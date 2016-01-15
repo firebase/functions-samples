@@ -15,19 +15,19 @@ This repository contains the following templates:
 
 How to moderate user input text for bad words.
 
-### [Username Moderation](/username-moderation) TODO
+### [Username Moderation](/username-moderation) TODO import from go/hearth-codesamples
 
 How to moderate new user names for bad words.
 
-### [LastModified Firebase DB tracking](/lastmodified-tracking) TODO
+### [LastModified Firebase DB tracking](/lastmodified-tracking) TODO import from go/hearth-codesamples
 
 Tracking when the Firebase DB was last modified.
 
-### [Automatic message translation](/message-translation) TODO
+### [Automatic message translation](/message-translation) TODO import from go/hearth-codesamples
 
 Integrates the Google Translate API to perform automatic text translation across any number of languages. Language codes can be stored in Firebase for on the fly changes.
 
-### [Full-text search via Algolia](/fulltext-search) TODO
+### [Full-text search via Algolia](/fulltext-search) TODO import from go/hearth-codesamples
 
 ...
 
