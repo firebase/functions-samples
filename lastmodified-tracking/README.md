@@ -48,7 +48,7 @@ The following security rules ensures only a Cloud Function with admin access can
 {
   "rules": {
     "lastmodified": {
-        ".write": "false", // TODO: Check taht this works with GCF admin access!
+        ".write": "false", // TODO: Check that this works with GCF admin access!
         ".read": "true"
     }
   }
