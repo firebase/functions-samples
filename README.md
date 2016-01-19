@@ -13,15 +13,11 @@ This repository contains the following templates:
 
 ### [Text Moderation](/text-moderation)
 
-How to moderate user input text for bad words.
+How to moderate user input text for bad words. For example this can be used to moderate usernames, chat or forum messages.
 
-### [Username Moderation](/username-moderation) TODO import from go/hearth-codesamples
+### [LastModified Firebase DB tracking](/lastmodified-tracking)
 
-How to moderate new user names for bad words.
-
-### [LastModified Firebase DB tracking](/lastmodified-tracking) TODO import from go/hearth-codesamples
-
-Tracking when the Firebase DB was last modified.
+Tracking when the Firebase DB (or a subset) was last modified.
 
 ### [Automatic message translation](/message-translation) TODO import from go/hearth-codesamples
 
