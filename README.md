@@ -1,6 +1,6 @@
 # Firebase Cloud Functions Templates Library
 
-This repository contains a collection of templates showcasing Firebase Cloud Functions usage.
+This repository contains a collection of templates showcasing some typical uses of Firebase Cloud Functions.
 
 
 ## Prerequisites
