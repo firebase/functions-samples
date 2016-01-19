@@ -14,7 +14,7 @@ The dependencies are listed in [package.json](package.json).
 
 ## Sample Database Structure
 
-Users anonymously add a message text to the `/messages` list:
+Users anonymously add a message - an object with a `text` attribute - to the `/messages` list:
 
 ```
 /functions-project-12345
@@ -45,8 +45,8 @@ Below is the trigger rule for the `moderator` function making sure it's triggere
 
 ## Security Rules
 
-The following security rules ensures users cannot read a message before it has been sanitized. The function adds a `sanitize` attribute (boolean) to the messages once they have been moderated.
-Also we make sure that users can only create a message and not edit them. We also make sure they cannot set the sanitized flag already.
+The following security rules ensures users cannot read a message before it has been sanitized. The function adds a `sanitized` attribute (boolean) to the messages once they have been moderated.
+Also we make sure that users can only create a message and not edit them again after moderation. We also make sure they cannot set the sanitized flag already.
 
 ```
 {
@@ -55,7 +55,7 @@ Also we make sure that users can only create a message and not edit them. We als
       "$message": {
         // Users can only add new messages. Not modify or delete them. Also makes sure they cannot mark a message as
         // already sanitized.
-        ".write": "!data.exists() && !newData.child('sanitized').exists()'"
+        ".write": "!data.exists() && !newData.child('sanitized').exists()'",
         ".read": "data.child('sanitized').val() === true"
       }
     }
