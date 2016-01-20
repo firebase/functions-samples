@@ -19,8 +19,8 @@ var Firebase = require('firebase');
 var env = require('./env');
 var ref = new Firebase(env.get('firebase.database.url'));
 
-function touch(context, data) {
-  ref.auth(env.get('firebase.database.token'), function(error, result) {
+function touch(context) {
+  ref.auth(env.get('firebase.database.token'), function(error) {
     if (error) {
       context.done(error);
     } else {
