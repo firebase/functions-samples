@@ -45,18 +45,18 @@ Below is the trigger rule for the `moderator` function making sure it's triggere
 
 ## Security Rules
 
-The following security rules ensures users cannot read a message before it has been sanitized. The function adds a `sanitized` attribute (boolean) to the messages once they have been moderated.
-Also we make sure that users can only create a message and not edit them again after moderation. We also make sure they cannot set the sanitized flag already.
+The following security rules ensures that users can only create a message and not edit them again after moderation. The function adds a `sanitized` attribute (boolean) to the messages once they have been checked.
+We also make sure they cannot set the sanitized flag already.
 
 ```
 {
   "rules": {
+    ".read": "true",
     "messages": {
       "$message": {
         // Users can only add new messages. Not modify or delete them. Also makes sure they cannot mark a message as
         // already sanitized.
-        ".write": "!data.exists() && !newData.child('sanitized').exists()'",
-        ".read": "data.child('sanitized').val() === true"
+        ".write": "!data.exists() && !newData.child('sanitized').exists()"
       }
     }
   }

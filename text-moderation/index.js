@@ -16,38 +16,47 @@
 'use strict';
 
 var Firebase = require('firebase');
-var config = require('./config.json'); // TODO: Replace this with the env.js once we know how to do this...
+var env = require('./env');
+var ref = new Firebase(env.get('firebase.database.url'));
 var stringUtils = require('./moderation-string-utils.js');
 stringUtils.loadModerationStringUtils();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
 exports.moderator = function(context, data) {
 
-  // Read the Firebase DB entry that triggered the function.
-  console.log('Loading firebase path: ' + config.firebaseDbUrl + data.path);
-  var messageFirebaseDbRef = new Firebase(config.firebaseDbUrl + data.path); // TODO: Replace this with the env.js once we know how to do this...
-  messageFirebaseDbRef.once('value', function(messageData) {
-
-    // Retrieved the message values.
-    console.log('Retrieved message content: ' + JSON.stringify(messageData.val()));
-    var messageEntryData = messageData.val();
-
-    // Run moderation checks on on the message and moderate if needed.
-    var moderatedMessage = moderateMessage(messageEntryData.text, context, messageFirebaseDbRef);
-
-    // If message has just been moderated we update the Firebase DB.
-    if (messageEntryData.text != moderatedMessage) {
-      console.log('Message has been moderated. Saving to DB: ' + moderatedMessage);
-      // TODO: Authorize when we can use custom auth on GCF.
-      messageFirebaseDbRef.update({text: moderatedMessage, sanitized: true},
-        context.done);
+  // Authorize to the Firebase Database with admin rights.
+  ref.authWithCustomToken(env.get('firebase.database.secret'), function(error) {
+    if (error) {
+      context.done(error);
     } else {
-      console.log('Marking message as sanitized. Saving to DB: ' + moderatedMessage);
-      messageFirebaseDbRef.update({sanitized: true}, context.done);
-    }
+      console.log("Authorized successfully with admin rights");
 
-  // If reading the Firebase DB failed.
-  }, context.done);
+      // Read the Firebase DB entry that triggered the function.
+      console.log('Loading firebase path: ' + env.get('firebase.database.url') + data.path);
+      var messageFirebaseDbRef = ref.child(data.path);
+      messageFirebaseDbRef.once('value', function(messageData) {
+
+        // Retrieved the message values.
+        console.log('Retrieved message content: ' + JSON.stringify(messageData.val()));
+        var messageEntryData = messageData.val();
+
+        // Run moderation checks on on the message and moderate if needed.
+        var moderatedMessage = moderateMessage(messageEntryData.text, context, messageFirebaseDbRef);
+
+        // If message has just been moderated we update the Firebase DB.
+        if (messageEntryData.text != moderatedMessage) {
+          console.log('Message has been moderated. Saving to DB: ' + moderatedMessage);
+          messageFirebaseDbRef.update({text: moderatedMessage, sanitized: true},
+            context.done);
+        } else {
+          console.log('Marking message as sanitized. Saving to DB: ' + moderatedMessage);
+          messageFirebaseDbRef.update({sanitized: true}, context.done);
+        }
+
+      // If reading the Firebase DB failed.
+      }, context.done);
+    }
+  });
 };
 
 // Moderates the given message if needed.
