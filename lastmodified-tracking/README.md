@@ -8,6 +8,8 @@ See file [index.js](index.js) for the code.
 
 This is done by simply updating a `lastmodified` attribute on the parent of the node which is tracked (for instance at the root of the Database).
 
+The dependencies are listed in [package.json](package.json).
+
 ## Sample Database Structure
 
 As an example we'll be using a simple chat database structure:
