@@ -19,6 +19,10 @@ How to moderate user input text for bad words. For example this can be used to m
 
 Tracking when the Firebase DB (or a subset) was last modified.
 
+### [Webhook upon Database writes](/minimal-webhook)
+
+Writing to the Database triggers a request to a callback URL (a Webhook). The content of the modified Data is sent to the Webhook.
+
 ### [Automatic message translation](/message-translation) TODO import from go/hearth-codesamples
 
 Integrates the Google Translate API to perform automatic text translation across any number of languages. Language codes can be stored in Firebase for on the fly changes.
