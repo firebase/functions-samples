@@ -36,7 +36,7 @@ Below is the trigger rule for the `moderator` function making sure it's triggere
       "triggers": {
         "database": {
           "path": "/messages/$message",
-          "condition": "!data.exists()" // Only run the function once on new messages
+          "condition": "!newData.child('sanitized').exists()" // Only run the function if it has not been sanitized
         }
       }
     }
