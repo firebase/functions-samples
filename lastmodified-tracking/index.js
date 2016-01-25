@@ -17,20 +17,10 @@
 
 var Firebase = require('firebase');
 var env = require('./env');
-var ref = new Firebase(env.get('firebase.database.url'));
+var ref = new Firebase(env.get('firebase.database.url'), 'admin');
+ref.auth(env.get('firebase.database.token'));
 
-function touch(context) {
-  ref.auth(env.get('firebase.database.token'), function(error) {
-    if (error) {
-      context.done(error);
-    } else {
-      console.log('Authenticated successfully with admin rights');
-      ref.child('lastmodified').set(Firebase.ServerValue.TIMESTAMP);
-      context.done();
-    }
-  });
-}
-
-module.exports = {
-  touch: touch
-}
+exports.touch = function(context) {
+  console.log('Authenticated successfully with admin rights');
+  ref.child('lastmodified').set(Firebase.ServerValue.TIMESTAMP, context.done);
+};
