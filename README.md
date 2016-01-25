@@ -15,13 +15,18 @@ This repository contains the following templates:
 
 How to moderate user input text for bad words. For example this can be used to moderate usernames, chat or forum messages.
 
-### [LastModified Firebase DB tracking](/lastmodified-tracking)
+### [LastModified Firebase Database tracking](/lastmodified-tracking)
 
-Tracking when the Firebase DB (or a subset) was last modified.
+Tracking when the Firebase Database (or a subset) was last modified.
 
 ### [Webhook upon Database writes](/minimal-webhook)
 
 Writing to the Database triggers a request to a callback URL (a Webhook). The content of the modified Data is sent to the Webhook.
+
+### [Firebase Database Child Nodes Count](/child-count)
+
+Keeps track of the number of child nodes of a Firebase Database element allowing clients to filter or order results using the child count.
+This can be useful to keep tack of the number of "likes" or "followers" of a somethings shares through social media.
 
 ### [Automatic message translation](/message-translation) TODO import from go/hearth-codesamples
 
