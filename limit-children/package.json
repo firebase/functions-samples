@@ -1,0 +1,6 @@
+{
+  "main": "index.js",
+  "dependencies": {
+    "firebase": "^2.4.0"
+  }
+}

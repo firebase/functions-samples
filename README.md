@@ -32,6 +32,10 @@ This can be useful to keep tack of the number of "likes" or "followers" of a som
 
 Integrates the Google Translate API to perform automatic text translation across any number of languages. Language codes can be stored in Firebase for on the fly changes.
 
+### [Limit number of child nodes](/limit-children)
+
+Make sure to keep the number of child nodes below a certain threshold. For instance this can be useful to limit the number of lines of logs or chat history below a given number.
+
 ### [Full-text search via Algolia](/fulltext-search) TODO import from go/hearth-codesamples
 
 ...
