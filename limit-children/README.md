@@ -1,4 +1,4 @@
-# Limit number of child nodes.
+# Limit number of child nodes
 
 This template shows how to keep the number of child nodes in a Firebase database below a given number. This can be used to limit the number of lines of a chat history or logs.
 
@@ -25,7 +25,7 @@ As an example we'll be using a simple chat database structure:
 
 ## Trigger rules
 
-Below is the trigger rule for the `truncate` function making sure it's triggered when a new message is added.
+Below is the trigger rule for the `truncate` function making sure it's triggered when a new chat message is added.
 
 ```
   "functions": {
