@@ -36,11 +36,11 @@ Integrates the Google Translate API to perform automatic text translation across
 
 Make sure to keep the number of child nodes below a certain threshold. For instance this can be useful to limit the number of lines of logs or chat history below a given number.
 
+### [Import Data to Big Query](/bigquery-import)
+
+Copies Firebase Database elements into BigQuery automatically. This can be useful for instance for logs analysis.
+
 ### [Full-text search via Algolia](/fulltext-search) TODO import from go/hearth-codesamples
-
-...
-
-### [Import Data to Big Query](/fulltext-search) TODO import from go/hearth-codesamples
 
 ...
 
