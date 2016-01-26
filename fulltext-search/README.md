@@ -10,28 +10,46 @@ The dependencies are listed in [package.json](package.json).
 
 ## Sample Database Structure
 
-As an example we'll be using a simple logs database structure:
+As an example we'll be using a simple blog structure:
 
 ```
 /functions-project-12345
-    /logs
+    /blog-posts
         /key-123456
-            text: "User signed in."
+            text: "This is my first blog entry..."
         /key-123457
-            text: "Error: Could not connect to Database"
+            text: "This is my second blog entry..."
+    /search
+        /queries
+            /key-546789
+                query: "first entry"
+            /key-078234
+                query: "second entry"
+        /results
+            /key-546789
+                result: "first entry"
+            /key-078234
+                result: "second entry"
 ```
 
 ## Trigger rules
 
-Below is the trigger rule for the `addtobigquery` function making sure it's triggered when a new log entry is added.
+Below is the trigger rule for the `indexentry` function making sure it's triggered when a new log entry is added and for the `searchentry` function making sure it's triggered when a new search query is added.
 
 ```
   "functions": {
     ".source": "functions",
-    "addtobigquery": {
+    "indexentry": {
       "triggers": {
         "database": {
-          "path": "/logs/$logid"
+          "path": "/blog-posts/$blogid"
+        }
+      }
+    }
+    "searchentry": {
+      "triggers": {
+        "database": {
+          "path": "/search/queries/$queryid"
         }
       }
     }

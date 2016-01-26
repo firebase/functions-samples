@@ -22,40 +22,42 @@ var ref = new Firebase(env.get('firebase.database.url'), 'admin');
 ref.auth(env.get('firebase.database.token'));
 
 // Authenticate to Algolia Database.
-// TODO: Make sure you add your Algolia Key and Secret into env.json
+// TODO: Make sure you add your Algolia Key and Secret into the env.json file.
 var algoliasearch = require('algoliasearch');
 var client = algoliasearch(env.get('algolia.key'), env.get('algolia.secret'));
 var index = client.initIndex('users');
 
-ref.child("search").remove();
-
+// Updates the search index when new blog entries are created or updated.
 function index_entry(context, data) {
-  ref.child(data.path).once("value", function (dataSnapshot) {
+  ref.child(data.path).once('value', function (dataSnapshot) {
     var firebaseObject = dataSnapshot.val();
     firebaseObject.objectID = dataSnapshot.key();
 
-    index.saveObject(firebaseObject, function(err, content) {
-      if (err) throw err;
-      ref.child('last_index').set(Firebase.ServerValue.TIMESTAMP);
-      context.done();
+    index.saveObject(firebaseObject, function(error) {
+      if (error) {
+        context.done(error);
+      } else {
+        ref.child('last_index').set(Firebase.ServerValue.TIMESTAMP);
+        context.done();
+      }
     });
   });
 }
 
 function search_entry(context, data) {
   ref.child('last_query').set(Firebase.ServerValue.TIMESTAMP);
-  ref.child(data.path).once("value", function (dataSnapshot) {
+  ref.child(data.path).once('value', function (dataSnapshot) {
     var query = dataSnapshot.val(),
         key = dataSnapshot.key();
 
     index.search(query, function searchDone(err, content) {
-      ref.child("search/results").child(key).set(content);
+      ref.child('search/results').child(key).set(content);
       context.done();
     });
   });
 }
 
 module.exports = {
-  "index-entry": index_entry,
-  "search-entry": search_entry
+  'indexentry': index_entry,
+  'searchentry': search_entry
 }

@@ -42,7 +42,7 @@ Copies Firebase Database elements into BigQuery automatically. This can be usefu
 
 ### [Full-text search via Algolia](/fulltext-search)
 
-Enable full text search on firebase database elements by using an Algolia hosted search service.
+Enable full-text search on firebase database elements by using an Algolia hosted search service.
 
 ## Contributing
 
