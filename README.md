@@ -38,11 +38,11 @@ Make sure to keep the number of child nodes below a certain threshold. For insta
 
 ### [Import Data to Big Query](/bigquery-import)
 
-Copies Firebase Database elements into BigQuery automatically. This can be useful for instance for logs analysis.
+Copies Firebase Database elements into BigQuery automatically. This can be useful for instance for further logs analysis.
 
-### [Full-text search via Algolia](/fulltext-search) TODO import from go/hearth-codesamples
+### [Full-text search via Algolia](/fulltext-search)
 
-...
+Enable full text search on firebase database elements by using an Algolia hosted search service.
 
 ## Contributing
 

@@ -1,0 +1,7 @@
+{
+  "main": "index.js",
+  "dependencies": {
+    "firebase": "^2.4.0",
+    "algoliasearch": "^3.10.2"
+  }
+}
