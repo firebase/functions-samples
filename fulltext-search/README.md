@@ -27,9 +27,9 @@ As an example we'll be using a simple blog structure:
                 query: "second entry"
         /results
             /key-546789
-                result: "first entry"
+                hits: [...
             /key-078234
-                result: "second entry"
+                hits: [...
 ```
 
 ## Trigger rules

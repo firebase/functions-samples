@@ -53,7 +53,7 @@ function search_entry(context, data) {
         key = dataSnapshot.key();
 
     index.search(query, function searchDone(err, content) {
-      ref.child('search/results').child(key).child('result').set(content);
+      ref.child('search/results').child(key).set(content);
       context.done();
     });
   });
