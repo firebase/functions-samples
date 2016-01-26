@@ -22,7 +22,7 @@ var ref = new Firebase(env.get('firebase.database.url'), 'admin');
 ref.auth(env.get('firebase.database.token'));
 
 // Authenticate to gcloud.
-// TODO: Make sure you add your Google Project ID, Private key and Email into env.json
+// TODO: Make sure you add your Google Project ID, Private key and Email into the env.json file.
 var gcloudconfig = {
   projectId: env.get('google.project_id'),
   credentials: {
