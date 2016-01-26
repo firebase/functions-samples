@@ -28,7 +28,7 @@ Writing to the Database triggers a request to a callback URL (a Webhook). The co
 Keeps track of the number of child nodes of a Firebase Database element allowing clients to filter or order results using the child count.
 This can be useful to keep tack of the number of "likes" or "followers" of a somethings shares through social media.
 
-### [Automatic message translation](/message-translation) TODO import from go/hearth-codesamples
+### [Automatic message translation](/message-translation)
 
 Integrates the Google Translate API to perform automatic text translation across any number of languages. Language codes can be stored in Firebase for on the fly changes.
 
@@ -40,7 +40,9 @@ Make sure to keep the number of child nodes below a certain threshold. For insta
 
 ...
 
+### [Import Data to Big Query](/fulltext-search) TODO import from go/hearth-codesamples
 
+...
 
 ## Contributing
 
