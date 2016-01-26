@@ -44,14 +44,16 @@ function index_entry(context, data) {
   });
 }
 
+// Starts a search query whenever a query is requested (by adding one to the `/search/queries`
+// element. Search results are then written under `search/results`.
 function search_entry(context, data) {
   ref.child('last_query').set(Firebase.ServerValue.TIMESTAMP);
   ref.child(data.path).once('value', function (dataSnapshot) {
-    var query = dataSnapshot.val(),
+    var query = dataSnapshot.val().query,
         key = dataSnapshot.key();
 
     index.search(query, function searchDone(err, content) {
-      ref.child('search/results').child(key).set(content);
+      ref.child('search/results').child(key).child('result').set(content);
       context.done();
     });
   });
