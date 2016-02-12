@@ -29,18 +29,13 @@ var index = client.initIndex('users');
 
 // Updates the search index when new blog entries are created or updated.
 function index_entry(context, data) {
-  ref.child(data.path).once('value', function (dataSnapshot) {
+  ref.child(data.path).once('value').then(function(dataSnapshot) {
     var firebaseObject = dataSnapshot.val();
     firebaseObject.objectID = dataSnapshot.key();
 
-    index.saveObject(firebaseObject, function(error) {
-      if (error) {
-        context.done(error);
-      } else {
-        ref.child('last_index').set(Firebase.ServerValue.TIMESTAMP);
-        context.done();
-      }
-    });
+    index.saveObject(firebaseObject).then(function() {
+      ref.child('last_index').set(Firebase.ServerValue.TIMESTAMP).then(context.done);
+    }).catch(context.done);
   });
 }
 
@@ -48,14 +43,13 @@ function index_entry(context, data) {
 // element. Search results are then written under `search/results`.
 function search_entry(context, data) {
   ref.child('last_query').set(Firebase.ServerValue.TIMESTAMP);
-  ref.child(data.path).once('value', function (dataSnapshot) {
+  ref.child(data.path).once('value').then(function(dataSnapshot) {
     var query = dataSnapshot.val().query,
         key = dataSnapshot.key();
 
-    index.search(query, function searchDone(err, content) {
-      ref.child('search/results').child(key).set(content);
-      context.done();
-    });
+    index.search(query).then(function (content) {
+      ref.child('search/results').child(key).set(content).then(context.done);
+    }).catch(context.done);
   });
 }
 

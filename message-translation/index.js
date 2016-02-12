@@ -21,7 +21,7 @@ var env = require('./env');
 var ref = new Firebase(env.get('firebase.database.url'), 'admin');
 ref.auth(env.get('firebase.database.token'));
 
-var request = require('request');
+var request = require('request-promise');
 var RSVP = require('rsvp');
 
 // List of output languages.
@@ -31,40 +31,39 @@ var LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 function translate(context, data) {
   var paths = data.path.split("/");
   var promises = [];
-  ref.child(data.path).once('value', function(snap) {
+  ref.child(data.path).once('value').then(function(snap) {
     for (var i = 0; i < LANGUAGES.length; i++) {
       var language = LANGUAGES[i];
       if (language !== paths[1]) {
         promises.push(createTranslationPromise(paths[1], language, snap));
       }
     }
-    RSVP.all(promises).then(function(){
+    RSVP.all(promises).then(function() {
       context.done();
     })
-  });
+  }).catch(context.done);
 }
 
 // URL to the Google Translate API.
 // TODO: Change `<YOUR_BROWSER_API_KEY>` by your Google Developers Console project API key.
 function createTranslateUrl(source, target, payload) {
-  return "https://www.googleapis.com/language/translate/v2?key=<YOUR_BROWSER_API_KEY>&source=" + source +
-      "&target=" + target + "&q=" + payload;
+  return 'https://www.googleapis.com/language/translate/v2?key=<YOUR_BROWSER_API_KEY>&source=' +
+      source + '&target=' + target + '&q=' + payload;
 }
 
 function createTranslationPromise(source, target, snapshot) {
   var key = snapshot.key();
-  var message = snapshot.val()['message']
-  return new RSVP.Promise(function(resolve, reject) {
-    request(createTranslateUrl(source, target, message), function(err, res, body) {
-      if (!err && res.statusCode == 200) {
-        var data = JSON.parse(body).data;
-        ref.child('messages/' + target + '/' + key)
-            .set({message: data["translations"][0]["translatedText"], translated: true});
-        resolve();
-      }
-      reject();
-    });
-  });
+  var message = snapshot.val()['message'];
+  return request(createTranslateUrl(source, target, message), {resolveWithFullResponse: true}).then(
+      function(response) {
+        if (response.statusCode == 200) {
+          var data = JSON.parse(response.body).data;
+          return ref.child('messages/' + target + '/' + key)
+              .set({message: data['translations'][0]['translatedText'], translated: true});
+        } else {
+          throw response.body;
+        }
+      });
 }
 
 module.exports = {

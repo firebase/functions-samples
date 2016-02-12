@@ -39,7 +39,7 @@ var table = dataset.table('<YOUR-TABLE-NAME>');
 
 // Copies the Firebase Database element to BigQuery
 function addtobigquery(context, data) {
-  ref.child(data.path).once('value', function (snap) {
+  ref.child(data.path).once('value').then(function(snap) {
     table.insert({
       ID: snap.key(),
       MESSAGE: snap.val().message,

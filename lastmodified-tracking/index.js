@@ -22,5 +22,6 @@ ref.auth(env.get('firebase.database.token'));
 
 exports.touch = function(context) {
   console.log('Authenticated successfully with admin rights');
-  ref.child('lastmodified').set(Firebase.ServerValue.TIMESTAMP, context.done);
+  ref.child('lastmodified').set(Firebase.ServerValue.TIMESTAMP).then(context.done)
+      .catch(context.done);
 };

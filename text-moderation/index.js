@@ -31,7 +31,7 @@ exports.moderator = function(context, data) {
   // Read the Firebase DB entry that triggered the function.
   console.log('Loading firebase path: ' + env.get('firebase.database.url') + data.path);
   var messageFirebaseDbRef = ref.child(data.path);
-  messageFirebaseDbRef.once('value', function(messageData) {
+  messageFirebaseDbRef.once('value').then(function(messageData) {
 
     // Retrieved the message values.
     console.log('Retrieved message content: ' + JSON.stringify(messageData.val()));
@@ -42,11 +42,14 @@ exports.moderator = function(context, data) {
 
     // Update the Firebase DB with checked message.
     console.log('Message has been moderated. Saving to DB: ' + moderatedMessage);
-    messageFirebaseDbRef.update({text: moderatedMessage, sanitized: true,
-        moderated: messageEntryData.text != moderatedMessage}, context.done);
+    messageFirebaseDbRef.update({
+      text: moderatedMessage,
+      sanitized: true,
+      moderated: messageEntryData.text != moderatedMessage
+    }).then(context.done);
 
   // If reading the Firebase DB failed.
-  }, context.done);
+  }).catch(context.done);
 };
 
 // Moderates the given message if needed.

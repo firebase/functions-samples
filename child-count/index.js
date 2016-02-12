@@ -24,7 +24,8 @@ ref.auth(env.get('firebase.database.token'));
 exports.countlikes = function(context, data) {
   var nodeRef = ref.child(data.path);
   console.log('Authenticated successfully with admin rights');
-  nodeRef.once('value', function(likesData) {
-    nodeRef.parent().child('likes_count').set(likesData.numChildren(), context.done);
-  }, context.done);
+  nodeRef.once('value').then(function(likesData) {
+    nodeRef.parent().child('likes_count').set(likesData.numChildren())
+        .then(context.done).catch(context.done);
+  }).catch(context.done);
 };

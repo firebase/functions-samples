@@ -27,21 +27,21 @@ var MAX_LOG_COUNT = 5;
 // Removes siblings of the node that element that triggered the function if there are more than MAX_LOG_COUNT
 function truncate(context, data) {
   var parentRef = ref.child(data.path).parent();
-  parentRef.once('value', function(snapshot) {
+  parentRef.once('value').then(function(snapshot) {
     if (snapshot.numChildren() > MAX_LOG_COUNT) {
       var childCount = 0;
       var updates = {};
-      snapshot.forEach(function (child) {
+      snapshot.forEach(function(child) {
         if (++childCount < snapshot.numChildren() - MAX_LOG_COUNT) {
           updates[child.key()] = null;
         }
       });
       // Update the parent. This effectiovely removes the extra children.
-      parentRef.update(updates, context.done);
+      parentRef.update(updates).then(context.done);
     } else {
       context.done();
     }
-  });
+  }).catch(context.done);
 }
 
 module.exports = {

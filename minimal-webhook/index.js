@@ -21,8 +21,8 @@ var env = require('./env');
 var ref = new Firebase(env.get('firebase.database.url'), 'admin');
 ref.authWithCustomToken(env.get('firebase.database.secret'));
 
-// Import the request URL.
-var request = require('request');
+// Import the request library.
+var request = require('request-promise');
 
 // This is the URL that we will callback and send the content fo the updated data node.
 // As an example we're using a Request Bin from http://requestb.in
@@ -32,16 +32,19 @@ var WEBHOOK_URL = 'http://requestb.in/1mqw97l1';
 // Reads the content of the node that triggered the function and sends it to the registered Webhook
 // URL.
 exports.webhook = function(context, data) {
-  ref.child(data.path).once('value', function(snap) {
+  ref.child(data.path).once('value').then(function(snap) {
     request({
-      url: WEBHOOK_URL,
+      uri: WEBHOOK_URL,
       method: 'POST',
       json: true,
-      body: snap.val()
-    }, function(err, response) {
-      if (err) { context.done(err); }
-      else if (response.statusCode >= 400) { context.done('HTTP Error:', response.statusCode) }
-      console.log('SUCCESS! Posted', data.path);
+      body: snap.val(),
+      resolveWithFullResponse: true
+    }).then(function(response) {
+      if (response.statusCode >= 400) {
+        context.done('HTTP Error:', response.statusCode);
+      } else {
+        console.log('SUCCESS! Posted', data.path);
+      }
     });
-  });
+  }).catch(context.done);
 };
