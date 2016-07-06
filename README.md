@@ -5,7 +5,8 @@ This repository contains a collection of templates showcasing some typical uses 
 
 ## Prerequisites
 
-To learn how to get started with Cloud Functions and Firebase try the quickstarts ([Web](https://devrel.git.corp.google.com/samples/firebase/quickstart/web/+/master/gcf/), [Android](https://devrel.git.corp.google.com/samples/firebase/quickstart/android/+/master/functions/)) and have a look at [the documentation](https://developers.google.com/firebase/docs/cloud-functions/setup).
+To learn how to get started with Cloud Functions and Firebase try the [quickstart](https://devrel.git.corp.google.com/samples/firebase/quickstart/functions/) and have a look at [the documentation](https://firebase.google.com/preview/functions/).
+
 
 ## Use Cases and Samples
 
@@ -14,6 +15,10 @@ This repository contains the following templates:
 ### [Text Moderation](/text-moderation)
 
 How to moderate user input text for bad words. For example this can be used to moderate usernames, chat or forum messages.
+
+### [Email Confirmation](/email-confirmation)
+
+Sends email confirmation after users subscribed to a mailing list.
 
 ### [LastModified Firebase Database tracking](/lastmodified-tracking)
 
