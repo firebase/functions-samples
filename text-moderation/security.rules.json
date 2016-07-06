@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "messages": {
+      ".read": true,
+      "$message": {
+        // Users can only add new messages to the review queue.
+        ".write": "!data.exists()",
+        // Users can't set the sanitized boolean themselves.
+        ".validate": "!newData.hasChildren(['sanitized'])"
+      }
+    }
+  }
+}

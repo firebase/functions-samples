@@ -1,0 +1,89 @@
+/**
+ * Copyright 2015 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+html, body {
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+.mdl-layout__header-row span {
+  margin-left: 15px;
+  margin-top: 17px;
+}
+.mdl-grid {
+  max-width: 1024px;
+  margin: auto;
+}
+.material-icons {
+  font-size: 36px;
+  top: 5px;
+  position: relative;
+}
+.mdl-layout__header-row {
+  padding: 0;
+  margin: 0;
+}
+#message-form {
+  display: flex;
+  flex-direction: column;
+}
+#message-form button {
+  max-width: 300px;
+}
+#message-list {
+  padding: 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+#message-title {
+  margin-top: 20px;
+}
+.mdl-card {
+  min-height: 0;
+}
+.message-card {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+.message-card.visible {
+  opacity: 1;
+}
+.message {
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 200;
+  padding-bottom: 30px;
+}
+.author {
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  font-style: italic;
+}
+.moderated {
+  position: absolute;
+  bottom: 10px;
+  font-weight: 100;
+  font-size: 10px;
+}
+.explanation {
+  font-size: 20px;
+  font-weight: 100;
+  line-height: 25px;
+}
+.mdl-card {
+  background: linear-gradient(white, #f9f9f9);
+  justify-content: space-between;
+}
