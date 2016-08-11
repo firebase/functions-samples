@@ -1,0 +1,63 @@
+# Use LinkedIn Sign In with Firebase
+
+This sample shows how to authenticate using LinkedIn Sign-In on Firebase. In this sample we use OAuth 2.0 based
+authentication to get LinkedIn user information then create a Firebase Custom Token (using the LinkedIn user ID).
+
+
+## Setup the sample
+
+Create and setup the Firebase project:
+ 1. Create a Firebase project using the [Firebase Developer Console](https://console.firebase.google.com).
+ 1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed for
+    Firebase Functions.
+ 1. Copy the Web initialisation snippet from **Firebase Console > Overview > Add Firebase to your web app** and paste it
+    in `public/index.html` and `public/popup.html` in lieu of the placeholders (where the `TODO(DEVELOPER)`
+    are located).
+ 1. From Firebse initialization snippet copy the `apiKey` value and paste it in `env.json` for the attribute
+    `firebaseConfig.apiKey` in lieu of the placeholder.
+
+Create and provide a Service Account's keys:
+ 1. Create a Service Accounts file as described in the [Server SDK setup instructions](https://firebase.google.com/docs/server/setup#add_firebase_to_your_app).
+ 1. Save the Service Account credential file as `./functions/service-account.json`
+
+
+Create and setup your LinkedIn app:
+ 1. Create a LinkedIn app in the [LinkedIn Developers website](https://www.linkedin.com/developer/apps/).
+ 1. Add the URL `https://<application-id>.firebaseapp.com/popup.html` to the
+    **OAuth 2.0** > **Authorized Redirect URLs** of your LinkedIn app.
+ 1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and paste them in `env.json` for the attribute
+    `linkedIn.clientId` and `linkedIn.secret` in lieu of the placeholders.
+
+ > Make sure the LinkedIn Client Secret is always kept secret. For instance do not save this in your version control system.
+
+Deploy your project:
+ 1. Run `firebase use --add` and choose your Firebase project. This will configure the Firebase CLI to use the correct
+    project locally.
+ 1. Run `firebase deploy` to effectively deploy the sample. The first time the Functions are deployed the process can
+    take several minutes.
+
+
+## Run the sample
+
+Open the sample's website by using `firebase open hosting:site` or directly accessing `https://<project-id>.firebaseapp.com/`.
+
+Click on the **Sign in with LinkedIn** button and a popup window will appear that will show the Linked In authentication consent screen. Sign In and/or authorize the authentication request.
+
+The website should display your name, email and profile pic from Linked In. At this point you are authenticated in Firebase and can use the database/hosting etc...
+
+## Workflow and design
+
+When Clicking the **Sign in with LinkedIn** button a popup is shown which redirects users to the `redirect` Function URL.
+
+The `redirect` Function then redirects the user to the LinkedIn OAuth 2.0 consent screen where (the first time only) the user will have to grant approval. Also the `state` cookie is set on the client with the value of the `state` URL query parameter to check against later on.
+
+After the user has granted approval he is redirected back to the `./popup.html` page along with an OAuth 2.0 Auth Code as a URL parameter. This Auth code is then sent to the `token` Function using a JSONP Request. The `token` function then:
+ - Checks that the value of the `state` URL query parameter is the same as the one in the `state` cookie.
+ - Exchanges the auth code for an access token using the LinkedIn app credentials.
+ - Use the Access Token to query the LinkedIn API to get user's information such as ID, name, email and profile pic URL.
+ - Mints a Custom Auth token (which is why we need Service Accounts Credentials).
+ - Use the Custom Auth token to authorize as the user and updates the email and/or profile information on Firebase if needed.
+ - Returns the Custom Auth Token to the `./popup.html` page.
+
+ The `./popup.html` receives the Custom Auth Token back from the AJAX request to the `token` Function and uses it to authenticate the user in Firebase. Then close the popup.
+ At this point the main page will detect the sign-in through the Firebase Auth State observer and display the signed-In user information.

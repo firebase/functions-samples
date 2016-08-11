@@ -1,0 +1,84 @@
+<!doctype html>
+<!--
+  Copyright 2016 Google Inc. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      https://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Demonstrates how to authenticate with LinkedIn on Firebase using Functions">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authenticate With LinkedIn</title>
+</head>
+<body>
+
+Please wait...
+
+<!-- Firebase -->
+<!-- ***********************************************************************************************************************
+     * TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Overview > Add Firebase to your web app. *
+     *********************************************************************************************************************** -->
+
+<script>
+  /**
+   * Returns the value of the given URL query parameter.
+   */
+  function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) ||
+        [null, ''])[1].replace(/\+/g, '%20')) || null;
+  }
+
+  /**
+   * Returns the ID of the Firebase project.
+   */
+  function getFirebaseProjectId() {
+    return firebase.app().options.authDomain.split('.')[0];
+  }
+
+  /**
+   * This callback is called by the JSONP callback of the 'token' Firebase Function with the Firebase auth token.
+   */
+  function tokenReceived(data) {
+    if (data.token) {
+      firebase.auth().signInWithCustomToken(data.token).then(function() {
+        window.close();
+      }).catch(function(error) {
+        console.error(error);
+        document.body.innerText = 'Error While using the Firebase Auth token to sign in: ' + error.message;
+      })
+    } else {
+      console.error(error);
+      document.body.innerText = 'Error in the token Function: ' + data.error;
+    }
+  }
+
+  var code = getURLParameter('code');
+  var state = getURLParameter('state');
+  var error = getURLParameter('error');
+  if (!code) {
+    document.body.innerText = 'Error back from the LinkedIn auth page: ' + error;
+  } else {
+    // Use JSONP to load the 'token' Firebase Function to exchange the auth code against a Firebase custom token.
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    // This is the URL to the HTTP triggered 'token' Firebase Function.
+    // See https://firebase.google.com/preview/functions/gcp-events#handle_a_cloud_http_firebase_function_event.
+    var tokenFunctionURL = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/token';
+    script.src = tokenFunctionURL +
+        '?code=' + encodeURIComponent(code) +
+        '&state=' + encodeURIComponent(state) +
+        '&callback=' + tokenReceived.name;
+    document.head.appendChild(script);
+  }
+</script>
+</body>
+</html>

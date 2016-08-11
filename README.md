@@ -1,16 +1,20 @@
-# Firebase Cloud Functions Templates Library
+# Firebase Functions Samples Library
 
-This repository contains a collection of templates showcasing some typical uses of Firebase Cloud Functions.
+This repository contains a collection of samples showcasing some typical uses of Firebase Functions.
 
 
 ## Prerequisites
 
-To learn how to get started with Cloud Functions and Firebase try the [quickstart](https://devrel.git.corp.google.com/samples/firebase/quickstart/functions/) and have a look at [the documentation](https://firebase.google.com/preview/functions/).
+To learn how to get started with Firebase Functions try the [quickstart samples](https://devrel.git.corp.google.com/samples/firebase/quickstart/functions/) and have a look at [the documentation](https://firebase.google.com/preview/functions/).
 
 
 ## Use Cases and Samples
 
-This repository contains the following templates:
+This repository contains the following samples:
+
+### [Authorize with LinkedIn](/linkedin-auth)
+
+Demonstrates how to authorize with a 3rd party sign-in mechanism (LinkedIn in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
 
 ### [Text Moderation](/text-moderation)
 
