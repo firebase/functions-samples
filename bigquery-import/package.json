@@ -1,7 +1,0 @@
-{
-  "main": "index.js",
-  "dependencies": {
-    "firebase": "^2.4.0",
-    "gcloud": "^0.27.0"
-  }
-}

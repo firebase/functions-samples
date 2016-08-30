@@ -1,12 +1,12 @@
 # Import Data to Big Query
 
-This template shows how to keep the number of child nodes in a Firebase database below a given number. This can be used to limit the number of lines of a chat history or logs.
+This template shows how to copy data from the Realtime Database (such as logs being written there) to Google Cloud's BigQuery.
 
-## Cloud Function Code
+## Function Code
 
-See file [index.js](index.js) for the code.
+See file [index.js](functions/index.js) for the code.
 
-The dependencies are listed in [package.json](package.json).
+The dependencies are listed in [functions/package.json](package.json).
 
 ## Sample Database Structure
 
@@ -21,21 +21,9 @@ As an example we'll be using a simple logs database structure:
             text: "Error: Could not connect to Database"
 ```
 
-## Trigger rules
+## Setting up the sample
 
-Below is the trigger rule for the `addtobigquery` function making sure it's triggered when a new log entry is added.
+Add your Project ID to the env.json file.
 
-```
-  "functions": {
-    ".source": "functions",
-    "addtobigquery": {
-      "triggers": {
-        "database": {
-          "path": "/logs/$logid"
-        }
-      }
-    }
-  }
-```
-
+You'll need to create a Service account's credentials file for your Google Cloud project. Then copy the credential file to  `functions/service-accounts.json`
 

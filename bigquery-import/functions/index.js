@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,14 @@
  */
 'use strict';
 
-// Create an all access Firebase Database reference.
-var Firebase = require('firebase');
-var env = require('./env');
-var ref = new Firebase(env.get('firebase.database.url'), 'admin');
-ref.auth(env.get('firebase.database.token'));
+var functions = require('firebase-functions');
+var Q = require('q');
 
 // Authenticate to gcloud.
 // TODO: Make sure you add your Google Project ID, Private key and Email into the env.json file.
 var gcloudconfig = {
-  projectId: env.get('google.project_id'),
-  credentials: {
-    private_key: env.get('google.private_key'),
-    client_email: env.get('google.client_email')
-  }
+  projectId: functions.env.get('google.project_id'),
+  credentials: require('./service-accounts.json')
 };
 var gcloud = require('gcloud')(gcloudconfig);
 var bigquery = gcloud.bigquery();
@@ -37,27 +31,25 @@ var dataset = bigquery.dataset('<YOUR-DATASET-NAME>');
 // TODO: Change <YOUR-TABLE-NAME> with your BigQuery table name.
 var table = dataset.table('<YOUR-TABLE-NAME>');
 
-// Copies the Firebase Database element to BigQuery
-function addtobigquery(context, data) {
-  ref.child(data.path).once('value').then(function(snap) {
-    table.insert({
-      ID: snap.key(),
-      MESSAGE: snap.val().message,
-      NUMBER: snap.val().number
-    }, function(err, insertErr, resp) {
-      if (err) {
-        console.log(err);
-        context.done(err);
-      } else if (insertErr) {
-        console.log(insertErr);
-        context.done(insertErr);
-      } else {
-        context.done();
-      }
-    });
+/**
+ * Writes all logs from the Realtime Database into bigquery.
+ */
+exports.addtobigquery = functions.database().path('/logs/$logid').on('value', event => {
+  const result = Q.defer();
+  table.insert({
+    ID: event.data.key(),
+    MESSAGE: event.data.val().message,
+    NUMBER: event.data.val().number
+  }, function(err, insertErr) {
+    if (err) {
+      console.log(err);
+      result.reject(err);
+    } else if (insertErr) {
+      console.log(insertErr);
+      result.reject(insertErr);
+    } else {
+      result.resolve();
+    }
   });
-}
-
-module.exports = {
-  addtobigquery: addtobigquery
-}
+  return result.promise;
+});
