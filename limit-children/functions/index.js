@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,35 +15,26 @@
  */
 'use strict';
 
-// Create an all access Firebase Database reference.
-var Firebase = require('firebase');
-var env = require('./env');
-var ref = new Firebase(env.get('firebase.database.url'), 'admin');
-ref.auth(env.get('firebase.database.token'));
+const functions = require('firebase-functions');
 
 // Max number of lines of the chat history.
-var MAX_LOG_COUNT = 5;
+const MAX_LOG_COUNT = 5;
 
-// Removes siblings of the node that element that triggered the function if there are more than MAX_LOG_COUNT
-function truncate(context, data) {
-  var parentRef = ref.child(data.path).parent();
-  parentRef.once('value').then(function(snapshot) {
+// Removes siblings of the node that element that triggered the function if there are more than MAX_LOG_COUNT.
+// In this example we'll keep the max number of chat message history to MAX_LOG_COUNT.
+exports.truncate = functions.database().path('/chat/$messageid').on('value', event => {
+  var parentRef = event.data.ref.parent();
+  return parentRef.once('value').then(snapshot => {
     if (snapshot.numChildren() > MAX_LOG_COUNT) {
       var childCount = 0;
       var updates = {};
       snapshot.forEach(function(child) {
         if (++childCount < snapshot.numChildren() - MAX_LOG_COUNT) {
-          updates[child.key()] = null;
+          updates[child.key] = null;
         }
       });
-      // Update the parent. This effectiovely removes the extra children.
-      parentRef.update(updates).then(context.done);
-    } else {
-      context.done();
+      // Update the parent. This effectively removes the extra children.
+      return parentRef.update(updates);
     }
-  }).catch(context.done);
-}
-
-module.exports = {
-  truncate: truncate
-};
+  });
+});
