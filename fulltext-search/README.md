@@ -2,11 +2,11 @@
 
 This template shows how to enable full text search on firebase database elements by using an Algolia hosted search service.
 
-## Cloud Function Code
+## Functions Code
 
-See file [index.js](index.js) for the code.
+See file [index.js](functions/index.js) for the code.
 
-The dependencies are listed in [package.json](package.json).
+The dependencies are listed in [package.json](functions/package.json).
 
 ## Sample Database Structure
 
@@ -32,28 +32,8 @@ As an example we'll be using a simple blog structure:
                 hits: [...
 ```
 
-## Trigger rules
-
-Below is the trigger rule for the `indexentry` function making sure it's triggered when a new log entry is added and for the `searchentry` function making sure it's triggered when a new search query is added.
-
-```
-  "functions": {
-    ".source": "functions",
-    "indexentry": {
-      "triggers": {
-        "database": {
-          "path": "/blog-posts/$blogid"
-        }
-      }
-    }
-    "searchentry": {
-      "triggers": {
-        "database": {
-          "path": "/search/queries/$queryid"
-        }
-      }
-    }
-  }
-```
-
+Whenever a new blog post is created or modified a Function sends the content to be indexed to the Algolia instance.
+To perform new searches clients add the search query to the realtime database under /search/queries/ which triggers a
+Firebase function which performs the search on the Algolia instance. The results are written under the /search/results
+tree.
 
