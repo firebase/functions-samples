@@ -1,8 +1,0 @@
-{
-  "main": "index.js",
-  "dependencies": {
-    "firebase": "^2.4.0",
-    "request-promise": "^2.0.0",
-    "rsvp": "^3.1.0"
-  }
-}
