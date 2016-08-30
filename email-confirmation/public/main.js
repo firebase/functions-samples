@@ -63,7 +63,6 @@ Demo.prototype.onAuthStateChanged = function(user) {
     }
     this.signedOutCard.style.display = 'block';
     this.signedInCard.style.display = 'none';
-    this.lastUid = null;
   }
 };
 
