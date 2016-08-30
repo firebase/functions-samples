@@ -5,7 +5,7 @@ This template shows how to perform server side moderation of text written to a F
 For instance if a user added the message "I DON'T LIKE THIS APP!! This is POOP!!!" this will get moderated to a - more civilized - non uppercase message: "I don't like this app. This is ****".
 
 
-## Cloud Function Code
+## Functions Code
 
 See file [index.js](index.js) for the moderation code.
 
