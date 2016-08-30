@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,9 @@
  */
 'use strict';
 
-var Firebase = require('firebase');
-var env = require('./env');
-var ref = new Firebase(env.get('firebase.database.url'), 'admin');
-ref.auth(env.get('firebase.database.token'));
+var functions = require('firebase-functions');
 
 // Keeps track of the length of the 'likes' child list in a separate attribute.
-exports.countlikes = function(context, data) {
-  var nodeRef = ref.child(data.path);
-  console.log('Authenticated successfully with admin rights');
-  nodeRef.once('value').then(function(likesData) {
-    nodeRef.parent().child('likes_count').set(likesData.numChildren())
-        .then(context.done).catch(context.done);
-  }).catch(context.done);
-};
+exports.countlikes = functions.database().path('/posts/$postid/likes').on('value', event => {
+  return event.adminRef.parent().child('likes_count').set(event.data.numChildren());
+});
