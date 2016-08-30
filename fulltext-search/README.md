@@ -37,3 +37,7 @@ To perform new searches clients add the search query to the realtime database un
 Firebase function which performs the search on the Algolia instance. The results are written under the /search/results
 tree.
 
+## Setting up the sample
+
+- Create an Algolia account at [www.algolia.com](https://www.algolia.com/)
+- Set your Algolia Key and Secret in the `env.json` file.

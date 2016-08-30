@@ -15,21 +15,21 @@
  */
 'use strict';
 
-var functions = require('firebase-functions');
-var Q = require('q');
+const functions = require('firebase-functions');
+const Q = require('q');
 
 // Authenticate to gcloud.
 // TODO: Make sure you add your Google Project ID, Private key and Email into the env.json file.
-var gcloudconfig = {
+const gcloudconfig = {
   projectId: functions.env.get('google.project_id'),
   credentials: require('./service-accounts.json')
 };
-var gcloud = require('gcloud')(gcloudconfig);
-var bigquery = gcloud.bigquery();
+const gcloud = require('gcloud')(gcloudconfig);
+const bigquery = gcloud.bigquery();
 // TODO: Change <YOUR-DATASET-NAME> with your BigQuery dataset name.
-var dataset = bigquery.dataset('<YOUR-DATASET-NAME>');
+const dataset = bigquery.dataset('<YOUR-DATASET-NAME>');
 // TODO: Change <YOUR-TABLE-NAME> with your BigQuery table name.
-var table = dataset.table('<YOUR-TABLE-NAME>');
+const table = dataset.table('<YOUR-TABLE-NAME>');
 
 /**
  * Writes all logs from the Realtime Database into bigquery.
@@ -40,7 +40,7 @@ exports.addtobigquery = functions.database().path('/logs/$logid').on('value', ev
     ID: event.data.key(),
     MESSAGE: event.data.val().message,
     NUMBER: event.data.val().number
-  }, function(err, insertErr) {
+  }, (err, insertErr) => {
     if (err) {
       console.log(err);
       result.reject(err);
