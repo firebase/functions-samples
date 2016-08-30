@@ -15,36 +15,27 @@
  */
 'use strict';
 
-// Create reference to the database authorized as an admin.
-var Firebase = require('firebase');
-var env = require('./env');
-var ref = new Firebase(env.get('firebase.database.url'), 'admin');
-ref.authWithCustomToken(env.get('firebase.database.secret'));
-
-// Import the request library.
-var request = require('request-promise');
+const functions = require('firebase-functions');
+const request = require('request-promise');
 
 // This is the URL that we will callback and send the content fo the updated data node.
 // As an example we're using a Request Bin from http://requestb.in
 // TODO: Make sure you create your own Request Bin and change this URL to try this sample.
-var WEBHOOK_URL = 'http://requestb.in/1mqw97l1';
+const WEBHOOK_URL = 'http://requestb.in/1mqw97l1';
 
 // Reads the content of the node that triggered the function and sends it to the registered Webhook
 // URL.
-exports.webhook = function(context, data) {
-  ref.child(data.path).once('value').then(function(snap) {
-    request({
-      uri: WEBHOOK_URL,
-      method: 'POST',
-      json: true,
-      body: snap.val(),
-      resolveWithFullResponse: true
-    }).then(function(response) {
-      if (response.statusCode >= 400) {
-        context.done('HTTP Error:', response.statusCode);
-      } else {
-        console.log('SUCCESS! Posted', data.path);
-      }
-    });
-  }).catch(context.done);
-};
+exports.webhook = functions.database().path('/hooks/$hookId').on('value', event => {
+  return request({
+    uri: WEBHOOK_URL,
+    method: 'POST',
+    json: true,
+    body: event.data.val(),
+    resolveWithFullResponse: true
+  }).then(response => {
+    if (response.statusCode >= 400) {
+      throw new Error(`HTTP Error: ${response.statusCode}`);
+    }
+    console.log('SUCCESS! Posted', event.data.ref);
+  });
+});
