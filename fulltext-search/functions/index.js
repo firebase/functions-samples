@@ -15,7 +15,6 @@
  */
 'use strict';
 
-// Create an all access Firebase Database reference.
 const functions = require('firebase-functions');
 
 // Authenticate to Algolia Database.
