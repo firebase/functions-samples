@@ -15,13 +15,10 @@
  */
 'use strict';
 
-var Firebase = require('firebase');
-var env = require('./env');
-var ref = new Firebase(env.get('firebase.database.url'), 'admin');
-ref.auth(env.get('firebase.database.token'));
+const functions = require('firebase-functions');
 
-exports.touch = function(context) {
-  console.log('Authenticated successfully with admin rights');
-  ref.child('lastmodified').set(Firebase.ServerValue.TIMESTAMP).then(context.done)
-      .catch(context.done);
-};
+/**
+ * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
+ */
+exports.touch = functions.database().path('/chat/$message').on('value',
+    () => functions.app.database().ref('/lastmodified').set(Firebase.ServerValue.TIMESTAMP));
