@@ -15,25 +15,25 @@
  */
 'use strict';
 
-var functions = require('firebase-functions');
-var nodemailer = require('nodemailer');
+const functions = require('firebase-functions');
+const nodemailer = require('nodemailer');
 
 // Configure the email transport using the default SMTP transport and a GMail account.
 // See: https://nodemailer.com/
 // For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/
 // TODO(DEVELOPER): Configure your email transport below. For GMail replace the <USER> and <PASSWORD> placeholders.
-var mailTransport = nodemailer.createTransport('smtps://<USER>:<PASSWORD>@smtp.gmail.com');
+const mailTransport = nodemailer.createTransport('smtps://nivco%40google.com:yltysyenducxhfvr@smtp.gmail.com');
 
 // Sends an email confirmation when a user changes his mailing list subscription.
-exports.sendEmailConfirmation = functions.database().path('/users/{uid}').on('value', function(event) {
-  var data = event.data;
-  var val = data.val();
+exports.sendEmailConfirmation = functions.database().path('/users/{uid}').on('value', event => {
+  const data = event.data;
+  const val = data.val();
 
   if (!data.changed('subscribedToMailingList')) {
     return;
   }
 
-  var mailOptions = {
+  const mailOptions = {
     from: '"Spammy Corp." <noreply@firebase.com>',
     to: val.email
   };
@@ -42,15 +42,15 @@ exports.sendEmailConfirmation = functions.database().path('/users/{uid}').on('va
   if (val.subscribedToMailingList) {
     mailOptions.subject = 'Thanks for subscribing to our newsletter';
     mailOptions.text = 'I will now spam you forever muahahahahah!!!';
-    return mailTransport.sendMail(mailOptions).then(function() {
-      console.log('New subscription confirmation email sent to: ' + val.email);
+    return mailTransport.sendMail(mailOptions).then(() => {
+      console.log('New subscription confirmation email sent to:', val.email);
     });
   }
 
   // The user unsubscribed to the newsletter.
   mailOptions.subject = 'Sad to see you go :`(';
   mailOptions.text = 'I hereby confirm that I will stop the spamming.';
-  return mailTransport.sendMail(mailOptions).then(function() {
-    console.log('New unsubscription confirmation email sent to: ' + val.email);
+  return mailTransport.sendMail(mailOptions).then(() => {
+    console.log('New unsubscription confirmation email sent to:', val.email);
   });
 });
