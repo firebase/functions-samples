@@ -31,7 +31,7 @@ const oauth2 = require('simple-oauth2')({
   authorizationPath: '/oauth/authorize'
 });
 
-const OAUTH_REDIRECT_URI = 'https://' + process.env.GCLOUD_PROJECT + '.firebaseapp.com/popup.html';
+const OAUTH_REDIRECT_URI = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`;
 const OAUTH_SCOPES = 'basic';
 
 /**
