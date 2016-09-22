@@ -5,7 +5,7 @@ This repository contains a collection of samples showcasing some typical uses of
 
 ## Prerequisites
 
-To learn how to get started with Firebase Functions try the [quickstart samples](https://devrel.git.corp.google.com/samples/firebase/quickstart/functions/) and have a look at [the documentation](https://firebase.google.com/preview/functions/).
+To learn how to get started with Firebase Functions try the quickstart samples and have a look at [the documentation](https://firebase.google.com/preview/functions/).
 
 
 ## Use Cases and Samples
