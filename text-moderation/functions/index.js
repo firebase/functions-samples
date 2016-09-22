@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 'use strict';
 
 // Create reference to the database authorized as an admin.
-var functions = require('firebase-functions');
-var capitalizeSentence = require('capitalize-sentence');
-var BadWordsFilter = require('bad-words');
-var filter = new BadWordsFilter();
+const functions = require('firebase-functions');
+const capitalizeSentence = require('capitalize-sentence');
+const BadWordsFilter = require('bad-words');
+const filter = new BadWordsFilter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
 exports.moderator = functions.database()
-    .path('/messages/{messageId}').on('write', function(event) {
-      var message = event.data.val();
+    .path('/messages/{messageId}').on('write', event => {
+      const message = event.data.val();
 
       if (message && !message.sanitized) {
         // Retrieved the message values.
@@ -41,6 +41,7 @@ exports.moderator = functions.database()
           moderated: message.text !== moderatedMessage
         });
       }
+      return null;
     });
 
 // Moderates the given message if appropriate.
@@ -73,8 +74,7 @@ String.prototype.moderateSwearwords = function() {
 // Detect if the current message is yelling. i.e. there are too many Uppercase
 // characters or exclamation points.
 String.prototype.isYelling = function() {
-  return this.replace(/[^A-Z]/g, '').length > this.length / 2 ||
-      this.replace(/[^!]/g, '').length >= 3;
+  return this.replace(/[^A-Z]/g, '').length > this.length / 2 || this.replace(/[^!]/g, '').length >= 3;
 };
 
 // Correctly capitalize the string as a sentence (e.g. uppercase after dots)
