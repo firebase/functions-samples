@@ -28,13 +28,13 @@ exports.moderator = functions.database()
 
       if (message && !message.sanitized) {
         // Retrieved the message values.
-        console.log('Retrieved message content: ' + JSON.stringify(message));
+        console.log('Retrieved message content: ', message);
 
         // Run moderation checks on on the message and moderate if needed.
         var moderatedMessage = moderateMessage(message.text);
 
         // Update the Firebase DB with checked message.
-        console.log('Message has been moderated. Saving to DB: ' + moderatedMessage);
+        console.log('Message has been moderated. Saving to DB: ', moderatedMessage);
         return event.data.adminRef.update({
           text: moderatedMessage,
           sanitized: true,
