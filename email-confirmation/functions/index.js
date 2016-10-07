@@ -18,14 +18,16 @@
 const functions = require('firebase-functions');
 const nodemailer = require('nodemailer');
 
-// Configure the email transport using the default SMTP transport and a GMail account.
-// See: https://nodemailer.com/
-// For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/
-// TODO(DEVELOPER): Configure your email transport below. For GMail replace the <USER> and <PASSWORD> placeholders.
-const mailTransport = nodemailer.createTransport('smtps://nivco%40google.com:yltysyenducxhfvr@smtp.gmail.com');
-
 // Sends an email confirmation when a user changes his mailing list subscription.
-exports.sendEmailConfirmation = functions.database().path('/users/{uid}').on('value', event => {
+exports.sendEmailConfirmation = functions.database().path('/users/{uid}').onWrite(event => {
+
+  // Configure the email transport using the default SMTP transport and a GMail account.
+  // See: https://nodemailer.com/
+  // For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/
+  // TODO: Make sure you configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
+  const mailTransport = nodemailer.createTransport(
+      `smtps://${encodeURIComponent(functions.env.gmail.email)}:${encodeURIComponent(functions.env.gmail.password)}@smtp.gmail.com`);
+
   const data = event.data;
   const val = data.val();
 
@@ -40,8 +42,8 @@ exports.sendEmailConfirmation = functions.database().path('/users/{uid}').on('va
 
   // The user just subscribed to our newsletter.
   if (val.subscribedToMailingList) {
-    mailOptions.subject = 'Thanks for subscribing to our newsletter';
-    mailOptions.text = 'I will now spam you forever muahahahahah!!!';
+    mailOptions.subject = 'Thanks and Welcome!';
+    mailOptions.text = 'Thanks you for subscribing to uour newsletter. You will receive our next weekly newsletter.';
     return mailTransport.sendMail(mailOptions).then(() => {
       console.log('New subscription confirmation email sent to:', val.email);
     });
@@ -49,7 +51,7 @@ exports.sendEmailConfirmation = functions.database().path('/users/{uid}').on('va
 
   // The user unsubscribed to the newsletter.
   mailOptions.subject = 'Sad to see you go :`(';
-  mailOptions.text = 'I hereby confirm that I will stop the spamming.';
+  mailOptions.text = 'I hereby confirm that I will stop sending you the newsletter.';
   return mailTransport.sendMail(mailOptions).then(() => {
     console.log('New unsubscription confirmation email sent to:', val.email);
   });

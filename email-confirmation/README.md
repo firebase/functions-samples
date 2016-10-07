@@ -7,7 +7,7 @@ This template shows how to send a confirmation emails to users who are subscribi
 
 See file [index.js](index.js) for the email sending code.
 
-Sending emails is performed using [nodemailer](https://www.npmjs.com/package/bad-words) a node based Email client with comprehensive EMail server setup. In this sample we're showing how to send email through SMTP using a Gmail account.
+Sending emails is performed using [nodemailer](https://www.npmjs.com/package/bad-words) a node based Email client with comprehensive EMail server setup. In this sample we're showing how to send email through SMTP using a Gmail account. Be aware that Gmail has an [email sending quota](). If you are planning on sending a large number of emails you should use a professional email sending platform such as Sendgrid
 
 The dependencies are listed in [package.json](package.json).
 
@@ -32,13 +32,24 @@ Then the email stored here is used by the function to send the email.
 The function triggers on changes to `/users/$uid` and exits if there are no changes to `subscribedToMailingList`.
 
 
-## Deploy and test
+## Setting up the sample
 
-This sample comes with a web-based UI for testing the function. To test it out:
+Set the `gmail.email` and `gmail.password` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
+
+```bash
+firebase env:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
+```
+
+This sample comes with a web-based UI for testing the function. To set it up:
 
  - Create a Firebase Project using the Firebase Developer Console
  - Enable Google Provider in the Auth section
  - Import and configure Firebase in the `public/index.html` where the `TODO` is located
- - Setup your email transport in the `functions/index.html` where the `TODO` is located
+
+
+## Deploy and test
+
+This sample comes with a web-based UI for testing the function. To test it out:
+
  - Deploy your project using `firebase deploy`
- - Open the app, Sign in using Google Sign-In and subscribe/unsubscribe to the newsletter and you should receive email confirmations
+ - Open the app using `firebase open`, Sign in using Google Sign-In and subscribe/unsubscribe to the newsletter and you should receive email confirmations
