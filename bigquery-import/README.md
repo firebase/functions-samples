@@ -28,4 +28,3 @@ Set the `bigquery.datasetName` and `bigquery.tableName` Google Cloud environment
 ```bash
 firebase env:set bigquery.datasetName="bar" bigquery.tableName="baz"
 ```
-
