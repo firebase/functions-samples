@@ -37,7 +37,13 @@ To perform new searches clients add the search query to the realtime database un
 Firebase function which performs the search on the Algolia instance. The results are written under the /search/results
 tree.
 
+
 ## Setting up the sample
 
-- Create an Algolia account at [www.algolia.com](https://www.algolia.com/)
-- Set your Algolia Key and Secret in the `env.json` file.
+Create an Algolia account at [www.algolia.com](https://www.algolia.com/)
+
+Set the `algolia.key` and `algolia.password` Google Cloud environment variables to match the Algolia Key and Secret of your account. For this use:
+
+```bash
+firebase env:set algolia.key="mykey" algolia.secret="secret"
+```

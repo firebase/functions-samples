@@ -18,29 +18,34 @@
 const functions = require('firebase-functions');
 
 // Authenticate to Algolia Database.
-// TODO: Make sure you add your Algolia Key and Secret into the env.json file.
 const algoliasearch = require('algoliasearch');
-const client = algoliasearch(functions.env.get('algolia.key'), functions.env.get('algolia.secret'));
-const index = client.initIndex('users');
 
 // Updates the search index when new blog entries are created or updated.
-exports.indexentry = functions.database().path('/blog-posts/$blogid').on('value', event => {
+exports.indexentry = functions.database().path('/blog-posts/$blogid').onWrite(event => {
+  // TODO: Make sure you configure the `algolia.key` and `algolia.secret` Google Cloud environment variables.
+  const client = algoliasearch(functions.env.algolia.key, functions.env.algolia.secret);
+  const index = client.initIndex('users');
+
   const firebaseObject = event.data.val();
   firebaseObject.objectID = event.data.key;
 
   return index.saveObject(firebaseObject).then(
-      () => functions.app.database().ref(Firebase.ServerValue.TIMESTAMP));
+      () => functions.app.database().ref(event.timestamp));
 });
 
 // Starts a search query whenever a query is requested (by adding one to the `/search/queries`
 // element. Search results are then written under `/search/results`.
-exports.searchentry = functions.database().path('/search/queries/$queryid').on('value', event => {
+exports.searchentry = functions.database().path('/search/queries/$queryid').onWrite(event => {
+  // TODO: Make sure you configure the `algolia.key` and `algolia.secret` Google Cloud environment variables.
+  const client = algoliasearch(functions.env.algolia.key, functions.env.algolia.secret);
+  const index = client.initIndex('users');
+
   const query = event.data.val().query;
   const key = event.data.key;
 
   return index.search(query).then(content => {
     const updates = {
-      '/last_query': Firebase.ServerValue.TIMESTAMP
+      '/last_query': event.timestamp
     };
     updates[`/search/results/${key}`] = content;
     return functions.app.database().ref().update(updates);
