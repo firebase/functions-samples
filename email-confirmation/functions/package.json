@@ -3,7 +3,7 @@
   "description": "Firebase Functions",
   "dependencies": {
     "nodemailer": "^2.4.1",
-    "firebase": "http://www.gstatic.com/firebasejs/staging/3.1.0-functions/firebase.tgz",
-    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-0.2.1.tar.gz"
+    "firebase": "^3.4.1",
+    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz"
   }
 }
