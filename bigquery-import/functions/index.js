@@ -18,35 +18,31 @@
 const functions = require('firebase-functions');
 const Q = require('q');
 
-// Authenticate to gcloud.
-// TODO: Make sure you add your Google Project ID, Private key and Email into the env.json file.
+// gcloud config.
 const gcloudconfig = {
-  projectId: functions.env.get('google.project_id'),
-  credentials: require('./service-accounts.json')
+  projectId: process.env.GCLOUD_PROJECT
 };
 const gcloud = require('gcloud')(gcloudconfig);
 const bigquery = gcloud.bigquery();
-// TODO: Change <YOUR-DATASET-NAME> with your BigQuery dataset name.
-const dataset = bigquery.dataset('<YOUR-DATASET-NAME>');
-// TODO: Change <YOUR-TABLE-NAME> with your BigQuery table name.
-const table = dataset.table('<YOUR-TABLE-NAME>');
 
 /**
  * Writes all logs from the Realtime Database into bigquery.
  */
-exports.addtobigquery = functions.database().path('/logs/$logid').on('value', event => {
+exports.addtobigquery = functions.database().path('/logs/$logid').onWrite(event => {
+  // TODO: Make sure you set the `bigquery.datasetName` environment variable.
+  const dataset = bigquery.dataset(functions.env.bigquery.datasetname);
+  // TODO: Make sure you set the `bigquery.tableName` environment variable.
+  const table = dataset.table(functions.env.bigquery.tablename);
+
   const result = Q.defer();
   table.insert({
-    ID: event.data.key(),
+    ID: event.data.key,
     MESSAGE: event.data.val().message,
     NUMBER: event.data.val().number
   }, (err, insertErr) => {
-    if (err) {
-      console.log(err);
-      result.reject(err);
-    } else if (insertErr) {
-      console.log(insertErr);
-      result.reject(insertErr);
+    if (err || insertErr) {
+      console.error(err || insertErr);
+      result.reject(err || insertErr);
     } else {
       result.resolve();
     }

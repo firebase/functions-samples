@@ -23,7 +23,9 @@ As an example we'll be using a simple logs database structure:
 
 ## Setting up the sample
 
-Add your Project ID to the env.json file.
+Set the `bigquery.datasetName` and `bigquery.tableName` Google Cloud environment variables to match the Dataset name and the Table name where you want the logs written to. For this use:
 
-You'll need to create a Service account's credentials file for your Google Cloud project. Then copy the credential file to  `functions/service-accounts.json`
+```bash
+firebase env:set bigquery.datasetName="bar" bigquery.tableName="baz"
+```
 
