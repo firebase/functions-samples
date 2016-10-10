@@ -20,5 +20,5 @@ const functions = require('firebase-functions');
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
  */
-exports.touch = functions.database().path('/chat/$message').on('value',
-    () => functions.app.database().ref('/lastmodified').set(Firebase.ServerValue.TIMESTAMP));
+exports.touch = functions.database().path('/chat/$message').onWrite(
+    event => functions.app.database().ref('/lastmodified').set(event.timestamp));
