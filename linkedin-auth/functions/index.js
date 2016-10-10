@@ -86,7 +86,7 @@ exports.token = functions.cloud.https().onRequest((req, res) => {
           token: token,
           displayName: userResults.formattedName,
           photoURL: userResults.pictureUrl,
-          emai: userResults.emailAddress,
+          email: userResults.emailAddress,
           linkedInAccessToken: results.access_token
         });
       });
@@ -97,7 +97,7 @@ exports.token = functions.cloud.https().onRequest((req, res) => {
 /**
  * Creates a Firebase custom auth token for the given LinkedIn user ID.
  *
- * @returns {Object} The Firebase custom auth token and the uid.
+ * @returns String The Firebase custom auth token.
  */
 function createFirebaseToken(linkedInID) {
   // The UID we'll assign to the user.
@@ -106,5 +106,5 @@ function createFirebaseToken(linkedInID) {
   // Create the custom token.
   const token = firebase.app().auth().createCustomToken(uid);
   console.log('Created Custom token for UID "', uid, '" Token:', token);
-  return {token: token, uid: uid};
+  return token;
 }

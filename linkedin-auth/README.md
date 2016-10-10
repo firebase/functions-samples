@@ -63,4 +63,3 @@ After the user has granted approval he is redirected back to the `./popup.html` 
 
   The `./popup.html` receives the Custom Auth Token and other data back from the AJAX request to the `token` Function and uses it to update the user's profile, saves the access token to the database, authenticate the user in Firebase and then close the popup.
  At this point the main page will detect the sign-in through the Firebase Auth State observer and display the signed-In user information.
- 

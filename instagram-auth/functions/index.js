@@ -112,7 +112,7 @@ exports.token = functions.cloud.https().onRequest((req, res) => {
 /**
  * Creates a Firebase custom auth token for the given Instagram user ID.
  *
- * @returns {Object} The Firebase custom auth token.
+ * @returns String The Firebase custom auth token.
  */
 function createFirebaseToken(instagramUID) {
   // The UID we'll assign to the user.
