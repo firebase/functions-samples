@@ -25,8 +25,11 @@ Create and setup your LinkedIn app:
  1. Create a LinkedIn app in the [LinkedIn Developers website](https://www.linkedin.com/developer/apps/).
  1. Add the URL `https://<application-id>.firebaseapp.com/popup.html` to the
     **OAuth 2.0** > **Authorized Redirect URLs** of your LinkedIn app.
- 1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and paste them in `env.json` for the attribute
-    `linkedIn.clientId` and `linkedIn.secret` in lieu of the placeholders.
+ 1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and use them to set the `linkedIn.clientId` and `linkedIn.clientSecret` Google Cloud environment variables. For this use:
+
+```bash
+firebase env:set linkedIn.clientId="yourClientID" linkedIn.clientSecret="yourClientSecret"
+```
 
  > Make sure the LinkedIn Client Secret is always kept secret. For instance do not save this in your version control system.
 
@@ -54,10 +57,10 @@ The `redirect` Function then redirects the user to the LinkedIn OAuth 2.0 consen
 After the user has granted approval he is redirected back to the `./popup.html` page along with an OAuth 2.0 Auth Code as a URL parameter. This Auth code is then sent to the `token` Function using a JSONP Request. The `token` function then:
  - Checks that the value of the `state` URL query parameter is the same as the one in the `state` cookie.
  - Exchanges the auth code for an access token using the LinkedIn app credentials.
- - Use the Access Token to query the LinkedIn API to get user's information such as ID, name, email and profile pic URL.
+ - Fetches the user ideneity using a LinkedIn API.
  - Mints a Custom Auth token (which is why we need Service Accounts Credentials).
- - Use the Custom Auth token to authorize as the user and updates the email and/or profile information on Firebase if needed.
- - Returns the Custom Auth Token to the `./popup.html` page.
+ - Returns the Custom Auth Token, email, photo URL, user display name and LinkedIn access token to the `./popup.html` page.
 
- The `./popup.html` receives the Custom Auth Token back from the AJAX request to the `token` Function and uses it to authenticate the user in Firebase. Then close the popup.
+  The `./popup.html` receives the Custom Auth Token and other data back from the AJAX request to the `token` Function and uses it to update the user's profile, saves the access token to the database, authenticate the user in Firebase and then close the popup.
  At this point the main page will detect the sign-in through the Firebase Auth State observer and display the signed-In user information.
+ 
