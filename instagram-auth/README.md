@@ -1,7 +1,7 @@
-# Use LinkedIn Sign In with Firebase
+# Use Instagram Sign In with Firebase
 
-This sample shows how to authenticate using LinkedIn Sign-In on Firebase. In this sample we use OAuth 2.0 based
-authentication to get LinkedIn user information then create a Firebase Custom Token (using the LinkedIn user ID).
+This sample shows how to authenticate using Instagram Sign-In on Firebase. In this sample we use OAuth 2.0 based
+authentication to get Instagram user information then create a Firebase Custom Token (using the Instagram user ID).
 
 
 ## Setup the sample
@@ -19,17 +19,16 @@ Create and provide a Service Account's keys:
  1. Save the Service Account credential file as `./functions/service-account.json`
 
 
-Create and setup your LinkedIn app:
- 1. Create a LinkedIn app in the [LinkedIn Developers website](https://www.linkedin.com/developer/apps/).
- 1. Add the URL `https://<application-id>.firebaseapp.com/popup.html` to the
-    **OAuth 2.0** > **Authorized Redirect URLs** of your LinkedIn app.
- 1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and use them to set the `instagram.clientId` and `instagram.clientSecret` Google Cloud environment variables. For this use:
+Create and setup your Instagram app:
+ 1. Register an Instagram app on [Instagram for Developers](https://www.instagram.com/developer/). You'll need to **Register a New Client**.
+ 1. Once Your app is created make sure you specify your app's callback URL in the list of **Valid redirect URIs** of your Instagram app. You should whitelist `https://localhost:5000/popup.html` for local development and if you deploy on App Engine (See Deploy section below) you should whitelist the URL `https://<application-id>.firebaseapp.com/popup.html`.
+ 1. Copy the **Client ID** and **Client Secret** of your Instagram app and use them to set the `instagram.clientId` and `instagram.clientSecret` Google Cloud environment variables. For this use:
 
 ```bash
 firebase env:set instagram.clientId="yourClientID" instagram.clientSecret="yourClientSecret"
 ```
 
- > Make sure the LinkedIn Client Secret is always kept secret. For instance do not save it in your version control system.
+ > Make sure the Instagram Client Secret is always kept secret. For instance do not save it in your version control system.
 
 Deploy your project:
  1. Run `firebase use --add` and choose your Firebase project. This will configure the Firebase CLI to use the correct
@@ -42,23 +41,21 @@ Deploy your project:
 
 Open the sample's website by using `firebase open hosting:site` or directly accessing `https://<project-id>.firebaseapp.com/`.
 
-Click on the **Sign in with LinkedIn** button and a popup window will appear that will show the Linked In authentication consent screen. Sign In and/or authorize the authentication request.
+Click on the **Sign in with Instagram** button and a popup window will appear that will show the Instagram In authentication consent screen. Sign In and/or authorize the authentication request.
 
-The website should display your name, email and profile pic from Linked In. At this point you are authenticated in Firebase and can use the database/hosting etc...
+The website should display your name and profile pic from Instagram. At this point you are authenticated in Firebase and can use the database/hosting etc...
 
 ## Workflow and design
 
-When Clicking the **Sign in with LinkedIn** button a popup is shown which redirects users to the `redirect` Function URL.
+When Clicking the **Sign in with Instagram** button a popup is shown which redirects users to the `redirect` Function URL.
 
-The `redirect` Function then redirects the user to the LinkedIn OAuth 2.0 consent screen where (the first time only) the user will have to grant approval. Also the `state` cookie is set on the client with the value of the `state` URL query parameter to check against later on.
+The `redirect` Function then redirects the user to the Instagram OAuth 2.0 consent screen where (the first time only) the user will have to grant approval. Also the `state` cookie is set on the client with the value of the `state` URL query parameter to check against later on.
 
 After the user has granted approval he is redirected back to the `./popup.html` page along with an OAuth 2.0 Auth Code as a URL parameter. This Auth code is then sent to the `token` Function using a JSONP Request. The `token` function then:
  - Checks that the value of the `state` URL query parameter is the same as the one in the `state` cookie.
- - Exchanges the auth code for an access token using the LinkedIn app credentials.
- - Use the Access Token to query the LinkedIn API to get user's information such as ID, name, email and profile pic URL.
+ - Exchanges the auth code for an access token using the Instagram app credentials and gets the user identity (photoURL and full name).
  - Mints a Custom Auth token (which is why we need Service Accounts Credentials).
- - Use the Custom Auth token to authorize as the user and updates the email and/or profile information on Firebase if needed.
- - Returns the Custom Auth Token to the `./popup.html` page.
+ - Returns the Custom Auth Token, photo URL, user display name and Instagram access token to the `./popup.html` page.
 
- The `./popup.html` receives the Custom Auth Token back from the AJAX request to the `token` Function and uses it to authenticate the user in Firebase. Then close the popup.
+ The `./popup.html` receives the Custom Auth Token and other data back from the AJAX request to the `token` Function and uses it to update the user's profile, saves the access token to the database, authenticate the user in Firebase and then close the popup.
  At this point the main page will detect the sign-in through the Firebase Auth State observer and display the signed-In user information.

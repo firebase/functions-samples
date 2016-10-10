@@ -32,7 +32,7 @@ const OAUTH_SCOPES = 'basic';
  */
 function instagramOAuth2Client() {
   // Instagram OAuth 2 setup
-  // TODO: Make sure you configure the `instagram.clientId` and `instagram.clientSecret` Google Cloud environment variables.
+  // TODO: Configure the `instagram.clientId` and `instagram.clientSecret` Google Cloud environment variables.
   const credentials = {
     client: {
       id: functions.env.instagram.clientId,
