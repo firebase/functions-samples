@@ -25,7 +25,7 @@ const WEBHOOK_URL = 'http://requestb.in/1mqw97l1';
 
 // Reads the content of the node that triggered the function and sends it to the registered Webhook
 // URL.
-exports.webhook = functions.database().path('/hooks/$hookId').on('value', event => {
+exports.webhook = functions.database().path('/hooks/$hookId').onWrite(event => {
   return request({
     uri: WEBHOOK_URL,
     method: 'POST',
