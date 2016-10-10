@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "linkedInAccessToken": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid"
+      }
+    }
+  }
+}
