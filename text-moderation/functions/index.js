@@ -23,7 +23,7 @@ const filter = new BadWordsFilter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
 exports.moderator = functions.database()
-    .path('/messages/{messageId}').on('write', event => {
+    .path('/messages/{messageId}').onWrite(event => {
       const message = event.data.val();
 
       if (message && !message.sanitized) {
