@@ -18,6 +18,7 @@
   <meta name="description" content="Demonstrates how to authorize Firebase with Instagram auth using Firebase Functions">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Authenticate with Instagram</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
 </head>
 <body>
 
@@ -49,16 +50,43 @@ Please wait...
    */
   function tokenReceived(data) {
     if (data.token) {
-      firebase.auth().signInWithCustomToken(data.token).then(function() {
-        window.close();
-      }).catch(function(error) {
-        console.error(error);
-        document.body.innerText = 'Error While using the Firebase Auth token to sign in: ' + error.message;
-      })
+      signInFirebase(data.token, data.displayName, data.photoURL, data.instagramAccessToken);
     } else {
       console.error(error);
       document.body.innerText = 'Error in the token Function: ' + data.error;
     }
+  }
+
+  /**
+   *  - Signs the user in Firebase using the given token
+   *  - Updates the user profile (photoURL and displayName)
+   *  - Saves the Instagram AccessToken to the Realtime Database
+   *  - Closes the popup
+   */
+  function signInFirebase(token, displayName, photoURL, instagramAccessToken) {
+    // We sign in via a temporary Firebase app to update the profile.
+    var tempApp = firebase.initializeApp(config, '_temp_');
+    tempApp.auth().signInWithCustomToken(token).then(function(user) {
+
+      // Saving the Instagram API access token in the Realtime Database.
+      const tasks = [tempApp.database().ref('/instagramAccessToken/' + user.uid).set(instagramAccessToken)];
+
+      // Updating the displayname and photoURL if needed.
+      if (displayName !== user.displayName || photoURL !== user.photoURL) {
+        tasks.push(user.updateProfile({displayName: displayName, photoURL: photoURL}));
+      }
+
+      // Wait for completion of above tasks.
+      return Promise.all(tasks).then(function() {
+        // Delete temporary Firebase app and sign in the default Firebase app, then close the popup.
+        Promise.all([tempApp.delete(), firebase.auth().signInWithCustomToken(token)]).then(function() {
+          window.close();
+        });
+      });
+    }).catch(function(error) {
+      console.error(error);
+      document.body.innerText = 'Error While using the Firebase Auth token to sign in: ' + error.message;
+    });
   }
 
   var code = getURLParameter('code');
