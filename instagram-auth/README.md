@@ -1,18 +1,14 @@
 # Use Instagram Sign In with Firebase
 
-This sample shows how to authenticate using Instagram Sign-In on Firebase. In this sample we use OAuth 2.0 based
-authentication to get Instagram user information then create a Firebase Custom Token (using the Instagram user ID).
+This sample shows how to authenticate using Instagram Sign-In on Firebase. In this sample we use OAuth 2.0 based authentication to get Instagram user information then create a Firebase Custom Token (using the Instagram user ID).
 
 
 ## Setup the sample
 
 Create and setup the Firebase project:
  1. Create a Firebase project using the [Firebase Developer Console](https://console.firebase.google.com).
- 1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed for
-    Firebase Functions.
- 1. Copy the Web initialisation snippet from **Firebase Console > Overview > Add Firebase to your web app** and paste it
-    in `public/index.html` and `public/popup.html` in lieu of the placeholders (where the `TODO(DEVELOPER)`
-    are located).
+ 1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed for Firebase Functions.
+ 1. Copy the Web initialisation snippet from **Firebase Console > Overview > Add Firebase to your web app** and paste it in `public/index.html` and `public/popup.html` in lieu of the placeholders (where the `TODO(DEVELOPER)` are located).
 
 Create and provide a Service Account's keys:
  1. Create a Service Accounts file as described in the [Server SDK setup instructions](https://firebase.google.com/docs/server/setup#add_firebase_to_your_app).
@@ -31,10 +27,8 @@ firebase env:set instagram.clientId="yourClientID" instagram.clientSecret="yourC
  > Make sure the Instagram Client Secret is always kept secret. For instance do not save it in your version control system.
 
 Deploy your project:
- 1. Run `firebase use --add` and choose your Firebase project. This will configure the Firebase CLI to use the correct
-    project locally.
- 1. Run `firebase deploy` to effectively deploy the sample. The first time the Functions are deployed the process can
-    take several minutes.
+ 1. Run `firebase use --add` and choose your Firebase project. This will configure the Firebase CLI to use the correct project locally.
+ 1. Run `firebase deploy` to effectively deploy the sample. The first time the Functions are deployed the process can take several minutes.
 
 
 ## Run the sample
