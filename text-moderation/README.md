@@ -1,4 +1,4 @@
-# Text Moderation with Firebase Cloud Functions
+# Text Moderation with Firebase Functions
 
 This template shows how to perform server side moderation of text written to a Firebase DB.
 
@@ -7,11 +7,11 @@ For instance if a user added the message "I DON'T LIKE THIS APP!! This is POOP!!
 
 ## Functions Code
 
-See file [index.js](index.js) for the moderation code.
+See file [functions/index.js](functions/index.js) for the moderation code.
 
 Moderation of the messages is performed using [bad-words](https://www.npmjs.com/package/bad-words) a bad words remover that uses an external [list of bad-words](https://github.com/web-mech/badwords-list) and is currently mostly aimed at filtering english bad words. Also messages that contains mostly upper case characters are re-capitalized correctly using [capitalize-sentence](https://www.npmjs.com/package/capitalize-sentence).
 
-The dependencies are listed in [package.json](package.json).
+The dependencies are listed in [functions/package.json](functions/package.json).
 
 
 ## Sample Database Structure

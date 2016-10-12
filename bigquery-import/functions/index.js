@@ -19,10 +19,7 @@ const functions = require('firebase-functions');
 const Q = require('q');
 
 // gcloud config.
-const gcloudconfig = {
-  projectId: process.env.GCLOUD_PROJECT
-};
-const gcloud = require('gcloud')(gcloudconfig);
+const gcloud = require('google-cloud')();
 const bigquery = gcloud.bigquery();
 
 /**

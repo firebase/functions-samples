@@ -4,11 +4,11 @@ This template shows how to keep track of the date at which the Firebase Database
 
 ## Functions Code
 
-See file [index.js](functions/index.js) for the code.
+See file [functions/index.js](functions/index.js) for the code.
 
 This is done by simply updating a `lastmodified` attribute on the parent of the node which is tracked (for instance at the root of the Database).
 
-The dependencies are listed in [package.json](functions/package.json).
+The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Sample Database Structure
 

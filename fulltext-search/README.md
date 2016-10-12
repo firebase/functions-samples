@@ -4,9 +4,9 @@ This template shows how to enable full text search on firebase database elements
 
 ## Functions Code
 
-See file [index.js](functions/index.js) for the code.
+See file [functions/index.js](functions/index.js) for the code.
 
-The dependencies are listed in [package.json](functions/package.json).
+The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Sample Database Structure
 

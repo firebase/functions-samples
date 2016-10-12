@@ -4,11 +4,11 @@ This template shows how to translate a new message in a given language into mult
 
 ## Functions Code
 
-See file [index.js](functions/index.js) for the code.
+See file [functions/index.js](functions/index.js) for the code.
 
 This is done by using the Google Translate API to translate the new message. The translated output is written into a fanned out structure using the langauge code as the key.
 
-The dependencies are listed in [package.json](functions/package.json).
+The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Sample Database Structure
 

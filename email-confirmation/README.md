@@ -1,15 +1,15 @@
-# Send Confirmation Emails with Firebase Cloud Functions
+# Send Confirmation Emails with Firebase Functions
 
-This template shows how to send a confirmation emails to users who are subscribing/un-subscribing to a newsletter.
+This sample shows how to send a confirmation emails to users who are subscribing/un-subscribing to a newsletter.
 
 
 ## Functions Code
 
-See file [index.js](index.js) for the email sending code.
+See file [functions/index.js](functions/index.js) for the email sending code.
 
 Sending emails is performed using [nodemailer](https://www.npmjs.com/package/bad-words) a node based Email client with comprehensive EMail server setup. In this sample we're showing how to send email through SMTP using a Gmail account. Be aware that Gmail has an [email sending quota](). If you are planning on sending a large number of emails you should use a professional email sending platform such as Sendgrid
 
-The dependencies are listed in [package.json](package.json).
+The dependencies are listed in [functions/package.json](functions/package.json).
 
 
 ## Sample Database Structure

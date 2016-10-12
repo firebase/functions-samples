@@ -4,11 +4,11 @@ This template shows how to keep track of the number of elements in a Firebase Da
 
 ## Functions Code
 
-See file [index.js](functions/index.js) for the code.
+See file [functions/index.js](functions/index.js) for the code.
 
 This is done by simply updating a `likes_count` attribute on the parent of the list node which is tracked.
 
-The dependencies are listed in [package.json](package.json).
+The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Sample Database Structure
 

@@ -4,9 +4,9 @@ This template shows how to keep the number of child nodes in a Firebase database
 
 ## Functions Code
 
-See file [index.js](function/index.js) for the code.
+See file [functions/index.js](function/index.js) for the code.
 
-The dependencies are listed in [package.json](function/package.json).
+The dependencies are listed in [functions/package.json](function/package.json).
 
 ## Sample Database Structure
 
