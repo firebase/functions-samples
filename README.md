@@ -24,6 +24,12 @@ Demonstrates how to authorize with a 3rd party sign-in mechanism (Instagram in t
 
 Uses an HTTP trigger.
 
+### [Automatically Convert Images](/convert-images)
+
+Demonstrates how to automatically convert images that are uploaded to Firebase Storage to JPEG using ImageMagick.
+
+Uses a Firebase Storage trigger.
+
 ### [Text Moderation](/text-moderation)
 
 How to moderate user input text for bad words. For example this can be used to moderate usernames, chat or forum messages.
