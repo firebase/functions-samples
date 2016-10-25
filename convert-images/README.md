@@ -29,4 +29,4 @@ Replace the placeholder `FIREBASE_STORAGE_BUCKET_NAME` with the name of the Fire
 To test the sample:
 
  - Deploy your project using `firebase deploy`
- - Go to the Firebase Console **Storage** tab and upload an image that is not a JEPG, for instance a PNG. After a short time an image with the same base name but the `.jpg` extension will be created in the same folder (make sure you refresh the UI to see the new file).
+ - Go to the Firebase Console **Storage** tab and upload an image that is not a JPEG, for instance a PNG. After a short time an image with the same base name but the `.jpg` extension will be created in the same folder (make sure you refresh the UI to see the new file).

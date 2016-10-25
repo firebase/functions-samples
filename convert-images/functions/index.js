@@ -51,7 +51,7 @@ exports.imagetojpg = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onCha
     return null;
   }
 
-  // Exit if this is triggered on a file that is not an image.
+  // Exit if the image is already a JPEG.
   if (event.data.contentType.startsWith('image/jpeg')) {
     console.log('Already a JPEG.');
     return null;
