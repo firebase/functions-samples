@@ -30,6 +30,12 @@ Demonstrates how to automatically convert images that are uploaded to Firebase S
 
 Uses a Firebase Storage trigger.
 
+### [Extract Image MEtadata](/exif-images)
+
+Demonstrates how to automatically extract image's metadata using ImageMagick for images that are uploaded to Firebase Storage.
+
+Uses a Firebase Storage trigger.
+
 ### [Text Moderation](/text-moderation)
 
 How to moderate user input text for bad words. For example this can be used to moderate usernames, chat or forum messages.
