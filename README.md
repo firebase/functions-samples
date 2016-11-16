@@ -30,7 +30,13 @@ Demonstrates how to automatically convert images that are uploaded to Firebase S
 
 Uses a Firebase Storage trigger.
 
-### [Extract Image MEtadata](/exif-images)
+### [Automatically Moderate Images](/convert-images)
+
+Demonstrates how to automatically moderate offensive images that are uploaded to Firebase Storage by using the Google Cloud API to detect offensive images and ImageMagick to blur these images.
+
+Uses a Firebase Storage trigger.
+
+### [Extract Image Metadata](/exif-images)
 
 Demonstrates how to automatically extract image's metadata using ImageMagick for images that are uploaded to Firebase Storage.
 
