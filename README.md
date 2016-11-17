@@ -12,6 +12,14 @@ To learn how to get started with Firebase Functions try the quickstart samples a
 
 This repository contains the following samples:
 
+### [Quickstart: Realtime Database trigger](/quickstarts/database)
+
+This quickstart sample demonstrates using **Firebase Functions** with a **Firebase Realtime Database** trigger. The function will detect all uppercased messages inserted to a database and make these lowercase.
+
+### [Quickstart: HTTPS trigger](/quickstarts/https)
+
+This quickstart sample demonstrates using **Firebase Functions** triggered by **HTTPS requests**. The function will return the current server time and allows for date time formatting.
+
 ### [Authorize with LinkedIn](/linkedin-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism (LinkedIn in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
