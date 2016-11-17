@@ -32,7 +32,7 @@ const functions = require('firebase-functions');
 // Listen to /messages/* for writes
 // Because the functions writes back to the same path that triggers onWrite,
 // carefully manage infinite loops.
-exports.makeUpperCase = functions.database().path('/messages/{childId}')
+exports.stopShouting = functions.database().path('/messages/{childId}')
     .onWrite(event => {
       // Access the current value.
       var written = event.data.val();
