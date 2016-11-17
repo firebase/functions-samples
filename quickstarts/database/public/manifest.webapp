@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "name": "Firebase GCF Quickstart",
+  "launch_path": "/index.html",
+  "description": "Demonstrates the use of Google Cloud Functions with a Firebase DB.",
+  "icons": {
+    "128": "/images/touch/touch-icon-128x128.png"
+  },
+  "developer": {
+    "name": "",
+    "url": ""
+  },
+  "installs_allowed_from": [
+    "*"
+  ],
+  "default_locale": "en",
+  "permissions": {
+  },
+  "locales": {
+    "en": {
+      "name": "Firebase GCF Quickstart",
+      "description": "Demonstrates the use of Google Cloud Functions with a Firebase DB."
+    }
+  }
+}
