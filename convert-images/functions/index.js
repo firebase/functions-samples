@@ -30,7 +30,6 @@ const JPEG_EXTENSION = 'jpg';
  */
 // TODO(DEVELOPER): Replace the placeholder below with the name of the Firebase Functions bucket.
 exports.imagetojpg = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onChange(event => {
-  console.log(event);
   const result = Q.defer();
 
   const filePath = event.data.name;
