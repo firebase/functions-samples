@@ -1,0 +1,11 @@
+{
+  "name": "fcm-notifications-sample-functions",
+  "description": "Sends notifications whena user gets new followers.",
+  "dependencies": {
+    "firebase": "^3.6.0",
+    "firebase-admin": "^4.0.1",
+    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
+    "request": "^2.78.0",
+    "request-promise-native": "^1.0.3"
+  }
+}
