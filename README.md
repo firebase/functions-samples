@@ -20,6 +20,10 @@ This quickstart sample demonstrates using **Firebase Functions** with a **Fireba
 
 This quickstart sample demonstrates using **Firebase Functions** triggered by **HTTPS requests**. The function will return the current server time and allows for date time formatting.
 
+### [Send FCM notifications](fcm-notifications)
+
+This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification from a Realtime Database triggered Function when users get new followers. The sample also features a Web UI to experience the FCM notification.
+
 ### [Authorize with LinkedIn](/linkedin-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism (LinkedIn in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
