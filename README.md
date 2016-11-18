@@ -42,9 +42,9 @@ Demonstrates how to automatically convert images that are uploaded to Firebase S
 
 Uses a Firebase Storage trigger.
 
-### [Automatically Moderate Images](/convert-images)
+### [Automatically Moderate Images](/moderate-images)
 
-Demonstrates how to automatically moderate offensive images that are uploaded to Firebase Storage by using the Google Cloud API to detect offensive images and ImageMagick to blur these images.
+Demonstrates how to automatically moderate offensive images that are uploaded to Firebase Storage by using the Google Cloud Vision API to detect offensive images and ImageMagick to blur these images.
 
 Uses a Firebase Storage trigger.
 
