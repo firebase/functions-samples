@@ -42,6 +42,12 @@ Demonstrates how to automatically convert images that are uploaded to Firebase S
 
 Uses a Firebase Storage trigger.
 
+### [Automatically Generate Thumbnails](/generate-thumbnail)
+
+Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage.
+
+Uses a Firebase Storage trigger.
+
 ### [Automatically Moderate Images](/moderate-images)
 
 Demonstrates how to automatically moderate offensive images that are uploaded to Firebase Storage by using the Google Cloud Vision API to detect offensive images and ImageMagick to blur these images.
