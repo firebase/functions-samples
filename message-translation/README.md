@@ -43,11 +43,3 @@ When a new message is received we lookup the language message and automatically 
                 translated: true
                 text: "Salut Bob! Comment ca va?"
 ```
-
-## Setting up the sample
-
-Set the `google.apikey` Google Cloud environment variables to the [Google APIs Server Key](https://console.developers.google.com/apis/credentials?project=_) of your Google Developers project. For this use:
-
-```bash
-firebase env:set google.apikey="abcdefghijlkmnopqrstuvwxy1234567890"
-```

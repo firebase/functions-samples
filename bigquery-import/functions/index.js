@@ -16,11 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const Q = require('q');
-
-// gcloud config.
-const gcloud = require('google-cloud')();
-const bigquery = gcloud.bigquery();
+const bigquery = require('@google-cloud/bigquery');
 
 /**
  * Writes all logs from the Realtime Database into bigquery.
@@ -31,18 +27,9 @@ exports.addtobigquery = functions.database().path('/logs/$logid').onWrite(event 
   // TODO: Make sure you set the `bigquery.tableName` Google Cloud environment variable.
   const table = dataset.table(functions.env.bigquery.tablename);
 
-  const result = Q.defer();
-  table.insert({
+  return table.insert({
     ID: event.data.key,
     MESSAGE: event.data.val().message,
     NUMBER: event.data.val().number
-  }, (err, insertErr) => {
-    if (err || insertErr) {
-      console.error(err || insertErr);
-      result.reject(err || insertErr);
-    } else {
-      result.resolve();
-    }
   });
-  return result.promise;
 });

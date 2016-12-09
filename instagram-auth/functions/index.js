@@ -50,7 +50,7 @@ function instagramOAuth2Client() {
  * Redirects the User to the Instagram authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.cloud.https().onRequest((req, res) => {
+exports.redirect = functions.https().onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   cookieParser()(req, res, () => {
@@ -77,7 +77,7 @@ exports.redirect = functions.cloud.https().onRequest((req, res) => {
  * The Firebase custom auth token, display name, photo URL and Instagram acces token are sent back in a JSONP callback
  * function with function name defined by the 'callback' query parameter.
  */
-exports.token = functions.cloud.https().onRequest((req, res) => {
+exports.token = functions.https().onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   try {

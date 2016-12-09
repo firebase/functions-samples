@@ -42,7 +42,7 @@ function linkedInClient() {
  * Redirects the User to the LinkedIn authentication consent screen. ALso the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.cloud.https().onRequest((req, res) => {
+exports.redirect = functions.https().onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   cookieParser()(req, res, () => {
@@ -59,7 +59,7 @@ exports.redirect = functions.cloud.https().onRequest((req, res) => {
  * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
  * 'callback' query parameter.
  */
-exports.token = functions.cloud.https().onRequest((req, res) => {
+exports.token = functions.https().onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   cookieParser()(req, res, () => {

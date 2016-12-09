@@ -16,10 +16,10 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const im = require('imagemagick');
-const mkdirp = require('mkdirp');
+const mkdirp = require('mkdirp-promise');
 const gcs = require('@google-cloud/storage')();
-const Q = require('q');
+const exec = require('child-process-promise').exec;
+const LOCAL_TMP_FOLDER = '/tmp/';
 
 // File extension for the created JPEG files.
 const JPEG_EXTENSION = 'jpg';
@@ -28,10 +28,7 @@ const JPEG_EXTENSION = 'jpg';
  * When an image is uploaded in the Storage bucket it is converted to JPEG automatically using
  * ImageMagick.
  */
-// TODO(DEVELOPER): Replace the placeholder below with the name of the Firebase Functions bucket.
-exports.imagetojpg = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onChange(event => {
-  const result = Q.defer();
-
+exports.imageToJPG = functions.storage().onChange(event => {
   const filePath = event.data.name;
   const filePathSplit = filePath.split('/');
   const fileName = filePathSplit.pop();
@@ -39,10 +36,10 @@ exports.imagetojpg = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onCha
   const fileExtension = fileNameSplit.pop();
   const baseFileName = fileNameSplit.join('.');
   const fileDir = filePathSplit.join('/') + (filePathSplit.length > 0 ? '/' : '');
-  const JPEGFilePath = `${fileDir}${baseFileName}.${JPEG_EXTENSION}`;
-  const tempLocalDir = `/tmp/${fileDir}`;
-  const tempLocalFile = `${tempLocalDir}${fileName}`;
-  const tempLocalJPEGFile = `/tmp/${JPEGFilePath}`;
+  const JPEGFilePath = `${fileDir}${baseFileName}.${JPEG_EXTENSION}`;//
+  const tempLocalDir = `${LOCAL_TMP_FOLDER}${fileDir}`;
+  const tempLocalFile = `${tempLocalDir}${fileName}`;//
+  const tempLocalJPEGFile = `${LOCAL_TMP_FOLDER}${JPEGFilePath}`;//
 
   // Exit if this is triggered on a file that is not an image.
   if (!event.data.contentType.startsWith('image/')) {
@@ -63,36 +60,23 @@ exports.imagetojpg = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onCha
   }
 
   // Create the temp directory where the storage file will be downloaded.
-  mkdirp(tempLocalDir, err => {
-    if (err) return result.reject(err);
-
+  return mkdirp(tempLocalDir).then(() => {
     // Download file from bucket.
     const bucket = gcs.bucket(event.data.bucket);
-    bucket.file(filePath).download({
+    return bucket.file(filePath).download({
       destination: tempLocalFile
-    }, err => {
-      if (err) return result.reject(err);
-
+    }).then(() => {
       console.log('The file has been downloaded to', tempLocalFile);
       // Convert the image to JPEG using ImageMagick.
-      im.convert([
-        tempLocalFile,
-        tempLocalJPEGFile
-      ], err => {
-        if (err) return result.reject(err);
-
-        console.log('Created JPEG for', filePath);
-        // Uploading the JPEG.
-        bucket.upload(tempLocalJPEGFile, {
+      return exec(`convert "${tempLocalFile}" "${tempLocalJPEGFile}"`).then(() => {
+        console.log('JPEG image created at', tempLocalJPEGFile);
+        // Uploading the JPEG image.
+        return bucket.upload(tempLocalJPEGFile, {
           destination: JPEGFilePath
-        }, err => {
-          if (err) return result.reject(err);
-
-          console.log('JPEG uploaded to Storage at', JPEGFilePath);
-          result.resolve();
+        }).then(() => {
+          console.log('JPEG image uploaded to Storage at', filePath);
         });
       });
     });
   });
-  return result.promise;
 });

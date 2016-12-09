@@ -20,15 +20,13 @@ const mkdirp = require('mkdirp-promise');
 const gcs = require('@google-cloud/storage')();
 const vision = require('@google-cloud/vision')();
 const exec = require('child-process-promise').exec;
-// TODO(DEVELOPER): Replace the placeholder below with the name of the Firebase Storage bucket.
-const FIREBASE_STORAGE_BUCKET_NAME = 'FIREBASE_STORAGE_BUCKET_NAME';
-const LOCAL_TMP_FOLDER = '/tmp';
+const LOCAL_TMP_FOLDER = '/tmp/';
 
 /**
  * When an image is uploaded we check if it is flagged as Adult or Violence by the Cloud Vision
  * API and if it is we blur it using ImageMagick.
  */
-exports.blurOffensiveImages = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onChange(event => {
+exports.blurOffensiveImages = functions.storage().onChange(event => {
   const file = gcs.bucket(event.data.bucket).file(event.data.name);
 
   // Exit if this is a move or deletion event.
@@ -54,8 +52,8 @@ function blurImage(filePath, bucketName, metadata) {
   const filePathSplit = filePath.split('/');
   filePathSplit.pop();
   const fileDir = filePathSplit.join('/');
-  const tempLocalDir = `${LOCAL_TMP_FOLDER}/${fileDir}`;
-  const tempLocalFile = `${LOCAL_TMP_FOLDER}/${filePath}`;
+  const tempLocalDir = `${LOCAL_TMP_FOLDER}${fileDir}`;
+  const tempLocalFile = `${LOCAL_TMP_FOLDER}${filePath}`;
 
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {

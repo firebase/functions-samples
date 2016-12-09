@@ -15,11 +15,9 @@
  */
 'use strict';
 
-// Create reference to the database authorized as an admin.
 const functions = require('firebase-functions');
 const capitalizeSentence = require('capitalize-sentence');
-const BadWordsFilter = require('bad-words');
-const filter = new BadWordsFilter();
+const badWordsFilter = require('bad-words')();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
 exports.moderator = functions.database()
@@ -31,7 +29,7 @@ exports.moderator = functions.database()
         console.log('Retrieved message content: ', message);
 
         // Run moderation checks on on the message and moderate if needed.
-        var moderatedMessage = moderateMessage(message.text);
+        const moderatedMessage = moderateMessage(message.text);
 
         // Update the Firebase DB with checked message.
         console.log('Message has been moderated. Saving to DB: ', moderatedMessage);
@@ -41,44 +39,43 @@ exports.moderator = functions.database()
           moderated: message.text !== moderatedMessage
         });
       }
-      return null;
     });
 
 // Moderates the given message if appropriate.
 function moderateMessage(message) {
-  // Moderate if the user is Yelling.
-  if (message.isYelling()) {
-    console.log('User is yelling. moderating...');
-    message = message.capitalizeSentence();
+  // Re-capitalize if the user is Shouting.
+  if (isShouting(message)) {
+    console.log('User is shouting. Fixing sentence case...');
+    message = stopShouting(message);
   }
 
   // Moderate if the user uses SwearWords.
-  if (message.containsSwearwords()) {
+  if (containsSwearwords(message)) {
     console.log('User is swearing. moderating...');
-    message = message.moderateSwearwords();
+    message = moderateSwearwords(message);
   }
 
   return message;
 }
 
 // Returns true if the string contains swearwords.
-String.prototype.containsSwearwords = function() {
-  return this !== filter.clean(this);
-};
+function containsSwearwords(message) {
+  return message !== badWordsFilter.clean(message);
+}
 
 // Hide all swearwords. e.g: Crap => ****.
-String.prototype.moderateSwearwords = function() {
-  return filter.clean(this);
-};
+function moderateSwearwords(message) {
+  return badWordsFilter.clean(message);
+}
 
-// Detect if the current message is yelling. i.e. there are too many Uppercase
+// Detect if the current message is shouting. i.e. there are too many Uppercase
 // characters or exclamation points.
-String.prototype.isYelling = function() {
-  return this.replace(/[^A-Z]/g, '').length > this.length / 2 || this.replace(/[^!]/g, '').length >= 3;
-};
+function isShouting(message) {
+  return message.replace(/[^A-Z]/g, '').length > message.length / 2 || message.replace(/[^!]/g, '').length >= 3;
+}
 
 // Correctly capitalize the string as a sentence (e.g. uppercase after dots)
 // and remove exclamation points.
-String.prototype.capitalizeSentence = function() {
-  return capitalizeSentence(this.toLowerCase()).replace(/!+/g, '.');
-};
+function stopShouting(message) {
+  return capitalizeSentence(message.toLowerCase()).replace(/!+/g, '.');
+}

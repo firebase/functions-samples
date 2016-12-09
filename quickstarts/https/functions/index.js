@@ -27,7 +27,7 @@ const cors = require('cors')({origin: true});
  *
  * Example format: "yyyy-mm-dd h:MM:ss".
  */
-exports.date = functions.cloud.https().onRequest((req, res) => {
+exports.date = functions.https().onRequest((req, res) => {
   cors(req, res, () => {
     try {
       const now = Date.now();

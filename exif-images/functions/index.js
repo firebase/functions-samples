@@ -15,25 +15,24 @@
  */
 'use strict';
 
-const im = require('imagemagick');
-const Q = require('q');
 const functions = require('firebase-functions');
-const mkdirp = require('mkdirp-then');
+const mkdirp = require('mkdirp-promise');
 const gcs = require('@google-cloud/storage')();
+const exec = require('child-process-promise').exec;
+const LOCAL_TMP_FOLDER = '/tmp/';
 
 /**
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
  * output of ImageMagick's `identify -verbose`) is saved in the Realtime Database.
  */
-// TODO(DEVELOPER): Replace the placeholder below with the name of the Firebase Functions bucket.
-exports.metadata = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onChange(event => {
+exports.metadata = functions.storage().onChange(event => {
   console.log(event);
 
   const filePath = event.data.name;
   const filePathSplit = filePath.split('/');
   const fileName = filePathSplit.pop();
   const fileDir = filePathSplit.join('/') + (filePathSplit.length > 0 ? '/' : '');
-  const tempLocalDir = `/tmp/${fileDir}`;
+  const tempLocalDir = `${LOCAL_TMP_FOLDER}${fileDir}`;
   const tempLocalFile = `${tempLocalDir}${fileName}`;
 
   // Exit if this is triggered on a file that is not an image.
@@ -51,9 +50,13 @@ exports.metadata = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onChang
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {
     // Download file from bucket.
-    return promisedDownloadFile(event.data.bucket, filePath, tempLocalFile).then(() => {
+    const bucket = gcs.bucket(event.data.bucket);
+    return bucket.file(filePath).download({
+      destination: tempLocalFile
+    }).then(() => {
       // Get Metadata from image.
-      return promisedImageMagickMetadata(tempLocalFile).then(metadata => {
+      return exec(`identify -verbose "${tempLocalFile}"`).then(result => {
+        const metadata = imageMagickOutputToObject(result.stdout);
         // Save metadata to realtime datastore.
         return functions.app.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata).then(() => {
           console.log('Wrote to:', fileDir, 'data:', metadata);
@@ -62,42 +65,6 @@ exports.metadata = functions.cloud.storage(FIREBASE_STORAGE_BUCKET_NAME).onChang
     });
   });
 });
-
-/**
- * Returns a promise that resolves when the given file has been downloaded from the bucket.
- */
-function promisedDownloadFile(bucketName, filePath, tempLocalFile) {
-  const result = Q.defer();
-  const bucket = gcs.bucket(bucketName);
-  bucket.file(filePath).download({
-    destination: tempLocalFile
-  }, err => {
-    if (err) {
-      result.reject(err);
-    } else {
-      console.log('The file has been downloaded to', tempLocalFile);
-      result.resolve();
-    }
-  });
-  return result.promise;
-}
-
-/**
- * Returns a promise that resolves with the metadata extracted from the given file.
- */
-function promisedImageMagickMetadata(localFile) {
-  const result = Q.defer();
-
-  im.identify(['-verbose', localFile], (err, output) => {
-    if (err) {
-      console.error('Error', err);
-      result.reject(err);
-    } else {
-      result.resolve(imageMagickOutputToObject(output));
-    }
-  });
-  return result.promise;
-}
 
 /**
  * Convert the output of ImageMagick's `identify -verbose` command to a JavaScript Object.

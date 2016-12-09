@@ -20,7 +20,6 @@ const nodemailer = require('nodemailer');
 
 // Sends an email confirmation when a user changes his mailing list subscription.
 exports.sendEmailConfirmation = functions.database().path('/users/{uid}').onWrite(event => {
-
   // Configure the email transport using the default SMTP transport and a GMail account.
   // See: https://nodemailer.com/
   // For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/

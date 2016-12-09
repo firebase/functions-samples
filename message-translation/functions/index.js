@@ -16,19 +16,19 @@
 'use strict';
 
 const functions = require('firebase-functions');
-var request = require('request-promise');
+const request = require('request-promise');
 
 // List of output languages.
-var LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
+const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 
 // Translate an incoming message.
 exports.translate = functions.database().path('/messages/$languageID/$messageID').onWrite(event => {
   if (event.data.val().translated) {
     return;
   }
-  var paths = event.data.ref.toString().split('/');
-  var promises = [];
-  for (var i = 0; i < LANGUAGES.length; i++) {
+  const paths = event.data.ref.toString().split('/');
+  const promises = [];
+  for (let i = 0; i < LANGUAGES.length; i++) {
     var language = LANGUAGES[i];
     if (language !== paths[1]) {
       promises.push(createTranslationPromise(paths[1], language, event.data));
@@ -38,9 +38,8 @@ exports.translate = functions.database().path('/messages/$languageID/$messageID'
 });
 
 // URL to the Google Translate API.
-// TODO: Change `<YOUR_BROWSER_API_KEY>` by your Google Developers Console project API key.
 function createTranslateUrl(source, target, payload) {
-  return `https://www.googleapis.com/language/translate/v2?key=${functions.env.google.apikey}&source=${source}&target=${target}&q=${payload}`;
+  return `https://www.googleapis.com/language/translate/v2?key=${functions.env.firebase.apiKey}&source=${source}&target=${target}&q=${payload}`;
 }
 
 function createTranslationPromise(source, target, snapshot) {

@@ -28,9 +28,8 @@ For example the metadata for the file at path `/1477402116302/mypic.jpg` will be
 
 This sample comes with a Function and  web-based UI for testing the function. To configure it:
 
- - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com) and visit the **Storage** tab.
+ - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com)
  - Enable Anonymous sign in the Auth section
- - In `functions/index.js` replace the placeholder `FIREBASE_STORAGE_BUCKET_NAME` with the name of the Firebase Storage bucket which can be found in the **Storage** tab of your Firebase project's console. It is typically of the form `<project-id>.appspot.com`.
  - Import and configure Firebase in the `index.html` where the `TODO` is located
 
 
