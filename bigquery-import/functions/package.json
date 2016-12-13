@@ -1,9 +1,9 @@
 {
-  "main": "index.js",
+  "name": "bigquery-import-functions",
+  "description": "Import data to BigQuery Firebase Functions sample",
   "dependencies": {
     "@google-cloud/bigquery": "^0.6.0",
-    "firebase": "^3.4.1",
+    "firebase": "^3.6",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
-    "q": "^1.4.1"
   }
 }

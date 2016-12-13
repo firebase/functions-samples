@@ -1,10 +1,10 @@
 {
-  "name": "functions",
-  "description": "Firebase Functions",
+  "name": "instagram-auth-functions",
+  "description": "Authenticate with Instagram Firebase Functions sample",
   "dependencies": {
     "cookie-parser": "^1.4.3",
     "crypto": "0.0.3",
-    "firebase": "^3.4.1",
+    "firebase": "^3.6",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
     "request": "^2.74.0",
     "request-promise-native": "^1.0.3",

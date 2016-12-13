@@ -1,7 +1,8 @@
 {
-  "main": "index.js",
+  "name": "lastmodified-tracking-functions",
+  "description": "Track Lastmodified date of nodes Firebase Functions sample",
   "dependencies": {
-    "firebase": "^3.4.1",
+    "firebase": "^3.6",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz"
   }
 }

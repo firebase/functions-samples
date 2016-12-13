@@ -1,10 +1,10 @@
 {
   "name": "https-quickstart-functions",
-  "description": "HTTPS Firebase Functions Quickstart sample ",
+  "description": "HTTPS Firebase Functions Quickstart sample",
   "dependencies": {
     "cors": "^2.8.1",
     "dateformat": "^1.0.12",
-    "firebase": "^3.4.1",
+    "firebase": "^3.6",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz"
   }
 }
