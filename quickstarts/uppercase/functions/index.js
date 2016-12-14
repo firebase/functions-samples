@@ -47,8 +47,8 @@ exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
       const original = event.data.val();
       console.log('Uppercasing', event.params.pushId, original);
       const uppercased = original.toUpperCase();
-      // Asynchronous Firebase Functions such as database listeners expect
-      // to be returned a Promise, Object, or null.
+      // Asynchronous Firebase Functions such as database listeners expect the callback
+      // function to return either a Promise, Object or null.
       // Setting an "uppercased" sibling in the Realtime Database returns a Promise.
       return event.data.ref.parent.child('uppercased').set(uppercased);
     });
