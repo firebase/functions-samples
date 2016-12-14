@@ -22,7 +22,7 @@ const functions = require('firebase-functions');
 
 // [START addMessage]
 // Take the text parameter passed to this HTTP end-point and insert it into the
-// Realtime Database under the path /messages/:pushId/original/
+// Realtime Database under the path /messages/:pushId/original
 // [START addMessageTrigger]
 exports.addMessage = functions.https().onRequest((request, response) => {
 // [END addMessageTrigger]
@@ -37,9 +37,8 @@ exports.addMessage = functions.https().onRequest((request, response) => {
 // [END addMessage]
 
 // [START makeUppercase]
-// Since HTTP functions are synchronous, we respond as quickly as possible and do
-// do additional work in an asynchronous fashion.
-// Start a database listener at the path we just pushed to.
+// Listens for new messages added to /messages/:pushId/original and creates an
+// uppercased version of the message to to /messages/:pushId/uppercased
 // [START makeUppercaseTrigger]
 exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
     .onWrite(event => {
