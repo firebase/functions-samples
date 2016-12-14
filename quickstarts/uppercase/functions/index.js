@@ -30,7 +30,7 @@ exports.addMessage = functions.https().onRequest((request, response) => {
   const original = request.query.text;
   // Push it into the Realtime Database then send a response
   functions.app.database().ref('/messages').push({original: original}).then(snapshot => {
-    // Redirect with 303 SEE OTHER, with the URL of the pushed object.
+    // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
     response.redirect(303, snapshot.ref);
   });
 });
