@@ -42,7 +42,7 @@ exports.addMessage = functions.https().onRequest((request, response) => {
 // [START makeUppercaseTrigger]
 exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
     .onWrite(event => {
-// [START makeUppercaseTrigger]
+// [END makeUppercaseTrigger]
       // Grab the current value of what was written to the Realtime Database.
       const original = event.data.val();
       console.log('Uppercasing', event.params.pushId, original);
