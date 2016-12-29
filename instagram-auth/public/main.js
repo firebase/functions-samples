@@ -52,11 +52,8 @@ Demo.prototype.onAuthStateChanged = function(user) {
 
 // Initiates the sign-in flow using LinkedIn sign in in a popup.
 Demo.prototype.signIn = function() {
-  // This is the URL to the HTTP triggered 'redirect' Firebase Function.
-  // See https://firebase.google.com/preview/functions/gcp-events#handle_a_cloud_http_firebase_function_event.
-  var redirectFunctionURL = 'https://us-central1-' + Demo.getFirebaseProjectId() + '.cloudfunctions.net/redirect';
-  // Open the Functions URL as a popup.
-  window.open(redirectFunctionURL, 'name', 'height=585,width=400');
+  // Open the popup that will start the auth flow.
+  window.open('popup.html', 'name', 'height=585,width=400');
 };
 
 // Signs-out of Firebase.
@@ -74,11 +71,6 @@ Demo.prototype.deleteAccount = function() {
       firebase.auth().signOut();
     }
   });
-};
-
-// Returns the Firebase project ID of the default Firebase app.
-Demo.getFirebaseProjectId = function() {
-  return firebase.app().options.authDomain.split('.')[0];
 };
 
 // Load the demo.

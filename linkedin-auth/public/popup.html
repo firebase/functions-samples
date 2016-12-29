@@ -18,7 +18,6 @@
   <meta name="description" content="Demonstrates how to authorize Firebase with LinkedIn auth using Firebase Functions">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Authenticate with LinkedIn</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
 </head>
 <body>
 
@@ -50,55 +49,23 @@ Please wait...
    */
   function tokenReceived(data) {
     if (data.token) {
-      signInFirebase(data.token, data.email, data.displayName, data.photoURL, data.linkedInAccessToken);
+      firebase.auth().signInWithCustomToken(data.token).then(function() {
+        window.close();
+      });
     } else {
-      console.error(error);
+      console.error(data);
       document.body.innerText = 'Error in the token Function: ' + data.error;
     }
-  }
-
-  /**
-   *  - Signs the user in Firebase using the given token
-   *  - Updates the user profile (photoURL and displayName)
-   *  - Saves the LinkedIn AccessToken in the Realtime Database
-   *  - Closes the popup
-   */
-  function signInFirebase(token, email, displayName, photoURL, linkedInAccessToken) {
-    // We sign in via a temporary Firebase app to update the profile.
-    var tempApp = firebase.initializeApp(config, '_temp_');
-    tempApp.auth().signInWithCustomToken(token).then(function(user) {
-
-      // Saving the LinkedIn API access token in the Realtime Database.
-      const tasks = [tempApp.database().ref('/linkedInAccessToken/' + user.uid).set(linkedInAccessToken)];
-
-      // Updating the displayname and photoURL if needed.
-      if (displayName !== user.displayName || photoURL !== user.photoURL) {
-        tasks.push(user.updateProfile({displayName: displayName, photoURL: photoURL}));
-      }
-
-      // Updating the email if needed.
-      if (email !== user.email) {
-        tasks.push(user.updateEmail(email));
-      }
-
-      // Wait for completion of above tasks.
-      return Promise.all(tasks).then(function() {
-        // Delete temporary Firebase app and sign in the default Firebase app, then close the popup.
-        Promise.all([tempApp.delete(), firebase.auth().signInWithCustomToken(token)]).then(function() {
-          window.close();
-        });
-      });
-    }).catch(function(error) {
-      console.error(error);
-      document.body.innerText = 'Error While using the Firebase Auth token to sign in: ' + error.message;
-    });
   }
 
   var code = getURLParameter('code');
   var state = getURLParameter('state');
   var error = getURLParameter('error');
-  if (!code) {
+  if (error) {
     document.body.innerText = 'Error back from the LinkedIn auth page: ' + error;
+  } else if(!code) {
+    // Start the auth flow.
+    window.location.href  = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/redirect';
   } else {
     // Use JSONP to load the 'token' Firebase Function to exchange the auth code against a Firebase custom token.
     const script = document.createElement('script');

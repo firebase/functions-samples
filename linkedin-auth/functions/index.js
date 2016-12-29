@@ -18,9 +18,12 @@
 const functions = require('firebase-functions');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
-const firebase = require('firebase');
-firebase.initializeApp({
-  serviceAccount: require('./service-account.json'),
+
+// Firebase Setup
+const admin = require('firebase-admin');
+const serviceAccount = require('./service-account.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`
 });
 
@@ -62,49 +65,88 @@ exports.redirect = functions.https().onRequest((req, res) => {
 exports.token = functions.https().onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
-  cookieParser()(req, res, () => {
-    if (!req.cookies.state) {
-      throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
-    }
-    console.log('Received verification state:', req.cookies.state);
-    Linkedin.auth.authorize(OAUTH_SCOPES, req.cookies.state); // Makes sure the state parameter is set
-    console.log('Received auth code:', req.query.code);
-    console.log('Received state:', req.query.state);
-    Linkedin.auth.getAccessToken(res, req.query.code, req.query.state, (error, results) => {
-      if (error) {
-        throw error;
+  try {
+    cookieParser()(req, res, () => {
+      if (!req.cookies.state) {
+        throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
       }
-      console.log('Received Access Token:', results.access_token);
-      const linkedin = Linkedin.init(results.access_token);
-      linkedin.people.me((error, userResults) => {
+      console.log('Received verification state:', req.cookies.state);
+      Linkedin.auth.authorize(OAUTH_SCOPES, req.cookies.state); // Makes sure the state parameter is set
+      console.log('Received auth code:', req.query.code);
+      console.log('Received state:', req.query.state);
+      Linkedin.auth.getAccessToken(res, req.query.code, req.query.state, (error, results) => {
         if (error) {
           throw error;
         }
-        console.log('Auth code exchange result received:', userResults);
-        const token = createFirebaseToken(userResults.id);
-        res.jsonp({
-          token: token,
-          displayName: userResults.formattedName,
-          photoURL: userResults.pictureUrl,
-          email: userResults.emailAddress,
-          linkedInAccessToken: results.access_token
+        console.log('Received Access Token:', results.access_token);
+        const linkedin = Linkedin.init(results.access_token);
+        linkedin.people.me((error, userResults) => {
+          if (error) {
+            throw error;
+          }
+          console.log('Auth code exchange result received:', userResults);
+
+          // We have an Instagram access token and the user identity now.
+          const accessToken = results.access_token;
+          const instagramUserID = userResults.id;
+          const profilePic = userResults.pictureUrl;
+          const userName = userResults.formattedName;
+          const email = userResults.emailAddress;
+
+          // Create a Firebase account and get the Custom Auth Token.
+          createFirebaseAccount(instagramUserID, userName, profilePic, email, accessToken).then(
+              firebaseToken => {
+                // Serve an HTML page that signs the user in and updates the user profile.
+                res.jsonp({token: firebaseToken});
+              });
         });
       });
     });
-  });
+  } catch (error) {
+    return res.jsonp({error: error.toString});
+  }
 });
 
 /**
- * Creates a Firebase custom auth token for the given LinkedIn user ID.
+ * Creates a Firebase account with the given user profile and returns a custom auth token allowing
+ * signing-in this account.
+ * Also saves the accessToken to the datastore at /linkedInAccessToken/$uid
  *
- * @returns String The Firebase custom auth token.
+ * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-function createFirebaseToken(linkedInID) {
+function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
   // The UID we'll assign to the user.
-  const uid = `linkedin:${linkedInID}`;
+  const uid = `linkedin:${linkedinID}`;
 
-  // Create the custom token.
-  const token = firebase.app().auth().createCustomToken(uid);
-  console.log('Created Custom token for UID "', uid, '" Token:', token);
-  return token;
+  // Save the access token tot he Firebase Realtime Database.
+  const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`)
+      .set(accessToken);
+
+  // Create or update the user account.
+  const userCreationTask = admin.auth().updateUser(uid, {
+    displayName: displayName,
+    photoURL: photoURL,
+    email: email,
+    emailVerified: true
+  }).catch(error => {
+    // If user does not exists we create it.
+    if (error.code === 'auth/user-not-found') {
+      return admin.auth().createUser({
+        uid: uid,
+        displayName: displayName,
+        photoURL: photoURL,
+        email: email,
+        emailVerified: true
+      });
+    }
+    throw error;
+  });
+
+  // Wait for all async task to complete then generate and return a custom auth token.
+  return Promise.all([userCreationTask, databaseTask]).then(() => {
+    // Create a Firebase custom auth token.
+    const token = admin.auth().createCustomToken(uid);
+    console.log('Created Custom token for UID "', uid, '" Token:', token);
+    return token;
+  });
 }
