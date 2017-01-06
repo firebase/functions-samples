@@ -43,6 +43,7 @@ exports.addMessage = functions.https().onRequest((request, response) => {
 exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
     .onWrite(event => {
 // [END makeUppercaseTrigger]
+// [START makeUppercaseBody]
       // Grab the current value of what was written to the Realtime Database.
       const original = event.data.val();
       console.log('Uppercasing', event.params.pushId, original);
@@ -52,5 +53,6 @@ exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
       // Setting an "uppercased" sibling in the Realtime Database returns a Promise.
       return event.data.ref.parent.child('uppercased').set(uppercased);
     });
+// [END makeUppercaseBody]
 // [END makeUppercase]
 // [END all]
