@@ -28,7 +28,7 @@ const exec = require('child-process-promise').exec;
  */
 // [START generateThumbnailTrigger]
 exports.generateThumbnail = functions.storage().onChange(event => {
-// [START generateThumbnailTrigger]
+// [END generateThumbnailTrigger]
   // [START eventAttributes]
   const fileBucket = event.bucket; // The Storage Bucket that contains the file.
   const filePath = event.path; // File path in the bucket.
