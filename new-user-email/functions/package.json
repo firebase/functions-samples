@@ -1,0 +1,10 @@
+{
+  "name": "functions",
+  "description": "Firebase Functions",
+  "dependencies": {
+    "firebase": "^3.6",
+    "firebase-admin": "^4.0.4",
+    "firebase-functions": "https://storage.googleapis.com/functions-dev-preview/auth-functions.tgz",
+    "nodemailer": "^2.4.1"
+  }
+}
