@@ -74,7 +74,7 @@ exports.generateThumbnail = functions.storage().onChange(event => {
         return bucket.upload(tempLocalThumbFile, {
           destination: thumbFilePath
         }).then(() => {
-          console.log('Thumbnail uploaded to Storage at', filePath);
+          console.log('Thumbnail uploaded to Storage at', thumbFilePath);
         });
       });
     });

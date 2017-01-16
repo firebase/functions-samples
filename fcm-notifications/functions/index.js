@@ -17,7 +17,7 @@
 
 const functions = require('firebase-functions');
 const firebaseAdmin = require('firebase-admin');
-var serviceAccount = require('./service-account.json');
+const serviceAccount = require('./service-account.json');
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
