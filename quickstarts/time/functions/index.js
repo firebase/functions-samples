@@ -15,23 +15,31 @@
  */
 'use strict';
 
+// [START import]
 const functions = require('firebase-functions');
 const dateFormat = require('dateformat');
 const cors = require('cors')({origin: true});
+// [END import]
 
+// [START all]
 /**
- * Returns the server's date. A timestamp is returned by default unless a `format` URL query parameter is specified with
- * which we'll try to format the date.
+ * Returns the server's date. A timestamp is returned by default unless a `format` URL query
+ * parameter is specified with which we'll try to format the date.
  *
  * Format must follow the Node dateformat library. See: https://www.npmjs.com/package/dateformat
  *
  * Example format: "yyyy-mm-dd h:MM:ss".
  */
+// [START trigger]
 exports.date = functions.https().onRequest((req, res) => {
+// [END trigger]
   cors(req, res, () => {
     try {
-      const now = Date.now();
+      // [START readQueryParam]
       const format = req.query.format;
+      // [END readQueryParam]
+      // [START send]
+      const now = Date.now();
       if (format) {
         const formattedDate = dateFormat(now, format);
         console.log('Sending Formatted date:', formattedDate);
@@ -40,10 +48,12 @@ exports.date = functions.https().onRequest((req, res) => {
         console.log('Sending Timestamp:', now);
         res.send(now.toString());
       }
+      // [END send]
+    // [START sendError]
     } catch (e) {
-      console.error(e);
-      console.log('Formatting');
       res.status(500).send(e.toString());
     }
+    // [END sendError]
   });
 });
+// [END all]
