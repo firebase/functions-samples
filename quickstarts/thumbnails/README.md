@@ -1,6 +1,10 @@
-# Automatically Generate Thumbnails
+# Firebase Functions Quickstart - Firebase Storage trigger
 
-This sample demonstrates how to automatically generate thumbnails for each images that are uploaded to Firebase Storage.
+This quickstart demonstrates using **Firebase Functions** setup with a Firebase Storage trigger.
+
+## Introduction
+
+This sample automatically generates thumbnails for each images that are uploaded to Firebase Storage.
 
 
 ## Functions Code
@@ -22,5 +26,16 @@ The function triggers on upload of any file to the Firebase Functions bucket.
 To deploy and test the sample:
 
  - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com) and visit the **Storage** tab.
- - Deploy your project using `firebase deploy`
+ - Enable Billing on your Firebase project
+ - Deploy your project's code using `firebase deploy`
  - Go to the Firebase Console **Storage** tab and upload an image. After a short time an thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
+
+
+## Contributing
+
+We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../../CONTRIBUTING.md).
+
+
+## License
+
+© Google, 2016. Licensed under an [Apache-2](../../LICENSE) license.

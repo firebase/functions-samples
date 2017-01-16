@@ -12,13 +12,17 @@ To learn how to get started with Firebase Functions try the quickstart samples a
 
 This repository contains the following samples:
 
-### [Quickstart: Realtime Database trigger](/quickstarts/database)
+### [Quickstart: Realtime Database trigger](/quickstarts/uppercase)
 
-This quickstart sample demonstrates using **Firebase Functions** with a **Firebase Realtime Database** trigger. The function will detect all uppercased messages inserted to a database and make these lowercase.
+This quickstart sample demonstrates using **Firebase Functions** with a **Firebase Realtime Database** trigger. The function will uppercase messages written to the datastore.
 
-### [Quickstart: HTTPS trigger](/quickstarts/https)
+### [Quickstart: HTTPS trigger](/quickstarts/time)
 
 This quickstart sample demonstrates using **Firebase Functions** triggered by **HTTPS requests**. The function will return the current server time and allows for date time formatting.
+
+### [Quickstart: Firebase Storage Trigger](/quickstarts/thumbnails)
+
+This quickstart sample demonstrates using **Firebase Functions** triggered by **Firebase Storage events**. The function will generate a thumbnail of uploaded images.
 
 ### [Send FCM notifications](fcm-notifications)
 
@@ -114,6 +118,18 @@ Uses an Realtime Database trigger.
 Enable full-text search on firebase database elements by using an Algolia hosted search service.
 
 Uses an Realtime Database trigger.
+
+### [User Data Cleanup](/user-data-cleanup)
+
+Deletes all associated user data that's on the Realtime database when a user deletes his Firebase account.
+
+Uses an Auth trigger.
+
+### [Welcome Email](/new-user-email)
+
+Sends a Welcome email when a user signs-in for the first time.
+
+Uses an Auth trigger.
 
 
 ## Contributing

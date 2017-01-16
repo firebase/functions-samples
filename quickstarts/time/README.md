@@ -1,6 +1,6 @@
-# Firebase Functions Quickstart - HTTP
+# Firebase Functions Quickstart - HTTPS trigger
 
-This quickstart demonstrates using **Firebase Functions** setup with an HTTP trigger.
+This quickstart demonstrates using **Firebase Functions** setup with an HTTPS trigger.
 
 
 ## Introduction
