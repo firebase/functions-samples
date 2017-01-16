@@ -34,10 +34,6 @@ exports.generateThumbnail = functions.storage().onChange(event => {
   const filePath = event.path; // File path in the bucket.
   const contentType = event.contentType; // File Content Type.
   const resourceState = event.resourceState; // The resourceState is 'exists' or 'not_exits' (for file/folder deletions).
-  const lastUpdated = event.updated; // Timestamp of the last file update.
-  const fileSize = event.size; // Size of the file in Bytes.
-  const md5Hash = event.md5Hash; // MD5 Hash of the file.
-  const crc32c = event.crc32c; // CRC32C Hash of the file.
   // [END eventAttributes]
 
   // [START stopConditions]
