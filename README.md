@@ -131,6 +131,12 @@ Sends a Welcome email when a user signs-in for the first time.
 
 Uses an Auth trigger.
 
+### [Delete Inactive Users Accounts Cron](/delete-unused-accounts-cron)
+
+Periodically deletes the accounts of users who have not signed in the last month.
+
+Uses an HTTPS trigger.
+
 
 ## Contributing
 

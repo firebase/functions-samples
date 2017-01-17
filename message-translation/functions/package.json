@@ -4,7 +4,6 @@
   "dependencies": {
     "firebase": "^3.6",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
-    "request-promise": "^2.0.0",
-    "rsvp": "^3.1.0"
+    "request-promise": "^2.0.0"
   }
 }
