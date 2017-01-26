@@ -50,7 +50,7 @@ exports.accountcleanup = functions.https().onRequest((req, res) => {
     const promisePool = new PromisePool(() => {
       let user;
       // We search for users that have not signed in in the last 30 days.
-      while (!user || user.metadata.lastSignedInAt.getTime() > Date.now() - 30 * 24 * 60 * 60 * 1000) {
+      while (!user || parseInt(user.lastLoginAt) > Date.now() - 30 * 24 * 60 * 60 * 1000) {
         if (users.length === 0) {
           return null;
         }
@@ -73,35 +73,13 @@ exports.accountcleanup = functions.https().onRequest((req, res) => {
 });
 
 /**
- * Returns the list of all users. Including additional metadata such as last sign-in Date.
+ * Returns the list of all users with their ID and lastLogin timestamp.
  */
-function getUsers() {
-  // Create a pool so that there is only `MAX_CONCURRENT` max parallel requests to fetch user details.
-  return getUserIds().then(userIds => {
-    const users = [];
-
-    const promisePool = new PromisePool(() => {
-      if (userIds.length === 0) {
-        return null;
-      }
-      const nextUserId = userIds.pop();
-      return firebaseAdmin.auth().getUser(nextUserId).then(user => {
-        users.push(user);
-      });
-    }, MAX_CONCURRENT);
-
-    return promisePool.start().then(() => users);
-  });
-}
-
-/**
- * Returns the list of all user Ids.
- */
-function getUserIds(userIds = [], nextPageToken, accessToken) {
+function getUsers(userIds = [], nextPageToken, accessToken) {
   return getAccessToken(accessToken).then(accessToken => {
     const options = {
       method: 'POST',
-      uri: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/downloadAccount?fields=users/localId,nextPageToken&access_token=' + accessToken,
+      uri: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/downloadAccount?fields=users/localId,users/lastLoginAt,nextPageToken&access_token=' + accessToken,
       body: {
         nextPageToken: nextPageToken,
         maxResults: 1000
@@ -113,13 +91,10 @@ function getUserIds(userIds = [], nextPageToken, accessToken) {
       if (!resp.users) {
         return userIds;
       }
-      resp.users.forEach(user => {
-        userIds.push(user.localId);
-      });
       if (resp.nextPageToken) {
-        return getUserIds(userIds, resp.nextPageToken, accessToken);
+        return getUsers(resp.users, resp.nextPageToken, accessToken);
       }
-      return userIds;
+      return resp.users;
     });
   });
 }

@@ -26,7 +26,7 @@ For example the metadata for the file at path `/1477402116302/mypic.jpg` will be
 
 ## Setting up the sample
 
-This sample comes with a Function and  web-based UI for testing the function. To configure it:
+This sample comes with a Function and web-based UI for testing the function. To configure it:
 
  - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com)
  - Enable Anonymous sign in the Auth section
