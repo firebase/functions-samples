@@ -21,7 +21,7 @@ const functions = require('firebase-functions');
 
 // [START helloWorld]
 /**
- * Background Cloud Function to be triggered by Pub/Sub.
+ * Cloud Function to be triggered by Pub/Sub.
  *
  * @param {object} event The Cloud Functions event.
  */
