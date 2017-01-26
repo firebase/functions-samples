@@ -5,7 +5,7 @@ This quickstart demonstrates using **Firebase Functions** setup with an HTTPS tr
 
 ## Introduction
 
-The function `date` simply returns the current server date. You can pass it a `format` URL Query parameter to format the date.
+We'll show a series of basic HTTPS triggered Functions.
 
 Further reading:
 
@@ -26,14 +26,7 @@ Create a Firebase Project on the [Firebase Console](https://console.firebase.goo
 Set up your Firebase project by running `firebase use --add`, select your Project ID and follow the instructions.
 
 
-### 3. Enable billing
-
-Enable Billing on your project:
-
-In your project's **Firebase Console** upgrade to one of the paid plans using the **UPGRADE** button.
-
-
-### 4. Install the Firebase CLI and enable Functions on your Firebase CLI
+### 3. Install the Firebase CLI and enable Functions on your Firebase CLI
 
 You need to have installed the Firebase CLI. If you haven't already run:
 
@@ -54,10 +47,7 @@ First you need to install the `npm` dependencies of the functions:
 cd functions && npm install; cd ..
 ```
 
-This installs locally:
- - The Firebase SDK and the Firebase Functions SDK.
- - The [dateformat](https://www.npmjs.com/package/dateformat) npm package to format the current time.
- - The [cors](https://www.npmjs.com/package/cors) npm package to allow Cross Origin AJAX requests on the endpoint.
+This installs locally the Firebase SDK and the Firebase Functions SDK.
 
 Deploy to Firebase using the following command:
 
@@ -72,15 +62,7 @@ This deploys and activate the date Function.
 
 ## Try the sample
 
-You can first simply hit the Function URL directly. After deploying the function you can simply open the following URLs in your browser:
-
-```
-https://us-central1-<project-id>.cloudfunctions.net/date
-
-https://us-central1-<project-id>.cloudfunctions.net/date?format=yyyy-mm-dd%20h%3AMM%3Ass
-```
-
-The timestamp and formatted date should be displayed.
+To try the samples please follow the [HTTPS trigger documentation](https://firebase.google.com/preview/functions/gcp-https)
 
 
 ## Contributing
