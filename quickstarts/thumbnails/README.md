@@ -1,24 +1,24 @@
-# Firebase Functions Quickstart - Firebase Storage trigger
+# Firebase SDK for Cloud Functions Quickstart - Cloud Storage trigger
 
-This quickstart demonstrates using **Firebase Functions** setup with a Firebase Storage trigger.
+This quickstart demonstrates using **Firebase SDK for Cloud Functions** setup with a Cloud Storage trigger.
 
 ## Introduction
 
-This sample automatically generates thumbnails for each images that are uploaded to Firebase Storage.
+This sample automatically generates thumbnails for each images that are uploaded to Cloud Storage.
 
 
 ## Functions Code
 
 See file [functions/index.js](functions/index.js) for the thumbnail generation code.
 
-The thumbnail generation is performed using ImagMagick which is installed by default on all Firebase Functions. This is a CLI so we execute the command from node using the [child-process-promise](https://www.npmjs.com/package/child-process-promise) package. The image is first downloaded locally from the Firebase Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
+The thumbnail generation is performed using ImagMagick which is installed by default on all Cloud Functions instances. This is a CLI so we execute the command from node using the [child-process-promise](https://www.npmjs.com/package/child-process-promise) package. The image is first downloaded locally from the Cloud Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
 
 ## Trigger rules
 
-The function triggers on upload of any file to the Firebase Functions bucket.
+The function triggers on upload of any file to your Firebase project's default Cloud Storage bucket.
 
 
 ## Deploy and test

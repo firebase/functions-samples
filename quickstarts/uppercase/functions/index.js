@@ -21,7 +21,7 @@ const functions = require('firebase-functions');
 // [END import]
 
 // [START addMessage]
-// Take the text parameter passed to this HTTP end-point and insert it into the
+// Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 // [START addMessageTrigger]
 exports.addMessage = functions.https().onRequest((request, response) => {
@@ -38,7 +38,7 @@ exports.addMessage = functions.https().onRequest((request, response) => {
 
 // [START makeUppercase]
 // Listens for new messages added to /messages/:pushId/original and creates an
-// uppercased version of the message to to /messages/:pushId/uppercased
+// uppercase version of the message to /messages/:pushId/uppercase
 // [START makeUppercaseTrigger]
 exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
     .onWrite(event => {
@@ -47,11 +47,11 @@ exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
       // Grab the current value of what was written to the Realtime Database.
       const original = event.data.val();
       console.log('Uppercasing', event.params.pushId, original);
-      const uppercased = original.toUpperCase();
-      // Asynchronous Firebase Functions such as database listeners expect the callback
-      // function to return either a Promise, Object or null.
-      // Setting an "uppercased" sibling in the Realtime Database returns a Promise.
-      return event.data.ref.parent.child('uppercased').set(uppercased);
+      const uppercase = original.toUpperCase();
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to the Firebase Realtime Database.
+      // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
+      return event.data.ref.parent.child('uppercase').set(uppercase);
     });
 // [END makeUppercaseBody]
 // [END makeUppercase]

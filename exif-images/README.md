@@ -7,14 +7,14 @@ This sample demonstrates how to automatically extract images metadata that are u
 
 See file [functions/index.js](functions/index.js) for the email sending code.
 
-The image metadata is provided using ImagMagick `identify` tool which is installed by default on all Firebase Functions. This is a CLI for which we use a NodeJS wrapper. The image is first downloaded locally from the Firebase Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
+The image metadata is provided using ImagMagick `identify` tool which is installed by default on all Cloud Functions instances. This is a CLI for which we use a NodeJS wrapper. The image is first downloaded locally from the Firebase Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
 
 ## Trigger rules
 
-The function triggers on upload of any file to the Firebase Functions bucket.
+The function triggers on upload of any file to your Firebase project default Cloud Storage bucket.
 
 
 ## Storage and Database Structure

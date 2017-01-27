@@ -1,11 +1,11 @@
-# Firebase Functions Samples Library
+# Firebase SDK for Cloud Functions Samples Library
 
-This repository contains a collection of samples showcasing some typical uses of Firebase Functions.
+This repository contains a collection of samples showcasing some typical uses of Cloud Functions using the Firebase SDK for CLoud Functions.
 
 
 ## Prerequisites
 
-To learn how to get started with Firebase Functions try the quickstart samples and have a look at [the documentation](https://firebase.google.com/preview/functions/).
+To learn how to get started with the Firebase SDKL for Cloud Functions try the quickstart samples and have a look at [the documentation](https://firebase.google.com/preview/functions/).
 
 
 ## Use Cases and Samples
@@ -14,15 +14,15 @@ This repository contains the following samples:
 
 ### [Quickstart: Realtime Database trigger](/quickstarts/uppercase)
 
-This quickstart sample demonstrates using **Firebase Functions** with a **Firebase Realtime Database** trigger. The function will uppercase messages written to the datastore.
+This quickstart sample demonstrates using **Cloud Functions** with a **Firebase Realtime Database** trigger. The function will uppercase messages written to the datastore.
 
 ### [Quickstart: HTTPS trigger](/quickstarts/time)
 
-This quickstart sample demonstrates using **Firebase Functions** triggered by **HTTPS requests**. The function will return the current server time and allows for date time formatting.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **HTTPS requests**. The function will return the current server time and allows for date time formatting.
 
 ### [Quickstart: Firebase Storage Trigger](/quickstarts/thumbnails)
 
-This quickstart sample demonstrates using **Firebase Functions** triggered by **Firebase Storage events**. The function will generate a thumbnail of uploaded images.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. The function will generate a thumbnail of uploaded images.
 
 ### [Send FCM notifications](fcm-notifications)
 

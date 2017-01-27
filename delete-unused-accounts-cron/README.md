@@ -7,7 +7,7 @@ This sample demonstrates how to delete the accounts of users who have not signed
 
 See file [functions/index.js](functions/index.js) for the code.
 
-Firebase Functions does not naticaly supports cron jobs. We are working around this by executing the code as an HTTPS triggered function. Then simply use an external service to periodically "ping" the URL.
+Cloud Functions does not natively supports cron jobs. We are working around this by executing the code as an HTTPS triggered function. Then simply use an external service to periodically "ping" the URL.
 
 Here is a non-exhaustive list of external services for cron jobs:
  - https://www.setcronjob.com/

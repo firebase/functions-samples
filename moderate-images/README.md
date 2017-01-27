@@ -8,14 +8,14 @@ This sample demonstrates how to automatically moderate offensive images uploaded
 See file [functions/index.js](functions/index.js) for the moderation code.
 
 The detection of adult and violent content in an image is done using The [Google Cloud Vision API](https://cloud.google.com/vision/).
-The image blurring is performed using ImageMagick which is installed by default on all Firebase Functions instances. The image is first downloaded locally from the Firebase Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
+The image blurring is performed using ImageMagick which is installed by default on all Cloud Functions instances. The image is first downloaded locally from the Firebase Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
 
 ## Trigger rules
 
-The function triggers on upload of any file to the Firebase Functions bucket.
+The function triggers on upload of any file to your Firebase project's default Cloud Storage bucket.
 
 
 ## Setting up the sample

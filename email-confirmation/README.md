@@ -1,4 +1,4 @@
-# Send Confirmation Emails with Firebase Functions
+# Send Confirmation Emails with Cloud Functions
 
 This sample shows how to send a confirmation emails to users who are subscribing/un-subscribing to a newsletter.
 

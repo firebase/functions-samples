@@ -1,6 +1,6 @@
-# Firebase Functions Quickstart - HTTPS trigger
+# Firebase SDK for Cloud Functions Quickstart - HTTPS trigger
 
-This quickstart demonstrates using **Firebase Functions** setup with an HTTPS trigger.
+This quickstart demonstrates using the **Firebase SDK for Cloud Functions** with an HTTPS trigger.
 
 
 ## Introduction
@@ -9,7 +9,7 @@ We'll show a series of basic HTTPS triggered Functions.
 
 Further reading:
 
- - [Read more about Firebase Functions](https://firebase.google.com/preview/functions/)
+ - [Read more about the Firebase SDK for Cloud Functions](https://firebase.google.com/preview/functions/)
 
 
 ## Initial setup, build tools and dependencies
@@ -36,8 +36,6 @@ npm install -g firebase-tools
 
 > Doesn't work? You may need to [change npm permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
-Once the CLI is installed run: `firebase --open-sesame functions` to enable Firebase Functions on your CLI and follow the instructions.
-
 
 ## Deploy the app to prod
 
@@ -47,7 +45,7 @@ First you need to install the `npm` dependencies of the functions:
 cd functions && npm install; cd ..
 ```
 
-This installs locally the Firebase SDK and the Firebase Functions SDK.
+This installs locally the Firebase SDK and the Firebase SDK for Cloud Functions.
 
 Deploy to Firebase using the following command:
 

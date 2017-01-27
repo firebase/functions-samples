@@ -7,7 +7,7 @@ This sample shows how to authenticate using LinkedIn Sign-In on Firebase. In thi
 
 Create and setup the Firebase project:
  1. Create a Firebase project using the [Firebase Developer Console](https://console.firebase.google.com).
- 1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed for Firebase Functions.
+ 1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed to be able to perform HTTP requests to external services from a Cloud Function.
  1. Copy the Web initialisation snippet from **Firebase Console > Overview > Add Firebase to your web app** and paste it in `public/index.html` and `public/popup.html` in lieu of the placeholders (where the `TODO(DEVELOPER)` are located).
 
 Create and provide a Service Account's keys:

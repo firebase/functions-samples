@@ -62,7 +62,7 @@ Demo.prototype.handleFileSelect = function(e) {
     contentType: file.type
   };
 
-  // Save the image on Firebase Storage.
+  // Save the image on Cloud Storage.
   var filePath = String(Date.now()) + '/' + file.name;
   firebase.storage().ref(filePath).put(file, metadata).then(function(snapshot) {
     console.log('Uploaded', snapshot.totalBytes, 'bytes.');

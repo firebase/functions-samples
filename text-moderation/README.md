@@ -1,4 +1,4 @@
-# Text Moderation with Firebase Functions
+# Text Moderation with Cloud Functions
 
 This template shows how to perform server side moderation of text written to a Firebase DB.
 
