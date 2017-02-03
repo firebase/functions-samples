@@ -5,7 +5,7 @@ This quickstart demonstrates using the **Firebase SDK for Cloud Functions** with
 
 ## Introduction
 
-The function `date` simply returns the current server date. You can pass it a `format` URL Query parameter to format the date.
+The function `date` returns the current server date. You can pass it a `format` URL Query parameter to format the date.
 
 Further reading:
 
@@ -63,7 +63,7 @@ This deploys and activate the date Function.
 
 ## Try the sample
 
-You can first simply hit the Function URL directly. After deploying the function you can simply open the following URLs in your browser:
+After deploying the function you can open the following URLs in your browser:
 
 ```
 https://us-central1-<project-id>.cloudfunctions.net/date
