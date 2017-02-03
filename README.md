@@ -12,17 +12,21 @@ To learn how to get started with the Firebase SDKL for Cloud Functions try the q
 
 This repository contains the following samples:
 
-### [Quickstart: Realtime Database trigger](/quickstarts/uppercase)
+### [Realtime database trigger quickstart: Uppercaser](/quickstarts/uppercase)
 
 This quickstart sample demonstrates using **Cloud Functions** with a **Firebase Realtime Database** trigger. The function will uppercase messages written to the datastore.
 
-### [Quickstart: HTTPS trigger](/quickstarts/time)
+### [HTTPS trigger quickstart: Time Server](/quickstarts/time)
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **HTTPS requests**. The function will return the current server time and allows for date time formatting.
 
-### [Quickstart: Firebase Storage Trigger](/quickstarts/thumbnails)
+### [Cloud Storage trigger quickstart: Thumbnail generator](/quickstarts/thumbnails)
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. The function will generate a thumbnail of uploaded images.
+
+### [PubSub trigger quickstart: Hello World](/quickstarts/thumbnails)
+
+This quickstart sample demonstrates using **Cloud Functions** triggered by **PubSub events**. The function will log the PubSub payload in a Hello world message.
 
 ### [Send FCM notifications](fcm-notifications)
 

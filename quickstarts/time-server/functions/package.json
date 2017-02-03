@@ -1,0 +1,10 @@
+{
+  "name": "time-server-functions",
+  "description": "A simple time server using HTTPS Cloud Function",
+  "dependencies": {
+    "cors": "^2.8.1",
+    "firebase": "^3.6",
+    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
+    "moment": "^2.17.1"
+  }
+}

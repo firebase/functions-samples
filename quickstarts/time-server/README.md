@@ -1,11 +1,11 @@
 # Firebase SDK for Cloud Functions Quickstart - HTTPS trigger
 
-This quickstart demonstrates using the **Firebase SDK for Cloud Functions** with an HTTPS trigger.
+This quickstart demonstrates using the **Firebase SDK for Cloud Functions** with an HTTPS trigger through building an endpoint returning the current time.
 
 
 ## Introduction
 
-We'll show a series of basic HTTPS triggered Functions.
+The function `date` simply returns the current server date. You can pass it a `format` URL Query parameter to format the date.
 
 Further reading:
 
@@ -45,7 +45,10 @@ First you need to install the `npm` dependencies of the functions:
 cd functions && npm install; cd ..
 ```
 
-This installs locally the Firebase SDK and the Firebase SDK for Cloud Functions.
+This installs locally:
+ - The Firebase SDK and the Firebase Functions SDK.
+ - The [moment](https://www.npmjs.com/package/moment) npm package to format time.
+ - The [cors](https://www.npmjs.com/package/cors) npm package to allow Cross Origin AJAX requests on the endpoint.
 
 Deploy to Firebase using the following command:
 
@@ -60,7 +63,15 @@ This deploys and activate the date Function.
 
 ## Try the sample
 
-To try the samples please follow the [HTTPS trigger documentation](https://firebase.google.com/preview/functions/gcp-https)
+You can first simply hit the Function URL directly. After deploying the function you can simply open the following URLs in your browser:
+
+```
+https://us-central1-<project-id>.cloudfunctions.net/date
+
+https://us-central1-<project-id>.cloudfunctions.net/date?format=MMMM%20Do%20YYYY%2C%20h%3Amm%3Ass%20a
+```
+
+Formatted dates should be displayed.
 
 
 ## Contributing
