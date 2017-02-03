@@ -30,9 +30,9 @@ const exec = require('child-process-promise').exec;
 exports.generateThumbnail = functions.storage().onChange(event => {
 // [END generateThumbnailTrigger]
   // [START eventAttributes]
-  const fileBucket = event.bucket; // The Storage Bucket that contains the file.
+  const fileBucket = event.bucket; // The Storage bucket that contains the file.
   const filePath = event.path; // File path in the bucket.
-  const contentType = event.contentType; // File Content Type.
+  const contentType = event.contentType; // File content type.
   const resourceState = event.resourceState; // The resourceState is 'exists' or 'not_exits' (for file/folder deletions).
   // [END eventAttributes]
 
@@ -71,7 +71,7 @@ exports.generateThumbnail = functions.storage().onChange(event => {
       console.log('Thumbnail created at', tempLocalFilePath);
       // We add a 'thumb_' prefix to thumbnails. That's where we'll upload the thumbnail.
       const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, `$1thumb_$2`);
-      // Uploading the Thumbnail.
+      // Uploading the thumbnail.
       return bucket.upload(tempLocalFilePath, {
         destination: thumbFilePath
       });
