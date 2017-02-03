@@ -40,32 +40,32 @@ exports.accountcleanup = functions.https().onRequest((req, res) => {
   if (key !== functions.env.cron.key) {
     console.log('The key provided in the request does not match the key set in the environment. Check that', key,
         'matches the cron.key attribute in `firebase env:get`');
-    return res.status(403).send('Security key does not match. Make sure your "key" URL query parameter matches the ' +
+    res.status(403).send('Security key does not match. Make sure your "key" URL query parameter matches the ' +
         'cron.key environment variable.');
+    return;
   }
 
-  // We'll fetch all user details.
+  // Fetch all user details.
   getUsers().then(users => {
-    // We'll use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
-    const promisePool = new PromisePool(() => {
-      let user;
-      // We search for users that have not signed in in the last 30 days.
-      while (!user || parseInt(user.lastLoginAt) > Date.now() - 30 * 24 * 60 * 60 * 1000) {
-        if (users.length === 0) {
-          return null;
-        }
-        user = users.pop();
-      }
+    // Find users that have not signed in in the last 30 days.
+    const inactiveUsers = users.filter(
+        user => parseInt(user.lastLoginAt, 10) > Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-      // If an inactive user is found we delete it.
-      return firebaseAdmin.auth().deleteUser(user.uid).then(() => {
-        console.log('Deleted user account', user.uid, 'because of inactivity');
-      }).catch(error => {
-        console.error('Deletion of inactive user account', user.uid, 'failed:', error);
-      });
+    // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
+    const promisePool = new PromisePool(() => {
+      if (inactiveUsers.length > 0) {
+        const userToDelete = inactiveUsers.pop();
+
+        // Delete the inactive user.
+        return firebaseAdmin.auth().deleteUser(userToDelete.uid).then(() => {
+          console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
+        }).catch(error => {
+          console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
+        });
+      }
     }, MAX_CONCURRENT);
 
-    return promisePool.start().then(() => {
+    promisePool.start().then(() => {
       console.log('User cleanup finished');
       res.send('User cleanup finished');
     });

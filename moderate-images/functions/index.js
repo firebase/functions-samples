@@ -26,11 +26,11 @@ const LOCAL_TMP_FOLDER = '/tmp/';
  * When an image is uploaded we check if it is flagged as Adult or Violence by the Cloud Vision
  * API and if it is we blur it using ImageMagick.
  */
-exports.blurOffensiveImages = functions.storage().onChange(event => {
-  const file = gcs.bucket(event.data.bucket).file(event.data.name);
+exports.blurOffensiveImages = functions.storage().onChange(object => {
+  const file = gcs.bucket(object.bucket).file(object.name);
 
   // Exit if this is a move or deletion event.
-  if (event.data.resourceState === 'not_exists') {
+  if (object.resourceState === 'not_exists') {
     return console.log('This is a deletion event.');
   }
 
@@ -40,7 +40,7 @@ exports.blurOffensiveImages = functions.storage().onChange(event => {
     console.log('SafeSearch results on image', safeSearch);
 
     if (safeSearch.adult || safeSearch.violence) {
-      return blurImage(event.data.name, event.data.bucket, event.data.metadata);
+      return blurImage(object.name, object.bucket, object.metadata);
     }
   });
 });
