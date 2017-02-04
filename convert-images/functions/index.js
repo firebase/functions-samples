@@ -44,19 +44,19 @@ exports.imageToJPG = functions.storage().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!event.data.contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return null;
+    return;
   }
 
   // Exit if the image is already a JPEG.
   if (event.data.contentType.startsWith('image/jpeg')) {
     console.log('Already a JPEG.');
-    return null;
+    return;
   }
 
   // Exit if this is a move or deletion event.
   if (event.data.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return null;
+    return;
   }
 
   // Create the temp directory where the storage file will be downloaded.

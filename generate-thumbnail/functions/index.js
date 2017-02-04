@@ -44,19 +44,19 @@ exports.generateThumbnail = functions.storage().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!event.data.contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return null;
+    return;
   }
 
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith(THUMB_PREFIX)) {
     console.log('Already a Thumbnail.');
-    return null;
+    return;
   }
 
   // Exit if this is a move or deletion event.
   if (event.data.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return null;
+    return;
   }
 
   // Create the temp directory where the storage file will be downloaded.

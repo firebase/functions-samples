@@ -40,7 +40,7 @@ exports.generateThumbnail = functions.storage().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return null;
+    return;
   }
 
   // Get the file name.
@@ -48,31 +48,31 @@ exports.generateThumbnail = functions.storage().onChange(event => {
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
     console.log('Already a Thumbnail.');
-    return null;
+    return;
   }
 
   // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return null;
+    return;
   }
   // [END stopConditions]
 
   // [START thumbnailGeneration]
   // Download file from bucket.
   const bucket = gcs.bucket(fileBucket);
-  const tempLocalFilePath = `/tmp/${fileName}`;
+  const tempFilePath = `/tmp/${fileName}`;
   return bucket.file(filePath).download({
-    destination: tempLocalFilePath
+    destination: tempFilePath
   }).then(() => {
-    console.log('Image downloaded locally to', tempLocalFilePath);
+    console.log('Image downloaded locally to', tempFilePath);
     // Generate a thumbnail using ImageMagick.
-    return exec(`convert "${tempLocalFilePath}" -thumbnail '200x200>' "${tempLocalFilePath}"`).then(() => {
-      console.log('Thumbnail created at', tempLocalFilePath);
-      // We add a 'thumb_' prefix to thumbnails. That's where we'll upload the thumbnail.
+    return exec(`convert "${tempFilePath}" -thumbnail '200x200>' "${tempFilePath}"`).then(() => {
+      console.log('Thumbnail created at', tempFilePath);
+      // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
       const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, `$1thumb_$2`);
       // Uploading the thumbnail.
-      return bucket.upload(tempLocalFilePath, {
+      return bucket.upload(tempFilePath, {
         destination: thumbFilePath
       });
     });

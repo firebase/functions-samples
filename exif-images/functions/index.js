@@ -34,13 +34,13 @@ exports.metadata = functions.storage().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!event.data.contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return null;
+    return;
   }
 
   // Exit if this is a move or deletion event.
   if (event.data.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return null;
+    return;
   }
 
   // Download file from bucket.
