@@ -18,6 +18,9 @@
 // [START all]
 // [START import]
 const functions = require('firebase-functions');
+
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 // [END import]
 
 // [START addMessage]
@@ -29,7 +32,7 @@ exports.addMessage = functions.https().onRequest((request, response) => {
   // Grab the text parameter.
   const original = request.query.text;
   // Push it into the Realtime Database then send a response
-  functions.app.database().ref('/messages').push({original: original}).then(snapshot => {
+  admin.database().ref('/messages').push({original: original}).then(snapshot => {
     // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
     response.redirect(303, snapshot.ref);
   });
@@ -40,7 +43,7 @@ exports.addMessage = functions.https().onRequest((request, response) => {
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
 // [START makeUppercaseTrigger]
-exports.makeUppercase = functions.database().path('/messages/{pushId}/original')
+exports.makeUppercase = functions.database().ref('/messages/{pushId}/original')
     .onWrite(event => {
 // [END makeUppercaseTrigger]
 // [START makeUppercaseBody]
