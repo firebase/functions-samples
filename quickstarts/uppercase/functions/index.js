@@ -27,7 +27,7 @@ admin.initializeApp(functions.config().firebase);
 // Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 // [START addMessageTrigger]
-exports.addMessage = functions.https().onRequest((request, response) => {
+exports.addMessage = functions.https.onRequest((request, response) => {
 // [END addMessageTrigger]
   // Grab the text parameter.
   const original = request.query.text;
@@ -43,7 +43,7 @@ exports.addMessage = functions.https().onRequest((request, response) => {
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
 // [START makeUppercaseTrigger]
-exports.makeUppercase = functions.database().ref('/messages/{pushId}/original')
+exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
     .onWrite(event => {
 // [END makeUppercaseTrigger]
 // [START makeUppercaseBody]
