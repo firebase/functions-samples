@@ -27,7 +27,7 @@ const exec = require('child-process-promise').exec;
  * ImageMagick.
  */
 // [START generateThumbnailTrigger]
-exports.generateThumbnail = functions.storage().onChange(event => {
+exports.generateThumbnail = functions.storage.object().onChange(event => {
 // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const fileBucket = event.bucket; // The Storage bucket that contains the file.
