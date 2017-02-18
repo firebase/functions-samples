@@ -17,41 +17,39 @@
 
 const functions = require('firebase-functions');
 const nodemailer = require('nodemailer');
+// Configure the email transport using the default SMTP transport and a GMail account.
+// See: https://nodemailer.com/
+// For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/
+// TODO: Make sure you configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
+const mailTransport = nodemailer.createTransport(
+    'smtps://' +
+    encodeURIComponent(functions.config().gmail.email) +
+    ':' +
+    encodeURIComponent(functions.config().gmail.password) +
+    '@smtp.gmail.com');
 
 // Your company name to include in the emails
 // TODO: Change this to your company name and also customize the email sent.
 const COMPANY_NAME = 'MyCompany';
 
 // Sends a welcome email to new user.
-exports.sendWelcomeEmail = functions.auth().onCreate(event => {
-  console.log('new Auth Event', event);
-  const email = event.email;
-  const displayName = event.displayName;
+exports.sendWelcomeEmail = functions.auth.user().onCreate(event => {
+  const email = event.data.email;
+  const displayName = event.data.displayName;
 
   return sendWelcomeEmail(email, displayName);
 });
 
 // Send an account deleted email confirmation to users who delete their accounts.
-exports.sendByeEmail = functions.auth().onDelete(event => {
-  const email = event.email;
-  const displayName = event.displayName;
+exports.sendByeEmail = functions.auth.user().onDelete(event => {
+  const email = event.data.email;
+  const displayName = event.data.displayName;
 
   return sendGoodbyEmail(email, displayName);
 });
 
-function setupMailSender() {
-  // Configure the email transport using the default SMTP transport and a GMail account.
-  // See: https://nodemailer.com/
-  // For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/
-  // TODO: Make sure you configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
-  return nodemailer.createTransport(
-      `smtps://${encodeURIComponent(functions.env.gmail.email)}:${encodeURIComponent(functions.env.gmail.password)}@smtp.gmail.com`);
-}
-
 // Sends a welcome email to the given user.
 function sendWelcomeEmail(email, displayName) {
-  const mailTransport = setupMailSender();
-
   const mailOptions = {
     from: '"MyCompany" <noreply@firebase.com>',
     to: email
@@ -67,8 +65,6 @@ function sendWelcomeEmail(email, displayName) {
 
 // Sends a goodbye email to the given user.
 function sendGoodbyEmail(email, displayName) {
-  const mailTransport = setupMailSender();
-
   const mailOptions = {
     from: '"MyCompany" <noreply@firebase.com>',
     to: email

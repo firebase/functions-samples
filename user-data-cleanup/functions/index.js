@@ -19,7 +19,7 @@ const functions = require('firebase-functions');
 
 // Deletes the user data in the Realtime Datastore when he deletes his account.
 exports.cleanupUserData = functions.auth().onDelete(event => {
-  const uid = event.uid;
+  const uid = event.data.uid;
 
   return functions.app.database().ref(`/users/${uid}`).remove();
 });
