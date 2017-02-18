@@ -21,17 +21,57 @@ const functions = require('firebase-functions');
 
 // [START helloWorld]
 /**
- * Cloud Function to be triggered by Pub/Sub.
+ * Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
+ * topic.
  *
  * @param {object} event The Cloud Functions event.
  */
 // [START trigger]
-exports.helloPubSub = functions.pubsub('topic-name').onPublish(event => {
+exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish(event => {
 // [END trigger]
-  const pubsubMessage = event.data;
-  // Read the PubSub Message as a String.
-  const name = pubsubMessage.data ? Buffer.from(pubsubMessage.data, 'base64').toString() : null;
+  // [START readBase64]
+  const pubSubMessage = event.data;
+  // Decode the PubSub Message body.
+  const messageBody = pubSubMessage.data ? Buffer.from(pubSubMessage.data, 'base64').toString() : null;
+  // [END readBase64]
+  // Print the message in the logs.
+  console.log(`Hello ${messageBody || 'World'}!`);
+});
+// [END helloWorld]
+
+/**
+ * Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
+ * topic as JSON.
+ *
+ * @param {object} event The Cloud Functions event.
+ */
+exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish(event => {
+  // [START readJson]
+  const pubSubMessage = event.data;
+  // Get the `name` attribute of the PubSub message JSON body.
+  let name = null;
+  try {
+    name = pubSubMessage.json.name;
+  } catch (e) {
+    console.error('PubSub message was not JSON', e);
+  }
+  // [END readJson]
   // Print the message in the logs.
   console.log(`Hello ${name || 'World'}!`);
 });
-// [END helloWorld]
+
+/**
+ * Cloud Function to be triggered by Pub/Sub that logs a message using the data attributes
+ * published to the topic.
+ *
+ * @param {object} event The Cloud Functions event.
+ */
+exports.helloPubSubAttributes = functions.pubsub.topic('yet-another-topic-name').onPublish(event => {
+  // [START readAttributes]
+  const pubSubMessage = event.data;
+  // Get the `name` attribute of the message.
+  const name = pubSubMessage.attributes.name;
+  // [END readAttributes]
+  // Print the message in the logs.
+  console.log(`Hello ${name || 'World'}!`);
+});

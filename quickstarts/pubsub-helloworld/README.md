@@ -53,7 +53,7 @@ Deploy to Firebase using the following command:
 firebase deploy
 ```
 
-This deploys and activate the date Function.
+This deploys and activate the PubSub hello World Functions.
 
 > The first time you call `firebase deploy` on a new project with Functions will take longer than usual.
 
@@ -63,7 +63,23 @@ This deploys and activate the date Function.
 Once deployed, to try the sample use the `glcoud` CLI to publish a message to the `topic-name` topic:
 
 ```
-gcloud alpha pubsub topics publish [YOUR_TOPIC_NAME] 'YourName'
+gcloud alpha pubsub topics publish topic-name 'YourName'
+```
+
+Open the Functions logs in the Firebase Console, you should see a messages that reads "Hello YourName".
+
+Then you can also publish a message to the `another-topic-name` topic using JSON data:
+
+```
+gcloud alpha pubsub topics publish another-topic-name '{"name":"YourName"}'
+```
+
+Open the Functions logs in the Firebase Console, you should see a messages that reads "Hello YourName".
+
+Last you can also publish a message to the `yet-another-topic-name` topic using JSON data:
+
+```
+gcloud alpha pubsub topics publish yet-another-topic-name --attribute name=YourName
 ```
 
 Open the Functions logs in the Firebase Console, you should see a messages that reads "Hello YourName".
