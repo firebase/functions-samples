@@ -16,28 +16,24 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const firebaseAdmin = require('firebase-admin');
-const serviceAccount = require('./service-account.json');
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
-});
-const google = require('googleapis');
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 const rp = require('request-promise');
 const promisePool = require('es6-promise-pool');
 const PromisePool = promisePool.PromisePool;
+// Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 
 /**
  * When requested this Function will delete every user accounts that has been inactive for 30 days.
  * The request needs to be authorized by passing a 'key' query parameter in the URL. This key must
- * match a key set as an environment variable using `firebase env:set cron.key="YOUR_KEY"`.
+ * match a key set as an environment variable using `firebase functions:config:set cron.key="YOUR_KEY"`.
  */
 exports.accountcleanup = functions.https().onRequest((req, res) => {
   const key = req.query.key;
 
   // Exit if the keys don't match
-  if (key !== functions.env.cron.key) {
+  if (key !== functions.config().cron.key) {
     console.log('The key provided in the request does not match the key set in the environment. Check that', key,
         'matches the cron.key attribute in `firebase env:get`');
     res.status(403).send('Security key does not match. Make sure your "key" URL query parameter matches the ' +
@@ -57,7 +53,7 @@ exports.accountcleanup = functions.https().onRequest((req, res) => {
         const userToDelete = inactiveUsers.pop();
 
         // Delete the inactive user.
-        return firebaseAdmin.auth().deleteUser(userToDelete.uid).then(() => {
+        return admin.auth().deleteUser(userToDelete.uid).then(() => {
           console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
         }).catch(error => {
           console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
@@ -84,7 +80,7 @@ function getUsers(userIds = [], nextPageToken, accessToken) {
         nextPageToken: nextPageToken,
         maxResults: 1000
       },
-      json: true // Automatically stringifies the body to JSON
+      json: true
     };
 
     return rp(options).then(resp => {
@@ -100,23 +96,17 @@ function getUsers(userIds = [], nextPageToken, accessToken) {
 }
 
 /**
- * Returns an access token using the Service accounts credentials.
+ * Returns an access token using the Google Cloud metadata server.
  */
 function getAccessToken(accessToken) {
   if (accessToken) {
     return Promise.resolve(accessToken);
   }
 
-  const jwtClient = new google.auth.JWT(serviceAccount.client_email, null,
-          serviceAccount.private_key, ['https://www.googleapis.com/auth/firebase'], null);
+  const options = {
+    uri: 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',
+    header: {'Metadata-Flavor': 'Google'}
+  };
 
-  return new Promise((resolve, reject) => {
-    jwtClient.authorize((error, token) => {
-      if (error) {
-        console.error('Error while fetching access token for Service accounts', error);
-        return reject();
-      }
-      resolve(token.access_token);
-    });
-  });
+  return rp(options).then(resp => resp.access_token);
 }

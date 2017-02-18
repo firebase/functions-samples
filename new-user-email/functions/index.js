@@ -21,12 +21,10 @@ const nodemailer = require('nodemailer');
 // See: https://nodemailer.com/
 // For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/
 // TODO: Make sure you configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
+const gmailEmail = encodeURIComponent(functions.config().gmail.email);
+const gmailPassword = encodeURIComponent(functions.config().gmail.password);
 const mailTransport = nodemailer.createTransport(
-    'smtps://' +
-    encodeURIComponent(functions.config().gmail.email) +
-    ':' +
-    encodeURIComponent(functions.config().gmail.password) +
-    '@smtp.gmail.com');
+    `smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com`);
 
 // Your company name to include in the emails
 // TODO: Change this to your company name and also customize the email sent.

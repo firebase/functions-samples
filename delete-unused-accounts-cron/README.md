@@ -27,7 +27,7 @@ The function triggers when the HTTP URL of the Function is requested.
 Set the `cron.key` Google Cloud environment variables to a randomly generated key, this will be used to authorize requests coming from the 3rd-party cron service. For this use:
 
 ```bash
-firebase env:set cron.key="YOUR_KEY"
+firebase functions:config:set cron.key="YOUR_KEY"
 ```
 
 You can generate a random key, for instance, by running:
