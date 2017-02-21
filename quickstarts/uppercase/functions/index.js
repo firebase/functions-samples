@@ -27,14 +27,14 @@ admin.initializeApp(functions.config().firebase);
 // Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 // [START addMessageTrigger]
-exports.addMessage = functions.https.onRequest((request, response) => {
+exports.addMessage = functions.https.onRequest((req, res) => {
 // [END addMessageTrigger]
   // Grab the text parameter.
-  const original = request.query.text;
+  const original = req.query.text;
   // Push it into the Realtime Database then send a response
   admin.database().ref('/messages').push({original: original}).then(snapshot => {
     // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-    response.redirect(303, snapshot.ref);
+    res.redirect(303, snapshot.ref);
   });
 });
 // [END addMessage]
