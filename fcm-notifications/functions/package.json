@@ -2,10 +2,7 @@
   "name": "fcm-notifications-functions",
   "description": "Send FCM notifications Firebase Functions sample",
   "dependencies": {
-    "firebase": "^3.6",
-    "firebase-admin": "^4.0.1",
+    "firebase-admin": "^4.1.1",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
-    "request": "^2.78.0",
-    "request-promise-native": "^1.0.3"
   }
 }

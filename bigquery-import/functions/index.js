@@ -21,11 +21,11 @@ const bigquery = require('@google-cloud/bigquery');
 /**
  * Writes all logs from the Realtime Database into bigquery.
  */
-exports.addtobigquery = functions.database().path('/logs/$logid').onWrite(event => {
+exports.addtobigquery = functions.database.ref('/logs/$logid').onWrite(event => {
   // TODO: Make sure you set the `bigquery.datasetName` Google Cloud environment variable.
-  const dataset = bigquery.dataset(functions.env.bigquery.datasetname);
+  const dataset = bigquery.dataset(functions.config().bigquery.datasetname);
   // TODO: Make sure you set the `bigquery.tableName` Google Cloud environment variable.
-  const table = dataset.table(functions.env.bigquery.tablename);
+  const table = dataset.table(functions.config().bigquery.tablename);
 
   return table.insert({
     ID: event.data.key,

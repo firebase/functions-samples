@@ -36,8 +36,8 @@ function linkedInClient() {
   // Instagram OAuth 2 setup
   // TODO: Configure the `linkedIn.clientId` and `linkedIn.clientSecret` Google Cloud environment variables.
   return require('node-linkedin')(
-      functions.env.linkedIn.clientId,
-      functions.env.linkedIn.clientSecret,
+      functions.config().linkedIn.clientId,
+      functions.config().linkedIn.clientSecret,
       `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
 }
 
@@ -45,7 +45,7 @@ function linkedInClient() {
  * Redirects the User to the LinkedIn authentication consent screen. ALso the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https().onRequest((req, res) => {
+exports.redirect = functions.https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   cookieParser()(req, res, () => {
@@ -62,7 +62,7 @@ exports.redirect = functions.https().onRequest((req, res) => {
  * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
  * 'callback' query parameter.
  */
-exports.token = functions.https().onRequest((req, res) => {
+exports.token = functions.https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   try {

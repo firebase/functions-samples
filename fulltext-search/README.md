@@ -45,5 +45,5 @@ Create an Algolia account at [www.algolia.com](https://www.algolia.com/)
 Set the `algolia.key` and `algolia.password` Google Cloud environment variables to match the Algolia Key and Secret of your account. For this use:
 
 ```bash
-firebase env:set algolia.key="mykey" algolia.secret="secret"
+firebase functions:config:set algolia.key="mykey" algolia.secret="secret"
 ```

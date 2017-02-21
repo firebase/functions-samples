@@ -19,18 +19,20 @@ const functions = require('firebase-functions');
 const nodemailer = require('nodemailer');
 
 // Sends an email confirmation when a user changes his mailing list subscription.
-exports.sendEmailConfirmation = functions.database().path('/users/{uid}').onWrite(event => {
+exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(event => {
   // Configure the email transport using the default SMTP transport and a GMail account.
   // See: https://nodemailer.com/
   // For other types of transports (Amazon SES, Sendgrid...) see https://nodemailer.com/2-0-0-beta/setup-transporter/
   // TODO: Make sure you configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
+  const gmailEmail = encodeURIComponent(functions.config().gmail.email);
+  const gmailPassword = encodeURIComponent(functions.config().gmail.password);
   const mailTransport = nodemailer.createTransport(
-      `smtps://${encodeURIComponent(functions.env.gmail.email)}:${encodeURIComponent(functions.env.gmail.password)}@smtp.gmail.com`);
+      `smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com`);
 
-  const data = event.data;
-  const val = data.val();
+  const snapshot = event.data;
+  const val = snapshot.val();
 
-  if (!data.changed('subscribedToMailingList')) {
+  if (!snapshot.changed('subscribedToMailingList')) {
     return;
   }
 

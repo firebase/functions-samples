@@ -16,6 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 const gcs = require('@google-cloud/storage')();
 const exec = require('child-process-promise').exec;
 const LOCAL_TMP_FOLDER = '/tmp/';
@@ -24,27 +26,26 @@ const LOCAL_TMP_FOLDER = '/tmp/';
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
  * output of ImageMagick's `identify -verbose`) is saved in the Realtime Database.
  */
-exports.metadata = functions.storage().onChange(event => {
-  console.log(event);
-
-  const filePath = event.data.name;
+exports.metadata = functions.storage.object().onChange(event => {
+  const object = event.data;
+  const filePath = object.name;
   const fileName = filePath.split('/').pop();
   const tempLocalFile = `${LOCAL_TMP_FOLDER}${fileName}`;
 
   // Exit if this is triggered on a file that is not an image.
-  if (!event.data.contentType.startsWith('image/')) {
+  if (!object.contentType.startsWith('image/')) {
     console.log('This is not an image.');
     return;
   }
 
   // Exit if this is a move or deletion event.
-  if (event.data.resourceState === 'not_exists') {
+  if (object.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
     return;
   }
 
   // Download file from bucket.
-  const bucket = gcs.bucket(event.data.bucket);
+  const bucket = gcs.bucket(object.bucket);
   return bucket.file(filePath).download({
     destination: tempLocalFile
   }).then(() => {
@@ -52,7 +53,7 @@ exports.metadata = functions.storage().onChange(event => {
     return exec(`identify -verbose "${tempLocalFile}"`).then(result => {
       const metadata = imageMagickOutputToObject(result.stdout);
       // Save metadata to realtime datastore.
-      return functions.app.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata).then(() => {
+      return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata).then(() => {
         console.log('Wrote to:', filePath, 'data:', metadata);
       });
     });

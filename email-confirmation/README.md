@@ -37,7 +37,7 @@ The function triggers on changes to `/users/$uid` and exits if there are no chan
 Set the `gmail.email` and `gmail.password` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
 
 ```bash
-firebase env:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
+firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
 ```
 
 This sample comes with a web-based UI for testing the function. To set it up:

@@ -26,5 +26,5 @@ As an example we'll be using a simple logs database structure:
 Set the `bigquery.datasetName` and `bigquery.tableName` Google Cloud environment variables to match the Dataset name and the Table name where you want the logs written to. For this use:
 
 ```bash
-firebase env:set bigquery.datasetName="bar" bigquery.tableName="baz"
+firebase functions:config:set bigquery.datasetName="bar" bigquery.tableName="baz"
 ```

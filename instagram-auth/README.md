@@ -10,10 +10,9 @@ Create and setup the Firebase project:
  1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed to be able to perform HTTP requests to external services from a Cloud Function.
  1. Copy the Web initialisation snippet from **Firebase Console > Overview > Add Firebase to your web app** and paste it in `public/index.html` and `public/popup.html` in lieu of the placeholders (where the `TODO(DEVELOPER)` are located).
 
-Create and provide a Service Account's keys:
+Create and provide a Service Account's credentials:
  1. Create a Service Accounts file as described in the [Server SDK setup instructions](https://firebase.google.com/docs/server/setup#add_firebase_to_your_app).
  1. Save the Service Account credential file as `./functions/service-account.json`
-
 
 Create and setup your Instagram app:
  1. Register an Instagram app on [Instagram for Developers](https://www.instagram.com/developer/). You'll need to **Register a New Client**.
@@ -21,7 +20,7 @@ Create and setup your Instagram app:
  1. Copy the **Client ID** and **Client Secret** of your Instagram app and use them to set the `instagram.clientId` and `instagram.clientSecret` Google Cloud environment variables. For this use:
 
 ```bash
-firebase env:set instagram.clientId="yourClientID" instagram.clientSecret="yourClientSecret"
+firebase functions:config:set instagram.clientId="yourClientID" instagram.clientSecret="yourClientSecret"
 ```
 
  > Make sure the Instagram Client Secret is always kept secret. For instance do not save it in your version control system.

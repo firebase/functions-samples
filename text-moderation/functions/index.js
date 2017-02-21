@@ -17,11 +17,12 @@
 
 const functions = require('firebase-functions');
 const capitalizeSentence = require('capitalize-sentence');
-const badWordsFilter = require('bad-words')();
+const Filter = require('bad-words');
+const badWordsFilter = new Filter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
-exports.moderator = functions.database()
-    .path('/messages/{messageId}').onWrite(event => {
+exports.moderator = functions.database
+    .ref('/messages/{messageId}').onWrite(event => {
       const message = event.data.val();
 
       if (message && !message.sanitized) {

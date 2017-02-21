@@ -2,7 +2,7 @@
   "name": "minimal-webhook-functions",
   "description": "Queries a Webhook Firebase Functions sample",
   "dependencies": {
-    "firebase": "^3.6",
+    "firebase-admin": "^4.1.1",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
     "request-promise": "^2.0.0"
   }
