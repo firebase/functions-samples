@@ -28,8 +28,9 @@ const JPEG_EXTENSION = 'jpg';
  * When an image is uploaded in the Storage bucket it is converted to JPEG automatically using
  * ImageMagick.
  */
-exports.imageToJPG = functions.storage().onChange(event => {
-  const filePath = event.data.name;
+exports.imageToJPG = functions.storage.object().onChange(event => {
+  const object = event.data;
+  const filePath = object.name;
   const filePathSplit = filePath.split('/');
   const fileName = filePathSplit.pop();
   const fileNameSplit = fileName.split('.');
@@ -42,19 +43,19 @@ exports.imageToJPG = functions.storage().onChange(event => {
   const tempLocalJPEGFile = `${LOCAL_TMP_FOLDER}${JPEGFilePath}`;//
 
   // Exit if this is triggered on a file that is not an image.
-  if (!event.data.contentType.startsWith('image/')) {
+  if (!object.contentType.startsWith('image/')) {
     console.log('This is not an image.');
     return;
   }
 
   // Exit if the image is already a JPEG.
-  if (event.data.contentType.startsWith('image/jpeg')) {
+  if (object.contentType.startsWith('image/jpeg')) {
     console.log('Already a JPEG.');
     return;
   }
 
   // Exit if this is a move or deletion event.
-  if (event.data.resourceState === 'not_exists') {
+  if (object.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
     return;
   }
@@ -62,7 +63,7 @@ exports.imageToJPG = functions.storage().onChange(event => {
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {
     // Download file from bucket.
-    const bucket = gcs.bucket(event.data.bucket);
+    const bucket = gcs.bucket(object.bucket);
     return bucket.file(filePath).download({
       destination: tempLocalFile
     }).then(() => {

@@ -2,7 +2,7 @@
   "name": "fulltext-search-functions",
   "description": "Full Text Search with Algolia Firebase Functions sample",
   "dependencies": {
-    "firebase": "^3.6",
+    "firebase-admin": "^4.1.1",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
     "algoliasearch": "^3.10.2"
   }

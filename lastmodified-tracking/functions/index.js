@@ -16,9 +16,11 @@
 'use strict';
 
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
  */
-exports.touch = functions.database().path('/chat/$message').onWrite(
-    event => functions.app.database().ref('/lastmodified').set(event.timestamp));
+exports.touch = functions.database.ref('/chat/$message').onWrite(
+    event => admin.database().ref('/lastmodified').set(event.timestamp));

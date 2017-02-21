@@ -29,7 +29,7 @@ const MAX_CONCURRENT = 3;
  * The request needs to be authorized by passing a 'key' query parameter in the URL. This key must
  * match a key set as an environment variable using `firebase functions:config:set cron.key="YOUR_KEY"`.
  */
-exports.accountcleanup = functions.https().onRequest((req, res) => {
+exports.accountcleanup = functions.https.onRequest((req, res) => {
   const key = req.query.key;
 
   // Exit if the keys don't match
@@ -88,9 +88,9 @@ function getUsers(userIds = [], nextPageToken, accessToken) {
         return userIds;
       }
       if (resp.nextPageToken) {
-        return getUsers(resp.users, resp.nextPageToken, accessToken);
+        return getUsers(userIds.concat(resp.users), resp.nextPageToken, accessToken);
       }
-      return resp.users;
+      return userIds.concat(resp.users);
     });
   });
 }

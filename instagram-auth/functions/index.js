@@ -38,8 +38,8 @@ function instagramOAuth2Client() {
   // TODO: Configure the `instagram.clientId` and `instagram.clientSecret` Google Cloud environment variables.
   const credentials = {
     client: {
-      id: functions.env.instagram.clientId,
-      secret: functions.env.instagram.clientSecret
+      id: functions.config().instagram.clientId,
+      secret: functions.config().instagram.clientSecret
     },
     auth: {
       tokenHost: 'https://api.instagram.com',
@@ -53,7 +53,7 @@ function instagramOAuth2Client() {
  * Redirects the User to the Instagram authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https().onRequest((req, res) => {
+exports.redirect = functions.https.onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   cookieParser()(req, res, () => {
@@ -76,7 +76,7 @@ exports.redirect = functions.https().onRequest((req, res) => {
  * The Firebase custom auth token, display name, photo URL and Instagram acces token are sent back in a JSONP callback
  * function with function name defined by the 'callback' query parameter.
  */
-exports.token = functions.https().onRequest((req, res) => {
+exports.token = functions.https.onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   try {
