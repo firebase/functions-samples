@@ -31,7 +31,7 @@ const THUMB_PREFIX = 'thumb_';
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
  */
-exports.generateThumbnail = functions.storage().onChange(event => {
+exports.generateThumbnail = functions.storage.object().onChange(event => {
   const filePath = event.data.name;
   const filePathSplit = filePath.split('/');
   const fileName = filePathSplit.pop();
