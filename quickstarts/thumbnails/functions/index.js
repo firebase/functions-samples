@@ -30,10 +30,12 @@ const exec = require('child-process-promise').exec;
 exports.generateThumbnail = functions.storage.object().onChange(event => {
 // [END generateThumbnailTrigger]
   // [START eventAttributes]
-  const fileBucket = event.bucket; // The Storage bucket that contains the file.
-  const filePath = event.path; // File path in the bucket.
-  const contentType = event.contentType; // File content type.
-  const resourceState = event.resourceState; // The resourceState is 'exists' or 'not_exits' (for file/folder deletions).
+  const object = event.data; // The Storage object.
+
+  const fileBucket = object.bucket; // The Storage bucket that contains the file.
+  const filePath = object.path; // File path in the bucket.
+  const contentType = object.contentType; // File content type.
+  const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exits' (for file/folder deletions).
   // [END eventAttributes]
 
   // [START stopConditions]
