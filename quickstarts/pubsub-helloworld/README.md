@@ -1,22 +1,22 @@
 # Firebase SDK for Cloud Functions Quickstart - PubSub trigger
 
-This quickstart demonstrates using **Firebase SDK for Cloud Functions** setup with a PubSub trigger.
+This quickstart demonstrates how to setup a PubSub triggered Cloud Function using the **Firebase SDK for Cloud Functions**.
 
 
 ## Introduction
 
-We'll show a basic PubSub triggered Functions.
+We'll deploy a PubSub triggered Functions that prints out a Hello World message to the Cloud Logs.
 
 Further reading:
 
- - [Read more about the Firebase SDK for Cloud Functions](https://firebase.google.com/preview/functions/)
+ - [Read more about the Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions/)
 
 
 ## Initial setup, build tools and dependencies
 
 ### 1. Clone this repo
 
-Clone or download this repo and open the `http` directory.
+Clone or download this repo and open the `quickstarts/pubsub-helloworld` directory.
 
 
 ### 2. Create a Firebase project and configure the quickstart
@@ -28,7 +28,7 @@ Set up your Firebase project by running `firebase use --add`, select your Projec
 
 ### 3. Install the Firebase CLI and enable Functions on your Firebase CLI
 
-You need to have installed the Firebase CLI. If you haven't already run:
+You need to have installed the Firebase CLI. If you haven't run:
 
 ```bash
 npm install -g firebase-tools
@@ -45,7 +45,7 @@ First you need to install the `npm` dependencies of the functions:
 cd functions && npm install; cd ..
 ```
 
-This installs locally the Firebase SDK and the Firebase SDK for Cloud Functions.
+This installs locally the Firebase Admin SDK and the Firebase SDK for Cloud Functions.
 
 Deploy to Firebase using the following command:
 

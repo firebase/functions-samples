@@ -23,8 +23,6 @@ const functions = require('firebase-functions');
 /**
  * Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
  * topic.
- *
- * @param {object} event The Cloud Functions event.
  */
 // [START trigger]
 exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish(event => {
@@ -42,8 +40,6 @@ exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish(event => {
 /**
  * Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
  * topic as JSON.
- *
- * @param {object} event The Cloud Functions event.
  */
 exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish(event => {
   // [START readJson]
@@ -63,8 +59,6 @@ exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish
 /**
  * Cloud Function to be triggered by Pub/Sub that logs a message using the data attributes
  * published to the topic.
- *
- * @param {object} event The Cloud Functions event.
  */
 exports.helloPubSubAttributes = functions.pubsub.topic('yet-another-topic-name').onPublish(event => {
   // [START readAttributes]
