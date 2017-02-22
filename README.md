@@ -1,11 +1,11 @@
 # Firebase SDK for Cloud Functions Samples Library
 
-This repository contains a collection of samples showcasing some typical uses of Cloud Functions using the Firebase SDK for CLoud Functions.
+This repository contains a collection of samples showcasing some typical uses of Cloud Functions using the Firebase SDK for Cloud Functions.
 
 
 ## Prerequisites
 
-To learn how to get started with the Firebase SDKL for Cloud Functions try the quickstart samples and have a look at [the documentation](https://firebase.google.com/preview/functions/).
+To learn how to get started with the Firebase SDK for Cloud Functions try the quickstart samples and have a look at [the documentation](https://firebase.google.com/preview/functions/).
 
 
 ## Use Cases and Samples
