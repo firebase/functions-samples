@@ -35,12 +35,12 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
   console.log('We have a new follower UID:', followerUid, 'for user:', followerUid);
 
   // Get the list of device notification tokens.
-  const getNotificationTokensPromise = admin.database().ref(`/users/${followedUid}/notificationTokens`).once('value');
+  const getDeviceTokensPromise = admin.database().ref(`/users/${followedUid}/notificationTokens`).once('value');
 
   // Get the follower profile.
   const getFollowerProfilePromise = admin.auth().getUser(followerUid);
 
-  return Promise.all([getNotificationTokensPromise, getFollowerProfilePromise]).then(results => {
+  return Promise.all([getDeviceTokensPromise, getFollowerProfilePromise]).then(results => {
     const tokensSnapshot = results[0];
     const follower = results[1];
 

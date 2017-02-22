@@ -25,7 +25,7 @@ This sample comes with a simple web-based UI which code is in [public](public) d
 
  1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
  1. Enable the **Google** Provider in the **Auth** section.
- 1. Clone or download this repo and open the `quickstarts/pubsub-helloworld` directory.
+ 1. Clone or download this repo and open the `quickstarts/email-users` directory.
  1. Paste the Web initialization snippet from: **Firebase Console > Overview > Add Firebase to your web app** in the `public/index.html` where the `TODO` is located.
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
@@ -33,7 +33,7 @@ This sample comes with a simple web-based UI which code is in [public](public) d
  1. Set the `gmail.email` and `gmail.password` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
 
     ```bash
-    firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
+    firebase functions:config:set gmail.email='myusername@gmail.com' gmail.password='secretpassword'
     ```
 
 
