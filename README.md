@@ -14,19 +14,23 @@ This repository contains the following samples:
 
 ### [Realtime database trigger quickstart: Uppercaser](/quickstarts/uppercase)
 
-This quickstart sample demonstrates using **Cloud Functions** with a **Firebase Realtime Database** trigger. The function will uppercase messages written to the datastore.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database events**. The function uppercase messages written to the datastore.
 
 ### [HTTPS trigger quickstart: Time Server](/quickstarts/time)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **HTTPS requests**. The function will return the current server time and allows for date time formatting.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **HTTPS requests**. The function returns the current server time and allows for date time formatting.
 
 ### [Cloud Storage trigger quickstart: Thumbnail generator](/quickstarts/thumbnails)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. The function will generate a thumbnail of uploaded images.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. The function generates a thumbnail of uploaded images.
+
+### [Auth trigger quickstart: Welcome Email](/quickstarts/email-users)
+
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Auth events**. The functions sends a Welcome email when user accounts are created (or when users signs-in using an Identity Provider for the first time) and sends a Goodbye email when user accounts ares deleted.
 
 ### [PubSub trigger quickstart: Hello World](/quickstarts/thumbnails)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **PubSub events**. The function will log the PubSub payload in a Hello world message.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **PubSub events**. The functions log the PubSub payload in a Hello world message.
 
 ### [Send FCM notifications](fcm-notifications)
 
@@ -126,12 +130,6 @@ Uses an Realtime Database trigger.
 ### [User Data Cleanup](/user-data-cleanup)
 
 Deletes all associated user data that's on the Realtime database when a user deletes his Firebase account.
-
-Uses an Auth trigger.
-
-### [Welcome Email](/new-user-email)
-
-Sends a Welcome email when a user signs-in for the first time.
 
 Uses an Auth trigger.
 
