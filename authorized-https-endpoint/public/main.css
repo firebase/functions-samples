@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2016 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,35 +28,19 @@ html, body {
 .mdl-layout__header-row {
   padding: 0;
 }
-#message-form {
-  display: flex;
-  flex-direction: column;
-}
-#message-form button {
-  max-width: 300px;
-}
-#message-list {
-  padding: 0;
-  width: 100%;
-}
-#message-list > div {
-  padding: 15px;
-  border-bottom: 1px #f1f1f1 solid;
-}
 h3 {
   background: url('firebase-logo.png') no-repeat;
   background-size: 40px;
   padding-left: 50px;
 }
 #demo-signed-out-card,
-#demo-signed-in-card,
-#demo-subscribe-button,
-#demo-unsubscribe-button,
-#demo-subscribed-text-container,
-#demo-unsubscribed-text-container {
+#demo-signed-in-card {
   display: none;
 }
-#demo-subscribe-button,
-#demo-unsubscribe-button {
-  margin-right: 20px;
+#demo-url,
+#demo-response {
+  font-weight: bold;
+}
+#demo-signed-in-card {
+  width: 600px;
 }

@@ -32,9 +32,19 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **PubSub events**. The functions log the PubSub payload in a Hello world message.
 
+### [Authorized HTTP Endpoint](/authorized-https-endpoint)
+
+This samples shows how to restrict an HTTPS Function to only the Firebase users of your app.
+Only users who pass a valid Firebase ID token as a Bearer token in the Authorization header of the HTTP request are authorized to use the function.
+Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
+
+Uses an HTTP trigger.
+
 ### [Send FCM notifications](fcm-notifications)
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification from a Realtime Database triggered Function when users get new followers. The sample also features a Web UI to experience the FCM notification.
+
+Uses a Realtime Database trigger.
 
 ### [Authorize with LinkedIn](/linkedin-auth)
 

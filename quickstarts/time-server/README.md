@@ -16,7 +16,7 @@ Further reading:
 
 ### 1. Clone this repo
 
-Clone or download this repo and open the `http` directory.
+Clone or download this repo and open the `quickstarts/time-server` directory.
 
 
 ### 2. Create a Firebase project and configure the quickstart
@@ -28,7 +28,7 @@ Set up your Firebase project by running `firebase use --add`, select your Projec
 
 ### 3. Install the Firebase CLI and enable Functions on your Firebase CLI
 
-You need to have installed the Firebase CLI. If you haven't already run:
+You need to have installed the Firebase CLI. If you haven't run:
 
 ```bash
 npm install -g firebase-tools
