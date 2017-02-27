@@ -16,7 +16,7 @@ This repository contains the following samples:
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database events**. The function uppercase messages written to the datastore.
 
-### [HTTPS trigger quickstart: Time Server](/quickstarts/time)
+### [HTTPS trigger quickstart: Time Server](/quickstarts/time-server)
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **HTTPS requests**. The function returns the current server time and allows for date time formatting.
 
