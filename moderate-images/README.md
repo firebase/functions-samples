@@ -23,8 +23,6 @@ The function triggers on upload of any file to your Firebase project's default C
 Create a Firebase project on the [Firebase Console](https://console.firebase.google.com).
 Enable Billing on your project by switching to the Blaze or Candle plan then visit the **Storage** tab.
 
-Replace the placeholder `FIREBASE_STORAGE_BUCKET_NAME` with the name of the Firebase Storage bucket which can be found in the **Storage** tab of your Firebase project's console. It is typically of the form `<project-id>.appspot.com`.
-
 In your [Google Cloud Console](https://console.cloud.google.com/apis/api/vision.googleapis.com/overview?project=_) enable the **Google Cloud Vision API**.
 
 
