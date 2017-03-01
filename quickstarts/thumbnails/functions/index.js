@@ -33,7 +33,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
-  const filePath = object.path; // File path in the bucket.
+  const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exits' (for file/folder deletions).
   // [END eventAttributes]
