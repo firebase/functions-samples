@@ -18,10 +18,10 @@ Create and setup your LinkedIn app:
  1. Create a LinkedIn app in the [LinkedIn Developers website](https://www.linkedin.com/developer/apps/).
  1. Add the URL `https://<application-id>.firebaseapp.com/popup.html` to the
     **OAuth 2.0** > **Authorized Redirect URLs** of your LinkedIn app.
- 1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and use them to set the `linkedIn.clientId` and `linkedIn.clientSecret` Google Cloud environment variables. For this use:
+ 1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and use them to set the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables. For this use:
 
 ```bash
-firebase functions:config:set linkedIn.clientId="yourClientID" linkedIn.clientSecret="yourClientSecret"
+firebase functions:config:set linkedin.client_id="yourClientID" linkedin.client_secret="yourClientSecret"
 ```
 
  > Make sure the LinkedIn Client Secret is always kept secret. For instance do not save this in your version control system.
@@ -35,13 +35,13 @@ Deploy your project:
 
 Open the sample's website by using `firebase open hosting:site` or directly accessing `https://<project-id>.firebaseapp.com/`.
 
-Click on the **Sign in with LinkedIn** button and a popup window will appear that will show the Linked In authentication consent screen. Sign In and/or authorize the authentication request.
+Click on the **Sign in with LinkedIn** button and a popup window will appear that will show the LinkedIn authentication consent screen. Sign In and/or authorize the authentication request.
 
-The website should display your name, email and profile pic from Linked In. At this point you are authenticated in Firebase and can use the database/hosting etc...
+The website should display your name, email and profile pic from LinkedIn. At this point you are authenticated in Firebase and can use the database/hosting etc...
 
 ## Workflow and design
 
-When Clicking the **Sign in with LinkedIn** button a popup is shown which redirects users to the `redirect` Function URL.
+When clicking the **Sign in with LinkedIn** button a popup is shown which redirects users to the `redirect` Function URL.
 
 The `redirect` Function then redirects the user to the LinkedIn OAuth 2.0 consent screen where (the first time only) the user will have to grant approval. Also the `state` cookie is set on the client with the value of the `state` URL query parameter to check against later on.
 

@@ -17,10 +17,10 @@ Create and provide a Service Account's credentials:
 Create and setup your Instagram app:
  1. Register an Instagram app on [Instagram for Developers](https://www.instagram.com/developer/). You'll need to **Register a New Client**.
  1. Once Your app is created make sure you specify your app's callback URL in the list of **Valid redirect URIs** of your Instagram app. You should whitelist `https://localhost:5000/popup.html` for local development and if you deploy on App Engine (See Deploy section below) you should whitelist the URL `https://<application-id>.firebaseapp.com/popup.html`.
- 1. Copy the **Client ID** and **Client Secret** of your Instagram app and use them to set the `instagram.clientId` and `instagram.clientSecret` Google Cloud environment variables. For this use:
+ 1. Copy the **Client ID** and **Client Secret** of your Instagram app and use them to set the `instagram.client_id` and `instagram.client_secret` Google Cloud environment variables. For this use:
 
 ```bash
-firebase functions:config:set instagram.clientId="yourClientID" instagram.clientSecret="yourClientSecret"
+firebase functions:config:set instagram.client_id="yourClientID" instagram.client_secret="yourClientSecret"
 ```
 
  > Make sure the Instagram Client Secret is always kept secret. For instance do not save it in your version control system.
@@ -40,7 +40,7 @@ The website should display your name and profile pic from Instagram. At this poi
 
 ## Workflow and design
 
-When Clicking the **Sign in with Instagram** button a popup is shown which redirects users to the `redirect` Function URL.
+When clicking the **Sign in with Instagram** button a popup is shown which redirects users to the `redirect` Function URL.
 
 The `redirect` Function then redirects the user to the Instagram OAuth 2.0 consent screen where (the first time only) the user will have to grant approval. Also the `state` cookie is set on the client with the value of the `state` URL query parameter to check against later on.
 
