@@ -66,6 +66,7 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
     // Send notifications to all tokens.
     return admin.messaging().sendToDevice(tokens, payload).then(response => {
       // For each message check if there was an error.
+      const tokensToRemove = [];
       response.results.forEach((result, index) => {
         const error = result.error;
         if (error) {
@@ -73,10 +74,11 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
           // Cleanup the tokens who are not registered anymore.
           if (error.code === 'messaging/invalid-registration-token' ||
               error.code === 'messaging/registration-token-not-registered') {
-            return tokensSnapshot.ref.child(tokens[index]).remove();
+            tokensToRemove.push(tokensSnapshot.ref.child(tokens[index]).remove());
           }
         }
       });
+      return Promise.all(tokensToRemove);
     });
   });
 });
