@@ -1,0 +1,18 @@
+{
+  "versionLabel": "1.0.0",
+  "agentInfo": {
+    "languageCode": "en-US",
+    "projectId": "hello",
+    "voiceName": "male_1"
+  },
+  "actions": [
+    {
+      "initialTrigger": {
+        "intent": "assistant.intent.action.MAIN"
+      },
+      "httpExecution": {
+        "url": "YOUR_ENDPOINT_URL"
+      }
+    }
+  ]
+}
