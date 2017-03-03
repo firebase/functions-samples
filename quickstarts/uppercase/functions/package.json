@@ -3,6 +3,15 @@
   "description": "Uppercaser Firebase Functions Quickstart sample",
   "dependencies": {
     "firebase-admin": "^4.1.1",
-    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz"
+    "firebase-functions": "https://storage.googleapis.com/functions-dev-preview/firebase-functions-0.5.1-preview2.tgz"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.7"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
   }
 }
