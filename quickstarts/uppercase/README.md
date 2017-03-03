@@ -14,7 +14,7 @@ This sample app does two things:
 To deploy and test the sample:
 
  - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com)
- - Enable Billing on your Firebase project
+ - Install the required dependencies by running `npm install` in the `functions` directory
  - Deploy your project's code using `firebase deploy`
  - Create a message by opening the following URL in your browser: https://us-central1-[MY_PROJECT].cloudfunctions.net/addMessage?text=uppercaseme (Replace [MY_PROJECT] by your project ID and you can change the message "uppercaseme").
 
