@@ -17,11 +17,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const credentials = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(credentials),
-  databaseURL: `https://${credentials.project_id}.firebaseio.com`
-});
+admin.initializeApp(functions.config().firebase);
 const express = require('express');
 const cors = require('cors')({origin: true});
 const app = express();

@@ -17,8 +17,6 @@ This sample comes with a simple web-based UI which code is in [public](public) d
  1. Enable the **Google** Provider in the **Auth** section.
  1. Clone or download this repo and open the `authenticated-https-endpoint` directory.
  1. Paste the Web initialization snippet from: **Firebase Console > Overview > Add Firebase to your web app** in the `public/index.html` where the `TODO` is located.
- 1. Download a Service Account credentials from: **Firebase Console > ⚙ > Project Settings > SERVICE ACCOUNTS > GENERATE NEW PRIVATE KEY** and save the file as `functions/service-account.json`.
- 1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
