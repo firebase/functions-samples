@@ -14,7 +14,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Trigger rules
 
-The function triggers on changes to `app_update` Firebase Analytics event..
+The function triggers on changes to `app_update` Firebase Analytics events. For other automatically logged events see: https://support.google.com/firebase/answer/6317485
 
 
 ## Setting up the sample

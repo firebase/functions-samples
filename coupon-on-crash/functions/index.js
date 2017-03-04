@@ -24,7 +24,7 @@ admin.initializeApp(functions.config().firebase);
  * After a user has experienced a crash of the app. Send them a coupon via FCM.
  */
 // [START trigger]
-exports.sendAppUpdateSurvey = functions.analytics.event('app_exception').onLog(event => {
+exports.sendCouponOnCrash = functions.analytics.event('app_exception').onLog(event => {
 // [END trigger]
   // [START attributes]
   const user = event.data.user;

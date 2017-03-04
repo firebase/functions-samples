@@ -29,21 +29,26 @@ const mailTransport = nodemailer.createTransport(
 
 // TODO: Create yor own survey.
 const LINK_TO_SURVEY = 'https://goo.gl/forms/IdurnOZ66h3FtlO33';
+const LATEST_VERSION = '2.0';
 
 /**
  * After a user has updated the app. Send them a survey to compare the app with the old version.
  */
 exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog(event => {
   const uid = event.data.user.userId;
+  const appVerion = event.data.user.appInfo.appVersion;
 
-  // Fetch the email of the user. In this sample we assume that the app is using Firebase Auth and
-  // has set the Firebase Analytics User ID to be the same as the Firebase Auth uid using the
-  // setUserId API.
-  return admin.auth().getUser(uid).then(user => {
-    const email = user.email;
-    const name = user.displayName;
-    return sendSurveyEmail(email, name);
-  });
+  // Check that the user has indeed upgraded to the latest version.
+  if (appVerion === LATEST_VERSION) {
+    // Fetch the email of the user. In this sample we assume that the app is using Firebase Auth and
+    // has set the Firebase Analytics User ID to be the same as the Firebase Auth uid using the
+    // setUserId API.
+    return admin.auth().getUser(uid).then(user => {
+      const email = user.email;
+      const name = user.displayName;
+      return sendSurveyEmail(email, name);
+    });
+  }
 });
 
 /**

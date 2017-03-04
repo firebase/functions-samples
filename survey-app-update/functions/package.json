@@ -1,6 +1,6 @@
 {
-  "name": "bigquery-import-functions",
-  "description": "Import data to BigQuery Firebase Functions sample",
+  "name": "survey-app-update-function",
+  "description": "Sends a survey via email to users who upgrade your app",
   "dependencies": {
     "nodemailer": "^2.4.1",
     "firebase-admin": "^4.1.1",

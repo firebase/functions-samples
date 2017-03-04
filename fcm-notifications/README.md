@@ -54,7 +54,7 @@ The function triggers every time the value of a follow flag changes at `/followe
 This sample comes with a web-based UI for testing the function. To test it out:
 
  - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
- - Enable Google Provider in the [Auth section](https://console.firebase.google.com/project/_/authentication/providers)
+ - Enable **Google Provider** in the [Auth section](https://console.firebase.google.com/project/_/authentication/providers)
  - Import and configure Firebase in `public/index.html` where the `TODO` is located
  - Install the required dependencies by running `npm install` in the `functions` directory
  - Deploy your project using `firebase deploy`
