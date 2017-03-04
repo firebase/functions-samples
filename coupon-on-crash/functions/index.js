@@ -29,11 +29,11 @@ exports.sendCouponOnCrash = functions.analytics.event('app_exception').onLog(eve
   // [START attributes]
   const user = event.data.user;
   const uid = user.userId; // The user ID set via the setUserId API.
-  const lifetimeValue = user.ltvInUSD; // Lifetime Value of the user in USD.
+  const lifetimeValue = user.ltvInUSD; // Lifetime Value revenue of the user in USD.
   const userLanguage = user.deviceInfo.userDefaultLanguage; // The user language in language-country format.
   // [END attributes]
 
-  // For users with a lifetime value above 2000 USD we send a coupon of higher value.
+  // For users with a lifetime revenue above 2000 USD we send a coupon of higher value.
   if (lifetimeValue > 2000) {
     return sendHighValueCouponViaFCM(uid, userLanguage);
   }
