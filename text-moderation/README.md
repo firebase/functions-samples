@@ -50,16 +50,15 @@ The function triggers every time a message is modified. It exits if the message 
 
 ## Security Rules
 
-The security rules only allow users to create message but not edit them afterwards. Also it does not allows users to set the `sanitized` value. Only the Functions is allowed to modify `sanitized` by using an admin authorized reference.
+The security rules only allow users to create message but not edit them afterwards. Also it does not allow users to set the `sanitized` value. Only the Cloud Function is allowed to modify `sanitized` by using an admin authorized reference.
 
 
 ## Deploy and test
 
 This sample comes with a web-based UI for testing the function. To test it out:
 
- - Create a Firebase Project using the Firebase Developer Console
- - Enable Google Provider in the Auth section
- - Import and configure Firebase in the `index.html` where the `TODO` is located
+ - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
+ - Import and configure Firebase in `public/index.html` where the `TODO` is located
+ - Install the required dependencies by running `npm install` in the `functions` directory
  - Deploy your project using `firebase deploy`
  - Open the app and add messages to the message board. Try to ad bad words into your message and they should get moderated.
-

@@ -42,8 +42,8 @@ firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password=
 
 This sample comes with a web-based UI for testing the function. To set it up:
 
- - Create a Firebase Project using the Firebase Developer Console
- - Enable Google Provider in the Auth section
+ - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
+ - Enable Google Provider in the [Auth section](https://console.firebase.google.com/project/_/authentication/providers)
  - Import and configure Firebase in the `public/index.html` where the `TODO` is located
 
 
