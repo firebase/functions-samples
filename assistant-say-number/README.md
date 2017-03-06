@@ -11,7 +11,7 @@ Further reading:
 
 See file [functions/index.js](functions/index.js) for the code.
 
-Sending the notification is performed using the [request-promise-native](https://www.npmjs.com/package/request-promise-native) package to send a REST request to the FCM API. The Web client writes the individual device tokens to the realtime database which the Function uses to send the notification.
+Handling the Google Actions requests is done using the [Google Actions SDK](https://www.npmjs.com/package/actions-on-google).
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
