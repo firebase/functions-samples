@@ -99,6 +99,7 @@ function getUsers(userIds = [], nextPageToken, accessToken) {
  * Returns an access token using the Google Cloud metadata server.
  */
 function getAccessToken(accessToken) {
+  // If we have an accessToken in cache to re-use we pass it directly.
   if (accessToken) {
     return Promise.resolve(accessToken);
   }
