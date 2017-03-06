@@ -7,7 +7,7 @@ This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notificati
 
 See file [functions/index.js](functions/index.js) for the code.
 
-Sending the notification is performed using the [request-promise-native](https://www.npmjs.com/package/request-promise-native) package to send a REST request to the FCM API. The Web client writes the individual device tokens to the realtime database which the Function uses to send the notification.
+Sending the notification is done using the [Firebase Admin SDK](https://www.npmjs.com/package/firebase-admin). The Web client writes the individual device tokens to the realtime database which the Function uses to send the notification.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
