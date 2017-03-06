@@ -1,11 +1,12 @@
 # Google Assistant action that reads the ordinal of a number.
 
 This sample shows how to create an action for the Google Home/Assistant using the Actions SDK hosted on Cloud Functions. The sample action asks users to say a number and reads out the ordinal of that number.
+
 e.g. If the user says "Twelve" the action will say "The ordinal of twelve is twelfth".
 
 Further reading:
  - Actions SDK: https://developers.google.com/actions/develop/sdk/getting-started#getting-started.
- - Firebase SDK: firebase.google.com/docs/functions
+ - Firebase SDK: https://firebase.google.com/docs/functions
 
 ## Functions Code
 
