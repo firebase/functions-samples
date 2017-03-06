@@ -39,6 +39,11 @@ Only users who pass a valid Firebase ID token as a Bearer token in the Authoriza
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 Uses an HTTP trigger.
 
+### [Google Assistant says ordinal of given number](/assistant-say-number)
+
+This sample shows how to create an action for the Google Home/Assistant using the Actions SDK hosted on Cloud Functions. The sample action asks users to say a number and reads out the ordinal of that number.
+Uses an HTTP trigger.
+
 ### [Send FCM notifications](fcm-notifications)
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification from a Realtime Database triggered Function when users get new followers. The sample also features a Web UI to experience the FCM notification.

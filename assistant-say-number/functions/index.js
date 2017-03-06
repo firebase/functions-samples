@@ -11,29 +11,32 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-// [START app]
 'use strict';
 
 const functions = require('firebase-functions');
+const ActionsSdkAssistant = require('actions-on-google').ActionsSdkAssistant;
 
-exports.helloWorld = functions.https.onRequest((request, response) => {
+/**
+ * Endpoint which handles requests for a Google Assistant action which asks users to say a number
+ * and read out the ordinal of that number.
+ * e.g. If the user says "Twelve" the action will say "The ordinal of twelve is twelfth".
+ */
+exports.sayNumber = functions.https.onRequest((req, res) => {
+  const assistant = new ActionsSdkAssistant({request: req, response: res});
 
-  const ActionsSdkAssistant = require('actions-on-google').ActionsSdkAssistant;
-  const assistant = new ActionsSdkAssistant({request, response});
-
+  // List of re-prompts that are used when we did not understand a number from the user.
   const reprompts = [
-    "I didn't hear a number",
-    "If you're still there, what's the number?",
+    'I didn\'t hear a number',
+    'If you\'re still there, what\'s the number?',
     'What is the number?'
   ];
 
-  let actionMap = new Map();
+  const actionMap = new Map();
 
   actionMap.set(assistant.StandardIntents.MAIN, assistant => {
     const inputPrompt = assistant.buildInputPrompt(true, `<speak>
         Hi! <break time="1"/>
-        I can read out an ordinal like <say-as interpret-as="ordinal">123</say-as>.
+        I can read out an ordinal number like <say-as interpret-as="ordinal">123</say-as>.
         Say a number.
       </speak>`, reprompts
     );
@@ -44,9 +47,8 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
     const rawInput = assistant.getRawInput();
     if (rawInput === 'bye') {
       assistant.tell('Goodbye!');
-    } else if (isNaN(parseInt(rawInput))) {
-      const inputPrompt = assistant.buildInputPrompt(false, `I didn't quite get that, what was the
-        number?`, reprompts);
+    } else if (isNaN(parseInt(rawInput, 10))) {
+      const inputPrompt = assistant.buildInputPrompt(false, 'I didn\'t quite get that, what was the number?', reprompts);
       assistant.ask(inputPrompt);
     } else {
       const inputPrompt = assistant.buildInputPrompt(true, `<speak>
@@ -59,6 +61,4 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   });
 
   assistant.handleRequest(actionMap);
-
-})
-// [END app]
+});
