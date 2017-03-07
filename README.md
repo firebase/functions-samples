@@ -69,7 +69,7 @@ Uses a Firebase Storage trigger.
 Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage.
 Uses a Firebase Storage trigger.
 
-### [Post GitHUb commits to Slack channel](/github-to-slack)
+### [Post GitHub commits to Slack channel](/github-to-slack)
 
 Demonstrates hows how to automatically post GitHub commits to a Slack channel using an HTTPS triggered Function.
 
