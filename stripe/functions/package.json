@@ -2,6 +2,7 @@
   "name": "functions",
   "description": "Firebase Functions",
   "dependencies": {
+    "@google-cloud/logging": "^0.7.1",
     "firebase-admin": "^4.0.5",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
     "stripe": "^4.15.0"
