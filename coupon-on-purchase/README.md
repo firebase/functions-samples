@@ -1,6 +1,6 @@
-# Send a coupon via FCM when there is a crash
+# Send a coupon via FCM to users who have completed a purchase
 
-This sample shows how to send a coupon to your users if a crash has been detected though Firebase analytics.
+This sample shows how to send a coupon to your users who have just purchased something. For instance: 10% off on your next purchase!
 
 
 ## Functions Code
@@ -14,14 +14,13 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Trigger rules
 
-The function triggers on changes to `app_exception` Firebase Analytics events. For other automatically logged events see: https://support.google.com/firebase/answer/6317485
+The function triggers on changes to `in_app_purchase` Firebase Analytics events. For other automatically logged events see: https://support.google.com/firebase/answer/6317485
 
 
 ## Deploy and test
 
 This sample can be tested on your Android and iOS app. To test it out:
 
- - Make sure you set the `app_exception` events as being a **Conversion event** in your project. You can do this on the Analytics section > Events tab.
  - Set the project to your Firebase project using `firebase use --add` then select your projec tin the list.
  - Deploy your project using `firebase deploy`
  - Make your app crash (somehow).

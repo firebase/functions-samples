@@ -21,20 +21,20 @@ admin.initializeApp(functions.config().firebase);
 
 // [START all]
 /**
- * After a user has experienced a crash of the app. Send them a coupon via FCM.
+ * After a user has completed a purchase. Send them a coupon via FCM valid on their next purchase.
  */
 // [START trigger]
-exports.sendCouponOnCrash = functions.analytics.event('app_exception').onLog(event => {
+exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLog(event => {
 // [END trigger]
   // [START attributes]
   const user = event.data.user;
   const uid = user.userId; // The user ID set via the setUserId API.
-  const lifetimeValue = user.ltvInUSD; // Lifetime Value revenue of the user in USD.
+  const purchaseValue = event.data.valueInUSD; // Amount of the purchase in USD.
   const userLanguage = user.deviceInfo.userDefaultLanguage; // The user language in language-country format.
   // [END attributes]
 
-  // For users with a lifetime revenue above 2000 USD we send a coupon of higher value.
-  if (lifetimeValue > 2000) {
+  // For purchases above 500 USD we send a coupon of higher value.
+  if (purchaseValue > 500) {
     return sendHighValueCouponViaFCM(uid, userLanguage);
   }
   return sendCouponViaFCM(uid, userLanguage);
@@ -42,7 +42,7 @@ exports.sendCouponOnCrash = functions.analytics.event('app_exception').onLog(eve
 // [END all]
 
 /**
- * Sends the given coupon Code via FCM to the list of device tokens.
+ * Sends a coupon code via FCM to the given user.
  *
  * @param {string} uid The UID of the user.
  * @param {string} userLanguage The user language in language-country format.
@@ -54,8 +54,8 @@ function sendCouponViaFCM(uid, userLanguage) {
       // Notification details.
       let payload = {
         notification: {
-          title: 'Special Offer!',
-          body: 'Get 10$ off your next purchase with "CRASH10".'
+          title: 'Thanks for your Purchase!',
+          body: 'Get 10% off your next purchase with "COMEBACK10".'
         }
       };
 
@@ -63,8 +63,8 @@ function sendCouponViaFCM(uid, userLanguage) {
       if (userLanguage.split('-')[0] === 'fr') {
         payload = {
           notification: {
-            title: 'Offre Speciale!',
-            body: 'Obtenez 10$ de réduction sur votre prochain achat avec "CRASH10".'
+            title: 'Merci pour votre achat!',
+            body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK10".'
           }
         };
       }
@@ -76,7 +76,7 @@ function sendCouponViaFCM(uid, userLanguage) {
 }
 
 /**
- * Sends the given coupon Code via FCM to the list of device tokens.
+ * Sends a high value coupon vode via FCM to the given user.
  *
  * @param {string} uid The UID of the user.
  * @param {string} userLanguage The user language in language-country format.
@@ -88,8 +88,8 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
       // Notification details.
       let payload = {
         notification: {
-          title: 'Special Offer!',
-          body: 'Get 30$ off your next purchase with "CRASH30".'
+          title: 'Thanks for your Purchase!',
+          body: 'Get 10% off your next purchase with "COMEBACK30".'
         }
       };
 
@@ -97,8 +97,8 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
       if (userLanguage.split('-')[0] === 'fr') {
         payload = {
           notification: {
-            title: 'Offre Speciale!',
-            body: 'Obtenez 30$ de réduction sur votre prochain achat avec "CRASH30".'
+            title: 'Merci pour votre achat!',
+            body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK30".'
           }
         };
       }

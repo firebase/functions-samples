@@ -139,9 +139,9 @@ Uses an Auth trigger.
 This sample shows how to send a survey to your users who have updated your app. App Update is detected using a Firebase Analytics event.
 Uses an Analytics trigger.
 
-### [Send a coupon to users who experienced a crash](/coupon-on-crash)
+### [Send a coupon to user who have completed a purchase](/coupon-on-purchase)
 
-This sample shows how to send a coupon to your users if a crash has been detected though a Firebase analytics event.
+This sample shows how to send a coupon to your users who have just purchased something. 10% off on your next purchase!
 Uses an Analytics trigger.
 
 ### [Delete Inactive Users Accounts Cron](/delete-unused-accounts-cron)
