@@ -30,6 +30,7 @@ firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password=
 
 This sample can be tested on your Android and iOS app. To test it out:
 
+ - Make sure you set the `app_update` events as being a **Conversion event** in your project. You can do this on the Analytics section > Events tab.
  - Set the project to your Firebase project using `firebase use --add` then select your projec tin the list.
  - Deploy your project using `firebase deploy`
  - Have users update your app, for instance through the play store.

@@ -21,6 +21,7 @@ The function triggers on changes to `app_exception` Firebase Analytics events. F
 
 This sample can be tested on your Android and iOS app. To test it out:
 
+ - Make sure you set the `app_exception` events as being a **Conversion event** in your project. You can do this on the Analytics section > Events tab.
  - Set the project to your Firebase project using `firebase use --add` then select your projec tin the list.
  - Deploy your project using `firebase deploy`
  - Make your app crash (somehow).
