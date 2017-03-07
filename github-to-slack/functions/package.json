@@ -1,12 +1,11 @@
 {
-  "name": "functions",
-  "description": "Firebase Functions",
+  "name": "github-to-slack-functions",
+  "description": "Firebase Functions that posts new GitHub commits to a Slack channel.",
   "dependencies": {
-    "@google-cloud/pubsub": "^0.8.2",
-    "firebase-admin": "^4.0.5",
+    "crypto": "0.0.3",
+    "firebase-admin": "^4.1.2",
     "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz",
     "request": "^2.80.0",
     "request-promise": "^4.1.1"
   }
 }
-

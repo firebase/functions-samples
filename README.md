@@ -69,6 +69,10 @@ Uses a Firebase Storage trigger.
 Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage.
 Uses a Firebase Storage trigger.
 
+### [Post GitHUb commits to Slack channel](/github-to-slack)
+
+Demonstrates hows how to automatically post GitHub commits to a Slack channel using an HTTPS triggered Function.
+
 ### [Automatically Moderate Images](/moderate-images)
 
 Demonstrates how to automatically moderate offensive images that are uploaded to Firebase Storage by using the Google Cloud Vision API to detect offensive images and ImageMagick to blur these images.
