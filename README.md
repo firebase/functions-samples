@@ -1,12 +1,14 @@
 # Firebase SDK for Cloud Functions Samples Library
 
-This repository contains a collection of samples showcasing some typical uses of Cloud Functions using the Firebase SDK for Cloud Functions.
+This repository contains a collection of samples showcasing some typical uses of Cloud Functions using the [Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions).
 
+### What's Cloud Functions?
+
+Cloud Functions is a hosted, private, and scalable Node.js environment where you can run JavaScript code. Firebase SDK for Cloud Functions integrates the Firebase platform by letting you write code that responds to events and invokes functionality exposed by other Firebase features.
 
 ## Prerequisites
 
-To learn how to get started with the Firebase SDK for Cloud Functions try the quickstart samples and have a look at [the documentation](https://firebase.google.com/preview/functions/).
-
+To learn how to get started with the Firebase SDK for Cloud Functions have a look at our [Getting Started Guide](https://firebase.google.com/docs/functions/get-started), try the [quickstart samples](/quickstarts) and have a look at [the documentation](https://firebase.google.com/docs/functions).
 
 ## Use Cases and Samples
 

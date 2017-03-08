@@ -9,7 +9,7 @@ The function `date` returns the current server date. You can pass it a `format` 
 
 Further reading:
 
- - [Read more about the Firebase SDK for Cloud Functions](https://firebase.google.com/preview/functions/)
+ - [Read more about the Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions)
 
 
 ## Initial setup, build tools and dependencies
