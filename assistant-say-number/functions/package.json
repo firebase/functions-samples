@@ -4,6 +4,6 @@
   "dependencies": {
     "actions-on-google": "^1.0.7",
     "firebase-admin": "^4.0.5",
-    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz"
+    "firebase-functions": "^0.5.1"
   }
 }

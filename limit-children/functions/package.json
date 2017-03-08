@@ -3,6 +3,6 @@
   "description": "Limit number of child nodes Firebase Functions sample",
   "dependencies": {
     "firebase-admin": "^4.1.1",
-    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz"
+    "firebase-functions": "^0.5.1"
   }
 }

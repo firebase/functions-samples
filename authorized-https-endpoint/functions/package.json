@@ -5,6 +5,6 @@
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "firebase-admin": "^4.1.2",
-    "firebase-functions": "https://storage.googleapis.com/firebase-preview-drop/node/firebase-functions/firebase-functions-preview.latest.tar.gz"
+    "firebase-functions": "^0.5.1"
   }
 }
