@@ -89,7 +89,7 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
       let payload = {
         notification: {
           title: 'Thanks for your Purchase!',
-          body: 'Get 10% off your next purchase with "COMEBACK30".'
+          body: 'Get 30% off your next purchase with "COMEBACK30".'
         }
       };
 
@@ -98,7 +98,7 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
         payload = {
           notification: {
             title: 'Merci pour votre achat!',
-            body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK30".'
+            body: 'Obtenez 30% de réduction sur votre prochain achat avec "COMEBACK30".'
           }
         };
       }
