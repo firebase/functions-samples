@@ -1,11 +1,11 @@
-# Post GitHUb commits to Slack channel.
+# Post GitHub commits to Slack channel.
 
 This sample shows how to automatically post GitHub commits to a Slack channel using an HTTPS Cloud Function.
 
 Further reading:
  - Slack Webhooks API: https://api.slack.com/incoming-webhooks
  - Firebase SDK: https://firebase.google.com/docs/functions
- - GitHUb Webhooks: https://developer.github.com/webhooks/creating/
+ - GitHub Webhooks: https://developer.github.com/webhooks/creating/
 
 ## Functions Code
 
