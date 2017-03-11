@@ -28,7 +28,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 ### [Auth trigger quickstart: Welcome Email](/quickstarts/email-users)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Auth events**. The functions sends a Welcome email when user accounts are created (or when users signs-in using an Identity Provider for the first time) and sends a Goodbye email when user accounts ares deleted.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Auth events**. The functions sends a Welcome email when user accounts are created (or when users signs-in using an Identity Provider for the first time) and sends a Goodbye email when user accounts are deleted.
 
 ### [PubSub trigger quickstart: Hello World](/quickstarts/pubsub-helloworld)
 
