@@ -18,7 +18,7 @@
 // [START import]
 const functions = require('firebase-functions');
 const gcs = require('@google-cloud/storage')();
-const exec = require('child-process-promise').exec;
+const spawn = require('child-process-promise').spawn;
 // [END import]
 
 // [START generateThumbnail]
@@ -69,7 +69,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   }).then(() => {
     console.log('Image downloaded locally to', tempFilePath);
     // Generate a thumbnail using ImageMagick.
-    return exec(`convert "${tempFilePath}" -thumbnail '200x200>' "${tempFilePath}"`).then(() => {
+    return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]).then(() => {
       console.log('Thumbnail created at', tempFilePath);
       // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
       const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, `$1thumb_$2`);

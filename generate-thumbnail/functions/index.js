@@ -18,7 +18,7 @@
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
 const gcs = require('@google-cloud/storage')();
-const exec = require('child-process-promise').exec;
+const spawn = require('child-process-promise').spawn;
 const LOCAL_TMP_FOLDER = '/tmp/';
 
 // Max height and width of the thumbnail in pixels.
@@ -68,7 +68,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     }).then(() => {
       console.log('The file has been downloaded to', tempLocalFile);
       // Generate a thumbnail using ImageMagick.
-      return exec(`convert "${tempLocalFile}" -thumbnail '${THUMB_MAX_WIDTH}x${THUMB_MAX_HEIGHT}>' "${tempLocalThumbFile}"`).then(() => {
+      return spawn('convert', [tempLocalFile, '-thumbnail', `${THUMB_MAX_WIDTH}x${THUMB_MAX_HEIGHT}>`, tempLocalThumbFile]).then(() => {
         console.log('Thumbnail created at', tempLocalThumbFile);
         // Uploading the Thumbnail.
         return bucket.upload(tempLocalThumbFile, {
