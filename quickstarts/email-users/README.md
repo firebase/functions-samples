@@ -33,7 +33,7 @@ This sample comes with a simple web-based UI which code is in [public](public) d
  1. Set the `gmail.email` and `gmail.password` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
 
     ```bash
-    firebase functions:config:set gmail.email='myusername@gmail.com' gmail.password='secretpassword'
+    firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
     ```
 
 
