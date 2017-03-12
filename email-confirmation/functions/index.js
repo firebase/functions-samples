@@ -42,7 +42,7 @@ exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(e
   // The user just subscribed to our newsletter.
   if (val.subscribedToMailingList) {
     mailOptions.subject = 'Thanks and Welcome!';
-    mailOptions.text = 'Thanks you for subscribing to uour newsletter. You will receive our next weekly newsletter.';
+    mailOptions.text = 'Thanks you for subscribing to our newsletter. You will receive our next weekly newsletter.';
     return mailTransport.sendMail(mailOptions).then(() => {
       console.log('New subscription confirmation email sent to:', val.email);
     });
