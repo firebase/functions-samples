@@ -97,7 +97,7 @@ describe('Cloud Functions', () => {
       const setStub = sinon.stub();
       // The following 4 lines override the behavior of event.data.ref.parent.child('uppercase')
       // .set('INPUT') to return true
-      sinon.stub(fakeEvent.data, 'ref', { get: refStub });
+      Object.defineProperty(fakeEvent.data, 'ref', { get: refStub });
       refStub.returns({ parent: { child: childStub}});
       childStub.withArgs(childParam).returns( { set: setStub });
       setStub.withArgs(setParam).returns(true);
