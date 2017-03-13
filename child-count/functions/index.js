@@ -21,5 +21,8 @@ admin.initializeApp(functions.config().firebase);
 
 // Keeps track of the length of the 'likes' child list in a separate attribute.
 exports.countlikes = functions.database.ref('/posts/{postid}/likes').onWrite(event => {
-  return event.data.ref.parent.child('likes_count').set(event.data.numChildren());
+  var likesCountRef = event.data.ref.parent.child('likes_count');
+  return likesCountRef.transaction(function(currentCount) {
+    return (currentCount || 0) + 1;
+  });
 });
