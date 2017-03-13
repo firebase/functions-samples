@@ -22,7 +22,7 @@ When a user signs-in we write some sample personal data of the following form:
         $uid : "Some user data"
 ```
 
-When the user deletes his account a Function will trigger and automatically delete the corresponding user data in the relatime database.
+When the user deletes his account a Function will trigger and automatically delete the corresponding user data in the realtime database.
 
 
 ## Trigger rules
