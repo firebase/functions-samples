@@ -24,7 +24,7 @@ const request = require('request-promise');
 const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 
 // Translate an incoming message.
-exports.translate = functions.database.ref('/messages/$languageID/$messageID').onWrite(event => {
+exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite(event => {
   const snapshot = event.data;
   if (snapshot.val().translated) {
     return;
