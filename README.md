@@ -75,6 +75,10 @@ Uses a Firebase Storage trigger.
 
 Demonstrates how to automatically post GitHub commits to a Slack channel using an HTTPS triggered Function.
 
+### [Create and charge Stripe customers](/stripe)
+
+Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library.
+
 ### [Automatically Moderate Images](/moderate-images)
 
 Demonstrates how to automatically moderate offensive images that are uploaded to Firebase Storage by using the Google Cloud Vision API to detect offensive images and ImageMagick to blur these images.
