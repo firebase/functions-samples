@@ -11,14 +11,12 @@ Further reading:
 
 See file [functions/index.js](functions/index.js) for the code.
 
-Handling the Google Actions requests is done using the [Google Actions SDK](https://www.npmjs.com/package/actions-on-google).
-
 The dependencies are listed in [functions/package.json](functions/package.json).
 
 
 ## Deploy and test
 
-To test this sample action:
+To test this integration:
 
  - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
  - Enable billing on your project by switching to the Blaze or Flame plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
@@ -34,5 +32,4 @@ To test this sample action:
    firebase functions:config:set slack.webhook_url="https://hooks.slack.com/services/..." github.secret="A_SECRET_YOU_DEFINED_WHEN_SETTING_UP_THE_GITHUB_WEBHOOK"
    ```
  - Deploy your project using `firebase deploy`
- - Make your action available for testing using the `gactions preview action.json`
- - Test your Action on the [Google Home Web Simulator](https://g.co/actionswebsim) by saying "Talk to My Action"
+ - Push a commit to your GitHub repo
