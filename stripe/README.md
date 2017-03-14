@@ -14,7 +14,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Deploy and test
 
-To test this sample action:
+To test this integration:
 
  - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
  - Enable billing on your project by switching to the Blaze or Flame plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
