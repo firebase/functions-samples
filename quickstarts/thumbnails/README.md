@@ -26,7 +26,9 @@ The function triggers on upload of any file to your Firebase project's default C
 To deploy and test the sample:
 
  - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com) and visit the **Storage** tab.
- - Enable Billing on your Firebase project
+ - Get the code, for instance using `git clone https://github.com/firebase/functions-samples`
+ - Enter the correct directory `cd functions-samples/quickstarts/thumbnails`
+ - Setup the CLI to use your Firebase project using `firebase use --add` and select your Firebase project
  - Deploy your project's code using `firebase deploy`
  - Go to the Firebase Console **Storage** tab and upload an image. After a short time an thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
 
