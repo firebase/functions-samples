@@ -25,16 +25,22 @@ const stripe = require('stripe')(functions.config().stripe.token),
       currency = functions.config().stripe.currency || 'USD';
 
 // [START chargecustomer]
+// Charge the Stripe customer whenever an amount is written to the Realtime database
 exports.createStripeCharge = functions.database.ref('/users/{userId}/charges/{id}').onWrite(event => {
   const val = event.data.val();
+  // This onWrite will trigger whenever anything is written to the path, so
+  // noop if the charge was deleted, errored out, or the Stripe API returned a result (id exists) 
   if (val === null || val.id || val.error) return null;
+  // Look up the Stripe customer id written in createStripeCustomer
   return admin.database().ref(`stripe_customers/${event.params.userId}`).once('value').then(snapshot => {
     return snapshot.val();
   }).then(customer => {
+    // Create a charge using the pushId as the idempotency key, protecting against double charges 
     const amount = val.amount;
     const idempotency_key = event.params.id;
     return stripe.charges.create({amount, currency, customer}, {idempotency_key});
   }).then(response => {
+      // If the result is seccessful, write it back to the database
       return event.data.ref.set(response);
     }, error => {
       // We want to capture errors and render them in a user-friendly way, while
@@ -47,6 +53,7 @@ exports.createStripeCharge = functions.database.ref('/users/{userId}/charges/{id
 });
 // [END chargecustomer]]
 
+// When a user is created, register them with Stripe
 exports.createStripeCustomer = functions.auth.user().onCreate(event => {
   const data = event.data;
   return stripe.customers.create({
@@ -56,6 +63,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(event => {
   });
 });
 
+// When a user deletes there account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(event => {
   return admin.database().ref(`/stripe_customers/${event.data.uid}`).once('value').then(snapshot => {
     return snapshot.val();
@@ -66,6 +74,9 @@ exports.cleanupUser = functions.auth.user().onDelete(event => {
   });
 });
 
+// To keep on top of errors, we should raise a verbose error report with Stackdriver rather
+// than simply relying on console.error. This will calculate users affected + send you email
+// alerts, if you've opted into receveiving them.
 // [START reporterror]
 function reportError(err, context = {}) {
   // This is the name of the StackDriver log stream that will receive the log
@@ -74,8 +85,8 @@ function reportError(err, context = {}) {
   const logName = 'errors';
   const log = logging.log(logName);
 
+  // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
   const metadata = {
-    // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
     resource: {
       type: 'cloud_function',
       labels: { function_name: process.env.FUNCTION_NAME }
@@ -102,6 +113,7 @@ function reportError(err, context = {}) {
 }
 // [END reporterror]
 
+// Sanitize the error message for the user
 function userFacingMessage(error) {
   return error.type ? error.message : 'An error occurred, developers have been alerted';
 }
