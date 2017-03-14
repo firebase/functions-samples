@@ -73,7 +73,7 @@ Uses a Firebase Storage trigger.
 
 ### [Post GitHub commits to Slack channel](/github-to-slack)
 
-Demonstrates hows how to automatically post GitHub commits to a Slack channel using an HTTPS triggered Function.
+Demonstrates how to automatically post GitHub commits to a Slack channel using an HTTPS triggered Function.
 
 ### [Automatically Moderate Images](/moderate-images)
 
