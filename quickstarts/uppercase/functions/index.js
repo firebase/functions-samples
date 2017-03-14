@@ -46,7 +46,7 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
     .onWrite(event => {
 // [END makeUppercaseTrigger]
-// [START makeUppercaseBody]
+      // [START makeUppercaseBody]
       // Grab the current value of what was written to the Realtime Database.
       const original = event.data.val();
       console.log('Uppercasing', event.params.pushId, original);
@@ -55,7 +55,7 @@ exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
       // writing to the Firebase Realtime Database.
       // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
       return event.data.ref.parent.child('uppercase').set(uppercase);
+      // [END makeUppercaseBody]
     });
-// [END makeUppercaseBody]
 // [END makeUppercase]
 // [END all]
