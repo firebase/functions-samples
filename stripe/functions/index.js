@@ -76,7 +76,7 @@ exports.cleanupUser = functions.auth.user().onDelete(event => {
 
 // To keep on top of errors, we should raise a verbose error report with Stackdriver rather
 // than simply relying on console.error. This will calculate users affected + send you email
-// alerts, if you've opted into receveiving them.
+// alerts, if you've opted into receiving them.
 // [START reporterror]
 function reportError(err, context = {}) {
   // This is the name of the StackDriver log stream that will receive the log
