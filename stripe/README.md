@@ -19,6 +19,7 @@ To test this integration:
  - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
  - Enable billing on your project by switching to the Blaze or Flame plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
  - Configure this sample to use your project using `firebase --use add` and select your project.
+ - Install dependencies locally by running: `cd functions; npm install; cd -`
  - [Add your Stripe API Secret Key](https://dashboard.stripe.com/account/apikeys) to firebase config:
  
      `firebase functions:config:set stripe.token=<YOUR STRIPE API KEY>`
