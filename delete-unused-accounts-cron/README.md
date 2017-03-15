@@ -13,6 +13,7 @@ Here is a non-exhaustive list of external services for cron jobs:
  - https://www.setcronjob.com/
  - https://cron-job.org/
  - https://www.easycron.com/
+ - https://zapier.com/zapbook/webhook/
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
@@ -39,9 +40,11 @@ node -e "console.log(require('crypto').randomBytes(20).toString('hex'))"
 
 To set up the sample:
 
- - Create a Firebase Project using the Firebase Developer Console
- - Enable billing since Functions require billing.
- - Download the service accounts using the Firebase Developer Console at: **"Wheely" Icon > Project Settings > Service Accounts > Generate New Private Key** and save it as `./functions/service-accounts.json`.
+ - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
+ - Download this sample e.g. `git clone https://github.com/firebase/functions-samples`
+ - Enter the sample directory `cd functions-samples/delete-unused-accounts-cron`
+ - Setup the sample with your project `firebase use --add` and follow the instructions.
+ - Install node dependencies of your Functions `cd functions; npm install; cd -`
  - Deploy your project using `firebase deploy`.
  - Open an account with a 3rd party cron service (e.g. www.setcronjob.com, cron-job.org, www.easycron.com, [Zapier](https://zapier.com/zapbook/webhook/) ...) and setup a daily cron job to hit the URL (don't forget to change `YOUR_KEY`):
 
