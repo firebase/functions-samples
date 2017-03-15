@@ -46,7 +46,7 @@ To set up the sample:
  - Setup the sample with your project `firebase use --add` and follow the instructions.
  - Install node dependencies of your Functions `cd functions; npm install; cd -`
  - Deploy your project using `firebase deploy`.
- - Open an account with a 3rd party cron service (e.g. www.setcronjob.com, cron-job.org, www.easycron.com, [Zapier](https://zapier.com/zapbook/webhook/) ...) and setup a daily cron job to hit the URL (don't forget to change `<YOUR-KEY> and <PROJECT-ID>`):
+ - Open an account with a 3rd party cron service (e.g. www.setcronjob.com, cron-job.org, www.easycron.com, [Zapier](https://zapier.com/zapbook/webhook/) ...) and setup a daily cron job to hit the URL (don't forget to change `<YOUR-KEY>` and `<PROJECT-ID>`):
 
  ```
  https://us-central1-<PROJECT-ID>.cloudfunctions.net/accountcleanup?key=<YOUR-KEY>
