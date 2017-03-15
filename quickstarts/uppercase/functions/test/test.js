@@ -79,10 +79,11 @@ describe('Cloud Functions', () => {
         // data: any, delta: any, path?: string);
         // We can pass null for the first 2 parameters. The data parameter represents the state of
         // the database item before the event, while the delta parameter represents the change that
-        // occured to cause the event to fire. The last parameter is the database path.
-        data: new functions.database.DeltaSnapshot(null, null, null, 'input', 'messages/1111/original'),
+        // occured to cause the event to fire. The last parameter is the database path, which we are
+        // not making use of in this test. So we will omit it.
+        data: new functions.database.DeltaSnapshot(null, null, null, 'input'),
         // To mock a database delete event:
-        // data: new functions.database.DeltaSnapshot(null, null, 'old_data', null, 'messages/1111/original')
+        // data: new functions.database.DeltaSnapshot(null, null, 'old_data', null)
       };
       // [END fakeEvent]
 
