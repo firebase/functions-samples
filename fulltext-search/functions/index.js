@@ -23,7 +23,7 @@ admin.initializeApp(functions.config().firebase);
 const algoliasearch = require('algoliasearch');
 
 // Updates the search index when new blog entries are created or updated.
-exports.indexentry = functions.database.ref('/blog-posts/$blogid').onWrite(event => {
+exports.indexentry = functions.database.ref('/blog-posts/{blogid}').onWrite(event => {
   // TODO: Make sure you configure the `algolia.key` and `algolia.secret` Google Cloud environment variables.
   const client = algoliasearch(functions.config().algolia.key, functions.config().algolia.secret);
   const index = client.initIndex('users');
@@ -37,7 +37,7 @@ exports.indexentry = functions.database.ref('/blog-posts/$blogid').onWrite(event
 
 // Starts a search query whenever a query is requested (by adding one to the `/search/queries`
 // element. Search results are then written under `/search/results`.
-exports.searchentry = functions.database.ref('/search/queries/$queryid').onWrite(event => {
+exports.searchentry = functions.database.ref('/search/queries/{queryid}').onWrite(event => {
   // TODO: Make sure you configure the `algolia.key` and `algolia.secret` Google Cloud environment variables.
   const client = algoliasearch(functions.config().algolia.key, functions.config().algolia.secret);
   const index = client.initIndex('users');
