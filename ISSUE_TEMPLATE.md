@@ -36,7 +36,7 @@ likely to be of broad use (i.e. not just a copy/paste solution to your specializ
 
 **Sample name or URL where you found the bug**
 
-**Failing Function code used (including require/import commands at the top)
+**Failing Function code used (including require/import commands at the top)**
 
 **Steps to set up and reproduce**
 
@@ -52,9 +52,9 @@ likely to be of broad use (i.e. not just a copy/paste solution to your specializ
 
 ### Debug output
 
-** Errors in the console logs at https://console.firebase.google.com/project/_/functions/logs?search=&severity=DEBUG **
+**Errors in the [console logs](https://console.firebase.google.com/project/_/functions/logs?search=&severity=DEBUG)**
 
-** Screenshots **
+**Screenshots**
 
 ### Expected behavior
 
