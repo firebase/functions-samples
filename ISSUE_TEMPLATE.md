@@ -9,13 +9,13 @@ Have a usage question about Functions?
 We get lots of those and we love helping you, but the samples issue tracker is not the best place for them and they
 will be closed. Here are some resources to get help:
 
-- Go through the Developer's Guide: https://github.com/angular/angularfire2#developer-guide
-- Read the full API reference: https://github.com/angular/angularfire2/blob/master/docs/api-reference.md
+- Go through the Contributor's Guide: https://github.com/firebase/functions-samples/blob/master/CONTRIBUTING.md
+- Read the full user's guide: https://firebase.google.com/docs/functions/
 
 If the official documentation doesn't help, try asking through our officially supported channels:
 
 - Firebase Google Group: https://groups.google.com/forum/#!forum/firebase-talk
-- Stack Overflow: https://stackoverflow.com/questions/tagged/cloud-functions (include the firebase tag, too!)
+- Stack Overflow: https://stackoverflow.com/questions/tagged/google-cloud-functions+firebase
 
 *Please avoid double posting across multiple channels!*
 
@@ -44,11 +44,11 @@ likely to be of broad use (i.e. not just a copy/paste solution to your specializ
 
 **Sample data pasted or attached as JSON (not an image)**
 
-<-- paste/attach/link sample data as json (not an image) -->
+<!-- paste/attach/link sample data as json (not an image) -->
 
 **Security rules used**
 
-<-- paste/attach/link security rules as json (not an image) -->
+<!-- paste/attach/link security rules as json (not an image) -->
 
 ### Debug output
 
