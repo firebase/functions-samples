@@ -19,7 +19,7 @@
  * Returns the ID of the Firebase project.
  */
 function getFirebaseProjectId() {
-    return firebase.app().options.authDomain.split('.')[0];
+  return firebase.app().options.authDomain.split('.')[0];
 }
 
 // Initializes the Demo.
@@ -60,35 +60,38 @@ Demo.prototype.onAuthStateChanged = function(user) {
 
 // Initiates the sign-in flow.
 Demo.prototype.signIn = function() {
-    var err = this.signInError;
-    err.innerText = "";
-    var req = new XMLHttpRequest();
-    req.onload = function() {
-        if (req.status === 400 || req.status === 401) {
-            err.innerText = "Invalid username or password";
-            return
-        }
-        if (req.status !== 200) {
-            err.innerText = "Invalid response from Firebase Cloud Function " + req.status;
-            return
-        }
-        var data = JSON.parse(req.responseText);
-        if (data.token) {
-            firebase.auth().signInWithCustomToken(data.token);
-            return;
-        } else {
-            console.log("ERROR RESPONSE: " + req.responseText);
-            err.innerText = "Invalid response from Firebase Cloud Function see developer console for details";
-            return;
-        }
-    };
-    req.onerror = function() {
-        err.innerText = "Network error in Firebase Cloud Function call see developer console for details";
-    };
-    var url = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/auth';
-    req.open("POST", url, true);
-    req.setRequestHeader("Content-Type", "application/json");
-    req.send(JSON.stringify({username:this.signInUsername.value, password:this.signInPassword.value}));
+  var err = this.signInError;
+  err.innerText = '';
+  var req = new XMLHttpRequest();
+  req.onload = function() {
+    if (req.status === 400 || req.status === 401) {
+      err.innerText = 'Invalid username or password';
+      return
+    }
+    if (req.status !== 200) {
+      err.innerText = 'Invalid response from Firebase Cloud Function ' + req.status;
+      return
+    }
+    var data = JSON.parse(req.responseText);
+    if (data.token) {
+      firebase.auth().signInWithCustomToken(data.token);
+      return;
+    } else {
+      console.log('ERROR RESPONSE: ' + req.responseText);
+      err.innerText = 'Invalid response from Firebase Cloud Function see developer console for details';
+      return;
+    }
+  };
+  req.onerror = function() {
+    err.innerText = 'Network error in Firebase Cloud Function call see developer console for details';
+  };
+  var url = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/auth';
+  req.open('POST', url, true);
+  req.setRequestHeader('Content-Type', 'application/json');
+  req.send(JSON.stringify({
+    username: this.signInUsername.value,
+    password: this.signInPassword.value
+  }));
 };
 
 // Signs-out of Firebase.

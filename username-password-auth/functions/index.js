@@ -18,7 +18,9 @@
 const functions = require('firebase-functions');
 
 // CORS Express middleware to enable CORS Requests.
-const cors = require('cors')({origin: true});
+const cors = require('cors')({
+  origin: true
+});
 
 // Firebase Setup
 const admin = require('firebase-admin');
@@ -28,59 +30,68 @@ admin.initializeApp({
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`
 });
 
-// Use Request to make the basic authentication request.
-const authRequest = require('request');
+// We use Request to make the basic authentication request in our example.
+const basicAuthRequest = require('request');
+
 
 /**
  * Authenticate the provided credentials returning a Firebase custom auth token.
+ * `username` and `password` values are expected in the body of the request.
  * If authentication fails return a 401 response.
+ * If the request is badly formed return a 400 response.
+ * If the request method is unsupported (not POST) return a 403 response.
  * If an error occurs log the details and return a 500 response.
  */
 exports.auth = functions.https.onRequest((req, res) => {
   try {
-      cors(req, res, () => {
-        // Handle CORS preflight request
-        if (req.method === 'OPTIONS') {
-          return res.sendStatus(200);
+    cors(req, res, () => {
+      // Handle CORS preflight request
+      if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+      }
+      // Authentication requests are POSTed, other requests are forbidden
+      if (req.method !== 'POST') {
+        return res.sendStatus(403);
+      }
+      let username = req.body.username;
+      if (!username) {
+        return res.sendStatus(400);
+      }
+      let password = req.body.password;
+      if (!password) {
+        return res.sendStatus(400);
+      }
+
+      let creds = {
+        'auth': {
+          'user': username,
+          'pass': password
         }
-        // Authentication requests are POSTed, other requests are forbidden
-        if (req.method !== 'POST') {
-          return res.sendStatus(403);
+      }
+
+      // For the purpose of this example use httpbin (https://httpbin.org) for the basic authentication request.
+      // (Only a password of `Testing123` will succeed)
+      const authEndpoint = `https://httpbin.org/basic-auth/${username}/Testing123`;
+
+      basicAuthRequest(authEndpoint, creds, (error, response, body) => {
+        let statusCode = response ? response.statusCode : 0;
+        if (statusCode === 401) { // Invalid username/password
+          return res.sendStatus(401);
         }
-        let username = req.body.username;
-        if (!username) {
-          return res.sendStatus(400);
+        if (statusCode !== 200) {
+          console.log('ERROR: invalid response returned from ', authEndpoint, ' status code ', statusCode);
+          return res.sendStatus(500);
         }
-        let password = req.body.password;
-        if (!password) {
-          return res.sendStatus(400);
-        }
-        // For the purpose of this example use httpbin (https://httpbin.org) for the basic authentication request.
-        // (Only a password of `Testing123` will succeed)
-        let url = "https://httpbin.org/basic-auth/" + username + "/Testing123";
-        let creds = {
-          'auth': {
-              'user': username,
-              'pass': password
-          }
-        }
-        authRequest(url, creds, function (error, response, body) {
-          let statusCode = response ? response.statusCode : 0;
-          if (statusCode === 401) { // Invalid username/password
-              return res.sendStatus(401);
-          }
-          if (statusCode !== 200) {
-              console.log('ERROR: invalid response returned from ', url, ' status code ', statusCode);
-              return res.sendStatus(500);
-          }
-          // On success create/update the Firebase account and return the Custom Auth Token.
-          // - any extra user details can also be created/updated here
-          createFirebaseAccount(username).then(firebaseToken => {
-                return res.status(200).json({token: firebaseToken});
+        // On success create/update the Firebase account and return the Custom Auth Token.
+        // - any extra user details can also be created/updated here
+        createFirebaseAccount(username).then(firebaseToken => {
+          return res.status(200).json({
+            token: firebaseToken
           });
         });
       });
-  } catch (error) {
+    });
+  } catch ( error ) {
     console.log('ERROR:', error);
     return res.sendStatus(500);
   }
@@ -97,7 +108,9 @@ function createFirebaseAccount(uid) {
   const userCreationTask = admin.auth().updateUser(uid, {}).catch(error => {
     // If user does not exists we create it.
     if (error.code === 'auth/user-not-found') {
-      return admin.auth().createUser({uid: uid });
+      return admin.auth().createUser({
+        uid: uid
+      });
     }
     throw error;
   });
