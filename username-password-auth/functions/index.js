@@ -38,17 +38,11 @@ const basicAuthRequest = require('request');
  * Authenticate the provided credentials returning a Firebase custom auth token.
  * `username` and `password` values are expected in the body of the request.
  * If authentication fails return a 401 response.
- * If the request is badly formed return a 400 response.
- * If the request method is unsupported (not POST) return a 403 response.
  * If an error occurs log the details and return a 500 response.
  */
 exports.auth = functions.https.onRequest((req, res) => {
   try {
     cors(req, res, () => {
-      // Handle CORS preflight request
-      if (req.method === 'OPTIONS') {
-        return res.sendStatus(200);
-      }
       // Authentication requests are POSTed, other requests are forbidden
       if (req.method !== 'POST') {
         return res.sendStatus(403);
