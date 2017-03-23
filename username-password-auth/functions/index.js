@@ -38,81 +38,105 @@ const basicAuthRequest = require('request');
  * Authenticate the provided credentials returning a Firebase custom auth token.
  * `username` and `password` values are expected in the body of the request.
  * If authentication fails return a 401 response.
+ * If the request is badly formed return a 400 response.
+ * If the request method is unsupported (not POST) return a 403 response.
  * If an error occurs log the details and return a 500 response.
  */
 exports.auth = functions.https.onRequest((req, res) => {
+
+  const handleError = (username, error) => {
+    console.error({
+      User: username
+    }, error);
+    return res.sendStatus(500);
+  }
+
+  const handleResponse = (username, status, body) => {
+    console.log({
+      User: username
+    }, {
+      Response: {
+        Status: status,
+        Body: body
+      }
+    });
+    if (body) {
+      return res.status(200).json(body);
+    }
+    return res.sendStatus(status);
+  }
+
+
+  let username = '';
   try {
     cors(req, res, () => {
       // Authentication requests are POSTed, other requests are forbidden
       if (req.method !== 'POST') {
-        return res.sendStatus(403);
+        return handleResponse(username, 403);
       }
-      let username = req.body.username;
+      username = req.body.username;
       if (!username) {
-        return res.sendStatus(400);
+        return handleResponse(username, 400);
       }
-      let password = req.body.password;
+      const password = req.body.password;
       if (!password) {
-        return res.sendStatus(400);
+        return handleResponse(username, 400);
       }
 
-      let creds = {
-        'auth': {
-          'user': username,
-          'pass': password
+      // TODO(DEVELOPER): In production you'll need to update the `authenticate` function so that it authenticates with your own credentials system.
+      authenticate(username, password).then(valid => {
+        if (!valid) {
+          return handleResponse(username, 401); // Invalid username/password
         }
-      }
 
-      // For the purpose of this example use httpbin (https://httpbin.org) for the basic authentication request.
-      // (Only a password of `Testing123` will succeed)
-      const authEndpoint = `https://httpbin.org/basic-auth/${username}/Testing123`;
-
-      basicAuthRequest(authEndpoint, creds, (error, response, body) => {
-        let statusCode = response ? response.statusCode : 0;
-        if (statusCode === 401) { // Invalid username/password
-          return res.sendStatus(401);
-        }
-        if (statusCode !== 200) {
-          console.log('ERROR: invalid response returned from ', authEndpoint, ' status code ', statusCode);
-          return res.sendStatus(500);
-        }
-        // On success create/update the Firebase account and return the Custom Auth Token.
-        // - any extra user details can also be created/updated here
-        createFirebaseAccount(username).then(firebaseToken => {
-          return res.status(200).json({
+        // On success return the Firebase Custom Auth Token.
+        admin.auth().createCustomToken(username).then(firebaseToken => {
+          return handleResponse(username, 200, {
             token: firebaseToken
           });
+        }).catch(error => {
+          return handleError(username, error);
         });
+
+      }).catch(error => {
+        return handleError(username, error);
       });
     });
   } catch ( error ) {
-    console.log('ERROR:', error);
-    return res.sendStatus(500);
+    return handleError(username, error);
   }
 });
 
 /**
- * Creates a Firebase account with the given user id and returns a custom auth token allowing
- * signing-in this account.
- *
- * @returns {Promise<string>} The Firebase custom auth token in a promise.
+ * Authenticate the provided credentials.
+ * TODO(DEVELOPER): In production you'll need to update this function so that it authenticates with your own credentials system.
+ * @returns {Promise<boolean>} success or failure.
  */
-function createFirebaseAccount(uid) {
-  // Create or update the user account.
-  const userCreationTask = admin.auth().updateUser(uid, {}).catch(error => {
-    // If user does not exists we create it.
-    if (error.code === 'auth/user-not-found') {
-      return admin.auth().createUser({
-        uid: uid
-      });
+function authenticate(username, password) {
+
+  // For the purpose of this example use httpbin (https://httpbin.org) and send a basic authentication request.
+  // (Only a password of `Testing123` will succeed)
+  const authEndpoint = `https://httpbin.org/basic-auth/${username}/Testing123`;
+  const creds = {
+    'auth': {
+      'user': username,
+      'pass': password
     }
-    throw error;
+  }
+  return new Promise((resolve, reject) => {
+    basicAuthRequest(authEndpoint, creds, (error, response, body) => {
+      if (error) {
+        return reject(error)
+      }
+      const statusCode = response ? response.statusCode : 0;
+      if (statusCode === 401) { // Invalid username/password
+        return resolve(false);
+      }
+      if (statusCode !== 200) {
+        return reject(Error('invalid response returned from ', authEndpoint, ' status code ', statusCode));
+      }
+      return resolve(true);
+    });
   });
-  // Wait for all async task to complete then generate and return a custom auth token.
-  return Promise.all([userCreationTask]).then(() => {
-    // Create a Firebase custom auth token.
-    const token = admin.auth().createCustomToken(uid);
-    console.log('Created Custom token for UID "', uid, '" Token:', token);
-    return token;
-  });
+
 }
