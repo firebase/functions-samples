@@ -147,8 +147,9 @@ function createFirebaseAccount(instagramID, displayName, photoURL, accessToken) 
   // Wait for all async task to complete then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    const token = admin.auth().createCustomToken(uid);
-    console.log('Created Custom token for UID "', uid, '" Token:', token);
-    return token;
+    return admin.auth().createCustomToken(uid).then(function (token) {
+      console.log('Created Custom token for UID "', uid, '" Token:', token);
+      return token;
+    });
   });
 }
