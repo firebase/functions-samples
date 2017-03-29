@@ -155,6 +155,11 @@ Uses an Analytics trigger.
 Periodically deletes the accounts of users who have not signed in the last month.
 Uses an HTTPS trigger.
 
+### [Username/password sign in with Firebase](/username-password-auth)
+
+Demonstrates how to authorize with a username/password sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
+Uses an HTTP trigger.
+
 
 ## Contributing
 
