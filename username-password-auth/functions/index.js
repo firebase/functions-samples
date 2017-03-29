@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Google Inc. All Rights Reserved.
+ * Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,19 +90,16 @@ exports.auth = functions.https.onRequest((req, res) => {
         }
 
         // On success return the Firebase Custom Auth Token.
-        admin.auth().createCustomToken(username).then(firebaseToken => {
+        return admin.auth().createCustomToken(username).then(firebaseToken => {
           return handleResponse(username, 200, {
             token: firebaseToken
           });
-        }).catch(error => {
-          return handleError(username, error);
         });
-
       }).catch(error => {
         return handleError(username, error);
       });
     });
-  } catch ( error ) {
+  } catch (error) {
     return handleError(username, error);
   }
 });
@@ -138,5 +135,4 @@ function authenticate(username, password) {
       return resolve(true);
     });
   });
-
 }
