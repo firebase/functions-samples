@@ -39,7 +39,7 @@ exports.recountlikes = functions.database.ref("/posts/{postid}/likes_count").onW
   if (!event.data.exists()) {
     var counterRef = event.data.ref;
     var collectionRef = counterRef.parent.child('likes');
-    return collectionRef.once('value', function(messagesData) {
+    return collectionRef.once('value').then(function(messagesData) {
       return counterRef.set(messagesData.numChildren());
     });
   }
