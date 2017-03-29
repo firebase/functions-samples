@@ -20,11 +20,13 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 // Keeps track of the length of the 'likes' child list in a separate property.
-exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}').onWrite((event) => {
+exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}').onWrite(event => {
   var collectionRef = event.data.ref.parent;
   var countRef = collectionRef.parent.child('likes_count');
 
-  return countRef.transaction(function(current) {
+  // return the promise from .transaction() so our function 
+  // waits for this async event to complete before it exits
+  return countRef.transaction(current => {
     if (event.data.exists() && !event.data.previous.exists()) {
       return (current || 0) + 1;
     }
@@ -35,12 +37,13 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
 });
 
 // If the number of likes gets deleted, recount the number of likes
-exports.recountlikes = functions.database.ref('/posts/{postid}/likes_count').onWrite((event) => {
+exports.recountlikes = functions.database.ref('/posts/{postid}/likes_count').onWrite(event => {
   if (!event.data.exists()) {
     var counterRef = event.data.ref;
     var collectionRef = counterRef.parent.child('likes');
-    return collectionRef.once('value').then(function(messagesData) {
-      return counterRef.set(messagesData.numChildren());
-    });
+    // return the promise from counterRef.set() so our function 
+    // waits for this async event to complete before it exits
+    return collectionRef.once('value')
+      .then(messagesData => counterRef.set(messagesData.numChildren()));
   }
 });
