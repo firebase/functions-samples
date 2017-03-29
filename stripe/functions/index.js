@@ -32,7 +32,7 @@ exports.createStripeCharge = functions.database.ref('/users/{userId}/charges/{id
   // noop if the charge was deleted, errored out, or the Stripe API returned a result (id exists) 
   if (val === null || val.id || val.error) return null;
   // Look up the Stripe customer id written in createStripeCustomer
-  return admin.database().ref(`stripe_customers/${event.params.userId}`).once('value').then(snapshot => {
+  return admin.database().ref(`stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
     return snapshot.val();
   }).then(customer => {
     // Create a charge using the pushId as the idempotency key, protecting against double charges 
@@ -59,7 +59,26 @@ exports.createStripeCustomer = functions.auth.user().onCreate(event => {
   return stripe.customers.create({
     email: data.email,
   }).then(customer => {
-    return admin.database().ref(`/stripe_customers/${data.uid}`).set(customer.id);
+    return admin.database().ref(`/stripe_customers/${data.uid}/customer_id`).set(customer.id);
+  });
+});
+
+// Add a payment source (card) for a user by writing a stripe payment source token to Realtime database
+exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/cards/{pushId}/token').onWrite(event => {
+  return admin.database().ref(`stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
+    return snapshot.val();
+  }).then(customer => {
+    const source = event.data.val();
+    const user = customer.val();
+    return stripe.customers.createSource(
+      user,
+      {source}
+   )}).then(response => {
+      return event.data.ref.parent.set(response);
+    }, error => {
+      return event.data.ref.child('error').set(userFacingMessage(error)).then(() => {
+      return reportError(error, {user: user});
+    });
   });
 });
 
