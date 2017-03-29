@@ -61,6 +61,11 @@ Uses an HTTP trigger.
 Demonstrates how to authorize with a 3rd party sign-in mechanism (Instagram in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
 
+### [Authorize with LINE](/line-auth)
+
+Demonstrates how to authorize with a 3rd party sign-in mechanism (LINE in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
+Uses an HTTP trigger.
+
 ### [Automatically Convert Images](/convert-images)
 
 Demonstrates how to automatically convert images that are uploaded to Firebase Storage to JPEG using ImageMagick.
