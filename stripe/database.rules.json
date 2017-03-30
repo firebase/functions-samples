@@ -1,6 +1,24 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    "stripe_customers": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        "sources": {
+          "$chargeId" : {
+            ".write": "$uid === auth.uid",
+            "token": { ".validate": "newData.isString()" },
+            "$other": { ".validate": false }
+          }
+        },
+        "charges": {
+          "$sourceId" : {
+            ".write": "$uid === auth.uid",
+            "source": { ".validate": "newData.isString()" },
+            "amount": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    }
   }
 }
