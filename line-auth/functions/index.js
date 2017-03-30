@@ -27,9 +27,6 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-// Load config file
-const config = require('./config.json');
-
 // Generate a Request option to access LINE APIs
 function generateLineApiRequest(apiEndpoint, lineAccessToken) {
   return {
@@ -101,8 +98,9 @@ function verifyLineToken(lineAccessToken) {
       // you must not skip this step to make sure that the LINE access token is indeed
       // issued for your channel.
       //TODO: consider !== here
-      if (response.channelId != config.line.channelId)
+      if (response.channelId != functions.config().line.channelid) {
         return Promise.reject(new Error('LINE channel ID mismatched'));
+      }
 
       // STEP 2: Access token validation succeeded, so look up the corresponding Firebase user
       const lineMid = response.mid;
@@ -122,7 +120,7 @@ function verifyLineToken(lineAccessToken) {
 // Verify LINE token and exchange for Firebase Custom Auth token
 exports.verifyToken = functions.https.onRequest((req, res) => {
 	if (req.body.token === undefined) {
-    const ret = {
+		const ret = {
       error_message: 'Access Token not found'
     };
     return res.status(400).send(ret);
@@ -137,13 +135,12 @@ exports.verifyToken = functions.https.onRequest((req, res) => {
         firebase_token: customAuthToken
       };
       return res.status(200).send(ret);   
-    })
-    .catch(err => {
+    }).catch(err => {
       // If LINE access token verification failed, return error response to client
       const ret = {
         error_message: 'Authentication error: Cannot verify access token.'
       };
-      console.log('Error: ', err);
+      console.error('LINE token verification failed: ', err);
       return res.status(403).send(ret);
     });
 })
