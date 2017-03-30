@@ -26,26 +26,28 @@ const stripe = require('stripe')(functions.config().stripe.token),
 
 // [START chargecustomer]
 // Charge the Stripe customer whenever an amount is written to the Realtime database
-exports.createStripeCharge = functions.database.ref('/users/{userId}/charges/{id}').onWrite(event => {
+exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/charges/{id}').onWrite(event => {
   const val = event.data.val();
   // This onWrite will trigger whenever anything is written to the path, so
   // noop if the charge was deleted, errored out, or the Stripe API returned a result (id exists) 
   if (val === null || val.id || val.error) return null;
   // Look up the Stripe customer id written in createStripeCustomer
-  return admin.database().ref(`stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
+  return admin.database().ref(`/stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
     return snapshot.val();
   }).then(customer => {
     // Create a charge using the pushId as the idempotency key, protecting against double charges 
     const amount = val.amount;
     const idempotency_key = event.params.id;
-    return stripe.charges.create({amount, currency, customer}, {idempotency_key});
+    let charge = {amount, currency, customer};
+    if (val.source !== null) charge.source = val.source;
+    return stripe.charges.create(charge, {idempotency_key});
   }).then(response => {
       // If the result is seccessful, write it back to the database
-      return event.data.ref.set(response);
+      return event.data.adminRef.set(response);
     }, error => {
       // We want to capture errors and render them in a user-friendly way, while
       // still logging an exception with Stackdriver
-      return event.data.ref.child('error').set(userFacingMessage(error)).then(() => {
+      return event.data.adminRef.child('error').set(userFacingMessage(error)).then(() => {
         return reportError(error, {user: event.params.userId});
       });
     }
@@ -57,28 +59,26 @@ exports.createStripeCharge = functions.database.ref('/users/{userId}/charges/{id
 exports.createStripeCustomer = functions.auth.user().onCreate(event => {
   const data = event.data;
   return stripe.customers.create({
-    email: data.email,
+    email: data.email
   }).then(customer => {
-    return admin.database().ref(`/stripe_customers/${data.uid}/customer_id`).set(customer.id);
+    return admin.database().adminRef(`/stripe_customers/${data.uid}/customer_id`).set(customer.id);
   });
 });
 
 // Add a payment source (card) for a user by writing a stripe payment source token to Realtime database
-exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/cards/{pushId}/token').onWrite(event => {
-  return admin.database().ref(`stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
+exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/sources/{pushId}/token').onWrite(event => {
+  const source = event.data.val();
+  if (source === null) return null;
+  return admin.database().ref(`/stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
     return snapshot.val();
   }).then(customer => {
-    const source = event.data.val();
-    const user = customer.val();
-    return stripe.customers.createSource(
-      user,
-      {source}
-   )}).then(response => {
-      return event.data.ref.parent.set(response);
+    return stripe.customers.createSource(customer, {source});
+  }).then(response => {
+      return event.data.adminRef.parent.set(response);
     }, error => {
-      return event.data.ref.child('error').set(userFacingMessage(error)).then(() => {
-      return reportError(error, {user: user});
-    });
+      return event.data.adminRef.parent.child('error').set(userFacingMessage(error)).then(() => {
+        return reportError(error, {user: user});
+      });
   });
 });
 
@@ -136,4 +136,3 @@ function reportError(err, context = {}) {
 function userFacingMessage(error) {
   return error.type ? error.message : 'An error occurred, developers have been alerted';
 }
-
