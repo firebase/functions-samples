@@ -61,7 +61,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(event => {
   return stripe.customers.create({
     email: data.email
   }).then(customer => {
-    return admin.database().adminRef(`/stripe_customers/${data.uid}/customer_id`).set(customer.id);
+    return admin.database().ref(`/stripe_customers/${data.uid}/customer_id`).set(customer.id);
   });
 });
 
