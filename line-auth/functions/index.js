@@ -119,8 +119,8 @@ function verifyLineToken(lineAccessToken) {
 
 // Verify LINE token and exchange for Firebase Custom Auth token
 exports.verifyToken = functions.https.onRequest((req, res) => {
-	if (req.body.token === undefined) {
-		const ret = {
+  if (req.body.token === undefined) {
+    const ret = {
       error_message: 'Access Token not found'
     };
     return res.status(400).send(ret);
