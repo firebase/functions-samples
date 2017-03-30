@@ -17,8 +17,10 @@ As an example we'll be using a simple blog structure:
     /blog-posts
         /key-123456
             text: "This is my first blog entry..."
+            last_index_timestamp: 1234567890
         /key-123457
             text: "This is my second blog entry..."
+            last_index_timestamp: 1234567891
     /search
         /queries
             /key-546789
@@ -30,6 +32,7 @@ As an example we'll be using a simple blog structure:
                 hits: [...
             /key-078234
                 hits: [...
+        /last_query_timestamp: 1234567892
 ```
 
 Whenever a new blog post is created or modified a Function sends the content to be indexed to the Algolia instance.
