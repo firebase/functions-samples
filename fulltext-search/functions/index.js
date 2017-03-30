@@ -34,7 +34,8 @@ exports.indexentry = functions.database.ref('/blog-posts/{blogid}').onWrite(even
   firebaseObject.objectID = event.data.key;
 
   return index.saveObject(firebaseObject).then(
-      () => event.data.adminRef.child('last_index_timestamp').set(Date.parse(event.timestamp).getTime()));
+      () => event.data.adminRef.child('last_index_timestamp').set(
+          Date.parse(event.timestamp).getTime()));
 });
 
 // Starts a search query whenever a query is requested (by adding one to the `/search/queries`
