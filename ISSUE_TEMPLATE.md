@@ -6,8 +6,7 @@ Thank you for contributing to the Firebase community!
 
 Have a usage question about Functions?
 ======================================
-We get lots of those and we love helping you, but the samples issue tracker is not the best place for them and they
-will be closed. Here are some resources to get help:
+We get lots of those and we love helping you, but the samples issue tracker is not the best place for them and they will be closed. Here are some resources to get help:
 
 - Go through the Contributor's Guide: https://github.com/firebase/functions-samples/blob/master/CONTRIBUTING.md
 - Read the full user's guide: https://firebase.google.com/docs/functions/
