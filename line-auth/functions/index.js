@@ -88,7 +88,6 @@ function getFirebaseUser(lineMid, lineAccessToken) {
 function verifyLineToken(lineAccessToken) {
   // Send request to LINE server for access token verification
   const verifyTokenOptions = generateLineApiRequest('https://api.line.me/v1/oauth/verify', lineAccessToken);
-  var firebaseUid = '';
 
   // STEP 1: Verify with LINE server that a LINE access token is valid
   return rp(verifyTokenOptions)
@@ -108,12 +107,10 @@ function verifyLineToken(lineAccessToken) {
     })
     .then(userRecord => {
       // STEP 3: Generate Firebase Custom Auth Token
-      const tokenPromise = admin.auth().createCustomToken(userRecord.uid);
-      tokenPromise.then(token => {
+      return admin.auth().createCustomToken(userRecord.uid).then(token => {
         console.log('Created Custom token for UID "', userRecord.uid, '" Token:', token);
+        return token;
       });
-      
-      return tokenPromise;
     });
 }
 
