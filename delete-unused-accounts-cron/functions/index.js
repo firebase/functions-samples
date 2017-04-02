@@ -21,6 +21,7 @@ admin.initializeApp(functions.config().firebase);
 const rp = require('request-promise');
 const promisePool = require('es6-promise-pool');
 const PromisePool = promisePool.PromisePool;
+const secureCompare = require('secure-compare');
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 
@@ -33,7 +34,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   const key = req.query.key;
 
   // Exit if the keys don't match
-  if (key !== functions.config().cron.key) {
+  if (!secureCompare(key, functions.config().cron.key)) {
     console.log('The key provided in the request does not match the key set in the environment. Check that', key,
         'matches the cron.key attribute in `firebase env:get`');
     res.status(403).send('Security key does not match. Make sure your "key" URL query parameter matches the ' +
