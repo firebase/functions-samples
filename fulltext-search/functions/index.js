@@ -20,9 +20,9 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 // Authenticate to Algolia Database.
-// TODO: Make sure you configure the `algolia.appId` and `algolia.apiKey` Google Cloud environment variables.
+// TODO: Make sure you configure the `algolia.app_id` and `algolia.api_key` Google Cloud environment variables.
 const algoliasearch = require('algoliasearch');
-const client = algoliasearch(functions.config().algolia.appId, functions.config().algolia.apiKey);
+const client = algoliasearch(functions.config().algolia.app_id, functions.config().algolia.api_key);
 
 // Name fo the algolia index for Blog posts content.
 const ALGOLIA_POSTS_INDEX_NAME = 'blogposts';
