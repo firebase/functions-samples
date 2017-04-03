@@ -36,17 +36,19 @@ As an example we'll be using a simple blog structure:
 ```
 
 Whenever a new blog post is created or modified a Function sends the content to be indexed to the Algolia instance.
-To perform new searches clients add the search query to the realtime database under /search/queries/ which triggers a
-Firebase function which performs the search on the Algolia instance. The results are written under the /search/results
+To perform new searches clients add the search query to the realtime database under `/search/queries/` which triggers a
+Firebase function which performs the search on the Algolia instance. The results are written under the `/search/results/`
 tree.
 
 
 ## Setting up the sample
 
-Create an Algolia account at [www.algolia.com](https://www.algolia.com/).  Enable Billing on your project by switching to the Blaze or Candle.
+Create an Algolia account at [www.algolia.com](https://www.algolia.com/).
 
-Set the `algolia.appId` and `algolia.apiKey` Google Cloud environment variables to match the Algolia application ID and API key of your account. For this use:
+Enable Billing on your Firebase project by switching to the Blaze or Candle plans.
+
+Set the `algolia.app_id` and `algolia.api_key` Google Cloud environment variables to match the Algolia application ID and API key of your account. For this use:
 
 ```bash
-firebase functions:config:set algolia.appId="myAlgoliaAppId" algolia.apiKey="myAlgoliaApiKey"
+firebase functions:config:set algolia.app_id="myAlgoliaAppId" algolia.api_key="myAlgoliaApiKey"
 ```
