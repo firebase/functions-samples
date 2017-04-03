@@ -43,7 +43,7 @@ tree.
 
 ## Setting up the sample
 
-Create an Algolia account at [www.algolia.com](https://www.algolia.com/)
+Create an Algolia account at [www.algolia.com](https://www.algolia.com/).  Enable Billing on your project by switching to the Blaze or Candle.
 
 Set the `algolia.appId` and `algolia.apiKey` Google Cloud environment variables to match the Algolia application ID and API key of your account. For this use:
 
