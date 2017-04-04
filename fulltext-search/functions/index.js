@@ -35,7 +35,7 @@ exports.indexentry = functions.database.ref('/blog-posts/{blogid}').onWrite(even
 
   return index.saveObject(firebaseObject).then(
       () => event.data.adminRef.child('last_index_timestamp').set(
-          Date.parse(event.timestamp).getTime()));
+          Date.parse(event.timestamp)));
 });
 
 // Starts a search query whenever a query is requested (by adding one to the `/search/queries`
@@ -48,7 +48,7 @@ exports.searchentry = functions.database.ref('/search/queries/{queryid}').onWrit
 
   return index.search(query).then(content => {
     const updates = {
-      '/search/last_query_timestamp': Date.parse(event.timestamp).getTime()
+      '/search/last_query_timestamp': Date.parse(event.timestamp)
     };
     updates[`/search/results/${key}`] = content;
     return admin.database().ref().update(updates);
