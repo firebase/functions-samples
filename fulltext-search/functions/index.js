@@ -28,10 +28,12 @@ const client = algoliasearch(functions.config().algolia.app_id, functions.config
 const ALGOLIA_POSTS_INDEX_NAME = 'blogposts';
 
 // Updates the search index when new blog entries are created or updated.
-exports.indexentry = functions.database.ref('/blog-posts/{blogid}').onWrite(event => {
+exports.indexentry = functions.database.ref('/blog-posts/{blogid}/text').onWrite(event => {
   const index = client.initIndex(ALGOLIA_POSTS_INDEX_NAME);
-  const firebaseObject = event.data.val();
-  firebaseObject.objectID = event.data.key;
+  const firebaseObject = {
+    text: event.data.val(),
+    objectID: event.params.blogid
+  };
 
   return index.saveObject(firebaseObject).then(
       () => event.data.adminRef.child('last_index_timestamp').set(
