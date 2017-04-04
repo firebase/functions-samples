@@ -36,7 +36,7 @@ exports.indexentry = functions.database.ref('/blog-posts/{blogid}/text').onWrite
   };
 
   return index.saveObject(firebaseObject).then(
-      () => event.data.adminRef.child('last_index_timestamp').set(
+      () => event.data.adminRef.parent.child('last_index_timestamp').set(
           Date.parse(event.timestamp)));
 });
 
