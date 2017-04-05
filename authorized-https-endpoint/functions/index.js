@@ -20,7 +20,7 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 const express = require('express');
 const cors = require('cors')({origin: true});
-const app = express();
+const router = new express.Router();
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
 // The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
@@ -47,13 +47,14 @@ const validateFirebaseIdToken = (req, res, next) => {
   });
 };
 
-app.use(cors);
-app.use(validateFirebaseIdToken);
-app.get('*', (req, res) => {
+router.use(cors);
+router.use(validateFirebaseIdToken);
+router.get('*', (req, res) => {
   res.send(`Hello ${req.user.name}`);
 });
 
 // This HTTPS endpoint can only be accessed by your Firebase Users.
 // Requests need to be authorized by providing an `Authorization` HTTP header
 // with value `Bearer <Firebase ID Token>`.
-exports.authorizedHello = functions.https.onRequest(app);
+// NOTE: You need to add a trailing slash to the Function's URL becasue of this issue: https://github.com/firebase/firebase-functions/issues/27
+exports.authorizedHello = functions.https.onRequest(router);
