@@ -34,22 +34,21 @@ The function triggers on changes to `/users/$uid` and exits if there are no chan
 
 ## Setting up the sample
 
-Set the `gmail.email` and `gmail.password` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
-
-```bash
-firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
-```
-
-This sample comes with a web-based UI for testing the function. To set it up:
-
- - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
- - Enable Google Provider in the [Auth section](https://console.firebase.google.com/project/_/authentication/providers)
- - Import and configure Firebase in the `public/index.html` where the `TODO` is located
-
+ 1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
+ 1. Enable the **Google** Provider in the **Auth** section.
+ 1. Clone or download this repo and open the `email-confirmation` directory.
+ 1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
+ 1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
+ 1. Install dependencies locally by running: `cd functions; npm install; cd -`
+ 1. Set the `gmail.email` and `gmail.password` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
+    ```bash
+    firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
+    ```
 
 ## Deploy and test
 
 This sample comes with a web-based UI for testing the function. To test it out:
 
- - Deploy your project using `firebase deploy`
- - Open the app using `firebase open`, Sign in using Google Sign-In and subscribe/unsubscribe to the newsletter and you should receive email confirmations
+ 1. Deploy your project using `firebase deploy`
+ 1. Open the app using `firebase open hosting:site`, this will open a browser.
+ 1. Sign in the web app in the browser using Google Sign-In and delete your account using the button on the web app. You should receive email confirmations for each actions.
