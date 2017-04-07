@@ -23,7 +23,7 @@ function Demo() {
     this.signOutButton = document.getElementById('demo-sign-out-button');
     this.responseContainer = document.getElementById('demo-response');
     this.urlContainer = document.getElementById('demo-url');
-    this.helloFunctionUrl = 'https://us-central1-' + config.authDomain.split('.')[0] + '.cloudfunctions.net/authorizedHello/';
+    this.helloFunctionUrl = 'https://us-central1-' + firebase.app().options.authDomain.split('.')[0] + '.cloudfunctions.net/authorizedHello/';
     this.signedOutCard = document.getElementById('demo-signed-out-card');
     this.signedInCard = document.getElementById('demo-signed-in-card');
 
