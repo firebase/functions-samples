@@ -115,7 +115,7 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
  * @param {string} uid The UID of the user.
  */
 function getDeviceTokens(uid) {
-  return admin.database().ref(`/users/${uid}/tokens`).then(snap => {
+  return admin.database().ref(`/users/${uid}/tokens`).once('value').then(snap => {
     if (snap.exists()) {
       return Object.keys(snap.val());
     }
