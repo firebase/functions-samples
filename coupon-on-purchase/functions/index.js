@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+'use strict';licenses
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -21,7 +21,7 @@ admin.initializeApp(functions.config().firebase);
 
 // [START all]
 /**
- * After a user has completed a purchase. Send them a coupon via FCM valid on their next purchase.
+ * After a user has completed a purchase, send them a coupon via FCM valid on their next purchase.
  */
 // [START trigger]
 exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLog(event => {
@@ -33,7 +33,7 @@ exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLo
   const userLanguage = user.deviceInfo.userDefaultLanguage; // The user language in language-country format.
   // [END attributes]
 
-  // For purchases above 500 USD we send a coupon of higher value.
+  // For purchases above 500 USD, we send a coupon of higher value.
   if (purchaseValue > 500) {
     return sendHighValueCouponViaFCM(uid, userLanguage);
   }
