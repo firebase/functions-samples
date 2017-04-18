@@ -145,7 +145,7 @@ Uses an Realtime Database trigger.
 Deletes all associated user data that's on the Realtime database when a user deletes his Firebase account.
 Uses an Auth trigger.
 
-### [Send a survey when users update your app](/survery-app-updated)
+### [Send a survey when users update your app](/survery-app-update)
 
 This sample shows how to send a survey to your users who have updated your app. App Update is detected using a Firebase Analytics event.
 Uses an Analytics trigger.
