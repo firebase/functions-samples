@@ -35,7 +35,7 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
     }
   }).then(() => {
     console.log('Counter updated.');
-  });;
+  });
 });
 
 // If the number of likes gets deleted, recount the number of likes
