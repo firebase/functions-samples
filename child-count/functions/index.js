@@ -33,7 +33,9 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
     else if (!event.data.exists() && event.data.previous.exists()) {
       return (current || 0) - 1;
     }
-  });
+  }).then(() => {
+    console.log('Counter updated.');
+  });;
 });
 
 // If the number of likes gets deleted, recount the number of likes
