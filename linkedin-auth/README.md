@@ -47,7 +47,7 @@ The `redirect` Function then redirects the user to the LinkedIn OAuth 2.0 consen
 After the user has granted approval he is redirected back to the `./popup.html` page along with an OAuth 2.0 Auth Code as a URL parameter. This Auth code is then sent to the `token` Function using a JSONP Request. The `token` function then:
  - Checks that the value of the `state` URL query parameter is the same as the one in the `state` cookie.
  - Exchanges the auth code for an access token using the LinkedIn app credentials.
- - Fetches the user ideneity using a LinkedIn API.
+ - Fetches the user identity using the LinkedIn API.
  - Mints a Custom Auth token (which is why we need Service Accounts Credentials).
  - Returns the Custom Auth Token, email, photo URL, user display name and LinkedIn access token to the `./popup.html` page.
 
