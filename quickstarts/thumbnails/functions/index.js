@@ -72,7 +72,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]).then(() => {
       console.log('Thumbnail created at', tempFilePath);
       // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
-      const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, `$1thumb_$2`);
+      const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, '$1thumb_$2');
       // Uploading the thumbnail.
       return bucket.upload(tempFilePath, {
         destination: thumbFilePath
