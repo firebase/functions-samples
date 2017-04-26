@@ -25,7 +25,6 @@ To test this integration:
      firebase functions:config:set stripe.token=<YOUR STRIPE API KEY>
      ```
  - *Optional:* change your default currency `firebase functions:config:set stripe.currency=GBP`
- - Pass your Firebase project's javascript config (**Add Firebase to your web app**) to the `firebase.initializeApp` call in `public/index.html` 
  - Pass your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) to the `Stripe.setPublishableKey` call in `public/index.html`
  - Deploy your project using `firebase deploy`
  - Test your Stripe integration by viewing your deployed site `firebase open hosting:site`
