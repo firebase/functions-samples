@@ -4,14 +4,14 @@ This quickstart demonstrates using **Firebase SDK for Cloud Functions** setup wi
 
 ## Introduction
 
-This sample automatically generates thumbnails for each images that are uploaded to Cloud Storage.
+This sample automatically generates thumbnails for images that are uploaded to Cloud Storage.
 
 
 ## Functions Code
 
 See file [functions/index.js](functions/index.js) for the thumbnail generation code.
 
-The thumbnail generation is performed using ImagMagick which is installed by default on all Cloud Functions instances. This is a CLI so we execute the command from node using the [child-process-promise](https://www.npmjs.com/package/child-process-promise) package. The image is first downloaded locally from the Cloud Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
+The thumbnail generation is performed using ImageMagick which is installed by default on all Cloud Functions instances. This is a CLI so we execute the command from node using the [child-process-promise](https://www.npmjs.com/package/child-process-promise) package. The image is first downloaded locally from the Cloud Storage bucket to the `tmp` folder using the [google-cloud](https://github.com/GoogleCloudPlatform/google-cloud-node) SDK.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
@@ -30,7 +30,7 @@ To deploy and test the sample:
  - Enter the correct directory `cd functions-samples/quickstarts/thumbnails`
  - Setup the CLI to use your Firebase project using `firebase use --add` and select your Firebase project
  - Deploy your project's code using `firebase deploy`
- - Go to the Firebase Console **Storage** tab and upload an image. After a short time an thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
+ - Go to the Firebase Console **Storage** tab and upload an image. After a short time a thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
 
 
 ## Contributing
