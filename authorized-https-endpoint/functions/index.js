@@ -56,5 +56,13 @@ router.get('*', (req, res) => {
 // This HTTPS endpoint can only be accessed by your Firebase Users.
 // Requests need to be authorized by providing an `Authorization` HTTP header
 // with value `Bearer <Firebase ID Token>`.
-// NOTE: You need to add a trailing slash to the Function's URL becasue of this issue: https://github.com/firebase/firebase-functions/issues/27
-exports.authorizedHello = functions.https.onRequest(router);
+exports.authorizedHello = functions.https.onRequest((req, res) => {
+  // NOTE: You need to add a trailing slash to the root URL becasue of this issue: https://github.com/firebase/firebase-functions/issues/27
+  // without trailing "/", req.path = null, req.url = null
+  // won't match to your app.get('/', ...) route
+  if (!req.path) {
+    // prepend to keep query, path params
+    req.url = `/${req.url}`
+  }
+  return router(req, res)
+});
