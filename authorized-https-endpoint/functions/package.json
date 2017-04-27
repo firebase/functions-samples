@@ -1,6 +1,6 @@
 {
-  "name": "authorized-https-endpoint",
-  "description": "restrict an HTTPS function to only the Firebase users of your app",
+  "name": "authorized-https-endpoint-functions",
+  "description": "restrict HTTPS functions to Firebase users",
   "dependencies": {
     "cors": "^2.8.1",
     "express": "^4.14.1",
