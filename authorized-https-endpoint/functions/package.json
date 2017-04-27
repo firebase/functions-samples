@@ -1,6 +1,6 @@
 {
-  "name": "time-server-functions",
-  "description": "A simple time server using HTTPS Cloud Function",
+  "name": "authorized-https-endpoint",
+  "description": "restrict an HTTPS function to only the Firebase users of your app",
   "dependencies": {
     "cors": "^2.8.1",
     "express": "^4.14.1",
