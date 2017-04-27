@@ -1,6 +1,6 @@
 {
-  "name": "fcm-notifications-functions",
-  "description": "Send FCM notifications Firebase Functions sample",
+  "name": "delete-unused-accounts-cron-functions",
+  "description": "Periodically delete unused Firebase accounts",
   "dependencies": {
     "es6-promise-pool": "^2.4.4",
     "firebase-admin": "^4.1.1",
