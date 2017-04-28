@@ -57,12 +57,7 @@ router.get('*', (req, res) => {
 // Requests need to be authorized by providing an `Authorization` HTTP header
 // with value `Bearer <Firebase ID Token>`.
 exports.authorizedHello = functions.https.onRequest((req, res) => {
-  // NOTE: You need to add a trailing slash to the root URL becasue of this issue: https://github.com/firebase/firebase-functions/issues/27
-  // without trailing "/", req.path = null, req.url = null
-  // won't match to your app.get('/', ...) route
-  if (!req.path) {
-    // prepend to keep query, path params
-    req.url = `/${req.url}`
-  }
+  // NOTE: Adding a temporary fix for issue https://github.com/firebase/firebase-functions/issues/27
+  req.url = req.path ? req.url : `/${req.url}`;
   return router(req, res)
 });
