@@ -107,7 +107,8 @@ function getAccessToken(accessToken) {
 
   const options = {
     uri: 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',
-    header: {'Metadata-Flavor': 'Google'}
+    headers: {'Metadata-Flavor': 'Google'},
+    json: true
   };
 
   return rp(options).then(resp => resp.access_token);
