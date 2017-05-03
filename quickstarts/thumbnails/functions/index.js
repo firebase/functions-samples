@@ -36,6 +36,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
+  const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
   // [END eventAttributes]
 
   // [START stopConditions]
@@ -56,6 +57,13 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
     console.log('This is a deletion event.');
+    return;
+  }
+  
+  // Exit if file exists but is not new and is only being triggered
+  // because of a metadata change.
+  if (resourceState === 'exists' && metageneration > 1) {
+    console.log('This is a metadata change event.');
     return;
   }
   // [END stopConditions]
