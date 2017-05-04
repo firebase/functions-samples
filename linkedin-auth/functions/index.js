@@ -21,11 +21,7 @@ const crypto = require('crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');
-const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`
-});
+admin.initializeApp(functions.config().firebase)
 
 const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
 
@@ -36,9 +32,9 @@ function linkedInClient() {
   // LinkedIn OAuth 2 setup
   // TODO: Configure the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables.
   return require('node-linkedin')(
-      functions.config().linkedin.client_id,
-      functions.config().linkedin.client_secret,
-      `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
+    functions.config().linkedin.client_id,
+    functions.config().linkedin.client_secret,
+    `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
 }
 
 /**
@@ -51,7 +47,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     console.log('Setting verification state:', state);
-    res.cookie('state', state.toString(), {maxAge: 3600000, secure: true, httpOnly: true});
+    res.cookie('state', state.toString(), { maxAge: 3600000, secure: true, httpOnly: true });
     Linkedin.auth.authorize(res, OAUTH_SCOPES, state.toString());
   });
 });
@@ -95,15 +91,15 @@ exports.token = functions.https.onRequest((req, res) => {
 
           // Create a Firebase account and get the Custom Auth Token.
           createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
-              firebaseToken => {
-                // Serve an HTML page that signs the user in and updates the user profile.
-                res.jsonp({token: firebaseToken});
-              });
+            firebaseToken => {
+              // Serve an HTML page that signs the user in and updates the user profile.
+              res.jsonp({ token: firebaseToken });
+            });
         });
       });
     });
   } catch (error) {
-    return res.jsonp({error: error.toString});
+    return res.jsonp({ error: error.toString });
   }
 });
 
@@ -120,7 +116,7 @@ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessT
 
   // Save the access token tot he Firebase Realtime Database.
   const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`)
-      .set(accessToken);
+    .set(accessToken);
 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {
