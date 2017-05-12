@@ -1,0 +1,12 @@
+// [START rewriterules]
+{
+  "hosting": {
+    "public": "public",
+
+    // Add the following rewrites section *within* "hosting".
+    "rewrites": [ {
+      "source": "/bigben", "function": "bigben"
+    } ]
+  }
+}
+// [END rewriterules]
