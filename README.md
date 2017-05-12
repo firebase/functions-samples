@@ -22,7 +22,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **HTTPS requests**. The function returns the current server time and allows for date time formatting.
 
-### [Hosting triggered HTTPS fucntion quickstart: Big Ben](/quickstarts/big-ben)
+### [Hosting triggered HTTPS function quickstart: Big Ben](/quickstarts/big-ben)
 
 This quickstart demonstrates using **Cloud Functions** with an HTTPS trigger that's triggered through a Firebase Hosting URL. The function will display a repeated number of "BONG" depending on the hour of the day.
 
