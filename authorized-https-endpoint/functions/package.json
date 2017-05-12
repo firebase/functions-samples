@@ -2,6 +2,7 @@
   "name": "authorized-https-endpoint-functions",
   "description": "restrict HTTPS functions to Firebase users",
   "dependencies": {
+    "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "firebase-admin": "^4.1.2",

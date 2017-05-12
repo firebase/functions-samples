@@ -2,11 +2,11 @@
 
 This samples shows how to restrict an HTTPS Function to only the Firebase users of your app.
 
-Only users who pass a valid Firebase ID token as a Bearer token in the Authorization header of the HTTP request are authorized to use the function.
+Only users who pass a valid Firebase ID token as a Bearer token in the `Authorization` header of the HTTP request or in a `__session` cookie are authorized to use the function.
 
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 
-Once authrorized the function respond with 'Hello <username>'.
+Once authorized the function respond with 'Hello <username>'.
 
 This sample comes with a simple web-based UI which code is in [public](public) directory that lets you sign-in Firebase and initiates an authorized XHR to the Function.
 
