@@ -37,7 +37,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Pub
 ### [Authorized HTTP endpoint](/authorized-https-endpoint)
 
 This samples shows how to restrict an HTTPS Function to only the Firebase users of your app.
-Only users who pass a valid Firebase ID token as a Bearer token in the Authorization header of the HTTP request are authorized to use the function.
+Only users who pass a valid Firebase ID token as a Bearer token in the `Authorization` header of the HTTP request or in a `__session` cookie are authorized to use the function.
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 Uses an HTTP trigger.
 
