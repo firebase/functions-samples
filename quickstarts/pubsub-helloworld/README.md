@@ -60,7 +60,7 @@ This deploys and activate the PubSub hello World Functions.
 
 ## Try the sample
 
-Once deployed, to try the sample use the `glcoud` CLI to publish a message to the `topic-name` topic:
+Once deployed, to try the sample use the `gcloud` CLI to publish a message to the `topic-name` topic:
 
 ```
 gcloud alpha pubsub topics publish topic-name 'YourName'
