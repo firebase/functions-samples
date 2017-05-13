@@ -1,0 +1,13 @@
+{
+  "name": "template-handlebars-functions",
+  "description": "Use handlebars templating engine on Firebase hosting with Cloud functions",
+  "dependencies": {
+    "cookie-parser": "^1.4.3",
+    "cors": "^2.8.1",
+    "express": "^4.14.1",
+    "express-handlebars": "^3.0.0",
+    "firebase-admin": "^4.1.2",
+    "firebase-functions": "^0.5.1",
+    "handlebars": "^4.0.8"
+  }
+}

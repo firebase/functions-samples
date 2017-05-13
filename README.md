@@ -45,6 +45,10 @@ Only users who pass a valid Firebase ID token as a Bearer token in the `Authoriz
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 Uses an HTTP trigger.
 
+### [Server-side generated pages w/ Handlebars templating and user sessions](/template-handlebars)
+
+This samples shows how to serve server-side generated HTML pages using the [HandlebarsJs](http://handlebarsjs.com/) templating system and serve User specific content by always passing the Firebase ID token in a `__session` cookie.
+
 ### [Google Assistant says ordinal of given number](/assistant-say-number)
 
 This sample shows how to create an action for the Google Home/Assistant using the Actions SDK hosted on Cloud Functions. The sample action asks users to say a number and reads out the ordinal of that number.
