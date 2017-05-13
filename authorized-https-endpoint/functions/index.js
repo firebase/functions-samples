@@ -29,7 +29,6 @@ const app = express();
 // when decoded successfully, the ID Token content will be added as `req.user`.
 const validateFirebaseIdToken = (req, res, next) => {
   console.log('Check if request is authorized with Firebase ID token');
-  console.log('headers', req.headers);
 
   if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
       !req.cookies.__session) {
