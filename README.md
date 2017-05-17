@@ -38,6 +38,9 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **PubSub events**. The functions log the PubSub payload in a Hello world message.
 
+### [Authenticated JSON API](/authenticated-json-api)
+This sample shows how to authenticate access to a JSON API to only allow access to data for a specific Firebase user.
+
 ### [Authorized HTTP endpoint](/authorized-https-endpoint)
 
 This samples shows how to restrict an HTTPS Function to only the Firebase users of your app.
@@ -64,10 +67,16 @@ Uses a Realtime Database trigger.
 Demonstrates how to authorize with a 3rd party sign-in mechanism (LinkedIn in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
 
+### [Image Maker](/image-maker)
+This sample demonstrates how to create various customized images through Cloud Functions and Hosting and serve it to the client.
+
 ### [Authorize with Instagram](/instagram-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism (Instagram in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
+
+### [Isomorphic React App](/isomorphic-react-app)
+This sample demonstrates how to create an isomorphic React application with server-side data fetching. This sample uses Cloud Functions, Hosting, and the Realtime Database.
 
 ### [Authorize with LINE](/line-auth)
 
