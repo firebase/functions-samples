@@ -82,6 +82,22 @@ exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/so
   });
 });
 
+// Add a payment source (card) for a user by writing a stripe payment source token to Realtime database
+exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/cards/{pushId}/token').onWrite(event => {
+  const source = event.data.val();
+  const user = event.params.userId;
+  return stripe.customers.createSource(
+    user,
+    {source}
+  ).then(response => {
+        return event.data.ref.parent.set(response);
+  }, error => {
+      return event.data.ref.child('error').set(userFacingMessage(error)).then(() => {
+        return reportError(error, {user: user});
+      });
+  });
+});
+
 // When a user deletes there account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(event => {
   return admin.database().ref(`/stripe_customers/${event.data.uid}`).once('value').then(snapshot => {
