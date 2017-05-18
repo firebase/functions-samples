@@ -23,4 +23,4 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 - POST {price:5} to `https://us-central1-<project-id>.cloudfunctions.net/pay` return `response.body.approval_url` go on the `approval_url` to achieve the paiement.
 
-See[Docs API Paypal rest-sdks](https://developer.paypal.com/docs/api/rest-sdks/)
+See [Docs API Paypal rest-sdks](https://developer.paypal.com/docs/api/rest-sdks/)
