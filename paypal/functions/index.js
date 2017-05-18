@@ -23,7 +23,7 @@ exports.pay = functions.https.onRequest((req, res) => {
         payer: {
             payment_method: 'paypal'
         },
-        // exemple url https://us-central1-<project-id>.cloudfunctions.net/process
+        // example url https://us-central1-<project-id>.cloudfunctions.net/process
         // replace return_url, cancel_url
         redirect_urls: {
             return_url: 'https://us-central1-<project-id>.cloudfunctions.net/process',
