@@ -70,7 +70,7 @@ function sendWelcomeEmail(email, displayName) {
     to: email
   };
 
-  // The user unsubscribed to the newsletter.
+  // The user subscribed to the newsletter.
   mailOptions.subject = `Welcome to ${APP_NAME}!`;
   mailOptions.text = `Hey ${displayName}!, Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
   return mailTransport.sendMail(mailOptions).then(() => {
