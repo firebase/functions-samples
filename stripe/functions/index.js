@@ -82,7 +82,7 @@ exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/so
   });
 });
 
-// When a user deletes there account, clean up after them
+// When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(event => {
   return admin.database().ref(`/stripe_customers/${event.data.uid}`).once('value').then(snapshot => {
     return snapshot.val();
