@@ -42,7 +42,7 @@ exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/
     if (val.source !== null) charge.source = val.source;
     return stripe.charges.create(charge, {idempotency_key});
   }).then(response => {
-      // If the result is seccessful, write it back to the database
+      // If the result is successful, write it back to the database
       return event.data.adminRef.set(response);
     }, error => {
       // We want to capture errors and render them in a user-friendly way, while
