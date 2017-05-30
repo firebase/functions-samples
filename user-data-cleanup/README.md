@@ -7,8 +7,6 @@ This sample shows how to cleanup the user data when he deletes his account.
 
 See file [functions/index.js](functions/index.js) for the data cleanup code.
 
-Sending emails is performed using [nodemailer](https://www.npmjs.com/package/bad-words) a node based Email client with comprehensive EMail server setup. In this sample we're showing how to send email through SMTP using a Gmail account. Be aware that Gmail has an [email sending quota](). If you are planning on sending a large number of emails you should use a professional email sending platform such as Sendgrid
-
 The dependencies are listed in [functions/package.json](functions/package.json).
 
 
