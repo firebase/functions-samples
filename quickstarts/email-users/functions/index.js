@@ -90,7 +90,7 @@ function sendGoodbyEmail(email, displayName) {
 
   // The user unsubscribed to the newsletter.
   mailOptions.subject = `Bye!`;
-  mailOptions.text = `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
+  mailOptions.text = `Hey ${displayName || ''}!, We confirm that we have deleted your ${APP_NAME} account.`;
   return mailTransport.sendMail(mailOptions).then(() => {
     console.log('Account deletion confirmation email sent to:', email);
   });
