@@ -77,7 +77,7 @@ exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/so
       return event.data.adminRef.parent.set(response);
     }, error => {
       return event.data.adminRef.parent.child('error').set(userFacingMessage(error)).then(() => {
-        return reportError(error, {user: user});
+        return reportError(error, {user: event.params.userId});
       });
   });
 });
