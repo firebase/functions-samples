@@ -43,7 +43,7 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate(event => {
   const user = event.data; // The Firebase user.
 
   const email = user.email; // The email of the user.
-  var displayName = user.displayName; // The display name of the user.
+  const displayName = user.displayName; // The display name of the user.
   // [END eventAttributes]
 
   return sendWelcomeEmail(email, displayName);
@@ -60,7 +60,7 @@ exports.sendByeEmail = functions.auth.user().onDelete(event => {
   const user = event.data;
 
   const email = user.email;
-  var displayName = user.displayName;
+  const displayName = user.displayName;
 
   return sendGoodbyEmail(email, displayName);
 });
@@ -75,10 +75,7 @@ function sendWelcomeEmail(email, displayName) {
 
   // The user subscribed to the newsletter.
   mailOptions.subject = `Welcome to ${APP_NAME}!`;
-  if(!displayName){
-	displayName=''
-  }
-  mailOptions.text = `Hey ${displayName}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
+  mailOptions.text = `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
   return mailTransport.sendMail(mailOptions).then(() => {
     console.log('New welcome email sent to:', email);
   });
@@ -93,10 +90,7 @@ function sendGoodbyEmail(email, displayName) {
 
   // The user unsubscribed to the newsletter.
   mailOptions.subject = `Bye!`;
-  if(!displayName){
-	displayName=''
-  }
-  mailOptions.text = `Hey ${displayName}! We confirm that we have deleted your ${APP_NAME} account.`;
+  mailOptions.text = `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
   return mailTransport.sendMail(mailOptions).then(() => {
     console.log('Account deletion confirmation email sent to:', email);
   });
