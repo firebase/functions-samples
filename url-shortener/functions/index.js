@@ -45,16 +45,15 @@ function createShortenerRequest(sourceUrl) {
 function createShortenerPromise(snapshot) {
   const key = snapshot.key;
   const originalUrl = snapshot.val();
-  return request(createShortenerRequest(originalUrl)).then(
-      response => {
-        if (response.statusCode === 200) {
-          const shortUrl = response.body.id;
-          return admin.database().ref(`/links/${key}`)
-              .set({
-                original: originalUrl,
-                short: shortUrl
-              });
-        }
-        throw response.body;
-      });
+  return request(createShortenerRequest(originalUrl)).then(response => {
+    if (response.statusCode === 200) {
+      return response.body.id;
+    }
+    throw response.body;
+  }).then(shortUrl => {
+    return admin.database().ref(`/links/${key}`).set({
+      original: originalUrl,
+      short: shortUrl
+    });
+  });
 }
