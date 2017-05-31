@@ -22,6 +22,10 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **HTTPS requests**. The function returns the current server time and allows for date time formatting.
 
+### [Hosting triggered HTTPS function quickstart: Big Ben](/quickstarts/big-ben)
+
+This quickstart demonstrates using **Cloud Functions** with an HTTPS trigger that's triggered through a Firebase Hosting URL. The function will display a repeated number of "BONG" depending on the hour of the day.
+
 ### [Cloud Storage trigger quickstart: Thumbnail generator](/quickstarts/thumbnails)
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. The function generates a thumbnail of uploaded images.
@@ -34,12 +38,19 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **PubSub events**. The functions log the PubSub payload in a Hello world message.
 
+### [Authenticated JSON API](/authenticated-json-api)
+This sample shows how to authenticate access to a JSON API to only allow access to data for a specific Firebase user.
+
 ### [Authorized HTTP endpoint](/authorized-https-endpoint)
 
 This samples shows how to restrict an HTTPS Function to only the Firebase users of your app.
-Only users who pass a valid Firebase ID token as a Bearer token in the Authorization header of the HTTP request are authorized to use the function.
+Only users who pass a valid Firebase ID token as a Bearer token in the `Authorization` header of the HTTP request or in a `__session` cookie are authorized to use the function.
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 Uses an HTTP trigger.
+
+### [Server-side generated pages w/ Handlebars templating and user sessions](/template-handlebars)
+
+This samples shows how to serve server-side generated HTML pages using the [HandlebarsJs](http://handlebarsjs.com/) templating system and serve User specific content by always passing the Firebase ID token in a `__session` cookie.
 
 ### [Google Assistant says ordinal of given number](/assistant-say-number)
 
@@ -56,10 +67,16 @@ Uses a Realtime Database trigger.
 Demonstrates how to authorize with a 3rd party sign-in mechanism (LinkedIn in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
 
+### [Image Maker](/image-maker)
+This sample demonstrates how to create various customized images through Cloud Functions and Hosting and serve it to the client.
+
 ### [Authorize with Instagram](/instagram-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism (Instagram in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
+
+### [Isomorphic React App](/isomorphic-react-app)
+This sample demonstrates how to create an isomorphic React application with server-side data fetching. This sample uses Cloud Functions, Hosting, and the Realtime Database.
 
 ### [Authorize with LINE](/line-auth)
 

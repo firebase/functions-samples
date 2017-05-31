@@ -1,0 +1,134 @@
+/**
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Custom CSS */
+
+body {
+  font-family: Lato,'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+
+.navbar-custom {
+  background: #2C3E50;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: none;
+  padding: 20px 0;
+}
+
+.navbar-custom .navbar-brand {
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.navbar-custom .navbar-brand:hover {
+  color: gray;
+}
+
+ul.cards {
+  margin-top: 20px;
+}
+
+li.card-inline {
+  display: inline-block;
+  width: 300px;
+  height: 326px;
+  margin: 5px;
+  text-align: center;
+}
+
+img.card-image {
+  width: 150px;
+  padding-top: 20px;
+}
+
+.user-details {
+  margin-bottom: 40px;
+}
+
+.hero {
+  text-align: center;
+  background: #18BC9C;
+  padding: 20px;
+  color: #fff;
+}
+
+img.employee-image {
+  width: 350px;
+  margin: 10px 0 20px;
+}
+
+td.title {
+  text-align: right;
+  font-weight: 700;
+}
+
+.callout {
+  padding: 20px;
+  margin: 20px auto;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+  width: 1000px;
+  border-left-color: #ce4844;
+}
+
+.callout h4 {
+  color: #ce4844;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.details-table, .reports {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+.reports {
+  margin-top: 30px;
+}
+
+img.report-img {
+  width: 100px;
+  padding-right: 10px;
+}
+
+.report-desc {
+  width: 230px;
+}
+
+.report-desc p {
+  margin: 0;
+  color: gray
+}
+
+.direct-report {
+  display: inline-block;
+}
+
+.direct-report .card {
+  width: 352px;
+  margin: 5px;
+  padding: 10px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  color: gray;
+  font-size: 11px;
+  margin-top: 30px;
+}

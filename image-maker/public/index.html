@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Demonstrates how to dynamically generate images on the server">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Maker Samples</title>
+
+  <!-- Material Design Lite -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue_grey-orange.min.css">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<style>
+    .mdl-card {
+      width: 400px;
+      margin: 10px;
+    }
+    section.row {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      justify-content: center;
+      margin: 10px 0;
+      align-items: baseline;
+    }
+    .inline {
+      display: inline-block;
+      margin: 0 5px;
+    }
+    .image-container {
+      text-align: center;
+      display: none;
+    }
+    #ray-tracing {
+      min-width: 400px;
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <!-- Header section containing title -->
+    <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+        <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+          <h3>Image Maker Samples</h3>
+        </div>
+      </div>
+    </header>
+    <main class="mdl-layout__content mdl-color--grey-100">
+      <div class="mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid" style="align-items: baseline;">
+        <section class='row'>
+          <div class="mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+              <h2 class="mdl-card__title-text">Clock</h2>
+            </div>
+            <div class="mdl-card__supporting-text" id='clock-directions'>Generates a PNG of a clock based on the following parameters.</div>
+            <div class="mdl-card__supporting-text image-container" id='clock-png'></div>
+            <div class="mdl-card__supporting-text">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='clock-stroke' value='#325FA2' />
+                <label class="mdl-textfield__label" for="clock-stroke">Clock Stroke</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='clock-fill' value='#eeeeee' />
+                <label class="mdl-textfield__label" for="clock-fill">Clock Fill</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='hour-stroke' value='#000000' />
+                <label class="mdl-textfield__label" for="hour-stroke">Hour Hand Stroke</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='minute-stroke' value='#000000' />
+                <label class="mdl-textfield__label" for="minute-stroke">Minute Hand Stroke</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='seconds-stroke' value='#D40000' />
+                <label class="mdl-textfield__label" for="seconds-stroke">Seconds Hand Stroke</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='seconds-fill' value='#D40000' />
+                <label class="mdl-textfield__label" for="seconds-fill">Seconds Hand Fill</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='seconds-tip' value='#555555' />
+                <label class="mdl-textfield__label" for="seconds-tip">Seconds Tip Fill</label>
+              </div>
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick={generateClock()}>
+                Generate Image
+              </a>
+            </div>
+          </div>
+          <div class="mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+              <h2 class="mdl-card__title-text">Sparkline Chart</h2>
+            </div>
+            <div class="mdl-card__supporting-text" id='spark-directions'>Generates a PNG of a Sparkline Chart. Input an array of integers as a sample data series.</div>
+            <div class="mdl-card__supporting-text image-container" id='spark-png'></div>
+            <div class="mdl-card__supporting-text">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:100%">
+                <textarea class="mdl-textfield__input" type="text" rows= "1" id="sampleSeries">[1, 2, 4, 5, 10, 4, 2, 5, 4, 3, 3, 2]</textarea>
+                <label class="mdl-textfield__label" for='sampleSeries'>Sample Data Series</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='line-stroke' value='#D40000' />
+                <label class="mdl-textfield__label" for="line-stroke">Line Stroke</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inline" style="width:46%">
+                <input class="mdl-textfield__input" type='color' id='bar-fill' value='#EEEEEE' />
+                <label class="mdl-textfield__label" for="bar-fill">Bar Fill</label>
+              </div>
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick={generateSparkChart()}>
+                Generate Image
+              </a>
+            </div>
+          </div>
+        </section>
+        <section class='row'>
+          <div class="mdl-card mdl-shadow--2dp" id='ray-tracing'>
+            <div class="mdl-card__title">
+              <h2 class="mdl-card__title-text">Ray Tracing</h2>
+            </div>
+            <div class="mdl-card__supporting-text" id='ray-directions'>Generates a PNG of a sphere using a recursive ray tracing algorithm. </div>
+            <div class='image-container' id='ray-png'></div>
+            <div id="ray-sections">
+              <div class="mdl-card__supporting-text mdl-card--border raySection">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:100%">
+                  <input class="mdl-textfield__input" type="number" value="27" min="1" max="27" id="depth" />
+                  <label class="mdl-textfield__label" for="depth">Min Depth Level</label>
+                </div>
+              </div>
+              <div class="mdl-card__supporting-text mdl-card--border raySection">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:100%">
+                  <input class="mdl-textfield__input" type="number" value="1" min="1" max="27" id="depth" />
+                  <label class="mdl-textfield__label" for="depth">Min Depth Level</label>
+                </div>
+              </div>
+            </div>
+            <div class="mdl-card__actions mdl-card--border">
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick={generateTracers()}>
+                Generate Image
+              </a>
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick={addTracer()}>
+                Add New Tracer
+              </a>
+              <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onClick={removeTracer()}>
+                Remove Last Tracer
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script
+    src="https://code.jquery.com/jquery-2.2.4.min.js"
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+    crossorigin="anonymous">
+  </script>
+  <script>
+    function updateImage(divId, imageUrl) {
+      $(`#${divId}-png`).html(`<div class='loading'>generating...</div><img src='${imageUrl}'/>`);
+      $(`#${divId}-png img`).on('load', function() {
+        $(`#${divId}-png .loading`).remove();
+      });
+      $(`#${divId}-png`).css('display','block');
+      $(`#${divId}-directions`).css('display','hidden');
+    }
+    function addTracer() {
+      $('#ray-sections').append(`<div class="mdl-card__supporting-text mdl-card--border raySection">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width:100%">
+          <input class="mdl-textfield__input" type="number" value="13" min="1" max="27" id="depth" />
+          <label class="mdl-textfield__label" for="depth">Min Depth Level</label>
+        </div>
+      </div>`);
+      componentHandler.upgradeElements(document.getElementById('ray-sections'));
+    }
+    function removeTracer() {
+      if ($('#ray-sections').children().length > 1) {
+        $('#ray-sections').children().last().remove();
+      }
+    }
+    function generateTracers() {
+      const tracers = $('.raySection').map(function(ind, elm) {
+        return parseInt($(elm).find("input#depth").val())
+      });
+      // construct data obj
+      const data = {
+        tracers: JSON.stringify(tracers.toArray())
+      };
+      // construct URL
+      const url = `/api/ray?${$.param(data)}`;
+      // update the img-container
+      updateImage('ray', url);
+    }
+    function generateSparkChart() {
+      // construct data obj
+      const data = {
+        series: $('#sampleSeries').val(),
+        colorOpts: {
+          lineStroke: $('#line-stroke').val(),
+          barFill: $('#bar-fill').val()
+        }
+      };
+      // construct URL
+      const url = `/api/spark?${$.param(data)}`;
+      // update the img-container
+      updateImage('spark', url);
+    }
+    function generateClock() {
+      // construct data obj
+      const data = {
+        strokes: {
+          clock: $('#clock-stroke').val(),
+          minute: $('#hour-stroke').val(),
+          hour: $('#minute-stroke').val(),
+          seconds: $('#seconds-stroke').val()
+        },
+        fills: {
+          clock: $('#clock-fill').val(),
+          tip: $('#seconds-tip').val(),
+          seconds: $('#seconds-fill').val()
+        }
+      };
+      // construct URL
+      const url = `/api/clock?${$.param(data)}`;
+      // update the img-container
+      updateImage('clock', url);
+    }
+  </script>
+</body>
+</html>

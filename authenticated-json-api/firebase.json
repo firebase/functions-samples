@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      { "source": "/api/**", "function": "api" }
+    ]
+  },
+  "database": {
+    "rules": "database.rules.json"
+  }
+}
