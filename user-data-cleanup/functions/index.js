@@ -17,10 +17,16 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const path = require('path');
 admin.initializeApp(functions.config().firebase);
 
 // Deletes the user data in the Realtime Datastore when the accounts are deleted.
 exports.cleanupUserData = functions.auth.user().onDelete(event => {
   const uid = event.data.uid;
-  return admin.database().ref(`/users/${uid}`).remove();
+  const displayName = event.data.displayName;
+  const wipeout_path = path.join( functions.config().wipeout.path, uid.toString());
+  return admin.database().ref(wipeout_path).remove(err =>{
+  }).then(() => {
+    admin.database().ref(`/wipeout-log/${uid}`).set(displayName);
+	});
 });
