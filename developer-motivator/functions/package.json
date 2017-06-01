@@ -3,5 +3,6 @@
   "description": "A simple developer motivator using Cloud Function and firebase analytics",
   "dependencies": {
     "firebase-admin": "^4.1.2",
-    "firebase-functions": "^0.5.1" }
+    "firebase-functions": "^0.5.1"
+  }
 }
