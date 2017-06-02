@@ -30,7 +30,7 @@ exports.appinstalled = functions.analytics.event('first_open').onLog(event => {
     const payload = {
       notification: {
         title: 'you have a new user \uD83D\uDE43',
-        body: 'new ' + event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country
+        body: event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country
       }
     };
 
@@ -46,7 +46,7 @@ exports.appremoved = functions.analytics.event('app_remove').onLog(event => {
     const payload = {
       notification: {
         title: 'you lost a user \uD83D\uDE1E',
-        body: 'lost ' + event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country
+        body: event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country
       }
     };
 
