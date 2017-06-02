@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Google Inc. All Rights Reserved.
+ * Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ admin.initializeApp(functions.config().firebase);
 
 // TODO: Make sure you configure the 'dev_motivator.device_token' Google Cloud environment variables.
 const deviceToken = functions.config().dev_motivator.device_token;
+
 /**
  * Triggers when the app is opened the first time in a user device and sends a notification to your developer device.
  *
@@ -33,7 +34,7 @@ exports.appinstalled = functions.analytics.event('first_open').onLog(event => {
       }
     };
 
-     admin.messaging().sendToDevice(deviceToken, payload);
+    admin.messaging().sendToDevice(deviceToken, payload);
 });
 
 /**
@@ -49,7 +50,6 @@ exports.appremoved = functions.analytics.event('app_remove').onLog(event => {
       }
     };
 
-     admin.messaging().sendToDevice(deviceToken, payload);
-
+    admin.messaging().sendToDevice(deviceToken, payload);
 });
 
