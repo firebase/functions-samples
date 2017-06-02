@@ -27,7 +27,7 @@ To deploy and test the sample:
 ```bash
   Log.d("Firebase", "token "+ FirebaseInstanceId.getInstance().getToken());
 ```
- - Copy your developer device token from the android logcat  
+ - Copy your device token from the android logcat  
  - Set the `dev_motivator.device_token` Google Cloud environment variables. For this use:
 
 ```bash
