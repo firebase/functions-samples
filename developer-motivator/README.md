@@ -1,4 +1,4 @@
-# Send Firebase Cloud Messaging each time a new user open your app the first time or remove your app from his device.
+# Get notified each time a new user open your app the first time or remove your app from his device.
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification from a Analytics triggered Function.
 
