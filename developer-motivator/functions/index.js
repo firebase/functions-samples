@@ -18,11 +18,12 @@ const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 admin.initializeApp(functions.config().firebase);
 
+// TODO: Make sure you configure the 'dev_motivator.device_token' Google Cloud environment variables.
+const deviceToken = functions.config().dev_motivator.device_token;
 /**
- * Could you add some short comment explaining what the functions does?
- * Endpoint which handles requests for a Google Assistant action which asks users to say a number
- * and read out the ordinal of that number.
- * e.g. If the user says "Twelve" the action will say "The ordinal of twelve is twelfth".
+ * Triggers when the app is opened the first time in a user device and sends a notification to your developer device.
+ *
+ * The device model name, the city and the country of the user are sent in the notification message
  */
 exports.appinstalled = functions.analytics.event('first_open').onLog(event => {
     const payload = {
@@ -32,14 +33,13 @@ exports.appinstalled = functions.analytics.event('first_open').onLog(event => {
       }
     };
 
-     admin.messaging().sendToDevice("put_your_developer_device_token_here", payload);
+     admin.messaging().sendToDevice(deviceToken, payload);
 });
 
 /**
- * Could you add some short comment explaining what the functions does? 
- * Endpoint which handles requests for a Google Assistant action which asks users to say a number
- * and read out the ordinal of that number.
- * e.g. If the user says "Twelve" the action will say "The ordinal of twelve is twelfth".
+ * Triggers when the app is removed from the user device and sends a notification to your developer device.
+ *
+ * The device model name, the city and the country of the user are sent in the notification message
  */
 exports.appremoved = functions.analytics.event('app_remove').onLog(event => {
     const payload = {
@@ -49,7 +49,7 @@ exports.appremoved = functions.analytics.event('app_remove').onLog(event => {
       }
     };
 
-     admin.messaging().sendToDevice("put_your_developer_device_token_here", payload);
+     admin.messaging().sendToDevice(deviceToken, payload);
 
 });
 

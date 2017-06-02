@@ -17,4 +17,20 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 The functions triggers every time a new user open your app the first time or remove your app from his device.
 
 ## Setup and test this sample section
-Could you add a ## Setup and test this sample section giving a step by step process to follow in order to get the sample running, for instance the tricky part will be how to get a developer device token
+
+To deploy and test the sample:
+
+ - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com)
+ - Install the required dependencies by running `npm install` in the `functions` directory
+ - Add this log to your android project:
+
+```bash
+  Log.d("Firebase", "token "+ FirebaseInstanceId.getInstance().getToken());
+```
+ - Copy your developer device token from the android logcat  
+ - Set the `dev_motivator.device_token` Google Cloud environment variables. For this use:
+
+```bash
+firebase functions:config:set dev_motivator.device_token="your_developer_device_token" 
+```
+ - Deploy your project's code using `firebase deploy`
