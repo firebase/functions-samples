@@ -165,6 +165,10 @@ Uses an HTTPS trigger.
 Demonstrates how to authorize with a username/password sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
 
+### [Developer Motivator](developer-motivator)
+
+This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification each time your app get a new user or lose one.
+Uses an Analytics trigger.
 
 ## Contributing
 
