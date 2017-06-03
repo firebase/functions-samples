@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const wipeout = require('./wipeout');
 
-admin.initializeApp(functions.config().firebase);
+exports.buildPath = (uid) => {
+  const dataPath = functions.config().wipeout.path;
+  const dataPathSplit = dataPath.split('/');
+  const wipeoutPath = dataPathSplit.join('/') +  (dataPathSplit[dataPathSplit.length -1] ==='' ? '' : '/') + uid.toString();
+ 
+  return wipeoutPath;
+}
 
-// Deletes the user data in the Realtime Datastore when the accounts are deleted.
-exports.cleanupUserData = functions.auth.user().onDelete(event => {
-  try {
-  	return wiepout.deleteUser(event.data); 
-  } catch (err) {
-  	console.err('Failed to delete user data.' + err);
-  }
-});
+exports.deleteUser = (data) => {
+  const uid = data.uid;
+  const displayName = data.displayName;
+  const wipeoutPath =this.buildPath(uid);
+
+  return admin.database().ref(wipeoutPath).remove().then(() => {
+    admin.database().ref(`/wipeout-log/${uid}`).set(displayName);
+	});
+
+}

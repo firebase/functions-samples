@@ -4,5 +4,14 @@
   "dependencies": {
     "firebase-admin": "^4.1.1",
     "firebase-functions": "^0.5.1"
+  },
+  "scripts": {
+    "test": "mocha test/test.js"
+  },
+  "devDependencies": {
+    "chai": "^4.0.1",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.4.2",
+    "sinon": "^2.3.2"
   }
 }
