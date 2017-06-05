@@ -33,10 +33,12 @@ The function triggers on user account deletions.
 This sample comes with a Function and web-based UI for testing the function. To configure it:
 
  1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
+ 1. Enable Google Auth. In the Firebase Console open the **Authentication** section > **SIGN IN METHOD** tab you need to enable the **Google** Sign-in Provider and click **SAVE**. 
  1. Clone or download this repo and open the `user-data-cleanup` directory.
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
+ 1. Set user data base path in CLI by using `firebase functions:config:set wipeout.path='<user data base>'`, check the config by using `firebase functions:config:get`.
  1. Deploy your project using `firebase deploy`
  1. Open the app using `firebase open hosting:site`, this will open a browser.
  1. Sign in using Google Sign-In and delete the account using the provided button. You can check at each step of the way if the data has been deleted using the Firebase console.

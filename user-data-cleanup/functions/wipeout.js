@@ -15,23 +15,37 @@
  */
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 
-exports.buildPath = (uid) => {
+buildPath = (uid) => {
   const dataPath = functions.config().wipeout.path;
   const dataPathSplit = dataPath.split('/');
-  const wipeoutPath = dataPathSplit.join('/') +  (dataPathSplit[dataPathSplit.length -1] ==='' ? '' : '/') + uid.toString();
- 
+  const wipeoutPath = dataPathSplit.join('/') +
+        (dataPathSplit[dataPathSplit.length - 1] === '' ? '' : '/') +
+        uid.toString();
+
   return wipeoutPath;
-}
+};
 
-exports.writeLog = (data) => {
-  const uid = data.uid;
-  const displayName = data.displayName;
-  return admin.database().ref(`/wipeout-log/${uid}`).set(displayName);
-}
-
+/**
+* Deletes data in the Realtime Datastore when the accounts are deleted.
+*
+* @parm {functions.auth.UserRecord} data Deleted User.
+*/
 exports.deleteUser = (data) => {
-  const uid = data.uid;
-  const wipeoutPath =this.buildPath(uid);
-  return admin.database().ref(wipeoutPath).remove();
+  return admin.database().ref(buildPath(data.uid)).remove();
+};
+
+/**
+* Write log into RTDB with displayName.
+*
+* @parm {functions.auth.UserRecord} data Deleted User.
+*/
+exports.writeLog = (data) => {
+  return admin.database().ref(`/wipeout-log/${data.uid}`).set(data.displayName);
+};
+
+// only expose internel functions to tests.
+if (process.env.NODE_ENV == 'TEST') {
+  module.exports.buildPath = buildPath;
 }

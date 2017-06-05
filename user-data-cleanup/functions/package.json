@@ -6,7 +6,7 @@
     "firebase-functions": "^0.5.1"
   },
   "scripts": {
-    "test": "mocha test/test.js"
+    "test": "NODE_ENV=TEST mocha test/test.js"
   },
   "devDependencies": {
     "chai": "<=3.5",
