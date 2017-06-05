@@ -24,7 +24,9 @@ admin.initializeApp(functions.config().firebase);
 // Deletes the user data in the Realtime Datastore when the accounts are deleted.
 exports.cleanupUserData = functions.auth.user().onDelete(event => {
   try {
-  	return wiepout.deleteUser(event.data); 
+  	return wiepout.deleteUser(event.data).then(() =>{
+  		return wipeout.writeLog(event.data);
+  	}); 
   } catch (err) {
   	console.err('Failed to delete user data.' + err);
   }

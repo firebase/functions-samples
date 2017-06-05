@@ -24,13 +24,14 @@ exports.buildPath = (uid) => {
   return wipeoutPath;
 }
 
-exports.deleteUser = (data) => {
+exports.writeLog = (data) => {
   const uid = data.uid;
   const displayName = data.displayName;
+  return admin.database().ref(`/wipeout-log/${uid}`).set(displayName);
+}
+
+exports.deleteUser = (data) => {
+  const uid = data.uid;
   const wipeoutPath =this.buildPath(uid);
-
-  return admin.database().ref(wipeoutPath).remove().then(() => {
-    admin.database().ref(`/wipeout-log/${uid}`).set(displayName);
-	});
-
+  return admin.database().ref(wipeoutPath).remove();
 }

@@ -27,11 +27,14 @@ const displayName = 'My Name';
 
 //test cases
 describe('Wipeout', () => {
-	let  admin, functions, wipeout;
+	let  admin, functions, wipeout, configStub, databaseStub, refStub;
 
 	before(() => {
 		admin = require('firebase-admin');
 		adminInitStub = sinon.stub(admin,'initializeApp');
+		databaseStub = sinon.stub(admin, 'database');
+		refStub = sinon.stub();
+		databaseStub.returns( { ref: refStub });
 
 		functions = require('firebase-functions');
 		configStub = sinon.stub(functions, 'config').returns({
@@ -59,27 +62,25 @@ describe('Wipeout', () => {
 		};
 
 		it('should build correct path', () => {
-			expect(wipeout.buildPath(fakeUser.uid)).to.equal(`/users/${userId}`);
+			expect(wipeout.buildPath(fakeUser.uid)).equal(`/users/${userId}`);
 			});
 
-		it('should delete data and write log into logging path', () => {
-			const logParam = `/wipeout-log/${userId}`;
+		it('should delete data', () => {
 			const removeParam = `/users/${userId}`;
-			const databaseStub = sinon.stub(admin, 'database');
-
-			const refStub = sinon.stub();
-			const setStub = sinon.stub();
 			const removeStub = sinon.stub();
-
-			databaseStub.returns( { ref: refStub });
-			refStub.withArgs(logParam).returns( { set: setStub} );
 			refStub.withArgs(removeParam).returns( { remove : removeStub } );
-			
-			setStub.withArgs(displayName).returns(true);
-			removeStub.returns(true);
+			removeStub.resolves("Removed");
 
+			return expect(wipeout.deleteUser(fakeUser)).to.eventually.equal("Removed");
+			});
 
-			expect(wipeout.deleteUser(fakeUser)).eventually.to.equal(true);
+		it('should write log into logging path', () => {
+			const logParam = `/wipeout-log/${userId}`;
+			const setStub = sinon.stub();
+			refStub.withArgs(logParam).returns( { set: setStub} );
+			setStub.withArgs(displayName).resolves('Log added');
+
+			return expect(wipeout.writeLog(fakeUser)).to.eventually.equal("Log added");
 			});
 
 		});
