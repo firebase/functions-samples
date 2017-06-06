@@ -32,7 +32,7 @@ function buildPath_(uid) {
 /**
 * Deletes data in the Realtime Datastore when the accounts are deleted.
 *
-* @parm {functions.auth.UserRecord} data Deleted User.
+* @param {functions.auth.UserRecord} data Deleted User.
 */
 exports.deleteUser = (data) => {
   return admin.database().ref(buildPath_(data.uid)).remove();
@@ -41,7 +41,7 @@ exports.deleteUser = (data) => {
 /**
 * Write log into RTDB with displayName.
 *
-* @parm {functions.auth.UserRecord} data Deleted User.
+* @param {functions.auth.UserRecord} data Deleted User.
 */
 exports.writeLog = (data) => {
   return admin.database().ref(`/wipeout-history/${data.uid}`).set('Success');

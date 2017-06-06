@@ -35,7 +35,9 @@ This sample comes with a Function and web-based UI for testing the function.
 To configure it:
 
  1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
- 1. Enable Google Auth. In the Firebase Console open the **Authentication** section > **SIGN IN METHOD** tab you need to enable the **Google** Sign-in Provider and click **SAVE**. 
+ 1. Enable Google Auth. In the Firebase Console open the 
+ **Authentication** section > **SIGN IN METHOD** tab 
+ you need to enable the **Google** Sign-in Provider and click **SAVE**. 
  1. Clone or download this repo and open the `user-data-cleanup` directory.
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.

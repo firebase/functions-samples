@@ -54,7 +54,7 @@ describe('Wipeout', () => {
 
   describe('Delete User', () => {
     const fakeUser = {
-      uid: userId,
+      uid: userId
     };
 
     it('should build correct path', () => {
