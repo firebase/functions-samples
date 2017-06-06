@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+'use strict';
 
 const chai = require('chai');
 const expect = chai.expect;
@@ -25,7 +26,8 @@ const userId = '8ZfiT8HeMTN9a4etjfCmahBqhK52';
 const displayName = 'My Name';
 
 describe('Wipeout', () => {
-  //let  admin, functions, wipeout, configStub, databaseStub, refStub;
+  let  admin, functions, wipeout, configStub,adminInitStub, databaseStub, refStub;
+
   before(() => {
     // create database and configuration stubs
     admin = require('firebase-admin');

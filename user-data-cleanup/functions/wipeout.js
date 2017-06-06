@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+'use strict';
+
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-buildPath = (uid) => {
+function _buildPath(uid) {
   const dataPath = functions.config().wipeout.path;
   const dataPathSplit = dataPath.split('/');
   const wipeoutPath = dataPathSplit.join('/') +
@@ -25,7 +27,7 @@ buildPath = (uid) => {
         uid.toString();
 
   return wipeoutPath;
-};
+}
 
 /**
 * Deletes data in the Realtime Datastore when the accounts are deleted.
@@ -33,7 +35,7 @@ buildPath = (uid) => {
 * @parm {functions.auth.UserRecord} data Deleted User.
 */
 exports.deleteUser = (data) => {
-  return admin.database().ref(buildPath(data.uid)).remove();
+  return admin.database().ref(_buildPath(data.uid)).remove();
 };
 
 /**
@@ -47,5 +49,5 @@ exports.writeLog = (data) => {
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV == 'TEST') {
-  module.exports.buildPath = buildPath;
+  module.exports.buildPath = _buildPath;
 }
