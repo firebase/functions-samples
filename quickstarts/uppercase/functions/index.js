@@ -33,11 +33,13 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // [END addMessageTrigger]
   // Grab the text parameter.
   const original = req.query.text;
+  // [START adminSdkPush]
   // Push the new message into the Realtime Database using the Firebase Admin SDK.
   admin.database().ref('/messages').push({original: original}).then(snapshot => {
     // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
     res.redirect(303, snapshot.ref);
   });
+  // [END adminSdkPush]
 });
 // [END addMessage]
 
