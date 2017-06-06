@@ -19,7 +19,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
-function buildPath(uid) {
+function buildPath_(uid) {
   const dataPath = functions.config().wipeout.path;
   const dataPathSplit = dataPath.split('/');
   const wipeoutPath = dataPathSplit.join('/') +
@@ -35,7 +35,7 @@ function buildPath(uid) {
 * @parm {functions.auth.UserRecord} data Deleted User.
 */
 exports.deleteUser = (data) => {
-  return admin.database().ref(buildPath(data.uid)).remove();
+  return admin.database().ref(buildPath_(data.uid)).remove();
 };
 
 /**
@@ -49,5 +49,5 @@ exports.writeLog = (data) => {
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV == 'TEST') {
-  module.exports.buildPath = buildPath;
+  module.exports.buildPath = buildPath_;
 }

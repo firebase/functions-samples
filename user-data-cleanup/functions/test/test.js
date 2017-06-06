@@ -23,7 +23,6 @@ chai.use(chaiAsPromised);
 
 // test input data which will be shared accross test cases
 const userId = '8ZfiT8HeMTN9a4etjfCmahBqhK52';
-const displayName = 'My Name';
 
 describe('Wipeout', () => {
   let admin, functions, wipeout, configStub;
@@ -69,7 +68,7 @@ describe('Wipeout', () => {
         removeStub.resolves('Removed');
 
         return expect(wipeout.deleteUser(fakeUser))
-              .to.eventually.equal('Removed');
+            .to.eventually.equal('Removed');
       });
 
     it('should write log into logging path', () => {
