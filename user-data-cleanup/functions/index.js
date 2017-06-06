@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,17 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+const wipeout = require('./wipeout');
 
-// Deletes the user data in the Realtime Datastore when the accounts are deleted.
+/**
+* Deletes data in the Realtime Datastore when the accounts are deleted.
+* Log into RTDB after successful deletion.
+*
+* @param {functions.CloudFunction} event User delete event.
+*/
 exports.cleanupUserData = functions.auth.user().onDelete(event => {
-  const uid = event.data.uid;
-  return admin.database().ref(`/users/${uid}`).remove();
-});
+    return wipeout.deleteUser(event.data).then(() => {
+      return wipeout.writeLog(event.data);
+    });
+  });
+
