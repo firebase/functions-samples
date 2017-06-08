@@ -3,7 +3,8 @@
   "description": "Cleanup the user data in the datastore upon account deletion",
   "dependencies": {
     "firebase-admin": "^4.1.1",
-    "firebase-functions": "^0.5.1"
+    "firebase-functions": "^0.5.1",
+    "request": "^2.81.0"
   },
   "scripts": {
     "test": "NODE_ENV=TEST mocha test/test.js"

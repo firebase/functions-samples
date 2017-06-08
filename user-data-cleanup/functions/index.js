@@ -29,4 +29,3 @@ exports.cleanupUserData = functions.auth.user().onDelete(event => {
       return wipeout.writeLog(event.data);
     });
   });
-

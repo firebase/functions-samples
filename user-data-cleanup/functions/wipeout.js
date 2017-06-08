@@ -18,6 +18,20 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
+const request = require('request');
+
+function readDBRules() {
+  const projectDBURL = functions.config().firebase.databaseURL;
+  admin.credential.applicationDefault().getAccessToken().then((snapshot) => {
+    return `${projectDBURL}/.settings/rules.json?access_token=${snapshot.access_token}`;
+  }).then((requestRuleURL) => {
+    request(requestRuleURL, function(error, response, body) {
+      //console.log('error:', error);
+      //console.log('statusCode:', response && response.statusCode);
+      console.log('body:', body);
+    });
+  });
+};
 
 function buildPath_(uid) {
   const dataPath = functions.config().wipeout.path;
@@ -50,4 +64,5 @@ exports.writeLog = (data) => {
 // only expose internel functions to tests.
 if (process.env.NODE_ENV == 'TEST') {
   module.exports.buildPath = buildPath_;
+  module.exports.readDBRules = readDBRules_;
 }
