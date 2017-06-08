@@ -9,10 +9,6 @@ Create and setup the Firebase project:
  1. Create a Firebase project using the [Firebase Developer Console](https://console.firebase.google.com).
  1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed to be able to perform HTTP requests to external services from a Cloud Function.
 
-Create and provide a Service Account's credentials:
- 1. Create a Service Accounts file as described in the [Server SDK setup instructions](https://firebase.google.com/docs/server/setup#add_firebase_to_your_app).
- 1. Save the Service Account credential file as `./functions/service-account.json`
-
 Create and setup your LinkedIn app:
  1. Create a LinkedIn app in the [LinkedIn Developers website](https://www.linkedin.com/developer/apps/).
  1. Add the URL `https://<application-id>.firebaseapp.com/popup.html` to the
