@@ -162,6 +162,11 @@ Uses a Realtime Database trigger.
 Enable full-text search on firebase database elements by using an Algolia hosted search service.
 Uses a Realtime Database trigger.
 
+### [Write Cloud Functions using ES2017 code](/es2017-transpile)
+
+This sample shows how you can write your Cloud Functions code using the ES2017 syntax - which is not supported natively by Cloud Functions. This requires to run a preparation step where your code is transpiled to a supported version of JavaScript.
+Uses an Database trigger.
+
 ### [User data cleanup](/user-data-cleanup)
 
 Deletes all associated user data that's on the Realtime database when a user deletes his Firebase account.
