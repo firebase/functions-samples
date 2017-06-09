@@ -25,4 +25,4 @@ This sample comes with a Function and web-based UI for testing the function. To 
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
  1. Transpile the code bu running: `cd functions; npm run prepare; cd -`
  1. Deploy your project using `firebase deploy`
- 1. Open the Firebase console for your project
+ 1. Open the Firebase console for your project and using the Realtime Database tab, create a node `/hello/Bob` with value `true`. Soon after the node has been created the Function will change the value to `Hello Bob`
