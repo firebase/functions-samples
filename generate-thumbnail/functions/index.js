@@ -34,6 +34,8 @@ const ref = admin.database().ref();
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
+ * After the thumbnail has been generated and uploaded to Cloud Storage,
+ * we write the public URL to the Firebase Realtime Database.
  */
 exports.generateThumbnail = functions.storage.object().onChange(event => {
   const fileBucket = event.data.bucket;
@@ -102,8 +104,8 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     const thumbFileUrl = thumbResult[0];
     const fileUrl = originalResult[0];
     // Add the URLs to the Database
-    return ref.child("images").push({path: fileUrl, thumbnail: thumbFileUrl});
+    return ref.child('images').push({path: fileUrl, thumbnail: thumbFileUrl});
   }).catch(reason => {
-    console.log(reason);
+    console.error(reason);
   });
 })
