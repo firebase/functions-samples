@@ -1,0 +1,10 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "dependencies": {
+    "firebase-admin": "~4.2.1",
+    "firebase-functions": "https://storage.googleapis.com/firebase-crash-preview-drop/firebase-functions-0.5.8-crashlytics-1.tgz",
+    "nodemailer": "^4.0.1"
+  },
+  "private": true
+}
