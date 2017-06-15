@@ -19,6 +19,7 @@ Crashlytics will become the future crash reporter for Firebase. Learn more about
   1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
   1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
   1. Install dependencies locally by running: `cd functions; npm install;`
+  1. Configure the Firebase CLI to set your Fabric Project ID `firebase functions:config:set fabric.project_id="<YOUR_FABRIC_PROJECT_ID>"`
   1. For EAP only, install the special version of the firebase-functions by running: `npm install --save https://storage.googleapis.com/firebase-crash-preview-drop/firebase-functions-0.5.8-crashlytics-1.tgz`
   
  Configuring the Email Service
