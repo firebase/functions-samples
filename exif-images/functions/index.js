@@ -16,6 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions');
+const mkdirp = require('mkdirp-promise');
+
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 const gcs = require('@google-cloud/storage')();
@@ -30,6 +32,9 @@ exports.metadata = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
   const fileName = filePath.split('/').pop();
+  const fileDir = filePathSplit.join('/') + (filePathSplit.length > 0 ? '/' : '');
+
+  const tempLocalDir = `${LOCAL_TMP_FOLDER}${fileDir}`;
   const tempLocalFile = `${LOCAL_TMP_FOLDER}${fileName}`;
 
   // Exit if this is triggered on a file that is not an image.
@@ -44,10 +49,13 @@ exports.metadata = functions.storage.object().onChange(event => {
     return;
   }
 
-  // Download file from bucket.
   const bucket = gcs.bucket(object.bucket);
-  return bucket.file(filePath).download({
-    destination: tempLocalFile
+  //create the temp directory where storage file will be downloaded
+  return mkdirp(tempLocalDir).then(()=>{
+    // Download file from bucket.
+    return bucket.file(filePath).download({
+      destination: tempLocalFile
+    });
   }).then(() => {
     // Get Metadata from image.
     return exec(`identify -verbose "${tempLocalFile}"`).then(result => {
