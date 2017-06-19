@@ -5,9 +5,9 @@ This sample shows how to cleanup the user data when he deletes his account.
 
 ## Functions Code
 
-See file [functions/index.js](functions/index.js) for the email sending code.
+See file [functions/index.js](functions/index.js) for the user data cleanup code.
 
-Sending emails is performed using [nodemailer](https://www.npmjs.com/package/bad-words) a node based Email client with comprehensive EMail server setup. In this sample we're showing how to send email through SMTP using a Gmail account. Be aware that Gmail has an [email sending quota](https://support.google.com/a/answer/166852?hl=en). If you are planning on sending a large number of emails you should use a professional email sending platform such as Sendgrid
+Deleting the user data is performed upon an account deletion on a `functions.auth.user().onDelete` trigger using the [firebase-admin](https://www.npmjs.com/package/firebase-admin) package.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
