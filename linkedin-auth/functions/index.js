@@ -10,7 +10,7 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for t`he specific language governing permissions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 'use strict';
@@ -33,7 +33,7 @@ const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
  * Creates a configured LinkedIn API Client instance.
  */
 function linkedInClient() {
-  // Instagram OAuth 2 setup
+  // LinkedIn OAuth 2 setup
   // TODO: Configure the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables.
   return require('node-linkedin')(
       functions.config().linkedin.client_id,
@@ -86,15 +86,15 @@ exports.token = functions.https.onRequest((req, res) => {
           }
           console.log('Auth code exchange result received:', userResults);
 
-          // We have an Instagram access token and the user identity now.
+          // We have a LinkedIn access token and the user identity now.
           const accessToken = results.access_token;
-          const instagramUserID = userResults.id;
+          const linkedInUserID = userResults.id;
           const profilePic = userResults.pictureUrl;
           const userName = userResults.formattedName;
           const email = userResults.emailAddress;
 
           // Create a Firebase account and get the Custom Auth Token.
-          createFirebaseAccount(instagramUserID, userName, profilePic, email, accessToken).then(
+          createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
               firebaseToken => {
                 // Serve an HTML page that signs the user in and updates the user profile.
                 res.jsonp({token: firebaseToken});
@@ -145,8 +145,9 @@ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessT
   // Wait for all async task to complete then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    const token = admin.auth().createCustomToken(uid);
-    console.log('Created Custom token for UID "', uid, '" Token:', token);
-    return token;
+    return admin.auth().createCustomToken(uid).then((token) => {
+      console.log('Created Custom token for UID "', uid, '" Token:', token);
+      return token;
+    });
   });
 }

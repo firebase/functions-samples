@@ -22,5 +22,5 @@ admin.initializeApp(functions.config().firebase);
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
  */
-exports.touch = functions.database.ref('/chat/$message').onWrite(
+exports.touch = functions.database.ref('/chat/{message}').onWrite(
     event => admin.database().ref('/lastmodified').set(event.timestamp));

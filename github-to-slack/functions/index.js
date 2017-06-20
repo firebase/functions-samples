@@ -18,6 +18,7 @@
 const functions = require('firebase-functions');
 const rp = require('request-promise');
 const crypto = require('crypto');
+const secureCompare = require('secure-compare');
 
 /**
  * Webhook that will be called each time there is a new GitHub commit and will post a message to
@@ -35,7 +36,7 @@ exports.githubWebhook = functions.https.onRequest((req, res) => {
   const expectedSignature = `${cipher}=${hmac}`;
 
   // Check that the body of the request has been signed with the GitHub Secret.
-  if (signature === expectedSignature) {
+  if (secureCompare(signature, expectedSignature)) {
     postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
       res.end();
     }).catch(error => {

@@ -21,6 +21,7 @@ admin.initializeApp(functions.config().firebase);
 const rp = require('request-promise');
 const promisePool = require('es6-promise-pool');
 const PromisePool = promisePool.PromisePool;
+const secureCompare = require('secure-compare');
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 
@@ -33,7 +34,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   const key = req.query.key;
 
   // Exit if the keys don't match
-  if (key !== functions.config().cron.key) {
+  if (!secureCompare(key, functions.config().cron.key)) {
     console.log('The key provided in the request does not match the key set in the environment. Check that', key,
         'matches the cron.key attribute in `firebase env:get`');
     res.status(403).send('Security key does not match. Make sure your "key" URL query parameter matches the ' +
@@ -45,7 +46,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   getUsers().then(users => {
     // Find users that have not signed in in the last 30 days.
     const inactiveUsers = users.filter(
-        user => parseInt(user.lastLoginAt, 10) > Date.now() - 30 * 24 * 60 * 60 * 1000);
+        user => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
     const promisePool = new PromisePool(() => {
@@ -53,10 +54,10 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
         const userToDelete = inactiveUsers.pop();
 
         // Delete the inactive user.
-        return admin.auth().deleteUser(userToDelete.uid).then(() => {
-          console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
+        return admin.auth().deleteUser(userToDelete.localId).then(() => {
+          console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
         }).catch(error => {
-          console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
+          console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
         });
       }
     }, MAX_CONCURRENT);
@@ -106,7 +107,8 @@ function getAccessToken(accessToken) {
 
   const options = {
     uri: 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',
-    header: {'Metadata-Flavor': 'Google'}
+    headers: {'Metadata-Flavor': 'Google'},
+    json: true
   };
 
   return rp(options).then(resp => resp.access_token);

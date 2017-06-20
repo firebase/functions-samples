@@ -17,8 +17,10 @@
 
 // [START all]
 // [START import]
+// The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 const functions = require('firebase-functions');
 
+// The Firebase Admin SDK to access the Firebase Realtime Database. 
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 // [END import]
@@ -31,11 +33,13 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // [END addMessageTrigger]
   // Grab the text parameter.
   const original = req.query.text;
-  // Push it into the Realtime Database then send a response
+  // [START adminSdkPush]
+  // Push the new message into the Realtime Database using the Firebase Admin SDK.
   admin.database().ref('/messages').push({original: original}).then(snapshot => {
     // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
     res.redirect(303, snapshot.ref);
   });
+  // [END adminSdkPush]
 });
 // [END addMessage]
 
@@ -46,7 +50,7 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
     .onWrite(event => {
 // [END makeUppercaseTrigger]
-// [START makeUppercaseBody]
+      // [START makeUppercaseBody]
       // Grab the current value of what was written to the Realtime Database.
       const original = event.data.val();
       console.log('Uppercasing', event.params.pushId, original);
@@ -55,7 +59,7 @@ exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
       // writing to the Firebase Realtime Database.
       // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
       return event.data.ref.parent.child('uppercase').set(uppercase);
+      // [END makeUppercaseBody]
     });
-// [END makeUppercaseBody]
 // [END makeUppercase]
 // [END all]

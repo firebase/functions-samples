@@ -35,7 +35,8 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
   const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.
-  const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exits' (for file/folder deletions).
+  const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
+  const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
   // [END eventAttributes]
 
   // [START stopConditions]
@@ -58,6 +59,13 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     console.log('This is a deletion event.');
     return;
   }
+  
+  // Exit if file exists but is not new and is only being triggered
+  // because of a metadata change.
+  if (resourceState === 'exists' && metageneration > 1) {
+    console.log('This is a metadata change event.');
+    return;
+  }
   // [END stopConditions]
 
   // [START thumbnailGeneration]
@@ -72,7 +80,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]).then(() => {
       console.log('Thumbnail created at', tempFilePath);
       // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
-      const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, `$1thumb_$2`);
+      const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, '$1thumb_$2');
       // Uploading the thumbnail.
       return bucket.upload(tempFilePath, {
         destination: thumbFilePath

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">LINELoginDemo</string>
+    <string name="line_login">LINE Login</string>
+    <string name="logout">Logout</string>
+    <string name="profile_picture">Profile Picture:</string>
+    <string name="display_name">Display Name:</string>
+    <string name="logging_in_using_line">Logging in using LINE...</string>
+    <string name="login_failed">Login failed.</string>
+</resources>

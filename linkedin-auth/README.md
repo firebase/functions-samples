@@ -8,7 +8,6 @@ This sample shows how to authenticate using LinkedIn Sign-In on Firebase. In thi
 Create and setup the Firebase project:
  1. Create a Firebase project using the [Firebase Developer Console](https://console.firebase.google.com).
  1. Enable Billing on your Firebase the project by switching to the **Blaze** plan, this is currently needed to be able to perform HTTP requests to external services from a Cloud Function.
- 1. Copy the Web initialisation snippet from **Firebase Console > Overview > Add Firebase to your web app** and paste it in `public/index.html` and `public/popup.html` in lieu of the placeholders (where the `TODO(DEVELOPER)` are located).
 
 Create and provide a Service Account's credentials:
  1. Create a Service Accounts file as described in the [Server SDK setup instructions](https://firebase.google.com/docs/server/setup#add_firebase_to_your_app).
@@ -20,9 +19,9 @@ Create and setup your LinkedIn app:
     **OAuth 2.0** > **Authorized Redirect URLs** of your LinkedIn app.
  1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and use them to set the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables. For this use:
 
-```bash
-firebase functions:config:set linkedin.client_id="yourClientID" linkedin.client_secret="yourClientSecret"
-```
+    ```bash
+    firebase functions:config:set linkedin.client_id="yourClientID" linkedin.client_secret="yourClientSecret"
+    ```
 
  > Make sure the LinkedIn Client Secret is always kept secret. For instance do not save this in your version control system.
 
@@ -48,7 +47,7 @@ The `redirect` Function then redirects the user to the LinkedIn OAuth 2.0 consen
 After the user has granted approval he is redirected back to the `./popup.html` page along with an OAuth 2.0 Auth Code as a URL parameter. This Auth code is then sent to the `token` Function using a JSONP Request. The `token` function then:
  - Checks that the value of the `state` URL query parameter is the same as the one in the `state` cookie.
  - Exchanges the auth code for an access token using the LinkedIn app credentials.
- - Fetches the user ideneity using a LinkedIn API.
+ - Fetches the user identity using the LinkedIn API.
  - Mints a Custom Auth token (which is why we need Service Accounts Credentials).
  - Returns the Custom Auth Token, email, photo URL, user display name and LinkedIn access token to the `./popup.html` page.
 

@@ -24,17 +24,16 @@ const request = require('request-promise');
 const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 
 // Translate an incoming message.
-exports.translate = functions.database.ref('/messages/$languageID/$messageID').onWrite(event => {
+exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite(event => {
   const snapshot = event.data;
   if (snapshot.val().translated) {
     return;
   }
-  const paths = snapshot.ref.toString().split('/');
   const promises = [];
   for (let i = 0; i < LANGUAGES.length; i++) {
     var language = LANGUAGES[i];
-    if (language !== paths[1]) {
-      promises.push(createTranslationPromise(paths[1], language, snapshot));
+    if (language !== event.params.languageID) {
+      promises.push(createTranslationPromise(event.params.languageID, language, snapshot));
     }
   }
   return Promise.all(promises);

@@ -1,0 +1,30 @@
+{
+  "name": "employee-directory-app",
+  "description": "Sample employee directory app built with React and Firebase",
+  "scripts": {
+    "buildClient": "./node_modules/.bin/webpack --config ./webpack.client.config.js",
+    "buildServer": "./node_modules/.bin/webpack --config ./webpack.server.config.js",
+    "build": "npm run buildClient && npm run buildServer"
+  },
+  "dependencies": {
+    "firebase": "3.9.0",
+    "lodash": "4.17.4",
+    "react": "15.5.4",
+    "react-dom": "15.5.4",
+    "react-router": "4.1.1",
+    "react-router-dom": "4.1.1"
+  },
+  "devDependencies": {
+    "babel-core": "6.24.1",
+    "babel-loader": "7.0.0",
+    "babel-preset-react": "6.24.1",
+    "babel-preset-stage-0": "6.24.1",
+    "webpack": "2.5.0"
+  },
+  "babel": {
+    "presets": [
+      "react",
+      "stage-0"
+    ]
+  }
+}

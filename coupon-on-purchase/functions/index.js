@@ -21,7 +21,7 @@ admin.initializeApp(functions.config().firebase);
 
 // [START all]
 /**
- * After a user has completed a purchase. Send them a coupon via FCM valid on their next purchase.
+ * After a user has completed a purchase, send them a coupon via FCM valid on their next purchase.
  */
 // [START trigger]
 exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLog(event => {
@@ -33,7 +33,7 @@ exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLo
   const userLanguage = user.deviceInfo.userDefaultLanguage; // The user language in language-country format.
   // [END attributes]
 
-  // For purchases above 500 USD we send a coupon of higher value.
+  // For purchases above 500 USD, we send a coupon of higher value.
   if (purchaseValue > 500) {
     return sendHighValueCouponViaFCM(uid, userLanguage);
   }
@@ -115,7 +115,7 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
  * @param {string} uid The UID of the user.
  */
 function getDeviceTokens(uid) {
-  return admin.database().ref(`/users/${uid}/tokens`).then(snap => {
+  return admin.database().ref(`/users/${uid}/tokens`).once('value').then(snap => {
     if (snap.exists()) {
       return Object.keys(snap.val());
     }

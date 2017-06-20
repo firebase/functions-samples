@@ -1,0 +1,68 @@
+/**
+ * Copyright 2017 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.mdl-card {
+  width: 100%;
+}
+
+#demo-sign-in-card > .mdl-card__title {
+  height: 125px;
+}
+
+#demo-create-message-result {
+  margin-left: 10px;
+}
+
+.mdl-textfield, .mdl-textfield > textarea {
+  width: 100%;
+  resize: none;
+}
+
+h5 {
+  margin: 20px 5px;
+}
+
+button:not(:first-child) {
+  margin-left: 5px;
+}
+
+li:hover {
+  background-color: rgba(158,158,158,.2);
+  cursor: pointer;
+}
+
+li.selected {
+  background-color: rgba(158,158,158,.4);
+}
+
+.demo-create-message {
+  padding: 10px;
+}
+
+.demo-message-list,
+.demo-message-details {
+  padding-left: 10px;
+}
+
+.demo-message-list > ul {
+  height: 335px;
+  overflow: auto;
+}
+
+.demo-message-details > pre {
+  height: 400px;
+  overflow: auto;
+}

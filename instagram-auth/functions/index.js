@@ -10,7 +10,7 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for t`he specific language governing permissions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 'use strict';
@@ -147,8 +147,9 @@ function createFirebaseAccount(instagramID, displayName, photoURL, accessToken) 
   // Wait for all async task to complete then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    const token = admin.auth().createCustomToken(uid);
-    console.log('Created Custom token for UID "', uid, '" Token:', token);
-    return token;
+    return admin.auth().createCustomToken(uid).then((token) => {
+      console.log('Created Custom token for UID "', uid, '" Token:', token);
+      return token;
+    });
   });
 }
