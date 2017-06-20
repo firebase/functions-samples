@@ -26,10 +26,10 @@ Crashlytics will become the future crash reporter for Firebase. Learn more about
   1. This sample uses [Gmail](https://mail.google.com), but you can alternatively use any email providers.
   1. Create a new Gmail account that you would like to send notifications/alerts from
   1. This sample will use basic user/pass authentication, you may also use and setup a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) instead
-  1. Config and set the environment variables to the Gmail account you're going to use to send emails: `firebase functions:config:set gmail.user="myusername@gmail.com" gmail.pass="secretpassword"`
+  1. Config and set the environment variables to the Gmail account you're going to use to send emails: `firebase functions:config:set email.user="myusername@gmail.com" email.pass="secretpassword"`
 
  Configuring Mailer Options
-  1. Specify the email that you would like to use to *receive* the alerts by setting the variable `USER_EMAIL` in the code
+  1. Specify the email that you would like to use to *receive* the alerts by using: `firebase functions:config:set email.recipient_address="me@gmail.com"`
   1. The [Nodemailer documentation](https://nodemailer.com/usage/) contains more documentation on how to further customize your message or use alternative auth methods 
    
 ## Deploy and test

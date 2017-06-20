@@ -29,8 +29,8 @@ exports.sendMailOnIssue = functions.crashlytics.onNewIssue((event) => {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-      user: functions.config().gmail.user,
-      pass: functions.config().gmail.pass
+      user: functions.config().email.user,
+      pass: functions.config().email.pass
     }
   });
 
@@ -39,7 +39,7 @@ exports.sendMailOnIssue = functions.crashlytics.onNewIssue((event) => {
   //   service: 'Gmail',
   //   auth: {
   //     type: 'OAuth2,
-  //     user: functions.config().gmail.user,
+  //     user: functions.config().email.user,
   //     serviceClient: serviceKeys.client_email,
   //     privateKey: serviceKeys.privateKey,
   //   }
@@ -47,7 +47,7 @@ exports.sendMailOnIssue = functions.crashlytics.onNewIssue((event) => {
 
   const { data } = event;
   const mailOpts = {
-    from: functions.config().gmail.user,
+    from: functions.config().email.user,
     to: USER_EMAIL,
     subject: 'Your app has a new issue',
     html: `<h1>Heads up, your app has a new issue!</h1>
