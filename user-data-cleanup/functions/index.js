@@ -25,6 +25,9 @@ const wipeout = require('./wipeout');
  * @param {!functions.CloudFunction} event User delete event.
  */
 exports.cleanupUserData = functions.auth.user().onDelete(event => {
-    return wipeout.deleteUser(event.data)
-        .then(() => wipeout.writeLog(event.data));
+    return wipeout.getConfig().then((config) => {
+      return wipeout.buildPath(config, event.data.uid);
+    }).then((deletePaths) => wipeout.deleteUser(deletePaths))
+        .then(() => wipeout.writeLog(event.data))
+        .catch((err) => console.error(err));
   });

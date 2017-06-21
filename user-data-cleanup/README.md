@@ -42,8 +42,8 @@ To configure it:
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
- 1. Set user data base path in CLI. e.g. `firebase functions:config:set wipeout.path='/users'`.
- 1. Check the config by using `firebase functions:config:get`.
+ 1. Run local tests using `cd functions; npm test`
  1. Deploy your project using `firebase deploy`
  1. Open the app using `firebase open hosting:site`, this will open a browser.
  1. Sign in using Google Sign-In and delete the account using the provided button. You can check at each step of the way if the data has been deleted using the Firebase console.
+ 

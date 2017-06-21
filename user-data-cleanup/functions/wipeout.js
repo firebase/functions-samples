@@ -16,66 +16,154 @@
 'use strict';
 
 const admin = require('firebase-admin');
+const fs = require('fs');
 const functions = require('firebase-functions');
 const PATH_SPLITTER = '/';
-const dbURL = functions.config().firebase.databaseURL;
 const request = require('request-promise');
+const sjc = require('strip-json-comments');
+const WIPEOUT_UID = '$WIPEOUT_UID';
+const WRITE_SIGN = '.write';
 
 admin.initializeApp(functions.config().firebase);
+const dbURL = functions.config().firebase.databaseURL;
+const wipeoutPathRegex = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
 
 
+//read wipeout file and remove comments
+const readJSON = (path) => {
+  const file = fs.readFileSync(path, 'utf-8');
+  return JSON.parse(sjc(file));
+};
+
+/**
+ * Get wiepout configration from wipeout_config.json,
+ * or else try to infer from RTDB rules.
+ *
+ */
+exports.getConfig = () => {
+  try {
+    const config = require('./wipeout_config.json').wipeout;
+    console.log(config);
+    return Promise.resolves(config);
+  }
+  catch (errConfigFile) {
+    console.log('No \"wipeout_config.json\" found.' + errConfigFile);
+    return readDBRules().then((DBRules) => extractfromDBRules(DBRules))
+        .catch((err)=> {
+          console.error('Failed to read database');
+          throw new Error(err);
+        });
+  }
+};
+
+/**
+ * Build deletion paths given a auth uid.
+ * or else try to infer from RTDB rules.
+ *
+ * @param {Object[]} config Wipeout configs
+ * @param {!String} uid User id.
+ */
+exports.buildPath = (config, uid) => {
+  console.log('CONFIG', config);
+  for (let i = 0, len = config.length; i < len; i++) {
+    if (wipeoutPathRegex.test(config[i].path) === false) {
+      return Promise.reject('Invalid wipeout Path');
+    }
+    config[i].path = config[i].path.replace(WIPEOUT_UID, uid.toString());
+  }
+  return config;
+};
+
+// Read database security rules using REST API.
 const readDBRules = () => {
-  admin.credential.applicationDefault().getAccessToken().then((snapshot) => {
+  return admin.credential.applicationDefault().getAccessToken().then((snapshot) => {
     return snapshot.access_token;
   }).then((token) => {
     const rulesURL = `${dbURL}/.settings/rules.json?access_token=${token}`;
     return request(rulesURL);
-  }).then((body) => {
-    console.log(body);
-    return body;
-  }).catch((err) => console.log(err));
+  }).then((body) => { console.log(body); return body;})
+  .catch((err) => {console.error(err + 'Failed to read RTDB rule.'); throw new Error(err);});
 };
+
 
 // extract wipeout rules from RTDB rules.
-const extractfromDBRules = () => {
-//
+const extractfromDBRules = (DBRules) => {
+  const rules = JSON.parse(sjc(DBRules));
+  const inferredRules = inferWipeoutRule(rules);
+  console.log('INFERRED RULES', inferredRules);
+  return inferredRules;
 };
 
-// Get wiepout configration from wipeout_config.json or CLI.
-// If both set, use CLI config.
-const getConfig = () => {
-  try {
-      return functions.config().wipeout;
-  }
-  catch (err) {
-    try {
-      return require('./wipeout_config.json');
-    } 
-    catch (err) {
-      console.log("No wipeout configuration specified");
-      console.log("Inferring from RTDB rules");
-      return  readDBRules().then((DBRules) => extractfromDBRules(DBRules));
+// BFS traverse of RTDB rules, check all the .write rules
+// for potential user data path.
+const inferWipeoutRule = (obj) => {
+  let queue = [];
+  let pathQueue = [];
+  let retRules = [];
+  queue.push(obj);
+  pathQueue.push([]);
+
+  while (queue.length > 0) {
+    let node = queue.shift();
+    let path = pathQueue.shift();
+
+    if (typeof(node) == 'object') {
+      let keys = Object.keys(node);
+      if (keys.includes(WRITE_SIGN)) {
+        let userPath = checkWriteRules(path, node[WRITE_SIGN]);
+        if (userPath !== undefined) {
+          retRules.push({'path': userPath});
+        }
+      } else {
+        for (let i = 0, len = keys.length; i < len; i++) {
+          let newPath = path.slice();
+          newPath.push(keys[i]);
+          pathQueue.push(newPath);
+          queue.push(node[keys[i]]);
+        }
+      }
     }
   }
+  return retRules;
 };
 
-const buildPath = (uid) => {
-  const dataPath = getConfig().path;
-  const dataPathSplit = dataPath.split(PATH_SPLITTER);
-  const wipeoutPath = dataPathSplit.join(PATH_SPLITTER) +
-      (dataPathSplit[dataPathSplit.length - 1] === '' ? '' : PATH_SPLITTER) +
-      uid.toString();
+// check if the write rule indicates only the specific user has write
+// access to the path. If so, the path contains user data.
+// TODO: currently hard coded criteria, will change very soon.
+const checkWriteRules = (currentPath, rule) => {
+  if ((rule === 'auth.uid === $uid') || (rule === 'auth.uid == $uid') ||
+     (rule === '$uid === auth.uid') || (rule === '$uid == auth.uid')) {
 
-  return wipeoutPath;
+    const UID = '$uid';
+    const location = currentPath.indexOf(UID);
+    if (location === -1) {
+      console.error('User ID not in path');
+      return undefined;
+    } else {
+      if (currentPath[0] !== 'rules') {
+        console.error('Mistake in current path, should start with "rules"');
+        return undefined;
+      }
+      currentPath[0] = '';
+      currentPath[location] = WIPEOUT_UID;
+      return currentPath.join(PATH_SPLITTER);
+    }
+  } else {
+    return undefined;
+  }
 };
 
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  *
- * @param {!functions.auth.UserRecord} data Deleted User.
+ * @param {!Object[]} deletedPaths list of path objects.
  */
-exports.deleteUser = (data) => {
-  return admin.database().ref(buildPath(data.uid)).remove();
+exports.deleteUser = (deletePaths) => {
+  let deleteTasks = [];
+  for (let i = 0; i < deletePaths.length; i++) {
+    deleteTasks.push(admin.database().ref(deletePaths[i].path).remove());
+  }
+  return Promise.all(deleteTasks);
 };
 
 /**
@@ -89,6 +177,9 @@ exports.writeLog = (data) => {
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV == 'TEST') {
-  module.exports.buildPath = buildPath;
   module.exports.readDBRules = readDBRules;
+  module.exports.extractfromDBRules = extractfromDBRules;
+  module.exports.inferWipeoutRule = inferWipeoutRule;
+  module.exports.checkWriteRules = checkWriteRules;
+
 }
