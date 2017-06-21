@@ -21,7 +21,7 @@ const functions = require('firebase-functions'),
 const parseUrl = (url) => {
     const matches = url.match(/(https?:\/\/)(.+?)(\/.+)?\/(projects|browse)\/([\w\-]+)/);
     if (matches && matches.length === 6) {
-      return { protocol: matches[1], domain: matches[2], contextPath: matches[3] | '', projectKey: matches[5]}
+      return { protocol: matches[1], domain: matches[2], contextPath: matches[3] || '', projectKey: matches[5]}
     } else {
       throw new Error('Unexpected URL Format');
     }
@@ -29,24 +29,21 @@ const parseUrl = (url) => {
 
 // Helper function that posts to Jira to create a new issue
 const createJiraIssue = (issueId, issueTitle) => {
-  const { projectUrl, user, pass, issueType, componentId } = functions.config().jira;
-  const { protocol, domain, contextPath, projectKey} = parseUrl(projectUrl);
-  const baseUrl = [protocol, domain, contextPath].join();
+  const { project_url, user, pass, issue_type, component_id } = functions.config().jira;
+  const { protocol, domain, contextPath, projectKey} = parseUrl(project_url);
+  const baseUrl = [protocol, domain, contextPath].join('');
   const url = `${baseUrl}/rest/api/2/issue`;
 
   // see https://developer.atlassian.com/jiradev/jira-apis/jira-rest-apis/jira-rest-api-tutorials/jira-rest-api-example-create-issue
   // to customize the new issue being created
-
   const newIssue = {
     "fields": {
-      "components": {
-        "id": componentId || '10000'
-      },
-      "project": { "id": projectKey },
+      "components": [{ "id": component_id || '10000' }],
+      "project": { "key": projectKey },
       "summary": `New Issue - ${issueId}`,
       "description": issueTitle,
-      "issueType": {
-        "name": issueType || 'Bug'
+      "issuetype": {
+        "name": issue_type || 'Bug'
       }
     }
   };

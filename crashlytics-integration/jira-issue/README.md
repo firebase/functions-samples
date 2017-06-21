@@ -23,8 +23,8 @@ Crashlytics will become the future crash reporter for Firebase. Learn more about
   1. For EAP only, install the special version of the firebase-functions by running: `npm install --save https://storage.googleapis.com/firebase-crash-preview-drop/firebase-functions-0.5.8-crashlytics-1.tgz`
   
  Integrating with Jira
-  1. Configure the required environment variables for Jira: `firebase functions:config:set jira.projectUrl="https://yourdomain.atlassian.net/projects.XX" jira.user="username" jira.pass="password"`
-  1. You may also specify two optional environment variables as well `firebase functions:config:set jira.issueType="bug" jira.componentId="10000"`
+  1. Configure the required environment variables for Jira: `firebase functions:config:set jira.project_url="https://yourdomain.atlassian.net/projects/XX" jira.user="username" jira.pass="password"`
+  1. You may also specify two optional environment variables as well `firebase functions:config:set jira.issue_type="bug" jira.component_id="10000"`
    
 ## Deploy and test
 
