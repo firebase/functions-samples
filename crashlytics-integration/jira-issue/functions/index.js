@@ -44,6 +44,9 @@ const createJiraIssue = (issueId, issueTitle) => {
       "description": issueTitle,
       "issuetype": {
         "name": issue_type || 'Bug'
+      },
+      "priority": {
+        "id": calculateIssuePriority(issueTitle).toString()
       }
     }
   };
@@ -61,6 +64,22 @@ const createJiraIssue = (issueId, issueTitle) => {
     body: newIssue,
     json: true
   });
+};
+
+// Helper function that calculate the priority of the issue
+const calculateIssuePriority = (issueTitle) => {
+  // run some custom logic that can determine the priority or severity of this issue
+  // for example, you can parse the stack trace to determine which part of your app
+  // is causing the crash and assign priorities based on that
+
+  // see https://docs.atlassian.com/jira/REST/cloud/#api/2/priority
+  // to grab a list of priorities that's available for your project
+  // for a default project, priorities are:
+  // [{"name":"Highest","id":"1"},{"name": "High","id": "2"},{"name": "Medium","id": "3"},{"name": "Low","id": "4"},{"name": "Lowest","id": "5"}]
+
+  // for the demonstration of this sample, just assign a random priority
+  return Math.floor(Math.random() * 5) + 1;
+
 };
 
 exports.createJiraOnIssue = functions.crashlytics.onNewIssue((event) => {
