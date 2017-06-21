@@ -17,6 +17,7 @@
 
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
+const fs = require('fs');
 
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -64,6 +65,12 @@ exports.metadata = functions.storage.object().onChange(event => {
       return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata).then(() => {
         console.log('Wrote to:', filePath, 'data:', metadata);
       });
+    });
+  }).then(()=>{
+    //cleanup temp directory after metadata is extracted
+    //Remove the file from temp directory
+    return fs.unlink(tempLocalFile,()=>{
+      console.log("cleanup successful!");
     });
   });
 });
