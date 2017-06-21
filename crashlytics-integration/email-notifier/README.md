@@ -20,7 +20,7 @@ Crashlytics will become the future crash reporter for Firebase. Learn more about
   1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
   1. Install dependencies locally by running: `cd functions; npm install;`
   1. Configure the Firebase CLI to set your Fabric Project ID `firebase functions:config:set fabric.project_id="<YOUR_FABRIC_PROJECT_ID>"`
-  1. For EAP only, install the special version of the firebase-functions by running: `npm install --save https://storage.googleapis.com/firebase-crash-preview-drop/firebase-functions-0.5.8-crashlytics-1.tgz`
+      1. How do I find my Fabric Project ID? Go into App Settings in your Fabric Dashboard and select the app you would like to use. The URL will contain your Fabric Project Id: `https://fabric.io/settings/apps/<YOUR_FABRIC_PROJECT_ID>`
   
  Configuring the Email Service
   1. This sample uses [Gmail](https://mail.google.com), but you can alternatively use any email providers.
@@ -35,7 +35,7 @@ Crashlytics will become the future crash reporter for Firebase. Learn more about
 ## Deploy and test
 
  1. Deploy your project using `firebase deploy`
- 1. Simulate a crash in your app
+ 1. Simulate a test crash. [Android Instructions](https://docs.fabric.io/android/crashlytics/test-crash.html) | [iOS Instructions](https://docs.fabric.io/apple/crashlytics/test-crash.html)
 
 
 ## Contributing
