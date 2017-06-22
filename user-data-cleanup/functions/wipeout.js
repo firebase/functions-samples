@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const deepcopy = require("deepcopy");
+const deepcopy = require('deepcopy');
 const fs = require('fs');
 const PATH_SPLITTER = '/';
 const request = require('request-promise');
@@ -28,24 +28,18 @@ const readJSON = (path) => {
 };
 
 /**
- * Initilize the wipeout library with firebase adminRef and configRef.
+ * Initilize the wipeout library.
  *
- * @param {} adminRef Firebse administration reference.
- * @param {} configRef Firebase configuration reference.
  */
-exports.init = (wipeoutConfig) => {
-  global.admin = wipeoutConfig.adminRef;
-  global.DB_URL = wipeoutConfig.configRef.databaseURL;
-  global.WIPEOUT_UID = wipeoutConfig.WIPEOUT_UID;
-  global.WRITE_SIGN = wipeoutConfig.WRITE_SIGN;
-  global.PATH_REGEX = wipeoutConfig.PATH_REGEX ;
+exports.initialize = (wipeoutConfig) => {
+  global.init = Object.freeze(wipeoutConfig);
 };
 
 /**
  * Get wiepout deletion paths from wipeout_config.json,
  * or else try to infer from RTDB rules.
  *
- * @param {!String} uid User auth id.
+ * @param {!string} uid User auth id.
  */
 exports.getPaths = (uid) => {
   try {
@@ -54,36 +48,36 @@ exports.getPaths = (uid) => {
   } catch (errConfigFile) {
     console.log('No \"wipeout_config.json\" found.' + errConfigFile);
     return readDBRules().then((DBRules) => {
-      const config = extractfromDBRules(DBRules);
+      const config = extractFromDBRules(DBRules);
       return buildPath(config, uid);
     })
    .catch((err)=> {
-     console.error('Failed to read database');
-     return Promise.reject(err);
-   });
+      console.error('Failed to read database');
+      return Promise.reject(err);
+    });
   }
 };
 
-// buid deletion paths from wipeout config 
+// buid deletion paths from wipeout config
 const buildPath = (config, uid) => {
   let paths = deepcopy(config);
   for (let i = 0, len = config.length; i < len; i++) {
-    if (!PATH_REGEX.test(config[i].path)) {
+    if (!init.PATH_REGEX.test(config[i].path)) {
       return Promise.reject('Invalid wipeout Path');
     }
-    paths[i].path = config[i].path.replace(WIPEOUT_UID, uid.toString());
+    paths[i].path = config[i].path.replace(init.WIPEOUT_UID, uid.toString());
   }
   return Promise.resolve(paths);
 };
 
 // Read database security rules using REST API.
 const readDBRules = () => {
-  return admin.credential.applicationDefault().getAccessToken()
+  return init.admin.credential.applicationDefault().getAccessToken()
   .then((snapshot) => {
     return snapshot.access_token;
   })
   .then((token) => {
-    const rulesURL = `${DB_URL}/.settings/rules.json?access_token=${token}`;
+    const rulesURL = `${init.DB_URL}/.settings/rules.json?access_token=${token}`;
     return request(rulesURL);
   })
   .then((body) => body)
@@ -95,7 +89,7 @@ const readDBRules = () => {
 
 
 // extract wipeout rules from RTDB rules.
-const extractfromDBRules = (DBRules) => {
+const extractFromDBRules = (DBRules) => {
   const rules = JSON.parse(sjc(DBRules));
   const inferredRules = inferWipeoutRule(rules);
   console.log('INFERRED RULES', inferredRules);
@@ -115,11 +109,11 @@ const inferWipeoutRule = (obj) => {
     let node = queue.shift();
     let path = pathQueue.shift();
 
-    if (typeof(node) == 'object') {
+    if (typeof node == 'object') {
       let keys = Object.keys(node);
-      if (keys.includes(WRITE_SIGN)) {
-        let userPath = checkWriteRules(path, node[WRITE_SIGN]);
-        if (userPath !== undefined) {
+      if (keys.includes(init.WRITE_SIGN)) {
+        let userPath = checkWriteRules(path, node[init.WRITE_SIGN]);
+        if (typeof userPath !== 'undefined') {
           retRules.push({'path': userPath});
         }
       } else {
@@ -153,7 +147,7 @@ const checkWriteRules = (currentPath, rule) => {
         return undefined;
       }
       currentPath[0] = '';
-      currentPath[location] = WIPEOUT_UID;
+      currentPath[location] = init.WIPEOUT_UID;
       return currentPath.join(PATH_SPLITTER);
     }
   } else {
@@ -169,7 +163,7 @@ const checkWriteRules = (currentPath, rule) => {
 exports.deleteUser = (deletePaths) => {
   let deleteTasks = [];
   for (let i = 0; i < deletePaths.length; i++) {
-    deleteTasks.push(admin.database().ref(deletePaths[i].path).remove());
+    deleteTasks.push(init.admin.database().ref(deletePaths[i].path).remove());
   }
   return Promise.all(deleteTasks);
 };
@@ -180,14 +174,14 @@ exports.deleteUser = (deletePaths) => {
  * @param {!functions.auth.UserRecord} data Deleted User.
  */
 exports.writeLog = (data) => {
-  return admin.database().ref(`/wipeout-history/${data.uid}`).set('Success');
+  return init.admin.database().ref(`/wipeout-history/${data.uid}`).set('Success');
 };
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV == 'TEST') {
   module.exports.buildPath = buildPath;
   module.exports.checkWriteRules = checkWriteRules;
-  module.exports.extractfromDBRules = extractfromDBRules;
+  module.exports.extractFromDBRules = extractFromDBRules;
   module.exports.inferWipeoutRule = inferWipeoutRule;
   module.exports.readDBRules = readDBRules;
 }

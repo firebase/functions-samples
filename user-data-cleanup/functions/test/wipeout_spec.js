@@ -51,15 +51,15 @@ describe('Wipeout', () => {
     });
 
     const WIPEOUT_CONFIG = {
-      'adminRef': admin,
-      'configRef': functions.config().firebase,
+      'admin': admin,
+      'DB_URL': functions.config().firebase.databaseURL,
       'WIPEOUT_UID': '$WIPEOUT_UID',
       'WRITE_SIGN': '.write',
       'PATH_REGEX': /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
     };
     
     wipeout = require('../wipeout');
-    wipeout.init(WIPEOUT_CONFIG);
+    wipeout.initialize(WIPEOUT_CONFIG);
   });
 
   after(() => {
@@ -103,7 +103,7 @@ describe('Wipeout', () => {
 
     it('should extract correct wipeout rules from RTBD rules ', () => {
       const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
-      const deletePaths = wipeout.extractfromDBRules(DBRules);
+      const deletePaths = wipeout.extractFromDBRules(DBRules);
       const userPaths = [{path: '/users/$WIPEOUT_UID'},
           {path: '/instagramAccessToken/$WIPEOUT_UID'},
           {path: '/accounts/$WIPEOUT_UID/githubToken'},
