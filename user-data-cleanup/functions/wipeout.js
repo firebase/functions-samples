@@ -45,14 +45,16 @@ exports.getPaths = (uid) => {
   try {
     const config = require('./wipeout_config.json').wipeout;
     return buildPath(config, uid);
-  } catch (errConfigFile) {
-    console.log('No \"wipeout_config.json\" found.' + errConfigFile);
+  } catch (err) {
+    console.log('Faile to read local config \"wipeout_config.json\". ' + err);
     return readDBRules().then((DBRules) => {
       const config = extractFromDBRules(DBRules);
       return buildPath(config, uid);
     })
-   .catch((err)=> {
-      console.error('Failed to read database');
+   .catch((errDB)=> {
+      console.error(errDB,
+       'Could not generate wipeout config from RTDB rules.' +
+       'Failed to read database');
       return Promise.reject(err);
     });
   }
@@ -63,7 +65,7 @@ const buildPath = (config, uid) => {
   let paths = deepcopy(config);
   for (let i = 0, len = config.length; i < len; i++) {
     if (!init.PATH_REGEX.test(config[i].path)) {
-      return Promise.reject('Invalid wipeout Path');
+      return Promise.reject('Invalid wipeout Path: ' + config[i].path);
     }
     paths[i].path = config[i].path.replace(init.WIPEOUT_UID, uid.toString());
   }
@@ -92,7 +94,6 @@ const readDBRules = () => {
 const extractFromDBRules = (DBRules) => {
   const rules = JSON.parse(sjc(DBRules));
   const inferredRules = inferWipeoutRule(rules);
-  console.log('INFERRED RULES', inferredRules);
   return inferredRules;
 };
 
@@ -174,7 +175,8 @@ exports.deleteUser = (deletePaths) => {
  * @param {!functions.auth.UserRecord} data Deleted User.
  */
 exports.writeLog = (data) => {
-  return init.admin.database().ref(`/wipeout-history/${data.uid}`).set('Success');
+  return init.admin.database().ref(`/wipeout-history/${data.uid}`)
+      .set('Success, timestamp:' + Date.now().toString());
 };
 
 // only expose internel functions to tests.
