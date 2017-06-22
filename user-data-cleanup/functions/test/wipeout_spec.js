@@ -35,8 +35,10 @@ describe('Wipeout', () => {
     // create database and configuration stubs
     adminInitStub = sinon.stub(admin, 'initializeApp');
     databaseStub = sinon.stub(admin, 'database');
-    deletePaths = [{'path': `/users/${fakeUserId}`},
-        {'path': `/usersData/${fakeUserId}`}];
+    deletePaths = [
+      {'path': `/users/${fakeUserId}`},
+      {'path': `/usersData/${fakeUserId}`}
+    ];
     refStub = sinon.stub();
     databaseStub.returns({ref: refStub});
     configStub = sinon.stub(functions, 'config').returns({
@@ -47,7 +49,17 @@ describe('Wipeout', () => {
         path: '/users/$WIPEOUT_UID'
       }
     });
+
+    const WIPEOUT_CONFIG = {
+      'adminRef': admin,
+      'configRef': functions.config().firebase,
+      'WIPEOUT_UID': '$WIPEOUT_UID',
+      'WRITE_SIGN': '.write',
+      'PATH_REGEX': /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
+    };
+    
     wipeout = require('../wipeout');
+    wipeout.init(WIPEOUT_CONFIG);
   });
 
   after(() => {
@@ -62,8 +74,9 @@ describe('Wipeout', () => {
 
     it('should build correct path', () => {
       const config = [{'path': '/users/$WIPEOUT_UID'}];
-      
-      expect(wipeout.buildPath(config, fakeUserId)[0].path).equal(`/users/${fakeUserId}`);
+
+      expect(wipeout.buildPath(config, fakeUserId))
+          .to.eventually.deep.equal([{'path': `/users/${fakeUserId}`}]);
     });
 
     it('should delete data in deletePaths', () => {

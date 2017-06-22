@@ -2,6 +2,7 @@
   "name": "user-data-cleanup-functions",
   "description": "Cleanup the user data in the datastore upon account deletion",
   "dependencies": {
+    "deepcopy": "^0.6.3",
     "firebase-admin": "^4.1.1",
     "firebase-functions": "^0.5.1",
     "request": "^2.81.0",

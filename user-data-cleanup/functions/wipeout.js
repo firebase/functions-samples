@@ -15,19 +15,11 @@
  */
 'use strict';
 
-const admin = require('firebase-admin');
+const deepcopy = require("deepcopy");
 const fs = require('fs');
-const functions = require('firebase-functions');
 const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
-const WIPEOUT_UID = '$WIPEOUT_UID';
-const WRITE_SIGN = '.write';
-
-admin.initializeApp(functions.config().firebase);
-const dbURL = functions.config().firebase.databaseURL;
-const wipeoutPathRegex = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
-
 
 //read wipeout file and remove comments
 const readJSON = (path) => {
@@ -36,53 +28,69 @@ const readJSON = (path) => {
 };
 
 /**
- * Get wiepout configration from wipeout_config.json,
- * or else try to infer from RTDB rules.
+ * Initilize the wipeout library with firebase adminRef and configRef.
  *
+ * @param {} adminRef Firebse administration reference.
+ * @param {} configRef Firebase configuration reference.
  */
-exports.getConfig = () => {
-  try {
-    const config = require('./wipeout_config.json').wipeout;
-    console.log(config);
-    return Promise.resolves(config);
-  }
-  catch (errConfigFile) {
-    console.log('No \"wipeout_config.json\" found.' + errConfigFile);
-    return readDBRules().then((DBRules) => extractfromDBRules(DBRules))
-        .catch((err)=> {
-          console.error('Failed to read database');
-          throw new Error(err);
-        });
-  }
+exports.init = (wipeoutConfig) => {
+  global.admin = wipeoutConfig.adminRef;
+  global.DB_URL = wipeoutConfig.configRef.databaseURL;
+  global.WIPEOUT_UID = wipeoutConfig.WIPEOUT_UID;
+  global.WRITE_SIGN = wipeoutConfig.WRITE_SIGN;
+  global.PATH_REGEX = wipeoutConfig.PATH_REGEX ;
 };
 
 /**
- * Build deletion paths given a auth uid.
+ * Get wiepout deletion paths from wipeout_config.json,
  * or else try to infer from RTDB rules.
  *
- * @param {Object[]} config Wipeout configs
- * @param {!String} uid User id.
+ * @param {!String} uid User auth id.
  */
-exports.buildPath = (config, uid) => {
-  console.log('CONFIG', config);
+exports.getPaths = (uid) => {
+  try {
+    const config = require('./wipeout_config.json').wipeout;
+    return buildPath(config, uid);
+  } catch (errConfigFile) {
+    console.log('No \"wipeout_config.json\" found.' + errConfigFile);
+    return readDBRules().then((DBRules) => {
+      const config = extractfromDBRules(DBRules);
+      return buildPath(config, uid);
+    })
+   .catch((err)=> {
+     console.error('Failed to read database');
+     return Promise.reject(err);
+   });
+  }
+};
+
+// buid deletion paths from wipeout config 
+const buildPath = (config, uid) => {
+  let paths = deepcopy(config);
   for (let i = 0, len = config.length; i < len; i++) {
-    if (wipeoutPathRegex.test(config[i].path) === false) {
+    if (!PATH_REGEX.test(config[i].path)) {
       return Promise.reject('Invalid wipeout Path');
     }
-    config[i].path = config[i].path.replace(WIPEOUT_UID, uid.toString());
+    paths[i].path = config[i].path.replace(WIPEOUT_UID, uid.toString());
   }
-  return config;
+  return Promise.resolve(paths);
 };
 
 // Read database security rules using REST API.
 const readDBRules = () => {
-  return admin.credential.applicationDefault().getAccessToken().then((snapshot) => {
+  return admin.credential.applicationDefault().getAccessToken()
+  .then((snapshot) => {
     return snapshot.access_token;
-  }).then((token) => {
-    const rulesURL = `${dbURL}/.settings/rules.json?access_token=${token}`;
+  })
+  .then((token) => {
+    const rulesURL = `${DB_URL}/.settings/rules.json?access_token=${token}`;
     return request(rulesURL);
-  }).then((body) => { console.log(body); return body;})
-  .catch((err) => {console.error(err + 'Failed to read RTDB rule.'); throw new Error(err);});
+  })
+  .then((body) => body)
+  .catch((err) => {
+    console.error(err, 'Failed to read RTDB rule.');
+    return Promise.reject(err);
+  });
 };
 
 
@@ -177,9 +185,9 @@ exports.writeLog = (data) => {
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV == 'TEST') {
-  module.exports.readDBRules = readDBRules;
+  module.exports.buildPath = buildPath;
+  module.exports.checkWriteRules = checkWriteRules;
   module.exports.extractfromDBRules = extractfromDBRules;
   module.exports.inferWipeoutRule = inferWipeoutRule;
-  module.exports.checkWriteRules = checkWriteRules;
-
+  module.exports.readDBRules = readDBRules;
 }
