@@ -16,8 +16,10 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const mkdirp = require('mkdirp-promise');
 const fs = require('fs');
+const crypto = require('crypto');
+const path = require('path');
+const os = require('os');
 
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
@@ -32,11 +34,11 @@ const LOCAL_TMP_FOLDER = '/tmp/';
 exports.metadata = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
-  const fileName = filePath.split('/').pop();
-  const fileDir = filePathSplit.join('/') + (filePathSplit.length > 0 ? '/' : '');
 
-  const tempLocalDir = `${LOCAL_TMP_FOLDER}${fileDir}`;
-  const tempLocalFile = `${LOCAL_TMP_FOLDER}${fileName}`;
+  //create random filename with same extention as uploaded file
+  const randomFileName = crypto.randomBytes(20).toString('hex') + path.extname(filePath);
+  const tempLocalFile = path.join(os.tmpdir(), randomFileName);
+
 
   // Exit if this is triggered on a file that is not an image.
   if (!object.contentType.startsWith('image/')) {
@@ -50,13 +52,10 @@ exports.metadata = functions.storage.object().onChange(event => {
     return;
   }
 
+  // Download file from bucket.
   const bucket = gcs.bucket(object.bucket);
-  //create the temp directory where storage file will be downloaded
-  return mkdirp(tempLocalDir).then(()=>{
-    // Download file from bucket.
-    return bucket.file(filePath).download({
-      destination: tempLocalFile
-    });
+  return bucket.file(filePath).download({
+    destination: tempLocalFile
   }).then(() => {
     // Get Metadata from image.
     return exec(`identify -verbose "${tempLocalFile}"`).then(result => {
@@ -66,10 +65,10 @@ exports.metadata = functions.storage.object().onChange(event => {
         console.log('Wrote to:', filePath, 'data:', metadata);
       });
     });
-  }).then(()=>{
+  }).then(() => {
     //cleanup temp directory after metadata is extracted
     //Remove the file from temp directory
-    return fs.unlink(tempLocalFile,()=>{
+    return fs.unlink(tempLocalFile,() => {
       console.log("cleanup successful!");
     });
   });

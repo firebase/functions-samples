@@ -5,8 +5,6 @@
     "@google-cloud/storage": "^0.4.0",
     "child-process-promise": "^2.2.0",
     "firebase-admin": "^4.1.1",
-    "firebase-functions": "^0.5.1",   
-    "mkdirp": "^0.5.1",
-    "mkdirp-promise": "^5.0.1"
+    "firebase-functions": "^0.5.1"
   }
 }
