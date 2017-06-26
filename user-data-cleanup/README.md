@@ -1,6 +1,6 @@
 # Cleanup user data upon account deletion.
 
-This sample shows how to cleanup the user data when he deletes his account.
+This sample shows how to cleanup the user data when they delete their account.
 
 
 ## Functions Code
@@ -22,7 +22,7 @@ When a user signs-in we write some sample personal data of the following form:
         $uid : "Some user data"
 ```
 
-When the user deletes his account a Function will trigger and automatically delete the corresponding user data in the realtime database.
+When the user deletes their account a Function will trigger and automatically delete the corresponding user data in the realtime database.
 
 
 ## Trigger rules
