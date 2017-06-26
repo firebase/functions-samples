@@ -20,13 +20,6 @@ const fs = require('fs');
 const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
-
-//read wipeout file and remove comments
-const readJSON = (path) => {
-  const file = fs.readFileSync(path, 'utf-8');
-  return JSON.parse(sjc(file));
-};
-
 /**
  * Initilize the wipeout library.
  *
@@ -36,25 +29,29 @@ exports.initialize = (wipeoutConfig) => {
 };
 
 /**
- * Get wiepout deletion paths from wipeout_config.json,
+ * Get wipeout deletion paths from wipeout_config.json,
  * or else try to infer from RTDB rules.
  *
  * @param {!string} uid User auth id.
  */
-exports.getPaths = (uid) => {
+const getPaths = (uid) => {
   try {
     const config = require('./wipeout_config.json').wipeout;
     return buildPath(config, uid);
   } catch (err) {
-    console.log('Faile to read local config \"wipeout_config.json\". ' + err);
+    console.log('Failed to read local configuration.' +
+      'Trying to infer from Realtime Database Security Rules...\n' +
+      '(If you intended to use local configuration, ' +
+      'make sure there\'s a "wipeout_config.json" file in the ' +
+      'functions directory with a "wipeout" field.', err);
     return readDBRules().then((DBRules) => {
       const config = extractFromDBRules(DBRules);
+      console.log('Using wipeout rules inferred from RTDB rules.');
       return buildPath(config, uid);
-    })
-   .catch((errDB)=> {
-      console.error(errDB,
+    }).catch((errDB)=> {
+      console.error(
        'Could not generate wipeout config from RTDB rules.' +
-       'Failed to read database');
+       'Failed to read database', errDB);
       return Promise.reject(err);
     });
   }
@@ -82,7 +79,6 @@ const readDBRules = () => {
     const rulesURL = `${init.DB_URL}/.settings/rules.json?access_token=${token}`;
     return request(rulesURL);
   })
-  .then((body) => body)
   .catch((err) => {
     console.error(err, 'Failed to read RTDB rule.');
     return Promise.reject(err);
@@ -161,7 +157,7 @@ const checkWriteRules = (currentPath, rule) => {
  *
  * @param {!Object[]} deletedPaths list of path objects.
  */
-exports.deleteUser = (deletePaths) => {
+const deleteUser = (deletePaths) => {
   let deleteTasks = [];
   for (let i = 0; i < deletePaths.length; i++) {
     deleteTasks.push(init.admin.database().ref(deletePaths[i].path).remove());
@@ -174,10 +170,24 @@ exports.deleteUser = (deletePaths) => {
  *
  * @param {!functions.auth.UserRecord} data Deleted User.
  */
-exports.writeLog = (data) => {
+const writeLog = (data) => {
   return init.admin.database().ref(`/wipeout-history/${data.uid}`)
-      .set('Success, timestamp:' + Date.now().toString());
+      .set(init.admin.database.ServerValue.TIMESTAMP);
 };
+
+/**
+ * Deletes data in the Realtime Datastore when the accounts are deleted.
+ * Log into RTDB after successful deletion.
+ *
+ */
+exports.cleanupUserData = () => {
+  return init.functions.auth.user().onDelete(event => {
+    return getPaths(event.data.uid)
+        .then(deletePaths => deleteUser(deletePaths))
+        .then(() => writeLog(event.data));
+  });
+};
+
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV == 'TEST') {
@@ -186,4 +196,7 @@ if (process.env.NODE_ENV == 'TEST') {
   module.exports.extractFromDBRules = extractFromDBRules;
   module.exports.inferWipeoutRule = inferWipeoutRule;
   module.exports.readDBRules = readDBRules;
+  module.exports.deleteUser = deleteUser;
+  module.exports.writeLog = writeLog;
+
 }

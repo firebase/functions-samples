@@ -95,12 +95,14 @@ describe('Wipeout', () => {
       const logParam = `/wipeout-history/${fakeUserId}`;
       const setStub = sinon.stub();
       refStub.withArgs(logParam).returns({set: setStub});
-      setStub.withArgs('Success').resolves('Log added');
+      setStub.resolves('Log added');
 
       return expect(wipeout.writeLog(fakeUser))
             .to.eventually.equal('Log added');
     });
 
+    // This is unit test for the path extraction functionality.
+    // Currently the deletion of complex path hasn't been implemented.
     it('should extract correct wipeout rules from RTBD rules ', () => {
       const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
       const deletePaths = wipeout.extractFromDBRules(DBRules);
