@@ -35,9 +35,9 @@ const notifySlack = (issueId, issueDesc) => {
 
 exports.postSlackOnIssue = functions.crashlytics.onNewIssue((event) => {
   const { data } = event;
-  notifySlack(data.issueId, data.issueTitle).then(() => {
+  return notifySlack(data.issueId, data.issueTitle).then(() => {
     console.log(`Posted issue ${data.issueId} successfully to Slack`);
   }).catch(error => {
-    console.log('An error has occurred', error);
+    console.error('An error has occurred', error);
   });
 });

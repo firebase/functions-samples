@@ -55,11 +55,9 @@ exports.sendMailOnIssue = functions.crashlytics.onNewIssue((event) => {
         <p>Issue Title: ${data.issueTitle}</p>`
   };
 
-  transporter.sendMail(mailOpts, (err) => {
-    if (err) {
-      console.log("Error has occured", err);
-    } else {
-      console.log("Successfully sent mail");
-    }
+  return transporter.sendMail(mailOpts).then(() => {
+    console.log("Successfully sent mail");
+  }).catch((err) => {
+    console.log("Error has occured", err);
   });
 });
