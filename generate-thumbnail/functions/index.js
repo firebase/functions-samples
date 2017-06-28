@@ -18,18 +18,19 @@
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
 // Include a Service Account Key to use a Signed URL
-const gcs = require('@google-cloud/storage')({keyFilename:'[InsertServiceAccountKey.json]'});
+const gcs = require('@google-cloud/storage')({keyFilename: 'service-account-credentials.json'});
 const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 const spawn = require('child-process-promise').spawn;
-const LOCAL_TMP_FOLDER = '/tmp/';
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
 
 // Max height and width of the thumbnail in pixels.
 const THUMB_MAX_HEIGHT = 200;
 const THUMB_MAX_WIDTH = 200;
 // Thumbnail prefix added to file names.
 const THUMB_PREFIX = 'thumb_';
-admin.initializeApp(functions.config().firebase);
-const ref = admin.database().ref();
 
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
@@ -38,18 +39,14 @@ const ref = admin.database().ref();
  * we write the public URL to the Firebase Realtime Database.
  */
 exports.generateThumbnail = functions.storage.object().onChange(event => {
-  const fileBucket = event.data.bucket;
-  const bucket = gcs.bucket(fileBucket);
+  // File and directory paths.
   const filePath = event.data.name;
-  const file = bucket.file(filePath);
-  const filePathSplit = filePath.split('/');
-  const fileName = filePathSplit.pop();
-  const fileDir = filePathSplit.join('/') + (filePathSplit.length > 0 ? '/' : '');
-  const thumbFilePath = `${fileDir}${THUMB_PREFIX}${fileName}`;
-  const tempLocalDir = `${LOCAL_TMP_FOLDER}${fileDir}`;
-  const tempLocalFile = `${tempLocalDir}${fileName}`;
-  const tempLocalThumbFile = `${LOCAL_TMP_FOLDER}${thumbFilePath}`;
-  const thumbFile = bucket.file(thumbFilePath);
+  const fileDir = path.dirname(filePath);
+  const fileName = path.basename(filePath);
+  const thumbFilePath = path.normalize(path.join(fileDir, `${THUMB_PREFIX}${fileName}`));
+  const tempLocalFile = path.join(os.tmpdir(), filePath);
+  const tempLocalDir = path.dirname(tempLocalFile);
+  const tempLocalThumbFile = path.join(os.tmpdir(), thumbFilePath);
 
   // Exit if this is triggered on a file that is not an image.
   if (!event.data.contentType.startsWith('image/')) {
@@ -69,12 +66,15 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     return;
   }
 
+  // Cloud Storage files.
+  const bucket = gcs.bucket(event.data.bucket);
+  const file = bucket.file(filePath);
+  const thumbFile = bucket.file(thumbFilePath);
+
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {
     // Download file from bucket.
-    return bucket.file(filePath).download({
-      destination: tempLocalFile
-    });
+    return file(filePath).download({destination: tempLocalFile});
   }).then(() => {
     console.log('The file has been downloaded to', tempLocalFile);
     // Generate a thumbnail using ImageMagick.
@@ -82,30 +82,28 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   }).then(() => {
     console.log('Thumbnail created at', tempLocalThumbFile);
     // Uploading the Thumbnail.
-    return bucket.upload(tempLocalThumbFile, {
-      destination: thumbFilePath
-    })
+    return bucket.upload(tempLocalThumbFile, {destination: thumbFilePath});
   }).then(() => {
     console.log('Thumbnail uploaded to Storage at', thumbFilePath);
-  }).then(() => {
+    // Once the image has been uploaded delete the local files to free up disk space.
+    fs.unlinkSync(tempLocalFile);
+    fs.unlinkSync(tempLocalThumbFile);
+    // Get the Signed URLs for the thumbnail and original image.
     const config = {
       action: 'read',
       expires: '03-01-2500'
     };
-    // Get the Signed URL for the thumbnail and original images
     return Promise.all([
       thumbFile.getSignedUrl(config),
-      file.getSignedUrl(config),
+      file.getSignedUrl(config)
     ]);
   }).then(results => {
-    console.log('Got Signed URL');
+    console.log('Got Signed URLs.');
     const thumbResult = results[0];
     const originalResult = results[1];
     const thumbFileUrl = thumbResult[0];
     const fileUrl = originalResult[0];
     // Add the URLs to the Database
-    return ref.child('images').push({path: fileUrl, thumbnail: thumbFileUrl});
-  }).catch(reason => {
-    console.error(reason);
+    return admin.database().ref('images').push({path: fileUrl, thumbnail: thumbFileUrl});
   });
-})
+});

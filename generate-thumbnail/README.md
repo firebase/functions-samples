@@ -29,8 +29,7 @@ To deploy and test the sample:
  - Setup your project by running `firebase use --add` and select the project you had created.
  - Install dependencies in the functions directory: `cd functions; npm install; cd -`
  - Go to the Firebase Console, select the gear image > **project settings** > **Service Accounts** and click *Generate New Private Key** to download a Service Account Key JSON document.
- - Add the JSON document to the **Functions** directory.
- - Replace `[InsertServiceAccountKey.json]` with the name of the Service Account JSON document.
+ - Add the JSON service account credentials file to the **Functions** directory as **functions/service-account-credentials.json**.
  - Deploy your project using `firebase deploy`
  - Go to the Firebase Console **Storage** tab and upload an image. After a short time an thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
  - Go to the Firebase Console **Database** tab and see that a child of `images` has been created contiaining the Signed URLs for both images.
