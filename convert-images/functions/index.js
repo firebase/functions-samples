@@ -24,7 +24,7 @@ const os = require('os');
 const fs = require('fs');
 
 // File extension for the created JPEG files.
-const JPEG_EXTENSION = 'jpg';
+const JPEG_EXTENSION = '.jpg';
 
 /**
  * When an image is uploaded in the Storage bucket it is converted to JPEG automatically using
@@ -33,13 +33,12 @@ const JPEG_EXTENSION = 'jpg';
 exports.imageToJPG = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
-  const fileName = path.basename(filePath);
-  const baseFileName = path.extname(fileName);
+  const baseFileName = path.basename(filePath, path.extname(filePath));
   const fileDir = path.dirname(filePath);
-  const JPEGFilePath = path.format({dir: fileDir, base: baseFileName, ext: JPEG_EXTENSION});
-  const tempLocalDir = path.join(os.tmpdir(), fileDir);
-  const tempLocalFile = path.join(tempLocalDir, fileName);
-  const tempLocalJPEGFile = path.join(tempLocalDir, JPEGFilePath);
+  const JPEGFilePath = path.normalize(path.format({dir: fileDir, name: baseFileName, ext: JPEG_EXTENSION}));
+  const tempLocalFile = path.join(os.tmpdir(), filePath);
+  const tempLocalDir = path.dirname(tempLocalFile);
+  const tempLocalJPEGFile = path.join(os.tmpdir(), JPEGFilePath);
 
   // Exit if this is triggered on a file that is not an image.
   if (!object.contentType.startsWith('image/')) {
@@ -65,7 +64,8 @@ exports.imageToJPG = functions.storage.object().onChange(event => {
     // Download file from bucket.
     return bucket.file(filePath).download({destination: tempLocalFile});
   }).then(() => {
-    console.log('The file has been downloaded to', tempLocalFile);
+    console.log('The file has been downloaded to',
+        tempLocalFile);
     // Convert the image to JPEG using ImageMagick.
     return spawn('convert', [tempLocalFile, tempLocalJPEGFile]);
   }).then(() => {
@@ -73,7 +73,7 @@ exports.imageToJPG = functions.storage.object().onChange(event => {
     // Uploading the JPEG image.
     return bucket.upload(tempLocalJPEGFile, {destination: JPEGFilePath});
   }).then(() => {
-    console.log('JPEG image uploaded to Storage at', tempLocalJPEGFile);
+    console.log('JPEG image uploaded to Storage at', JPEGFilePath);
     // Once the image has been converted delete the local files to free up disk space.
     fs.unlinkSync(tempLocalJPEGFile);
     fs.unlinkSync(tempLocalFile);
