@@ -17,6 +17,7 @@
 
 const functions = require('firebase-functions');
 const gcs = require('@google-cloud/storage')();
+const path = require('path');
 const sharp = require('sharp');
 
 const THUMB_MAX_WIDTH = 200;
@@ -24,7 +25,7 @@ const THUMB_MAX_HEIGHT = 200;
 
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
- * ImageMagick.
+ * Sharp.
  */
 exports.generateThumbnail = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
@@ -42,7 +43,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   }
 
   // Get the file name.
-  const fileName = filePath.split('/').pop();
+  const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
     console.log('Already a Thumbnail.');
