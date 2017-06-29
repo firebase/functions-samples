@@ -17,12 +17,23 @@ The dependencies are listed in [functions/package.json](functions/package.json).
   
  - Or use local-emulator : [firebase functions local-emulator](https://firebase.google.com/docs/functions/local-emulator)
   
+`firebase serve --only functions` # to only emulate functions
+
+`firebase serve --only functions,hosting` # to emulate both functions and hosting
+
   Create a REST API apps & Sandbox account
  - [Add your Paypal API Secret Key](https://developer.paypal.com/developer/applications/)
   
+
+run: `firebase functions:config:set paypal.client_id="yourPaypalClientID"`
+
+run: `firebase functions:config:set paypal.client_id="yourPaypalClientSecret"`
+
   In
 [functions/index.js](functions/index.js) 
 
-- POST {price:5} to `https://us-central1-<project-id>.cloudfunctions.net/pay` return `response.body.approval_url` go on the `approval_url` to achieve the paiement.
+- POST {price:5} to `https://us-central1-<project-id>.cloudfunctions.net/pay` 
+
+return `response.body.approval_url` go on the `approval_url` to achieve the paiement.
 
 See [Docs API Paypal rest-sdks](https://developer.paypal.com/docs/api/rest-sdks/)
