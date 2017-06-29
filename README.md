@@ -197,6 +197,10 @@ Uses an HTTP trigger.
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app get a new user or lose one.
 Uses an Analytics trigger.
 
+### [Thumbnail creating using Node.js Stream & Sharp](/image-sharp)
+
+This sample shows how to use Node.js Stream to read image from Cloud Storage, generate a thumbnail image using Sharp and upload it back to Cloud Storage.
+
 ## Contributing
 
 We'd love that you contribute to the project. Before doing so please read our [Contributor guide](CONTRIBUTING.md).
