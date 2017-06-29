@@ -120,7 +120,6 @@ const categorizeScore = score => {
     return 'positive';
   } else if (score < -0.25) {
     return 'negative';
-  } else {
-    return 'neutral';
   }
-}
+  return 'neutral';
+};
