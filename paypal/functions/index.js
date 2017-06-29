@@ -1,5 +1,7 @@
 'use strict';
 const functions = require('firebase-functions');
+// CORS Express middleware to enable CORS Requests.
+const cors = require('cors')({origin: true});
 const paypal = require('paypal-rest-sdk');
 // firebase-admin SDK init
 const admin = require('firebase-admin');
@@ -7,17 +9,15 @@ admin.initializeApp(functions.config().firebase);
 // Configure your environment
 paypal.configure({
     'mode': 'sandbox', // sandbox or live
-    'client_id': functions.config().paypal.client_id,
-    'client_secret': functions.config().paypal.client_secret
+    'client_id': functions.config().paypal.client_id, // run: firebase functions:config:set paypal.client_id="yourPaypalClientID" 
+    'client_secret': functions.config().paypal.client_secret // run: firebase functions:config:set paypal.client_secret="yourPaypalClientSecret"
 });
 
 exports.pay = functions.https.onRequest((req, res) => {
     // Dev
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'application/json, Content-Type');
-    res.setHeader('Access-Control-Allow-Methods', 'POST');
-    // Build PayPal payment request
+    cors(req, res, () => {});
+
+    // 1.Set up a payment information object, Nuild PayPal payment request
     const payReq = JSON.stringify({
         intent: 'sale',
         payer: {
@@ -26,8 +26,8 @@ exports.pay = functions.https.onRequest((req, res) => {
         // example url https://us-central1-<project-id>.cloudfunctions.net/process
         // replace return_url, cancel_url
         redirect_urls: {
-            return_url: `https://us-central1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/process`,
-            cancel_url: 'http://localhost:4200/cancel'
+            return_url: `https://us-central1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/process`, // 
+            cancel_url: 'http://localhost:4200/cancel' // replace with your app url
         },
         transactions: [{
             amount: {
@@ -40,7 +40,7 @@ exports.pay = functions.https.onRequest((req, res) => {
             // reference_id: ''
         }]
     });
-    // Initialize the payment and redirect the user
+    // 2.Initialize the payment and redirect the user.
     paypal.payment.create(payReq, (error, payment) => {
         const links = {};
         if (error) {
@@ -58,8 +58,8 @@ exports.pay = functions.https.onRequest((req, res) => {
             if (links.hasOwnProperty('approval_url')) {
                 // REDIRECT USER TO links['approval_url'].href
                 console.log(links.approval_url.href);
-                // res.set('Content-Type', 'application/json');
-                res.redirect(links.approval_url.href);
+                // res.json({"approval_url":links.approval_url.href});
+                res.redirect(302, links.approval_url.href);
             } else {
                 console.error('no redirect URI present');
                 res.status('500').end();
@@ -68,7 +68,7 @@ exports.pay = functions.https.onRequest((req, res) => {
     });
 });
 
-// Complete the payment
+// 3.Complete the payment. Use the payer and payment IDs provided in the query string following the redirect.
 exports.process = functions.https.onRequest((req, res) => {
     const paymentId = req.query.paymentId;
     const payerId = {
@@ -78,7 +78,7 @@ exports.process = functions.https.onRequest((req, res) => {
     paypal.payment.execute(paymentId, payerId, function (error, payment) {
         if (error) {
             console.error(error);
-            res.redirect('http://localhost:4200/error');
+            res.redirect('http://localhost:4200/error'); // replace with your url page error
         } else {
             if (payment.state === 'approved') {
                 console.info('payment completed successfully');
@@ -91,8 +91,7 @@ exports.process = functions.https.onRequest((req, res) => {
                     'description': description,
                     'date': Date.now()
                 }).then(r => console.info('promise: ', r));
-                // replace url
-                res.redirect('http://localhost:4200/success');
+                res.redirect('http://localhost:4200/success'); // replace with your url, page success
             } else {
                 console.warn('payment.state: not approved ?');
                 // replace debug url
