@@ -1,6 +1,6 @@
 {
-  "name": "generate-thumbnail-functions",
-  "description": "Generate Thumbnail Firebase Functions sample",
+  "name": "generate-thumbnail-sharp-functions",
+  "description": "Generate Thumbnail with Sharp Firebase Functions sample",
   "dependencies": {
     "@google-cloud/storage": "^0.4.0",
     "firebase-admin": "^4.1.1",
