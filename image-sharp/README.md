@@ -1,11 +1,7 @@
 # Image resizing using Node.js Stream and Sharp - Cloud Storage trigger
 
-This quickstart demonstrates using **Firebase SDK for Cloud Functions** setup with a Cloud Storage trigger.
-
-## Introduction
-
-This sample automatically generates thumbnails for images that are uploaded to Cloud Storage.
-This is a alternative approach for using ImageMagick, see [quickstarts/thumbnail](../quickstarts/thumbnail).
+This sample demonstrates how to use Node.js Stream to read image from Cloud Storage, generate a thumbnail image using Sharp and upload it back to Cloud Storage.
+This is a alternative approach for using ImageMagick, see [generate-thumbnail](../generate-thumbnail).
 
 
 ## Functions Code
@@ -37,9 +33,9 @@ To deploy and test the sample:
 
 ## Contributing
 
-We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../../CONTRIBUTING.md).
+We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../CONTRIBUTING.md).
 
 
 ## License
 
-© Google, 2016. Licensed under an [Apache-2](../../LICENSE) license.
+© Google, 2016. Licensed under an [Apache-2](../LICENSE) license.
