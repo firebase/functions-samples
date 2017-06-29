@@ -88,9 +88,14 @@ Uses an HTTP trigger.
 Demonstrates how to automatically convert images that are uploaded to Firebase Storage to JPEG using ImageMagick.
 Uses a Firebase Storage trigger.
 
-### [Generate image thumbnails after upload](/generate-thumbnail)
+### [Generate image thumbnails using ImageMagick](/generate-thumbnail)
 
-Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage.
+Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage using ImageMagick and generate a public download link for the images.
+Uses a Firebase Storage trigger.
+
+### [Generate image thumbnails using Node.js Stream & Sharp](/image-sharp)
+
+Demonstrates how to use Node.js Stream to read image from Cloud Storage, generate a thumbnail image using Sharp and upload it back to Cloud Storage.
 Uses a Firebase Storage trigger.
 
 ### [Post GitHub commits to Slack channel](/github-to-slack)
@@ -196,10 +201,6 @@ Uses an HTTP trigger.
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app get a new user or lose one.
 Uses an Analytics trigger.
-
-### [Thumbnail creating using Node.js Stream & Sharp](/image-sharp)
-
-This sample shows how to use Node.js Stream to read image from Cloud Storage, generate a thumbnail image using Sharp and upload it back to Cloud Storage.
 
 ## Contributing
 
