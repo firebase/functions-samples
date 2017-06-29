@@ -15,18 +15,24 @@
  */
 'use strict';
 
+const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 const wipeout = require('./wipeout');
 
-/**
-* Deletes data in the Realtime Datastore when the accounts are deleted.
-* Log into RTDB after successful deletion.
-*
-* @param {functions.CloudFunction} event User delete event.
-*/
-exports.cleanupUserData = functions.auth.user().onDelete(event => {
-    return wipeout.deleteUser(event.data).then(() => {
-      return wipeout.writeLog(event.data);
-    });
-  });
+const WIPEOUT_CONFIG = {
+	'admin' : admin,
+	'functions' : functions,
+	'DB_URL' : functions.config().firebase.databaseURL,
+	'WIPEOUT_UID' : '$WIPEOUT_UID',
+	'WRITE_SIGN' : '.write',
+	'PATH_REGEX' : /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
+};
+
+
+admin.initializeApp(functions.config().firebase);
+
+
+wipeout.initialize(WIPEOUT_CONFIG);
+exports.cleanupUserData = wipeout.cleanupUserData();
+
 

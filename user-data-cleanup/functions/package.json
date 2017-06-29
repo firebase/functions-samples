@@ -2,11 +2,15 @@
   "name": "user-data-cleanup-functions",
   "description": "Cleanup the user data in the datastore upon account deletion",
   "dependencies": {
+    "deepcopy": "^0.6.3",
     "firebase-admin": "^4.1.1",
-    "firebase-functions": "^0.5.1"
+    "firebase-functions": "^0.5.1",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "strip-json-comments": "^2.0.1"
   },
   "scripts": {
-    "test": "NODE_ENV=TEST mocha test/test.js"
+    "test": "NODE_ENV=TEST mocha test/wipeout_spec.js"
   },
   "devDependencies": {
     "chai": "<=3.5",
