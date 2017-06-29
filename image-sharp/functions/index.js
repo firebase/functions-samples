@@ -69,8 +69,9 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const metadata = {
     contentType: contentType
   };
-  // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail
-  const thumbFilePath = filePath.replace(/(\/)?([^\/]*)$/, '$1thumb_$2');
+  // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
+  const thumbFileName = `thumb_${fileName}`;
+  const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
   // Create write stream for uploading thumbnail
   const thumbnailUploadStream = bucket.file(thumbFilePath).createWriteStream({metadata});
 
