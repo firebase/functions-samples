@@ -1,6 +1,6 @@
 {
   "wipeout":[
-  	{"path":"/users/$WIPEOUT_UID"}
+  	{"path":"/users/#WIPEOUT_UID"}
   ]
 } 
 
