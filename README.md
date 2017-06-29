@@ -88,9 +88,14 @@ Uses an HTTP trigger.
 Demonstrates how to automatically convert images that are uploaded to Firebase Storage to JPEG using ImageMagick.
 Uses a Firebase Storage trigger.
 
-### [Generate image thumbnails after upload](/generate-thumbnail)
+### [Generate image thumbnails using ImageMagick](/generate-thumbnail)
 
-Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage.
+Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage using ImageMagick and generate a public download link for the images.
+Uses a Firebase Storage trigger.
+
+### [Generate image thumbnails using Node.js Stream & Sharp](/image-sharp)
+
+Demonstrates how to use Node.js Stream to read image from Cloud Storage, generate a thumbnail image using Sharp and upload it back to Cloud Storage.
 Uses a Firebase Storage trigger.
 
 ### [Post GitHub commits to Slack channel](/github-to-slack)
