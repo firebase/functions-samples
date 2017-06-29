@@ -43,13 +43,12 @@ const basicAuthRequest = require('request');
  * If an error occurs log the details and return a 500 response.
  */
 exports.auth = functions.https.onRequest((req, res) => {
-
   const handleError = (username, error) => {
     console.error({
       User: username
     }, error);
     return res.sendStatus(500);
-  }
+  };
 
   const handleResponse = (username, status, body) => {
     console.log({
@@ -64,8 +63,7 @@ exports.auth = functions.https.onRequest((req, res) => {
       return res.status(200).json(body);
     }
     return res.sendStatus(status);
-  }
-
+  };
 
   let username = '';
   try {
@@ -115,15 +113,15 @@ function authenticate(username, password) {
   // (Only a password of `Testing123` will succeed)
   const authEndpoint = `https://httpbin.org/basic-auth/${username}/Testing123`;
   const creds = {
-    'auth': {
-      'user': username,
-      'pass': password
+    auth: {
+      user: username,
+      pass: password
     }
-  }
+  };
   return new Promise((resolve, reject) => {
     basicAuthRequest(authEndpoint, creds, (error, response, body) => {
       if (error) {
-        return reject(error)
+        return reject(error);
       }
       const statusCode = response ? response.statusCode : 0;
       if (statusCode === 401) { // Invalid username/password

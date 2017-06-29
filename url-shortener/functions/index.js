@@ -39,7 +39,7 @@ function createShortenerRequest(sourceUrl) {
     },
     json: true,
     resolveWithFullResponse: true
-  }
+  };
 }
 
 function createShortenerPromise(snapshot) {
