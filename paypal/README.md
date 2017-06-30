@@ -26,15 +26,12 @@ The dependencies are listed in [functions/package.json](functions/package.json).
   
  - Or use local-emulator : [firebase functions local-emulator](https://firebase.google.com/docs/functions/local-emulator)
   
-  # to only emulate functions
 ```sh
-firebase serve --only functions
+firebase serve --only functions  # to only emulate functions
 ``` 
 
-# to emulate both functions and hosting
-
 ```sh
-firebase serve --only functions,hosting 
+firebase serve --only functions,hosting # to emulate both functions and hosting
 ```
 
   Create a REST API apps & Sandbox account
