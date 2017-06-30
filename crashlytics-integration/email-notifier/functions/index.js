@@ -18,14 +18,11 @@
 const functions = require('firebase-functions'),
       nodemailer = require('nodemailer');
 
-// To use a service account auth instead of the basic user/pass
+// To use a service account auth instead of the lintbasic user/pass
 // see https://developers.google.com/identity/protocols/OAuth2ServiceAccount
 // const serviceKeys = require('./service-account.json');
 
-// @todo: specify an email address to receive the notifications
-const USER_EMAIL = "";
-
-exports.sendMailOnIssue = functions.crashlytics.onNewIssue((event) => {
+exports.sendMailOnIssue = functions.crashlytics.onNewIssue(event => {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -48,7 +45,7 @@ exports.sendMailOnIssue = functions.crashlytics.onNewIssue((event) => {
   const { data } = event;
   const mailOpts = {
     from: functions.config().email.user,
-    to: USER_EMAIL,
+    to: functions.config().email.destination_email,
     subject: 'Your app has a new issue',
     html: `<h1>Heads up, your app has a new issue!</h1>
         <p>Issue Id: ${data.issueId}</p>
@@ -56,8 +53,6 @@ exports.sendMailOnIssue = functions.crashlytics.onNewIssue((event) => {
   };
 
   return transporter.sendMail(mailOpts).then(() => {
-    console.log("Successfully sent mail");
-  }).catch((err) => {
-    console.log("Error has occured", err);
+    console.log('Successfully sent mail');
   });
 });

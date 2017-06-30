@@ -29,7 +29,7 @@ Crashlytics will become the future crash reporter for Firebase. Learn more about
   1. Config and set the environment variables to the Gmail account you're going to use to send emails: `firebase functions:config:set email.user="myusername@gmail.com" email.pass="secretpassword"`
 
  Configuring Mailer Options
-  1. Specify the email that you would like to use to *receive* the alerts by using: `firebase functions:config:set email.recipient_address="me@gmail.com"`
+  1. Specify the email that you would like to use to *receive* the alerts by using: `firebase functions:config:set email.destination_email="me@gmail.com"`
   1. The [Nodemailer documentation](https://nodemailer.com/usage/) contains more documentation on how to further customize your message or use alternative auth methods 
    
 ## Deploy and test

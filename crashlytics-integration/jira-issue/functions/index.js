@@ -31,7 +31,6 @@ const calculateIssuePriority = (issueTitle) => {
 
   // for the demonstration of this sample, just return 1
   return 1;
-
 };
 
 // Helper function that parses the Jira project url and returns an object
@@ -40,7 +39,7 @@ const parseUrl = (url) => {
   // input url format: https://yourdomain.atlassian.net/projects/XX
   const matches = url.match(/(https?:\/\/)(.+?)(\/.+)?\/(projects|browse)\/([\w\-]+)/);
   if (matches && matches.length === 6) {
-    return { protocol: matches[1], domain: matches[2], contextPath: matches[3] || '', projectKey: matches[5]}
+    return {protocol: matches[1], domain: matches[2], contextPath: matches[3] || '', projectKey: matches[5]};
   } else {
     throw new Error('Unexpected URL Format');
   }
@@ -56,16 +55,16 @@ const createJiraIssue = (issueId, issueTitle) => {
   // see https://developer.atlassian.com/jiradev/jira-apis/jira-rest-apis/jira-rest-api-tutorials/jira-rest-api-example-create-issue
   // to customize the new issue being created
   const newIssue = {
-    "fields": {
-      "components": [{ "id": component_id || '10000' }],
-      "project": { "key": projectKey },
-      "summary": `New Issue - ${issueId}`,
-      "description": issueTitle,
-      "issuetype": {
-        "name": issue_type || 'Bug'
+    fields: {
+      components: [{id: component_id || '10000'}],
+      project: {key: projectKey },
+      summary: `New Issue - ${issueId}`,
+      description: issueTitle,
+      issuetype: {
+        name: issue_type || 'Bug'
       },
-      "priority": {
-        "id": calculateIssuePriority(issueTitle).toString()
+      priority: {
+        id: calculateIssuePriority(issueTitle).toString()
       }
     }
   };
@@ -85,11 +84,9 @@ const createJiraIssue = (issueId, issueTitle) => {
   });
 };
 
-exports.createJiraOnIssue = functions.crashlytics.onNewIssue((event) => {
+exports.createJiraOnIssue = functions.crashlytics.onNewIssue(event => {
   const { data } = event;
   return createJiraIssue(data.issueId, data.issueTitle).then(() => {
     console.log(`Created issue ${data.issueId} successfully to Jira`);
-  }).catch(error => {
-    console.error('An error has occurred', error);
   });
 });
