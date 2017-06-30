@@ -26,9 +26,16 @@ The dependencies are listed in [functions/package.json](functions/package.json).
   
  - Or use local-emulator : [firebase functions local-emulator](https://firebase.google.com/docs/functions/local-emulator)
   
-`firebase serve --only functions` # to only emulate functions
+  # to only emulate functions
+```sh
+firebase serve --only functions
+``` 
 
-`firebase serve --only functions,hosting` # to emulate both functions and hosting
+# to emulate both functions and hosting
+
+```sh
+firebase serve --only functions,hosting 
+```
 
   Create a REST API apps & Sandbox account
  - [Add your Paypal API Secret Key](https://developer.paypal.com/developer/applications/)
