@@ -74,7 +74,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {
     // Download file from bucket.
-    return file(filePath).download({destination: tempLocalFile});
+    return file.download({destination: tempLocalFile});
   }).then(() => {
     console.log('The file has been downloaded to', tempLocalFile);
     // Generate a thumbnail using ImageMagick.
