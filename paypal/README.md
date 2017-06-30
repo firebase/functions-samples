@@ -34,9 +34,14 @@ The dependencies are listed in [functions/package.json](functions/package.json).
  - [Add your Paypal API Secret Key](https://developer.paypal.com/developer/applications/)
   
 
-run: `firebase functions:config:set paypal.client_id="yourPaypalClientID"`
+run:
+```sh
+firebase functions:config:set paypal.client_id="yourPaypalClientID"
+```
 
-run: `firebase functions:config:set paypal.client_id="yourPaypalClientSecret"`
+```sh
+firebase functions:config:set paypal.client_id="yourPaypalClientSecret"
+```
 
   In
 [functions/index.js](functions/index.js) 
