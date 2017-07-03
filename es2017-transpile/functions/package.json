@@ -1,12 +1,14 @@
 {
   "name": "es2017-functions",
-  "description": "Sample app showing how to transpiule ES7 code in cloud Functions.",
+  "description": "Sample app showing how to transpile ES7 code in cloud Functions.",
   "dependencies": {
+    "babel-runtime": "^6.23.0",
     "firebase-admin": "^4.1.1",
     "firebase-functions": "^0.5.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-latest": "^6.24.1"
   },
   "scripts": {
