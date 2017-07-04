@@ -9,6 +9,8 @@ See file [functions/index.js](functions/index.js) for the email sending code.
 
 Sending emails is performed using [nodemailer](https://www.npmjs.com/package/nodemailer) a node based Email client with comprehensive EMail server setup. For simplicity, in this sample we're showing how to send email through SMTP using a Gmail account. Be aware that Gmail has an [email sending quota](https://support.google.com/mail/answer/22839). If you are planning on sending a large number of emails you should use a professional email sending platform such as [Sendgrid](https://console.cloud.google.com/launcher/details/sendgrid-app/sendgrid-email), [Mailjet](https://www.mailjet.com/google) or [Mailgun](http://www.mailgun.com/google).
 
+>If switching to Sendgrid, Mailjet or Mailgun make sure you enable billing on your Firebase project as this is required to send requests to non-Google services.
+
 The dependencies are listed in [functions/package.json](functions/package.json).
 
 
