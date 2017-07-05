@@ -19,7 +19,7 @@ const functions = require('firebase-functions'),
       rp = require('request-promise');
 
 // Helper function that calculate the priority of the issue
-const calculateIssuePriority = (issueTitle) => {
+const calculateIssuePriority = issueTitle => {
   // run some custom logic that can determine the priority or severity of this issue
   // for example, you can parse the stack trace to determine which part of your app
   // is causing the crash and assign priorities based on that
@@ -35,7 +35,7 @@ const calculateIssuePriority = (issueTitle) => {
 
 // Helper function that parses the Jira project url and returns an object
 // of the url fragments
-const parseUrl = (url) => {
+const parseUrl = url => {
   // input url format: https://yourdomain.atlassian.net/projects/XX
   const matches = url.match(/(https?:\/\/)(.+?)(\/.+)?\/(projects|browse)\/([\w\-]+)/);
   if (matches && matches.length === 6) {
