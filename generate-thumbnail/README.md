@@ -28,7 +28,7 @@ To deploy and test the sample:
  - Open this sample's directory: `cd functions-samples/generate-thumbnail`
  - Setup your project by running `firebase use --add` and select the project you had created.
  - Install dependencies in the functions directory: `cd functions; npm install; cd -`
- - Go to the Firebase Console, select the gear image > **project settings** > **Service Accounts** and click *Generate New Private Key** to download a Service Account Key JSON document.
+ - Go to the Firebase Console, select the gear image > **project settings** > **Service Accounts** and click **Generate New Private Key** to download a Service Account Key JSON document.
  - Add the JSON service account credentials file to the **Functions** directory as **functions/service-account-credentials.json**.
  - Deploy your project using `firebase deploy`
  - Go to the Firebase Console **Storage** tab and upload an image. After a short time an thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
