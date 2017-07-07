@@ -21,10 +21,16 @@ const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
 /**
- * Initilize the wipeout library.
- *
+ * Initialize the wipeout library.
+ * @param {object} wipeoutConfig contains the fields:
+ *  'admin' module returned by require('firebase-admin')
+ *  'functions' module returned by require('firebase-functions')
+ *  'DB_URL' the URL of the project's Firebase Realtime Database
+ *  'WIPEOUT_UID' typically '$WIPEOUT_UID'; change in case of conflict
+ *  'WRITE_SIGN': should be '.write',
+ *  'PATH_REGEX': should be /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
  */
-exports.initialize = (wipeoutConfig) => {
+exports.initialize = wipeoutConfig => {
   global.init = Object.freeze(wipeoutConfig);
 };
 
@@ -48,7 +54,7 @@ const getPaths = (uid) => {
       const config = extractFromDBRules(DBRules);
       console.log('Using wipeout rules inferred from RTDB rules.');
       return buildPath(config, uid);
-    }).catch((errDB)=> {
+    }).catch(errDB => {
       console.error(
        'Could not generate wipeout config from RTDB rules.' +
        'Failed to read database', errDB);
@@ -59,7 +65,7 @@ const getPaths = (uid) => {
 
 // buid deletion paths from wipeout config
 const buildPath = (config, uid) => {
-  let paths = deepcopy(config);
+  const paths = deepcopy(config);
   for (let i = 0, len = config.length; i < len; i++) {
     if (!init.PATH_REGEX.test(config[i].path)) {
       return Promise.reject('Invalid wipeout Path: ' + config[i].path);
@@ -96,26 +102,26 @@ const extractFromDBRules = (DBRules) => {
 // BFS traverse of RTDB rules, check all the .write rules
 // for potential user data path.
 const inferWipeoutRule = (obj) => {
-  let queue = [];
-  let pathQueue = [];
-  let retRules = [];
+  const queue = [];
+  const pathQueue = [];
+  const retRules = [];
   queue.push(obj);
   pathQueue.push([]);
 
   while (queue.length > 0) {
-    let node = queue.shift();
-    let path = pathQueue.shift();
+    const node = queue.shift();
+    const path = pathQueue.shift();
 
-    if (typeof node == 'object') {
-      let keys = Object.keys(node);
+    if (typeof node === 'object') {
+      const keys = Object.keys(node);
       if (keys.includes(init.WRITE_SIGN)) {
-        let userPath = checkWriteRules(path, node[init.WRITE_SIGN]);
+        const userPath = checkWriteRules(path, node[init.WRITE_SIGN]);
         if (typeof userPath !== 'undefined') {
           retRules.push({'path': userPath});
         }
       } else {
         for (let i = 0, len = keys.length; i < len; i++) {
-          let newPath = path.slice();
+          const newPath = path.slice();
           newPath.push(keys[i]);
           pathQueue.push(newPath);
           queue.push(node[keys[i]]);
@@ -137,7 +143,7 @@ const checkWriteRules = (currentPath, rule) => {
     const location = currentPath.indexOf(UID);
     if (location === -1) {
       console.error('User ID not in path');
-      return undefined;
+      return;
     } else {
       if (currentPath[0] !== 'rules') {
         console.error('Mistake in current path, should start with "rules"');
@@ -147,8 +153,6 @@ const checkWriteRules = (currentPath, rule) => {
       currentPath[location] = init.WIPEOUT_UID;
       return currentPath.join(PATH_SPLITTER);
     }
-  } else {
-    return undefined;
   }
 };
 
@@ -158,7 +162,7 @@ const checkWriteRules = (currentPath, rule) => {
  * @param {!Object[]} deletedPaths list of path objects.
  */
 const deleteUser = (deletePaths) => {
-  let deleteTasks = [];
+  const deleteTasks = [];
   for (let i = 0; i < deletePaths.length; i++) {
     deleteTasks.push(init.admin.database().ref(deletePaths[i].path).remove());
   }
@@ -190,7 +194,7 @@ exports.cleanupUserData = () => {
 
 
 // only expose internel functions to tests.
-if (process.env.NODE_ENV == 'TEST') {
+if (process.env.NODE_ENV === 'TEST') {
   module.exports.buildPath = buildPath;
   module.exports.checkWriteRules = checkWriteRules;
   module.exports.extractFromDBRules = extractFromDBRules;
