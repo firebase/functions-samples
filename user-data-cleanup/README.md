@@ -5,7 +5,23 @@ This sample shows how to cleanup the user data when they delete their account.
 
 ## Functions Code
 
-See file [functions/index.js](functions/index.js) for the data cleanup code.
+See file [functions/wipeout.js](functions/wipeout.js) for the data cleanup code.
+
+When a user deletes their account, their data in the database will be deleted
+automatically. The function needs configuration to find according user data. The
+configuration can be specified in local file
+[functions/wipeout_config.json](functions/wipeout_conifg.json). If the file
+doesn't exists or doesn't contain a valid configuration object, the function
+will go ahead and infer the configuration from Firebase database authorization
+rules (verification of the inferred rules will be in the next release).
+
+The configuration is a json object and its `wipeout` filed is a list of objects.
+Each object in the list has a string field called `path` specifying a path where
+user data is stored. The path string could use variable `$WIPEOUT_UID` which
+will be replaced by UID of the deleted user account when triggered.
+
+Please don't change the `WIPEOUT_CONFIG` object in `functions/index.js` unless
+you want to customize the function and know the code well.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 

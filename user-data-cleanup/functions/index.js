@@ -20,12 +20,12 @@ const functions = require('firebase-functions');
 const wipeout = require('./wipeout');
 
 const WIPEOUT_CONFIG = {
-	'admin' : admin,
-	'functions' : functions,
-	'DB_URL' : functions.config().firebase.databaseURL,
-	'WIPEOUT_UID' : '$WIPEOUT_UID',
-	'WRITE_SIGN' : '.write',
-	'PATH_REGEX' : /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
+    'admin': admin,
+    'functions': functions,
+    'DB_URL': functions.config().firebase.databaseURL,
+    'WIPEOUT_UID': '$WIPEOUT_UID',
+    'WRITE_SIGN': '.write',
+    'PATH_REGEX': /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
 };
 
 
@@ -34,5 +34,3 @@ admin.initializeApp(functions.config().firebase);
 
 wipeout.initialize(WIPEOUT_CONFIG);
 exports.cleanupUserData = wipeout.cleanupUserData();
-
-

@@ -1,14 +1,14 @@
 {
   "rules": {
-  	// Basic rules 
+    // Basic rules 
     "users": {
       "$uid": {
         ".read": "auth.uid === $uid",
         ".write": "auth.uid === $uid",
         "messages": {
           ".indexOn": ["category"]
-      		}
-      	}
+            }
+        }
     },
     // Third-party directory
     "instagramAccessToken": {
