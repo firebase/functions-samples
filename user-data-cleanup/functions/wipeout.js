@@ -16,7 +16,6 @@
 'use strict';
 
 const deepcopy = require('deepcopy');
-const fs = require('fs');
 const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
@@ -86,7 +85,8 @@ const readDBRules = () => {
     return snapshot.access_token;
   })
   .then(token => {
-    const rulesURL = `${init.DB_URL}/.settings/rules.json?access_token=${token}`;
+    const rulesURL = `${init.DB_URL}/.settings/rules.json?` +
+        `access_token=${token}`;
     return request(rulesURL);
   })
   .catch(err => {
@@ -189,20 +189,24 @@ const writeLog = data => {
  */
 exports.cleanupUserData = () => {
   return init.users.onDelete(event => {
-    const configPromise = init.db.ref(`${BOOK_KEEPING_PATH}/rules`).once('value');
-    const confirmPromise = init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).once('value');
-    return Promise.all([configPromise, confirmPromise]).then((snapshots) => {
+    const configPromise = init.db
+        .ref(`${BOOK_KEEPING_PATH}/rules`).once('value');
+    const confirmPromise = init.db
+        .ref(`${BOOK_KEEPING_PATH}/confirm`).once('value');
+    return Promise.all([configPromise, confirmPromise])
+        .then((snapshots) => {
       const config = snapshots[0].val();
       const confirm = snapshots[1].val();
       if (!snapshots[0].exists() || !confirm) {
-        return Promise.reject("No config or not confirmed by developers no data deleted at user deletion.");
+        return Promise.reject("No config or not confirmed by developers." +
+          " No data deleted at user deletion.");
       } else {
         return Promise.resolve(config);
       }
     })
     .then(config => buildPath(config, event.data.uid))
     .then(deletePaths => deleteUser(deletePaths))
-    .then(() => writeLog(event.data));;
+    .then(() => writeLog(event.data));
   });
 };
 
@@ -218,9 +222,10 @@ exports.showWipeoutConfig = () => {
           .set(config).then(() => {
             const content = "Please verify the wipeout rules. <br> " +
             "If correct, click the 'Confirm' button below. <br>" +
-            "If incorrect, please modify functions/wipeout_config.json and deploy again. <br>" +
-             JSON.stringify(config) + "<form action='/confirmWipeoutConfig'" +
-                " method='post'><input type='submit' value='Confirm' name ='confirm'></form>";
+            "If incorrect, please modify functions/wipeout_config.json" +
+            "and deploy again. <br> <br>" + JSON.stringify(config) +
+            "<form action='/confirmWipeoutConfig' method='post'>" +
+            "<input type='submit' value='Confirm' name ='confirm'></form>";
             res.send(content);
           });
     });

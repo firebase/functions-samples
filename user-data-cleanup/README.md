@@ -60,6 +60,8 @@ To configure it:
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
  1. Run local tests using `cd functions; npm test`
  1. Deploy your project using `firebase deploy`
+ 1. Please go to the url `https://us-central1-<project-id>.cloudfunctions.net/showWipeoutConfig` to verify the wiepout rules. If correct, click the confirm button, or else change the local configutation file [functions/wipeout_config.json](functions/wipeout_conifg.json) and redeploy. **Note a developer confirmation is required after every deployment.**
  1. Open the app using `firebase open hosting:site`, this will open a browser.
  1. Sign in using Google Sign-In and delete the account using the provided button. You can check at each step of the way if the data has been deleted using the Firebase console.
  
+
