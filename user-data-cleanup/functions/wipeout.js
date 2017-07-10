@@ -16,6 +16,7 @@
 'use strict';
 
 const deepcopy = require('deepcopy');
+const jsep = require('jsep');
 const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
@@ -24,6 +25,16 @@ const WIPEOUT_UID = '#WIPEOUT_UID';
 const WRITE_SIGN = '.write';
 const PATH_REGEX = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
 const BOOK_KEEPING_PATH = '/wipeout';
+
+const Expression = require('./expression.js');
+const TRUE = 'true';
+const FALSE = 'false';
+const UNDEFINED = 'undefined';
+
+const NO_ACCESS = 0;
+const SINGLE_ACCESS = 1;
+const MULT_ACCESS = 2;
+
 
 /**
  * Initialize the wipeout library.
@@ -48,11 +59,12 @@ const getConfig = () => {
     const config = require('./wipeout_config.json').wipeout;
     return Promise.resolve(config);
   } catch (err) {
-    console.log('Failed to read local configuration.' +
-      'Trying to infer from Realtime Database Security Rules...\n' +
-      '(If you intended to use local configuration, ' +
-      'make sure there\'s a \'wipeout_config.json\' file in the ' +
-      'functions directory with a \'wipeout\' field.', err);
+    console.log(`Failed to read local configuration.
+Trying to infer from Realtime Database Security Rules...
+
+(If you intended to use local configuration,
+make sure there's a 'wipeout_config.json' file in the
+functions directory with a 'wipeout' field.`, err);
     return readDBRules().then(DBRules => {
       const config = extractFromDBRules(DBRules);
       console.log('Using wipeout rules inferred from RTDB rules.');
@@ -134,34 +146,99 @@ const inferWipeoutRule = obj => {
   return retRules;
 };
 
+// check memeber expression of candidate auth.id
+const checkMember = obj => {
+  return obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
+      obj.property.name === 'uid';
+};
+
+// get the DNF expression asscociated with auth.uid
+const getExpression = obj => {
+  if (obj.type === 'Literal') {
+    return obj.raw === 'true' ? new Expression(TRUE,[]) : new Expression(TRUE,[]);
+  } else if (obj.type === 'Identifier') {
+    return obj.name[0] === '$' ? new Expression(UNDEFINED, [[obj.name]]) : new Expression(FALSE,[]);
+  } else { return new Expression(TRUE,[]);}
+};
+
+// check binary expressions for candidate auth.uid == ?
+function checkBinary(obj) {
+  if (obj.type === 'BinaryExpression' && (obj.operator === '==' || obj.operator === '===')) {
+    if (checkMember(obj.left)) { return getExpression(obj.right);}
+    if (checkMember(obj.right)) { return getExpression(obj.left);}
+  }
+  return new Expression(TRUE,[]);
+}
+
+// check true or false literals
+function checkLiteral(obj) {
+  if (obj.type === 'Literal') {
+    if (obj.raw === 'true') {
+      return new Expression(TRUE,[]);
+    } else if (obj.raw === 'false') {
+      return new Expression(FALSE,[]);
+    } else {throw 'Literals else than true or false are not supported';}
+  }
+}
+
+// check (nested) logic expressions
+function checkLogic(obj) {
+  if (obj.type === 'BinaryExpression') {
+    return checkBinary(obj);// also check unary literals
+  } else if (obj.type === 'Literal') {
+    return checkLiteral(obj);
+  } else if (obj.type === 'LogicalExpression') {
+    const left = checkLogic(obj.left);
+    const right = checkLogic(obj.right);
+    //console.log(obj.operator,left, right);
+
+    if (obj.operator === '||') {
+      return Expression.or(left, right);
+    } else if (obj.operator === '&&') {
+      return Expression.and(left, right);
+    }
+  } else {
+    return new Expression(TRUE, []);
+  }
+}
+
 // check if the write rule indicates only the specific user has write
 // access to the path. If so, the path contains user data.
 // TODO(dzdz): currently hard coded criteria, will change very soon.
-const checkWriteRules = (currentPath, rule) => {
-  if ((rule === 'auth.uid === $uid') || (rule === 'auth.uid == $uid') ||
-     (rule === '$uid === auth.uid') || (rule === '$uid == auth.uid')) {
-
-    const UID = '$uid';
-    const location = currentPath.indexOf(UID);
-    if (location === -1) {
-      console.error('User ID not in path');
-      return;
-    } else {
-      if (currentPath[0] !== 'rules') {
-        console.error('Mistake in current path, should start with "rules"');
-        return undefined;
-      }
-      currentPath[0] = '';
-      currentPath[location] = WIPEOUT_UID;
-      return currentPath.join(PATH_SPLITTER);
-    }
+function checkWriteRules(currentPath, rule) {
+  let ruleTree;
+  try {
+    ruleTree = jsep(rule);
+  } catch (err) {
+    //console.log(`jsep failed to parse the rule ${rule}. Rulw ignored`, err);
+    return; // ignore write rules which couldn't be parased by jsep/.
   }
-};
+
+  const resultExp = checkLogic(ruleTree);
+
+  if (resultExp.getAccessNumber() === SINGLE_ACCESS) {
+    const authVars = resultExp.getConjunctionList()[0];
+    authVars.every((cur) => {
+      const location = currentPath.indexOf(cur);
+      if (location === -1) {
+        throw 'Write rule is using unknown variable ' + cur;
+      } else {
+        currentPath[location] = WIPEOUT_UID;
+        return true;
+      }
+    });
+    if (currentPath[0]) {
+      currentPath[0] = '';
+      return currentPath.join(PATH_SPLITTER);
+    } else { throw `Mistake in current path, should start with 'rules'`;}
+  } else { return;}
+}
+
 
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  *
- * @param {!Object[]} deletedPaths list of path objects.
+ * @param {!Object[]} deletePaths list of path objects.
  */
 const deleteUser = deletePaths => {
   const deleteTasks = [];
@@ -198,8 +275,8 @@ exports.cleanupUserData = () => {
       const config = snapshots[0].val();
       const confirm = snapshots[1].val();
       if (!snapshots[0].exists() || !confirm) {
-        return Promise.reject("No config or not confirmed by developers." +
-          " No data deleted at user deletion.");
+        return Promise.reject('No config or not confirmed by developers. ' +
+          'No data deleted at user deletion.');
       } else {
         return Promise.resolve(config);
       }
@@ -220,12 +297,13 @@ exports.showWipeoutConfig = () => {
     return getConfig().then(config => {
       return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
           .set(config).then(() => {
-            const content = "Please verify the wipeout rules. <br> " +
-            "If correct, click the 'Confirm' button below. <br>" +
-            "If incorrect, please modify functions/wipeout_config.json" +
-            "and deploy again. <br> <br>" + JSON.stringify(config) +
-            "<form action='/confirmWipeoutConfig' method='post'>" +
-            "<input type='submit' value='Confirm' name ='confirm'></form>";
+            const content = `Please verify the wipeout rules. <br>
+If correct, click the 'Confirm' button below. <br>
+If incorrect, please modify functions/wipeout_config.json
+and deploy again. <br> <br> ${JSON.stringify(config)} 
+<form action='/confirmWipeoutConfig' method='post'>
+<input type='submit' value='Confirm' name ='confirm'></form>`;
+
             res.send(content);
           });
     });
@@ -243,7 +321,6 @@ exports.confirmWipeoutConfig = () => {
           .then(() => res.send('Confirm sent'));
     });
 };
-
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV === 'TEST') {
