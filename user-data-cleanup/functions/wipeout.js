@@ -48,11 +48,11 @@ const getConfig = () => {
     const config = require('./wipeout_config.json').wipeout;
     return Promise.resolve(config);
   } catch (err) {
-    console.log('Failed to read local configuration.' +
-      'Trying to infer from Realtime Database Security Rules...\n' +
-      '(If you intended to use local configuration, ' +
-      'make sure there\'s a \'wipeout_config.json\' file in the ' +
-      'functions directory with a \'wipeout\' field.', err);
+    console.log(`Failed to read local configuration.
+Trying to infer from Realtime Database Security Rules...\n
+(If you intended to use local configuration,
+make sure there's a 'wipeout_config.json' file in the
+functions directory with a 'wipeout' field.`, err);
     return readDBRules().then(DBRules => {
       const config = extractFromDBRules(DBRules);
       console.log('Using wipeout rules inferred from RTDB rules.');
@@ -161,7 +161,7 @@ const checkWriteRules = (currentPath, rule) => {
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  *
- * @param {!Object[]} deletedPaths list of path objects.
+ * @param {!Object[]} deletePaths list of path objects.
  */
 const deleteUser = deletePaths => {
   const deleteTasks = [];
@@ -198,8 +198,8 @@ exports.cleanupUserData = () => {
       const config = snapshots[0].val();
       const confirm = snapshots[1].val();
       if (!snapshots[0].exists() || !confirm) {
-        return Promise.reject("No config or not confirmed by developers." +
-          " No data deleted at user deletion.");
+        return Promise.reject('No config or not confirmed by developers. ' +
+          'No data deleted at user deletion.');
       } else {
         return Promise.resolve(config);
       }
@@ -220,12 +220,13 @@ exports.showWipeoutConfig = () => {
     return getConfig().then(config => {
       return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
           .set(config).then(() => {
-            const content = "Please verify the wipeout rules. <br> " +
-            "If correct, click the 'Confirm' button below. <br>" +
-            "If incorrect, please modify functions/wipeout_config.json" +
-            "and deploy again. <br> <br>" + JSON.stringify(config) +
-            "<form action='/confirmWipeoutConfig' method='post'>" +
-            "<input type='submit' value='Confirm' name ='confirm'></form>";
+            const content = `Please verify the wipeout rules. <br> 
+If correct, click the 'Confirm' button below. <br>
+If incorrect, please modify functions/wipeout_config.json 
+and deploy again. <br> <br> ${JSON.stringify(config)} 
+<form action='/confirmWipeoutConfig' method='post'>
+<input type='submit' value='Confirm' name ='confirm'></form>`;
+
             res.send(content);
           });
     });
@@ -243,7 +244,6 @@ exports.confirmWipeoutConfig = () => {
           .then(() => res.send('Confirm sent'));
     });
 };
-
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV === 'TEST') {
