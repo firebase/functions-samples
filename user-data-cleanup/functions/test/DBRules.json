@@ -108,6 +108,7 @@
         }
       }
     },
+
     "total_scores": {
       // Everybody can read the combined scores.
       ".read": "auth != null"
@@ -123,6 +124,21 @@
     "summary": {
       // Only admin can see summary, which contains the answer key
       ".read": "auth.token.email_verified == true && auth.token.email.matches(/.*@google.com$/)"
+    },
+    // firebase function samples: fcm-notification
+    "users2": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid"
+      }
+    },
+    "followers": {
+      "$followedUid": {
+        "$followerUid": {
+          ".read": "auth.uid === $followerUid",
+          ".write": "auth.uid === $followerUid"
+        }
+      }
     }
 
   }

@@ -155,15 +155,18 @@ const checkMember = obj => {
 // get the DNF expression asscociated with auth.uid
 const getExpression = obj => {
   if (obj.type === 'Literal') {
-    return obj.raw === 'true' ? new Expression(TRUE,[]) : new Expression(TRUE,[]);
+    return obj.raw === 'true' ?
+        new Expression(TRUE,[]) : new Expression(FALSE,[]);
   } else if (obj.type === 'Identifier') {
-    return obj.name[0] === '$' ? new Expression(UNDEFINED, [[obj.name]]) : new Expression(FALSE,[]);
-  } else { return new Expression(TRUE,[]);}
+    return obj.name[0] === '$' ?
+        new Expression(UNDEFINED, [[obj.name]]) : new Expression(FALSE,[]);
+  } else { return new Expression(TRUE,[]);}// may contain data references.
 };
 
 // check binary expressions for candidate auth.uid == ?
 function checkBinary(obj) {
-  if (obj.type === 'BinaryExpression' && (obj.operator === '==' || obj.operator === '===')) {
+  if (obj.type === 'BinaryExpression' &&
+      (obj.operator === '==' || obj.operator === '===')) {
     if (checkMember(obj.left)) { return getExpression(obj.right);}
     if (checkMember(obj.right)) { return getExpression(obj.left);}
   }
@@ -204,7 +207,6 @@ function checkLogic(obj) {
 
 // check if the write rule indicates only the specific user has write
 // access to the path. If so, the path contains user data.
-// TODO(dzdz): currently hard coded criteria, will change very soon.
 function checkWriteRules(currentPath, rule) {
   let ruleTree;
   try {
@@ -217,7 +219,7 @@ function checkWriteRules(currentPath, rule) {
   const resultExp = checkLogic(ruleTree);
 
   if (resultExp.getAccessNumber() === SINGLE_ACCESS) {
-    const authVars = resultExp.getConjunctionList()[0];
+    const authVars = resultExp.getConjunctionLists()[0];
     authVars.every((cur) => {
       const location = currentPath.indexOf(cur);
       if (location === -1) {

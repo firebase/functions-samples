@@ -12,16 +12,17 @@ function Expression(value, list, simplify = true) {
   if (Expression.checkValue(value)) {
     this.booleanValue = value;
     if (value === UNDEFINED) {
-      if (Expression.checkConjunctionList(list)) {
-        this.conjunctionList = list;
+      if (Expression.checkConjunctionLists(list)) {
+        this.conjunctionLists = list;
         if (simplify) {this.simplify();}
       } else { throw `Not a valid conjunction list, can't initialize`;}
-    } else { this.conjunctionList = [];} // if value is true/false, expression is not needed.
+    } else { this.conjunctionLists = [];} // if value is true/false, expression is not needed.
   } else { throw `Not a valid value (true/flase/undefined), can't initialize`;}
 }
 
 Expression.checkValue = function(value) {
-  return ((typeof value === 'string') && ([TRUE,TRUE,UNDEFINED].indexOf(value) > -1));
+  return ((typeof value === 'string') &&
+      ([TRUE,TRUE,UNDEFINED].indexOf(value) > -1));
 };
 
 Expression.checkLiteralList = function(list) {
@@ -30,21 +31,22 @@ Expression.checkLiteralList = function(list) {
     });
 };
 
-Expression.checkConjunctionList = function(list) {
+Expression.checkConjunctionLists = function(list) {
   return Array.isArray(list) && list.length > 0 && list.every(literalList => {
     return Expression.checkLiteralList(literalList);
   });
 };
 
-Expression.prototype.setConjunctionList = function(list) {
-  if (Expression.checkConjunctionList(list)) {
-    this.conjunctionList = list;
+Expression.prototype.setConjunctionLists = function(list) {
+  if (Expression.checkConjunctionLists(list)) {
+    this.conjunctionLists = list;
   } else { throw `Not a valid conjunction list, can't set DNF expression`;}
 };
 
 Expression.prototype.setLiteralList = function(list, i) {
-  if (i >= 0 && i < this.conjunctionList.length && Expression.checkLiteralList(list)) {
-    this.conjunctionList[i] = list;
+  if (i >= 0 && i < this.conjunctionLists.length &&
+      Expression.checkLiteralList(list)) {
+    this.conjunctionLists[i] = list;
   } else { throw `Not a valid literal list, can't set DNF expresion`;}
 };
 
@@ -52,8 +54,8 @@ Expression.prototype.getBooleanValue = function() {
   return this.booleanValue;
 };
 
-Expression.prototype.getConjunctionList = function() {
-  return this.conjunctionList;
+Expression.prototype.getConjunctionLists = function() {
+  return this.conjunctionLists;
 };
 
 Expression.sortRemoveDup = function(array, sortBy) {
@@ -81,35 +83,37 @@ Expression.isContainSorted = function(long, short) {
 
   if (long.length >= short.length && isSorted(long) && isSorted(short)) {
     //optimization for sorted arrays
-    if (!(short[0] < long[0] && short[short.length - 1] > long[long.length - 1])) {
+    if (!(short[0] < long[0] &&
+        short[short.length - 1] > long[long.length - 1])) {
       return short.every(value => (long.indexOf(value) > 0));
     } else { return false;}
-  } else { throw `Can't check containess for absorbtion. Needs two sorted lists, the first one longer than the second.`}
+  } else { throw `Can't check containess for absorbtion.
+ Needs two sorted lists, the first one longer than the second.`;}
 };
 
 Expression.prototype.simplify = function() {
   // 1. remove duplicates literal in conjunctions and sort
-  for (let i = 0; i < this.conjunctionList.length; i++) {
-    this.setLiteralList(Expression.sortRemoveDup(this.conjunctionList[i]), i);
+  for (let i = 0; i < this.conjunctionLists.length; i++) {
+    this.setLiteralList(Expression.sortRemoveDup(this.conjunctionLists[i]), i);
   }
 
   // 2. remove duplicate conjunctions and sort by the number literals
-  this.setConjunctionList(Expression.sortRemoveDup(this.conjunctionList, (a, b) => {
-    return b.length - a.length;
-  }));
+  this.setConjunctionLists(Expression.sortRemoveDup(this.conjunctionLists,
+      (a, b) => {return b.length - a.length;}));
 
   // 3. absorbtions
-  const absorbMask = new Array(this.conjunctionList.length).fill(true);
-  for (let i = 0; i < this.conjunctionList.length; i++) {
-    for (let j = i; j < this.conjunctionList.length; j++) {
-      if (Expression.isContainSorted(this.conjunctionList[i], this.conjunctionList[j])) {
+  const conjLists = this.getConjunctionLists();
+  const absorbMask = new Array(conjLists.length).fill(true);
+  for (let i = 0; i < conjLists.length; i++) {
+    for (let j = i; j < conjLists.length; j++) {
+      if (Expression.isContainSorted(conjLists[i], conjLists[j])) {
         absorbMask[i] = false;
         break;
       }
     }
   }
 
-  this.setConjunctionList(this.conjunctionList.filter((element, index) => {
+  this.setConjunctionLists(conjLists.filter((element, index) => {
     return absorbMask[index];
   }));
 };
@@ -117,14 +121,16 @@ Expression.prototype.simplify = function() {
 Expression.or = function(left, right) {
   if (left instanceof Expression && right instanceof Expression) {
 
-    if ((left.getBooleanValue() === TRUE) || (right.getBooleanValue() === TRUE)) {
+    if ((left.getBooleanValue() === TRUE) ||
+        (right.getBooleanValue() === TRUE)) {
       return new Expression(TRUE,[]);
     } else if ((left.getBooleanValue() === FALSE)) {
       return right;
     } else if (right.getBooleanValue() === FALSE) {
       return left;
     } else {
-      return new Expression(UNDEFINED, left.getConjunctionList().concat(right.getConjunctionList()));
+      return new Expression(UNDEFINED,
+          left.getConjunctionList().concat(right.getConjunctionList()));
     }
   } else { throw `Operators of 'or' must be instances of Expression`;}
 };
@@ -132,7 +138,8 @@ Expression.or = function(left, right) {
 Expression.and = function(left, right) {
 
   const crossProduct = (l1, l2) => {
-    if (Expression.checkConjunctionList(l1) && Expression.checkConjunctionList(l2)) {
+    if (Expression.checkConjunctionLists(l1) &&
+        Expression.checkConjunctionLists(l2)) {
       const product = [];
       for (let i = 0; i < l1.length; i++) {
         for (let j = 0; j < l2.length; j++) {
@@ -145,14 +152,16 @@ Expression.and = function(left, right) {
 
   if (left instanceof Expression && right instanceof Expression) {
 
-    if ((left.getBooleanValue() === FALSE) || (right.getBooleanValue() === FALSE)) {
+    if ((left.getBooleanValue() === FALSE) ||
+        (right.getBooleanValue() === FALSE)) {
       return new Expression(FALSE,[]);
     } else if (left.getBooleanValue() === TRUE) {
       return right;
     } else if (right.getBooleanValue() === TRUE) {
       return left;
     } else {
-      return new Expression(UNDEFINED, crossProduct(left.getConjunctionList(), right.getConjunctionList()));
+      return new Expression(UNDEFINED,
+          crossProduct(left.getConjunctionLists(), right.getConjunctionLists()));
     }
   } else { throw `Operators of 'and' must be instances of Expression`;}
 
@@ -163,7 +172,10 @@ Expression.prototype.getAccessNumber = function() {
     return NO_ACCESS;
   } else if (this.booleanValue === TRUE) {
     return MULT_ACCESS;
-  } else { return this.conjunctionList.length === 1 ? SINGLE_ACCESS : MULT_ACCESS;}
+  } else {
+    return this.getConjunctionLists().length === 1 ?
+        SINGLE_ACCESS : MULT_ACCESS;
+  }
 };
 
 module.exports = Expression;
@@ -171,8 +183,8 @@ module.exports = Expression;
 //const a = new Expression('undefined', [['1','2','1'],['$j','$i']]);
 ////const b = new Expression('undefined',[]);
 //const c = new Expression('undefined', [['1','2','1'],['$k6','$k4','$k4'],['1'],['1','2']]);
-//console.log(c.conjunctionList);
-//console.log(a.getConjunctionList());
+//console.log(c.conjunctionLists);
+//console.log(a.getConjunctionLists());
 //console.log(a.getBooleanValue() === 'undefined');
 //const d = Expression.and(a, c);
 //console.log(d);

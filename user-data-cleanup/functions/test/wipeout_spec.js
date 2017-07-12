@@ -110,13 +110,16 @@ describe('Wipeout', () => {
       const deletePaths = wipeout.extractFromDBRules(DBRules);
       const userPaths = [{path: '/users/#WIPEOUT_UID'},
           {path: '/instagramAccessToken/#WIPEOUT_UID'},
+          {path: '/users2/#WIPEOUT_UID'},
           {path: '/accounts/#WIPEOUT_UID/githubToken'},
           {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
           {path: '/users-say-that/#WIPEOUT_UID/lang'},
+          {path: '/followers/$followedUid/#WIPEOUT_UID'},
           {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
           {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
           {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
-          {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}];
+          {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
+          ];
 
       return expect(deletePaths).to.deep.equal(userPaths);
     });
