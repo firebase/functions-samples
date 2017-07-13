@@ -217,32 +217,25 @@ exports.cleanupUserData = () => {
  */
 exports.showWipeoutConfig = () => {
   return init.https.onRequest((req,res) => {
-    return getConfig().then(config => {
-      return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
-          .set(config).then(() => {
-            const content = `Please verify the wipeout rules. <br> 
+    if (req.method === 'GET') {
+      return getConfig().then(config => {
+        return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
+            .set(config).then(() => {
+              const content = `Please verify the wipeout rules. <br>
 If correct, click the 'Confirm' button below. <br>
 If incorrect, please modify functions/wipeout_config.json 
 and deploy again. <br> <br> ${JSON.stringify(config)} 
-<form action='/confirmWipeoutConfig' method='post'>
+<form action='#' method='post'>
 <input type='submit' value='Confirm' name ='confirm'></form>`;
 
-            res.send(content);
-          });
-    });
-  });
-};
-
-
-/**
- * Give developers the ability to confirm the wipeout rules through a URL
- *
- */
-exports.confirmWipeoutConfig = () => {
-  return init.https.onRequest((req,res) => {
+              res.send(content);
+            });
+      });
+    } else if ((req.method === 'POST') && req.body.confirm === 'Confirm') {
       return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(true)
-          .then(() => res.send('Confirm sent'));
-    });
+          .then(() => res.send('Confirm sent. The Wipeout function is activated.'));
+    }
+  });
 };
 
 // only expose internel functions to tests.
