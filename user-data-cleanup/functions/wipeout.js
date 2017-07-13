@@ -26,15 +26,8 @@ const WRITE_SIGN = '.write';
 const PATH_REGEX = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
 const BOOK_KEEPING_PATH = '/wipeout';
 
-const Expression = require('./expression.js');
-const TRUE = 'true';
-const FALSE = 'false';
-const UNDEFINED = 'undefined';
-
-const NO_ACCESS = 0;
-const SINGLE_ACCESS = 1;
-const MULT_ACCESS = 2;
-
+const exp = require('./expression.js');
+const Expression = exp.Expression;
 
 /**
  * Initialize the wipeout library.
@@ -61,7 +54,6 @@ const getConfig = () => {
   } catch (err) {
     console.log(`Failed to read local configuration.
 Trying to infer from Realtime Database Security Rules...
-
 (If you intended to use local configuration,
 make sure there's a 'wipeout_config.json' file in the
 functions directory with a 'wipeout' field.`, err);
@@ -156,11 +148,12 @@ const checkMember = obj => {
 const getExpression = obj => {
   if (obj.type === 'Literal') {
     return obj.raw === 'true' ?
-        new Expression(TRUE,[]) : new Expression(FALSE,[]);
+        new Expression(exp.TRUE,[]) : new Expression(exp.FALSE,[]);
   } else if (obj.type === 'Identifier') {
     return obj.name[0] === '$' ?
-        new Expression(UNDEFINED, [[obj.name]]) : new Expression(FALSE,[]);
-  } else { return new Expression(TRUE,[]);}// may contain data references.
+        new Expression(exp.UNDEFINED, [[obj.name]]) :
+        new Expression(exp.FALSE,[]);
+  } else { return new Expression(exp.TRUE,[]);}// may contain data references.
 };
 
 // check binary expressions for candidate auth.uid == ?
@@ -170,16 +163,16 @@ function checkBinary(obj) {
     if (checkMember(obj.left)) { return getExpression(obj.right);}
     if (checkMember(obj.right)) { return getExpression(obj.left);}
   }
-  return new Expression(TRUE,[]);
+  return new Expression(exp.TRUE,[]);
 }
 
 // check true or false literals
 function checkLiteral(obj) {
   if (obj.type === 'Literal') {
     if (obj.raw === 'true') {
-      return new Expression(TRUE,[]);
+      return new Expression(exp.TRUE,[]);
     } else if (obj.raw === 'false') {
-      return new Expression(FALSE,[]);
+      return new Expression(exp.FALSE,[]);
     } else {throw 'Literals else than true or false are not supported';}
   }
 }
@@ -201,7 +194,7 @@ function checkLogic(obj) {
       return Expression.and(left, right);
     }
   } else {
-    return new Expression(TRUE, []);
+    return new Expression(exp.TRUE, []);
   }
 }
 
@@ -218,7 +211,7 @@ function checkWriteRules(currentPath, rule) {
 
   const resultExp = checkLogic(ruleTree);
 
-  if (resultExp.getAccessNumber() === SINGLE_ACCESS) {
+  if (resultExp.getAccessNumber() === exp.SINGLE_ACCESS) {
     const authVars = resultExp.getConjunctionLists()[0];
     authVars.every((cur) => {
       const location = currentPath.indexOf(cur);

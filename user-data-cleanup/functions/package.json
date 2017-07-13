@@ -11,7 +11,7 @@
     "strip-json-comments": "^2.0.1"
   },
   "scripts": {
-    "test": "NODE_ENV=TEST mocha test/wipeout_spec.js"
+    "test": "NODE_ENV=TEST mocha test/index_spec.js"
   },
   "devDependencies": {
     "chai": "<=3.5",
