@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,22 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const functions = require('firebase-functions');
+const wipeout = require('./wipeout');
+
+const WIPEOUT_CONFIG = {
+    'admin': admin,
+    'functions': functions,
+    'DB_URL': functions.config().firebase.databaseURL,
+    'WIPEOUT_UID': '$WIPEOUT_UID',
+    'WRITE_SIGN': '.write',
+    'PATH_REGEX': /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
+};
+
+
 admin.initializeApp(functions.config().firebase);
 
-// Deletes the user data in the Realtime Datastore when the accounts are deleted.
-exports.cleanupUserData = functions.auth.user().onDelete(event => {
-  const uid = event.data.uid;
-  return admin.database().ref(`/users/${uid}`).remove();
-});
+
+wipeout.initialize(WIPEOUT_CONFIG);
+exports.cleanupUserData = wipeout.cleanupUserData();
