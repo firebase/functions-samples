@@ -22,7 +22,8 @@ const functions = require('firebase-functions'),
 // see https://developers.google.com/identity/protocols/OAuth2ServiceAccount
 // const serviceKeys = require('./service-account.json');
 
-exports.sendMailOnIssue = functions.crashlytics.onNewIssue(event => {
+// Helper function for nodemailer
+const createTransporter = () => {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -42,17 +43,73 @@ exports.sendMailOnIssue = functions.crashlytics.onNewIssue(event => {
   //   }
   // });
 
+  return transporter;
+};
+
+exports.sendOnNewIssue = functions.crashlytics.onNewIssue(event => {
   const { data } = event;
+  // Available attributes for new issues
+  // data.issueId - {String} Issue id number
+  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  const { issueId, issueTitle } = data;
   const mailOpts = {
     from: functions.config().email.user,
     to: functions.config().email.destination_email,
     subject: 'Your app has a new issue',
     html: `<h1>Heads up, your app has a new issue!</h1>
-        <p>Issue Id: ${data.issueId}</p>
-        <p>Issue Title: ${data.issueTitle}</p>`
+        <p>Issue Id: ${issueId}</p>
+        <p>Issue Title: ${issueTitle}</p>`
   };
 
-  return transporter.sendMail(mailOpts).then(() => {
+  return createTransporter().sendMail(mailOpts).then(() => {
+    console.log('Successfully sent mail');
+  });
+});
+
+exports.sendOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
+  const { data } = event;
+  // Available attributes for regressed issues
+  // data.issueId - {String} Issue id number
+  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  // data.resolvedAt - {Long} Timestamp in which the issue was resolved at
+  const { issueId, issueTitle, resolvedAt } = data;
+  const mailOpts = {
+    from: functions.config().email.user,
+    to: functions.config().email.destination_email,
+    subject: 'Your app has a new issue',
+    html: `<h1>Heads up, your app has a regressed issue!</h1>
+        <p>Issue Id: ${issueId}</p>
+        <p>Issue Title: ${issueTitle}</p>
+        <p>Originally Resolved On: ${new Date(resolvedAt).toString()}</p>`
+  };
+
+  return createTransporter().sendMail(mailOpts).then(() => {
+    console.log('Successfully sent mail');
+  });
+});
+
+exports.sendOnVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
+  const { data } = event;
+  // Available attributes for velocity alerts
+  // data.issueId - {String} Issue id number
+  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  // data.crashPercentage - {double} Crash Percentage. Total crashes divided by total # of sessions.
+  // data.buildVersion - {String} build version
+  // data.crashes - {double} # of Crashes
+  const { issueId, issueTitle, crashPercentage, buildVersion, crashes } = data;
+  const mailOpts = {
+    from: functions.config().email.user,
+    to: functions.config().email.destination_email,
+    subject: 'Your app has a velocity alert!',
+    html: `<h1>Heads up, your app has a velocity alert!</h1>
+        <h3>This issue is causing ${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash</h3>
+        <p>Issue Id: ${issueId}</p>
+        <p>Issue Title: ${issueTitle}</p>
+        <p>Build Version: ${buildVersion}</p>
+        <p># of Total Crashes: ${crashes.toString()}</p>`,
+  };
+
+  return createTransporter().sendMail(mailOpts).then(() => {
     console.log('Successfully sent mail');
   });
 });
