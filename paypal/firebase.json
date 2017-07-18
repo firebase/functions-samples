@@ -1,1 +1,28 @@
-{}
+{"functions": {
+  "source": "functions"
+},
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "/pay",
+        "function": "pay"
+      },
+    {
+        "source":"/error",
+        "destination":"/error.html",
+        "type":301
+    },
+    {
+        "source":"/cancel",
+        "destination":"/cancel.html",
+        "type":301
+    },
+    {
+        "source":"/success",
+        "destination":"/success.html",
+        "type":301
+    }
+    ]
+  }
+}

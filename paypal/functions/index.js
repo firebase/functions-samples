@@ -16,7 +16,6 @@ paypal.configure({
 exports.pay = functions.https.onRequest((req, res) => {
     // Dev
     cors(req, res, () => {});
-
     // 1.Set up a payment information object, Nuild PayPal payment request
     const payReq = JSON.stringify({
         intent: 'sale',
@@ -27,7 +26,7 @@ exports.pay = functions.https.onRequest((req, res) => {
         // replace return_url, cancel_url
         redirect_urls: {
             return_url: `https://us-central1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/process`, // 
-            cancel_url: 'http://localhost:4200/cancel' // replace with your app url
+            cancel_url: 'http://localhost:5000/cancel' // replace with your app url
         },
         transactions: [{
             amount: {
@@ -35,9 +34,12 @@ exports.pay = functions.https.onRequest((req, res) => {
                 currency: 'USD'
             },
             // This is the payment transaction description. Maximum length: 127
-            description: 'Cloud Functions Firebase paypal-rest-sdk' // req.body.id
+            description: req.body.uid, // req.body.id
             // reference_id string .Optional. The merchant-provided ID for the purchase unit. Maximum length: 256.
-            // reference_id: ''
+            // reference_id: req.body.uid,
+            custom: req.body.uid,
+            // soft_descriptor: req.body.uid
+            // "invoice_number": req.body.uid,A
         }]
     });
     // 2.Initialize the payment and redirect the user.
@@ -57,7 +59,7 @@ exports.pay = functions.https.onRequest((req, res) => {
             // If redirect url present, redirect user
             if (links.hasOwnProperty('approval_url')) {
                 // REDIRECT USER TO links['approval_url'].href
-                console.log(links.approval_url.href);
+                console.info(links.approval_url.href);
                 // res.json({"approval_url":links.approval_url.href});
                 res.redirect(302, links.approval_url.href);
             } else {
@@ -74,24 +76,24 @@ exports.process = functions.https.onRequest((req, res) => {
     const payerId = {
         payer_id: req.query.PayerID
     };
-
     paypal.payment.execute(paymentId, payerId, function (error, payment) {
         if (error) {
             console.error(error);
-            res.redirect('http://localhost:4200/error'); // replace with your url page error
+            res.redirect('http://localhost:5000/error'); // replace with your url page error
         } else {
             if (payment.state === 'approved') {
-                console.info('payment completed successfully');
-                console.info('res.description: ', payment.transactions[0].description);
+                console.info('payment completed successfully, description: ', payment.transactions[0].description);
+                // console.info('req.custom: : ', payment.transactions[0].custom);
                 // set paid status to True in RealTime Database
-                const description = payment.transactions[0].description;
-                const ref = admin.database().ref('paypal/');
+                const date = Date.now();
+                const uid = payment.transactions[0].description;
+                const ref = admin.database().ref('users/' + uid + '/');
                 ref.push({
                     'paid': true,
-                    'description': description,
-                    'date': Date.now()
+                    // 'description': description,
+                    'date': date
                 }).then(r => console.info('promise: ', r));
-                res.redirect('http://localhost:4200/success'); // replace with your url, page success
+                res.redirect('http://localhost:5000/success'); // replace with your url, page success
             } else {
                 console.warn('payment.state: not approved ?');
                 // replace debug url
