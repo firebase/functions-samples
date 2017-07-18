@@ -36,7 +36,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 run: `firebase functions:config:set paypal.client_id="yourPaypalClientID"`
 
-run: `firebase functions:config:set paypal.client_id="yourPaypalClientSecret"`
+run: `firebase functions:config:set paypal.client_secret="yourPaypalClientSecret"`
 
   In
 [functions/index.js](functions/index.js) 
