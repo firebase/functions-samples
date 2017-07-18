@@ -62,7 +62,7 @@ exports.postOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
 
 exports.postOnVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
   const { data } = event;
-  // Available attributes for regressed issues
+  // Available attributes for velocity alerts
   // data.issueId - {String} Issue id number
   // data.issueTitle - {String} Issue Title (first line of the stack trace)
   // data.crashPercentage - {double} Crash Percentage. Total crashes divided by total # of sessions.

@@ -19,7 +19,7 @@ const functions = require('firebase-functions'),
       rp = require('request-promise');
 
 // Helper function that calculate the priority of the issue
-const calculateIssuePriority = issueTitle => {
+const calculateIssuePriority = eventType => {
   // run some custom logic that can determine the priority or severity of this issue
   // for example, you can parse the stack trace to determine which part of your app
   // is causing the crash and assign priorities based on that
@@ -29,8 +29,17 @@ const calculateIssuePriority = issueTitle => {
   // for a default project, priorities are:
   // [{"name":"Highest","id":"1"},{"name": "High","id": "2"},{"name": "Medium","id": "3"},{"name": "Low","id": "4"},{"name": "Lowest","id": "5"}]
 
-  // for the demonstration of this sample, just return 1
-  return 1;
+  // for the demonstration of this sample, let's assign a priority based on the event type
+  if (eventType === 'velocityAlert') {
+    // high impacting, return highest priority
+    return 1;
+  } else if (eventType === 'regressed') {
+    // regressed issue, return medium priority
+    return 3;
+  } else {
+    // new issues - return low priority
+    return 4;
+  }
 };
 
 // Helper function that parses the Jira project url and returns an object
@@ -46,7 +55,7 @@ const parseUrl = url => {
 };
 
 // Helper function that posts to Jira to create a new issue
-const createJiraIssue = (issueId, issueTitle) => {
+const createJiraIssue = (summary, description, priority) => {
   const { project_url, user, pass, issue_type, component_id } = functions.config().jira;
   const { protocol, domain, contextPath, projectKey} = parseUrl(project_url);
   const baseUrl = [protocol, domain, contextPath].join('');
@@ -58,13 +67,13 @@ const createJiraIssue = (issueId, issueTitle) => {
     fields: {
       components: [{id: component_id || '10000'}],
       project: {key: projectKey },
-      summary: `New Issue - ${issueId}`,
-      description: issueTitle,
+      summary,
+      description,
       issuetype: {
         name: issue_type || 'Bug'
       },
       priority: {
-        id: calculateIssuePriority(issueTitle).toString()
+        id: priority.toString(),
       }
     }
   };
@@ -84,9 +93,51 @@ const createJiraIssue = (issueId, issueTitle) => {
   });
 };
 
-exports.createJiraOnIssue = functions.crashlytics.onNewIssue(event => {
+exports.createNewIssue = functions.crashlytics.onNewIssue(event => {
   const { data } = event;
-  return createJiraIssue(data.issueId, data.issueTitle).then(() => {
-    console.log(`Created issue ${data.issueId} successfully to Jira`);
+  // Available attributes for new issues
+  // data.issueId - {String} Issue id number
+  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  const { issueId, issueTitle } = data;
+  const summary = `New Issue - ${issueId}`;
+  const description = `There's a new issue in your app - ${issueTitle}`;
+  const priority = calculateIssuePriority();
+  return createJiraIssue(summary, description, priority).then(() => {
+    console.log(`Created issue ${issueId} successfully to Jira`);
+  });
+});
+
+exports.createRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
+  const { data } = event;
+  // Available attributes for regressed issues
+  // data.issueId - {String} Issue id number
+  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  // data.resolvedAt - {Long} Timestamp in which the issue was resolved at
+  const { issueId, issueTitle, resolvedAt } = data;
+  const summary = `Regressed Issue - ${issueId}`;
+  const description = `There's a regressed issue in your app - ${issueTitle}` +
+    ` This issue was previously resolved at ${new Date(resolvedAt).toString()}`;
+  const priority = calculateIssuePriority('regressed');
+  return createJiraIssue(summary, description, priority).then(() => {
+    console.log(`Created issue ${issueId} successfully to Jira`);
+  });
+});
+
+exports.createVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
+  const { data } = event;
+  // Available attributes for regressed issues
+  // data.issueId - {String} Issue id number
+  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  // data.crashPercentage - {double} Crash Percentage. Total crashes divided by total # of sessions.
+  // data.buildVersion - {String} build version
+  // data.crashes - {double} # of Crashes
+  const { issueId, issueTitle, crashPercentage, buildVersion, crashes } = data;
+  const summary = `Velocity Alert - ${issueId}`;
+  const description = `A velocity alert has been reported - ${issueTitle}. ` +
+    `This issue is occuring in build version ${buildVersion} and is causing ` +
+    `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
+  const priority = calculateIssuePriority('velocityAlert');
+  return createJiraIssue(summary, description, priority).then(() => {
+    console.log(`Created issue ${issueId} successfully to Jira`);
   });
 });
