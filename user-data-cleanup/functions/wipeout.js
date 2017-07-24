@@ -16,10 +16,15 @@
 'use strict';
 
 const deepcopy = require('deepcopy');
-const fs = require('fs');
 const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
+
+const WIPEOUT_UID = '#WIPEOUT_UID';
+const WRITE_SIGN = '.write';
+const PATH_REGEX = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
+const BOOK_KEEPING_PATH = '/wipeout';
+
 /**
  * Initialize the wipeout library.
  * @param {object} wipeoutConfig contains the fields:
@@ -32,28 +37,25 @@ const sjc = require('strip-json-comments');
  */
 exports.initialize = wipeoutConfig => {
   global.init = Object.freeze(wipeoutConfig);
+  return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(false);
 };
 
-/**
- * Get wipeout deletion paths from wipeout_config.json,
- * or else try to infer from RTDB rules.
- *
- * @param {!string} uid User auth id.
- */
-const getPaths = (uid) => {
+// Get wipeout configuration from wipeout_config.json,
+// or else try to infer from RTDB rules.
+const getConfig = () => {
   try {
     const config = require('./wipeout_config.json').wipeout;
-    return buildPath(config, uid);
+    return Promise.resolve(config);
   } catch (err) {
-    console.log('Failed to read local configuration.' +
-      'Trying to infer from Realtime Database Security Rules...\n' +
-      '(If you intended to use local configuration, ' +
-      'make sure there\'s a "wipeout_config.json" file in the ' +
-      'functions directory with a "wipeout" field.', err);
-    return readDBRules().then((DBRules) => {
+    console.log(`Failed to read local configuration.
+Trying to infer from Realtime Database Security Rules...\n
+(If you intended to use local configuration,
+make sure there's a 'wipeout_config.json' file in the
+functions directory with a 'wipeout' field.`, err);
+    return readDBRules().then(DBRules => {
       const config = extractFromDBRules(DBRules);
       console.log('Using wipeout rules inferred from RTDB rules.');
-      return buildPath(config, uid);
+      return Promise.resolve(config);
     }).catch(errDB => {
       console.error(
        'Could not generate wipeout config from RTDB rules.' +
@@ -67,33 +69,33 @@ const getPaths = (uid) => {
 const buildPath = (config, uid) => {
   const paths = deepcopy(config);
   for (let i = 0, len = config.length; i < len; i++) {
-    if (!init.PATH_REGEX.test(config[i].path)) {
+    if (!PATH_REGEX.test(config[i].path)) {
       return Promise.reject('Invalid wipeout Path: ' + config[i].path);
     }
-    paths[i].path = config[i].path.replace(init.WIPEOUT_UID, uid.toString());
+    paths[i].path = config[i].path.replace(WIPEOUT_UID, uid.toString());
   }
   return Promise.resolve(paths);
 };
 
 // Read database security rules using REST API.
 const readDBRules = () => {
-  return init.admin.credential.applicationDefault().getAccessToken()
-  .then((snapshot) => {
+  return init.credential.getAccessToken()
+  .then(snapshot => {
     return snapshot.access_token;
   })
-  .then((token) => {
-    const rulesURL = `${init.DB_URL}/.settings/rules.json?access_token=${token}`;
+  .then(token => {
+    const rulesURL = `${init.DB_URL}/.settings/rules.json?` +
+        `access_token=${token}`;
     return request(rulesURL);
   })
-  .catch((err) => {
+  .catch(err => {
     console.error(err, 'Failed to read RTDB rule.');
     return Promise.reject(err);
   });
 };
 
-
 // extract wipeout rules from RTDB rules.
-const extractFromDBRules = (DBRules) => {
+const extractFromDBRules = DBRules => {
   const rules = JSON.parse(sjc(DBRules));
   const inferredRules = inferWipeoutRule(rules);
   return inferredRules;
@@ -101,7 +103,7 @@ const extractFromDBRules = (DBRules) => {
 
 // BFS traverse of RTDB rules, check all the .write rules
 // for potential user data path.
-const inferWipeoutRule = (obj) => {
+const inferWipeoutRule = obj => {
   const queue = [];
   const pathQueue = [];
   const retRules = [];
@@ -111,11 +113,10 @@ const inferWipeoutRule = (obj) => {
   while (queue.length > 0) {
     const node = queue.shift();
     const path = pathQueue.shift();
-
     if (typeof node === 'object') {
       const keys = Object.keys(node);
-      if (keys.includes(init.WRITE_SIGN)) {
-        const userPath = checkWriteRules(path, node[init.WRITE_SIGN]);
+      if (keys.includes(WRITE_SIGN)) {
+        const userPath = checkWriteRules(path, node[WRITE_SIGN]);
         if (typeof userPath !== 'undefined') {
           retRules.push({'path': userPath});
         }
@@ -134,7 +135,7 @@ const inferWipeoutRule = (obj) => {
 
 // check if the write rule indicates only the specific user has write
 // access to the path. If so, the path contains user data.
-// TODO: currently hard coded criteria, will change very soon.
+// TODO(dzdz): currently hard coded criteria, will change very soon.
 const checkWriteRules = (currentPath, rule) => {
   if ((rule === 'auth.uid === $uid') || (rule === 'auth.uid == $uid') ||
      (rule === '$uid === auth.uid') || (rule === '$uid == auth.uid')) {
@@ -150,7 +151,7 @@ const checkWriteRules = (currentPath, rule) => {
         return undefined;
       }
       currentPath[0] = '';
-      currentPath[location] = init.WIPEOUT_UID;
+      currentPath[location] = WIPEOUT_UID;
       return currentPath.join(PATH_SPLITTER);
     }
   }
@@ -159,12 +160,12 @@ const checkWriteRules = (currentPath, rule) => {
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  *
- * @param {!Object[]} deletedPaths list of path objects.
+ * @param deletePaths list of path objects.
  */
-const deleteUser = (deletePaths) => {
+const deleteUser = deletePaths => {
   const deleteTasks = [];
   for (let i = 0; i < deletePaths.length; i++) {
-    deleteTasks.push(init.admin.database().ref(deletePaths[i].path).remove());
+    deleteTasks.push(init.db.ref(deletePaths[i].path).remove());
   }
   return Promise.all(deleteTasks);
 };
@@ -173,10 +174,11 @@ const deleteUser = (deletePaths) => {
  * Write log into RTDB with displayName.
  *
  * @param {!functions.auth.UserRecord} data Deleted User.
+ * TODO(dzdz): check for current wipeout path
  */
-const writeLog = (data) => {
-  return init.admin.database().ref(`/wipeout-history/${data.uid}`)
-      .set(init.admin.database.ServerValue.TIMESTAMP);
+const writeLog = data => {
+  return init.db.ref(`${BOOK_KEEPING_PATH}/history/${data.uid}`)
+      .set(init.serverValue.TIMESTAMP);
 };
 
 /**
@@ -185,13 +187,55 @@ const writeLog = (data) => {
  *
  */
 exports.cleanupUserData = () => {
-  return init.functions.auth.user().onDelete(event => {
-    return getPaths(event.data.uid)
-        .then(deletePaths => deleteUser(deletePaths))
-        .then(() => writeLog(event.data));
+  return init.users.onDelete(event => {
+    const configPromise = init.db
+        .ref(`${BOOK_KEEPING_PATH}/rules`).once('value');
+    const confirmPromise = init.db
+        .ref(`${BOOK_KEEPING_PATH}/confirm`).once('value');
+    return Promise.all([configPromise, confirmPromise])
+        .then((snapshots) => {
+      const config = snapshots[0].val();
+      const confirm = snapshots[1].val();
+      if (!snapshots[0].exists() || !confirm) {
+        return Promise.reject('No config or not confirmed by developers. ' +
+          'No data deleted at user deletion.');
+      } else {
+        return Promise.resolve(config);
+      }
+    })
+    .then(config => buildPath(config, event.data.uid))
+    .then(deletePaths => deleteUser(deletePaths))
+    .then(() => writeLog(event.data));
   });
 };
 
+
+/**
+ * Give developers the ability to see the wipeout rules through a URL
+ *
+ */
+exports.showWipeoutConfig = () => {
+  return init.https.onRequest((req, res) => {
+    if (req.method === 'GET') {
+      return getConfig().then(config => {
+        return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
+            .set(config).then(() => {
+              const content = `Please verify the wipeout rules. <br>
+If correct, click the 'Confirm' button below. <br>
+If incorrect, please modify functions/wipeout_config.json 
+and deploy again. <br> <br> ${JSON.stringify(config)} 
+<form action='#' method='post'>
+<input type='submit' value='Confirm' name ='confirm'></form>`;
+
+              res.send(content);
+            });
+      });
+    } else if ((req.method === 'POST') && req.body.confirm === 'Confirm') {
+      return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(true)
+          .then(() => res.send('Confirm sent, Wipeout function activated.'));
+    }
+  });
+};
 
 // only expose internel functions to tests.
 if (process.env.NODE_ENV === 'TEST') {

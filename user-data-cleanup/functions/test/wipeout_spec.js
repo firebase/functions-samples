@@ -28,7 +28,7 @@ chai.use(chaiAsPromised);
 const fakeUserId = '8ZfiT8HeMTN9a4etjfCmahBqhK52';
 
 describe('Wipeout', () => {
-  let wipeout, configStub, refStub;
+  let wipeout, configStub, refStub, confirmStub;
   let adminInitStub, databaseStub, deletePaths;
 
   before(() => {
@@ -46,18 +46,20 @@ describe('Wipeout', () => {
         databaseURL: 'https://fakedb.firebaseio.com'
       },
       wipeout: {
-        path: '/users/$WIPEOUT_UID'
+        path: '/users/#WIPEOUT_UID'
       }
     });
+    confirmStub = sinon.stub();
+    refStub.withArgs(`/wipeout/confirm`).returns({set: confirmStub});
 
     const WIPEOUT_CONFIG = {
       'admin': admin,
-      'DB_URL': functions.config().firebase.databaseURL,
-      'WIPEOUT_UID': '$WIPEOUT_UID',
-      'WRITE_SIGN': '.write',
-      'PATH_REGEX': /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
+      'db': admin.database(),
+      'serverValue': admin.database.ServerValue,
+      'functions': functions,
+      'DB_URL': functions.config().firebase.databaseURL
     };
-    
+
     wipeout = require('../wipeout');
     wipeout.initialize(WIPEOUT_CONFIG);
   });
@@ -73,7 +75,7 @@ describe('Wipeout', () => {
     };
 
     it('should build correct path', () => {
-      const config = [{'path': '/users/$WIPEOUT_UID'}];
+      const config = [{'path': '/users/#WIPEOUT_UID'}];
 
       expect(wipeout.buildPath(config, fakeUserId))
           .to.eventually.deep.equal([{'path': `/users/${fakeUserId}`}]);
@@ -92,7 +94,7 @@ describe('Wipeout', () => {
     });
 
     it('should write log into logging path', () => {
-      const logParam = `/wipeout-history/${fakeUserId}`;
+      const logParam = `/wipeout/history/${fakeUserId}`;
       const setStub = sinon.stub();
       refStub.withArgs(logParam).returns({set: setStub});
       setStub.resolves('Log added');
@@ -106,18 +108,17 @@ describe('Wipeout', () => {
     it('should extract correct wipeout rules from RTBD rules ', () => {
       const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
       const deletePaths = wipeout.extractFromDBRules(DBRules);
-      const userPaths = [{path: '/users/$WIPEOUT_UID'},
-          {path: '/instagramAccessToken/$WIPEOUT_UID'},
-          {path: '/accounts/$WIPEOUT_UID/githubToken'},
-          {path: '/accounts/$WIPEOUT_UID/profileNeedsUpdate'},
-          {path: '/users-say-that/$WIPEOUT_UID/lang'},
-          {path: '/stripe_customers/$WIPEOUT_UID/sources/$chargeId'},
-          {path: '/stripe_customers/$WIPEOUT_UID/charges/$sourceId'},
-          {path: '/users-say-that/$WIPEOUT_UID/scenes/$scene/nouns'},
-          {path: '/users-say-that/$WIPEOUT_UID/scenes/$scene/in_progress'}];
+      const userPaths = [{path: '/users/#WIPEOUT_UID'},
+          {path: '/instagramAccessToken/#WIPEOUT_UID'},
+          {path: '/accounts/#WIPEOUT_UID/githubToken'},
+          {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
+          {path: '/users-say-that/#WIPEOUT_UID/lang'},
+          {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
+          {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
+          {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
+          {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}];
 
       return expect(deletePaths).to.deep.equal(userPaths);
     });
   });
 });
-
