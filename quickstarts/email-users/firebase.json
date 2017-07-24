@@ -1,5 +1,5 @@
 {
   "hosting": {
-    "public": "public"
+    "public": "./public"
   }
 }
