@@ -42,7 +42,6 @@ const Expression = exp.Expression;
 exports.initialize = wipeoutConfig => {
   global.init = Object.freeze(wipeoutConfig);
   return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(false);
-
 };
 
 // Get wipeout configuration from wipeout_config.json,
@@ -53,7 +52,11 @@ const getConfig = () => {
     return Promise.resolve(config);
   } catch (err) {
     console.log(`Failed to read local configuration.
+<<<<<<< HEAD
 Trying to infer from Realtime Database Security Rules...
+=======
+Trying to infer from Realtime Database Security Rules...\n
+>>>>>>> origin/wipeout2
 (If you intended to use local configuration,
 make sure there's a 'wipeout_config.json' file in the
 functions directory with a 'wipeout' field.`, err);
@@ -233,7 +236,11 @@ function checkWriteRules(currentPath, rule) {
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  *
+<<<<<<< HEAD
  * @param {!Object[]} deletePaths list of path objects.
+=======
+ * @param deletePaths list of path objects.
+>>>>>>> origin/wipeout2
  */
 const deleteUser = deletePaths => {
   const deleteTasks = [];
@@ -288,6 +295,7 @@ exports.cleanupUserData = () => {
  *
  */
 exports.showWipeoutConfig = () => {
+<<<<<<< HEAD
   return init.https.onRequest((req,res) => {
     return getConfig().then(config => {
       return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
@@ -312,9 +320,28 @@ and deploy again. <br> <br> ${JSON.stringify(config)}
  */
 exports.confirmWipeoutConfig = () => {
   return init.https.onRequest((req,res) => {
+=======
+  return init.https.onRequest((req, res) => {
+    if (req.method === 'GET') {
+      return getConfig().then(config => {
+        return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
+            .set(config).then(() => {
+              const content = `Please verify the wipeout rules. <br>
+If correct, click the 'Confirm' button below. <br>
+If incorrect, please modify functions/wipeout_config.json 
+and deploy again. <br> <br> ${JSON.stringify(config)} 
+<form action='#' method='post'>
+<input type='submit' value='Confirm' name ='confirm'></form>`;
+
+              res.send(content);
+            });
+      });
+    } else if ((req.method === 'POST') && req.body.confirm === 'Confirm') {
+>>>>>>> origin/wipeout2
       return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(true)
-          .then(() => res.send('Confirm sent'));
-    });
+          .then(() => res.send('Confirm sent, Wipeout function activated.'));
+    }
+  });
 };
 
 // only expose internel functions to tests.
