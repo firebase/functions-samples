@@ -38,7 +38,6 @@ const BOOK_KEEPING_PATH = '/wipeout';
 exports.initialize = wipeoutConfig => {
   global.init = Object.freeze(wipeoutConfig);
   return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(false);
-
 };
 
 // Get wipeout configuration from wipeout_config.json,
@@ -161,7 +160,7 @@ const checkWriteRules = (currentPath, rule) => {
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  *
- * @param {!Object[]} deletePaths list of path objects.
+ * @param deletePaths list of path objects.
  */
 const deleteUser = deletePaths => {
   const deleteTasks = [];
@@ -216,7 +215,7 @@ exports.cleanupUserData = () => {
  *
  */
 exports.showWipeoutConfig = () => {
-  return init.https.onRequest((req,res) => {
+  return init.https.onRequest((req, res) => {
     if (req.method === 'GET') {
       return getConfig().then(config => {
         return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
@@ -233,7 +232,7 @@ and deploy again. <br> <br> ${JSON.stringify(config)}
       });
     } else if ((req.method === 'POST') && req.body.confirm === 'Confirm') {
       return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(true)
-          .then(() => res.send('Confirm sent. The Wipeout function is activated.'));
+          .then(() => res.send('Confirm sent, Wipeout function activated.'));
     }
   });
 };

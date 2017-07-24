@@ -8,8 +8,8 @@ This sample shows how to cleanup the user data when they delete their account.
 See file [functions/wipeout.js](functions/wipeout.js) for the data cleanup code.
 
 When a user deletes their account, their data in the database will be deleted
-automatically. The function needs configuration to find according user data. The
-configuration can be specified in local file
+automatically. The function needs configuration to find according user data. 
+The configuration can be specified in local file
 [functions/wipeout_config.json](functions/wipeout_conifg.json). If the file
 doesn't exists or doesn't contain a valid configuration object, the function
 will go ahead and infer the configuration from Firebase database authorization
@@ -50,18 +50,29 @@ The function triggers on user account deletions.
 This sample comes with a Function and web-based UI for testing the function. 
 To configure it:
 
- 1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
- 1. Enable Google Auth. In the Firebase Console open the 
- **Authentication** section > **SIGN IN METHOD** tab 
- you need to enable the **Google** Sign-in Provider and click **SAVE**. 
+ 1. Create a Firebase Project using the
+  [Firebase Console](https://console.firebase.google.com).
+ 1. Enable Google Auth. In the Firebase Console open the
+  **Authentication** section > **SIGN IN METHOD** tab
+  you need to enable the **Google** Sign-in Provider and click **SAVE**.
  1. Clone or download this repo and open the `user-data-cleanup` directory.
- 1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
- 1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
+ 1. You must have the Firebase CLI installed. If you don't have it install it
+  with `npm install -g firebase-tools` and then configure it with
+  `firebase login`.
+ 1. Configure the CLI locally by using `firebase use --add` and select 
+ your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
  1. Run local tests using `cd functions; npm test`
  1. Deploy your project using `firebase deploy`
- 1. Please go to the url `https://us-central1-<project-id>.cloudfunctions.net/showWipeoutConfig` to verify the wipeout rules. If correct, click the confirm button, or else change the local configutation file [functions/wipeout_config.json](functions/wipeout_conifg.json) and redeploy. **Note a developer confirmation is required after every deployment.**
+ 1. Please go to the url 
+  `https://us-central1-<project-id>.cloudfunctions.net/showWipeoutConfig` to
+  verify the wipeout rules. If correct, click the confirm button,
+  or else change the local configutation file
+  [functions/wipeout_config.json](functions/wipeout_conifg.json) and redeploy.
+  **Note a developer confirmation is required after every deployment.**
  1. Open the app using `firebase open hosting:site`, this will open a browser.
- 1. Sign in using Google Sign-In and delete the account using the provided button. You can check at each step of the way if the data has been deleted using the Firebase console.
+ 1. Sign in using Google Sign-In and delete the account using
+  the provided button. You can check at each step of the way if the data
+  has been deleted using the Firebase console.
  
 
