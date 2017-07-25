@@ -34,10 +34,11 @@ Access.prototype.getAccessStatus = function() {
 
 Access.prototype.getAccessPattern = function(path, placeHolder){
   if (path[0] ==='rules'){
-    path[0] = '';
-    return path.map(cur => {
+    const result = path.map(cur => {
       return this.getVariableList().indexOf(cur) > -1 ? placeHolder : cur;
-    }).join('/');
+    });
+    result[0]='';
+    return result.join('/');
   } else {throw `A valid path starts with 'rules'`;}
 
 };

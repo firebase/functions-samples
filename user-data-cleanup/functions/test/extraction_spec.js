@@ -46,17 +46,51 @@ describe('Auto generation of rules', () => {
         expression.SINGLE_ACCESS);
     expectVars('$random_name === auth.uid', ['$user','$random_name'],
         ['$random_name']);
+    expectAccess('auth.uid == null', [], expression.NO_ACCESS);
+    expectAccess('auth.uid != null', [], expression.MULT_ACCESS);
+    expectAccess('auth.uid == ADMIN', [], expression.NO_ACCESS);
   });
 
   it('should deal with logic expressions correctly', () => {
+    expectAccess('auth.uid==$user || true', ['$user'], expression.MULT_ACCESS);
+    expectAccess('auth.uid==$user || false', ['$user'], expression.SINGLE_ACCESS);
+    expectAccess('auth.uid==$user && true', ['$user'], expression.SINGLE_ACCESS);
+    expectAccess('auth.uid==$user && false', ['$user'], expression.NO_ACCESS);
 
+    expectVars('auth.uid==$user || false', ['$user'], ['$user']);
+    expectVars('auth.uid==$user && true', ['$user'], ['$user']);
+
+    expectAccess('auth.uid == $k1 && auth.uid == $k2', ['key','$k1','$k2']
+        , expression.SINGLE_ACCESS);
+    expectAccess('auth.uid == $k1 || auth.uid == $k2', ['key','$k1','$k2']
+        , expression.MULT_ACCESS);
+    expectAccess('auth.uid == $k1 && (auth.uid == $k2 || auth.uid == $k3)', 
+      ['key','$k1','$k2','$k3'], expression.MULT_ACCESS);
+  });
+
+  it('should deal with additional access from hierarchical rules', () => {
+    const ruleTree = {
+      'rules':{
+        'room':{
+          '$creator':{
+            '.write':'auth.uid === $creator',
+            '$member':{
+              '.write':'auth.uid != null'
+            }
+          }
+        }
+      }
+    };
+    expect(wipeout.inferWipeoutRule(ruleTree)).to.deep
+        .equal([
+        { path: '/room/#WIPEOUT_UID' },
+        {except: '/room/$creator/$member' }]);
   });
 
   it('should extract correct wipeout rules from RTBD rules ', () => {
     const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
     const inferredDeletePaths = wipeout.extractFromDBRules(DBRules);
     const userPaths = [
-        {except: '/admin'},
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {path: '/users2/#WIPEOUT_UID'},
