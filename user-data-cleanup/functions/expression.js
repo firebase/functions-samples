@@ -24,121 +24,152 @@ const SINGLE_ACCESS = 1;
 const MULT_ACCESS = 2;
 
 function Expression(value, list, simplify = true) {
-  if (Expression.checkValue(value)) {
-    this.booleanValue = value;
-    if (value === UNDEFINED) {
-      if (Expression.checkConjunctionLists(list)) {
-        this.conjunctionLists = list;
-        if (simplify) {this.simplify();}
-      } else { throw `Not a valid conjunction list, can't initialize`;}
-    } else { this.conjunctionLists = [];} // if value is true/false, expression is not needed.
-  } else { throw `Not a valid boolean value, can't initialize`;}
+  if (!checkValue(value)) {
+    throw `Not a valid boolean value, can't initialize`;
+  }
+  this.booleanValue = value;
+  if (value !== UNDEFINED) {
+    this.conjunctionLists = [];
+    return;
+  }
+  if (!checkConjunctionLists(list)) {
+    throw `Not a valid conjunction list, can't initialize`;
+  }
+  this.conjunctionLists = list;
+  if (simplify) {
+    this.simplify();
+  }
 }
 
-// validity checking for booleanValue.
-Expression.checkValue = function(value) {
-  return ((typeof value === 'string') &&
-      ([TRUE,FALSE,UNDEFINED].indexOf(value) > -1));
-};
+/**
+ * Helper function, validity checking for booleanValue.
+ * @param value input string, should be TRUE/FALSE/UNDEFINED
+ */
+const checkValue = value =>
+    (typeof value === 'string') &&
+    ([TRUE, FALSE, UNDEFINED].indexOf(value) > -1);
 
-// validity checking for Literal lists (conjunction clause).
-Expression.checkLiteralList = function(list) {
-  return Array.isArray(list) && list.length > 0 && list.every(literal => {
-      return typeof literal === 'string';
-    });
-};
+/**
+ * Helper function, validity checking for Literal lists (conjunction clause).
+ * @param list literal list, should be list of strings/literal
+ */
+const checkLiteralList = list =>
+    Array.isArray(list) && list.length > 0 && list.every(literal =>
+        typeof literal === 'string');
 
-// validity checking for conjunction lists.
-Expression.checkConjunctionLists = function(list) {
-  return Array.isArray(list) && list.length > 0 && list.every(literalList => {
-    return Expression.checkLiteralList(literalList);
-  });
-};
+/**
+ * Helper function, validity checking for conjunction lists.
+ * @param list conjunction list, should be list of literal lists
+ */
+const checkConjunctionLists = list =>
+  Array.isArray(list) && list.length > 0 && list.every(literalList =>
+      checkLiteralList(literalList));
 
-// setter for conjunctionLists
+/**
+ * Setter of conjunction lists.
+ * @param list conjunction list, should be list of literal lists
+ */
 Expression.prototype.setConjunctionLists = function(list) {
-  if (Expression.checkConjunctionLists(list)) {
-    this.conjunctionLists = list;
-  } else { throw `Not a valid conjunction list, can't set DNF expression`;}
+  if (!checkConjunctionLists(list)) {
+    throw `Not a valid conjunction list, can't set DNF expression`;
+  }
+  this.conjunctionLists = list;
 };
 
-// setter for literalList
+/**
+ * Setter of literal list.
+ * @param list literal list, should be list literal
+ */
 Expression.prototype.setLiteralList = function(list, i) {
-  if (i >= 0 && i < this.conjunctionLists.length &&
-      Expression.checkLiteralList(list)) {
-    this.conjunctionLists[i] = list;
-  } else { throw `Not a valid literal list, can't set DNF expresion`;}
+  if (!(i >= 0 && i < this.conjunctionLists.length &&
+      checkLiteralList(list))) {
+    throw `Not a valid literal list or index, can't set DNF expresion`;
+  }
+  this.conjunctionLists[i] = list;
 };
 
-// getter for BooleanValue
+/**
+ * Getter of BooleanValue
+ */
 Expression.prototype.getBooleanValue = function() {
   return this.booleanValue;
 };
 
-// getter  for ConjunctionLists
+/**
+ * Getter of conjunction list
+ */
 Expression.prototype.getConjunctionLists = function() {
   return this.conjunctionLists;
 };
 
-// calculate the write access state of the rule.
+/**
+ * Get access access number of a expression object
+ */
 Expression.prototype.getAccessNumber = function() {
   if (this.booleanValue === FALSE) {
     return NO_ACCESS;
-  } else if (this.booleanValue === TRUE) {
-    return MULT_ACCESS;
-  } else {
-    return this.getConjunctionLists().length === 1 ?
-        SINGLE_ACCESS : MULT_ACCESS;
   }
+  if (this.booleanValue === TRUE) {
+    return MULT_ACCESS;
+  }
+  return this.getConjunctionLists().length === 1 ? SINGLE_ACCESS : MULT_ACCESS;
 };
 
-// helper function which sort an array according to compare function sortBy,
-// and then remove any duplications based on stringify results.
-Expression.sortRemoveDup = function(array, sortBy) {
+/**
+ * Helper function which sort an array according to compare function sortBy,
+ * and then remove any duplications based on stringify results.
+ * @param array array to sort
+ * @param sortBy function indicating sorting principle
+ */
+const sortRemoveDup = (array, sortBy) => {
   const exist = {};
-  array = array.filter(element => {
+  const result = array.filter(element => {
     const strConjunction = JSON.stringify(element);
     if (exist.hasOwnProperty(strConjunction)) {
       return false;
-    } else {
-      exist[strConjunction] = true;
-      return true;
     }
+    exist[strConjunction] = true;
+    return true;
   });
-  array.sort(sortBy);
-  return array;
+  result.sort(sortBy);
+  return result;
 };
 
-// helper function which checks if long is a superset of short.
-// requirments: 1. long and short are both sorted arries
-// 2. the length of long is not smaller than short.
-Expression.isContainSorted = function(long, short) {
+/**
+ * Helper function which checks if an array is a superset of the other.
+ * Both arrays should be sorted, and the first array should be longer.
+ * @param long sorted array, candidate superset
+ * @param short sorted array, candidate subset
+ */
+const isContainSorted = (long, short) => {
   //check if the arrays are stricly sorted (no duplicates allowed).
-  const isSorted = array => {
-    return array.length > 0 && array.every((ele, index, arr) => {
-      return index === 0 ? true : arr[index] > arr[index - 1];
-    });
-  };
+  const isSorted = array =>
+      array.length > 0 && array.every((ele, index, arr) =>
+          index === 0 ? true : arr[index] > arr[index - 1]);
 
-  if (long.length >= short.length && isSorted(long) && isSorted(short)) {
+  if (!(long.length >= short.length && isSorted(long) && isSorted(short))) {
+    throw `Can't check containess for absorbtion.
+Needs two sorted lists, the first one longer than the second.`;
+  }
+  if (short[0] < long[0] ||
+      short[short.length - 1] > long[long.length - 1]) {
     // early termination optimization for sorted arrays
-    if (!(short[0] < long[0] &&
-        short[short.length - 1] > long[long.length - 1])) {
-      return short.every(value => (long.indexOf(value) > -1));
-    } else { return false;}
-  } else { throw `Can't check containess for absorbtion.
- Needs two sorted lists, the first one longer than the second.`;}
+    return false;
+  }
+  return short.every(value => (long.indexOf(value) > -1));
 };
 
-//convert a expression in DNF to simplified form.
+/**
+ * convert a expression in DNF to simplified form.
+ */
 Expression.prototype.simplify = function() {
   // 1. remove duplicates literal in conjunctions and sort
   for (let i = 0; i < this.conjunctionLists.length; i++) {
-    this.setLiteralList(Expression.sortRemoveDup(this.conjunctionLists[i]), i);
+    this.setLiteralList(sortRemoveDup(this.conjunctionLists[i]), i);
   }
 
   // 2. remove duplicate conjunctions and sort by the number literals
-  this.setConjunctionLists(Expression.sortRemoveDup(this.conjunctionLists,
+  this.setConjunctionLists(sortRemoveDup(this.conjunctionLists,
       (a, b) => {return b.length - a.length;}));
 
   // 3. absorptions. A |(A & B) = A
@@ -146,7 +177,7 @@ Expression.prototype.simplify = function() {
   const absorbMask = new Array(conjLists.length).fill(true);
   for (let i = 0; i < conjLists.length; i++) {
     for (let j = i + 1; j < conjLists.length; j++) {
-      if (Expression.isContainSorted(conjLists[i], conjLists[j])) {
+      if (isContainSorted(conjLists[i], conjLists[j])) {
         absorbMask[i] = false;
         break;
       }
@@ -157,58 +188,67 @@ Expression.prototype.simplify = function() {
   }));
 };
 
-// OR of two expressions in DNF,
-// merge conjuntion lists of two expression and simplify
+/**
+ * OR of two expressions in DNF,
+ * merge conjuntion lists of two expression and simplify
+ * @param left left operand of OR
+ * @param right right operand of OR
+ */
 Expression.or = function(left, right) {
-  if (left instanceof Expression && right instanceof Expression) {
-
-    if ((left.getBooleanValue() === TRUE) ||
-        (right.getBooleanValue() === TRUE)) {
-      return new Expression(TRUE,[]);
-    } else if ((left.getBooleanValue() === FALSE)) {
-      return right;
-    } else if (right.getBooleanValue() === FALSE) {
-      return left;
-    } else {
-      return new Expression(UNDEFINED,
-          left.getConjunctionLists().concat(right.getConjunctionLists()));
-    }
-  } else { throw `Operators of 'or' must be instances of Expression`;}
+  if (!(left instanceof Expression && right instanceof Expression)) {
+    throw `Operators of 'or' must be instances of Expression`;
+  }
+  if ((left.getBooleanValue() === TRUE) ||
+      (right.getBooleanValue() === TRUE)) {
+    return new Expression(TRUE,[]);
+  }
+  if ((left.getBooleanValue() === FALSE)) {
+    return right;
+  }
+  if (right.getBooleanValue() === FALSE) {
+    return left;
+  }
+  return new Expression(UNDEFINED,
+        left.getConjunctionLists().concat(right.getConjunctionLists()));
 };
 
-// AND of two expressions in DNF, cross product of the two conjunction lists.
-// Product of two clauses means the union of the their literals.
+/**
+ * AND of two expressions in DNF,cross product of the two conjunction lists.
+ * Product of two clauses means the union of the their literals.
+ * @param left left operand of AND
+ * @param right right operand of AND
+ */
 Expression.and = function(left, right) {
 
   const crossProduct = (l1, l2) => {
-    if (Expression.checkConjunctionLists(l1) &&
-        Expression.checkConjunctionLists(l2)) {
-      const product = [];
-      for (let i = 0; i < l1.length; i++) {
-        for (let j = 0; j < l2.length; j++) {
-          product.push(l1[i].concat(l2[j]));
-        }
+    if (!(checkConjunctionLists(l1) && checkConjunctionLists(l2))) {
+      throw 'Only supports crossproduct of two conjunction lists';
+    }
+    const product = [];
+    for (let i = 0; i < l1.length; i++) {
+      for (let j = 0; j < l2.length; j++) {
+        product.push(l1[i].concat(l2[j]));
       }
-      return product;
-    } else { throw 'Only supports crossproduct of two conjunction lists';}
+    }
+    return product;
+
   };
 
-  if (left instanceof Expression && right instanceof Expression) {
-
-    if ((left.getBooleanValue() === FALSE) ||
-        (right.getBooleanValue() === FALSE)) {
-      return new Expression(FALSE,[]);
-    } else if (left.getBooleanValue() === TRUE) {
-      return right;
-    } else if (right.getBooleanValue() === TRUE) {
-      return left;
-    } else {
-      return new Expression(UNDEFINED,
-          crossProduct(left.getConjunctionLists(),
-              right.getConjunctionLists()));
-    }
-  } else { throw `Operators of 'and' must be instances of Expression`;}
-
+  if (!(left instanceof Expression && right instanceof Expression)) {
+    throw `Operators of 'and' must be instances of Expression`;
+  }
+  if ((left.getBooleanValue() === FALSE) ||
+      (right.getBooleanValue() === FALSE)) {
+    return new Expression(FALSE,[]);
+  }
+  if (left.getBooleanValue() === TRUE) {
+    return right;
+  }
+  if (right.getBooleanValue() === TRUE) {
+    return left;
+  }
+  return new Expression(UNDEFINED,
+      crossProduct(left.getConjunctionLists(), right.getConjunctionLists()));
 };
 
 module.exports = {
