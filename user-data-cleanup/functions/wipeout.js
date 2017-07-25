@@ -52,7 +52,8 @@ const getConfig = () => {
     return Promise.resolve(config);
   } catch (err) {
     console.log(`Failed to read local configuration.
-Trying to infer from Realtime Database Security Rules...\n
+Trying to infer from Realtime Database Security Rules...
+
 (If you intended to use local configuration,
 make sure there's a 'wipeout_config.json' file in the
 functions directory with a 'wipeout' field.`, err);
@@ -168,29 +169,34 @@ const inferWipeoutRule = tree => {
 };
 
 // check memeber expression of candidate auth.id
-const checkMember = obj => {
-  return obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
+const checkMember = obj =>
+    obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
       obj.property.name === 'uid';
-};
 
 // get the DNF expression asscociated with auth.uid
 const getExpression = obj => {
   if (obj.type === 'Literal') {
     return obj.raw === 'true' ?
         new Expression(exp.TRUE,[]) : new Expression(exp.FALSE,[]);
-  } else if (obj.type === 'Identifier') {
+  }
+  if (obj.type === 'Identifier') {
     return obj.name[0] === '$' ?
         new Expression(exp.UNDEFINED, [[obj.name]]) :
         new Expression(exp.FALSE,[]);
-  } else { return new Expression(exp.TRUE,[]);}// may contain data references.
+  }
+  return new Expression(exp.TRUE,[]);// may contain data references.
 };
 
 // check binary expressions for candidate auth.uid == ?
 function checkBinary(obj) {
   if (obj.type === 'BinaryExpression' &&
       (obj.operator === '==' || obj.operator === '===')) {
-    if (checkMember(obj.left)) { return getExpression(obj.right);}
-    if (checkMember(obj.right)) { return getExpression(obj.left);}
+    if (checkMember(obj.left)) {
+      return getExpression(obj.right);
+    }
+    if (checkMember(obj.right)) {
+      return getExpression(obj.left);
+    }
   }
   return new Expression(exp.TRUE,[]);
 }
@@ -200,9 +206,11 @@ function checkLiteral(obj) {
   if (obj.type === 'Literal') {
     if (obj.raw === 'true') {
       return new Expression(exp.TRUE,[]);
-    } else if (obj.raw === 'false') {
+    }
+    if (obj.raw === 'false') {
       return new Expression(exp.FALSE,[]);
-    } else {throw 'Literals else than true or false are not supported';}
+    }
+    throw 'Literals else than true or false are not supported';
   }
 }
 
@@ -210,15 +218,18 @@ function checkLiteral(obj) {
 function checkLogic(obj) {
   if (obj.type === 'BinaryExpression') {
     return checkBinary(obj);// also check unary literals
-  } else if (obj.type === 'Literal') {
+  }
+  if (obj.type === 'Literal') {
     return checkLiteral(obj);
-  } else if (obj.type === 'LogicalExpression') {
+  }
+  if (obj.type === 'LogicalExpression') {
     const left = checkLogic(obj.left);
     const right = checkLogic(obj.right);
 
     if (obj.operator === '||') {
       return Expression.or(left, right);
-    } else if (obj.operator === '&&') {
+    }
+    if (obj.operator === '&&') {
       return Expression.and(left, right);
     }
   } else {
