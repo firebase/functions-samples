@@ -137,8 +137,10 @@ describe('Expressions', () => {
     // AND of expressions without fixed boolean values.
     expectExp(Expression.or(exp1, exp2), [['$b','$c'],['$a']]);
     expectExp(Expression.or(exp2, exp1), [['$b','$c'],['$a']]);
-    expectExp(Expression.or(exp1, exp3), [['$a','$b'],['$b','$c'],['$a','$c']]);
-    expectExp(Expression.or(exp3, exp1), [['$a','$b'],['$b','$c'],['$a','$c']]);
+    expectExp(Expression.or(exp1, exp3),
+        [['$a','$b'],['$b','$c'],['$a','$c']]);
+    expectExp(Expression.or(exp3, exp1),
+        [['$a','$b'],['$b','$c'],['$a','$c']]);
     expectExp(Expression.or(exp2, exp3), [['$a']]);
   });
 });

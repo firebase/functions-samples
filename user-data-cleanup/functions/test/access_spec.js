@@ -19,7 +19,6 @@
 const Access = require('../access');
 const common = require('./common');
 const expression = require('../expression');
-const Expression = expression.Expression;
 const expect = common.expect;
 
 const expectVar = (acc, list) => {

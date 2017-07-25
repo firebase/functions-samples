@@ -53,17 +53,19 @@ describe('Auto generation of rules', () => {
 
   it('should deal with logic expressions correctly', () => {
     expectAccess('auth.uid==$user || true', ['$user'], expression.MULT_ACCESS);
-    expectAccess('auth.uid==$user || false', ['$user'], expression.SINGLE_ACCESS);
-    expectAccess('auth.uid==$user && true', ['$user'], expression.SINGLE_ACCESS);
+    expectAccess('auth.uid==$user || false', ['$user'],
+        expression.SINGLE_ACCESS);
+    expectAccess('auth.uid==$user && true', ['$user'],
+        expression.SINGLE_ACCESS);
     expectAccess('auth.uid==$user && false', ['$user'], expression.NO_ACCESS);
 
     expectVars('auth.uid==$user || false', ['$user'], ['$user']);
     expectVars('auth.uid==$user && true', ['$user'], ['$user']);
 
-    expectAccess('auth.uid == $k1 && auth.uid == $k2', ['key','$k1','$k2']
-        , expression.SINGLE_ACCESS);
-    expectAccess('auth.uid == $k1 || auth.uid == $k2', ['key','$k1','$k2']
-        , expression.MULT_ACCESS);
+    expectAccess('auth.uid == $k1 && auth.uid == $k2', ['key','$k1','$k2'],
+        expression.SINGLE_ACCESS);
+    expectAccess('auth.uid == $k1 || auth.uid == $k2', ['key','$k1','$k2'],
+        expression.MULT_ACCESS);
     expectAccess('auth.uid == $k1 && (auth.uid == $k2 || auth.uid == $k3)', 
       ['key','$k1','$k2','$k3'], expression.MULT_ACCESS);
   });
