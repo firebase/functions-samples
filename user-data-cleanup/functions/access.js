@@ -18,84 +18,105 @@
 const exp = require('./expression');
 
 function Access(status, list) {
-  if ([exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].indexOf(status) > -1) {
-    this.accessStatus = status;
-    if (status === exp.SINGLE_ACCESS) {
-      if (Access.checkVariableList(list)) {
-        this.variableList = list;
-      } else {throw 'Not a valid list of variable for single access.';}
-    } else {this.variableList = [];}
-  } else {throw 'Not a valid access status.';}
+  if (!([exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].indexOf(status) > -1)) {
+    throw 'Not a valid access status.';
+  }
+  this.accessStatus = status;
+  if (status !== exp.SINGLE_ACCESS) {
+    this.variableList = [];
+    return;
+  }
+  if (!checkVariableList(list)) {
+    throw 'Not a valid list of variable for single access.';
+  }
+  this.variableList = list;
 }
 
+/**
+ * Helper function, validity checking for variable list.
+ * @param list input list, should be list of strings
+ */
+const checkVariableList = list =>
+    Array.isArray(list) && list.length > 0 && list.every(variable =>
+    typeof variable === 'string');
+
+/**
+ * Getter of access status
+ */
 Access.prototype.getAccessStatus = function() {
   return this.accessStatus;
 };
 
-Access.prototype.getAccessPattern = function(path, placeHolder){
-  if (path[0] ==='rules'){
-    const result = path.map(cur => {
-      return this.getVariableList().indexOf(cur) > -1 ? placeHolder : cur;
-    });
-    result[0]='';
-    return result.join('/');
-  } else {throw `A valid path starts with 'rules'`;}
-
+/**
+ * Getter of access pattern
+ * @param path path to the current node, list of strings
+ * @param placeHolder aut palceholder, e.g. #WIPEOUT_UID
+ */
+Access.prototype.getAccessPattern = function(path, placeHolder) {
+  if (path[0] !== 'rules') {
+    throw `A valid path starts with 'rules'`;
+  }
+  const result = path.map(cur => {
+    return this.getVariableList().indexOf(cur) > -1 ? placeHolder : cur;
+  });
+  result[0] = '';
+  return result.join('/');
 };
 
 Access.prototype.getVariableList = function() {
   return this.variableList;
 };
 
-Access.checkVariableList = function(list) {
-  return Array.isArray(list) && list.length > 0 && list.every(variable => {
-    return typeof variable === 'string';
-  });
-};
-
-// get access object from expression object and check variable validty with 
-// currentPath. 
+/**
+ * Create access object from expression object.
+ * The access object describes the access pattern of the expression
+ * @param expression input expression object
+ * @param currentPath path to the current node, list of strings
+ */
 Access.fromExpression = function(expression, currentPath) {
   const status = expression.getAccessNumber();
   if ((status === exp.NO_ACCESS) || (status === exp.MULT_ACCESS)) {
     return new Access(status, []);
-  } else {
-    const authVars = expression.getConjunctionLists()[0];
-    const validVariable = authVars.every((cur) => {
-      return currentPath.indexOf(cur) > -1;
-    });
-    if (validVariable) {
-      return new Access(status, authVars);
-    } else {throw 'Write rule is using unknown variable';}
   }
+  const authVars = expression.getConjunctionLists()[0];
+  const validVariable = authVars.every(cur => currentPath.indexOf(cur) > -1);
+
+  if (!validVariable) {
+    throw 'Write rule is using unknown variable';
+  }
+  return new Access(status, authVars);
 };
 
-// Get access status of the node, according to access of the 
-// rule at the location and access status of its ancestor
+/**
+ * Get access status of the node, according to access of the
+ * rule at the location and access status of its ancestor
+ * @param ancestor access object of ancestor of the current node
+ * @param ruleAccess access object of write rule at the current place
+ */
 Access.nodeAccess = function(ancestor, ruleAccess) {
-  const accessAnc = ancestor.getAccessStatus();
-  const accessRule = ruleAccess.getAccessStatus();
-  if (accessAnc === exp.MULT_ACCESS) {
+  const ancestorAcc = ancestor.getAccessStatus();
+  const ruleAcc = ruleAccess.getAccessStatus();
+  if (ancestorAcc === exp.MULT_ACCESS) {
     return new Access(exp.MULT_ACCESS,[]);
-
-  } else if (accessAnc === exp.NO_ACCESS) {
+  }
+  if (ancestorAcc === exp.NO_ACCESS) {
     return ruleAccess;
-
-  } else if (accessAnc === exp.SINGLE_ACCESS) {
-    if (accessRule === exp.NO_ACCESS) {
+  }
+  if (ancestorAcc === exp.SINGLE_ACCESS) {
+    if (ruleAcc === exp.NO_ACCESS) {
       return ancestor;
-
-    } else if (accessRule === exp.MULT_ACCESS) {
+    }
+    if (ruleAcc === exp.MULT_ACCESS) {
       return new Access(exp.MULT_ACCESS, []);
+    }
+    if (ruleAcc === exp.SINGLE_ACCESS) {
+      const noAdditionalAccess = ancestor.getVariableList().every(variable =>
+          ruleAccess.getVariableList().indexOf(variable) > -1);
 
-    } else if (accessRule === exp.SINGLE_ACCESS) {
-      const noAdditionalAccess = ancestor.getVariableList().every(variable => {
-        return ruleAccess.getVariableList().indexOf(variable) > -1;
-      });
       if (noAdditionalAccess) {
         return ancestor;
-      } else {return new Access(exp.MULT_ACCESS,[]);}
-
+      }
+      return new Access(exp.MULT_ACCESS,[]);
     }
   }
 };
