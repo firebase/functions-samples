@@ -81,8 +81,8 @@ Expression.prototype.setConjunctionLists = function(list) {
  * @param list literal list, should be list literal
  */
 Expression.prototype.setLiteralList = function(list, i) {
-  if (!(i >= 0 && i < this.conjunctionLists.length &&
-      checkLiteralList(list))) {
+  if (i < 0 || i >= this.conjunctionLists.length ||
+      !checkLiteralList(list)) {
     throw `Not a valid literal list or index, can't set DNF expresion`;
   }
   this.conjunctionLists[i] = list;
@@ -170,7 +170,7 @@ Expression.prototype.simplify = function() {
 
   // 2. remove duplicate conjunctions and sort by the number literals
   this.setConjunctionLists(sortRemoveDup(this.conjunctionLists,
-      (a, b) => {return b.length - a.length;}));
+      (a, b) => b.length - a.length));
 
   // 3. absorptions. A |(A & B) = A
   const conjLists = this.getConjunctionLists();
@@ -183,9 +183,9 @@ Expression.prototype.simplify = function() {
       }
     }
   }
-  this.setConjunctionLists(conjLists.filter((element, index) => {
-    return absorbMask[index];
-  }));
+  this.setConjunctionLists(
+    conjLists.filter((element, index) => absorbMask[index])
+  );
 };
 
 /**
@@ -231,7 +231,6 @@ Expression.and = function(left, right) {
       }
     }
     return product;
-
   };
 
   if (!(left instanceof Expression && right instanceof Expression)) {
