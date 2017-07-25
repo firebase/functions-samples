@@ -15,10 +15,8 @@
  */
 'use strict';
 
-describe('Wipeout', ()=> {
-
+describe('Wipeout', () => {
   require('./expression_spec.js');
   require('./wipeout_spec.js');
-
 });
 
