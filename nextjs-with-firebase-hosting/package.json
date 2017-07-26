@@ -1,0 +1,17 @@
+{
+  "name": "nextjs-with-firebase-hosting",
+  "version": "1.0.0",
+  "description": "Host Next.js SSR app on Firebase Cloud Functions with Firebase Hosting redirects.",
+  "repository": "https://github.com/jthegedus/firebase-functions-next-example.git",
+  "scripts": {
+    "install": "yarn build-all",
+    "next": "yarn build-firebase && cd \"src/app\" && yarn && yarn dev",
+    "preserve": "yarn build-all",
+    "serve": "firebase serve",
+    "predeploy": "yarn build-all",
+    "deploy": "firebase deploy",
+    "build-all": "yarn build-next && yarn build-firebase",
+    "build-next": "cd \"src/app\" && yarn && yarn build",
+    "build-firebase": "cd \"src/functions\" && yarn"
+  }
+}
