@@ -1,9 +1,9 @@
-import Header from "./Header"
+import Header from './Header';
 
 const App = ({ children }) =>
   <main>
     <Header />
     {children}
-  </main>
+  </main>;
 
-export default App
+export default App;
