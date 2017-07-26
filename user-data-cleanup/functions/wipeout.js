@@ -17,7 +17,6 @@
 
 const deepcopy = require('deepcopy');
 const jsep = require('jsep');
-const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
 
@@ -28,6 +27,7 @@ const BOOK_KEEPING_PATH = '/wipeout';
 
 const exp = require('./expression.js');
 const Expression = exp.Expression;
+const Access = require('./access.js');
 
 /**
  * Initialize the wipeout library.
@@ -105,32 +105,58 @@ const extractFromDBRules = DBRules => {
   return inferredRules;
 };
 
+
 // BFS traverse of RTDB rules, check all the .write rules
 // for potential user data path.
-const inferWipeoutRule = obj => {
+const inferWipeoutRule = tree => {
   const queue = [];
-  const pathQueue = [];
   const retRules = [];
-  queue.push(obj);
-  pathQueue.push([]);
+  const initial = {
+    node: tree,
+    path: [],
+    ancestorAccess: new Access(exp.NO_ACCESS, [])
+  };
+  queue.push(initial);
 
   while (queue.length > 0) {
-    const node = queue.shift();
-    const path = pathQueue.shift();
+    const obj = queue.shift();
+    const node = obj.node;
+    const path = obj.path;
+    let ancestor = obj.ancestorAccess;
+
     if (typeof node === 'object') {
       const keys = Object.keys(node);
       if (keys.includes(WRITE_SIGN)) {
-        const userPath = checkWriteRules(path, node[WRITE_SIGN]);
-        if (typeof userPath !== 'undefined') {
-          retRules.push({'path': userPath});
+
+        // access status of the write rule
+        const ruleAccess = checkWriteRules(path, node[WRITE_SIGN]);
+        // access status of the node, considering ancestor.
+        const nodeAccess = Access.nodeAccess(ancestor, ruleAccess);
+
+        if (nodeAccess.getAccessStatus() === exp.MULT_ACCESS) {
+          if (ancestor.getAccessStatus() === exp.SINGLE_ACCESS) {
+            retRules.push({'except': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
+          }
+          continue; // won't go into subtree of MULT_ACCESS nodes
+
+        } else if (nodeAccess.getAccessStatus() === exp.SINGLE_ACCESS) {
+          if (ancestor.getAccessStatus() === exp.NO_ACCESS) {
+            retRules.push({'path': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
+          }
         }
-      } else {
-        for (let i = 0, len = keys.length; i < len; i++) {
-          const newPath = path.slice();
-          newPath.push(keys[i]);
-          pathQueue.push(newPath);
-          queue.push(node[keys[i]]);
-        }
+        //update ancestor for children
+        ancestor = nodeAccess;
+      }
+
+      for (let i = 0, len = keys.length; i < len; i++) {
+        const newPath = path.slice();
+        newPath.push(keys[i]);
+        const newObj = {
+          node: node[keys[i]],
+          path: newPath,
+          ancestorAccess: ancestor
+        };
+        queue.push(newObj);
       }
     }
   }
@@ -138,29 +164,34 @@ const inferWipeoutRule = obj => {
 };
 
 // check memeber expression of candidate auth.id
-const checkMember = obj => {
-  return obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
+const checkMember = obj =>
+    obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
       obj.property.name === 'uid';
-};
 
 // get the DNF expression asscociated with auth.uid
 const getExpression = obj => {
   if (obj.type === 'Literal') {
     return obj.raw === 'true' ?
         new Expression(exp.TRUE,[]) : new Expression(exp.FALSE,[]);
-  } else if (obj.type === 'Identifier') {
+  }
+  if (obj.type === 'Identifier') {
     return obj.name[0] === '$' ?
         new Expression(exp.UNDEFINED, [[obj.name]]) :
         new Expression(exp.FALSE,[]);
-  } else { return new Expression(exp.TRUE,[]);}// may contain data references.
+  }
+  return new Expression(exp.TRUE,[]);// may contain data references.
 };
 
 // check binary expressions for candidate auth.uid == ?
 function checkBinary(obj) {
   if (obj.type === 'BinaryExpression' &&
       (obj.operator === '==' || obj.operator === '===')) {
-    if (checkMember(obj.left)) { return getExpression(obj.right);}
-    if (checkMember(obj.right)) { return getExpression(obj.left);}
+    if (checkMember(obj.left)) {
+      return getExpression(obj.right);
+    }
+    if (checkMember(obj.right)) {
+      return getExpression(obj.left);
+    }
   }
   return new Expression(exp.TRUE,[]);
 }
@@ -170,9 +201,11 @@ function checkLiteral(obj) {
   if (obj.type === 'Literal') {
     if (obj.raw === 'true') {
       return new Expression(exp.TRUE,[]);
-    } else if (obj.raw === 'false') {
+    }
+    if (obj.raw === 'false') {
       return new Expression(exp.FALSE,[]);
-    } else {throw 'Literals else than true or false are not supported';}
+    }
+    throw 'Literals else than true or false are not supported';
   }
 }
 
@@ -180,16 +213,18 @@ function checkLiteral(obj) {
 function checkLogic(obj) {
   if (obj.type === 'BinaryExpression') {
     return checkBinary(obj);// also check unary literals
-  } else if (obj.type === 'Literal') {
+  }
+  if (obj.type === 'Literal') {
     return checkLiteral(obj);
-  } else if (obj.type === 'LogicalExpression') {
+  }
+  if (obj.type === 'LogicalExpression') {
     const left = checkLogic(obj.left);
     const right = checkLogic(obj.right);
-    //console.log(obj.operator,left, right);
 
     if (obj.operator === '||') {
       return Expression.or(left, right);
-    } else if (obj.operator === '&&') {
+    }
+    if (obj.operator === '&&') {
       return Expression.and(left, right);
     }
   } else {
@@ -204,30 +239,11 @@ function checkWriteRules(currentPath, rule) {
   try {
     ruleTree = jsep(rule);
   } catch (err) {
-    //console.log(`jsep failed to parse the rule ${rule}. Rulw ignored`, err);
-    return; // ignore write rules which couldn't be parased by jsep/.
+    // ignore write rules which couldn't be parased by jsep/.
+    return new Access(exp.MULT_ACCESS);
   }
-
-  const resultExp = checkLogic(ruleTree);
-
-  if (resultExp.getAccessNumber() === exp.SINGLE_ACCESS) {
-    const authVars = resultExp.getConjunctionLists()[0];
-    authVars.every((cur) => {
-      const location = currentPath.indexOf(cur);
-      if (location === -1) {
-        throw 'Write rule is using unknown variable ' + cur;
-      } else {
-        currentPath[location] = WIPEOUT_UID;
-        return true;
-      }
-    });
-    if (currentPath[0]) {
-      currentPath[0] = '';
-      return currentPath.join(PATH_SPLITTER);
-    } else { throw `Mistake in current path, should start with 'rules'`;}
-  } else { return;}
+  return Access.fromExpression(checkLogic(ruleTree), currentPath);
 }
-
 
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
@@ -245,7 +261,7 @@ const deleteUser = deletePaths => {
 /**
  * Write log into RTDB with displayName.
  *
- * @param {!functions.auth.UserRecord} data Deleted User.
+ * @param data Deleted User.
  * TODO(dzdz): check for current wipeout path
  */
 const writeLog = data => {
@@ -318,5 +334,4 @@ if (process.env.NODE_ENV === 'TEST') {
   module.exports.readDBRules = readDBRules;
   module.exports.deleteUser = deleteUser;
   module.exports.writeLog = writeLog;
-
 }

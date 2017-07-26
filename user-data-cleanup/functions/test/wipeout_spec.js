@@ -22,9 +22,8 @@ const chaiAsPromised = common.chaiAsPromised;
 const expect = common.expect;
 const functions = common.functions;
 const sinon = common.sinon;
-const fs = require('fs');
 
-describe('Delete User', () => {
+describe('Wipeout', () => {
   let wipeout, configStub, refStub, confirmStub;
   let adminInitStub, databaseStub;
 
@@ -103,23 +102,4 @@ describe('Delete User', () => {
           .to.eventually.equal('Log added');
   });
 
-  // This is unit test for the path extraction functionality.
-  // Currently the deletion of complex path hasn't been implemented.
-  it('should extract correct wipeout rules from RTBD rules ', () => {
-    const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
-    const inferredDeletePaths = wipeout.extractFromDBRules(DBRules);
-    const userPaths = [{path: '/users/#WIPEOUT_UID'},
-        {path: '/instagramAccessToken/#WIPEOUT_UID'},
-        {path: '/users2/#WIPEOUT_UID'},
-        {path: '/accounts/#WIPEOUT_UID/githubToken'},
-        {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
-        {path: '/users-say-that/#WIPEOUT_UID/lang'},
-        {path: '/followers/$followedUid/#WIPEOUT_UID'},
-        {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
-        {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
-        {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
-        {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
-        ];
-    return expect(inferredDeletePaths).to.deep.equal(userPaths);
-  });
 });
