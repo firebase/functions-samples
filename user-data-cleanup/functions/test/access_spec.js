@@ -62,20 +62,16 @@ describe('Access', () => {
     const expUM = new expression.Expression(expression.UNDEFINED,
         [['a','b'],['c']]);
 
-    const accN = Access.fromExpression(expF, []);
-    const accM = Access.fromExpression(expT, []);
-    const accM2 = Access.fromExpression(expUM, []);
-    const accS = Access.fromExpression(expUS, ['a','b','c','d']);
+    const accN = Access.fromExpression(expF);
+    const accM = Access.fromExpression(expT);
+    const accM2 = Access.fromExpression(expUM);
+    const accS = Access.fromExpression(expUS);
 
     expectAccess(accN, expression.NO_ACCESS);
     expectAccess(accM, expression.MULT_ACCESS);
     expectAccess(accM2, expression.MULT_ACCESS);
     expectAccess(accS, expression.SINGLE_ACCESS);
     expectVar(accS, expUS.getConjunctionLists()[0]);
-    // throw error when the path is wrong.
-    const wrongPath = () => Access.fromExpression(expUS, ['a']);
-    expect(wrongPath).to.throw('Write rule is using unknown variable');
-
   });
 
   it('should create correct object from rule and ancestor object', () => {
@@ -104,7 +100,5 @@ describe('Access', () => {
     expectVar(Access.nodeAccess(single1, no), single1.getVariableList());
 
     expectAccess(Access.nodeAccess(single1, mult), expression.MULT_ACCESS);
-
   });
-
 });

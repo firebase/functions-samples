@@ -71,20 +71,13 @@ Access.prototype.getVariableList = function() {
  * Create access object from expression object.
  * The access object describes the access pattern of the expression
  * @param expression input expression object
- * @param currentPath path to the current node, list of strings
  */
-Access.fromExpression = function(expression, currentPath) {
+Access.fromExpression = function(expression) {
   const status = expression.getAccessNumber();
   if ((status === exp.NO_ACCESS) || (status === exp.MULT_ACCESS)) {
     return new Access(status, []);
   }
-  const authVars = expression.getConjunctionLists()[0];
-  const validVariable = authVars.every(cur => currentPath.indexOf(cur) > -1);
-
-  if (!validVariable) {
-    throw 'Write rule is using unknown variable';
-  }
-  return new Access(status, authVars);
+  return new Access(status, expression.getConjunctionLists()[0]);
 };
 
 /**
