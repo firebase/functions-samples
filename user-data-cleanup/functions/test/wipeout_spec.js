@@ -15,30 +15,35 @@
  */
 'use strict';
 
-const admin = require('firebase-admin');
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const expect = chai.expect;
+const common = require('./common.js');
+const admin = common.admin;
+const chai = common.chai;
+const chaiAsPromised = common.chaiAsPromised;
+const expect = common.expect;
+const functions = common.functions;
+const sinon = common.sinon;
 const fs = require('fs');
-const functions = require('firebase-functions');
-const sinon = require('sinon');
-chai.use(chaiAsPromised);
 
-// test input data which will be shared accross test cases
-const fakeUserId = '8ZfiT8HeMTN9a4etjfCmahBqhK52';
-
-describe('Wipeout', () => {
+describe('Delete User', () => {
   let wipeout, configStub, refStub, confirmStub;
-  let adminInitStub, databaseStub, deletePaths;
+  let adminInitStub, databaseStub;
 
-  before(() => {
-    // create database and configuration stubs
-    adminInitStub = sinon.stub(admin, 'initializeApp');
-    databaseStub = sinon.stub(admin, 'database');
-    deletePaths = [
+  const fakeUserId = '8ZfiT8HeMTN9a4etjfCmahBqhK52';
+  const fakeUser = {
+    uid: fakeUserId
+  };
+  const deletePaths = [
       {'path': `/users/${fakeUserId}`},
       {'path': `/usersData/${fakeUserId}`}
     ];
+
+  before(() => {
+    chai.use(chaiAsPromised);
+
+    // create database and configuration stubs
+    adminInitStub = sinon.stub(admin, 'initializeApp');
+    databaseStub = sinon.stub(admin, 'database');
+
     refStub = sinon.stub();
     databaseStub.returns({ref: refStub});
     configStub = sinon.stub(functions, 'config').returns({
@@ -69,56 +74,52 @@ describe('Wipeout', () => {
     adminInitStub.restore();
   });
 
-  describe('Delete User', () => {
-    const fakeUser = {
-      uid: fakeUserId
-    };
+  it('should build correct path', () => {
+    const config = [{'path': '/users/#WIPEOUT_UID'}];
 
-    it('should build correct path', () => {
-      const config = [{'path': '/users/#WIPEOUT_UID'}];
+    expect(wipeout.buildPath(config, fakeUserId))
+        .to.eventually.deep.equal([{'path': `/users/${fakeUserId}`}]);
+  });
 
-      expect(wipeout.buildPath(config, fakeUserId))
-          .to.eventually.deep.equal([{'path': `/users/${fakeUserId}`}]);
-    });
+  it('should delete data in deletePaths', () => {
+    const removeParam = `/users/${fakeUserId}`;
+    const removeParam2 = `/usersData/${fakeUserId}`;
+    const removeStub = sinon.stub();
+    refStub.withArgs(removeParam).returns({remove: removeStub});
+    refStub.withArgs(removeParam2).returns({remove: removeStub});
+    removeStub.resolves('Removed');
 
-    it('should delete data in deletePaths', () => {
-      const removeParam = `/users/${fakeUserId}`;
-      const removeParam2 = `/usersData/${fakeUserId}`;
-      const removeStub = sinon.stub();
-      refStub.withArgs(removeParam).returns({remove: removeStub});
-      refStub.withArgs(removeParam2).returns({remove: removeStub});
-      removeStub.resolves('Removed');
+    return expect(wipeout.deleteUser(deletePaths))
+        .to.eventually.deep.equal(['Removed','Removed']);
+  });
 
-      return expect(wipeout.deleteUser(deletePaths))
-          .to.eventually.deep.equal(['Removed','Removed']);
-    });
+  it('should write log into logging path', () => {
+    const logParam = `/wipeout/history/${fakeUserId}`;
+    const setStub = sinon.stub();
+    refStub.withArgs(logParam).returns({set: setStub});
+    setStub.resolves('Log added');
 
-    it('should write log into logging path', () => {
-      const logParam = `/wipeout/history/${fakeUserId}`;
-      const setStub = sinon.stub();
-      refStub.withArgs(logParam).returns({set: setStub});
-      setStub.resolves('Log added');
+    return expect(wipeout.writeLog(fakeUser))
+          .to.eventually.equal('Log added');
+  });
 
-      return expect(wipeout.writeLog(fakeUser))
-            .to.eventually.equal('Log added');
-    });
-
-    // This is unit test for the path extraction functionality.
-    // Currently the deletion of complex path hasn't been implemented.
-    it('should extract correct wipeout rules from RTBD rules ', () => {
-      const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
-      const deletePaths = wipeout.extractFromDBRules(DBRules);
-      const userPaths = [{path: '/users/#WIPEOUT_UID'},
-          {path: '/instagramAccessToken/#WIPEOUT_UID'},
-          {path: '/accounts/#WIPEOUT_UID/githubToken'},
-          {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
-          {path: '/users-say-that/#WIPEOUT_UID/lang'},
-          {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
-          {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
-          {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
-          {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}];
-
-      return expect(deletePaths).to.deep.equal(userPaths);
-    });
+  // This is unit test for the path extraction functionality.
+  // Currently the deletion of complex path hasn't been implemented.
+  it('should extract correct wipeout rules from RTBD rules ', () => {
+    const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
+    const inferredDeletePaths = wipeout.extractFromDBRules(DBRules);
+    const userPaths = [{path: '/users/#WIPEOUT_UID'},
+        {path: '/instagramAccessToken/#WIPEOUT_UID'},
+        {path: '/users2/#WIPEOUT_UID'},
+        {path: '/accounts/#WIPEOUT_UID/githubToken'},
+        {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
+        {path: '/users-say-that/#WIPEOUT_UID/lang'},
+        {path: '/followers/$followedUid/#WIPEOUT_UID'},
+        {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
+        {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
+        {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
+        {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
+        ];
+    return expect(inferredDeletePaths).to.deep.equal(userPaths);
   });
 });

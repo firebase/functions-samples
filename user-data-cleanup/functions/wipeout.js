@@ -16,6 +16,7 @@
 'use strict';
 
 const deepcopy = require('deepcopy');
+const jsep = require('jsep');
 const PATH_SPLITTER = '/';
 const request = require('request-promise');
 const sjc = require('strip-json-comments');
@@ -24,6 +25,9 @@ const WIPEOUT_UID = '#WIPEOUT_UID';
 const WRITE_SIGN = '.write';
 const PATH_REGEX = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
 const BOOK_KEEPING_PATH = '/wipeout';
+
+const exp = require('./expression.js');
+const Expression = exp.Expression;
 
 /**
  * Initialize the wipeout library.
@@ -48,7 +52,8 @@ const getConfig = () => {
     return Promise.resolve(config);
   } catch (err) {
     console.log(`Failed to read local configuration.
-Trying to infer from Realtime Database Security Rules...\n
+Trying to infer from Realtime Database Security Rules...
+
 (If you intended to use local configuration,
 make sure there's a 'wipeout_config.json' file in the
 functions directory with a 'wipeout' field.`, err);
@@ -133,29 +138,106 @@ const inferWipeoutRule = obj => {
   return retRules;
 };
 
-// check if the write rule indicates only the specific user has write
-// access to the path. If so, the path contains user data.
-// TODO(dzdz): currently hard coded criteria, will change very soon.
-const checkWriteRules = (currentPath, rule) => {
-  if ((rule === 'auth.uid === $uid') || (rule === 'auth.uid == $uid') ||
-     (rule === '$uid === auth.uid') || (rule === '$uid == auth.uid')) {
+// check memeber expression of candidate auth.id
+const checkMember = obj =>
+    obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
+      obj.property.name === 'uid';
 
-    const UID = '$uid';
-    const location = currentPath.indexOf(UID);
-    if (location === -1) {
-      console.error('User ID not in path');
-      return;
-    } else {
-      if (currentPath[0] !== 'rules') {
-        console.error('Mistake in current path, should start with "rules"');
-        return undefined;
-      }
-      currentPath[0] = '';
-      currentPath[location] = WIPEOUT_UID;
-      return currentPath.join(PATH_SPLITTER);
+// get the DNF expression asscociated with auth.uid
+const getExpression = obj => {
+  if (obj.type === 'Literal') {
+    return obj.raw === 'true' ?
+        new Expression(exp.TRUE,[]) : new Expression(exp.FALSE,[]);
+  }
+  if (obj.type === 'Identifier') {
+    return obj.name[0] === '$' ?
+        new Expression(exp.UNDEFINED, [[obj.name]]) :
+        new Expression(exp.FALSE,[]);
+  }
+  return new Expression(exp.TRUE,[]);// may contain data references.
+};
+
+// check binary expressions for candidate auth.uid == ?
+function checkBinary(obj) {
+  if (obj.type === 'BinaryExpression' &&
+      (obj.operator === '==' || obj.operator === '===')) {
+    if (checkMember(obj.left)) {
+      return getExpression(obj.right);
+    }
+    if (checkMember(obj.right)) {
+      return getExpression(obj.left);
     }
   }
-};
+  return new Expression(exp.TRUE,[]);
+}
+
+// check true or false literals
+function checkLiteral(obj) {
+  if (obj.type === 'Literal') {
+    if (obj.raw === 'true') {
+      return new Expression(exp.TRUE,[]);
+    }
+    if (obj.raw === 'false') {
+      return new Expression(exp.FALSE,[]);
+    }
+    throw 'Literals else than true or false are not supported';
+  }
+}
+
+// check (nested) logic expressions
+function checkLogic(obj) {
+  if (obj.type === 'BinaryExpression') {
+    return checkBinary(obj);// also check unary literals
+  }
+  if (obj.type === 'Literal') {
+    return checkLiteral(obj);
+  }
+  if (obj.type === 'LogicalExpression') {
+    const left = checkLogic(obj.left);
+    const right = checkLogic(obj.right);
+
+    if (obj.operator === '||') {
+      return Expression.or(left, right);
+    }
+    if (obj.operator === '&&') {
+      return Expression.and(left, right);
+    }
+  } else {
+    return new Expression(exp.TRUE, []);
+  }
+}
+
+// check if the write rule indicates only the specific user has write
+// access to the path. If so, the path contains user data.
+function checkWriteRules(currentPath, rule) {
+  let ruleTree;
+  try {
+    ruleTree = jsep(rule);
+  } catch (err) {
+    //console.log(`jsep failed to parse the rule ${rule}. Rulw ignored`, err);
+    return; // ignore write rules which couldn't be parased by jsep/.
+  }
+
+  const resultExp = checkLogic(ruleTree);
+
+  if (resultExp.getAccessNumber() === exp.SINGLE_ACCESS) {
+    const authVars = resultExp.getConjunctionLists()[0];
+    authVars.every((cur) => {
+      const location = currentPath.indexOf(cur);
+      if (location === -1) {
+        throw 'Write rule is using unknown variable ' + cur;
+      } else {
+        currentPath[location] = WIPEOUT_UID;
+        return true;
+      }
+    });
+    if (currentPath[0]) {
+      currentPath[0] = '';
+      return currentPath.join(PATH_SPLITTER);
+    } else { throw `Mistake in current path, should start with 'rules'`;}
+  } else { return;}
+}
+
 
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
