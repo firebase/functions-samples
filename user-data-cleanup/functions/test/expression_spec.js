@@ -29,6 +29,10 @@ const expectBoolean = (exp, value) => {
   expect(exp.getBooleanValue()).to.equal(value);
 };
 
+const expectCond = (exp, cond) => {
+  expect(exp.getCondition()).to.equal(cond);
+};
+
 const newExpfromList = (list) => {
   return new Expression(expression.UNDEFINED, list);
 };
@@ -42,6 +46,7 @@ describe('Expressions', () => {
     const new5 = () => new Expression(expression.UNDEFINED, [[1,2,3], []]);
     const new6 = () => new Expression(expression.UNDEFINED, [[]]);
     const new7 = () => new Expression(true, [[1,2,3]]);
+    const new8 = () => new Expression(expression.TRUE, [], 1);
 
     expect(new1).to.throw(`Not a valid conjunction list, can't initialize`);
     expect(new2).to.throw(`Not a valid conjunction list, can't initialize`);
@@ -50,6 +55,8 @@ describe('Expressions', () => {
     expect(new5).to.throw(`Not a valid conjunction list, can't initialize`);
     expect(new6).to.throw(`Not a valid conjunction list, can't initialize`);
     expect(new7).to.throw(`Not a valid boolean value, can't initialize`);
+    expect(new8).to.throw(`Condition needs to be a string or undefined`);
+
   });
 
   it('should have empty conjunctionLists with fixed boolean values', () => {
@@ -62,6 +69,17 @@ describe('Expressions', () => {
     expectExp(exp2, []);
     expectExp(exp3, []);
     expectExp(exp4, []);
+  });
+
+  it('should create expression with correct condition', () => {
+    const expF = new Expression(expression.FALSE, [], 'some condition');
+    const expT = new Expression(expression.TRUE, [], 'some condition');
+    const expU = new Expression(expression.UNDEFINED,
+        [['a']], 'some condition');
+
+    expectCond(expF, undefined);
+    expectCond(expT, 'some condition');
+    expectCond(expU, 'some condition');
   });
 
   it('should be properly simplified: literals ', () => {
@@ -103,46 +121,54 @@ describe('Expressions', () => {
     expectExp(exp3, [['$a', '$b'], ['$b', '$c'], ['$a', '$c']]);
   });
 
-  it('should do correct AND operations', () => {
+  describe('should do correct operations', () => {
     const expTrue = new Expression(expression.TRUE,[[]]);
     const expFalse = new Expression(expression.FALSE,[[]]);
     const exp1 = newExpfromList([['$a', '$b'], ['$c', '$b'], ['$c', '$a']]);
     const exp2 = newExpfromList([['$a']]);
     const exp3 = newExpfromList([['$a', '$b']]);
+    const expCond1 = new Expression(expression.TRUE, [], '$k1 < 1000');
+    const expCond2 = new Expression(expression.UNDEFINED,
+        [['$a']], '$k1 < 1000');
+    const expCond3 = new Expression(expression.UNDEFINED, [['$b'],['$c']],
+        '${/user/$uid}.exists()');
 
-    // cases with true and false in AND
-    expectBoolean(Expression.and(expTrue, expFalse), expression.FALSE);
-    expectBoolean(Expression.and(exp1, expFalse), expression.FALSE);
-    expectBoolean(Expression.and(expTrue, exp1), expression.UNDEFINED);
-    expectExp(Expression.and(expTrue, exp1), exp1.getConjunctionLists());
-    // AND of expressions without fixed boolean values.
-    expectExp(Expression.and(exp1, exp2), [['$a', '$b'], ['$a', '$c']]);
-    expectExp(Expression.and(exp2, exp1), [['$a', '$b'], ['$a', '$c']]);
-    expectExp(Expression.and(exp1, exp3), [['$a', '$b']]);
-    expectExp(Expression.and(exp3, exp1), [['$a', '$b']]);
-    expectExp(Expression.and(exp2, exp3), [['$a', '$b']]);
-  });
+    it('should do correct AND operations', () => {
+      // cases with true and false in AND
+      expectBoolean(Expression.and(expTrue, expFalse), expression.FALSE);
+      expectBoolean(Expression.and(exp1, expFalse), expression.FALSE);
+      expectBoolean(Expression.and(expTrue, exp1), expression.UNDEFINED);
+      expectExp(Expression.and(expTrue, exp1), exp1.getConjunctionLists());
+      // AND of expressions without fixed boolean values.
+      expectExp(Expression.and(exp1, exp2), [['$a', '$b'], ['$a', '$c']]);
+      expectExp(Expression.and(exp2, exp1), [['$a', '$b'], ['$a', '$c']]);
+      expectExp(Expression.and(exp1, exp3), [['$a', '$b']]);
+      expectExp(Expression.and(exp3, exp1), [['$a', '$b']]);
+      expectExp(Expression.and(exp2, exp3), [['$a', '$b']]);
+      // conditions after AND operations
+      expectCond(Expression.and(expCond1, exp1), '$k1 < 1000');
+      expectCond(Expression.and(expCond1, expCond2),
+          '$k1 < 1000 && $k1 < 1000');
+      expectCond(Expression.and(expCond2, expCond3),
+          '$k1 < 1000 && ${/user/$uid}.exists()');
+      expectCond(Expression.and(expFalse, expCond2), undefined);
+    });
 
-  it('should do correct OR operations', () => {
-    const expTrue = new Expression(expression.TRUE,[[]]);
-    const expFalse = new Expression(expression.FALSE,[[]]);
-    const exp1 = newExpfromList([['$a', '$b'], ['$c', '$b'], ['$c', '$a']]);
-    const exp2 = newExpfromList([['$a']]);
-    const exp3 = newExpfromList([['$a', '$b']]);
-
-    // cases with true and false in OR
-    expectBoolean(Expression.or(expTrue, expFalse), expression.TRUE);
-    expectBoolean(Expression.or(expTrue, exp1), expression.TRUE);
-    expectBoolean(Expression.or(expFalse, exp1), expression.UNDEFINED);
-    expectExp(Expression.or(exp1, expFalse), exp1.getConjunctionLists());
-    // AND of expressions without fixed boolean values.
-    expectExp(Expression.or(exp1, exp2), [['$b', '$c'], ['$a']]);
-    expectExp(Expression.or(exp2, exp1), [['$b', '$c'], ['$a']]);
-    expectExp(Expression.or(exp1, exp3),
-        [['$a', '$b'], ['$b', '$c'], ['$a', '$c']]);
-    expectExp(Expression.or(exp3, exp1),
-        [['$a', '$b'], ['$b', '$c'], ['$a', '$c']]);
-    expectExp(Expression.or(exp2, exp3), [['$a']]);
+    it('should do correct OR operations', () => {
+      // cases with true and false in OR
+      expectBoolean(Expression.or(expTrue, expFalse), expression.TRUE);
+      expectBoolean(Expression.or(expTrue, exp1), expression.TRUE);
+      expectBoolean(Expression.or(expFalse, exp1), expression.UNDEFINED);
+      expectExp(Expression.or(exp1, expFalse), exp1.getConjunctionLists());
+      // AND of expressions without fixed boolean values.
+      expectExp(Expression.or(exp1, exp2), [['$b', '$c'], ['$a']]);
+      expectExp(Expression.or(exp2, exp1), [['$b', '$c'], ['$a']]);
+      expectExp(Expression.or(exp1, exp3),
+          [['$a', '$b'], ['$b', '$c'], ['$a', '$c']]);
+      expectExp(Expression.or(exp3, exp1),
+          [['$a', '$b'], ['$b', '$c'], ['$a', '$c']]);
+      expectExp(Expression.or(exp2, exp3), [['$a']]);
+    });
   });
 });
 

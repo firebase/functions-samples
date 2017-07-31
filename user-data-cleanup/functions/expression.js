@@ -23,11 +23,19 @@ const NO_ACCESS = 0;
 const SINGLE_ACCESS = 1;
 const MULT_ACCESS = 2;
 
-function Expression(value, list, simplify = true) {
+function Expression(value, list, condition = undefined) {
   if (!checkValue(value)) {
-    throw `Not a valid boolean value, can't initialize`;
+    throw `Not a valid boolean value, can't initialize.`;
   }
   this.booleanValue = value;
+  if (typeof condition !== 'string' && typeof condition !== 'undefined') {
+    throw `Condition needs to be a string or undefined`;
+  }
+  if (value === FALSE) {
+    //An expression with FALSE booleanValue should not have conditions
+    condition = undefined;
+  }
+  this.condition = condition;
   if (value !== UNDEFINED) {
     this.conjunctionLists = [];
     return;
@@ -36,13 +44,12 @@ function Expression(value, list, simplify = true) {
     throw `Not a valid conjunction list, can't initialize`;
   }
   this.conjunctionLists = list;
-  if (simplify) {
-    this.simplify();
-  }
+  this.simplify();
 }
 
 /**
  * Helper function, validity checking for booleanValue.
+ *
  * @param value input string, should be TRUE/FALSE/UNDEFINED
  */
 const checkValue = value =>
@@ -51,6 +58,7 @@ const checkValue = value =>
 
 /**
  * Helper function, validity checking for Literal lists (conjunction clause).
+ *
  * @param list literal list, should be list of strings/literal
  */
 const checkLiteralList = list =>
@@ -59,6 +67,7 @@ const checkLiteralList = list =>
 
 /**
  * Helper function, validity checking for conjunction lists.
+ *
  * @param list conjunction list, should be list of literal lists
  */
 const checkConjunctionLists = list =>
@@ -67,6 +76,7 @@ const checkConjunctionLists = list =>
 
 /**
  * Setter of conjunction lists.
+ *
  * @param list conjunction list, should be list of literal lists
  */
 Expression.prototype.setConjunctionLists = function(list) {
@@ -78,6 +88,7 @@ Expression.prototype.setConjunctionLists = function(list) {
 
 /**
  * Setter of literal list.
+ *
  * @param list literal list, should be list literal
  */
 Expression.prototype.setLiteralList = function(list, i) {
@@ -89,7 +100,7 @@ Expression.prototype.setLiteralList = function(list, i) {
 };
 
 /**
- * Getter of BooleanValue
+ * Getter of booleanValue
  */
 Expression.prototype.getBooleanValue = function() {
   return this.booleanValue;
@@ -100,6 +111,13 @@ Expression.prototype.getBooleanValue = function() {
  */
 Expression.prototype.getConjunctionLists = function() {
   return this.conjunctionLists;
+};
+
+/**
+ * Getter of condition
+ */
+Expression.prototype.getCondition = function() {
+  return this.condition;
 };
 
 /**
@@ -118,6 +136,7 @@ Expression.prototype.getAccessNumber = function() {
 /**
  * Helper function which sort an array according to compare function sortBy,
  * and then remove any duplications based on stringify results.
+
  * @param array array to sort
  * @param sortBy function indicating sorting principle
  */
@@ -138,6 +157,7 @@ const sortRemoveDup = (array, sortBy) => {
 /**
  * Helper function which checks if an array is a superset of the other.
  * Both arrays should be sorted, and the first array should be longer.
+
  * @param long sorted array, candidate superset
  * @param short sorted array, candidate subset
  */
@@ -188,9 +208,28 @@ Expression.prototype.simplify = function() {
   );
 };
 
+const condOperation = (left, right, op) => {
+  if (op !== '||' && op !== '&&') {
+    throw `Invalid operation ${op} for conditions`;
+  }
+
+  if (typeof left === 'undefined' && typeof right === 'undefined') {
+    return undefined;
+  }
+  if (typeof left === 'undefined') {
+    return right;
+  }
+  if (typeof right === 'undefined') {
+    return left;
+  }
+  return `${left} ${op} ${right}`;
+
+};
+
 /**
  * OR of two expressions in DNF,
  * merge conjuntion lists of two expression and simplify
+ *
  * @param left left operand of OR
  * @param right right operand of OR
  */
@@ -198,9 +237,10 @@ Expression.or = function(left, right) {
   if (!(left instanceof Expression && right instanceof Expression)) {
     throw `Operators of 'or' must be instances of Expression`;
   }
+  const newCond = condOperation(left.condition, right.condition, '||');
   if ((left.getBooleanValue() === TRUE) ||
       (right.getBooleanValue() === TRUE)) {
-    return new Expression(TRUE,[]);
+    return new Expression(TRUE,[], newCond);
   }
   if ((left.getBooleanValue() === FALSE)) {
     return right;
@@ -209,12 +249,14 @@ Expression.or = function(left, right) {
     return left;
   }
   return new Expression(UNDEFINED,
-        left.getConjunctionLists().concat(right.getConjunctionLists()));
+        left.getConjunctionLists().concat(right.getConjunctionLists()),
+        newCond);
 };
 
 /**
  * AND of two expressions in DNF,cross product of the two conjunction lists.
  * Product of two clauses means the union of the their literals.
+ *
  * @param left left operand of AND
  * @param right right operand of AND
  */
@@ -236,18 +278,23 @@ Expression.and = function(left, right) {
   if (!(left instanceof Expression && right instanceof Expression)) {
     throw `Operators of 'and' must be instances of Expression`;
   }
+  const newCond = condOperation(left.condition, right.condition, '&&');
+
   if ((left.getBooleanValue() === FALSE) ||
       (right.getBooleanValue() === FALSE)) {
-    return new Expression(FALSE,[]);
+    return new Expression(FALSE, [], newCond);
   }
   if (left.getBooleanValue() === TRUE) {
-    return right;
+    return new Expression(right.getBooleanValue(),
+        right.getConjunctionLists(),newCond);
   }
   if (right.getBooleanValue() === TRUE) {
-    return left;
+    return new Expression(left.getBooleanValue(),
+        left.getConjunctionLists(),newCond);
   }
   return new Expression(UNDEFINED,
-      crossProduct(left.getConjunctionLists(), right.getConjunctionLists()));
+      crossProduct(left.getConjunctionLists(), right.getConjunctionLists()),
+      newCond);
 };
 
 module.exports = {

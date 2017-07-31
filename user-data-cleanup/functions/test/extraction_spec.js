@@ -84,6 +84,14 @@ describe('Auto generation of rules', () => {
         {except: '/room/$creator/$member'}]);
   });
 
+  it('should deal with data references', () => {
+
+  });
+
+  it('should deal with condition', () => {
+
+  });
+
   it('should extract correct wipeout rules from RTBD rules ', () => {
     const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
     const inferredDeletePaths = wipeout.extractFromDBRules(DBRules);
