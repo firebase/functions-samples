@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 'use strict';
+// unit tests for the Expression class
 
 const common = require('./common');
 const expression = require('../expression');
@@ -61,7 +62,6 @@ describe('Expressions', () => {
     expectExp(exp2, []);
     expectExp(exp3, []);
     expectExp(exp4, []);
-    expectExp(exp1, []);
   });
 
   it('should be properly simplified: literals ', () => {
