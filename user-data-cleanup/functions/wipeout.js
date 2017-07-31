@@ -134,13 +134,15 @@ const inferWipeoutRule = tree => {
 
         if (nodeAccess.getAccessStatus() === exp.MULT_ACCESS) {
           if (ancestor.getAccessStatus() === exp.SINGLE_ACCESS) {
-            retRules.push({'except': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
+            retRules.push(
+            {'except': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
           }
           continue; // won't go into subtree of MULT_ACCESS nodes
 
         } else if (nodeAccess.getAccessStatus() === exp.SINGLE_ACCESS) {
           if (ancestor.getAccessStatus() === exp.NO_ACCESS) {
-            retRules.push({'path': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
+            retRules.push(
+            {'path': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
           }
         }
         //update ancestor for children

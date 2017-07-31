@@ -53,8 +53,7 @@ function Expression(value, list, condition = undefined) {
  * @param value input string, should be TRUE/FALSE/UNDEFINED
  */
 const checkValue = value =>
-    (typeof value === 'string') &&
-    ([TRUE, FALSE, UNDEFINED].indexOf(value) > -1);
+    (typeof value === 'string') && ([TRUE, FALSE, UNDEFINED].includes(value));
 
 /**
  * Helper function, validity checking for Literal lists (conjunction clause).
@@ -176,7 +175,7 @@ Needs two sorted lists, the first one longer than the second.`;
     // early termination optimization for sorted arrays
     return false;
   }
-  return short.every(value => (long.indexOf(value) > -1));
+  return short.every(value => (long.includes(value)));
 };
 
 /**
