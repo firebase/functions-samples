@@ -24,6 +24,8 @@ const expect = common.expect;
 const fs = require('fs');
 const jsep = require('jsep');
 const rules = require('../parse_rule');
+const refs = require('../eval_ref');
+
 const wipeout = require('../wipeout');
 
 // path is only used to repalce 'data' variable in write rule,
@@ -31,24 +33,24 @@ const wipeout = require('../wipeout');
 const pathHolder = ['rules','#'];
 
 const expectAccess = (rule, access, path = pathHolder) =>
-    expect(rules.checkWriteRules(rule, path).getAccessStatus())
+    expect(rules.parseWriteRule(rule, path).getAccessStatus())
     .to.equal(access);
 
 const expectVars = (rule, vars, path = pathHolder) =>
-    expect(rules.checkWriteRules(rule, path).getVariableList())
+    expect(rules.parseWriteRule(rule, path).getVariableList())
     .to.deep.equal(vars);
 
 const expectCond = (rule, cond, path = pathHolder) =>
-    expect(rules.checkWriteRules(rule, path).getCondition()).to.equal(cond);
+    expect(rules.parseWriteRule(rule, path).getCondition()).to.equal(cond);
 
 const expectRef = (rule, result, path = pathHolder) => {
   const obj = jsep(rule);
-  return expect(rules.parseCallExp(obj, path)).to.equal(result);
+  return expect(refs.evalRef(obj, path)).to.equal(result);
 };
 
 const expectRefErr = (rule, err, path = pathHolder) => {
   const obj = jsep(rule);
-  expect(() => rules.parseCallExp(obj, path)).to.throw(err);
+  expect(() => refs.evalRef(obj, path)).to.throw(err);
 };
 
 describe('Auto generation of rules', () => {
@@ -149,7 +151,6 @@ and exists() now, sibling found`);
         '{/users/$uid/name}.val() !== null', ['rules','users','$uid']);
     expectAccess(`auth.uid === $uid && data.child('name').val() !== null`,
         exp.SINGLE_ACCESS, ['rules','users','$uid']);
-
   });
 
   it('should extract correct wipeout rules from RTBD rules ', () => {
@@ -159,7 +160,7 @@ and exists() now, sibling found`);
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {
-          condition: '{/users2/$uid/test}.val() !== null',
+          condition: '{/users2/$uid/test}.val() !== null && {/users2/$uid}.exists()',
           path: '/users2/#WIPEOUT_UID'
         },
         {path: '/accounts/#WIPEOUT_UID/githubToken'},

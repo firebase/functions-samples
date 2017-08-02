@@ -15,111 +15,61 @@
  */
 'use strict';
 
-//parsing write rules
+// Parse write rules to get back the Access object of the rule.
+// Exports parseWriteRule()
 const exp = require('./expression');
 const Expression = exp.Expression;
 const jsep = require('jsep');
 const Access = require('./access');
+const refs = require('./eval_ref');
 
-// TODO(dzdz): consistent function representations
 
-// check memeber expression of candidate auth.id
-const checkMember = obj =>
-    obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
-      obj.property.name === 'uid';
-
-// get the DNF expression asscociated with auth.uid
-const getExpression = obj => {
-  if (obj.type === 'Literal') {
-    return obj.raw === 'true' ?
-        new Expression(exp.TRUE, []) : new Expression(exp.FALSE, []);
+/**
+ * Parse a write rule to get the access and condition
+ *
+ * @param write rule
+ * @param path, list of strings staring with 'rules'
+ * @return Access object of the write rule
+ */
+const parseWriteRule = (rule, path) => {
+  let ruleTree;
+  try {
+    ruleTree = jsep(rule);
+  } catch (err) {
+    // Ignore write rules which couldn't be parased by jsep.
+    return new Access(exp.MULT_ACCESS);
   }
-  if (obj.type === 'Identifier') {
-    return obj.name[0] === '$' ?
-        new Expression(exp.UNDEFINED, [[obj.name]]) :
-        new Expression(exp.FALSE, []);
-  }
-  return new Expression(exp.TRUE, []);// may contain data references.
+  return Access.fromExpression(parseLogic(ruleTree, path));
 };
 
-// get candidate for binary expressions.
-const getNonAuth = (obj, path) => {
+/**
+ * Recursively parse logic expressions to get
+ * the expression object of a logic expression.
+ *
+ * @param
+ * @param path, list of strings staring with 'rules'
+ * @return Expression object representing operands in logic expressions
+ */
+const parseLogic = (obj, path) => {
   switch (obj.type) {
-    case 'Literal':
-      return obj.raw.toString();
-    case 'Identifier':
-      return obj.name.toString();
     case 'CallExpression':
-      return parseCallExp(obj, path);
-    default:
-      throw `Type of BinaryExpression candidate ${obj.type} not supported`;
-  }
-};
+      return new Expression(exp.TRUE, [], refs.evalRef(obj, path));
 
-// TODO(dzdz) : refactor function
-function newCond(obj, path) {
-  const condLeft = getNonAuth(obj.left, path);
-  const condRight = getNonAuth(obj.right, path);
-  if (typeof condLeft !== 'undefined' && typeof condRight !== 'undefined') {
-    return `${condLeft} ${obj.operator} ${condRight}`;
-  }
-  return; // if either part contains newData, condition is true.
-
-}
-
-// check binary expressions for candidate auth.uid == ?
-function checkBinary(obj, path) {
-  if (obj.type !== 'BinaryExpression') {
-    throw 'Expect Binary Expreesion';
-  }
-
-  if (obj.operator === '==' || obj.operator === '===') {
-    if (checkMember(obj.left)) {
-      return getExpression(obj.right);
-    }
-    if (checkMember(obj.right)) {
-      return getExpression(obj.left);
-    }
-    //no auth invovled
-    return new Expression(exp.TRUE, [], newCond(obj, path));
-  }
-
-  if (['==', '===', '<', '>', '<=', '>=', '!=', '!=='].includes(obj.operator)) {
-    if (checkMember(obj.left) || checkMember(obj.right)) {
-      return new Expression(exp.TRUE,[]);
-    }
-    return new Expression(exp.TRUE, [], newCond(obj, path));
-  }
-  return new Expression(exp.TRUE, []);
-}
-
-// check true or false literals
-function checkLiteral(obj) {
-  if (obj.type !== 'Literal') {
-    throw 'Expect Literal';
-  }
-
-  if (obj.raw === 'true') {
-    return new Expression(exp.TRUE, []);
-  }
-  if (obj.raw === 'false') {
-    return new Expression(exp.FALSE, []);
-  }
-  throw 'Literals else than true or false are not supported';
-}
-
-// check (nested) logic expressions
-function checkLogic(obj, path) {
-  switch (obj.type) {
-    // case 'CallExpression':
-    // get back expression with condition.
     case 'BinaryExpression':
-      return checkBinary(obj, path);
+      return parseBinary(obj, path);
+
     case 'Literal':
-      return checkLiteral(obj);
+      if (obj.raw === 'true') {
+        return new Expression(exp.TRUE, []);
+      }
+      if (obj.raw === 'false') {
+        return new Expression(exp.FALSE, []);
+      }
+      throw 'Literals else than true or false are not supported';
+
     case 'LogicalExpression':
-      const left = checkLogic(obj.left, path);
-      const right = checkLogic(obj.right, path);
+      const left = parseLogic(obj.left, path);
+      const right = parseLogic(obj.right, path);
 
       if (obj.operator === '||') {
         return Expression.or(left, right);
@@ -132,156 +82,85 @@ function checkLogic(obj, path) {
     default:
       return new Expression(exp.TRUE, []);
   }
-}
-
-// check if the write rule indicates only the specific user has write
-// access to the path. If so, the path contains user data.
-function checkWriteRules(rule, path) {
-  let ruleTree;
-  try {
-    ruleTree = jsep(rule);
-  } catch (err) {
-    // ignore write rules which couldn't be parased by jsep/.
-    return new Access(exp.MULT_ACCESS);
-  }
-  return Access.fromExpression(checkLogic(ruleTree, path));
-}
-
-const parseCallExp = (callExp, path) => {
-  const re = /\s*[.()'"]\s*/;
-  if (JSON.stringify(callExp).split(re).includes('newData')) {
-    // return undefined for newData, any logic expression on this should be true
-    return;
-  }
-
-  const refValue = parseRef(callExp, path);
-  if (refValue.length !== 1) {
-    throw 'Not a valid referece value. Did you forget .val() at the end?';
-  }
-  return refValue[0];
 };
 
-const parseRef = (obj, path) => {
-  if (obj.type === 'CallExpression') {
-    const arg = obj.arguments;
-
-    // evaluate the callee
-    const result = parseRef(obj.callee, path);
-
-    // incorperate the arguments
-    if (arg.length === 0) {
-      // if no argument
-      if (result[result.length - 1] === '#CHILD') {
-        throw 'Needs a argument for child ()';
-      }
-      return result;
-    }
-    // evaluate the argument (only one argurment allowed)
-    const argVal = evalArg(arg['0'], path);
-
-    if (result[result.length - 1] !== '#CHILD') {
-      throw 'Only supports argument for child()';
-    }
-    // replace the place holder with actuall argument
-    result[result.length - 1] = argVal;
-    return result;
+/**
+ * Parse BinaryExpression to get the expression object
+ *
+ *
+ * @param obj BinaryExpression to parse
+ * @param path, list of strings staring with 'rules'
+ * @return expression object of the BinaryExpression.
+ */
+const parseBinary = (obj, path) => {
+  if (obj.type !== 'BinaryExpression') {
+    throw 'Expect Binary Expreesion';
   }
-
-  // Member expresion where the object is the data path so far.
-  // and the property is the function to call, can be child(), parent(), val(), exists()
-  // among these, only child() hava one and only one argument
-  if (obj.type === 'MemberExpression') {
-    let result = [];
-
-    switch (obj.object.type) {
-      case 'Identifier':
-        result = result.concat(evalIdentifier(obj.object, path));
-        break;
-      case 'CallExpression':
-        result = parseRef(obj.object, path);
-        break;
-      default:
-        throw 'Invalid member object for data reference' + obj.object.type;
-    }
-
-    if (obj.property.type !== 'Identifier') {
-      throw 'Property should be Identifiers';
-    }
-    // dealing with different functions
-    switch (obj.property.name) {
-      case 'child':
-        // push child holder to the end of the list
-        result.push('#CHILD');
-        return result;
-      case 'parent':
-        if (result.length <= 2) { // index 0 is always 'rules'
-          throw 'No parent avaliable';
-        }
-        result.splice(result.length - 1, 1);
-        return result;
-      case 'val':
-        return ['{' + result.join('/') + '}.val()'];
-
-      case 'exists':
-        return ['{' + result.join('/') + '}.exists()'];
-
-      default:
-        throw `Only support reference child(), parent(), \
-val() and exists() now, ${obj.property.name} found`;
-    }
+  // auth involved in BinaryExpression
+  if (refs.checkAuth(obj.left)) {
+    return getAuthExp(obj.right, obj.operator);
   }
-  throw 'Unsupported data references';
+  if (refs.checkAuth(obj.right)) {
+    return getAuthExp(obj.left, obj.operator);
+  }
+  //no auth invovled
+  let newCond;
+  const condLeft = getCond(obj.left, path);
+  const condRight = getCond(obj.right, path);
+  if (typeof condLeft !== 'undefined' && typeof condRight !== 'undefined') {
+    newCond = `${condLeft} ${obj.operator} ${condRight}`;
+  } else {
+    // if either part is undefined(contains newData), the condition is ignored.
+    newCond = undefined;
+  }
+  return new Expression(exp.TRUE, [], newCond);
 };
 
-const evalIdentifier = (id, path) => {
-    if (id.type !== 'Identifier') {
-      throw 'evalIdentifier() needs Identifiers as input';
-    }
-    switch (id.name) {
-      case 'root':
-        return '';
 
-      case 'data':
-        const p = path.slice();
-        p[0] = '';
-        return p;
+/**
+ * If one of the operand in BinaryExpression is auth,
+ * parse the other side to get the auth expression.
+ *
+ * @param obj operand besides auth in BinaryExpression
+ * @param op operator of the BinaryExpression
+ * @return auth expression
+ */
+const getAuthExp = (obj, op) => {
+  if (op !== '==' && op !== '===') {
+    return new Expression(exp.TRUE, []);
+  }
 
-      case 'newData':
-        throw 'newData not supported';
-    }
-    return id.name;
-  };
+  if (obj.type === 'Literal') {
+    return obj.raw === 'true' ?
+        new Expression(exp.TRUE, []) : new Expression(exp.FALSE, []);
+  }
+  if (obj.type === 'Identifier') {
+    return obj.name[0] === '$' ?
+        new Expression(exp.UNDEFINED, [[obj.name]]) :
+        new Expression(exp.FALSE, []);
+  }
+  return new Expression(exp.TRUE, []);// May contain data references.
+};
 
-// argument, could be a literal/auth.uid/other data references.
-const evalArg = (arg, path) => {
-  switch (arg.type) {
-    case 'Identifier':
-      return evalIdentifier(arg, path);
-
+/**
+ * If No auth in the BinaryExpression, parse the operand to
+ * get candidates for conditions.
+ *
+ * @param obj operand of BinaryExpression
+ * @param path, list of strings staring with 'rules'
+ * @return string representing value of the operand
+ */
+const getCond = (obj, path) => {
+  switch (obj.type) {
     case 'Literal':
-      return arg.value;
-
-    case 'MemberExpression':
-      if (checkMember(arg)) {
-        return '#WIPEOUT_UID';//TODO(dzdz) change place holder.
-      }
-      throw 'MemberExpression as argument not supported, except auth.uid';
-
+      return obj.raw.toString();
+    case 'Identifier':
+      return obj.name.toString();
     case 'CallExpression':
-      const result = parseRef(arg, path);
-
-      if (result.length !== 1) {
-        throw 'Invalid argument' + result.toString();
-      }
-      return result[0];
-
+      return refs.evalRef(obj, path);
     default:
-      throw 'Unsupported argument type: ' + arg.type;
+      throw `Type of BinaryExpression candidate ${obj.type} not supported`;
   }
 };
 
-module.exports.checkWriteRules = checkWriteRules;
-
-if (process.env.NODE_ENV === 'TEST') {
-  module.exports.parseCallExp = parseCallExp;
-}
+module.exports.parseWriteRule = parseWriteRule;
