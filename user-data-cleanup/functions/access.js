@@ -17,8 +17,14 @@
 
 const exp = require('./expression');
 
-function Access(status, list) {
-  if (!([exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].indexOf(status) > -1)) {
+/**
+ * Access Class, used to represent the access status of a write rule or node
+ * @param status access status, could be NO_ACCESS/SINGLE_ACCESS/MULT_ACCESS
+ * @param list variable list, should be empty list if status is NO/SINGLE,
+ * else should be the list of literal in the conjunction of corresponding exp
+ */
+function Access(status, list, condition = undefined) {
+  if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
     throw 'Not a valid access status.';
   }
   this.accessStatus = status;
@@ -30,6 +36,7 @@ function Access(status, list) {
     throw 'Not a valid list of variable for single access.';
   }
   this.variableList = list;
+  this.condition = condition;
 }
 
 /**
@@ -48,6 +55,13 @@ Access.prototype.getAccessStatus = function() {
 };
 
 /**
+ * Getter of condition
+ */
+Access.prototype.getCondition = function() {
+  return this.condition;
+};
+
+/**
  * Getter of access pattern
  * @param path path to the current node, list of strings
  * @param placeHolder aut palceholder, e.g. #WIPEOUT_UID
@@ -56,9 +70,8 @@ Access.prototype.getAccessPattern = function(path, placeHolder) {
   if (path[0] !== 'rules') {
     throw `A valid path starts with 'rules'`;
   }
-  const result = path.map(cur => {
-    return this.getVariableList().indexOf(cur) > -1 ? placeHolder : cur;
-  });
+  const result = path.map(
+      cur => this.getVariableList().includes(cur) ? placeHolder : cur);
   result[0] = '';
   return result.join('/');
 };
@@ -71,20 +84,14 @@ Access.prototype.getVariableList = function() {
  * Create access object from expression object.
  * The access object describes the access pattern of the expression
  * @param expression input expression object
- * @param currentPath path to the current node, list of strings
  */
-Access.fromExpression = function(expression, currentPath) {
+Access.fromExpression = function(expression) {
   const status = expression.getAccessNumber();
+  const cond = expression.getCondition();
   if ((status === exp.NO_ACCESS) || (status === exp.MULT_ACCESS)) {
-    return new Access(status, []);
+    return new Access(status, [], cond);
   }
-  const authVars = expression.getConjunctionLists()[0];
-  const validVariable = authVars.every(cur => currentPath.indexOf(cur) > -1);
-
-  if (!validVariable) {
-    throw 'Write rule is using unknown variable';
-  }
-  return new Access(status, authVars);
+  return new Access(status, expression.getConjunctionLists()[0], cond);
 };
 
 /**
@@ -94,30 +101,43 @@ Access.fromExpression = function(expression, currentPath) {
  * @param ruleAccess access object of write rule at the current place
  */
 Access.nodeAccess = function(ancestor, ruleAccess) {
-  const ancestorAcc = ancestor.getAccessStatus();
-  const ruleAcc = ruleAccess.getAccessStatus();
-  if (ancestorAcc === exp.MULT_ACCESS) {
-    return new Access(exp.MULT_ACCESS,[]);
-  }
-  if (ancestorAcc === exp.NO_ACCESS) {
-    return ruleAccess;
-  }
-  if (ancestorAcc === exp.SINGLE_ACCESS) {
-    if (ruleAcc === exp.NO_ACCESS) {
-      return ancestor;
-    }
-    if (ruleAcc === exp.MULT_ACCESS) {
-      return new Access(exp.MULT_ACCESS, []);
-    }
-    if (ruleAcc === exp.SINGLE_ACCESS) {
-      const noAdditionalAccess = ancestor.getVariableList().every(variable =>
-          ruleAccess.getVariableList().indexOf(variable) > -1);
+  switch (ancestor.getAccessStatus()) {
 
-      if (noAdditionalAccess) {
-        return ancestor;
+    case exp.MULT_ACCESS:
+      // If either access is MULT then result is MULT
+      return new Access(exp.MULT_ACCESS, []);
+
+    case exp.NO_ACCESS:
+      // If ancestor has no access, then rule access applies
+      return ruleAccess;
+
+    case exp.SINGLE_ACCESS:
+      switch (ruleAccess.getAccessStatus()) {
+
+        case exp.NO_ACCESS:
+          // If rule adds no access, then ancestor access applies
+          return ancestor;
+
+        case exp.MULT_ACCESS:
+          // If either access is MULT then result is MULT
+          return new Access(exp.MULT_ACCESS, []);
+
+        case exp.SINGLE_ACCESS:
+          // If both accesses are SINGLE, then the result is either SINGLE or
+          // MULT depending on whether every variables are a subset of the
+          // rules variables (whether the rule grants additional access beyond
+          // its ancestor).
+          const noAdditionalAccess = ancestor.getVariableList().every(
+              ancVariable => ruleAccess.getVariableList().includes(ancVariable)
+              );
+          if (noAdditionalAccess) {
+            // If the child node has single access, the child node condition
+            // is the OR of child rule condition and parent node condition.
+            const newCond = exp.condOperation(ancestor.getCondition(), ruleAccess.getCondition(), '||');
+            return new Access(exp.SINGLE_ACCESS, ancestor.getVariableList(), newCond);
+          }
+          return new Access(exp.MULT_ACCESS, []);
       }
-      return new Access(exp.MULT_ACCESS,[]);
-    }
   }
 };
 

@@ -129,14 +129,14 @@
     "users2": {
       ".read": true,
       "$uid": {
-        ".write": "auth.uid === $uid"
+        ".write": "auth.uid === $uid && data.child('test').val() !== null && newData.val() !== null && data.exists()"
       }
     },
     "followers": {
       "$followedUid": {
         "$followerUid": {
           ".read": "auth.uid === $followerUid",
-          ".write": "auth.uid === $followerUid"
+          ".write": "auth.uid === $followerUid && $followerUid> 1000"
         }
       }
     }

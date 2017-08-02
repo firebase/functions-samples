@@ -15,19 +15,17 @@
  */
 'use strict';
 
+const common = require('./common');
 const deepcopy = require('deepcopy');
-const jsep = require('jsep');
 const request = require('request-promise');
+const rules = require('./parse_rule');
 const sjc = require('strip-json-comments');
 
-const WIPEOUT_UID = '#WIPEOUT_UID';
 const WRITE_SIGN = '.write';
 const PATH_REGEX = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
-const BOOK_KEEPING_PATH = '/wipeout';
 
-const exp = require('./expression.js');
-const Expression = exp.Expression;
-const Access = require('./access.js');
+const exp = require('./expression');
+const Access = require('./access');
 
 /**
  * Initialize the wipeout library.
@@ -41,7 +39,7 @@ const Access = require('./access.js');
  */
 exports.initialize = wipeoutConfig => {
   global.init = Object.freeze(wipeoutConfig);
-  return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(false);
+  return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(false);
 };
 
 // Get wipeout configuration from wipeout_config.json,
@@ -69,14 +67,14 @@ functions directory with a 'wipeout' field.`, err);
   }
 };
 
-// buid deletion paths from wipeout config
+// Buid deletion paths from wipeout config
 const buildPath = (config, uid) => {
   const paths = deepcopy(config);
   for (let i = 0, len = config.length; i < len; i++) {
     if (!PATH_REGEX.test(config[i].path)) {
       return Promise.reject('Invalid wipeout Path: ' + config[i].path);
     }
-    paths[i].path = config[i].path.replace(WIPEOUT_UID, uid.toString());
+    paths[i].path = config[i].path.replace(common.WIPEOUT_UID, uid.toString());
   }
   return Promise.resolve(paths);
 };
@@ -98,13 +96,12 @@ const readDBRules = () => {
   });
 };
 
-// extract wipeout rules from RTDB rules.
+// Extract wipeout rules from RTDB rules.
 const extractFromDBRules = DBRules => {
   const rules = JSON.parse(sjc(DBRules));
   const inferredRules = inferWipeoutRule(rules);
   return inferredRules;
 };
-
 
 // BFS traverse of RTDB rules, check all the .write rules
 // for potential user data path.
@@ -129,22 +126,27 @@ const inferWipeoutRule = tree => {
       if (keys.includes(WRITE_SIGN)) {
 
         // access status of the write rule
-        const ruleAccess = checkWriteRules(path, node[WRITE_SIGN]);
+        const ruleAccess = rules.parseWriteRule(node[WRITE_SIGN], path);
         // access status of the node, considering ancestor.
         const nodeAccess = Access.nodeAccess(ancestor, ruleAccess);
 
         if (nodeAccess.getAccessStatus() === exp.MULT_ACCESS) {
           if (ancestor.getAccessStatus() === exp.SINGLE_ACCESS) {
-            retRules.push({'except': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
+            retRules.push(
+            {'except': nodeAccess.getAccessPattern(path, common.WIPEOUT_UID)});
           }
-          continue; // won't go into subtree of MULT_ACCESS nodes
-
+          continue; // Won't go into subtree of MULT_ACCESS nodesx
         } else if (nodeAccess.getAccessStatus() === exp.SINGLE_ACCESS) {
           if (ancestor.getAccessStatus() === exp.NO_ACCESS) {
-            retRules.push({'path': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
+            const inferredRule = {
+                'path': nodeAccess.getAccessPattern(path, common.WIPEOUT_UID)};
+            if (typeof nodeAccess.getCondition() !== 'undefined') {
+              inferredRule.condition = nodeAccess.getCondition();
+            }
+            retRules.push(inferredRule);
           }
         }
-        //update ancestor for children
+        // Update ancestor for children
         ancestor = nodeAccess;
       }
 
@@ -163,87 +165,6 @@ const inferWipeoutRule = tree => {
   return retRules;
 };
 
-// check memeber expression of candidate auth.id
-const checkMember = obj =>
-    obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
-      obj.property.name === 'uid';
-
-// get the DNF expression asscociated with auth.uid
-const getExpression = obj => {
-  if (obj.type === 'Literal') {
-    return obj.raw === 'true' ?
-        new Expression(exp.TRUE,[]) : new Expression(exp.FALSE,[]);
-  }
-  if (obj.type === 'Identifier') {
-    return obj.name[0] === '$' ?
-        new Expression(exp.UNDEFINED, [[obj.name]]) :
-        new Expression(exp.FALSE,[]);
-  }
-  return new Expression(exp.TRUE,[]);// may contain data references.
-};
-
-// check binary expressions for candidate auth.uid == ?
-function checkBinary(obj) {
-  if (obj.type === 'BinaryExpression' &&
-      (obj.operator === '==' || obj.operator === '===')) {
-    if (checkMember(obj.left)) {
-      return getExpression(obj.right);
-    }
-    if (checkMember(obj.right)) {
-      return getExpression(obj.left);
-    }
-  }
-  return new Expression(exp.TRUE,[]);
-}
-
-// check true or false literals
-function checkLiteral(obj) {
-  if (obj.type === 'Literal') {
-    if (obj.raw === 'true') {
-      return new Expression(exp.TRUE,[]);
-    }
-    if (obj.raw === 'false') {
-      return new Expression(exp.FALSE,[]);
-    }
-    throw 'Literals else than true or false are not supported';
-  }
-}
-
-// check (nested) logic expressions
-function checkLogic(obj) {
-  if (obj.type === 'BinaryExpression') {
-    return checkBinary(obj);// also check unary literals
-  }
-  if (obj.type === 'Literal') {
-    return checkLiteral(obj);
-  }
-  if (obj.type === 'LogicalExpression') {
-    const left = checkLogic(obj.left);
-    const right = checkLogic(obj.right);
-
-    if (obj.operator === '||') {
-      return Expression.or(left, right);
-    }
-    if (obj.operator === '&&') {
-      return Expression.and(left, right);
-    }
-  } else {
-    return new Expression(exp.TRUE, []);
-  }
-}
-
-// check if the write rule indicates only the specific user has write
-// access to the path. If so, the path contains user data.
-function checkWriteRules(currentPath, rule) {
-  let ruleTree;
-  try {
-    ruleTree = jsep(rule);
-  } catch (err) {
-    // ignore write rules which couldn't be parased by jsep/.
-    return new Access(exp.MULT_ACCESS);
-  }
-  return Access.fromExpression(checkLogic(ruleTree), currentPath);
-}
 
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
@@ -265,7 +186,7 @@ const deleteUser = deletePaths => {
  * TODO(dzdz): check for current wipeout path
  */
 const writeLog = data => {
-  return init.db.ref(`${BOOK_KEEPING_PATH}/history/${data.uid}`)
+  return init.db.ref(`${common.BOOK_KEEPING_PATH}/history/${data.uid}`)
       .set(init.serverValue.TIMESTAMP);
 };
 
@@ -277,9 +198,9 @@ const writeLog = data => {
 exports.cleanupUserData = () => {
   return init.users.onDelete(event => {
     const configPromise = init.db
-        .ref(`${BOOK_KEEPING_PATH}/rules`).once('value');
+        .ref(`${common.BOOK_KEEPING_PATH}/rules`).once('value');
     const confirmPromise = init.db
-        .ref(`${BOOK_KEEPING_PATH}/confirm`).once('value');
+        .ref(`${common.BOOK_KEEPING_PATH}/confirm`).once('value');
     return Promise.all([configPromise, confirmPromise])
         .then((snapshots) => {
       const config = snapshots[0].val();
@@ -306,7 +227,7 @@ exports.showWipeoutConfig = () => {
   return init.https.onRequest((req, res) => {
     if (req.method === 'GET') {
       return getConfig().then(config => {
-        return init.db.ref(`${BOOK_KEEPING_PATH}/rules`)
+        return init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
             .set(config).then(() => {
               const content = `Please verify the wipeout rules. <br>
 If correct, click the 'Confirm' button below. <br>
@@ -319,16 +240,15 @@ and deploy again. <br> <br> ${JSON.stringify(config)}
             });
       });
     } else if ((req.method === 'POST') && req.body.confirm === 'Confirm') {
-      return init.db.ref(`${BOOK_KEEPING_PATH}/confirm`).set(true)
+      return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(true)
           .then(() => res.send('Confirm sent, Wipeout function activated.'));
     }
   });
 };
 
-// only expose internel functions to tests.
+// Only expose internel functions to tests.
 if (process.env.NODE_ENV === 'TEST') {
   module.exports.buildPath = buildPath;
-  module.exports.checkWriteRules = checkWriteRules;
   module.exports.extractFromDBRules = extractFromDBRules;
   module.exports.inferWipeoutRule = inferWipeoutRule;
   module.exports.readDBRules = readDBRules;
