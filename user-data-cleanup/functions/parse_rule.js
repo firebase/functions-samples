@@ -46,7 +46,7 @@ const getExpression = obj => {
 const getNonAuth = (obj, path) => {
   switch (obj.type) {
     case 'Literal':
-      return obj.value.toString();
+      return obj.raw.toString();
     case 'Identifier':
       return obj.name.toString();
     case 'CallExpression':
@@ -55,6 +55,17 @@ const getNonAuth = (obj, path) => {
       throw `Type of BinaryExpression candidate ${obj.type} not supported`;
   }
 };
+
+// TODO(dzdz) : refactor function
+function newCond(obj, path) {
+  const condLeft = getNonAuth(obj.left, path);
+  const condRight = getNonAuth(obj.right, path);
+  if (typeof condLeft !== 'undefined' && typeof condRight !== 'undefined') {
+    return `${condLeft} ${obj.operator} ${condRight}`;
+  }
+  return; // if either part contains newData, condition is true.
+
+}
 
 // check binary expressions for candidate auth.uid == ?
 function checkBinary(obj, path) {
@@ -70,17 +81,14 @@ function checkBinary(obj, path) {
       return getExpression(obj.left);
     }
     //no auth invovled
-    return new Expression(exp.TRUE, [],
-        `${getNonAuth(obj.left, path)} === ${getNonAuth(obj.right, path)}`);
+    return new Expression(exp.TRUE, [], newCond(obj, path));
   }
 
   if (['==', '===', '<', '>', '<=', '>=', '!=', '!=='].includes(obj.operator)) {
     if (checkMember(obj.left) || checkMember(obj.right)) {
       return new Expression(exp.TRUE,[]);
     }
-    return new Expression(exp.TRUE, [],
-        `${getNonAuth(obj.left, path)} ${obj.operator} \
-${getNonAuth(obj.right, path)}`);
+    return new Expression(exp.TRUE, [], newCond(obj, path));
   }
   return new Expression(exp.TRUE, []);
 }
@@ -102,7 +110,6 @@ function checkLiteral(obj) {
 
 // check (nested) logic expressions
 function checkLogic(obj, path) {
-
   switch (obj.type) {
     // case 'CallExpression':
     // get back expression with condition.
@@ -142,12 +149,12 @@ function checkWriteRules(rule, path) {
 
 const parseCallExp = (callExp, path) => {
   const re = /\s*[.()'"]\s*/;
-  if (callExp.split(re).includes('newData')) {
+  if (JSON.stringify(callExp).split(re).includes('newData')) {
     // return undefined for newData, any logic expression on this should be true
     return;
   }
 
-  const refValue = parseRef(jsep(callExp), path);
+  const refValue = parseRef(callExp, path);
   if (refValue.length !== 1) {
     throw 'Not a valid referece value. Did you forget .val() at the end?';
   }
@@ -165,7 +172,7 @@ const parseRef = (obj, path) => {
     if (arg.length === 0) {
       // if no argument
       if (result[result.length - 1] === '#CHILD') {
-        throw 'Needs a argument for child () ';
+        throw 'Needs a argument for child ()';
       }
       return result;
     }
@@ -207,8 +214,8 @@ const parseRef = (obj, path) => {
         result.push('#CHILD');
         return result;
       case 'parent':
-        if (result.length <= 1) {
-          throw 'No parent avaliable' + result.toString();
+        if (result.length <= 2) { // index 0 is always 'rules'
+          throw 'No parent avaliable';
         }
         result.splice(result.length - 1, 1);
         return result;
@@ -217,11 +224,13 @@ const parseRef = (obj, path) => {
 
       case 'exists':
         return ['{' + result.join('/') + '}.exists()'];
+
       default:
-        throw `Only support reference child(), parent(), val() and exists() now, ${obj.property.name} found`;
+        throw `Only support reference child(), parent(), \
+val() and exists() now, ${obj.property.name} found`;
     }
-    throw 'Unsupported data references';
   }
+  throw 'Unsupported data references';
 };
 
 const evalIdentifier = (id, path) => {
@@ -233,7 +242,9 @@ const evalIdentifier = (id, path) => {
         return '';
 
       case 'data':
-        return path;
+        const p = path.slice();
+        p[0] = '';
+        return p;
 
       case 'newData':
         throw 'newData not supported';
@@ -245,7 +256,7 @@ const evalIdentifier = (id, path) => {
 const evalArg = (arg, path) => {
   switch (arg.type) {
     case 'Identifier':
-      return evalIdentifier(arg);
+      return evalIdentifier(arg, path);
 
     case 'Literal':
       return arg.value;
@@ -258,6 +269,7 @@ const evalArg = (arg, path) => {
 
     case 'CallExpression':
       const result = parseRef(arg, path);
+
       if (result.length !== 1) {
         throw 'Invalid argument' + result.toString();
       }
@@ -269,3 +281,7 @@ const evalArg = (arg, path) => {
 };
 
 module.exports.checkWriteRules = checkWriteRules;
+
+if (process.env.NODE_ENV === 'TEST') {
+  module.exports.parseCallExp = parseCallExp;
+}

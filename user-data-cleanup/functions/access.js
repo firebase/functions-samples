@@ -23,7 +23,7 @@ const exp = require('./expression');
  * @param list variable list, should be empty list if status is NO/SINGLE,
  * else should be the list of literal in the conjunction of corresponding exp
  */
-function Access(status, list) {
+function Access(status, list, condition = undefined) {
   if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
     throw 'Not a valid access status.';
   }
@@ -36,6 +36,7 @@ function Access(status, list) {
     throw 'Not a valid list of variable for single access.';
   }
   this.variableList = list;
+  this.condition = condition;
 }
 
 /**
@@ -51,6 +52,13 @@ const checkVariableList = list =>
  */
 Access.prototype.getAccessStatus = function() {
   return this.accessStatus;
+};
+
+/**
+ * Getter of condition
+ */
+Access.prototype.getCondition = function() {
+  return this.condition;
 };
 
 /**
@@ -79,10 +87,11 @@ Access.prototype.getVariableList = function() {
  */
 Access.fromExpression = function(expression) {
   const status = expression.getAccessNumber();
+  const cond = expression.getCondition();
   if ((status === exp.NO_ACCESS) || (status === exp.MULT_ACCESS)) {
-    return new Access(status, []);
+    return new Access(status, [], cond);
   }
-  return new Access(status, expression.getConjunctionLists()[0]);
+  return new Access(status, expression.getConjunctionLists()[0], cond);
 };
 
 /**
@@ -99,7 +108,7 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
       return new Access(exp.MULT_ACCESS, []);
 
     case exp.NO_ACCESS:
-      // If ancester has no access, then rule access applies
+      // If ancestor has no access, then rule access applies
       return ruleAccess;
 
     case exp.SINGLE_ACCESS:
@@ -122,7 +131,10 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
               ancVariable => ruleAccess.getVariableList().includes(ancVariable)
               );
           if (noAdditionalAccess) {
-            return ancestor;
+            // If the child node has single access, the child node condition
+            // is the OR of child rule condition and parent node condition.
+            const newCond = exp.condOperation(ancestor.getCondition(), ruleAccess.getCondition(), '||');
+            return new Access(exp.SINGLE_ACCESS, ancestor.getVariableList(), newCond);
           }
           return new Access(exp.MULT_ACCESS, []);
       }

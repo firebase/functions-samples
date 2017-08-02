@@ -19,50 +19,65 @@
 // from RTDB rules and storage rules.
 
 const common = require('./common');
-const expression = require('../expression');
+const exp = require('../expression');
 const expect = common.expect;
 const fs = require('fs');
-const parseRule = require('../parse_rule');
+const jsep = require('jsep');
+const rules = require('../parse_rule');
 const wipeout = require('../wipeout');
 
-const expectAccess = (rule, access) => {
-  expect(parseRule.checkWriteRules(rule).getAccessStatus())
-      .to.equal(access);
+// path is only used to repalce 'data' variable in write rule,
+// otherwise uses dummy path in tests.
+const pathHolder = ['rules','#'];
+
+const expectAccess = (rule, access, path = pathHolder) =>
+    expect(rules.checkWriteRules(rule, path).getAccessStatus())
+    .to.equal(access);
+
+const expectVars = (rule, vars, path = pathHolder) =>
+    expect(rules.checkWriteRules(rule, path).getVariableList())
+    .to.deep.equal(vars);
+
+const expectCond = (rule, cond, path = pathHolder) =>
+    expect(rules.checkWriteRules(rule, path).getCondition()).to.equal(cond);
+
+const expectRef = (rule, result, path = pathHolder) => {
+  const obj = jsep(rule);
+  return expect(rules.parseCallExp(obj, path)).to.equal(result);
 };
 
-const expectVars = (rule, vars) => {
-  expect(parseRule.checkWriteRules(rule).getVariableList())
-      .to.deep.equal(vars);
+const expectRefErr = (rule, err, path = pathHolder) => {
+  const obj = jsep(rule);
+  expect(() => rules.parseCallExp(obj, path)).to.throw(err);
 };
 
 describe('Auto generation of rules', () => {
-
   it('should get correct access from write rules', () => {
-    expectAccess('true', expression.MULT_ACCESS);
-    expectAccess('false', expression.NO_ACCESS);
-    expectAccess('auth.uid == $user', expression.SINGLE_ACCESS);
-    expectAccess('auth.uid === $user', expression.SINGLE_ACCESS);
-    expectAccess('$user === auth.uid', expression.SINGLE_ACCESS);
-    expectAccess('$random_name === auth.uid', expression.SINGLE_ACCESS);
+    expectAccess('true', exp.MULT_ACCESS);
+    expectAccess('false', exp.NO_ACCESS);
+    expectAccess('auth.uid == $user', exp.SINGLE_ACCESS);
+    expectAccess('auth.uid === $user', exp.SINGLE_ACCESS);
+    expectAccess('$user === auth.uid', exp.SINGLE_ACCESS);
+    expectAccess('$random_name === auth.uid', exp.SINGLE_ACCESS);
     expectVars('$random_name === auth.uid', ['$random_name']);
-    expectAccess('auth.uid == null', expression.NO_ACCESS);
-    expectAccess('auth.uid != null', expression.MULT_ACCESS);
-    expectAccess('auth.uid == ADMIN', expression.NO_ACCESS);
-  });
+    expectAccess('auth.uid == null', exp.NO_ACCESS);
+    expectAccess('auth.uid != null', exp.MULT_ACCESS);
+    expectAccess('auth.uid == ADMIN', exp.NO_ACCESS);
+  });//
 
   it('should deal with logic expressions correctly', () => {
-    expectAccess('auth.uid==$user || true', expression.MULT_ACCESS);
-    expectAccess('auth.uid==$user || false', expression.SINGLE_ACCESS);
-    expectAccess('auth.uid==$user && true', expression.SINGLE_ACCESS);
-    expectAccess('auth.uid==$user && false', expression.NO_ACCESS);
+    expectAccess('auth.uid==$user || true', exp.MULT_ACCESS);
+    expectAccess('auth.uid==$user || false', exp.SINGLE_ACCESS);
+    expectAccess('auth.uid==$user && true', exp.SINGLE_ACCESS);
+    expectAccess('auth.uid==$user && false', exp.NO_ACCESS);//
 
     expectVars('auth.uid==$user || false', ['$user']);
-    expectVars('auth.uid==$user && true', ['$user']);
+    expectVars('auth.uid==$user && true', ['$user']);//
 
-    expectAccess('auth.uid == $k1 && auth.uid == $k2', expression.SINGLE_ACCESS);
-    expectAccess('auth.uid == $k1 || auth.uid == $k2', expression.MULT_ACCESS);
+    expectAccess('auth.uid == $k1 && auth.uid == $k2', exp.SINGLE_ACCESS);
+    expectAccess('auth.uid == $k1 || auth.uid == $k2', exp.MULT_ACCESS);
     expectAccess('auth.uid == $k1 && (auth.uid == $k2 || auth.uid == $k3)',
-        expression.MULT_ACCESS);
+        exp.MULT_ACCESS);
   });
 
   it('should deal with additional access from hierarchical rules', () => {
@@ -84,11 +99,56 @@ describe('Auto generation of rules', () => {
         {except: '/room/$creator/$member'}]);
   });
 
-  it('should deal with data references', () => {
-
+  describe('should deal with data references', () => {
+    it('should throw an error for invalid data references', () => {
+      // Invalid functions
+      expectRefErr(`data.sibling()`,
+          `Only support reference child(), parent(), val() \
+and exists() now, sibling found`);
+      // Needs to be a value instead of a location reference.
+      expectRefErr(`data.child('a')`,
+          `Not a valid referece value. Did you forget .val() at the end?`);
+      // Invalide arguments
+      expectRefErr(`data.child().val()`, `Needs a argument for child ()`);
+      expectRefErr(`data.child('arg').parent('arg')`,
+          `Only supports argument for child()`);
+      expectRefErr(`data.val('arg')`, `Only supports argument for child()`);
+      expectRefErr(`data.exists('arg')`, `Only supports argument for child()`);
+      // No valid parent
+      expectRefErr(`data.parent()`, `No parent avaliable`);
+    });
+    it('should extract correct content for data references', () => {
+      // references containing newData should evaluates to undefined.
+      expectRef(`newData.child('from').val()`, undefined);
+      // functions val(), exists(), parent(), child()
+      expectRef(`data.val()`, `{/doc/$uid/create}.val()`,
+         ['rules','doc','$uid','create']);
+      expectRef(`data.child('acc').val()`, `{/users/acc}.val()`,
+         ['rules', 'users']);
+      expectRef(`data.child('acc').parent().val()`, `{/users}.val()`,
+         ['rules', 'users']);
+      expectRef(`data.child('acc').parent().child('acc2').val()`,
+         `{/users/acc2}.val()`, ['rules', 'users']);
+      expectRef(`data.child('acc').parent().child('acc2').exists()`,
+          `{/users/acc2}.exists()`, ['rules', 'users']);
+      // variable root
+      expectRef(`root.child('acc').val()`, `{/acc}.val()`);
+      // complex arguments
+      expectRef(`root.child('rooms').child(data.child('creator').val()).val()`,
+          `{/rooms/{/rooms/$roomid/creator}.val()}.val()`,
+          ['rules', 'rooms', '$roomid']);
+      expectRef(
+          `root.child('rooms').child($roomid).child('members')\
+.child(auth.uid).val()`,
+          `{/rooms/$roomid/members/#WIPEOUT_UID}.val()`);
+    });
   });
 
   it('should deal with condition', () => {
+    expectCond(`auth.uid === $uid && data.child('name').val() !== null`,
+        '{/users/$uid/name}.val() !== null', ['rules','users','$uid']);
+    expectAccess(`auth.uid === $uid && data.child('name').val() !== null`,
+        exp.SINGLE_ACCESS, ['rules','users','$uid']);
 
   });
 
@@ -98,11 +158,17 @@ describe('Auto generation of rules', () => {
     const userPaths = [
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
-        {path: '/users2/#WIPEOUT_UID'},
+        {
+          condition: '{/users2/$uid/test}.val() !== null',
+          path: '/users2/#WIPEOUT_UID'
+        },
         {path: '/accounts/#WIPEOUT_UID/githubToken'},
         {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
         {path: '/users-say-that/#WIPEOUT_UID/lang'},
-        {path: '/followers/$followedUid/#WIPEOUT_UID'},
+        {
+          condition: '$followerUid > 1000',
+          path: '/followers/$followedUid/#WIPEOUT_UID'
+        },
         {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
         {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
@@ -110,5 +176,4 @@ describe('Auto generation of rules', () => {
         ];
     return expect(inferredDeletePaths).to.deep.equal(userPaths);
   });
-
 });

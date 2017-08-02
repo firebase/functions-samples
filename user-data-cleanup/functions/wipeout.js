@@ -128,7 +128,7 @@ const inferWipeoutRule = tree => {
       if (keys.includes(WRITE_SIGN)) {
 
         // access status of the write rule
-        const ruleAccess = parseRule.checkWriteRules(node[WRITE_SIGN]);
+        const ruleAccess = parseRule.checkWriteRules(node[WRITE_SIGN], path);
         // access status of the node, considering ancestor.
         const nodeAccess = Access.nodeAccess(ancestor, ruleAccess);
 
@@ -141,8 +141,12 @@ const inferWipeoutRule = tree => {
 
         } else if (nodeAccess.getAccessStatus() === exp.SINGLE_ACCESS) {
           if (ancestor.getAccessStatus() === exp.NO_ACCESS) {
-            retRules.push(
-            {'path': nodeAccess.getAccessPattern(path, WIPEOUT_UID)});
+            const inferredRule = {
+                'path': nodeAccess.getAccessPattern(path, WIPEOUT_UID)};
+            if (typeof nodeAccess.getCondition() !== 'undefined') {
+              inferredRule.condition = nodeAccess.getCondition();
+            }
+            retRules.push(inferredRule);
           }
         }
         //update ancestor for children

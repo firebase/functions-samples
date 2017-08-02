@@ -167,7 +167,7 @@ const isContainSorted = (long, short) => {
           index === 0 ? true : arr[index] > arr[index - 1]);
 
   if (!(long.length >= short.length && isSorted(long) && isSorted(short))) {
-    throw `Can't check containess for absorbtion.
+    throw `Can't check containess for absorbtion.\
 Needs two sorted lists, the first one longer than the second.`;
   }
   if (short[0] < long[0] ||
@@ -303,5 +303,6 @@ module.exports = {
   UNDEFINED: UNDEFINED,
   NO_ACCESS: NO_ACCESS,
   SINGLE_ACCESS: SINGLE_ACCESS,
-  MULT_ACCESS: MULT_ACCESS
+  MULT_ACCESS: MULT_ACCESS,
+  condOperation: condOperation
 };
