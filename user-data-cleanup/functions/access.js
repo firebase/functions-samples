@@ -16,7 +16,7 @@
 'use strict';
 
 const exp = require('./expression');
-
+const common = require('./common');
 /**
  * Access Class, used to represent the access status of a write rule or node
  * @param status access status, could be NO_ACCESS/SINGLE_ACCESS/MULT_ACCESS
@@ -64,16 +64,26 @@ Access.prototype.getCondition = function() {
 /**
  * Getter of access pattern
  * @param path path to the current node, list of strings
- * @param placeHolder aut palceholder, e.g. #WIPEOUT_UID
+ * @return accessPattern object with path and an optional condition field
  */
-Access.prototype.getAccessPattern = function(path, placeHolder) {
+Access.prototype.getAccessPattern = function(path) {
   if (path[0] !== 'rules') {
     throw `A valid path starts with 'rules'`;
   }
   const result = path.map(
-      cur => this.getVariableList().includes(cur) ? placeHolder : cur);
+      cur => this.getVariableList().includes(cur) ? common.WIPEOUT_UID : cur);
   result[0] = '';
-  return result.join('/');
+  const ret =  {'path': result.join('/')};
+  let cond = this.getCondition();
+  if (typeof cond !== 'undefined') {
+    // replace any auth variable with holder
+    for (let i = 0; i < this.getVariableList().length; i++) {
+      const re = new RegExp(`\\${this.getVariableList()[i]}\\b`, 'g');
+      cond = cond.replace(re, common.WIPEOUT_UID);
+    }
+    ret.condition = cond;
+  }
+  return ret;
 };
 
 Access.prototype.getVariableList = function() {

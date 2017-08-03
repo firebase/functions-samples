@@ -119,36 +119,37 @@ and exists() now, sibling found`);
       // No valid parent
       expectRefErr(`data.parent()`, `No parent avaliable`);
     });
+
     it('should extract correct content for data references', () => {
       // references containing newData should evaluates to undefined.
       expectRef(`newData.child('from').val()`, undefined);
       // functions val(), exists(), parent(), child()
-      expectRef(`data.val()`, `{/doc/$uid/create}.val()`,
+      expectRef(`data.val()`, `val(rules,doc,$uid,create)`,
          ['rules','doc','$uid','create']);
-      expectRef(`data.child('acc').val()`, `{/users/acc}.val()`,
+      expectRef(`data.child('acc').val()`, `val(rules,users,acc)`,
          ['rules', 'users']);
-      expectRef(`data.child('acc').parent().val()`, `{/users}.val()`,
+      expectRef(`data.child('acc').parent().val()`, `val(rules,users)`,
          ['rules', 'users']);
       expectRef(`data.child('acc').parent().child('acc2').val()`,
-         `{/users/acc2}.val()`, ['rules', 'users']);
+         `val(rules,users,acc2)`, ['rules', 'users']);
       expectRef(`data.child('acc').parent().child('acc2').exists()`,
-          `{/users/acc2}.exists()`, ['rules', 'users']);
+          `exists(rules,users,acc2)`, ['rules', 'users']);
       // variable root
-      expectRef(`root.child('acc').val()`, `{/acc}.val()`);
+      expectRef(`root.child('acc').val()`, `val(rules,acc)`);
       // complex arguments
       expectRef(`root.child('rooms').child(data.child('creator').val()).val()`,
-          `{/rooms/{/rooms/$roomid/creator}.val()}.val()`,
+          `val(rules,rooms,val(rules,rooms,$roomid,creator))`,
           ['rules', 'rooms', '$roomid']);
       expectRef(
           `root.child('rooms').child($roomid).child('members')\
 .child(auth.uid).val()`,
-          `{/rooms/$roomid/members/#WIPEOUT_UID}.val()`);
+          `val(rules,rooms,$roomid,members,#WIPEOUT_UID)`);
     });
   });
 
   it('should deal with condition', () => {
     expectCond(`auth.uid === $uid && data.child('name').val() !== null`,
-        '{/users/$uid/name}.val() !== null', ['rules','users','$uid']);
+        'val(rules,users,$uid,name) !== null', ['rules','users','$uid']);
     expectAccess(`auth.uid === $uid && data.child('name').val() !== null`,
         exp.SINGLE_ACCESS, ['rules','users','$uid']);
   });
@@ -160,14 +161,14 @@ and exists() now, sibling found`);
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {
-          condition: '{/users2/$uid/test}.val() !== null && {/users2/$uid}.exists()',
+          condition: 'val(rules,users2,#WIPEOUT_UID,test) !== null && exists(rules,users2,#WIPEOUT_UID)',
           path: '/users2/#WIPEOUT_UID'
         },
         {path: '/accounts/#WIPEOUT_UID/githubToken'},
         {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
         {path: '/users-say-that/#WIPEOUT_UID/lang'},
         {
-          condition: '$followerUid > 1000',
+          condition: '#WIPEOUT_UID > 1000',
           path: '/followers/$followedUid/#WIPEOUT_UID'
         },
         {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},

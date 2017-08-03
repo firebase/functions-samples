@@ -28,8 +28,7 @@ const common = require('./common');
  * or undefined if expression contains newData.
  */
 const evalRef = (callExp, path) => {
-  const re = /\s*[.()'"]\s*/;
-  if (JSON.stringify(callExp).split(re).includes('newData')) {
+  if (JSON.stringify(callExp).split(/\W/).includes('newData')) {
     // return undefined for newData, any logic expression on this should be true
     return;
   }
@@ -115,10 +114,10 @@ const evalMember = (obj, path) => {
       return result;
 
     case 'val':
-      return ['{' + result.join('/') + '}.val()'];
+      return ['val(' + result.join(',') + ')'];
 
     case 'exists':
-      return ['{' + result.join('/') + '}.exists()'];
+      return ['exists(' + result.join(',') + ')'];
 
     default:
       throw `Only support reference child(), parent(), val() and exists() now, ${obj.property.name} found`;
@@ -138,13 +137,11 @@ const evalIdentifier = (id, path) => {
     }
     switch (id.name) {
       case 'root':
-        return '';
+        return 'rules';
 
       case 'data':
         const p = path.slice();
-        p[0] = '';
         return p;
-
       case 'newData':
         throw 'newData not supported';
     }
