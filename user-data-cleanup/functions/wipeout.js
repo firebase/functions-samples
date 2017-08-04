@@ -20,12 +20,13 @@ const deepcopy = require('deepcopy');
 const request = require('request-promise');
 const rules = require('./parse_rule');
 const sjc = require('strip-json-comments');
-
+const jsep = require('jsep');
 const WRITE_SIGN = '.write';
 const PATH_REGEX = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
 
 const exp = require('./expression');
 const Access = require('./access');
+const eval_cond = require('./eval_cond');
 
 /**
  * Initialize the wipeout library.
@@ -50,9 +51,7 @@ const getConfig = () => {
     return Promise.resolve(config);
   } catch (err) {
     console.log(`Failed to read local configuration.
-Trying to infer from Realtime Database Security Rules...
-
-(If you intended to use local configuration,
+Trying to infer from Realtime Database Security Rules...(If you intended to use local configuration,
 make sure there's a 'wipeout_config.json' file in the
 functions directory with a 'wipeout' field.`, err);
     return readDBRules().then(DBRules => {
@@ -68,17 +67,37 @@ functions directory with a 'wipeout' field.`, err);
   }
 };
 
-// Buid deletion paths from wipeout config
+// Buid deletion paths from wipeout config by swapping
+// in the user authentication id.
 const buildPath = (config, uid) => {
   const paths = deepcopy(config);
-  for (let i = 0, len = config.length; i < len; i++) {
+  const conditions = [];
+  for (let i = 0; i < config.lenth; i++) {
     if (!PATH_REGEX.test(config[i].path)) {
       return Promise.reject('Invalid wipeout Path: ' + config[i].path);
     }
     paths[i].path = config[i].path.replace(common.WIPEOUT_UID, uid.toString());
+
+    conditions.push(checkCondition(paths[i].condition, uid));
   }
-  return Promise.resolve(paths);
+  return Promise.all(conditions).then(res => {
+    for (let i = 0; i < res.length; i++){
+      if (!res[i]){
+        paths[i] = undefined;
+      }
+    }
+    return Promise.resolve(paths);
+  });
 };
+
+
+const checkCondition = (condition, uid) => {
+  const cond = condition.replace(common.WIPEOUT_UID, uid.toString());
+  const obj = jsep(cond);
+  return eval_cond.checkLogic(obj);
+
+};
+
 
 // Read database security rules using REST API.
 const readDBRules = () => {
@@ -173,7 +192,9 @@ const inferWipeoutRule = tree => {
 const deleteUser = deletePaths => {
   const deleteTasks = [];
   for (let i = 0; i < deletePaths.length; i++) {
-    deleteTasks.push(init.db.ref(deletePaths[i].path).remove());
+    if (typeof deletePaths[i] !== 'undefined') {
+      deleteTasks.push(init.db.ref(deletePaths[i].path).remove());
+    }
   }
   return Promise.all(deleteTasks);
 };

@@ -17,9 +17,9 @@
 
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
-const wipeout = require('./wipeout');
-
 admin.initializeApp(functions.config().firebase);
+
+const wipeout = require('./wipeout');
 
 const WIPEOUT_CONFIG = {
     'credential': admin.credential.applicationDefault(),
