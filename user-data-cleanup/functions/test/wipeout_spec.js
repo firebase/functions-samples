@@ -15,13 +15,13 @@
  */
 'use strict';
 
-const common = require('./common.js');
-const admin = common.admin;
-const chai = common.chai;
-const chaiAsPromised = common.chaiAsPromised;
-const expect = common.expect;
-const functions = common.functions;
-const sinon = common.sinon;
+const testCommon = require('./test_common');
+const admin = testCommon.admin;
+const chai = testCommon.chai;
+const chaiAsPromised = testCommon.chaiAsPromised;
+const expect = testCommon.expect;
+const functions = testCommon.functions;
+const sinon = testCommon.sinon;
 
 describe('Wipeout', () => {
   let wipeout, configStub, refStub, confirmStub;
@@ -60,12 +60,12 @@ describe('Wipeout', () => {
       'admin': admin,
       'db': admin.database(),
       'serverValue': admin.database.ServerValue,
-      'functions': functions,
       'DB_URL': functions.config().firebase.databaseURL
     };
 
     wipeout = require('../wipeout');
     wipeout.initialize(WIPEOUT_CONFIG);
+
   });
 
   after(() => {
@@ -73,11 +73,26 @@ describe('Wipeout', () => {
     adminInitStub.restore();
   });
 
-  it('should build correct path', () => {
-    const config = [{'path': '/users/#WIPEOUT_UID'}];
+  //  it('should build correct path', () => {
+  //    const config = [{'path': '/users/#WIPEOUT_UID'}];
+  //    expect(wipeout.buildPath(config, fakeUserId))
+  //        .to.eventually.deep.equal([{'path': `/users/${fakeUserId}`}]);
+  //  });
 
-    expect(wipeout.buildPath(config, fakeUserId))
-        .to.eventually.deep.equal([{'path': `/users/${fakeUserId}`}]);
+  it('should evaluate conditions correctly', () => {
+    expect(wipeout.checkCondition(`0 > 1`, 'uid')).to.eventually.equal(false);
+    expect(wipeout.checkCondition(`1 > 0 && 3 > 1`, 'uid')).to.eventually.equal(true);
+    expect(wipeout.checkCondition(`#WIPEOUT_UID >= 'U12344'`, 'U12345')).to.eventually.equal(true);
+
+    const snapshot1 = sinon.stub(refStub,'once');
+    snapshot1.withArgs('value').resolves({'exists': () => true, 'val': () => 'TEST'});
+    refStub.withArgs(`/users2/U12345/test`).returns({once: snapshot1});
+    expect(wipeout.checkCondition(`exists(rules,users2,#WIPEOUT_UID,test)`, 'U12345')).to.eventually.equal(true);
+    expect(wipeout.checkCondition(`val(rules,users2,#WIPEOUT_UID,test) == 'TEST'`,'U12345')).to.eventually.equal(true);
+   
+    expect(wipeout.checkCondition(`val(rules,users2,#WIPEOUT_UID,test) == 'TEST'`,'U12345')).to.eventually.equal(true);
+
+
   });
 
   it('should delete data in deletePaths', () => {
@@ -101,5 +116,4 @@ describe('Wipeout', () => {
     return expect(wipeout.writeLog(fakeUser))
           .to.eventually.equal('Log added');
   });
-
 });

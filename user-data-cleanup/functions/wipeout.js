@@ -26,7 +26,8 @@ const PATH_REGEX = /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/;
 
 const exp = require('./expression');
 const Access = require('./access');
-const eval_cond = require('./eval_cond');
+const functions = require('firebase-functions');
+
 
 /**
  * Initialize the wipeout library.
@@ -78,11 +79,12 @@ const buildPath = (config, uid) => {
     }
     paths[i].path = config[i].path.replace(common.WIPEOUT_UID, uid.toString());
 
+    // checkCondition returns a promise.
     conditions.push(checkCondition(paths[i].condition, uid));
   }
   return Promise.all(conditions).then(res => {
-    for (let i = 0; i < res.length; i++){
-      if (!res[i]){
+    for (let i = 0; i < res.length; i++) {
+      if (!res[i]) {
         paths[i] = undefined;
       }
     }
@@ -90,12 +92,89 @@ const buildPath = (config, uid) => {
   });
 };
 
+/*****
+Evaluate conditions
+***/
+
+const extractPath = list => {
+  const ret = [''];
+  for (let i = 1; i < list.length; i++) {
+    ret.push(list[i].name);
+  }
+  return ret.join('/');
+};
+
+const evalOperand = obj => {
+  switch (obj.type) {
+    case 'Identifier':
+      return Promise.resolve(obj.name);
+
+    case 'Literal':
+      return Promise.resolve(obj.value);
+
+    case 'CallExpression':
+      switch (obj.callee.name) {
+        case 'exists':
+          return evalExists(obj);
+        case 'val':
+          return evalVal(obj);
+      }
+  }
+};
+
+const evalExists = obj => {
+  if (obj.callee.name !== 'exists') {
+    throw 'Expect exists()';
+  }
+  const loc = extractPath(obj.arguments);
+  var ref = init.db.ref(loc);
+  return ref.once('value').then(snapshot => snapshot.exists());
+};
+
+const evalVal = obj => {
+  if (obj.callee.name !== 'val') {
+    throw 'Expect val()';
+  }
+  const loc = extractPath(obj.arguments);
+  var ref = init.db.ref(loc);
+  return ref.once('value').then(snapshot => snapshot.val());
+};
+
+const evalLogic = (obj) => {
+  switch (obj.type) {
+    case 'CallExpression':
+      return evalExists(obj);
+
+    case 'BinaryExpression':
+      const leftBinary = evalOperand(obj.left);
+      const rightBinary = evalOperand(obj.right);
+
+      return Promise.all([leftBinary, rightBinary])
+          .then(res => eval(`res[0] ${obj.operator} res[1]`));
+
+    case 'LogicalExpression':
+      const leftLogic = evalLogic(obj.left);
+      const rightLogic = evalLogic(obj.right);
+      if (obj.operator === '||') {
+        return Promise.all([leftLogic, rightLogic])
+            .then(res => (res[0] || res[1]));
+      }
+      if (obj.operator === '&&') {
+        return Promise.all([leftLogic, rightLogic])
+            .then(res => (res[0] && res[1]));
+      }
+      throw `Unsupported logic operation in condition`;
+  }
+};
+
+/*****
+End Evaluate conditions
+***/
 
 const checkCondition = (condition, uid) => {
   const cond = condition.replace(common.WIPEOUT_UID, uid.toString());
   const obj = jsep(cond);
-  return eval_cond.checkLogic(obj);
-
+  return evalLogic(obj);
 };
 
 
@@ -244,7 +323,7 @@ exports.cleanupUserData = () => {
  *
  */
 exports.showWipeoutConfig = () => {
-  return init.https.onRequest((req, res) => {
+  return functions.https.onRequest((req, res) => {
     if (req.method === 'GET') {
       return getConfig().then(config => {
         return init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
@@ -266,6 +345,8 @@ and deploy again. <br> <br> ${JSON.stringify(config)}
   });
 };
 
+
+
 // Only expose internel functions to tests.
 if (process.env.NODE_ENV === 'TEST') {
   module.exports.buildPath = buildPath;
@@ -274,4 +355,5 @@ if (process.env.NODE_ENV === 'TEST') {
   module.exports.readDBRules = readDBRules;
   module.exports.deleteUser = deleteUser;
   module.exports.writeLog = writeLog;
+  module.exports.checkCondition = checkCondition;
 }

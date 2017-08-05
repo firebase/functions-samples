@@ -15,10 +15,11 @@
  */
 'use strict';
 
+
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
-admin.initializeApp(functions.config().firebase);
 
+admin.initializeApp(functions.config().firebase);
 const wipeout = require('./wipeout');
 
 const WIPEOUT_CONFIG = {
@@ -26,7 +27,6 @@ const WIPEOUT_CONFIG = {
     'db': admin.database(),
     'serverValue': admin.database.ServerValue,
     'users': functions.auth.user(),
-    'https': functions.https,
     'DB_URL': functions.config().firebase.databaseURL,
   };
 

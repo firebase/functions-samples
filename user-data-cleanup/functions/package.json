@@ -17,6 +17,7 @@
     "chai": "<=3.5",
     "chai-as-promised": "^6.0.0",
     "mocha": "^3.4.2",
-    "sinon": "^2.3.2"
+    "sinon": "^2.3.2",
+    "sinon-stub-promise": "^4.0.0"
   }
 }

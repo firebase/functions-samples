@@ -21,6 +21,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const functions = require('firebase-functions');
 const sinon = require('sinon');
+const sinonStubPromise = require('sinon-stub-promise');
 
 exports.admin = admin;
 exports.chai = chai;
@@ -28,3 +29,4 @@ exports.chaiAsPromised = chaiAsPromised;
 exports.expect = chai.expect;
 exports.functions = functions;
 exports.sinon = sinon;
+exports.sinonStubPromise = sinonStubPromise;

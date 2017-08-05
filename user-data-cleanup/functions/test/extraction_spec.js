@@ -18,9 +18,9 @@
 // unit tests for automatically generated wipeout rules,
 // from RTDB rules and storage rules.
 
-const common = require('./common');
+const testCommon = require('./test_common');
 const exp = require('../expression');
-const expect = common.expect;
+const expect = testCommon.expect;
 const fs = require('fs');
 const jsep = require('jsep');
 const rules = require('../parse_rule');
