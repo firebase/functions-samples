@@ -71,16 +71,18 @@ functions directory with a 'wipeout' field.`, err);
 // Buid deletion paths from wipeout config by swapping
 // in the user authentication id.
 const buildPath = (config, uid) => {
-  const paths = deepcopy(config);
+  const paths = [];
   const conditions = [];
-  for (let i = 0; i < config.lenth; i++) {
+  for (let i = 0; i < config.length; i++) {
     if (!PATH_REGEX.test(config[i].path)) {
       return Promise.reject('Invalid wipeout Path: ' + config[i].path);
     }
-    paths[i].path = config[i].path.replace(common.WIPEOUT_UID, uid.toString());
+    const re = new RegExp(common.WIPEOUT_UID, 'g');
+
+    paths.push({'path':config[i].path.replace(re, uid.toString())});
 
     // checkCondition returns a promise.
-    conditions.push(checkCondition(paths[i].condition, uid));
+    conditions.push(checkCondition(config[i].condition, uid));
   }
   return Promise.all(conditions).then(res => {
     for (let i = 0; i < res.length; i++) {
@@ -88,22 +90,32 @@ const buildPath = (config, uid) => {
         paths[i] = undefined;
       }
     }
-    return Promise.resolve(paths);
+    return Promise.resolve(paths.filter(item => typeof item !== 'undefined'));
   });
 };
 
-/*****
-Evaluate conditions
-***/
-
+/**
+ * Helper function, extract path from argument list
+ * @param list input list
+ * @return path extracted from the argument list
+ */
 const extractPath = list => {
   const ret = [''];
   for (let i = 1; i < list.length; i++) {
-    ret.push(list[i].name);
+    if (list[i].type === 'Identifier') {
+      ret.push(list[i].name);
+    } else if (list[i].type === 'Literal') {
+      ret.push(list[i].value);
+    }
   }
   return ret.join('/');
 };
 
+/**
+ * Helper function, Evaluate operand in conditions
+ * @param obj input object of the operand
+ * @return Promise resolved with the value of the operand
+ */
 const evalOperand = obj => {
   switch (obj.type) {
     case 'Identifier':
@@ -122,6 +134,11 @@ const evalOperand = obj => {
   }
 };
 
+/**
+ * Evaluates exists() methods in conditions, check the DB for existence.
+ * @param obj input object of the operand
+ * @return Promise resolved with true or false
+ */
 const evalExists = obj => {
   if (obj.callee.name !== 'exists') {
     throw 'Expect exists()';
@@ -131,6 +148,11 @@ const evalExists = obj => {
   return ref.once('value').then(snapshot => snapshot.exists());
 };
 
+/**
+ * Evaluates val() methods in conditions, check the DB for data value.
+ * @param obj input object of the operand
+ * @return Promise resolved with query data value
+ */
 const evalVal = obj => {
   if (obj.callee.name !== 'val') {
     throw 'Expect val()';
@@ -140,8 +162,18 @@ const evalVal = obj => {
   return ref.once('value').then(snapshot => snapshot.val());
 };
 
+/**
+ * Evaluates logic expressions in conditions
+ * @param obj input object of the logic expression
+ * @return Promise resolved with true or false value of the logic expression
+ */
 const evalLogic = (obj) => {
   switch (obj.type) {
+    case 'Literal':
+      if (obj.value !== true && obj.value !== false) {
+        throw 'Unsupported Literal in condition';
+      }
+      return Promise.resolve(obj.value);
     case 'CallExpression':
       return evalExists(obj);
 
@@ -150,7 +182,7 @@ const evalLogic = (obj) => {
       const rightBinary = evalOperand(obj.right);
 
       return Promise.all([leftBinary, rightBinary])
-          .then(res => eval(`res[0] ${obj.operator} res[1]`));
+          .then(res => eval(`res[0].toString() ${obj.operator} res[1].toString()`));
 
     case 'LogicalExpression':
       const leftLogic = evalLogic(obj.left);
@@ -164,15 +196,17 @@ const evalLogic = (obj) => {
             .then(res => (res[0] && res[1]));
       }
       throw `Unsupported logic operation in condition`;
+    default:
+      throw 'Unsuppotted logic expression';
   }
 };
 
-/*****
-End Evaluate conditions
-***/
-
 const checkCondition = (condition, uid) => {
-  const cond = condition.replace(common.WIPEOUT_UID, uid.toString());
+  if (typeof condition === 'undefined') {
+    return Promise.resolve(true);
+  }
+  const re = new RegExp(common.WIPEOUT_UID, 'g');
+  const cond = condition.toString().replace(re, '\'' + uid.toString() + '\'');
   const obj = jsep(cond);
   return evalLogic(obj);
 };

@@ -171,7 +171,10 @@ and exists() now, sibling found`);
           condition: '#WIPEOUT_UID > 1000',
           path: '/followers/$followedUid/#WIPEOUT_UID'
         },
-        {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
+        { 
+          condition: "#WIPEOUT_UID === val(rules,stripe_customers,$uid,charges)",
+          path: '/stripe_customers/$uid/sources/$chargeId'
+        },
         {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
