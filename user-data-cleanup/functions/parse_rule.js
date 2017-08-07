@@ -107,11 +107,11 @@ const parseBinary = (obj, path) => {
   let newCond;
   const condLeft = getCond(obj.left, path);
   const condRight = getCond(obj.right, path);
-  if (typeof condLeft !== 'undefined' && typeof condRight !== 'undefined') {
+  if (condLeft !== null && condRight !== null) {
     newCond = `${condLeft} ${obj.operator} ${condRight}`;
   } else {
-    // if either part is undefined(contains newData), the condition is ignored.
-    newCond = undefined;
+    // if either part is null(contains newData), the condition is ignored.
+    newCond = null;
   }
   return new Expression(exp.TRUE, [], newCond);
 };
@@ -148,7 +148,7 @@ const getAuthExp = (obj, op) => {
  *
  * @param obj operand of BinaryExpression
  * @param path, list of strings staring with 'rules'
- * @return string representing value of the operand
+ * @return string representing value of the operand or null
  */
 const getCond = (obj, path) => {
   switch (obj.type) {
