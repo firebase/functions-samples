@@ -23,17 +23,17 @@ const NO_ACCESS = 0;
 const SINGLE_ACCESS = 1;
 const MULT_ACCESS = 2;
 
-function Expression(value, list, condition = undefined) {
+function Expression(value, list, condition = null) {
   if (!checkValue(value)) {
     throw `Not a valid boolean value, can't initialize.`;
   }
   this.booleanValue = value;
-  if (typeof condition !== 'string' && typeof condition !== 'undefined') {
+  if (typeof condition !== 'string' && condition !== null) {
     throw `Condition needs to be a string or undefined`;
   }
   if (value === FALSE) {
     //An expression with FALSE booleanValue should not have conditions
-    condition = undefined;
+    condition = null;
   }
   this.condition = condition;
   if (value !== UNDEFINED) {
@@ -113,7 +113,7 @@ Expression.prototype.getConjunctionLists = function() {
 };
 
 /**
- * Getter of condition
+ * Getter of condition, could be null if no condition
  */
 Expression.prototype.getCondition = function() {
   return this.condition;
@@ -212,13 +212,13 @@ const condOperation = (left, right, op) => {
     throw `Invalid operation ${op} for conditions`;
   }
 
-  if (typeof left === 'undefined' && typeof right === 'undefined') {
-    return undefined;
+  if (left === null && right === null) {
+    return null;
   }
-  if (typeof left === 'undefined') {
+  if (left === null) {
     return right;
   }
-  if (typeof right === 'undefined') {
+  if (right === null) {
     return left;
   }
   return `${left} ${op} ${right}`;

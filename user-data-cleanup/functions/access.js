@@ -17,26 +17,31 @@
 
 const exp = require('./expression');
 const common = require('./common');
+
 /**
  * Access Class, used to represent the access status of a write rule or node
  * @param status access status, could be NO_ACCESS/SINGLE_ACCESS/MULT_ACCESS
  * @param list variable list, should be empty list if status is NO/SINGLE,
  * else should be the list of literal in the conjunction of corresponding exp
+ * @param condition optional condition for access status, inherited directly from
+ * corresponding expression, default null
  */
-function Access(status, list, condition = undefined) {
+function Access(status, list, condition = null) {
   if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
     throw 'Not a valid access status.';
   }
   this.accessStatus = status;
+
   if (status !== exp.SINGLE_ACCESS) {
     this.variableList = [];
+    this.condition = null;
     return;
   }
   if (!checkVariableList(list)) {
     throw 'Not a valid list of variable for single access.';
   }
-  this.variableList = list;
   this.condition = condition;
+  this.variableList = list;
 }
 
 /**
@@ -55,7 +60,7 @@ Access.prototype.getAccessStatus = function() {
 };
 
 /**
- * Getter of condition
+ * Getter of condition, could be null if no condition
  */
 Access.prototype.getCondition = function() {
   return this.condition;
@@ -73,9 +78,9 @@ Access.prototype.getAccessPattern = function(path) {
   const result = path.map(
       cur => this.getVariableList().includes(cur) ? common.WIPEOUT_UID : cur);
   result[0] = '';
-  const ret =  {'path': result.join('/')};
+  const ret = {'path': result.join('/')};
   let cond = this.getCondition();
-  if (typeof cond !== 'undefined') {
+  if (cond !== null) {
     // replace any auth variable with holder
     for (let i = 0; i < this.getVariableList().length; i++) {
       const re = new RegExp(`\\${this.getVariableList()[i]}\\b`, 'g');
@@ -143,8 +148,10 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
           if (noAdditionalAccess) {
             // If the child node has single access, the child node condition
             // is the OR of child rule condition and parent node condition.
-            const newCond = exp.condOperation(ancestor.getCondition(), ruleAccess.getCondition(), '||');
-            return new Access(exp.SINGLE_ACCESS, ancestor.getVariableList(), newCond);
+            const newCond = exp.condOperation(ancestor.getCondition(),
+                ruleAccess.getCondition(), '||');
+            return new Access(exp.SINGLE_ACCESS, ancestor.getVariableList(),
+                newCond);
           }
           return new Access(exp.MULT_ACCESS, []);
       }

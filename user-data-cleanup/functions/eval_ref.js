@@ -30,7 +30,7 @@ const common = require('./common');
 const evalRef = (callExp, path) => {
   if (JSON.stringify(callExp).split(/\W/).includes('newData')) {
     // return undefined for newData, any logic expression on this should be true
-    return;
+    return null;
   }
 
   const refValue = evalCallExp(callExp, path);
@@ -120,7 +120,8 @@ const evalMember = (obj, path) => {
       return ['exists(' + result.join(',') + ')'];
 
     default:
-      throw `Only support reference child(), parent(), val() and exists() now, ${obj.property.name} found`;
+      throw `Only support reference child(), parent(), val() \
+and exists() now, ${obj.property.name} found`;
   }
 };
 

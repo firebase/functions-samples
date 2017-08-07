@@ -30,7 +30,7 @@ const wipeout = require('../wipeout');
 
 // path is only used to repalce 'data' variable in write rule,
 // otherwise uses dummy path in tests.
-const pathHolder = ['rules','#'];
+const pathHolder = ['rules', '#'];
 
 const expectAccess = (rule, access, path = pathHolder) =>
     expect(rules.parseWriteRule(rule, path).getAccessStatus())
@@ -122,10 +122,10 @@ and exists() now, sibling found`);
 
     it('should extract correct content for data references', () => {
       // references containing newData should evaluates to undefined.
-      expectRef(`newData.child('from').val()`, undefined);
+      expectRef(`newData.child('from').val()`, null);
       // functions val(), exists(), parent(), child()
       expectRef(`data.val()`, `val(rules,doc,$uid,create)`,
-         ['rules','doc','$uid','create']);
+         ['rules', 'doc', '$uid', 'create']);
       expectRef(`data.child('acc').val()`, `val(rules,users,acc)`,
          ['rules', 'users']);
       expectRef(`data.child('acc').parent().val()`, `val(rules,users)`,
@@ -151,7 +151,7 @@ and exists() now, sibling found`);
     expectCond(`auth.uid === $uid && data.child('name').val() !== null`,
         'val(rules,users,$uid,name) !== null', ['rules','users','$uid']);
     expectAccess(`auth.uid === $uid && data.child('name').val() !== null`,
-        exp.SINGLE_ACCESS, ['rules','users','$uid']);
+        exp.SINGLE_ACCESS, ['rules', 'users', '$uid']);
   });
 
   it('should extract correct wipeout rules from RTBD rules ', () => {
@@ -161,7 +161,8 @@ and exists() now, sibling found`);
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {
-          condition: 'val(rules,users2,#WIPEOUT_UID,test) !== null && exists(rules,users2,#WIPEOUT_UID)',
+          condition: `val(rules,users2,#WIPEOUT_UID,test) !== null && \
+exists(rules,users2,#WIPEOUT_UID)`,
           path: '/users2/#WIPEOUT_UID'
         },
         {path: '/accounts/#WIPEOUT_UID/githubToken'},
