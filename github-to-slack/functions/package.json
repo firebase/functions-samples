@@ -2,7 +2,6 @@
   "name": "github-to-slack-functions",
   "description": "Firebase Functions that posts new GitHub commits to a Slack channel.",
   "dependencies": {
-    "crypto": "0.0.3",
     "firebase-admin": "^4.1.2",
     "firebase-functions": "^0.5.1",
     "request": "^2.80.0",
