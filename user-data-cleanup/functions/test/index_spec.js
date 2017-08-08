@@ -15,24 +15,10 @@
  */
 'use strict';
 
-const admin = require('firebase-admin');
-const functions = require('firebase-functions');
-const wipeout = require('./wipeout');
-
-admin.initializeApp(functions.config().firebase);
-
-const WIPEOUT_CONFIG = {
-    'credential': admin.credential.applicationDefault(),
-    'db': admin.database(),
-    'serverValue': admin.database.ServerValue,
-    'users': functions.auth.user(),
-    'https': functions.https,
-    'DB_URL': functions.config().firebase.databaseURL,
-  };
-
-wipeout.initialize(WIPEOUT_CONFIG);
-
-exports.cleanupUserData = wipeout.cleanupUserData();
-
-exports.showWipeoutConfig = wipeout.showWipeoutConfig();
+describe('Wipeout', () => {
+  require('./expression_spec.js');
+  require('./wipeout_spec.js');
+  require('./access_spec.js');
+  require('./extraction_spec.js');
+});
 
