@@ -51,7 +51,7 @@ Demo.prototype.onAuthStateChanged = function(user) {
   }
 };
 
-// Initiates the sign-in flow using LinkedIn sign in in a popup.
+// Initiates the sign-in flow using GoogleAuthProvider sign in in a popup.
 Demo.prototype.signIn = function() {
   firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
 };
