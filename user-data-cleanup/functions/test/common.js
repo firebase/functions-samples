@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 'use strict';
-
+// potential setups which cloud be shared by multiple test files.
 const admin = require('firebase-admin');
+const chai = require('chai');
+const chaiAsPromised = require('chai-as-promised');
 const functions = require('firebase-functions');
-const wipeout = require('./wipeout');
+const sinon = require('sinon');
 
-admin.initializeApp(functions.config().firebase);
-
-const WIPEOUT_CONFIG = {
-    'credential': admin.credential.applicationDefault(),
-    'db': admin.database(),
-    'serverValue': admin.database.ServerValue,
-    'users': functions.auth.user(),
-    'https': functions.https,
-    'DB_URL': functions.config().firebase.databaseURL,
-  };
-
-wipeout.initialize(WIPEOUT_CONFIG);
-
-exports.cleanupUserData = wipeout.cleanupUserData();
-
-exports.showWipeoutConfig = wipeout.showWipeoutConfig();
-
+exports.admin = admin;
+exports.chai = chai;
+exports.chaiAsPromised = chaiAsPromised;
+exports.expect = chai.expect;
+exports.functions = functions;
+exports.sinon = sinon;
