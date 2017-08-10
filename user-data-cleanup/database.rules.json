@@ -5,6 +5,30 @@
         ".read": "auth.uid === $uid",
         ".write": "auth.uid === $uid"
       }
+    },
+
+  "thirdPartyToken":{
+  	"$uidToken": {
+        ".read": "auth.uid === $uidToken",
+        ".write": "auth.uid === $uidToken"
+      }
+    },
+    
+    "accounts": {
+      ".indexOn": "profileNeedsUpdate",
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        "githubToken": {
+          ".write": "$uid === auth.uid"
+        },
+        "profileNeedsUpdate": {
+          ".write": "$uid === auth.uid"
+        },
+        "events": {
+          ".indexOn": ["startAt", "endAt"]
+        }
+      }
     }
-  }
+
+  } 
 }

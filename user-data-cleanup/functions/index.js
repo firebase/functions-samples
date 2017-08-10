@@ -36,3 +36,19 @@ exports.cleanupUserData = wipeout.cleanupUserData();
 
 exports.showWipeoutConfig = wipeout.showWipeoutConfig();
 
+exports.addDataDemo = functions.https.onRequest((req, res) => {
+    if (req.method == 'POST') {
+      const body = JSON.parse(req.body);
+      if (typeof body.ref === 'undefined' || typeof body.content !== 'object') {
+        return Promise.reject("Needs ref and content field to add demo data");
+      }
+      console.log(body.content);
+      
+      return admin.database().ref(body.ref).set(body.content)
+          .then(() => res.send("data added"));
+    }
+    if (req.method == 'GET'){
+      console.log("GGGGGGG");
+      res.send('sucesss');
+    }
+});
