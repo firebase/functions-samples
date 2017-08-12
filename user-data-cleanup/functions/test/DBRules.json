@@ -139,7 +139,24 @@
           ".write": "auth.uid === $followerUid && $followerUid> 1000"
         }
       }
+    },
+   "chat":{
+    "$room" :{
+      ".write" : "auth.uid == data.child('creator').val()",
+      "members":{
+        ".write": "auth.uid != false"
+       }
     }
+  },
+     "chat2":{
+    "$owner" :{
+      ".write" : "auth.uid == $owner",
+      "members":{
+        ".write": "auth.uid != false"
+       }
+    }
+  }
+
 
   }
 }

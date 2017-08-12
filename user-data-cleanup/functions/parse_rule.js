@@ -141,9 +141,9 @@ const getAuthExp = (obj, op, path) => {
         new Expression(exp.FALSE, []);
   }
   if (obj.type === 'CallExpression') {
-    const dataRef = refs.evalRef(obj, path)
-    return new Expression(exp.UNDEFINED, [[refs.evalRef(obj, path)]],
-        `${common.WIPEOUT_UID} === ${dataRef}`);
+    //const dataRef = refs.evalRef(obj, path)
+    return new Expression(exp.UNDEFINED, [[refs.evalRef(obj, path)]]);
+        //`${common.WIPEOUT_UID} === ${dataRef}`);
   }
   return new Expression(exp.TRUE, []);// May contain data references.
 };

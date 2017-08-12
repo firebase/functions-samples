@@ -68,21 +68,55 @@ functions directory with a 'wipeout' field.`, err);
   }
 };
 
+//const evalAuthVar = (config, uid) => {
+//  const candidates = [];
+//  for (let i = 0; i < config.authVar.length; i++) {
+//    const pathList = config.authVar[i].slice(4, -1).split(',');
+//    const ref = init.db.ref(pathList.slice(0, -2).join('/'));
+//    const varValues = ref.orderByChild(pathList.slice(-1)[0]].equalTo(uid.toString()).once('value', snapshot => snapshot.val());
+//    candidates.push(varValues);
+//  }
+//  Promise.all(candidates).then(res => {
+//    console.log(res);
+//    let ret = {};
+//    for (let i = 0; i < res.length; i++) {
+//      const varName = config.authVar[i].slice(-2)[0]
+//      ret[varName] = intersection(ret[varName] ,res[i]);
+//    }
+//  });
+//};
+
+// simple version only dealing with a single authVar
+const evalAuthVar = (config, uid) => {
+  if (config.authVar.length ! =1) {
+    throw 'This version only deals with authVar with a single value';
+  }
+  const authVar = config.authVar[0];
+    const pathList = authVar.slice(4, -1).split(',');
+    const ref = init.db.ref(pathList.slice(0, -2).join('/'));
+    return ref.orderByChild(pathList.slice(-1)[0]).equalTo(uid.toString())
+        .once('value', snapshot => snapshot.val())
+        .then(res => {[authVar.slice(-2)[0]]: Object.keys(res)});
+
+
+};
+
+
 // Buid deletion paths from wipeout config by swapping
 // in the user authentication id.
-const buildPath = (config, uid) => {
+const buildPath = (configs, uid) => {
   const paths = [];
   const conditions = [];
-  for (let i = 0; i < config.length; i++) {
-    if (!PATH_REGEX.test(config[i].path)) {
-      return Promise.reject('Invalid wipeout Path: ' + config[i].path);
+  for (let i = 0; i < configs.length; i++) {
+    if (!PATH_REGEX.test(configs[i].path)) {
+      return Promise.reject('Invalid wipeout Path: ' + configs[i].path);
     }
     const re = new RegExp(common.WIPEOUT_UID, 'g');
 
-    paths.push({'path':config[i].path.replace(re, uid.toString())});
+    paths.push({'path': configs[i].path.replace(re, uid.toString())});
 
     // checkCondition returns a promise.
-    conditions.push(checkCondition(config[i].condition, uid));
+    conditions.push(checkCondition(configs[i].condition, uid));
   }
   return Promise.all(conditions).then(res => {
     for (let i = 0; i < res.length; i++) {
@@ -244,7 +278,8 @@ const inferWipeoutRule = tree => {
   const initial = {
     node: tree,
     path: [],
-    ancestorAccess: new Access(exp.NO_ACCESS, [])
+    ancestorAccess: new Access(exp.NO_ACCESS, []),
+    ancestorPath: ''
   };
   queue.push(initial);
 
@@ -253,6 +288,7 @@ const inferWipeoutRule = tree => {
     const node = obj.node;
     const path = obj.path;
     let ancestor = obj.ancestorAccess;
+    let ancestorPath = obj.ancestorPath;
 
     if (typeof node === 'object') {
       const keys = Object.keys(node);
@@ -265,14 +301,17 @@ const inferWipeoutRule = tree => {
 
         if (nodeAccess.getAccessStatus() === exp.MULT_ACCESS) {
           if (ancestor.getAccessStatus() === exp.SINGLE_ACCESS) {
-            retRules.push(
-            {'except': nodeAccess.getAccessPattern(path)['path']});
+            const ancestorConfig = retRules.filter(o => o.path === ancestorPath);
+            const p = path.slice();
+            p[0] = '';
+            ancestorConfig[0].except = p.join('/');
           }
           continue; // Won't go into subtree of MULT_ACCESS nodes
 
         } else if (nodeAccess.getAccessStatus() === exp.SINGLE_ACCESS) {
           if (ancestor.getAccessStatus() === exp.NO_ACCESS) {
             retRules.push(nodeAccess.getAccessPattern(path));
+            ancestorPath = nodeAccess.getAccessPattern(path)['path'];
           }
         }
         // Update ancestor for children
@@ -285,7 +324,8 @@ const inferWipeoutRule = tree => {
         const newObj = {
           node: node[keys[i]],
           path: newPath,
-          ancestorAccess: ancestor
+          ancestorAccess: ancestor,
+          ancestorPath: ancestorPath
         };
         queue.push(newObj);
       }

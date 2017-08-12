@@ -88,7 +88,7 @@ describe('Auto generation of rules', () => {
         'room': {
           '$creator': {
             '.write': 'auth.uid === $creator',
-            '$member': {
+            'member': {
               '.write': 'auth.uid != null'
             }
           }
@@ -97,8 +97,10 @@ describe('Auto generation of rules', () => {
     };
     expect(wipeout.inferWipeoutRule(ruleTree)).to.deep
         .equal([
-        {path: '/room/#WIPEOUT_UID'},
-        {except: '/room/$creator/$member'}]);
+        {
+          path: '/room/#WIPEOUT_UID',
+          except: '/room/$creator/member'
+        }]);
   });
 
   describe('should deal with data references', () => {
@@ -165,16 +167,27 @@ and exists() now, sibling found`);
 exists(rules,users2,#WIPEOUT_UID)`,
           path: '/users2/#WIPEOUT_UID'
         },
+
+        {
+          path: '/chat/$room',
+          authVar: ['val(rules,chat,$room,creator)'],
+          except: '/chat/$room/members'
+        },
+
+        {
+          'path': '/chat2/#WIPEOUT_UID',
+          'except': '/chat2/$owner/members'
+        },
         {path: '/accounts/#WIPEOUT_UID/githubToken'},
         {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
         {path: '/users-say-that/#WIPEOUT_UID/lang'},
         {
-          condition: '#WIPEOUT_UID > 1000',
-          path: '/followers/$followedUid/#WIPEOUT_UID'
+          path: '/followers/$followedUid/#WIPEOUT_UID',
+          condition: '#WIPEOUT_UID > 1000'
         },
         { 
-          condition: "#WIPEOUT_UID === val(rules,stripe_customers,$uid,charges)",
-          path: '/stripe_customers/$uid/sources/$chargeId'
+          path: '/stripe_customers/$uid/sources/$chargeId',
+          authVar: ['val(rules,stripe_customers,$uid,charges)']
         },
         {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
