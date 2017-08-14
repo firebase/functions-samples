@@ -46,7 +46,8 @@ function Demo() {
     this.basicButton.addEventListener('click', this.basic.bind(this));
     this.tokenButton.addEventListener('click', this.token.bind(this));
     this.accountsButton.addEventListener('click', this.accounts.bind(this));
-
+    // Demo variables
+    this.chatRoomId = 1;
   }.bind(this));
 }
 
@@ -79,9 +80,11 @@ Demo.prototype.token = function() {
 
 
 Demo.prototype.chat = function() {
-  const body = {ref: '/chat/room/', content:{creator: this.user.uid, members: [1,2,3]}};
+  const body = {
+    ref: `/chat/room${this.chatRoomId}`,
+    content:{creator: this.user.uid, members: [1,2,3], name: 'Chat Name'}};
   this.addDataDemo(body);
-  //firebase.database().ref('/chat/room').set();
+  this.chatRoomId += 1;
 };
 
 

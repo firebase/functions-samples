@@ -28,7 +28,16 @@
           ".indexOn": ["startAt", "endAt"]
         }
       }
+    },
+   "chat":{
+    "$room" :{
+      ".write" : "auth.uid == data.child('creator').val()",
+      "members":{
+        ".write": "auth.uid != false"
+       }
     }
+  }
+
 
   } 
 }

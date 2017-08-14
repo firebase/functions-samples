@@ -44,8 +44,13 @@ exports.initialize = wipeoutConfig => {
   return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(false);
 };
 
-// Get wipeout configuration from wipeout_config.json,
-// or else try to infer from RTDB rules.
+
+/**
+ * Get wipeout configuration from wipeout_config.json,
+ * or else try to infer from RTDB rules.
+ *
+ * @return Wipeout rules(config)
+ */
 const getConfig = () => {
   try {
     const config = require('./wipeout_config.json').wipeout;
@@ -68,68 +73,205 @@ functions directory with a 'wipeout' field.`, err);
   }
 };
 
-//const evalAuthVar = (config, uid) => {
-//  const candidates = [];
-//  for (let i = 0; i < config.authVar.length; i++) {
-//    const pathList = config.authVar[i].slice(4, -1).split(',');
-//    const ref = init.db.ref(pathList.slice(0, -2).join('/'));
-//    const varValues = ref.orderByChild(pathList.slice(-1)[0]].equalTo(uid.toString()).once('value', snapshot => snapshot.val());
-//    candidates.push(varValues);
-//  }
-//  Promise.all(candidates).then(res => {
-//    console.log(res);
-//    let ret = {};
-//    for (let i = 0; i < res.length; i++) {
-//      const varName = config.authVar[i].slice(-2)[0]
-//      ret[varName] = intersection(ret[varName] ,res[i]);
-//    }
-//  });
-//};
 
-// simple version only dealing with a single authVar
-const evalAuthVar = (config, uid) => {
-  if (config.authVar.length ! =1) {
-    throw 'This version only deals with authVar with a single value';
-  }
-  const authVar = config.authVar[0];
-    const pathList = authVar.slice(4, -1).split(',');
-    const ref = init.db.ref(pathList.slice(0, -2).join('/'));
-    return ref.orderByChild(pathList.slice(-1)[0]).equalTo(uid.toString())
-        .once('value', snapshot => snapshot.val())
-        .then(res => {[authVar.slice(-2)[0]]: Object.keys(res)});
-
-
-};
-
-
-// Buid deletion paths from wipeout config by swapping
-// in the user authentication id.
-const buildPath = (configs, uid) => {
-  const paths = [];
-  const conditions = [];
+/**
+ * Preprocessing of wipeout config at execution time
+ * Swap any authentication place holder with uid of deleted account.
+ *
+ * @param configs input list of config
+ * @param uid autentication id of deleted account
+ * @return configs after processing
+ */
+const preProcess = (configs, uid) => {
+  const newConfigs = deepcopy(configs);
   for (let i = 0; i < configs.length; i++) {
     if (!PATH_REGEX.test(configs[i].path)) {
       return Promise.reject('Invalid wipeout Path: ' + configs[i].path);
     }
     const re = new RegExp(common.WIPEOUT_UID, 'g');
-
-    paths.push({'path': configs[i].path.replace(re, uid.toString())});
-
-    // checkCondition returns a promise.
-    conditions.push(checkCondition(configs[i].condition, uid));
+    newConfigs[i].path = newConfigs[i].path.replace(re, uid.toString());
   }
-  return Promise.all(conditions).then(res => {
+  return newConfigs;
+};
+
+
+/**
+ * Evaluate conditions at runtime, filter out configs with false condition,
+ * remove condition field after filtering.
+ *
+ * @param configs input list of config
+ * @param uid autentication id of deleted account
+ * @return configs after filtering
+ */
+const filterCondition = (configs, uid) => {
+  const newConfigs = deepcopy(configs);
+  const candidates = [];
+  // Create list of Promises returned by checkcondition()
+  for (let i = 0; i < configs.length; i++) {
+    candidates.push(checkCondition(configs[i].condition, uid));
+    delete newConfigs[i].condition;
+  }
+  return Promise.all(candidates).then(res => {
     for (let i = 0; i < res.length; i++) {
       if (!res[i]) {
-        paths[i] = undefined;
+        newConfigs[i] = null;
       }
     }
-    return Promise.resolve(paths.filter(item => typeof item !== 'undefined'));
+    return newConfigs.filter(item => item !== null);
+  });
+};
+
+/**
+ * Evaluate authVar at execution time for a single config
+ * Current only support one authVar.
+ * Replace variables in path by possible values of authVar.
+ * e.g. authVar $room =>['room1','room2'], input config.path = /chat/$rooms
+ * A list of two configs with path '/chat/room1' and path '/chat/room2' will
+ * be returned.
+ *
+ * @param configs input config
+ * @param uid autentication id of deleted account
+ * @return configs list of configs after Evaluation,
+ */
+
+const evalSingleAuthVar = (config, uid) => {
+  if (config.authVar.length !== 1) {
+    console.log('This version only deals with authVar with a single value');
+    return []; // This config ignored.
+  }
+  const authVar = config.authVar[0];
+  const pathList = authVar.slice(4, -1).split(',');
+  const ref = init.db.ref(pathList.slice(1, -2).join('/'));
+  return ref.orderByChild(pathList.slice(-1)[0]).equalTo(uid.toString())
+      .once('value')
+      .then(res => {
+        const obj = {[pathList.slice(-2)[0]]: Object.keys(res.val())};
+        const configList = [];
+        const varName = Object.keys(obj)[0];
+        const varList = obj[varName];
+        if (!config.path.split('/').includes(varName)) {
+          return [];
+        }
+        for (let i = 0; i < varList.length; i++) {
+          const temp = deepcopy(config);
+          temp.path = config.path.replace(varName, varList[i]);
+          delete temp.authVar;
+          configList.push(temp);
+        }
+        return configList;
+      });
+};
+
+/**
+ * Evaluate authVar at execution time for all configs
+ *
+ * @param configs input list of configs
+ * @param uid autentication id of deleted account
+ * @return configs new list of configs
+ */
+const evalAuthVars = (configs, uid) => {
+  const candidates = [];
+  let evalConfigs = [];
+  for (let i = 0; i < configs.length; i++) {
+    if ('authVar' in configs[i]) {
+      candidates.push(evalSingleAuthVar(configs[i], uid));
+    } else {
+      evalConfigs.push(configs[i]);
+    }
+  }
+  return Promise.all(candidates).then(res => {
+    for (let i = 0; i < res.length; i++) {
+      evalConfigs = evalConfigs.concat(res[i]);
+    }
+    return evalConfigs;
+  });
+};
+
+
+/**
+ * Evaluate 'except' field at execution time for a single config
+ * Current only support exceptions of one level.
+ * e.g. input config.path = /chat/$rooms, config.except = /chat/$room/member,
+ * and a /chat/$room directory has 3 children creator, name, member.
+ * A list of two configs with path /chat/$room/creator
+ * and path /chat/$room/name will be returned.
+ * config.except = /chat/$room/member/groupA is a two level exception
+ * and is not supported
+ *
+ * @param configs input config
+ * @param uid autentication id of deleted account
+ * @return configs list of configs after processing
+ */
+const evalSingleExcept = (config) => {
+  const removeTail = l => l[l.length - 1] === '' ? l.slice(0, l.length - 1) : l;
+  const pathList = removeTail(config.path.split('/'));
+  const exceptList = removeTail(config.except.split('/'));
+
+  if (exceptList.length - pathList > 1) {
+    console.log('This version only supports single level exceptions');
+    return []; // This config ingored.
+  }
+  const ref = init.db.ref(pathList.slice(1).join('/'));
+  return ref.once('value')
+      .then(res => {
+        const children = [];
+        res.forEach(child => {
+          children.push(child.key);
+          return; // Returning true will cancel the enumeration
+          });
+        return children;
+      })
+      .then(children => {
+        console.log("CHILDREN", children);
+        const exception = exceptList[exceptList.length - 1];
+        if (!children.includes(exception)) {
+          // return the parent path without exception
+          const fakeException = deepcopy(config);
+          delete fakeException.except;
+          return [fakeException];
+        } else {
+          const configList = [];
+          for (let i = 0; i < children.length; i++) {
+            if (children[i] !== exception) {
+              const newConfig = deepcopy(config);
+              delete newConfig.except;
+              newConfig.path = pathList.join('/') + `/${children[i]}`;
+              configList.push(newConfig);
+            }
+          }
+          return configList;
+        }
+      });
+};
+
+/**
+ * Evaluate exception at execution time for all configs
+ *
+ * @param configs input list of configs
+ * @param uid autentication id of deleted account
+ * @return configs new list of configs
+ */
+const evalExcepts = (configs) => {
+  const candidates = [];
+  let evalConfigs = [];
+  for (let i = 0; i < configs.length; i++) {
+    if ('except' in configs[i]) {
+      candidates.push(evalSingleExcept(configs[i]));
+    } else {
+      evalConfigs.push(configs[i]);
+    }
+  }
+  return Promise.all(candidates).then(res => {
+    for (let i = 0; i < res.length; i++) {
+      evalConfigs = evalConfigs.concat(res[i]);
+    }
+    return evalConfigs;
   });
 };
 
 /**
  * Helper function, extract path from argument list
+ *
  * @param list input list
  * @return path extracted from the argument list
  */
@@ -147,6 +289,7 @@ const extractPath = list => {
 
 /**
  * Helper function, Evaluate operand in conditions
+ *
  * @param obj input object of the operand
  * @return Promise resolved with the value of the operand
  */
@@ -170,6 +313,7 @@ const evalOperand = obj => {
 
 /**
  * Evaluates exists() methods in conditions, check the DB for existence.
+ *
  * @param obj input object of the operand
  * @return Promise resolved with true or false
  */
@@ -184,6 +328,7 @@ const evalExists = obj => {
 
 /**
  * Evaluates val() methods in conditions, check the DB for data value.
+ *
  * @param obj input object of the operand
  * @return Promise resolved with query data value
  */
@@ -198,6 +343,7 @@ const evalVal = obj => {
 
 /**
  * Evaluates logic expressions in conditions
+ *
  * @param obj input object of the logic expression
  * @return Promise resolved with true or false value of the logic expression
  */
@@ -235,6 +381,14 @@ const evalLogic = (obj) => {
   }
 };
 
+
+/**
+ * Check a condition at execution time
+ *
+ * @param obj condition
+ * @param uid autentication id of deleted account
+ * @return true or false value of the condition
+ */
 const checkCondition = (condition, uid) => {
   if (typeof condition === 'undefined') {
     return Promise.resolve(true);
@@ -245,8 +399,11 @@ const checkCondition = (condition, uid) => {
   return evalLogic(obj);
 };
 
-
-// Read database security rules using REST API.
+/**
+ * Read database security rules using REST API.
+ *
+ * @return database security rules
+ */
 const readDBRules = () => {
   return init.credential.getAccessToken()
   .then(snapshot => {
@@ -263,15 +420,26 @@ const readDBRules = () => {
   });
 };
 
-// Extract wipeout rules from RTDB rules.
+/**
+ * Parse database security rules and extract wipeout rules(user data location).
+ *
+ * @param DBRules database security rules in string form
+ * @return wipeout rules
+ */
 const extractFromDBRules = DBRules => {
   const rules = JSON.parse(sjc(DBRules));
   const inferredRules = inferWipeoutRule(rules);
   return inferredRules;
 };
 
-// BFS traverse of RTDB rules, check all the .write rules
-// for potential user data path.
+
+/**
+ * Infer wipeout rules from databse security rules by traversing the rules tree
+ * and analysis the write rules.
+ *
+ * @param DBRules database security rules as a tree-structured json object
+ * @return wipeout rules
+ */
 const inferWipeoutRule = tree => {
   const queue = [];
   const retRules = [];
@@ -334,6 +502,28 @@ const inferWipeoutRule = tree => {
   return retRules;
 };
 
+/**
+ * Remove trailing free variables (variables starting with $) in paths.
+ * Ignore any configs which still have free variables afterwards.
+ *
+ * @param configs input configurations
+ * @return configs with (multiple) tailing free variables removed.
+ */
+const removeFreeVars = configs => {
+  const newConfigs = [];
+  for (let i = 0; i < configs.length; i++) {
+    const pathList = configs[i].path.split('/');
+    let j = pathList.length - 1;
+    while (j > 0 && (pathList[j].startsWith('$') || pathList[j] === '')) {
+      j = j - 1;
+    }
+    const newPath = pathList.slice(0, j + 1).join('/');
+    if (!newPath.includes('$') && newPath !== '') {
+      newConfigs.push({path: newPath});
+    }
+  }
+  return newConfigs;
+};
 
 
 
@@ -349,18 +539,17 @@ const deleteUser = deletePaths => {
       deleteTasks.push(init.db.ref(deletePaths[i].path).remove());
     }
   }
-  return Promise.all(deleteTasks);
+  return Promise.all(deleteTasks).then(() => deletePaths);
 };
 
 /**
- * Write log into RTDB with displayName.
+ * Write log into RTDB with timestamp and deleted paths.
  *
  * @param data Deleted User.
- * TODO(dzdz): check for current wipeout path
  */
-const writeLog = data => {
+const writeLog = (data, paths) => {
   return init.db.ref(`${common.BOOK_KEEPING_PATH}/history/${data.uid}`)
-      .set(init.serverValue.TIMESTAMP);
+      .set({timestamp: init.serverValue.TIMESTAMP, paths: paths});
 };
 
 /**
@@ -385,9 +574,16 @@ exports.cleanupUserData = () => {
         return Promise.resolve(config);
       }
     })
-    .then(config => buildPath(config, event.data.uid))
+    .then(configs => {
+      const newConfigs = preProcess(configs, event.data.uid);
+      console.log(configs);
+      return filterCondition(newConfigs, event.data.uid);
+    })
+    .then(configs => {console.log(configs); return evalAuthVars(configs, event.data.uid);})
+    .then(configs => {console.log(configs); return evalExcepts(configs);})
+    .then(configs => {console.log(configs); return removeFreeVars(configs);})
     .then(deletePaths => deleteUser(deletePaths))
-    .then(() => writeLog(event.data));
+    .then(paths => writeLog(event.data, paths));
   });
 };
 
@@ -423,11 +619,17 @@ and deploy again. <br> <br> ${JSON.stringify(config)}
 
 // Only expose internel functions to tests.
 if (process.env.NODE_ENV === 'TEST') {
-  module.exports.buildPath = buildPath;
+  module.exports.filterCondition = filterCondition;
   module.exports.extractFromDBRules = extractFromDBRules;
   module.exports.inferWipeoutRule = inferWipeoutRule;
   module.exports.readDBRules = readDBRules;
   module.exports.deleteUser = deleteUser;
   module.exports.writeLog = writeLog;
   module.exports.checkCondition = checkCondition;
+  module.exports.evalSingleAuthVar = evalSingleAuthVar;
+  module.exports.evalAuthVars = evalAuthVars;
+  module.exports.removeFreeVars = removeFreeVars;
+  module.exports.preProcess = preProcess;
+  module.exports.evalSingleExcept = evalSingleExcept;
+  module.exports.evalExcepts = evalExcepts;
 }
