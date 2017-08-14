@@ -23,8 +23,8 @@ const common = require('./common');
  * @param status access status, could be NO_ACCESS/SINGLE_ACCESS/MULT_ACCESS
  * @param list variable list, should be empty list if status is NO/SINGLE,
  * else should be the list of literal in the conjunction of corresponding exp
- * @param condition optional condition for access status, inherited directly from
- * corresponding expression, default null
+ * @param condition optional condition for access status, inherited directly 
+ * from corresponding expression, default null
  */
 function Access(status, list, condition = null) {
   if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {

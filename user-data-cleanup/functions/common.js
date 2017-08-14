@@ -15,7 +15,9 @@
  */
 'use strict';
 
-//common constants used accross the files
+/**
+ * common constants used accross the files
+ */
 module.exports = {
   WIPEOUT_UID: '#WIPEOUT_UID',
   BOOK_KEEPING_PATH: '/wipeout'
