@@ -1,4 +1,21 @@
-// Trigger function copies new data in Firebase database to Google Sheet
+/**
+ * Copyright 2017 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+'use strict';
+
+// Sample trigger function that copies new Firebase data to a Google Sheet
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -8,22 +25,25 @@ const google = require('googleapis');
 admin.initializeApp(functions.config().firebase);
 const db = admin.database();
 
-const FUNCTIONS_CLIENT_ID = functions.config().googleapi.client_id;
-const FUNCTIONS_SECRET_KEY = functions.config().googleapi.client_secret;
+// TODO: Use firebase functions:config:set to configure your googleapi object:
+// googleapi.client_id = Google API client ID, 
+// googleapi.client_secret = client secret, and 
+// googleapi.sheet_id = Google Sheet id (long string in middle of sheet URL)
+const CONFIG_CLIENT_ID = functions.config().googleapi.client_id;
+const CONFIG_CLIENT_SECRET = functions.config().googleapi.client_secret;
+const CONFIG_SHEET_ID = functions.config().googleapi.sheet_id;
+
+// TODO: Use firebase functions:config:set to configure your watchedpaths object:
+// watchedpaths.data_path = Firebase path for data to be synced to Google Sheet
+const CONFIG_DATA_PATH = functions.config().watchedpaths.data_path;
+
+// TODO: Update YOUR_FUNCTIONS_SUBDOMAIN
 const FUNCTIONS_REDIRECT = '{YOUR_FUNCTIONS_SUBDOMAIN}.cloudfunctions.net/OauthCallback';
-// TODO: use firebase functions:config:set to configure your Google API client ID and secret
-// TODO: update FUNCTIONS_REDIRECT
-
-// data will be synced from DATA_PATH in Firebase to Google Sheet with SHEET_ID
-const DATA_PATH = '/testing';
-const SHEET_ID = '';
-// TODO: add in sheet ID (long string in middle of Sheet URL)
-
 
 // setup for authGoogleAPI
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const auth = new googleAuth();
-const functionsOauthClient = new auth.OAuth2(FUNCTIONS_CLIENT_ID, FUNCTIONS_SECRET_KEY,
+const functionsOauthClient = new auth.OAuth2(CONFIG_CLIENT_ID, CONFIG_CLIENT_SECRET,
   FUNCTIONS_REDIRECT);
 let oauthTokens = null;
 
@@ -52,12 +72,12 @@ exports.OauthCallback = functions.https.onRequest((req, res) => {
   });
 });
 
-// trigger function to write to Sheet when new data comes in on DATA_PATH
-exports.appendRecordToSpreadsheet = functions.database.ref(`${DATA_PATH}/{ITEM}`).onWrite(
+// trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
+exports.appendRecordToSpreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onWrite(
   (event) => {
     const newRecord = event.data.current.val();
     return appendPromise({
-      spreadsheetId: SHEET_ID,
+      spreadsheetId: CONFIG_SHEET_ID,
       range: 'A:C',
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
@@ -99,13 +119,13 @@ function getAuthorizedClient() {
   });
 }
 
-// HTTPS function to write new data to DATA_PATH, for testing
+// HTTPS function to write new data to CONFIG_DATA_PATH, for testing
 exports.testSheetWrite = functions.https.onRequest((req, res) => {
   const random1 = Math.floor(Math.random() * 100);
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
   const ID = new Date().getUTCMilliseconds();
-  return db.ref(`${DATA_PATH}/${ID}`).set({
+  return db.ref(`${CONFIG_DATA_PATH}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
     thirdColumn: random3
