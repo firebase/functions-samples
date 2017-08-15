@@ -66,27 +66,67 @@ Access.prototype.getCondition = function() {
   return this.condition;
 };
 
+//check if a string represents a valid authVar,
+// needs to be a single level of val(...)
+// If no variable in the path, return 'FIXED'
+// If only the (length - 2) location is variable, return 'AuthVar'
+const checkAuthVar = str => {
+  if (!/val\((\w+(,\$?\w+)*)\)/.test(str))
+    return 'FALSE';
+  const varFlagList = str.slice(4, -1).split(',').map(i => i.startsWith('$'));
+  if (varFlagList.every(x => !x)) {
+    return 'FIXED';
+  }
+  const removed = varFlagList.splice(-2,1);
+  if (removed[0] && varFlagList.every(x => !x)) {
+    return 'AUTHVAR';
+  }
+  return 'FALSE';
+};
+
 /**
  * Getter of access pattern
+ *
  * @param path path to the current node, list of strings
- * @return accessPattern object with path and an optional condition field
+ * @return accessPattern object with path and an optional condition field 
+ * and an optional authVar field
  */
 Access.prototype.getAccessPattern = function(path) {
+  if (this.getAccessStatus() !== exp.SINGLE_ACCESS) {
+    throw 'Access Pattern only avaialbe for SINGLE ACCESS objects';
+  }
   if (path[0] !== 'rules') {
     throw `A valid path starts with 'rules'`;
   }
+  const varList = this.getVariableList();
   const result = path.map(
-      cur => this.getVariableList().includes(cur) ? common.WIPEOUT_UID : cur);
+      cur => varList.includes(cur) ? common.WIPEOUT_UID : cur);
   result[0] = '';
   const ret = {'path': result.join('/')};
   let cond = this.getCondition();
   if (cond !== null) {
     // replace any auth variable with holder
-    for (let i = 0; i < this.getVariableList().length; i++) {
-      const re = new RegExp(`\\${this.getVariableList()[i]}\\b`, 'g');
+    for (let i = 0; i < varList.length; i++) {
+      const re = new RegExp(`\\${varList[i]}\\b`, 'g');
       cond = cond.replace(re, common.WIPEOUT_UID);
     }
     ret.condition = cond;
+  }
+  const authVar = [];
+  for (let i = 0; i < varList.length; i++) {
+    switch (checkAuthVar(varList[i])) {
+      case 'FALSE':
+        break;
+      case 'FIXED':
+        ret.condition = `${ret.condition} && \
+${common.WIPEOUT_UID} === ${varList[i]}`;
+        break;
+      case 'AUTHVAR':
+        authVar.push(varList[i]);
+    }
+  }
+  if (authVar.length > 0) {
+    ret.authVar = authVar;
   }
   return ret;
 };

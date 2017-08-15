@@ -1,9 +1,46 @@
 {
-  "rules": {
-    "users": {
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid"
+  "rules":{
+    "users":{
+      "$uid":{
+        ".read":"auth.uid === $uid",
+        ".write":"auth.uid === $uid"
+      }
+    },
+    "thirdPartyToken":{
+      "$uidToken":{
+        ".read":"auth.uid === $uidToken",
+        ".write":"auth.uid === $uidToken"
+      }
+    },
+    "accounts":{
+      ".indexOn":"profileNeedsUpdate",
+      "$uid":{
+        ".read":"$uid === auth.uid",
+        "githubToken":{
+          ".write":"$uid === auth.uid"
+        },
+        "profileNeedsUpdate":{
+          ".write":"$uid === auth.uid"
+        },
+        "events":{
+          ".indexOn":[
+            "startAt",
+            "endAt"
+          ]
+        }
+      }
+    },
+    "chat":{
+      "$room":{
+        ".write":"auth.uid == data.child('creator').val()",
+        "members":{
+          ".write":"auth.uid != false"
+        }
+      }
+    },
+    "record":{
+      "$uid":{
+        ".write":"auth.uid === $uid && data.child('createYear').val() > 2016"
       }
     }
   }
