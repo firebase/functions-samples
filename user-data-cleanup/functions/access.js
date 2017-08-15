@@ -86,6 +86,7 @@ const checkAuthVar = str => {
 
 /**
  * Getter of access pattern
+ *
  * @param path path to the current node, list of strings
  * @return accessPattern object with path and an optional condition field 
  * and an optional authVar field
@@ -111,7 +112,6 @@ Access.prototype.getAccessPattern = function(path) {
     }
     ret.condition = cond;
   }
-  //ret.authVar = this.getVariableList().filter(v => checkValid(v));
   const authVar = [];
   for (let i = 0; i < varList.length; i++) {
     switch (checkAuthVar(varList[i])) {

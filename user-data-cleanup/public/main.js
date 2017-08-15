@@ -35,6 +35,8 @@ function Demo() {
     this.basicButton = document.getElementById('demo-basic-button');
     this.tokenButton = document.getElementById('demo-token-button');
     this.accountsButton = document.getElementById('demo-accounts-button');
+    this.record1Button = document.getElementById('demo-record1-button');
+    this.record2Button = document.getElementById('demo-record2-button');
 
     // Bind events.
     this.signInButton.addEventListener('click', this.signIn.bind(this));
@@ -46,6 +48,8 @@ function Demo() {
     this.basicButton.addEventListener('click', this.basic.bind(this));
     this.tokenButton.addEventListener('click', this.token.bind(this));
     this.accountsButton.addEventListener('click', this.accounts.bind(this));
+    this.record1Button.addEventListener('click', this.record.bind(this, 2015));
+    this.record2Button.addEventListener('click', this.record.bind(this, 2017));
     // Demo variables
     this.chatRoomId = 1;
   }.bind(this));
@@ -60,7 +64,6 @@ Demo.prototype.onAuthStateChanged = function(user) {
     this.signedOutCard.style.display = 'none';
     this.addDataCard.style.display = 'block';
     this.signedInCard.style.display = 'block';
-    // We write some user data. This will be deleted by a Function when the user deletes his account.
     this.user = user;
   } else {
     this.signedOutCard.style.display = 'block';
@@ -78,6 +81,13 @@ Demo.prototype.token = function() {
   firebase.database().ref('/thirdPartyToken/' + this.user.uid).set('token');
 };
 
+Demo.prototype.addDataDemo = function(body) {
+  const xhttp = new XMLHttpRequest();
+  body.uid = this.user.uid;
+  xhttp.open('POST', '/addDataDemo', true);
+  xhttp.send(JSON.stringify(body), (er,res,body) => console.log(er, res, body));
+};
+
 
 Demo.prototype.chat = function() {
   const body = {
@@ -87,20 +97,17 @@ Demo.prototype.chat = function() {
   this.chatRoomId += 1;
 };
 
-
 Demo.prototype.accounts = function() {
   const cont = {githubToken: 'TOKEN', profileNeedsUpdate: 'FOO', events: [1,2,3]};
-  console.log(cont);
   const body = {ref: `/accounts/${this.user.uid}/`, content: cont};
   this.addDataDemo(body);
 };
 
-Demo.prototype.addDataDemo = function(body) {
-  const xhttp = new XMLHttpRequest();
-  body.uid = this.user.uid;
-  xhttp.open('POST', '/addDataDemo', true);
-  xhttp.send(JSON.stringify(body), (er,res,body) => console.log(er, res, body));
-
+Demo.prototype.record = function(year){
+  this.addDataDemo({
+      ref: `/record/${this.user.uid}`,
+      content: {content: 'Record data', createYear: year}
+    });
 };
 
 // Initiates the sign-in flow using LinkedIn sign in in a popup.
@@ -119,7 +126,8 @@ Demo.prototype.deleteAccount = function() {
     window.alert('Account deleted');
   }).catch(function(error) {
     if (error.code === 'auth/requires-recent-login') {
-      window.alert('You need to have recently signed-in to delete your account. Please sign-in and try again.');
+      window.alert(`You need to have recently signed-in to delete your account.
+Please sign-in and try again.`);
       firebase.auth().signOut();
     }
   });

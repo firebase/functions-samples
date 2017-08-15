@@ -185,7 +185,7 @@ describe('Wipeout', () => {
       path: '/chat/room/',
       except: '/chat/room/foo'
     })).to.eventually.deep
-    .equal([]);
+    .equal([{path: '/chat/room/'}]);
   });
 
   it('should evaluate exception list correctly', () => {

@@ -15,6 +15,7 @@
  */
 'use strict';
 
+const ejs = require('ejs');
 const common = require('./common');
 const deepcopy = require('deepcopy');
 const request = require('request-promise');
@@ -54,7 +55,7 @@ exports.initialize = wipeoutConfig => {
 const getConfig = () => {
   try {
     const config = require('./wipeout_config.json').wipeout;
-    return Promise.resolve(config);
+    return Promise.resolve({rules: config, source: 'LOCAL'});
   } catch (err) {
     console.log(`Failed to read local configuration.
 Trying to infer from Realtime Database Security Rules...(If you intended to use local configuration,
@@ -63,7 +64,7 @@ functions directory with a 'wipeout' field.`, err);
     return readDBRules().then(DBRules => {
       const config = extractFromDBRules(DBRules);
       console.log('Using wipeout rules inferred from RTDB rules.');
-      return Promise.resolve(config);
+      return Promise.resolve({rules: config, source: 'AUTO'});
     }).catch(errDB => {
       console.error(
        'Could not generate wipeout config from RTDB rules.' +
@@ -145,6 +146,9 @@ const evalSingleAuthVar = (config, uid) => {
   return ref.orderByChild(pathList.slice(-1)[0]).equalTo(uid.toString())
       .once('value')
       .then(res => {
+        if (!res.exists()) {
+          return []; 
+        }
         const obj = {[pathList.slice(-2)[0]]: Object.keys(res.val())};
         const configList = [];
         const varName = Object.keys(obj)[0];
@@ -214,6 +218,9 @@ const evalSingleExcept = (config) => {
   const ref = init.db.ref(pathList.slice(1).join('/'));
   return ref.once('value')
       .then(res => {
+        if (!res.exists()) {
+          return []; 
+        }
         const children = [];
         res.forEach(child => {
           children.push(child.key);
@@ -222,7 +229,6 @@ const evalSingleExcept = (config) => {
         return children;
       })
       .then(children => {
-        console.log("CHILDREN", children);
         const exception = exceptList[exceptList.length - 1];
         if (!children.includes(exception)) {
           // return the parent path without exception
@@ -330,7 +336,8 @@ const evalExists = obj => {
  * Evaluates val() methods in conditions, check the DB for data value.
  *
  * @param obj input object of the operand
- * @return Promise resolved with query data value
+ * @return Promise resolved with query data value 
+ * or false if the data doesn't exists.
  */
 const evalVal = obj => {
   if (obj.callee.name !== 'val') {
@@ -338,7 +345,13 @@ const evalVal = obj => {
   }
   const loc = extractPath(obj.arguments);
   var ref = init.db.ref(loc);
-  return ref.once('value').then(snapshot => snapshot.val());
+  return ref.once('value').then(snapshot => {
+
+    if (snapshot.exists()){
+      return snapshot.val();
+    }
+    return false;
+  });
 };
 
 /**
@@ -362,7 +375,8 @@ const evalLogic = (obj) => {
       const rightBinary = evalOperand(obj.right);
 
       return Promise.all([leftBinary, rightBinary])
-          .then(res => eval(`res[0].toString() ${obj.operator} res[1].toString()`));
+          .then(res => eval(`res[0].toString() \
+${obj.operator} res[1].toString()`));
 
     case 'LogicalExpression':
       const leftLogic = evalLogic(obj.left);
@@ -576,12 +590,11 @@ exports.cleanupUserData = () => {
     })
     .then(configs => {
       const newConfigs = preProcess(configs, event.data.uid);
-      console.log(configs);
       return filterCondition(newConfigs, event.data.uid);
     })
-    .then(configs => {console.log(configs); return evalAuthVars(configs, event.data.uid);})
-    .then(configs => {console.log(configs); return evalExcepts(configs);})
-    .then(configs => {console.log(configs); return removeFreeVars(configs);})
+    .then(configs => evalAuthVars(configs, event.data.uid))
+    .then(configs => evalExcepts(configs))
+    .then(configs => removeFreeVars(configs))
     .then(deletePaths => deleteUser(deletePaths))
     .then(paths => writeLog(event.data, paths));
   });
@@ -595,22 +608,18 @@ exports.cleanupUserData = () => {
 exports.showWipeoutConfig = () => {
   return functions.https.onRequest((req, res) => {
     if (req.method === 'GET') {
-      return getConfig().then(config => {
+      return getConfig().then(configs => {
         return init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
-            .set(config).then(() => {
-              const content = `Please verify the wipeout rules. <br>
-If correct, click the 'Confirm' button below. <br>
-If incorrect, please modify functions/wipeout_config.json 
-and deploy again. <br> <br> ${JSON.stringify(config)} 
-<form action='#' method='post'>
-<input type='submit' value='Confirm' name ='confirm'></form>`;
-
-              res.send(content);
+            .set(configs.rules).then(() => {
+              ejs.renderFile('template.ejs', {configs: configs.rules},
+               (err, html) => res.send(html));
             });
       });
     } else if ((req.method === 'POST') && req.body.confirm === 'Confirm') {
       return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(true)
-          .then(() => res.send('Confirm sent, Wipeout function activated.'));
+          .then(() => init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`).once('value')
+            .then(snapshot => res.send('Confirm sent, Wipeout function activated.' + JSON.stringify(snapshot.val()))) );
+
     }
   });
 };

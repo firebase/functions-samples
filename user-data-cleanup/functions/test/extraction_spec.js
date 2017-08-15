@@ -143,8 +143,8 @@ and exists() now, sibling found`);
           `val(rules,rooms,val(rules,rooms,$roomid,creator))`,
           ['rules', 'rooms', '$roomid']);
       expectRef(
-          `root.child('rooms').child($roomid).child('members')\
-.child(auth.uid).val()`,
+          `root.child('rooms').child($roomid).\
+child('members').child(auth.uid).val()`,
           `val(rules,rooms,$roomid,members,#WIPEOUT_UID)`);
     });
   });
@@ -163,8 +163,8 @@ and exists() now, sibling found`);
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {
-          condition: `val(rules,users2,#WIPEOUT_UID,test) !== null && \
-exists(rules,users2,#WIPEOUT_UID)`,
+          condition: `val(rules,users2,#WIPEOUT_UID,test) \
+!== null && exists(rules,users2,#WIPEOUT_UID)`,
           path: '/users2/#WIPEOUT_UID'
         },
 
@@ -178,6 +178,10 @@ exists(rules,users2,#WIPEOUT_UID)`,
           'path': '/chat2/#WIPEOUT_UID',
           'except': '/chat2/$owner/members'
         },
+        {
+          'path': '/record/#WIPEOUT_UID',
+          'condition': 'val(rules,record,#WIPEOUT_UID,createYear) > 2016'
+        },
         {path: '/accounts/#WIPEOUT_UID/githubToken'},
         {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
         {path: '/users-say-that/#WIPEOUT_UID/lang'},
@@ -185,7 +189,7 @@ exists(rules,users2,#WIPEOUT_UID)`,
           path: '/followers/$followedUid/#WIPEOUT_UID',
           condition: '#WIPEOUT_UID > 1000'
         },
-        { 
+        {
           path: '/stripe_customers/$uid/sources/$chargeId',
           authVar: ['val(rules,stripe_customers,$uid,charges)']
         },
