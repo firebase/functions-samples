@@ -42,7 +42,6 @@ const functions = require('firebase-functions');
  */
 exports.initialize = wipeoutConfig => {
   global.init = Object.freeze(wipeoutConfig);
-  return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(false);
 };
 
 
@@ -622,14 +621,19 @@ exports.showWipeoutConfig = () => {
               (err, html) => res.send(html));
             });
       });
-    } else if ((req.method === 'POST') && req.body.confirm === 'Confirm') {
-      return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(true)
-          .then(() => init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
-              .once('value').then(snapshot => {
+    } else if ((req.method === 'POST')) {
+      if (req.body.confirm === 'Confirm') {
+        return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(true)
+            .then(() => init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
+            .once('value').then(snapshot => {
               ejs.renderFile('template_confirm.ejs', {configs: snapshot.val()},
                (err, html) => res.send(html));
             }));
-
+      } else if (req.body.confirm === 'Reset') {
+          return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(false)
+              .then(() => res.send(`Initialize complete.
+ Remember to verify and confirm the wipeout rules to activate the library`));
+      }
     }
   });
 };

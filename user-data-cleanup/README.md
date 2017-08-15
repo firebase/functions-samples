@@ -63,6 +63,7 @@ To configure it:
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
  1. Run local tests using `cd functions; npm test`
  1. Deploy your project using `firebase deploy`
+ 1. Initialized the library `npm start <project-id>`. If you don't know your project ID, run `firebase list` and look for the row with `(current)` by the name.
  1. Please go to the url
   `https://us-central1-<project-id>.cloudfunctions.net/showWipeoutConfig` to
   verify the wipeout rules. The webpage will show the source of these wipeout rules, either loaded  from local config or generated from security rules. 
