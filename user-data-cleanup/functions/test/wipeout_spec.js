@@ -126,7 +126,9 @@ describe('Wipeout', () => {
     const snapshot = sinon.stub();
 
     snapshot.withArgs('value')
-        .resolves({'val': () => {return {'room1': 'uid', 'room2': 'uid'};}});
+        .resolves({
+          'exists' :() => true,
+          'val': () => {return {'room1': 'uid', 'room2': 'uid'};}});
     queryStub.withArgs(fakeUserId).returns({once: snapshot});
     childStub.withArgs('creator').returns({equalTo: queryStub});
     refStub.withArgs(`chat`).returns({orderByChild: childStub});
@@ -169,7 +171,11 @@ describe('Wipeout', () => {
   it('should evaluate exceptions correctly', () => {
     const snapshot = sinon.stub();
     snapshot.withArgs('value')
-        .resolves([{key: 'name'}, {key:'creator'}, {key: 'members'}]);
+        .resolves({
+          forEach: [].forEach
+              .bind([{key: 'name'}, {key: 'creator'}, {key: 'members'}]),
+           exists: () => true });
+
     refStub.withArgs(`chat/room`).returns({once: snapshot});
 
     expect(wipeout.evalSingleExcept({
