@@ -33,33 +33,24 @@
   <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
     <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
       <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
-        <h3>Account events demo</h3>
+        <h3>Demo confirm config Page</h3>
       </div>
     </div>
   </header>
   <main class="mdl-layout__content mdl-color--grey-100">
     <div class="mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
 
-    <h3>
-    Please verify the wipeout rules. <br>
+    <h3> 
+    Confirmation sent! The wipeout library is now activacted.
     </h3>
-    <p>
-    The wiepout rule shown below is <strong> <%= source %> </strong>strong>.
-    
 
+    Wipeout rules used are listed:
     <ul>
     <% configs.forEach(function(config){ %>
       <li> <%= JSON.stringify(config, null, 2) %> </li>
     <% }); %>
     </ul>
 
-  If correct, click the 'Confirm' button. <br>
-  If incorrect, please modify functions/wipeout_config.json 
-    and deploy again. <br> <br> 
-
- 
-  <form action='#' method='post'>
-  <button id="demo-sign-out-button" class="mdl-color-text--grey-700 mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect" type="submit" value='Confirm' name ='confirm'>Confirm</button>
 
   </main>
 </div>
