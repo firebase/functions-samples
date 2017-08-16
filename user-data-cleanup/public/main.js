@@ -110,17 +110,17 @@ Demo.prototype.record = function(year){
     });
 };
 
-// Initiates the sign-in flow using LinkedIn sign in in a popup.
+/** Initiates the sign-in flow using LinkedIn sign in in a popup. */
 Demo.prototype.signIn = function() {
   firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
 };
 
-// Signs-out of Firebase.
+/** Signs-out of Firebase. */
 Demo.prototype.signOut = function() {
   firebase.auth().signOut();
 };
 
-// Deletes the user's account.
+/** Deletes the user's account. */
 Demo.prototype.deleteAccount = function() {
   firebase.auth().currentUser.delete().then(function() {
     window.alert('Account deleted');
@@ -133,5 +133,5 @@ Please sign-in and try again.`);
   });
 };
 
-// Load the demo.
+/** Load the demo. */
 window.demo = new Demo();
