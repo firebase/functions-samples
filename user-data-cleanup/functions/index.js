@@ -35,6 +35,7 @@ exports.cleanupUserData = wipeout.cleanupUserData();
 
 exports.showWipeoutConfig = wipeout.showWipeoutConfig();
 
+/** Cloud Function that adds demo data to app for a user. */
 exports.addDataDemo = functions.https.onRequest((req, res) => {
   if (req.method == 'POST') {
     const body = JSON.parse(req.body);

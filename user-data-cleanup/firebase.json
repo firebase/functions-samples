@@ -4,8 +4,8 @@
   },
   "hosting": {
     "public": "public",
-    "rewrites": [ {
-      "source": "/addDataDemo", "function": "addDataDemo"
-    } ]
+    "rewrites": [
+      {"source": "/addDataDemo", "function": "addDataDemo"}
+    ]
   }
 }

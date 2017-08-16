@@ -20,5 +20,5 @@
  */
 module.exports = {
   WIPEOUT_UID: '#WIPEOUT_UID',
-  BOOK_KEEPING_PATH: '/wipeout',
+  BOOK_KEEPING_PATH: '/wipeout'
 };

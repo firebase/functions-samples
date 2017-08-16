@@ -127,8 +127,9 @@ describe('Wipeout', () => {
 
     snapshot.withArgs('value')
         .resolves({
-          'exists' :() => true,
-          'val': () => {return {'room1': 'uid', 'room2': 'uid'};}});
+          'exists' : () => true,
+          'val': () => {return {'room1': 'uid', 'room2': 'uid'};}
+        });
     queryStub.withArgs(fakeUserId).returns({once: snapshot});
     childStub.withArgs('creator').returns({equalTo: queryStub});
     refStub.withArgs(`chat`).returns({orderByChild: childStub});

@@ -23,7 +23,7 @@ const common = require('./common');
  * @param status access status, could be NO_ACCESS/SINGLE_ACCESS/MULT_ACCESS
  * @param list variable list, should be empty list if status is NO/SINGLE,
  * else should be the list of literal in the conjunction of corresponding exp
- * @param condition optional condition for access status, inherited directly 
+ * @param condition optional condition for access status, inherited directly
  * from corresponding expression, default null
  */
 function Access(status, list, condition = null) {
@@ -66,18 +66,19 @@ Access.prototype.getCondition = function() {
   return this.condition;
 };
 
-//check if a string represents a valid authVar,
-// needs to be a single level of val(...)
-// If no variable in the path, return 'FIXED'
-// If only the (length - 2) location is variable, return 'AuthVar'
+/** Check if a string represents a valid authVar, needs to be a single level of
+ * val(...) If no variable in the path, return 'FIXED' If only the (length - 2)
+ * location is variable, return 'AuthVar'
+ */
 const checkAuthVar = str => {
-  if (!/val\((\w+(,\$?\w+)*)\)/.test(str))
+  if (!/val\((\w+(,\$?\w+)*)\)/.test(str)) {
     return 'FALSE';
+  }
   const varFlagList = str.slice(4, -1).split(',').map(i => i.startsWith('$'));
   if (varFlagList.every(x => !x)) {
     return 'FIXED';
   }
-  const removed = varFlagList.splice(-2,1);
+  const removed = varFlagList.splice(-2, 1);
   if (removed[0] && varFlagList.every(x => !x)) {
     return 'AUTHVAR';
   }
@@ -87,13 +88,13 @@ const checkAuthVar = str => {
 /**
  * Getter of access pattern
  *
- * @param path path to the current node, list of strings
- * @return accessPattern object with path and an optional condition field 
- * and an optional authVar field
+ * @param {list} path path to the current node, list of strings
+ * @return {object} accessPattern object with path and an optional condition
+ * field and an optional authVar field
  */
 Access.prototype.getAccessPattern = function(path) {
   if (this.getAccessStatus() !== exp.SINGLE_ACCESS) {
-    throw 'Access Pattern only avaialbe for SINGLE ACCESS objects';
+    throw 'Access Pattern only available for SINGLE ACCESS objects';
   }
   if (path[0] !== 'rules') {
     throw `A valid path starts with 'rules'`;
