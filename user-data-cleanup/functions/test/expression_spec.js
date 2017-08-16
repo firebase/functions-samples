@@ -16,10 +16,10 @@
 'use strict';
 // unit tests for the Expression class
 
-const common = require('./common');
+const testCommon = require('./test_common');
 const exp = require('../expression');
 const Expression = exp.Expression;
-const expect = common.expect;
+const expect = testCommon.expect;
 
 const expectExp = (exp, list) => {
   expect(exp.getConjunctionLists()).to.deep.equal(list);

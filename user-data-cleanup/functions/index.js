@@ -17,16 +17,15 @@
 
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
-const wipeout = require('./wipeout');
 
 admin.initializeApp(functions.config().firebase);
+const wipeout = require('./wipeout');
 
 const WIPEOUT_CONFIG = {
     'credential': admin.credential.applicationDefault(),
     'db': admin.database(),
     'serverValue': admin.database.ServerValue,
     'users': functions.auth.user(),
-    'https': functions.https,
     'DB_URL': functions.config().firebase.databaseURL,
   };
 
@@ -36,3 +35,14 @@ exports.cleanupUserData = wipeout.cleanupUserData();
 
 exports.showWipeoutConfig = wipeout.showWipeoutConfig();
 
+/** Cloud Function that adds demo data to app for a user. */
+exports.addDataDemo = functions.https.onRequest((req, res) => {
+  if (req.method == 'POST') {
+    const body = JSON.parse(req.body);
+    if (typeof body.ref === 'undefined' || typeof body.content !== 'object') {
+      return Promise.reject('Needs ref and content field to add demo data');
+    }
+    return admin.database().ref(body.ref).set(body.content)
+        .then(() => res.send('data added'));
+  }
+});

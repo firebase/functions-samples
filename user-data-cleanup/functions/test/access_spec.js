@@ -17,9 +17,9 @@
 //unit tests for the Access class
 
 const Access = require('../access');
-const common = require('./common');
+const testCommon = require('./test_common');
 const exp = require('../expression');
-const expect = common.expect;
+const expect = testCommon.expect;
 
 const expectVar = (acc, list) =>
   expect(acc.getVariableList()).to.deep.equal(list);
