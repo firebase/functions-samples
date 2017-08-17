@@ -6,9 +6,11 @@
         ".read": "auth.uid === $uid",
         ".write": "auth.uid === $uid",
         "messages": {
-          ".indexOn": ["category"]
-            }
+          ".indexOn": [
+            "category"
+          ]
         }
+      }
     },
     // Third-party directory
     "instagramAccessToken": {
@@ -17,28 +19,37 @@
         ".write": "auth.uid === $uid"
       }
     },
-    // functions-samples: stripe 
+    // functions-samples:    stripe 
     "stripe_customers": {
       "$uid": {
         ".read": "$uid === auth.uid",
         "sources": {
-          "$chargeId" : {
-            ".write": "$uid === auth.uid",
-            "token": { ".validate": "newData.isString()" },
-            "$other": { ".validate": false }
+          "$chargeId": {
+            ".write": "auth.uid === data.parent().parent().child('charges').val()",
+            "token": {
+              ".validate": "newData.isString()"
+            },
+            "$other": {
+              ".validate": false
+            }
           }
         },
         "charges": {
-          "$sourceId" : {
+          "$sourceId": {
             ".write": "$uid === auth.uid",
-            "source": { ".validate": "newData.isString()" },
-            "amount": { ".validate": "newData.isNumber()" },
-            "$other": { ".validate": false }
+            "source": {
+              ".validate": "newData.isString()"
+            },
+            "amount": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
           }
         }
       }
     },
-
     // Hubbub
     "accounts": {
       ".indexOn": "profileNeedsUpdate",
@@ -51,7 +62,10 @@
           ".write": "$uid === auth.uid"
         },
         "events": {
-          ".indexOn": ["startAt", "endAt"]
+          ".indexOn": [
+            "startAt",
+            "endAt"
+          ]
         }
       }
     },
@@ -74,7 +88,7 @@
     },
     //Say-that
     "admin": {
-      // Admin access: only @google.com users.
+      // Admin access:      only @google.com users.
       ".read": "auth.token.email_verified == true && auth.token.email.matches(/.*@google.com$/)",
       ".write": "auth.token.email_verified == true && auth.token.email.matches(/.*@google.com$/)",
       "current_scene": {
@@ -108,7 +122,6 @@
         }
       }
     },
-
     "total_scores": {
       // Everybody can read the combined scores.
       ".read": "auth != null"
@@ -125,7 +138,7 @@
       // Only admin can see summary, which contains the answer key
       ".read": "auth.token.email_verified == true && auth.token.email.matches(/.*@google.com$/)"
     },
-    // firebase function samples: fcm-notification
+    // firebase function samples:   fcm-notification
     "users2": {
       ".read": true,
       "$uid": {
@@ -139,7 +152,27 @@
           ".write": "auth.uid === $followerUid && $followerUid> 1000"
         }
       }
+    },
+    "chat": {
+      "$room": {
+        ".write": "auth.uid == data.child('creator').val()",
+        "members": {
+          ".write": "auth.uid != false"
+        }
+      }
+    },
+    "chat2": {
+      "$owner": {
+        ".write": "auth.uid == $owner",
+        "members": {
+          ".write": "auth.uid != false"
+        }
+      }
+    },
+    "record": {
+      "$uid": {
+        ".write": "auth.uid === $uid && data.child('createYear').val() > 2016"
+      }
     }
-
   }
 }

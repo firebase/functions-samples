@@ -17,6 +17,7 @@
 
 // Parse write rules to get back the Access object of the rule.
 // Exports parseWriteRule()
+const common = require('./common');
 const exp = require('./expression');
 const Expression = exp.Expression;
 const jsep = require('jsep');
@@ -98,10 +99,10 @@ const parseBinary = (obj, path) => {
   }
   // auth involved in BinaryExpression
   if (refs.checkAuth(obj.left)) {
-    return getAuthExp(obj.right, obj.operator);
+    return getAuthExp(obj.right, obj.operator, path);
   }
   if (refs.checkAuth(obj.right)) {
-    return getAuthExp(obj.left, obj.operator);
+    return getAuthExp(obj.left, obj.operator, path);
   }
   //no auth invovled
   let newCond;
@@ -125,7 +126,7 @@ const parseBinary = (obj, path) => {
  * @param op operator of the BinaryExpression
  * @return auth expression
  */
-const getAuthExp = (obj, op) => {
+const getAuthExp = (obj, op, path) => {
   if (op !== '==' && op !== '===') {
     return new Expression(exp.TRUE, []);
   }
@@ -138,6 +139,9 @@ const getAuthExp = (obj, op) => {
     return obj.name[0] === '$' ?
         new Expression(exp.UNDEFINED, [[obj.name]]) :
         new Expression(exp.FALSE, []);
+  }
+  if (obj.type === 'CallExpression') {
+    return new Expression(exp.UNDEFINED, [[refs.evalRef(obj, path)]]);
   }
   return new Expression(exp.TRUE, []);// May contain data references.
 };
@@ -158,6 +162,7 @@ const getCond = (obj, path) => {
       return obj.name.toString();
     case 'CallExpression':
       return refs.evalRef(obj, path);
+
     default:
       throw `Type of BinaryExpression candidate ${obj.type} not supported`;
   }
