@@ -14,8 +14,17 @@
  * limitations under the License.
  */
  
- // Storage rules grammar specification for PEG.js parser generator.
- 
+
+/**
+ * Storage rules grammar specification for PEG.js parser generator.
+ * Usage: To generate the parse code, run
+ * `npm install -g pegjs; pegjs grammar.pegjs` under
+ * the functions folder, the output is named grammar.js by default
+ * To use the parser:
+ * const parser = require('./grammar');
+ * const obj = parser.parse(ruleString);
+ */
+
 {
   function createMatch(path, read, write, matchLists = undefined) {
     let match = {};
