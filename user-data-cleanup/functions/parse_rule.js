@@ -17,6 +17,7 @@
 
 // Parse write rules to get back the Access object of the rule.
 // Exports parseWriteRule()
+const common = require('./common');
 const exp = require('./expression');
 const Expression = exp.Expression;
 const jsep = require('jsep');
@@ -98,20 +99,20 @@ const parseBinary = (obj, path) => {
   }
   // auth involved in BinaryExpression
   if (refs.checkAuth(obj.left)) {
-    return getAuthExp(obj.right, obj.operator);
+    return getAuthExp(obj.right, obj.operator, path);
   }
   if (refs.checkAuth(obj.right)) {
-    return getAuthExp(obj.left, obj.operator);
+    return getAuthExp(obj.left, obj.operator, path);
   }
   //no auth invovled
   let newCond;
   const condLeft = getCond(obj.left, path);
   const condRight = getCond(obj.right, path);
-  if (typeof condLeft !== 'undefined' && typeof condRight !== 'undefined') {
+  if (condLeft !== null && condRight !== null) {
     newCond = `${condLeft} ${obj.operator} ${condRight}`;
   } else {
-    // if either part is undefined(contains newData), the condition is ignored.
-    newCond = undefined;
+    // if either part is null(contains newData), the condition is ignored.
+    newCond = null;
   }
   return new Expression(exp.TRUE, [], newCond);
 };
@@ -125,7 +126,7 @@ const parseBinary = (obj, path) => {
  * @param op operator of the BinaryExpression
  * @return auth expression
  */
-const getAuthExp = (obj, op) => {
+const getAuthExp = (obj, op, path) => {
   if (op !== '==' && op !== '===') {
     return new Expression(exp.TRUE, []);
   }
@@ -139,6 +140,9 @@ const getAuthExp = (obj, op) => {
         new Expression(exp.UNDEFINED, [[obj.name]]) :
         new Expression(exp.FALSE, []);
   }
+  if (obj.type === 'CallExpression') {
+    return new Expression(exp.UNDEFINED, [[refs.evalRef(obj, path)]]);
+  }
   return new Expression(exp.TRUE, []);// May contain data references.
 };
 
@@ -148,7 +152,7 @@ const getAuthExp = (obj, op) => {
  *
  * @param obj operand of BinaryExpression
  * @param path, list of strings staring with 'rules'
- * @return string representing value of the operand
+ * @return string representing value of the operand or null
  */
 const getCond = (obj, path) => {
   switch (obj.type) {
@@ -158,6 +162,7 @@ const getCond = (obj, path) => {
       return obj.name.toString();
     case 'CallExpression':
       return refs.evalRef(obj, path);
+
     default:
       throw `Type of BinaryExpression candidate ${obj.type} not supported`;
   }

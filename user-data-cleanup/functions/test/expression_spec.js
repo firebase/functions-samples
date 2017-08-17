@@ -16,10 +16,10 @@
 'use strict';
 // unit tests for the Expression class
 
-const common = require('./common');
+const testCommon = require('./test_common');
 const exp = require('../expression');
 const Expression = exp.Expression;
-const expect = common.expect;
+const expect = testCommon.expect;
 
 const expectExp = (exp, list) => {
   expect(exp.getConjunctionLists()).to.deep.equal(list);
@@ -41,11 +41,11 @@ describe('Expressions', () => {
   it('should not create expression with illegal parameters', () => {
     const new1 = () => new Expression(exp.UNDEFINED, []);
     const new2 = () => new Expression(exp.UNDEFINED, [[[]]]);
-    const new3 = () => new Expression(exp.UNDEFINED, [1,2,3]);
-    const new4 = () => new Expression(exp.UNDEFINED, [[1,2,3]]);
-    const new5 = () => new Expression(exp.UNDEFINED, [[1,2,3], []]);
+    const new3 = () => new Expression(exp.UNDEFINED, [1, 2, 3]);
+    const new4 = () => new Expression(exp.UNDEFINED, [[1, 2, 3]]);
+    const new5 = () => new Expression(exp.UNDEFINED, [[1, 2, 3], []]);
     const new6 = () => new Expression(exp.UNDEFINED, [[]]);
-    const new7 = () => new Expression(true, [[1,2,3]]);
+    const new7 = () => new Expression(true, [[1, 2, 3]]);
     const new8 = () => new Expression(exp.TRUE, [], 1);
 
     expect(new1).to.throw(`Not a valid conjunction list, can't initialize`);
@@ -61,9 +61,9 @@ describe('Expressions', () => {
 
   it('should have empty conjunctionLists with fixed boolean values', () => {
     const exp1 = new Expression(exp.TRUE, [[]]);
-    const exp2 = new Expression(exp.TRUE, [[1,2,3], ['a','b','c']]);
+    const exp2 = new Expression(exp.TRUE, [[1, 2, 3], ['a', 'b', 'c']]);
     const exp3 = new Expression(exp.FALSE, [[]]);
-    const exp4 = new Expression(exp.FALSE, [[1,2,3], ['a','b','c']]);
+    const exp4 = new Expression(exp.FALSE, [[1, 2, 3], ['a', 'b', 'c']]);
 
     expectExp(exp1, []);
     expectExp(exp2, []);
@@ -77,7 +77,7 @@ describe('Expressions', () => {
     const expU = new Expression(exp.UNDEFINED,
         [['a']], 'some condition');
 
-    expectCond(expF, undefined);
+    expectCond(expF, null);
     expectCond(expT, 'some condition');
     expectCond(expU, 'some condition');
   });
@@ -150,7 +150,7 @@ describe('Expressions', () => {
           '$k1 < 1000 && $k1 < 1000');
       expectCond(Expression.and(expCond2, expCond3),
           '$k1 < 1000 && ${/user/$uid}.exists()');
-      expectCond(Expression.and(expFalse, expCond2), undefined);
+      expectCond(Expression.and(expFalse, expCond2), null);
     });
 
     it('should do correct OR operations', () => {

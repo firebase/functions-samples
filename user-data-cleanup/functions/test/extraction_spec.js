@@ -18,9 +18,9 @@
 // unit tests for automatically generated wipeout rules,
 // from RTDB rules and storage rules.
 
-const common = require('./common');
+const testCommon = require('./test_common');
 const exp = require('../expression');
-const expect = common.expect;
+const expect = testCommon.expect;
 const fs = require('fs');
 const jsep = require('jsep');
 const rules = require('../parse_rule');
@@ -30,7 +30,7 @@ const wipeout = require('../wipeout');
 
 // path is only used to repalce 'data' variable in write rule,
 // otherwise uses dummy path in tests.
-const pathHolder = ['rules','#'];
+const pathHolder = ['rules', '#'];
 
 const expectAccess = (rule, access, path = pathHolder) =>
     expect(rules.parseWriteRule(rule, path).getAccessStatus())
@@ -88,7 +88,7 @@ describe('Auto generation of rules', () => {
         'room': {
           '$creator': {
             '.write': 'auth.uid === $creator',
-            '$member': {
+            'member': {
               '.write': 'auth.uid != null'
             }
           }
@@ -97,8 +97,10 @@ describe('Auto generation of rules', () => {
     };
     expect(wipeout.inferWipeoutRule(ruleTree)).to.deep
         .equal([
-        {path: '/room/#WIPEOUT_UID'},
-        {except: '/room/$creator/$member'}]);
+        {
+          path: '/room/#WIPEOUT_UID',
+          except: '/room/$creator/member'
+        }]);
   });
 
   describe('should deal with data references', () => {
@@ -119,38 +121,39 @@ and exists() now, sibling found`);
       // No valid parent
       expectRefErr(`data.parent()`, `No parent avaliable`);
     });
+
     it('should extract correct content for data references', () => {
       // references containing newData should evaluates to undefined.
-      expectRef(`newData.child('from').val()`, undefined);
+      expectRef(`newData.child('from').val()`, null);
       // functions val(), exists(), parent(), child()
-      expectRef(`data.val()`, `{/doc/$uid/create}.val()`,
-         ['rules','doc','$uid','create']);
-      expectRef(`data.child('acc').val()`, `{/users/acc}.val()`,
+      expectRef(`data.val()`, `val(rules,doc,$uid,create)`,
+         ['rules', 'doc', '$uid', 'create']);
+      expectRef(`data.child('acc').val()`, `val(rules,users,acc)`,
          ['rules', 'users']);
-      expectRef(`data.child('acc').parent().val()`, `{/users}.val()`,
+      expectRef(`data.child('acc').parent().val()`, `val(rules,users)`,
          ['rules', 'users']);
       expectRef(`data.child('acc').parent().child('acc2').val()`,
-         `{/users/acc2}.val()`, ['rules', 'users']);
+         `val(rules,users,acc2)`, ['rules', 'users']);
       expectRef(`data.child('acc').parent().child('acc2').exists()`,
-          `{/users/acc2}.exists()`, ['rules', 'users']);
+          `exists(rules,users,acc2)`, ['rules', 'users']);
       // variable root
-      expectRef(`root.child('acc').val()`, `{/acc}.val()`);
+      expectRef(`root.child('acc').val()`, `val(rules,acc)`);
       // complex arguments
       expectRef(`root.child('rooms').child(data.child('creator').val()).val()`,
-          `{/rooms/{/rooms/$roomid/creator}.val()}.val()`,
+          `val(rules,rooms,val(rules,rooms,$roomid,creator))`,
           ['rules', 'rooms', '$roomid']);
       expectRef(
-          `root.child('rooms').child($roomid).child('members')\
-.child(auth.uid).val()`,
-          `{/rooms/$roomid/members/#WIPEOUT_UID}.val()`);
+          `root.child('rooms').child($roomid).\
+child('members').child(auth.uid).val()`,
+          `val(rules,rooms,$roomid,members,#WIPEOUT_UID)`);
     });
   });
 
   it('should deal with condition', () => {
     expectCond(`auth.uid === $uid && data.child('name').val() !== null`,
-        '{/users/$uid/name}.val() !== null', ['rules','users','$uid']);
+        'val(rules,users,$uid,name) !== null', ['rules','users','$uid']);
     expectAccess(`auth.uid === $uid && data.child('name').val() !== null`,
-        exp.SINGLE_ACCESS, ['rules','users','$uid']);
+        exp.SINGLE_ACCESS, ['rules', 'users', '$uid']);
   });
 
   it('should extract correct wipeout rules from RTBD rules ', () => {
@@ -160,17 +163,36 @@ and exists() now, sibling found`);
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {
-          condition: '{/users2/$uid/test}.val() !== null && {/users2/$uid}.exists()',
+          condition: `val(rules,users2,#WIPEOUT_UID,test) \
+!== null && exists(rules,users2,#WIPEOUT_UID)`,
           path: '/users2/#WIPEOUT_UID'
+        },
+
+        {
+          path: '/chat/$room',
+          authVar: ['val(rules,chat,$room,creator)'],
+          except: '/chat/$room/members'
+        },
+
+        {
+          'path': '/chat2/#WIPEOUT_UID',
+          'except': '/chat2/$owner/members'
+        },
+        {
+          'path': '/record/#WIPEOUT_UID',
+          'condition': 'val(rules,record,#WIPEOUT_UID,createYear) > 2016'
         },
         {path: '/accounts/#WIPEOUT_UID/githubToken'},
         {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
         {path: '/users-say-that/#WIPEOUT_UID/lang'},
         {
-          condition: '$followerUid > 1000',
-          path: '/followers/$followedUid/#WIPEOUT_UID'
+          path: '/followers/$followedUid/#WIPEOUT_UID',
+          condition: '#WIPEOUT_UID > 1000'
         },
-        {path: '/stripe_customers/#WIPEOUT_UID/sources/$chargeId'},
+        {
+          path: '/stripe_customers/$uid/sources/$chargeId',
+          authVar: ['val(rules,stripe_customers,$uid,charges)']
+        },
         {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
