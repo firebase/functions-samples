@@ -1,0 +1,17 @@
+{
+  "env": {
+    "es6": true,
+    "mocha": true,
+    "node": true
+  },
+  "extends": ["eslint:recommended", "google"],
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "plugins": [
+    "promise"
+  ],
+  "rules": {
+    "require-jsdoc": 0
+  }
+}
