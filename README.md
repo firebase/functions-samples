@@ -30,6 +30,10 @@ This quickstart demonstrates using **Cloud Functions** with an HTTPS trigger tha
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. The function generates a thumbnail of uploaded images.
 
+### [Cloud Storage trigger quickstart: FFMPEG Audio Converter](/quickstarts/ffmpeg-convert-audio)
+
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. This function uses ffmpeg / fluent-ffmpeg and automatically converts audio files to FLAC file format with mono-channel audio @ 16000hz.
+
 ### [Auth trigger quickstart: Welcome Email](/quickstarts/email-users)
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Auth events**. The functions sends a Welcome email when user accounts are created (or when users signs-in using an Identity Provider for the first time) and sends a Goodbye email when user accounts are deleted.
