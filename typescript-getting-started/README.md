@@ -39,7 +39,11 @@ starter project:
 1. Create a Firebase Project using the Firebase Developer Console
 2. From the command line inside the directory:
    `firebase --use add YOUR-PROJECT-NAME`
-3. `firebase deploy`
+3. `cd functions; npm run deploy`
+
+Note: with TypeScript you need to build the JavaScript files before
+deploying, so there's an npm script that does the steps.  You can see
+that and a few other handy shortcuts in [package.json](functions/package.json)
 
 After the deploy is complete, you will see output with the URL of your
 Cloud Function endpoint. You can test the function with curl.
