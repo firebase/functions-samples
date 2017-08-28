@@ -49,9 +49,14 @@ starter project:
    firebase init
    firebase --use add $PROJECT
    rm -rf functions
-   cp -r ../functions-samples/typescript-getting-started functions
+   cp -r ../functions-samples/typescript-getting-started/functions functions
    ```
-5. `cd functions; npm run deploy`
+5. Install the dependencies and deploy
+   ```
+   cd functions
+   yarn     # or npm install
+   npm run deploy
+   ```
 
 Note: with TypeScript you need to build the JavaScript files before
 deploying, so there's an npm script that does the steps.  You can see
