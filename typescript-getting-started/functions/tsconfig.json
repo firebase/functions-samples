@@ -5,10 +5,7 @@
     "noImplicitAny": false,
     "outDir": "",
     "sourceMap": true,
-    "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "target": "es6"
   },
   "include": [
     "src/**/*.ts",
