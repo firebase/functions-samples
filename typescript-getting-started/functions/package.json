@@ -13,5 +13,6 @@
     "watch": "tsc --watch",
     "deploy": "tsc && firebase deploy --only functions"
   },
+  "main": "build/index.js",
   "private": true
 }

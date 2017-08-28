@@ -59,7 +59,9 @@ cd functions
 mkdir src
 mv index.js src/index.ts
 ```
-5. add the following dev dependencies and scripts to functions/package.json
+5. add the following dev dependencies, scripts, and we'll be compiling the js
+files in a directory called `build`, so we can specify where to start loading
+JavaScript for Cloud Functions as `"main"` in functions/package.json
 ```
   "devDependencies": {
     "typescript": "^2.3.2"
@@ -69,7 +71,9 @@ mv index.js src/index.ts
     "watch": "tsc --watch",
     "deploy": "tsc && firebase deploy --only functions"
   },
+  "main": "build/index.js",
 ```
+
 6. install dependencies with yarn (still in `functions` directory)
 ```
 yarn install
@@ -81,7 +85,7 @@ yarn install
     "lib": ["es6", "es2015.promise"],
     "module": "commonjs",
     "noImplicitAny": false,
-    "outDir": "",
+    "outDir": "build",
     "sourceMap": true,
     "target": "es6",
   },
