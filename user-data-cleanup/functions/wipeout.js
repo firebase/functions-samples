@@ -57,7 +57,8 @@ const getConfig = () => {
     return Promise.resolve({rules: config, source: 'LOCAL'});
   } catch (err) {
     console.log(`Failed to read local configuration.
-Trying to infer from Realtime Database Security Rules...\n
+Trying to infer from Realtime Database Security Rules...(If you intended to use local configuration,
+make sure there's a 'wipeout_config.json' file in the
 functions directory with a 'wipeout' field.`, err);
     return readDBRules().then(DBRules => {
       const config = extractFromDBRules(DBRules);
@@ -487,7 +488,8 @@ const inferWipeoutRule = tree => {
             p[0] = '';
             ancestorConfig[0].except = p.join('/');
           }
-          continue; // Won't go into subtree of MULT_ACCESS nodesx
+          continue; // Won't go into subtree of MULT_ACCESS nodes
+
         } else if (nodeAccess.getAccessStatus() === exp.SINGLE_ACCESS) {
           if (ancestor.getAccessStatus() === exp.NO_ACCESS) {
             retRules.push(nodeAccess.getAccessPattern(path));
@@ -536,6 +538,8 @@ const removeFreeVars = configs => {
   }
   return newConfigs;
 };
+
+
 
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
