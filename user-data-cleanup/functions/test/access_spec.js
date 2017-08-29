@@ -17,17 +17,18 @@
 //unit tests for the Access class
 
 const Access = require('../access');
-const common = require('./common');
+const testCommon = require('./test_common');
 const exp = require('../expression');
-const expect = common.expect;
+const expect = testCommon.expect;
 
-const expectVar = (acc, list) => {
+const expectVar = (acc, list) =>
   expect(acc.getVariableList()).to.deep.equal(list);
-};
 
-const expectAccess = (acc, access) => {
+const expectAccess = (acc, access) =>
   expect(acc.getAccessStatus()).to.equal(access);
-};
+
+const expectCond = (acc, cond) =>
+  expect(acc.getCondition()).to.equal(cond);
 
 describe('Access', () => {
 
@@ -62,26 +63,22 @@ describe('Access', () => {
     const expUM = new exp.Expression(exp.UNDEFINED,
         [['a','b'],['c']]);
 
-    const accN = Access.fromExpression(expF, []);
-    const accM = Access.fromExpression(expT, []);
-    const accM2 = Access.fromExpression(expUM, []);
-    const accS = Access.fromExpression(expUS, ['a','b','c','d']);
+    const accN = Access.fromExpression(expF);
+    const accM = Access.fromExpression(expT);
+    const accM2 = Access.fromExpression(expUM);
+    const accS = Access.fromExpression(expUS);
 
     expectAccess(accN, exp.NO_ACCESS);
     expectAccess(accM, exp.MULT_ACCESS);
     expectAccess(accM2, exp.MULT_ACCESS);
     expectAccess(accS, exp.SINGLE_ACCESS);
     expectVar(accS, expUS.getConjunctionLists()[0]);
-    // throw error when the path is wrong.
-    const wrongPath = () => Access.fromExpression(expUS, ['a']);
-    expect(wrongPath).to.throw('Write rule is using unknown variable');
-
   });
 
   it('should create correct object from rule and ancestor object', () => {
-    const single1 = new Access(exp.SINGLE_ACCESS,['a','b']);
+    const single1 = new Access(exp.SINGLE_ACCESS,['a','b'], 'a != 1000');
     const single2 = new Access(exp.SINGLE_ACCESS,['a','c']);
-    const single3 = new Access(exp.SINGLE_ACCESS,['a','b','c']);
+    const single3 = new Access(exp.SINGLE_ACCESS,['a','b','c'], 'a>100');
     const mult = new Access(exp.MULT_ACCESS,[]);
     const no = new Access(exp.NO_ACCESS,[]);
 
@@ -102,9 +99,8 @@ describe('Access', () => {
 
     expectAccess(Access.nodeAccess(single1, no), exp.SINGLE_ACCESS);
     expectVar(Access.nodeAccess(single1, no), single1.getVariableList());
-
     expectAccess(Access.nodeAccess(single1, mult), exp.MULT_ACCESS);
 
+    expectCond(Access.nodeAccess(single1, single3), 'a != 1000 || a>100');
   });
-
 });
