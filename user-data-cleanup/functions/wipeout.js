@@ -640,7 +640,7 @@ exports.showWipeoutConfig = () => {
 
 
 
-// Only expose internel functions to tests.
+// Only expose internal functions to tests.
 if (process.env.NODE_ENV === 'TEST') {
   module.exports.filterCondition = filterCondition;
   module.exports.extractFromDBRules = extractFromDBRules;
