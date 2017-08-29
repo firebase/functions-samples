@@ -24,6 +24,7 @@ const exp = require('./expression');
  * else should be the list of literal in the conjunction of corresponding exp
  */
 function Access(status, list) {
+  // TODO(eobrain) convert this to ES2025 class.
   if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
     throw 'Not a valid access status.';
   }
