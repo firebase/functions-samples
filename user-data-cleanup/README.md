@@ -77,7 +77,7 @@ To configure it:
   rules, either loaded from local config or generated from security rules.
 1. The format of wipeout rules are described in the next section. If the rules
   are correct, click the confirm button, or else change the local configuration
-  file [functions/wipeout_config.json](functions/wipeout_conifg.json) and
+  file [functions/wipeout_config.json](functions/wipeout_config.json) and
   redeploy. **Note a developer confirmation is required after every
   deployment.**
  1. Open the app using `firebase open hosting:site`, this will open a browser.
