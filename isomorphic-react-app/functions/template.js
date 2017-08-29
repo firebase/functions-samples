@@ -17,7 +17,7 @@
 // Template file that the server will use to inject the React markup and
 // initial state before sending it to the client
 
-const template = function(opts) {
+const template = opts => {
   return `
   <!DOCTYLE html>
   <html>
@@ -42,6 +42,6 @@ const template = function(opts) {
     <script src='/assets/client.bundle.js'></script>
   </html>
   `;
-}
+};
 
 module.exports = template;

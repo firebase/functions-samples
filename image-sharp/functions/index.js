@@ -15,24 +15,19 @@
  */
 'use strict';
 
-// [START import]
 const functions = require('firebase-functions');
 const gcs = require('@google-cloud/storage')();
-const spawn = require('child-process-promise').spawn;
 const path = require('path');
-const os = require('os');
-const fs = require('fs');
-// [END import]
+const sharp = require('sharp');
 
-// [START generateThumbnail]
+const THUMB_MAX_WIDTH = 200;
+const THUMB_MAX_HEIGHT = 200;
+
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
- * ImageMagick.
+ * Sharp.
  */
-// [START generateThumbnailTrigger]
 exports.generateThumbnail = functions.storage.object().onChange(event => {
-// [END generateThumbnailTrigger]
-  // [START eventAttributes]
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -40,9 +35,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const contentType = object.contentType; // File content type.
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
   const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
-  // [END eventAttributes]
 
-  // [START stopConditions]
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.');
@@ -69,27 +62,31 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     console.log('This is a metadata change event.');
     return;
   }
-  // [END stopConditions]
 
-  // [START thumbnailGeneration]
   // Download file from bucket.
   const bucket = gcs.bucket(fileBucket);
-  const tempFilePath = path.join(os.tmpdir(), fileName);
-  return bucket.file(filePath).download({
-    destination: tempFilePath
-  }).then(() => {
-    console.log('Image downloaded locally to', tempFilePath);
-    // Generate a thumbnail using ImageMagick.
-    return spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]);
-  }).then(() => {
-    console.log('Thumbnail created at', tempFilePath);
-    // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
-    const thumbFileName = `thumb_${fileName}`;
-    const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-    // Uploading the thumbnail.
-    return bucket.upload(tempFilePath, {destination: thumbFilePath});
-  // Once the thumbnail has been uploaded delete the local file to free up disk space.
-  }).then(() => fs.unlinkSync(tempFilePath));
-  // [END thumbnailGeneration]
+
+  const metadata = {
+    contentType: contentType
+  };
+  // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
+  const thumbFileName = `thumb_${fileName}`;
+  const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
+  // Create write stream for uploading thumbnail
+  const thumbnailUploadStream = bucket.file(thumbFilePath).createWriteStream({metadata});
+
+  // Create Sharp pipeline for resizing the image and use pipe to read from bucket read stream
+  const pipeline = sharp();
+  pipeline
+    .resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT)
+    .max()
+    .pipe(thumbnailUploadStream);
+
+  bucket.file(filePath).createReadStream().pipe(pipeline);
+
+  const streamAsPromise = new Promise((resolve, reject) =>
+    thumbnailUploadStream.on('finish', resolve).on('error', reject));
+  return streamAsPromise.then(() => {
+    console.log('Thumbnail created successfully');
+  });
 });
-// [END generateThumbnail]

@@ -23,7 +23,15 @@ This sample comes with a simple web-based UI which code is in [public](public) d
 
 ## Deploy and test
 
-This sample comes with a web-based UI for testing the function. To test it out:
+This sample comes with a web-based UI for testing the function.
+To test locally do:
+
+ 1. Start serving your project locally using `firebase serve --only hosting,functions`
+ 1. Open the app in a browser at `https://localhost:5000`.
+ 1. Sign in the web app in the browser using Google Sign-In and two authenticated requests will be performed from the client and the result will be displayed on the page, normally "Hello <user displayname>".
+
+
+To deploy and test on prod do:
 
  1. Deploy your project using `firebase deploy`
  1. Open the app using `firebase open hosting:site`, this will open a browser.
