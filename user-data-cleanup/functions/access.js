@@ -27,7 +27,6 @@ const common = require('./common');
  * from corresponding expression, default null
  */
 function Access(status, list, condition = null) {
-  // TODO(eobrain) convert this to ES2025 class.
   if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
     throw 'Not a valid access status.';
   }
