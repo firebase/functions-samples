@@ -11,9 +11,11 @@ Sending the notification is done using the [Firebase Admin SDK](https://www.npmj
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
+
 ## Trigger rules
 
 The functions triggers every time a new user open your app the first time or remove your app from his device.
+
 
 ## Setup and test this sample section
 
