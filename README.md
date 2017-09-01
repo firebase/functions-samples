@@ -15,10 +15,10 @@ To learn how to get started with Cloud Functions for Firebase by having a look a
 
 This repository contains two kinds of samples:
 
-1. Development Environment Setup: examples of how to get started with different,
-commonly used JavaScript development patterns
-2. Sample Functions that integrate back-end services or provide sample code for
-common applications for Cloud Functions
+1. **Development Environment Setup** illustrate how to get started with
+different, commonly used JavaScript development patterns.
+2. **Sample Functions** integrate back-end services or provide sample code for
+common applications for Cloud Functions.
 
 
 ## Development Environment Setup
