@@ -10,9 +10,40 @@ Cloud Functions is a hosted, private, and scalable Node.js environment where you
 
 To learn how to get started with Cloud Functions for Firebase by having a look at our [Getting Started Guide](https://firebase.google.com/docs/functions/get-started), trying the [quickstart samples](/quickstarts) and looking at [the documentation](https://firebase.google.com/docs/functions).
 
-## Use Cases and Samples
 
-This repository contains the following samples:
+## Samples Overview
+
+This repository contains two kinds of samples:
+
+1. Development Environment Setup: examples of how to get started with different,
+commonly used JavaScript development patterns
+2. Sample Functions that integrate back-end services or provide sample code for
+common applications for Cloud Functions
+
+
+## Development Environment Setup
+
+The Firebase CLI generates sample code for Cloud Functions using JavaScript
+that is natively supported in NodeJS. Most developers use more modern
+JavaScript or TypeScript which requires additional tools.
+
+### [Write Cloud Functions using TypeScript](/typescript-getting-started)
+
+This sample shows how you can write your Cloud Functions code using Typescript.
+This requires a buld step, included as an npm script, which transpiles the
+source code to a supported version of JavaScript.
+Uses an **HTTPS request**.
+
+
+### [Write Cloud Functions using ES2017 code](/es2017-transpile)
+
+This sample shows how you can write your Cloud Functions code using the ES2017
+syntax. This requires to run a preparation step where your code is transpiled to
+a supported version of JavaScript.
+Uses a **Firebase Realtime Database trigger**.
+
+
+## Sample Functions
 
 ### [Realtime database trigger quickstart: Uppercaser](/quickstarts/uppercase)
 
@@ -166,11 +197,6 @@ Uses a Realtime Database trigger.
 
 Enable full-text search on firebase database elements by using an Algolia hosted search service.
 Uses a Realtime Database trigger.
-
-### [Write Cloud Functions using ES2017 code](/es2017-transpile)
-
-This sample shows how you can write your Cloud Functions code using the ES2017 syntax - which is not supported natively by Cloud Functions. This requires to run a preparation step where your code is transpiled to a supported version of JavaScript.
-Uses an Database trigger.
 
 ### [User data cleanup](/user-data-cleanup)
 
