@@ -1,0 +1,18 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "dependencies": {
+    "firebase-admin": "~4.2.1",
+    "firebase-functions": "^0.5.7"
+  },
+  "devDependencies": {
+    "typescript": "^2.3.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "deploy": "tsc && firebase deploy --only functions"
+  },
+  "main": "build/index.js",
+  "private": true
+}
