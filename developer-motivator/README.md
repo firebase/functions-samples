@@ -22,7 +22,7 @@ The functions triggers every time a new user open your app the first time or rem
 To deploy and test the sample:
 
  - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com)
- - In the Google Analytics for Firebase dashboard, in the `Events` tab, mark the `app_remove` event a conversion event by switching the toggle. The `first_open` event should already be marked as such.
+ - In the Firebase Console, under `Analytics`, in the `Events` tab, mark the `app_remove` event a conversion event by switching the toggle. The `first_open` event should already be marked as such.
  - Install the required dependencies by running `npm install` in the `functions` directory
  - Add this log to your android project:
 
