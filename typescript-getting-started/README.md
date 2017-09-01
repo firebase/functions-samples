@@ -21,7 +21,38 @@ across a project and development team.  TypeScript offers support for the
 latest and evolving JavaScript features like async functions and decorators,
 to help build robust components.
 
-If you are new to TypeScript, check out the [TypeScript PlayGround](https://www.typescriptlang.org/play/index.html).
+For a nice intro to TypeScript, check out the [TypeScript PlayGround](https://www.typescriptlang.org/play/index.html).
+
+### What is different about TypeScript in this example?
+
+The TypeScript source is in `functions/src` and then we need to do a build
+step before deploying (see steps below).  The main Cloud Function entry
+point is `src/index.ts` which compiled to `src/index.js` and that is specified
+in `functions/package.json`.
+
+There are two key differences to the example Cloud Function:
+
+* `require` -> `import`
+* `exports.` -> `export let`
+
+JavaScript:
+```
+var functions = require('firebase-functions');
+
+exports.helloWorld = functions.https.onRequest((request, response) => {
+ response.send("Hello from Firebase!\n\n");
+});
+```
+
+TypeScript:
+```
+import * as functions from 'firebase-functions'
+
+export let helloWorld = functions.https.onRequest((request, response) => {
+ response.send("Hello from Firebase!\n\n");
+});
+```
+
 
 
 ### Project Setup
@@ -63,7 +94,9 @@ deploying, so there's an npm script that does the steps.  You can see
 that and a few other handy shortcuts in [package.json](functions/package.json)
 
 After the deploy is complete, you will see output with the URL of your
-Cloud Function endpoint. You can test the function with curl.
+Cloud Function endpoint. You can test the function with curl.  The following
+command will work with any project, since the output of `firebase use` is
+the current project ID:
 ```
-curl https://us-central1-YOUR-PROJECT-NAME.cloudfunctions.net/helloWorld
+curl https://us-central1-$(firebase use).cloudfunctions.net/helloWorld
 ```
