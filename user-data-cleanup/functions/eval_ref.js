@@ -35,7 +35,7 @@ const evalRef = (callExp, path) => {
 
   const refValue = evalCallExp(callExp, path);
   if (refValue.length !== 1) {
-    throw 'Not a valid referece value. Did you forget .val() at the end?';
+    throw new Error('Not a valid referece value. Did you forget .val() at the end?');
   }
   return refValue[0];
 };
@@ -56,7 +56,7 @@ const evalCallExp = (obj, path) => {
     if (arg.length === 0) {
       // if no argument
       if (result[result.length - 1] === '#CHILD') {
-        throw 'Needs a argument for child ()';
+        throw new Error('Needs a argument for child ()');
       }
       return result;
     }
@@ -64,7 +64,7 @@ const evalCallExp = (obj, path) => {
     const argVal = evalArg(arg['0'], path);
 
     if (result[result.length - 1] !== '#CHILD') {
-      throw 'Only supports argument for child()';
+      throw new Error('Only supports argument for child()');
     }
     // Replace the place holder with actuall argument
     result[result.length - 1] = argVal;
@@ -93,11 +93,11 @@ const evalMember = (obj, path) => {
     break;
 
     default:
-      throw 'Invalid member object for data reference' + obj.object.type;
+    throw new Error('Invalid member object for data reference ' + obj.object.type);
   }
 
   if (obj.property.type !== 'Identifier') {
-    throw 'Property should be Identifiers';
+    throw new Error('Property should be Identifiers');
   }
 
   // dealing with functions
@@ -108,7 +108,7 @@ const evalMember = (obj, path) => {
 
     case 'parent':
       if (result.length <= 2) { // Index 0 is always 'rules'
-        throw 'No parent avaliable';
+        throw new Error('No parent avaliable');
       }
       result.splice(result.length - 1, 1);
       return result;
@@ -120,8 +120,8 @@ const evalMember = (obj, path) => {
       return ['exists(' + result.join(',') + ')'];
 
     default:
-      throw `Only support reference child(), parent(), val() \
-and exists() now, ${obj.property.name} found`;
+      throw new Error(`Only support reference child(), parent(), val() \
+and exists() now, ${obj.property.name} found`);
   }
 };
 
@@ -134,17 +134,18 @@ and exists() now, ${obj.property.name} found`;
  */
 const evalIdentifier = (id, path) => {
     if (id.type !== 'Identifier') {
-      throw 'evalIdentifier() needs Identifiers as input';
+      throw new Error('evalIdentifier() needs Identifiers as input');
     }
     switch (id.name) {
       case 'root':
         return 'rules';
 
-      case 'data':
+      case 'data': {
         const p = path.slice();
         return p;
+      }
       case 'newData':
-        throw 'newData not supported';
+      throw new Error('newData not supported');
     }
     return id.name;
   };
@@ -179,18 +180,18 @@ const evalArg = (arg, path) => {
       if (checkAuth(arg)) {
         return common.WIPEOUT_UID;
       }
-      throw 'MemberExpression as argument not supported, except auth.uid';
+    throw new Error('MemberExpression as argument not supported, except auth.uid');
 
-    case 'CallExpression':
+    case 'CallExpression': {
       const result = evalCallExp(arg, path);
 
       if (result.length !== 1) {
-        throw 'Invalid argument' + result.toString();
+        throw new Error('Invalid argument' + result.toString());
       }
       return result[0];
-
+    }
     default:
-      throw 'Unsupported argument type: ' + arg.type;
+      throw new Error('Unsupported argument type: ' + arg.type);
   }
 };
 

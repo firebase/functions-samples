@@ -141,12 +141,12 @@ const evalSingleAuthVar = (config, uid) => {
   }
   const authVar = config.authVar[0];
   const pathList = authVar.slice(4, -1).split(',');
-  const ref = init.db.ref(pathList.slice(1, -2).join('/'));
+  const ref = global.init.db.ref(pathList.slice(1, -2).join('/'));
   return ref.orderByChild(pathList.slice(-1)[0]).equalTo(uid.toString())
       .once('value')
       .then(res => {
         if (!res.exists()) {
-          return []; 
+          return [];
         }
         const obj = {[pathList.slice(-2)[0]]: Object.keys(res.val())};
         const configList = [];
@@ -214,11 +214,11 @@ const evalSingleExcept = (config) => {
     console.log('This version only supports single level exceptions');
     return []; // This config ingored.
   }
-  const ref = init.db.ref(pathList.slice(1).join('/'));
+  const ref = global.init.db.ref(pathList.slice(1).join('/'));
   return ref.once('value')
       .then(res => {
         if (!res.exists()) {
-          return []; 
+          return [];
         }
         const children = [];
         res.forEach(child => {
@@ -324,10 +324,10 @@ const evalOperand = obj => {
  */
 const evalExists = obj => {
   if (obj.callee.name !== 'exists') {
-    throw 'Expect exists()';
+    throw new Error('Expect exists()');
   }
   const loc = extractPath(obj.arguments);
-  var ref = init.db.ref(loc);
+  var ref = global.init.db.ref(loc);
   return ref.once('value').then(snapshot => snapshot.exists());
 };
 
@@ -335,18 +335,18 @@ const evalExists = obj => {
  * Evaluates val() methods in conditions, check the DB for data value.
  *
  * @param obj input object of the operand
- * @return Promise resolved with query data value 
+ * @return Promise resolved with query data value
  * or false if the data doesn't exists.
  */
 const evalVal = obj => {
   if (obj.callee.name !== 'val') {
-    throw 'Expect val()';
+    throw new Error('Expect val()');
   }
   const loc = extractPath(obj.arguments);
-  var ref = init.db.ref(loc);
+  var ref = global.init.db.ref(loc);
   return ref.once('value').then(snapshot => {
 
-    if (snapshot.exists()){
+    if (snapshot.exists()) {
       return snapshot.val();
     }
     return false;
@@ -363,21 +363,23 @@ const evalLogic = (obj) => {
   switch (obj.type) {
     case 'Literal':
       if (obj.value !== true && obj.value !== false) {
-        throw 'Unsupported Literal in condition';
+        throw new Error('Unsupported Literal in condition');
       }
       return Promise.resolve(obj.value);
     case 'CallExpression':
       return evalExists(obj);
 
-    case 'BinaryExpression':
+    case 'BinaryExpression': {
       const leftBinary = evalOperand(obj.left);
       const rightBinary = evalOperand(obj.right);
 
+      // TODO(eobrain) Consider if we can avoid using dangerous eval.
       return Promise.all([leftBinary, rightBinary])
-          .then(res => eval(`res[0].toString() \
-${obj.operator} res[1].toString()`));
+        .then(res => eval(  // eslint-disable-line no-eval
+          `res[0].toString() ${obj.operator} res[1].toString()`));
+    }
 
-    case 'LogicalExpression':
+    case 'LogicalExpression': {
       const leftLogic = evalLogic(obj.left);
       const rightLogic = evalLogic(obj.right);
       if (obj.operator === '||') {
@@ -388,9 +390,10 @@ ${obj.operator} res[1].toString()`));
         return Promise.all([leftLogic, rightLogic])
             .then(res => (res[0] && res[1]));
       }
-      throw `Unsupported logic operation in condition`;
+      throw new Error('Unsupported logic operation in condition');
+    }
     default:
-      throw 'Unsuppotted logic expression';
+    throw new Error('Unsuppotted logic expression');
   }
 };
 
@@ -418,12 +421,12 @@ const checkCondition = (condition, uid) => {
  * @return database security rules
  */
 const readDBRules = () => {
-  return init.credential.getAccessToken()
+  return global.init.credential.getAccessToken()
   .then(snapshot => {
     return snapshot.access_token;
   })
   .then(token => {
-    const rulesURL = `${init.DB_URL}/.settings/rules.json?` +
+    const rulesURL = `${global.init.DB_URL}/.settings/rules.json?` +
         `access_token=${token}`;
     return request(rulesURL);
   })
@@ -550,7 +553,7 @@ const deleteUser = deletePaths => {
   const deleteTasks = [];
   for (let i = 0; i < deletePaths.length; i++) {
     if (typeof deletePaths[i] !== 'undefined') {
-      deleteTasks.push(init.db.ref(deletePaths[i].path).remove());
+      deleteTasks.push(global.init.db.ref(deletePaths[i].path).remove());
     }
   }
   return Promise.all(deleteTasks).then(() => deletePaths);
@@ -562,8 +565,8 @@ const deleteUser = deletePaths => {
  * @param data Deleted User.
  */
 const writeLog = (data, paths) => {
-  return init.db.ref(`${common.BOOK_KEEPING_PATH}/history/${data.uid}`)
-      .set({timestamp: init.serverValue.TIMESTAMP, paths: paths});
+  return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/history/${data.uid}`)
+      .set({timestamp: global.init.serverValue.TIMESTAMP, paths: paths});
 };
 
 /**
@@ -572,10 +575,10 @@ const writeLog = (data, paths) => {
  *
  */
 exports.cleanupUserData = () => {
-  return init.users.onDelete(event => {
-    const configPromise = init.db
+  return global.init.users.onDelete(event => {
+    const configPromise = global.init.db
         .ref(`${common.BOOK_KEEPING_PATH}/rules`).once('value');
-    const confirmPromise = init.db
+    const confirmPromise = global.init.db
         .ref(`${common.BOOK_KEEPING_PATH}/confirm`).once('value');
     return Promise.all([configPromise, confirmPromise])
         .then((snapshots) => {
@@ -610,27 +613,36 @@ exports.showWipeoutConfig = () => {
   return functions.https.onRequest((req, res) => {
     if (req.method === 'GET') {
       return getConfig().then(configs => {
-        return init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
+        return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
             .set(configs.rules).then(() => {
               const sourceDict = {
                 'LOCAL': 'loaded from local wipeout config',
                 'AUTO': 'generated by the library from security rules'
               };
-              ejs.renderFile('template.ejs',
-              {configs: configs.rules, source: sourceDict[configs.source]},
-              (err, html) => res.send(html));
+              ejs.renderFile(
+                'template.ejs',
+                {configs: configs.rules, source: sourceDict[configs.source]},
+                (err, html) => {
+                  console.log('Problem rendering template: ', err);
+                  res.send(html);
+                });
             });
       });
     } else if ((req.method === 'POST')) {
       if (req.body.confirm === 'Confirm') {
-        return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(true)
-            .then(() => init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
+        return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(true)
+            .then(() => global.init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
             .once('value').then(snapshot => {
-              ejs.renderFile('template_confirm.ejs', {configs: snapshot.val()},
-               (err, html) => res.send(html));
+              ejs.renderFile(
+                'template_confirm.ejs',
+                {configs: snapshot.val()},
+                (err, html) => {
+                  console.log('Problem rendering template: ', err);
+                  res.send(html);
+                });
             }));
       } else if (req.body.confirm === 'Reset') {
-          return init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(false)
+          return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`).set(false)
               .then(() => res.send(`Initialize complete.
  Remember to verify and confirm the wipeout rules to activate the library`));
       }

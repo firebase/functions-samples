@@ -25,11 +25,11 @@ const MULT_ACCESS = 2;
 
 function Expression(value, list, condition = null) {
   if (!checkValue(value)) {
-    throw `Not a valid boolean value, can't initialize.`;
+    throw new Error('Not a valid boolean value, can\'t initialize.');
   }
   this.booleanValue = value;
   if (typeof condition !== 'string' && condition !== null) {
-    throw `Condition needs to be a string or undefined`;
+    throw new Error('Condition needs to be a string or undefined');
   }
   if (value === FALSE) {
     //An expression with FALSE booleanValue should not have conditions
@@ -41,7 +41,7 @@ function Expression(value, list, condition = null) {
     return;
   }
   if (!checkConjunctionLists(list)) {
-    throw `Not a valid conjunction list, can't initialize`;
+    throw new Error('Not a valid conjunction list, can\'t initialize');
   }
   this.conjunctionLists = list;
   this.simplify();
@@ -80,7 +80,7 @@ const checkConjunctionLists = list =>
  */
 Expression.prototype.setConjunctionLists = function(list) {
   if (!checkConjunctionLists(list)) {
-    throw `Not a valid conjunction list, can't set DNF expression`;
+    throw new Error('ot a valid conjunction list, can\'t set DNF expression');
   }
   this.conjunctionLists = list;
 };
@@ -93,7 +93,7 @@ Expression.prototype.setConjunctionLists = function(list) {
 Expression.prototype.setLiteralList = function(list, i) {
   if (i < 0 || i >= this.conjunctionLists.length ||
       !checkLiteralList(list)) {
-    throw `Not a valid literal list or index, can't set DNF expresion`;
+    throw new Error('Not a valid literal list or index, can\'t set DNF expresion');
   }
   this.conjunctionLists[i] = list;
 };
@@ -167,8 +167,8 @@ const isContainSorted = (long, short) => {
           index === 0 ? true : arr[index] > arr[index - 1]);
 
   if (!(long.length >= short.length && isSorted(long) && isSorted(short))) {
-    throw `Can't check containess for absorbtion.\
-Needs two sorted lists, the first one longer than the second.`;
+    throw new Error('Can\'t check containess for absorbtion. ' +
+                    'Needs two sorted lists, the first one longer than the second.');
   }
   if (short[0] < long[0] ||
       short[short.length - 1] > long[long.length - 1]) {
@@ -209,7 +209,7 @@ Expression.prototype.simplify = function() {
 
 const condOperation = (left, right, op) => {
   if (op !== '||' && op !== '&&') {
-    throw `Invalid operation ${op} for conditions`;
+    throw new Error(`Invalid operation ${op} for conditions`);
   }
 
   if (left === null && right === null) {
@@ -234,7 +234,7 @@ const condOperation = (left, right, op) => {
  */
 Expression.or = function(left, right) {
   if (!(left instanceof Expression && right instanceof Expression)) {
-    throw `Operators of 'or' must be instances of Expression`;
+    throw new Error('Operators of "or" must be instances of Expression');
   }
   const newCond = condOperation(left.condition, right.condition, '||');
   if ((left.getBooleanValue() === TRUE) ||
@@ -263,7 +263,7 @@ Expression.and = function(left, right) {
 
   const crossProduct = (l1, l2) => {
     if (!(checkConjunctionLists(l1) && checkConjunctionLists(l2))) {
-      throw 'Only supports crossproduct of two conjunction lists';
+      throw new Error('Only supports crossproduct of two conjunction lists');
     }
     const product = [];
     for (let i = 0; i < l1.length; i++) {
@@ -275,7 +275,7 @@ Expression.and = function(left, right) {
   };
 
   if (!(left instanceof Expression && right instanceof Expression)) {
-    throw `Operators of 'and' must be instances of Expression`;
+    throw new Error('Operators of "and" must be instances of Expression');
   }
   const newCond = condOperation(left.condition, right.condition, '&&');
 

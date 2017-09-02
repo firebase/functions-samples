@@ -17,7 +17,6 @@
 
 // Parse write rules to get back the Access object of the rule.
 // Exports parseWriteRule()
-const common = require('./common');
 const exp = require('./expression');
 const Expression = exp.Expression;
 const jsep = require('jsep');
@@ -66,9 +65,9 @@ const parseLogic = (obj, path) => {
       if (obj.raw === 'false') {
         return new Expression(exp.FALSE, []);
       }
-      throw 'Literals else than true or false are not supported';
+    throw new Error('Literals else than true or false are not supported');
 
-    case 'LogicalExpression':
+    case 'LogicalExpression': {
       const left = parseLogic(obj.left, path);
       const right = parseLogic(obj.right, path);
 
@@ -78,7 +77,8 @@ const parseLogic = (obj, path) => {
       if (obj.operator === '&&') {
         return Expression.and(left, right);
       }
-      throw `Unsupported logic operation: ${obj.operator}`;
+      throw new Error(`Unsupported logic operation: ${obj.operator}`);
+    }
 
     default:
       return new Expression(exp.TRUE, []);
@@ -95,7 +95,7 @@ const parseLogic = (obj, path) => {
  */
 const parseBinary = (obj, path) => {
   if (obj.type !== 'BinaryExpression') {
-    throw 'Expect Binary Expreesion';
+    throw new Error('Expect Binary Expreesion');
   }
   // auth involved in BinaryExpression
   if (refs.checkAuth(obj.left)) {
@@ -164,7 +164,7 @@ const getCond = (obj, path) => {
       return refs.evalRef(obj, path);
 
     default:
-      throw `Type of BinaryExpression candidate ${obj.type} not supported`;
+      throw new Error(`Type of BinaryExpression candidate ${obj.type} not supported`);
   }
 };
 

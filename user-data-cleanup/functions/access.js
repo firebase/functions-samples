@@ -28,7 +28,7 @@ const common = require('./common');
  */
 function Access(status, list, condition = null) {
   if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
-    throw 'Not a valid access status.';
+    throw new Error('Not a valid access status.');
   }
   this.accessStatus = status;
 
@@ -38,7 +38,7 @@ function Access(status, list, condition = null) {
     return;
   }
   if (!checkVariableList(list)) {
-    throw 'Not a valid list of variable for single access.';
+    throw new Error('Not a valid list of variable for single access.');
   }
   this.condition = condition;
   this.variableList = list;
@@ -94,10 +94,10 @@ const checkAuthVar = str => {
  */
 Access.prototype.getAccessPattern = function(path) {
   if (this.getAccessStatus() !== exp.SINGLE_ACCESS) {
-    throw 'Access Pattern only available for SINGLE ACCESS objects';
+    throw new Error('Access Pattern only available for SINGLE ACCESS objects');
   }
   if (path[0] !== 'rules') {
-    throw `A valid path starts with 'rules'`;
+    throw new Error('A valid path starts with "rules")');
   }
   const varList = this.getVariableList();
   const result = path.map(
@@ -178,7 +178,7 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
           // If either access is MULT then result is MULT
           return new Access(exp.MULT_ACCESS, []);
 
-        case exp.SINGLE_ACCESS:
+        case exp.SINGLE_ACCESS: {
           // If both accesses are SINGLE, then the result is either SINGLE or
           // MULT depending on whether every variables are a subset of the
           // rules variables (whether the rule grants additional access beyond
@@ -195,6 +195,7 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
                 newCond);
           }
           return new Access(exp.MULT_ACCESS, []);
+        }
       }
   }
 };

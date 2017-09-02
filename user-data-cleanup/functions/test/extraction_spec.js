@@ -95,6 +95,7 @@ describe('Auto generation of rules', () => {
         }
       }
     };
+
     expect(wipeout.inferWipeoutRule(ruleTree)).to.deep
         .equal([
         {
@@ -106,53 +107,53 @@ describe('Auto generation of rules', () => {
   describe('should deal with data references', () => {
     it('should throw an error for invalid data references', () => {
       // Invalid functions
-      expectRefErr(`data.sibling()`,
-          `Only support reference child(), parent(), val() \
-and exists() now, sibling found`);
+      expectRefErr('data.sibling()',
+                   'Only support reference child(), parent(), val() ' +
+                   'and exists() now, sibling found');
       // Needs to be a value instead of a location reference.
-      expectRefErr(`data.child('a')`,
-          `Not a valid referece value. Did you forget .val() at the end?`);
+      expectRefErr('data.child(\'a\')',
+          'Not a valid referece value. Did you forget .val() at the end?');
       // Invalide arguments
-      expectRefErr(`data.child().val()`, `Needs a argument for child ()`);
-      expectRefErr(`data.child('arg').parent('arg')`,
-          `Only supports argument for child()`);
-      expectRefErr(`data.val('arg')`, `Only supports argument for child()`);
-      expectRefErr(`data.exists('arg')`, `Only supports argument for child()`);
+      expectRefErr('data.child().val()', 'Needs a argument for child ()');
+      expectRefErr('data.child(\'arg\').parent(\'arg\')',
+          'Only supports argument for child()');
+      expectRefErr('data.val(\'arg\')', 'Only supports argument for child()');
+      expectRefErr('data.exists(\'arg\')', 'Only supports argument for child()');
       // No valid parent
-      expectRefErr(`data.parent()`, `No parent avaliable`);
+      expectRefErr('data.parent()', 'No parent avaliable');
     });
 
     it('should extract correct content for data references', () => {
       // references containing newData should evaluates to undefined.
-      expectRef(`newData.child('from').val()`, null);
+      expectRef('newData.child(\'from\').val()', null);
       // functions val(), exists(), parent(), child()
-      expectRef(`data.val()`, `val(rules,doc,$uid,create)`,
+      expectRef('data.val()', 'val(rules,doc,$uid,create)',
          ['rules', 'doc', '$uid', 'create']);
-      expectRef(`data.child('acc').val()`, `val(rules,users,acc)`,
+      expectRef('data.child(\'acc\').val()', 'val(rules,users,acc)',
          ['rules', 'users']);
-      expectRef(`data.child('acc').parent().val()`, `val(rules,users)`,
+      expectRef('data.child(\'acc\').parent().val()', 'val(rules,users)',
          ['rules', 'users']);
-      expectRef(`data.child('acc').parent().child('acc2').val()`,
-         `val(rules,users,acc2)`, ['rules', 'users']);
-      expectRef(`data.child('acc').parent().child('acc2').exists()`,
-          `exists(rules,users,acc2)`, ['rules', 'users']);
+      expectRef('data.child(\'acc\').parent().child(\'acc2\').val()',
+         'val(rules,users,acc2)', ['rules', 'users']);
+      expectRef('data.child(\'acc\').parent().child(\'acc2\').exists()',
+          'exists(rules,users,acc2)', ['rules', 'users']);
       // variable root
-      expectRef(`root.child('acc').val()`, `val(rules,acc)`);
+      expectRef('root.child(\'acc\').val()', 'val(rules,acc)');
       // complex arguments
-      expectRef(`root.child('rooms').child(data.child('creator').val()).val()`,
-          `val(rules,rooms,val(rules,rooms,$roomid,creator))`,
+      expectRef('root.child(\'rooms\').child(data.child(\'creator\').val()).val()',
+          'val(rules,rooms,val(rules,rooms,$roomid,creator))',
           ['rules', 'rooms', '$roomid']);
       expectRef(
-          `root.child('rooms').child($roomid).\
-child('members').child(auth.uid).val()`,
-          `val(rules,rooms,$roomid,members,#WIPEOUT_UID)`);
+          'root.child(\'rooms\').child($roomid). ' +
+          'child(\'members\').child(auth.uid).val()',
+          'val(rules,rooms,$roomid,members,#WIPEOUT_UID)');
     });
   });
 
   it('should deal with condition', () => {
-    expectCond(`auth.uid === $uid && data.child('name').val() !== null`,
+    expectCond('auth.uid === $uid && data.child(\'name\').val() !== null',
         'val(rules,users,$uid,name) !== null', ['rules','users','$uid']);
-    expectAccess(`auth.uid === $uid && data.child('name').val() !== null`,
+    expectAccess('auth.uid === $uid && data.child(\'name\').val() !== null',
         exp.SINGLE_ACCESS, ['rules', 'users', '$uid']);
   });
 
@@ -163,8 +164,8 @@ child('members').child(auth.uid).val()`,
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {
-          condition: `val(rules,users2,#WIPEOUT_UID,test) \
-!== null && exists(rules,users2,#WIPEOUT_UID)`,
+          condition: 'val(rules,users2,#WIPEOUT_UID,test) ' +
+            '!== null && exists(rules,users2,#WIPEOUT_UID)',
           path: '/users2/#WIPEOUT_UID'
         },
 
@@ -197,6 +198,7 @@ child('members').child(auth.uid).val()`,
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
         ];
-    return expect(inferredDeletePaths).to.deep.equal(userPaths);
+
+    expect(inferredDeletePaths).to.deep.equal(userPaths);
   });
 });

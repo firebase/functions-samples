@@ -26,7 +26,7 @@ const WIPEOUT_CONFIG = {
     'db': admin.database(),
     'serverValue': admin.database.ServerValue,
     'users': functions.auth.user(),
-    'DB_URL': functions.config().firebase.databaseURL,
+    'DB_URL': functions.config().firebase.databaseURL
   };
 
 wipeout.initialize(WIPEOUT_CONFIG);
@@ -37,7 +37,7 @@ exports.showWipeoutConfig = wipeout.showWipeoutConfig();
 
 /** Cloud Function that adds demo data to app for a user. */
 exports.addDataDemo = functions.https.onRequest((req, res) => {
-  if (req.method == 'POST') {
+  if (req.method === 'POST') {
     const body = JSON.parse(req.body);
     if (typeof body.ref === 'undefined' || typeof body.content !== 'object') {
       return Promise.reject('Needs ref and content field to add demo data');

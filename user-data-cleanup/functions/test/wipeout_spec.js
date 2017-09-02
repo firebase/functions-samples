@@ -54,7 +54,7 @@ describe('Wipeout', () => {
       }
     });
     confirmStub = sinon.stub();
-    refStub.withArgs(`/wipeout/confirm`).returns({set: confirmStub});
+    refStub.withArgs('/wipeout/confirm').returns({set: confirmStub});
 
     const WIPEOUT_CONFIG = {
       'admin': admin,
@@ -81,21 +81,25 @@ describe('Wipeout', () => {
 
   it('should evaluate conditions correctly', () => {
     expect(wipeout.checkCondition(
-        `0 > 1`, fakeUserId)).to.eventually.equal(false);
+        '0 > 1', fakeUserId)).to.eventually.equal(false);
+
     expect(wipeout.checkCondition(
-        `1 > 0 && 3 > 1`, fakeUserId)).to.eventually.equal(true);
+        '1 > 0 && 3 > 1', fakeUserId)).to.eventually.equal(true);
+
     expect(wipeout.checkCondition(
-        `#WIPEOUT_UID != 'U12345'`, fakeUserId)).to.eventually.equal(true);
+        '#WIPEOUT_UID != \'U12345\'', fakeUserId)).to.eventually.equal(true);
 
     const snapshot1 = sinon.stub(refStub, 'once');
     snapshot1.withArgs('value')
         .resolves({'exists': () => true, 'val': () => 'TEST'});
     refStub.withArgs(`/users2/${fakeUserId}/test`).returns({once: snapshot1});
+
     expect(wipeout.checkCondition(
-        `exists(rules,users2,#WIPEOUT_UID,test)`,
+        'exists(rules,users2,#WIPEOUT_UID,test)',
          fakeUserId)).to.eventually.equal(true);
+
     expect(wipeout.checkCondition(
-        `val(rules,users2,#WIPEOUT_UID,test) == 'TEST'`,
+        'val(rules,users2,#WIPEOUT_UID,test) == \'TEST\'',
         fakeUserId)).to.eventually.equal(true);
 
     const snapshot2 = sinon.stub(refStub, 'once');
@@ -103,19 +107,22 @@ describe('Wipeout', () => {
         .resolves({'exists': () => true, 'val': () => fakeUserId});
     refStub.withArgs(`/users2/${fakeUserId}/creator`)
         .returns({once: snapshot2});
+
     expect(wipeout.checkCondition(
-        `val(rules,users2,#WIPEOUT_UID,creator) == #WIPEOUT_UID`,
+        'val(rules,users2,#WIPEOUT_UID,creator) == #WIPEOUT_UID',
       fakeUserId)).to.eventually.equal(true);
+
     expect(wipeout.checkCondition(
-        `val(rules,users2,#WIPEOUT_UID,creator) == #WIPEOUT_UID && #WIPEOUT_UID != 'U12345'`,
+        'val(rules,users2,#WIPEOUT_UID,creator) == #WIPEOUT_UID && #WIPEOUT_UID != \'U12345\'',
         fakeUserId)).to.eventually.equal(true);
   });
 
   it('should filter out false conditions', () => {
     const config = [
     {path: `/users/${fakeUserId}`, condition: 'true'},
-    {path: `/users2/${fakeUserId}`, condition: 'false'},
+    {path: `/users2/${fakeUserId}`, condition: 'false'}
     ];
+
     expect(wipeout.filterCondition(config, fakeUserId))
         .to.eventually.deep.equal([{'path': `/users/${fakeUserId}`}]);
   });
@@ -132,7 +139,7 @@ describe('Wipeout', () => {
         });
     queryStub.withArgs(fakeUserId).returns({once: snapshot});
     childStub.withArgs('creator').returns({equalTo: queryStub});
-    refStub.withArgs(`chat`).returns({orderByChild: childStub});
+    refStub.withArgs('chat').returns({orderByChild: childStub});
 
     expect(wipeout.evalSingleAuthVar({
       path: '/chat/$room',
@@ -177,7 +184,7 @@ describe('Wipeout', () => {
               .bind([{key: 'name'}, {key: 'creator'}, {key: 'members'}]),
            exists: () => true });
 
-    refStub.withArgs(`chat/room`).returns({once: snapshot});
+    refStub.withArgs('chat/room').returns({once: snapshot});
 
     expect(wipeout.evalSingleExcept({
       path: '/chat/room/',
@@ -185,7 +192,7 @@ describe('Wipeout', () => {
     })).to.eventually.deep
     .equal([
       {path: '/chat/room/name'},
-      {path: '/chat/room/creator'},
+      {path: '/chat/room/creator'}
       ]);
 
     expect(wipeout.evalSingleExcept({
@@ -206,7 +213,7 @@ describe('Wipeout', () => {
     .equal([
       {path: '/chat/room3'},
       {path: '/chat/room/name'},
-      {path: '/chat/room/creator'},
+      {path: '/chat/room/creator'}
     ]);
   });
 

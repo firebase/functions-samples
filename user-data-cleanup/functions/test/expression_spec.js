@@ -48,14 +48,14 @@ describe('Expressions', () => {
     const new7 = () => new Expression(true, [[1, 2, 3]]);
     const new8 = () => new Expression(exp.TRUE, [], 1);
 
-    expect(new1).to.throw(`Not a valid conjunction list, can't initialize`);
-    expect(new2).to.throw(`Not a valid conjunction list, can't initialize`);
-    expect(new3).to.throw(`Not a valid conjunction list, can't initialize`);
-    expect(new4).to.throw(`Not a valid conjunction list, can't initialize`);
-    expect(new5).to.throw(`Not a valid conjunction list, can't initialize`);
-    expect(new6).to.throw(`Not a valid conjunction list, can't initialize`);
-    expect(new7).to.throw(`Not a valid boolean value, can't initialize`);
-    expect(new8).to.throw(`Condition needs to be a string or undefined`);
+    expect(new1).to.throw('Not a valid conjunction list, can\'t initialize');
+    expect(new2).to.throw('Not a valid conjunction list, can\'t initialize');
+    expect(new3).to.throw('Not a valid conjunction list, can\'t initialize');
+    expect(new4).to.throw('Not a valid conjunction list, can\'t initialize');
+    expect(new5).to.throw('Not a valid conjunction list, can\'t initialize');
+    expect(new6).to.throw('Not a valid conjunction list, can\'t initialize');
+    expect(new7).to.throw('Not a valid boolean value, can\'t initialize');
+    expect(new8).to.throw('Condition needs to be a string or undefined');
 
   });
 

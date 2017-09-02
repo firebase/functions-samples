@@ -38,10 +38,10 @@ describe('Access', () => {
     const new3 = () => new Access(exp.SINGLE_ACCESS,[[1,2,3]]);
     const new4 = () => new Access(true,['1','2','3']);
 
-    expect(new1).to.throw(`Not a valid list of variable for single access.`);
-    expect(new2).to.throw(`Not a valid list of variable for single access.`);
-    expect(new3).to.throw(`Not a valid list of variable for single access.`);
-    expect(new4).to.throw(`Not a valid access status.`);
+    expect(new1).to.throw('Not a valid list of variable for single access.');
+    expect(new2).to.throw('Not a valid list of variable for single access.');
+    expect(new3).to.throw('Not a valid list of variable for single access.');
+    expect(new4).to.throw('Not a valid access status.');
   });
 
   it('should have empty variableList with NO/MULT access', () => {
