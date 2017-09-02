@@ -20,14 +20,15 @@ const common = require('./common');
 
 /**
  * Access Class, used to represent the access status of a write rule or node
- * @param status access status, could be NO_ACCESS/SINGLE_ACCESS/MULT_ACCESS
- * @param list variable list, should be empty list if status is NO/SINGLE,
+ * @constructor
+ * @param {integer} status  NO_ACCESS, SINGLE_ACCESS, or MULT_ACCESS
+ * @param {array} variable_list should be empty if status is NO_/SINGLE,
  * else should be the list of literal in the conjunction of corresponding exp
- * @param condition optional condition for access status, inherited directly
- * from corresponding expression, default null
+ * @param {string} [condition] optional condition for access status, inherited
+ * directly from corresponding expression, default null
  */
-function Access(status, list, condition = null) {
-  if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
+function Access(status, variable_list, condition=null) {
+  if (! [exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
     throw new Error('Not a valid access status.');
   }
   this.accessStatus = status;
@@ -37,16 +38,16 @@ function Access(status, list, condition = null) {
     this.condition = null;
     return;
   }
-  if (!checkVariableList(list)) {
+  if (!checkVariableList(variable_list)) {
     throw new Error('Not a valid list of variable for single access.');
   }
   this.condition = condition;
-  this.variableList = list;
+  this.variableList = variable_list;
 }
 
 /**
  * Helper function, validity checking for variable list.
- * @param list input list, should be list of strings
+ * @param {array} a list of strings
  */
 const checkVariableList = list =>
     Array.isArray(list) && list.length > 0 && list.every(variable =>
@@ -54,6 +55,7 @@ const checkVariableList = list =>
 
 /**
  * Getter of access status
+ * @return {integer}
  */
 Access.prototype.getAccessStatus = function() {
   return this.accessStatus;
@@ -61,6 +63,7 @@ Access.prototype.getAccessStatus = function() {
 
 /**
  * Getter of condition, could be null if no condition
+ * @return {string}
  */
 Access.prototype.getCondition = function() {
   return this.condition;
@@ -132,6 +135,7 @@ ${common.WIPEOUT_UID} === ${varList[i]}`;
   return ret;
 };
 
+/** @return {array} list of strings */
 Access.prototype.getVariableList = function() {
   return this.variableList;
 };
@@ -139,9 +143,9 @@ Access.prototype.getVariableList = function() {
 /**
  * Create access object from expression object.
  * The access object describes the access pattern of the expression
- * @param expression input expression object
+ * @param {string} expression input expression object
  */
-Access.fromExpression = function(expression) {
+Access.fromExpression = (expression) => {
   const status = expression.getAccessNumber();
   const cond = expression.getCondition();
   if ((status === exp.NO_ACCESS) || (status === exp.MULT_ACCESS)) {
@@ -153,10 +157,11 @@ Access.fromExpression = function(expression) {
 /**
  * Get access status of the node, according to access of the
  * rule at the location and access status of its ancestor
- * @param ancestor access object of ancestor of the current node
- * @param ruleAccess access object of write rule at the current place
+ * @param {Access} ancestor access object of ancestor of the current node
+ * @param {Access} ruleAccess access object of write rule at the current place
+ * @return {Access}
  */
-Access.nodeAccess = function(ancestor, ruleAccess) {
+Access.nodeAccess = (ancestor, ruleAccess) => {
   switch (ancestor.getAccessStatus()) {
 
     case exp.MULT_ACCESS:
@@ -200,4 +205,7 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
   }
 };
 
+
+/** Access class is used to represent the access status of a write rule or
+ * node. */
 module.exports = Access;

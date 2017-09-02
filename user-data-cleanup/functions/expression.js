@@ -29,7 +29,7 @@ function Expression(value, list, condition = null) {
   }
   this.booleanValue = value;
   if (typeof condition !== 'string' && condition !== null) {
-    throw new Error('Condition needs to be a string or undefined');
+    throw new Error('Condition needs to be a string or null');
   }
   if (value === FALSE) {
     //An expression with FALSE booleanValue should not have conditions
