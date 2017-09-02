@@ -55,7 +55,7 @@ describe('Expressions', () => {
     expect(new5).to.throw('Not a valid conjunction list, can\'t initialize');
     expect(new6).to.throw('Not a valid conjunction list, can\'t initialize');
     expect(new7).to.throw('Not a valid boolean value, can\'t initialize');
-    expect(new8).to.throw('Condition needs to be a string or undefined');
+    expect(new8).to.throw('Condition needs to be a string or null');
 
   });
 
@@ -170,4 +170,3 @@ describe('Expressions', () => {
     });
   });
 });
-
