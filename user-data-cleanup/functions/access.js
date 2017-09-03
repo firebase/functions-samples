@@ -27,8 +27,8 @@ const common = require('./common');
  * @param {string} [condition] optional condition for access status, inherited
  * directly from corresponding expression, default null
  */
-function Access(status, variable_list, condition=null) {
-  if (! [exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
+function Access(status, variable_list, condition = null) {
+  if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
     throw new Error('Not a valid access status.');
   }
   this.accessStatus = status;
