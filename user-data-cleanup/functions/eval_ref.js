@@ -22,9 +22,9 @@ const common = require('./common');
 /**
  * Evaluates data references
  *
- * @param callExp input CallExpression
- * @param path current path
- * @return string which represents the value of the call expression
+ * @param {object} callExp input CallExpression
+ * @param {array} path current path
+ * @return {string} which represents the value of the call expression
  * or undefined if expression contains newData.
  */
 const evalRef = (callExp, path) => {
@@ -35,7 +35,7 @@ const evalRef = (callExp, path) => {
 
   const refValue = evalCallExp(callExp, path);
   if (refValue.length !== 1) {
-    throw new Error('Not a valid referece value. Did you forget .val() at the end?');
+    throw new Error('Not a valid value. Did you forget .val() at the end?');
   }
   return refValue[0];
 };
@@ -43,9 +43,9 @@ const evalRef = (callExp, path) => {
 /**
  * Evaluates CallExpression
  *
- * @param obj input CallExpression
- * @param path current path
- * @return list holding variables in the data reference
+ * @param {object}  obj input CallExpression
+ * @param {array} path current path
+ * @return {array} list holding variables in the data reference
  */
 const evalCallExp = (obj, path) => {
     const arg = obj.arguments;
@@ -77,9 +77,9 @@ const evalCallExp = (obj, path) => {
  * The property is the function to call: child(), parent(), val(), exists()
  * The object is the entity which calls the function
  *
- * @param obj input MemberExpression
- * @param path current path
- * @return list holding variables in the data reference
+ * @param {object} obj input MemberExpression
+ * @param {array} path current path
+ * @return {array} holding variables in the data reference
  */
 const evalMember = (obj, path) => {
   let result = [];
@@ -93,7 +93,8 @@ const evalMember = (obj, path) => {
     break;
 
     default:
-    throw new Error('Invalid member object for data reference ' + obj.object.type);
+      throw new Error('Invalid member object for data reference ' +
+                      obj.object.type);
   }
 
   if (obj.property.type !== 'Identifier') {
@@ -128,9 +129,9 @@ and exists() now, ${obj.property.name} found`);
 /**
  * Evaluates Identifier, replace root/data with value.
  *
- * @param id input identifier
- * @param path current path
- * @return string or list of string representing identifier
+ * @param {object} id input identifier (jsep parse tree)
+ * @param {array} path current path
+ * @return {string or list of string} representing identifier
  */
 const evalIdentifier = (id, path) => {
     if (id.type !== 'Identifier') {
@@ -140,12 +141,11 @@ const evalIdentifier = (id, path) => {
       case 'root':
         return 'rules';
 
-      case 'data': {
-        const p = path.slice();
-        return p;
-      }
+      case 'data':
+        return path.slice();
+
       case 'newData':
-      throw new Error('newData not supported');
+        throw new Error('newData not supported');
     }
     return id.name;
   };
@@ -153,8 +153,8 @@ const evalIdentifier = (id, path) => {
 /**
  * Helper function, checks if a MemerberExpression is auth.uid
  *
- * @param obj input MemberExpression
- * @return true or false
+ * @param {object} obj input MemberExpression
+ * @return {Boolean}
  */
 const checkAuth = obj =>
     obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
@@ -164,9 +164,9 @@ const checkAuth = obj =>
 /**
  * Evaluates argument of functions
  *
- * @param arg input argument
- * @param path current path
- * @return string representing argument value
+ * @param {object} arg input argument (jsep parse tree)
+ * @param {array} path current path
+ * @return {string} representation of argument value
  */
 const evalArg = (arg, path) => {
   switch (arg.type) {
@@ -180,7 +180,7 @@ const evalArg = (arg, path) => {
       if (checkAuth(arg)) {
         return common.WIPEOUT_UID;
       }
-    throw new Error('MemberExpression as argument not supported, except auth.uid');
+    throw new Error('member reference not supported, except auth.uid');
 
     case 'CallExpression': {
       const result = evalCallExp(arg, path);
@@ -195,6 +195,8 @@ const evalArg = (arg, path) => {
   }
 };
 
+/** Evaluates data references */
 module.exports.evalRef = evalRef;
-module.exports.checkAuth = checkAuth;
 
+/** Helper function, checks if a MemerberExpression is auth.uid */
+module.exports.checkAuth = checkAuth;

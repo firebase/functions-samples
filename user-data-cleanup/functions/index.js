@@ -31,8 +31,10 @@ const WIPEOUT_CONFIG = {
 
 wipeout.initialize(WIPEOUT_CONFIG);
 
+/** expose cleanupUserDat as Cloud Function */
 exports.cleanupUserData = wipeout.cleanupUserData();
 
+/** expose showWipeoutConfig as Cloud Function */
 exports.showWipeoutConfig = wipeout.showWipeoutConfig();
 
 /** Cloud Function that adds demo data to app for a user. */

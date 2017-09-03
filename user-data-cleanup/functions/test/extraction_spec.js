@@ -112,13 +112,14 @@ describe('Auto generation of rules', () => {
                    'and exists() now, sibling found');
       // Needs to be a value instead of a location reference.
       expectRefErr('data.child(\'a\')',
-          'Not a valid referece value. Did you forget .val() at the end?');
+          'Not a valid value. Did you forget .val() at the end?');
       // Invalide arguments
       expectRefErr('data.child().val()', 'Needs a argument for child ()');
       expectRefErr('data.child(\'arg\').parent(\'arg\')',
           'Only supports argument for child()');
       expectRefErr('data.val(\'arg\')', 'Only supports argument for child()');
-      expectRefErr('data.exists(\'arg\')', 'Only supports argument for child()');
+      expectRefErr('data.exists(\'arg\')',
+                   'Only supports argument for child()');
       // No valid parent
       expectRefErr('data.parent()', 'No parent avaliable');
     });
