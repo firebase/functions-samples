@@ -584,7 +584,7 @@ exports.cleanupUserData = () => global.init.users.onDelete(event => {
            )
       .then(configs => evalAuthVars(configs, event.data.uid))
       .then(configs => evalExcepts(configs))
-      .then(nfigs => removeFreeVars(configs))
+      .then(configs => removeFreeVars(configs))
       .then(deletePaths => deleteUser(deletePaths))
       .then(paths => writeLog(event.data, paths));
 });
@@ -613,7 +613,7 @@ exports.showWipeoutConfig = () => functions.https.onRequest((req, res) => {
                     res.send(html);
                   });
             })
-      )
+      );
     } else if ((req.method === 'POST')) {
       if (req.body.confirm === 'Confirm') {
         return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`)
