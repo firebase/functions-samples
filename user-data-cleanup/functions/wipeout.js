@@ -563,7 +563,7 @@ const writeLog = (data, paths) => {
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  * Log into RTDB after successful deletion.
- * @return {Promise}}
+ * @return {Promise}
  */
 exports.cleanupUserData = () => global.init.users.onDelete(event => {
   const configPromise = global.init.db
