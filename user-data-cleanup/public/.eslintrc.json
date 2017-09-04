@@ -1,0 +1,7 @@
+{
+  "parserOptions": {
+  },
+  "env": {
+  },
+  "extends": "./.eslintrc-browser.json"
+}
