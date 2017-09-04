@@ -21,21 +21,15 @@ const exp = require('../expression');
 const Expression = exp.Expression;
 const expect = testCommon.expect;
 
-const expectExp = (exp, list) => {
-  expect(exp.getConjunctionLists()).to.deep.equal(list);
-};
+const expectExp = (exp, list) =>
+      expect(exp.getConjunctionLists()).to.deep.equal(list);
 
-const expectBoolean = (exp, value) => {
-  expect(exp.getBooleanValue()).to.equal(value);
-};
+const expectBoolean = (exp, value) =>
+      expect(exp.getBooleanValue()).to.equal(value);
 
-const expectCond = (exp, cond) => {
-  expect(exp.getCondition()).to.equal(cond);
-};
+const expectCond = (exp, cond) => expect(exp.getCondition()).to.equal(cond);
 
-const newExpfromList = (list) => {
-  return new Expression(exp.UNDEFINED, list);
-};
+const newExpfromList = list => new Expression(exp.UNDEFINED, list);
 
 describe('Expressions', () => {
   it('should not create expression with illegal parameters', () => {
@@ -56,7 +50,6 @@ describe('Expressions', () => {
     expect(new6).to.throw('Not a valid conjunction list, can\'t initialize');
     expect(new7).to.throw('Not a valid boolean value, can\'t initialize');
     expect(new8).to.throw('Condition needs to be a string or null');
-
   });
 
   it('should have empty conjunctionLists with fixed boolean values', () => {
@@ -107,12 +100,12 @@ describe('Expressions', () => {
 
     expectExp(exp1, [['$a', '$b', '$c']]);
     expectExp(exp2, [['$a']]);
-    expectExp(exp3, [['$a', '$b', '$c'],['$d', '$e']]);
+    expectExp(exp3, [['$a', '$b', '$c'], ['$d', '$e']]);
     expectExp(exp4, [['$a']]);
   });
 
   it('should be properly simplified: absorption', () => {
-    const exp1 = newExpfromList([['$c', '$b', '$a'], ['$b', '$a'],['$c']]);
+    const exp1 = newExpfromList([['$c', '$b', '$a'], ['$b', '$a'], ['$c']]);
     const exp2 = newExpfromList([['$a', '$b', '$c'], ['$a', '$b'], ['$a']]);
     const exp3 = newExpfromList([['$a', '$b'], ['$c', '$b'], ['$c', '$a']]);
 
@@ -122,14 +115,14 @@ describe('Expressions', () => {
   });
 
   describe('should do correct operations', () => {
-    const expTrue = new Expression(exp.TRUE,[[]]);
-    const expFalse = new Expression(exp.FALSE,[[]]);
+    const expTrue = new Expression(exp.TRUE, [[]]);
+    const expFalse = new Expression(exp.FALSE, [[]]);
     const exp1 = newExpfromList([['$a', '$b'], ['$c', '$b'], ['$c', '$a']]);
     const exp2 = newExpfromList([['$a']]);
     const exp3 = newExpfromList([['$a', '$b']]);
     const expCond1 = new Expression(exp.TRUE, [], '$k1 < 1000');
     const expCond2 = new Expression(exp.UNDEFINED, [['$a']], '$k1 < 1000');
-    const expCond3 = new Expression(exp.UNDEFINED, [['$b'],['$c']],
+    const expCond3 = new Expression(exp.UNDEFINED, [['$b'], ['$c']],
         '${/user/$uid}.exists()');
 
     it('should do correct AND operations', () => {

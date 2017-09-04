@@ -22,9 +22,15 @@ const chaiAsPromised = require('chai-as-promised');
 const functions = require('firebase-functions');
 const sinon = require('sinon');
 
+/** test_common has require statements for all the modules. */
 exports.admin = admin;
+/** test_common has require statements for all the modules. */
 exports.chai = chai;
+/** test_common has require statements for all the modules. */
 exports.chaiAsPromised = chaiAsPromised;
+/** test_common has require statements for all the modules. */
 exports.expect = chai.expect;
+/** test_common has require statements for all the modules. */
 exports.functions = functions;
+/** test_common has require statements for all the modules. */
 exports.sinon = sinon;

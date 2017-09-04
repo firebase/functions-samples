@@ -33,25 +33,29 @@ const wipeout = require('../wipeout');
 const pathHolder = ['rules', '#'];
 
 const expectAccess = (rule, access, path = pathHolder) =>
-    expect(rules.parseWriteRule(rule, path).getAccessStatus())
-    .to.equal(access);
+      expect(
+          rules.parseWriteRule(rule, path).getAccessStatus()
+      ).to.equal(access);
 
 const expectVars = (rule, vars, path = pathHolder) =>
-    expect(rules.parseWriteRule(rule, path).getVariableList())
-    .to.deep.equal(vars);
+      expect(
+          rules.parseWriteRule(rule, path).getVariableList()
+      ).to.deep.equal(vars);
 
 const expectCond = (rule, cond, path = pathHolder) =>
-    expect(rules.parseWriteRule(rule, path).getCondition()).to.equal(cond);
+      expect(
+          rules.parseWriteRule(rule, path).getCondition()
+      ).to.equal(cond);
 
-const expectRef = (rule, result, path = pathHolder) => {
-  const obj = jsep(rule);
-  return expect(refs.evalRef(obj, path)).to.equal(result);
-};
+const expectRef = (rule, result, path = pathHolder) =>
+      expect(
+          refs.evalRef(jsep(rule), path)
+      ).to.equal(result);
 
-const expectRefErr = (rule, err, path = pathHolder) => {
-  const obj = jsep(rule);
-  expect(() => refs.evalRef(obj, path)).to.throw(err);
-};
+const expectRefErr = (rule, err, path = pathHolder) =>
+      expect(
+          () => refs.evalRef(jsep(rule), path)
+      ).to.throw(err);
 
 describe('Auto generation of rules', () => {
   it('should get correct access from write rules', () => {
@@ -65,16 +69,16 @@ describe('Auto generation of rules', () => {
     expectAccess('auth.uid == null', exp.NO_ACCESS);
     expectAccess('auth.uid != null', exp.MULT_ACCESS);
     expectAccess('auth.uid == ADMIN', exp.NO_ACCESS);
-  });//
+  });
 
   it('should deal with logic expressions correctly', () => {
     expectAccess('auth.uid==$user || true', exp.MULT_ACCESS);
     expectAccess('auth.uid==$user || false', exp.SINGLE_ACCESS);
     expectAccess('auth.uid==$user && true', exp.SINGLE_ACCESS);
-    expectAccess('auth.uid==$user && false', exp.NO_ACCESS);//
+    expectAccess('auth.uid==$user && false', exp.NO_ACCESS);
 
     expectVars('auth.uid==$user || false', ['$user']);
-    expectVars('auth.uid==$user && true', ['$user']);//
+    expectVars('auth.uid==$user && true', ['$user']);
 
     expectAccess('auth.uid == $k1 && auth.uid == $k2', exp.SINGLE_ACCESS);
     expectAccess('auth.uid == $k1 || auth.uid == $k2', exp.MULT_ACCESS);
@@ -96,12 +100,14 @@ describe('Auto generation of rules', () => {
       }
     };
 
-    expect(wipeout.inferWipeoutRule(ruleTree)).to.deep
-        .equal([
-        {
+    expect(
+        wipeout.inferWipeoutRule(ruleTree)
+    ).to.deep.equal(
+        [{
           path: '/room/#WIPEOUT_UID',
           except: '/room/$creator/member'
-        }]);
+        }]
+    );
   });
 
   describe('should deal with data references', () => {
@@ -153,15 +159,15 @@ describe('Auto generation of rules', () => {
 
   it('should deal with condition', () => {
     expectCond('auth.uid === $uid && data.child(\'name\').val() !== null',
-        'val(rules,users,$uid,name) !== null', ['rules','users','$uid']);
+        'val(rules,users,$uid,name) !== null', ['rules', 'users', '$uid']);
     expectAccess('auth.uid === $uid && data.child(\'name\').val() !== null',
         exp.SINGLE_ACCESS, ['rules', 'users', '$uid']);
   });
 
   it('should extract correct wipeout rules from RTBD rules ', () => {
     const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
-    const inferredDeletePaths = wipeout.extractFromDBRules(DBRules);
-    const userPaths = [
+    const got = wipeout.extractFromDBRules(DBRules);
+    const want = [
         {path: '/users/#WIPEOUT_UID'},
         {path: '/instagramAccessToken/#WIPEOUT_UID'},
         {
@@ -200,6 +206,6 @@ describe('Auto generation of rules', () => {
         {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
         ];
 
-    expect(inferredDeletePaths).to.deep.equal(userPaths);
+    expect(got).to.deep.equal(want);
   });
 });
