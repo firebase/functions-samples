@@ -4,7 +4,7 @@ To be compliant with privacy regulations you may need to ensure that a
 user's data is deleted when they delete their account.
 
 This library contains a Cloud Function triggered by account deletion.
-It wipes out all the data in the FIrebase Realtime Database that
+It wipes out all the data in the Firebase Realtime Database that
 belongs to the user that was deleted.
 
 To determine "belonging", the Cloud Function analyzes the app's
