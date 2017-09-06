@@ -1,9 +1,17 @@
-# Cleanup user data upon account deletion.
+# Wipeout user data when account deleted
 
-This sample shows how to cleanup the user data when they delete their account.
-An auto-wipeout Cloud Functions library is provided to help developers identity
-user data location in their apps. This sample also comes with a simple demo app
-showing how the library works.
+To be compliant with privacy regulations you may need to ensure that a
+user's data is deleted when they delete their account.
+
+This library contains a Cloud Function triggered by account deletion.
+It wipes out all the data in the FIrebase Realtime Database that
+belongs to the user that was deleted.
+
+To determine "belonging", the Cloud Function analyzes the app's
+Security Rules, considering any data that can only be written by a
+particular user to belong to that user.
+
+Also included here is a simple demo app showing how the library works.
 
 
 ## Functions Code
