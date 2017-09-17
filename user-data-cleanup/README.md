@@ -5,6 +5,12 @@ An auto-wipeout Cloud Functions library is provided to help developers identity
 user data location in their apps. This sample also comes with a simple demo app
 showing how the library works.
 
+The instructions below explain how to *use* this library. If you want
+to *contribute* to the library, or are just curious about how it is
+built, please see the overview [Design Doc](doc/design.md) and the
+detailed explanation of [Auto Rules
+Extraction](doc/auto_rules_extraction.md).
+
 
 ## Functions Code
 
