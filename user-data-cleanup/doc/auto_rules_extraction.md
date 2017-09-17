@@ -145,10 +145,10 @@ corresponding outcomes with different write rules.
 
 | Write Rule | Access Pattern(s) | EXP in  DNF | Results |
 |------------|-------------------|-------------|---------|
-| Auth.uid==$k1 | /key/#WUID/$k2 | ($k2) | Single access |
-| Auth.uid==$k2 | /key/$k1/#WUID | ($k1) | Single access |
-| Auth.uid==$k1 && Auth.uid ==$k1 | /key/#WUID/#WUID | ($k1 && $k2) | Single access |
-| Auth.uid==$k1||Auth.uid ==$k1 | /key/#WUID/$k2; | /key/$k1/#WUID | ($k1)||($k2) | Multiple access |
+| Auth.uid == $k1 | /key/#WUID/$k2 | ($k2) | Single access |
+| Auth.uid == $k2 | /key/$k1/#WUID | ($k1) | Single access |
+| Auth.uid == $k1 && Auth.uid ==$k1 | /key/#WUID/#WUID | ($k1 && $k2) | Single access |
+| Auth.uid == $k1 &#124;&#124; Auth.uid ==$k1 | /key/#WUID/$k2; | /key/$k1/#WUID | ($k1) &#124; ($k2) | Multiple access |
 | Auth.uid!=null | - | (True) | Multiple access |
 | Auth.uid==null | - | (False) | No access |
 | Auth.uid==SOME_FIX_ID | - | (False) | No access |
