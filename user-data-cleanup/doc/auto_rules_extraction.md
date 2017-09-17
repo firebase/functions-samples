@@ -147,11 +147,11 @@ corresponding outcomes with different write rules.
 |------------|-------------------|-------------|---------|
 | Auth.uid == $k1 | /key/#WUID/$k2 | ($k2) | Single access |
 | Auth.uid == $k2 | /key/$k1/#WUID | ($k1) | Single access |
-| Auth.uid == $k1 && Auth.uid ==$k1 | /key/#WUID/#WUID | ($k1 && $k2) | Single access |
-| Auth.uid == $k1 &#124;&#124; Auth.uid ==$k1 | /key/#WUID/$k2; | /key/$k1/#WUID | ($k1) &#124; ($k2) | Multiple access |
-| Auth.uid!=null | - | (True) | Multiple access |
-| Auth.uid==null | - | (False) | No access |
-| Auth.uid==SOME_FIX_ID | - | (False) | No access |
+| Auth.uid == $k1 && Auth.uid == $k1 | /key/#WUID/#WUID | ($k1 && $k2) | Single access |
+| Auth.uid == $k1 &#124;&#124; Auth.uid == $k1 | /key/#WUID/$k2; /key/$k1/#WUID | ($k1) &#124; ($k2) | Multiple access |
+| Auth.uid != null | - | (True) | Multiple access |
+| Auth.uid == null | - | (False) | No access |
+| Auth.uid == SOME_FIX_ID | - | (False) | No access |
 
 (In this table, use #WUID instead of #WIPEOUT_UID to save space.)
 
