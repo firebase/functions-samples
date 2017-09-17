@@ -4,23 +4,23 @@
 
 ## Introduction
 
-The auto-wipeout project aims to help Firebase developer protect
-privacy of their end-users. Auto wipeout is a Cloud Functions library
+The auto-wipeout project aims to help Firebase developers protect
+privacy of their end-users. Auto-wipeout is a Cloud Functions library
 which can automatically find and delete user data on end-user account
-deletion. It idea is inspired by the Google internal system Wipeout.
-In this way, Firebase customers (Firebase developers) can focus on
-making their apps special with a lower cost of writing safer apps.
+deletion. In this way, Firebase customers (Firebase developers) can
+focus on making their apps special with a lower cost of writing safer
+apps.
 
 Developers can choose to specify user data storing patterns through
 local configurations or rely on our Auto Extraction algorithms. If no
 local configuration is found, the library takes advantages of the fact
-that Firebase security rules implies access pattern in the schemaless
+that Firebase security rules imply access pattern in the schemaless
 real time database. It fetches security rules and runs the Auto
-Extraction algorithms to get Wipeout rules which describes user
-storing patterns. After activation, the Cloud Functions will be
-triggered by account deletion, wipeout user data according to wipeout
-rules and log its behavior. The overall workflow and wipeout rules
-specs are described in detail later in this document.
+Extraction algorithms to get Wipeout rules which describe user storing
+patterns. After activation, the Cloud Functions will be triggered by
+account deletion, wipeout user data according to wipeout rules and log
+its behavior. The overall workflow and wipeout rules specs are
+described in detail later in this document.
 
 The Difficult part of the project is the Auto Extraction algorithms.
 It works by searching the rules tree for write rule, extract access
@@ -48,7 +48,7 @@ One way to get these knowledge is to ask the developers to specify
 them. This is a good way to get accurate information so we allow
 developers to write local configurations describing user data storing
 patterns. The problem is this approach adds additional burden to the
-developers and may scary them away from using the feature.
+developers and may scare them away from using the feature.
 
 The better alternative is to provide a service which automatically
 extracts user data storing pattern and asks the developer to verify.
@@ -59,14 +59,14 @@ storing pattern (Wipeout Rules) from Security Rules for RTDB.
 
 This Diagram shows the workflow of the current Auto Wipeout library
 works. But it can be generalized to a system which supports Cloud
-Storage and other variation of Wipepout. The generalized system is
+Storage and other variation of Wipeout. The generalized system is
 described as the 3-step process:
 
 1.  Parse RTDB or Storage security rules to internal representations
     (json object: Rule tree)
     1.  RTDB parse json object 
-    2.  Cloud Storage/verax rules: lightweight parse generated from
-        PEG.js parse generator. (This part hasn’t yet been open
+    2.  Cloud Storage for Firebase rules: lightweight parser generated
+        from PEG.js parse generator. (This part hasn’t yet been open
         sourced.)
 2.  Extract user data rules from Rule trees. User data rules are
     patterns describing places where user data are stored. (The
@@ -96,15 +96,15 @@ web confirmation UI is shown in the figure below:
 
 The wipeout rules is a list of JSON object, each of them describes a
 pattern of user data storage. When a user account is deleted, the
-library go through every config to remove any match with these
+library goes through every config to remove any match with these
 patterns. A single config rule can have four fields:
 
 *   `path`: Mandatory field. A String indicating a location of user
     data. A path can include place holder variables `#WIPEOUT_UID`
     which will be replaced by auth.uid at execution time. It can also
-    include free variables which starts with $. A simple example path
+    include free variables which start with `$`. A simple example path
     is `/users/#WIPEOUT_UID`, and an example path field for a chat app
-    is /chat/$room.
+    is `/chat/$room`.
 *   `authVar`: Optional field, List of data references. Besides the
     locations marked by `#WIPEOUT_UID` in path, `authVar` is a list of
     values/data references which should equals to the authentication
@@ -152,7 +152,24 @@ database:
     have free variable is not supported for deletion and will be
     ignored.
 
-After these steps, we'll have a list of concrete deletion path. The library goes ahead and deletes the data and record the the paths together with a timestamp at /wipeout/history/#WIPEOUT_UID in the real time database.
+After these steps, we'll have a list of concrete deletion path. The
+library goes ahead and deletes the data and record the the paths
+together with a timestamp at /wipeout/history/#WIPEOUT_UID in the real
+time database.
+
+
+## Deletion Efficiency
+
+Wipeout rules allow free variables in paths, and these free variables
+may imply a search/scan in the database which leads to scalability
+issues. For example, consider the following two paths 1)
+`/key/#WIPEOUT_UID/$k2` 2) `/key/$k1/#WIPEOUT_UID`. With a specific
+UID, 1) describes any valid children of `/key/UID`, while 2) describes
+children named UID under any valid children of /key/. In order to get
+all data references described by 2), without further information, we
+need to go to the database and check any children of `/key/`. This
+might become infeasible when the database is large.
+
 
 ## Future works (potential issue list)
 
@@ -168,10 +185,10 @@ After these steps, we'll have a list of concrete deletion path. The library goes
 4.  Expand Auto Wipeout to Cloud Storage.
 5.  Add Pre-hooks and post-hooks which allow developers to run
     customized code before or after deletion.
-6.  Support roll back of deletion. Soft deletion for a fixed amount of
+6.  Support <roll back of deletion. Soft deletion for a fixed amount of
     time.
 7.  Developer Confirmation Web UI could explain generated Wipeout Rule
-    with example or a fake user.
+    with an example or a fake user.
 8.  Integration tests for the library.
 
 
