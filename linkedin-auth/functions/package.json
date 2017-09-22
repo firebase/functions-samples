@@ -7,4 +7,12 @@
     "firebase-functions": "^0.5.1",
     "node-linkedin": "^0.5.4"
   }
+  var admin = require("firebase-admin");
+
+var serviceAccount = require("path/to/serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://<DATABASE_NAME>.firebaseio.com"
+});
 }
