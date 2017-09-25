@@ -114,7 +114,7 @@ Demo.prototype.accounts = function() {
 Demo.prototype.record = function(year) {
   this.addDataDemo({
       ref: '/record/' + this.user.uid,
-    content: {content: 'Record data', createYear: year},
+      content: {content: 'Record data', createYear: year},
     });
 };
 
