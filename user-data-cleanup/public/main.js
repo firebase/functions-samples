@@ -16,8 +16,7 @@
 'use strict';
 
 
-
-// Initializes the Demo.
+/** Initializes the Demo. */
 function Demo() {
   document.addEventListener('DOMContentLoaded', function() {
     // Shortcuts to DOM Elements.
@@ -87,7 +86,9 @@ Demo.prototype.addDataDemo = function(body) {
   xhttp.open('POST', '/addDataDemo', true);
   xhttp.send(
     JSON.stringify(body),
-    function(er,res,body) {console.log(er, res, body);}
+    function(er, res, body) {
+      console.log(er, res, body);
+    }
   );
 };
 
@@ -95,13 +96,17 @@ Demo.prototype.addDataDemo = function(body) {
 Demo.prototype.chat = function() {
   var body = {
     ref: '/chat/room' + this.chatRoomId,
-    content:{creator: this.user.uid, members: [1,2,3], name: 'Chat Name'}};
+    content: {creator: this.user.uid, members: [1, 2, 3], name: 'Chat Name'}};
   this.addDataDemo(body);
   this.chatRoomId += 1;
 };
 
 Demo.prototype.accounts = function() {
-  var cont = {githubToken: 'TOKEN', profileNeedsUpdate: 'FOO', events: [1,2,3]};
+  var cont = {
+    githubToken: 'TOKEN',
+    profileNeedsUpdate: 'FOO',
+    events: [1, 2, 3],
+  };
   var body = {ref: '/accounts/' + this.user.uid + '/', content: cont};
   this.addDataDemo(body);
 };
@@ -109,7 +114,7 @@ Demo.prototype.accounts = function() {
 Demo.prototype.record = function(year) {
   this.addDataDemo({
       ref: '/record/' + this.user.uid,
-      content: {content: 'Record data', createYear: year}
+    content: {content: 'Record data', createYear: year},
     });
 };
 

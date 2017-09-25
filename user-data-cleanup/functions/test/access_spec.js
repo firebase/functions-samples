@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 'use strict';
-//unit tests for the Access class
+
+// unit tests for the Access class
 
 const Access = require('../access');
 const testCommon = require('./test_common');
@@ -31,7 +32,6 @@ const expectCond = (acc, cond) =>
   expect(acc.getCondition()).to.equal(cond);
 
 describe('Access', () => {
-
   it('should only create object with illegal parameters', () => {
     const new1 = () => new Access(exp.SINGLE_ACCESS, []);
     const new2 = () => new Access(exp.SINGLE_ACCESS, [[[]]]);

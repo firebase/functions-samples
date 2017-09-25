@@ -24,34 +24,36 @@ const functions = testCommon.functions;
 const sinon = testCommon.sinon;
 
 describe('Wipeout', () => {
-  let wipeout, configStub, refStub, confirmStub;
-  let adminInitStub, databaseStub;
-
   const fakeUserId = '8ZfiT8HeMTN9a4etjfCmahBqhK52';
   const fakeUser = {
-    uid: fakeUserId
+    uid: fakeUserId,
   };
   const deletePaths = [
-      {'path': `/users/${fakeUserId}`},
-      {'path': `/usersData/${fakeUserId}`}
-    ];
+    {'path': `/users/${fakeUserId}`},
+    {'path': `/usersData/${fakeUserId}`},
+  ];
 
+  let wipeout;
+  let configStub;
+  let refStub;
+  let confirmStub;
+  let adminInitStub;
   before(() => {
     chai.use(chaiAsPromised);
 
     // create database and configuration stubs
     adminInitStub = sinon.stub(admin, 'initializeApp');
-    databaseStub = sinon.stub(admin, 'database');
+    const databaseStub = sinon.stub(admin, 'database');
 
     refStub = sinon.stub();
     databaseStub.returns({ref: refStub});
     configStub = sinon.stub(functions, 'config').returns({
       firebase: {
-        databaseURL: 'https://fakedb.firebaseio.com'
+        databaseURL: 'https://fakedb.firebaseio.com',
       },
       wipeout: {
-        path: '/users/#WIPEOUT_UID'
-      }
+        path: '/users/#WIPEOUT_UID',
+      },
     });
     confirmStub = sinon.stub();
     refStub.withArgs('/wipeout/confirm').returns({set: confirmStub});
@@ -60,7 +62,7 @@ describe('Wipeout', () => {
       'admin': admin,
       'db': admin.database(),
       'serverValue': admin.database.ServerValue,
-      'DB_URL': functions.config().firebase.databaseURL
+      'DB_URL': functions.config().firebase.databaseURL,
     };
 
     wipeout = require('../wipeout');
@@ -131,7 +133,7 @@ describe('Wipeout', () => {
   it('should filter out false conditions', () => {
     const config = [
       {path: `/users/${fakeUserId}`, condition: 'true'},
-      {path: `/users2/${fakeUserId}`, condition: 'false'}
+      {path: `/users2/${fakeUserId}`, condition: 'false'},
     ];
 
     expect(
@@ -148,8 +150,8 @@ describe('Wipeout', () => {
 
     snapshot.withArgs('value')
         .resolves({
-          'exists' : () => true,
-          'val': () => {return {'room1': 'uid', 'room2': 'uid'};}
+          'exists': () => true,
+          'val': () => ({'room1': 'uid', 'room2': 'uid'}),
         });
     queryStub.withArgs(fakeUserId).returns({once: snapshot});
     childStub.withArgs('creator').returns({equalTo: queryStub});
@@ -160,13 +162,13 @@ describe('Wipeout', () => {
             {
               path: '/chat/$room',
               authVar: ['val(rules,chat,$room,creator)'],
-              condition: 'foo'
+              condition: 'foo',
             },
             fakeUserId)
     ).to.eventually.deep.equal(
         [
           {path: '/chat/room1', condition: 'foo'},
-          {path: '/chat/room2', condition: 'foo'}
+          {path: '/chat/room2', condition: 'foo'},
         ]
     );
 
@@ -175,7 +177,7 @@ describe('Wipeout', () => {
             {
               path: '/chat/$foo',
               authVar: ['val(rules,chat,$room,creator)'],
-              condition: 'foo'
+              condition: 'foo',
             },
             fakeUserId)
     ).to.eventually.deep.equal(
@@ -191,28 +193,28 @@ describe('Wipeout', () => {
                 path: '/chat/$room',
                 authVar: ['val(rules,chat,$room,creator)'],
                 condition: 'foo',
-                except: '/chat/$room/members'
+                except: '/chat/$room/members',
               },
               {
-                path: '/chat/room3'
-              }
+                path: '/chat/room3',
+              },
             ],
             fakeUserId)
     ).to.eventually.deep.equal(
         [
           {
-            path: '/chat/room3'
+            path: '/chat/room3',
           },
           {
             path: '/chat/room1',
             condition: 'foo',
-            except: '/chat/$room/members'
+            except: '/chat/$room/members',
           },
           {
             path: '/chat/room2',
             condition: 'foo',
-            except: '/chat/$room/members'
-          }
+            except: '/chat/$room/members',
+          },
         ]
     );
   });
@@ -221,27 +223,29 @@ describe('Wipeout', () => {
     const snapshot = sinon.stub();
     snapshot.withArgs('value')
         .resolves({
-          forEach: [].forEach
-              .bind([{key: 'name'}, {key: 'creator'}, {key: 'members'}]),
-           exists: () => true });
+          forEach: [].forEach.bind(
+            [{key: 'name'}, {key: 'creator'}, {key: 'members'}]
+          ),
+          exists: () => true,
+        });
 
     refStub.withArgs('chat/room').returns({once: snapshot});
 
     expect(
         wipeout.evalSingleExcept({
           path: '/chat/room/',
-          except: '/chat/room/members'
+          except: '/chat/room/members',
         })
     ).to.eventually.deep.equal(
         [
           {path: '/chat/room/name'},
-          {path: '/chat/room/creator'}
+          {path: '/chat/room/creator'},
         ]);
 
     expect(
         wipeout.evalSingleExcept({
           path: '/chat/room/',
-          except: '/chat/room/foo'
+          except: '/chat/room/foo',
         })
     ).to.eventually.deep.equal(
         [{path: '/chat/room/'}]
@@ -253,15 +257,15 @@ describe('Wipeout', () => {
         wipeout.evalExcepts([
           {
             path: '/chat/room',
-            except: 'chat/room/members'
+            except: 'chat/room/members',
           },
-          {path: '/chat/room3'}
+          {path: '/chat/room3'},
         ])
     ).to.eventually.deep.equal(
         [
           {path: '/chat/room3'},
           {path: '/chat/room/name'},
-          {path: '/chat/room/creator'}
+          {path: '/chat/room/creator'},
         ]
     );
   });
@@ -273,13 +277,13 @@ describe('Wipeout', () => {
           {path: '/chat/$room/$member'},
           {path: '/chat/#WIPEOUT_UID/$room/'},
           {path: '/chat/$room/foo'},
-          {path: '/$foo'}
+          {path: '/$foo'},
         ])
     ).to.deep.equal(
         [
           {path: '/chat'},
           {path: '/chat'},
-          {path: '/chat/#WIPEOUT_UID'}
+          {path: '/chat/#WIPEOUT_UID'},
         ]
     );
   });
@@ -297,7 +301,7 @@ describe('Wipeout', () => {
     ).to.eventually.deep.equal(
         [
           {'path': removeParam},
-          {'path': removeParam2}
+          {'path': removeParam2},
         ]
     );
   });

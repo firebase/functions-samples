@@ -29,7 +29,7 @@ const expectBoolean = (exp, value) =>
 
 const expectCond = (exp, cond) => expect(exp.getCondition()).to.equal(cond);
 
-const newExpfromList = list => new Expression(exp.UNDEFINED, list);
+const newExpfromList = (list) => new Expression(exp.UNDEFINED, list);
 
 describe('Expressions', () => {
   it('should not create expression with illegal parameters', () => {
@@ -87,7 +87,6 @@ describe('Expressions', () => {
     expectExp(exp3, [['$a', '$b', '$c']]);
     expectExp(exp4, [['$a']]);
     expectExp(exp5, [['$a', 'a']]);
-
   });
 
   it('should be properly simplified: clauses', () => {

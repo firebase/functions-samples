@@ -93,11 +93,11 @@ describe('Auto generation of rules', () => {
           '$creator': {
             '.write': 'auth.uid === $creator',
             'member': {
-              '.write': 'auth.uid != null'
-            }
-          }
-        }
-      }
+              '.write': 'auth.uid != null',
+            },
+          },
+        },
+      },
     };
 
     expect(
@@ -105,7 +105,7 @@ describe('Auto generation of rules', () => {
     ).to.deep.equal(
         [{
           path: '/room/#WIPEOUT_UID',
-          except: '/room/$creator/member'
+          except: '/room/$creator/member',
         }]
     );
   });
@@ -147,9 +147,10 @@ describe('Auto generation of rules', () => {
       // variable root
       expectRef('root.child(\'acc\').val()', 'val(rules,acc)');
       // complex arguments
-      expectRef('root.child(\'rooms\').child(data.child(\'creator\').val()).val()',
-          'val(rules,rooms,val(rules,rooms,$roomid,creator))',
-          ['rules', 'rooms', '$roomid']);
+      expectRef(
+        'root.child(\'rooms\').child(data.child(\'creator\').val()).val()',
+        'val(rules,rooms,val(rules,rooms,$roomid,creator))',
+        ['rules', 'rooms', '$roomid']);
       expectRef(
           'root.child(\'rooms\').child($roomid). ' +
           'child(\'members\').child(auth.uid).val()',
@@ -168,43 +169,43 @@ describe('Auto generation of rules', () => {
     const DBRules = fs.readFileSync('test/DBRules.json', 'utf-8');
     const got = wipeout.extractFromDBRules(DBRules);
     const want = [
-        {path: '/users/#WIPEOUT_UID'},
-        {path: '/instagramAccessToken/#WIPEOUT_UID'},
-        {
-          condition: 'val(rules,users2,#WIPEOUT_UID,test) ' +
-            '!== null && exists(rules,users2,#WIPEOUT_UID)',
-          path: '/users2/#WIPEOUT_UID'
-        },
+      {path: '/users/#WIPEOUT_UID'},
+      {path: '/instagramAccessToken/#WIPEOUT_UID'},
+      {
+        condition: 'val(rules,users2,#WIPEOUT_UID,test) ' +
+          '!== null && exists(rules,users2,#WIPEOUT_UID)',
+        path: '/users2/#WIPEOUT_UID',
+      },
 
-        {
-          path: '/chat/$room',
-          authVar: ['val(rules,chat,$room,creator)'],
-          except: '/chat/$room/members'
-        },
+      {
+        path: '/chat/$room',
+        authVar: ['val(rules,chat,$room,creator)'],
+        except: '/chat/$room/members',
+      },
 
-        {
-          'path': '/chat2/#WIPEOUT_UID',
-          'except': '/chat2/$owner/members'
-        },
-        {
-          'path': '/record/#WIPEOUT_UID',
-          'condition': 'val(rules,record,#WIPEOUT_UID,createYear) > 2016'
-        },
-        {path: '/accounts/#WIPEOUT_UID/githubToken'},
-        {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
-        {path: '/users-say-that/#WIPEOUT_UID/lang'},
-        {
-          path: '/followers/$followedUid/#WIPEOUT_UID',
-          condition: '#WIPEOUT_UID > 1000'
-        },
-        {
-          path: '/stripe_customers/$uid/sources/$chargeId',
-          authVar: ['val(rules,stripe_customers,$uid,charges)']
-        },
-        {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
-        {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
-        {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'}
-        ];
+      {
+        'path': '/chat2/#WIPEOUT_UID',
+        'except': '/chat2/$owner/members',
+      },
+      {
+        'path': '/record/#WIPEOUT_UID',
+        'condition': 'val(rules,record,#WIPEOUT_UID,createYear) > 2016',
+      },
+      {path: '/accounts/#WIPEOUT_UID/githubToken'},
+      {path: '/accounts/#WIPEOUT_UID/profileNeedsUpdate'},
+      {path: '/users-say-that/#WIPEOUT_UID/lang'},
+      {
+        path: '/followers/$followedUid/#WIPEOUT_UID',
+        condition: '#WIPEOUT_UID > 1000',
+      },
+      {
+        path: '/stripe_customers/$uid/sources/$chargeId',
+        authVar: ['val(rules,stripe_customers,$uid,charges)'],
+      },
+      {path: '/stripe_customers/#WIPEOUT_UID/charges/$sourceId'},
+      {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/nouns'},
+      {path: '/users-say-that/#WIPEOUT_UID/scenes/$scene/in_progress'},
+    ];
 
     expect(got).to.deep.equal(want);
   });

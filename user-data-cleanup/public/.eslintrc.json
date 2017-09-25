@@ -1,7 +1,12 @@
 {
-  "parserOptions": {
-  },
+  "extends": "google",
+
   "env": {
+    "browser": true,
+    "node": false
   },
-  "extends": "./.eslintrc-browser.json"
+
+  "rules": {
+    "no-var": 0
+  }
 }
