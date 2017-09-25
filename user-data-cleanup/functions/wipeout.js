@@ -40,7 +40,7 @@ const functions = require('firebase-functions');
  *  'WRITE_SIGN': should be '.write',
  *  'PATH_REGEX': should be /^\/?$|(^(?=\/))(\/(?=[^/\0])[^/\0]+)*\/?$/
  */
-exports.initialize = wipeoutConfig => {
+exports.initialize = (wipeoutConfig) => {
   global.init = Object.freeze(wipeoutConfig);
 };
 
@@ -61,11 +61,11 @@ Trying to infer from Realtime Database Security Rules...
 (If you intended to use local configuration,
 make sure there's a 'wipeout_config.json' file in the
 functions directory with a 'wipeout' field.`, err);
-    return readDBRules().then(DBRules => {
+    return readDBRules().then((DBRules) => {
       const config = extractFromDBRules(DBRules);
       console.log('Using wipeout rules inferred from RTDB rules.');
       return Promise.resolve({rules: config, source: 'AUTO'});
-    }).catch(errDB => {
+    }).catch((errDB) => {
       console.error(
        'Could not generate wipeout config from RTDB rules.' +
        'Failed to read database', errDB);
@@ -112,13 +112,13 @@ const filterCondition = (configs, uid) => {
     candidates.push(checkCondition(configs[i].condition, uid));
     delete newConfigs[i].condition;
   }
-  return Promise.all(candidates).then(res => {
+  return Promise.all(candidates).then((res) => {
     for (let i = 0; i < res.length; i++) {
       if (!res[i]) {
         newConfigs[i] = null;
       }
     }
-    return newConfigs.filter(item => item !== null);
+    return newConfigs.filter((item) => item !== null);
   });
 };
 
@@ -144,26 +144,26 @@ const evalSingleAuthVar = (config, uid) => {
   const pathList = authVar.slice(4, -1).split(',');
   const ref = global.init.db.ref(pathList.slice(1, -2).join('/'));
   return ref.orderByChild(pathList.slice(-1)[0]).equalTo(uid.toString())
-      .once('value')
-      .then(res => {
-        if (!res.exists()) {
-          return [];
-        }
-        const obj = {[pathList.slice(-2)[0]]: Object.keys(res.val())};
-        const configList = [];
-        const varName = Object.keys(obj)[0];
-        const varList = obj[varName];
-        if (!config.path.split('/').includes(varName)) {
-          return [];
-        }
-        for (let i = 0; i < varList.length; i++) {
-          const temp = deepcopy(config);
-          temp.path = config.path.replace(varName, varList[i]);
-          delete temp.authVar;
-          configList.push(temp);
-        }
-        return configList;
-      });
+    .once('value')
+    .then((res) => {
+      if (!res.exists()) {
+        return [];
+      }
+      const obj = {[pathList.slice(-2)[0]]: Object.keys(res.val())};
+      const configList = [];
+      const varName = Object.keys(obj)[0];
+      const varList = obj[varName];
+      if (!config.path.split('/').includes(varName)) {
+        return [];
+      }
+      for (let i = 0; i < varList.length; i++) {
+        const temp = deepcopy(config);
+        temp.path = config.path.replace(varName, varList[i]);
+        delete temp.authVar;
+        configList.push(temp);
+      }
+      return configList;
+    });
 };
 
 /**
@@ -183,7 +183,7 @@ const evalAuthVars = (configs, uid) => {
       evalConfigs.push(configs[i]);
     }
   }
-  return Promise.all(candidates).then(res => {
+  return Promise.all(candidates).then((res) => {
     for (let i = 0; i < res.length; i++) {
       evalConfigs = evalConfigs.concat(res[i]);
     }
@@ -202,12 +202,13 @@ const evalAuthVars = (configs, uid) => {
  * config.except = /chat/$room/member/groupA is a two level exception
  * and is not supported
  *
- * @param {array} configs input config
+ * @param {array} config input config
  * @param {string} uid authentication id of deleted account
  * @return {array} configs list of configs after processing
  */
 const evalSingleExcept = (config) => {
-  const removeTail = l => l[l.length - 1] === '' ? l.slice(0, l.length - 1) : l;
+  const removeTail = (l) =>
+        l[l.length - 1] === '' ? l.slice(0, l.length - 1) : l;
   const pathList = removeTail(config.path.split('/'));
   const exceptList = removeTail(config.except.split('/'));
 
@@ -217,37 +218,37 @@ const evalSingleExcept = (config) => {
   }
   const ref = global.init.db.ref(pathList.slice(1).join('/'));
   return ref.once('value')
-      .then(res => {
-        if (!res.exists()) {
-          return [];
-        }
-        const children = [];
-        res.forEach(child => {
-          children.push(child.key);
-          return; // Returning true will cancel the enumeration
-          });
-        return children;
-      })
-      .then(children => {
-        const exception = exceptList[exceptList.length - 1];
-        if (!children.includes(exception)) {
-          // return the parent path without exception
-          const fakeException = deepcopy(config);
-          delete fakeException.except;
-          return [fakeException];
-        } else {
-          const configList = [];
-          for (let i = 0; i < children.length; i++) {
-            if (children[i] !== exception) {
-              const newConfig = deepcopy(config);
-              delete newConfig.except;
-              newConfig.path = pathList.join('/') + `/${children[i]}`;
-              configList.push(newConfig);
-            }
-          }
-          return configList;
-        }
+    .then((res) => {
+      if (!res.exists()) {
+        return [];
+      }
+      const children = [];
+      res.forEach((child) => {
+        children.push(child.key);
+        return; // Returning true will cancel the enumeration
       });
+      return children;
+    })
+    .then((children) => {
+      const exception = exceptList[exceptList.length - 1];
+      if (!children.includes(exception)) {
+        // return the parent path without exception
+        const fakeException = deepcopy(config);
+        delete fakeException.except;
+        return [fakeException];
+      } else {
+        const configList = [];
+        for (let i = 0; i < children.length; i++) {
+          if (children[i] !== exception) {
+            const newConfig = deepcopy(config);
+            delete newConfig.except;
+            newConfig.path = pathList.join('/') + `/${children[i]}`;
+            configList.push(newConfig);
+          }
+        }
+        return configList;
+      }
+    });
 };
 
 /**
@@ -267,7 +268,7 @@ const evalExcepts = (configs) => {
       evalConfigs.push(configs[i]);
     }
   }
-  return Promise.all(candidates).then(res => {
+  return Promise.all(candidates).then((res) => {
     for (let i = 0; i < res.length; i++) {
       evalConfigs = evalConfigs.concat(res[i]);
     }
@@ -281,7 +282,7 @@ const evalExcepts = (configs) => {
  * @param {array} list input list
  * @return {string} path extracted from the argument list
  */
-const extractPath = list => {
+const extractPath = (list) => {
   const ret = [''];
   for (let i = 1; i < list.length; i++) {
     if (list[i].type === 'Identifier') {
@@ -299,7 +300,7 @@ const extractPath = list => {
  * @param {object} obj input object of the operand
  * @return {Promise} resolved with the value of the operand
  */
-const evalOperand = obj => {
+const evalOperand = (obj) => {
   switch (obj.type) {
     case 'Identifier':
       return Promise.resolve(obj.name);
@@ -323,13 +324,13 @@ const evalOperand = obj => {
  * @param {opbject} obj input object of the operand
  * @return {Promise} resolved with true or false
  */
-const evalExists = obj => {
+const evalExists = (obj) => {
   if (obj.callee.name !== 'exists') {
     throw new Error('Expect exists()');
   }
   const loc = extractPath(obj.arguments);
-  var ref = global.init.db.ref(loc);
-  return ref.once('value').then(snapshot => snapshot.exists());
+  const ref = global.init.db.ref(loc);
+  return ref.once('value').then((snapshot) => snapshot.exists());
 };
 
 /**
@@ -339,14 +340,14 @@ const evalExists = obj => {
  * @return {Promise} resolved with query data value
  * or false if the data doesn't exists.
  */
-const evalVal = obj => {
+const evalVal = (obj) => {
   if (obj.callee.name !== 'val') {
     throw new Error('Expect val()');
   }
   const loc = extractPath(obj.arguments);
-  var ref = global.init.db.ref(loc);
+  const ref = global.init.db.ref(loc);
   return ref.once('value').then(
-      snapshot => snapshot.exists() ? snapshot.val() : false
+    (snapshot) => snapshot.exists() ? snapshot.val() : false
   );
 };
 
@@ -372,7 +373,7 @@ const evalLogic = (obj) => {
 
       // TODO(eobrain) Consider if we can avoid using dangerous eval.
       return Promise.all([leftBinary, rightBinary])
-        .then(res => eval(  // eslint-disable-line no-eval
+        .then((res) => eval( // eslint-disable-line no-eval
           `res[0].toString() ${obj.operator} res[1].toString()`));
     }
 
@@ -381,11 +382,11 @@ const evalLogic = (obj) => {
       const rightLogic = evalLogic(obj.right);
       if (obj.operator === '||') {
         return Promise.all([leftLogic, rightLogic])
-            .then(res => (res[0] || res[1]));
+          .then((res) => (res[0] || res[1]));
       }
       if (obj.operator === '&&') {
         return Promise.all([leftLogic, rightLogic])
-            .then(res => (res[0] && res[1]));
+          .then((res) => (res[0] && res[1]));
       }
       throw new Error('Unsupported logic operation in condition');
     }
@@ -398,7 +399,7 @@ const evalLogic = (obj) => {
 /**
  * Check a condition at execution time
  *
- * @param {object} obj condition
+ * @param {object} condition
  * @param {string} uid authentication id of deleted account
  * @return {Boolean} true or false value of the condition
  */
@@ -419,14 +420,14 @@ const checkCondition = (condition, uid) => {
  */
 const readDBRules = () => {
   return global.init.credential.getAccessToken()
-  .then(snapshot => snapshot.access_token)
-  .then(token =>
-    request(`${global.init.DB_URL}/.settings/rules.json?` +
-            `access_token=${token}`))
-  .catch(err => {
-    console.error(err, 'Failed to read RTDB rule.');
-    return Promise.reject(err);
-  });
+    .then((snapshot) => snapshot.access_token)
+    .then((token) =>
+          request(`${global.init.DB_URL}/.settings/rules.json?` +
+                  `access_token=${token}`))
+    .catch((err) => {
+      console.error(err, 'Failed to read RTDB rule.');
+      return Promise.reject(err);
+    });
 };
 
 /**
@@ -435,7 +436,7 @@ const readDBRules = () => {
  * @param {string} DBRules database security rules in string form
  * @return {array} wipeout rules
  */
-const extractFromDBRules = DBRules =>
+const extractFromDBRules = (DBRules) =>
       inferWipeoutRule(JSON.parse(sjc(DBRules)));
 
 
@@ -446,14 +447,14 @@ const extractFromDBRules = DBRules =>
  * @param {object} tree database security rules as a tree-structured json object
  * @return {array} wipeout rules
  */
-const inferWipeoutRule = tree => {
+const inferWipeoutRule = (tree) => {
   const queue = [];
   const retRules = [];
   const initial = {
     node: tree,
     path: [],
     ancestorAccess: new Access(exp.NO_ACCESS, []),
-    ancestorPath: ''
+    ancestorPath: '',
   };
   queue.push(initial);
 
@@ -467,7 +468,6 @@ const inferWipeoutRule = tree => {
     if (typeof node === 'object') {
       const keys = Object.keys(node);
       if (keys.includes(WRITE_SIGN)) {
-
         // access status of the write rule
         const ruleAccess = rules.parseWriteRule(node[WRITE_SIGN], path);
         // access status of the node, considering ancestor.
@@ -476,13 +476,12 @@ const inferWipeoutRule = tree => {
         if (nodeAccess.getAccessStatus() === exp.MULT_ACCESS) {
           if (ancestor.getAccessStatus() === exp.SINGLE_ACCESS) {
             const ancestorConfig = retRules
-                .filter(o => o.path === ancestorPath);
+                  .filter((o) => o.path === ancestorPath);
             const p = path.slice();
             p[0] = '';
             ancestorConfig[0].except = p.join('/');
           }
           continue; // Won't go into subtree of MULT_ACCESS nodes
-
         } else if (nodeAccess.getAccessStatus() === exp.SINGLE_ACCESS) {
           if (ancestor.getAccessStatus() === exp.NO_ACCESS) {
             retRules.push(nodeAccess.getAccessPattern(path));
@@ -500,7 +499,7 @@ const inferWipeoutRule = tree => {
           node: node[keys[i]],
           path: newPath,
           ancestorAccess: ancestor,
-          ancestorPath: ancestorPath
+          ancestorPath: ancestorPath,
         };
         queue.push(newObj);
       }
@@ -516,7 +515,7 @@ const inferWipeoutRule = tree => {
  * @param {array} configs input configurations
  * @return {array} configs with (multiple) tailing free variables removed.
  */
-const removeFreeVars = configs => {
+const removeFreeVars = (configs) => {
   const newConfigs = [];
   for (let i = 0; i < configs.length; i++) {
     const pathList = configs[i].path.split('/');
@@ -533,14 +532,13 @@ const removeFreeVars = configs => {
 };
 
 
-
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  *
  * @param {array} deletePaths list of path objects.
  * @return {Promise}
  */
-const deleteUser = deletePaths => {
+const deleteUser = (deletePaths) => {
   const deleteTasks = [];
   for (let i = 0; i < deletePaths.length; i++) {
     if (typeof deletePaths[i] !== 'undefined') {
@@ -553,57 +551,59 @@ const deleteUser = deletePaths => {
 /**
  * Write log into RTDB with timestamp and deleted paths.
  *
- * @param {object} data Deleted User.
+ * @param {object} data deleted user
+ * @param {array} paths deleted
+ * @return {Promise}
  */
-const writeLog = (data, paths) => {
-  return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/history/${data.uid}`)
+const writeLog = (data, paths) =>
+      global.init.db.ref(`${common.BOOK_KEEPING_PATH}/history/${data.uid}`)
       .set({timestamp: global.init.serverValue.TIMESTAMP, paths: paths});
-};
 
 /**
  * Deletes data in the Realtime Datastore when the accounts are deleted.
  * Log into RTDB after successful deletion.
  * @return {Promise}
  */
-exports.cleanupUserData = () => global.init.users.onDelete(event => {
+exports.cleanupUserData = () => global.init.users.onDelete((event) => {
   const configPromise = global.init.db
         .ref(`${common.BOOK_KEEPING_PATH}/rules`).once('value');
   const confirmPromise = global.init.db
         .ref(`${common.BOOK_KEEPING_PATH}/confirm`).once('value');
   return Promise.all([configPromise, confirmPromise])
-      .then((snapshots) => {
-        const config = snapshots[0].val();
-        const confirm = snapshots[1].val();
-        return (snapshots[0].exists() && confirm) ?
-            Promise.resolve(config) :
-            Promise.reject('No config or not confirmed by developers. ' +
-                           'No data deleted at user deletion.');
-      })
-      .then(configs =>
-            filterCondition(preProcess(configs, event.data.uid), event.data.uid)
-           )
-      .then(configs => evalAuthVars(configs, event.data.uid))
-      .then(configs => evalExcepts(configs))
-      .then(configs => removeFreeVars(configs))
-      .then(deletePaths => deleteUser(deletePaths))
-      .then(paths => writeLog(event.data, paths));
+    .then((snapshots) => {
+      const config = snapshots[0].val();
+      const confirm = snapshots[1].val();
+      return (snapshots[0].exists() && confirm) ?
+        Promise.resolve(config) :
+        Promise.reject('No config or not confirmed by developers. ' +
+                       'No data deleted at user deletion.');
+    })
+    .then((configs) =>
+          filterCondition(preProcess(configs, event.data.uid), event.data.uid)
+         )
+    .then((configs) => evalAuthVars(configs, event.data.uid))
+    .then((configs) => evalExcepts(configs))
+    .then((configs) => removeFreeVars(configs))
+    .then((deletePaths) => deleteUser(deletePaths))
+    .then((paths) => writeLog(event.data, paths));
 });
 
 
 /**
  * Give developers the ability to see the wipeout rules through a URL
  * Pages rendered by EJS.
+ * @return {Promise}
  */
 exports.showWipeoutConfig = () => functions.https.onRequest((req, res) => {
   switch (req.method) {
   case 'GET':
     return getConfig().then(
-      configs =>
+      (configs) =>
         global.init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
         .set(configs.rules).then(() => {
           const sourceDict = {
             'LOCAL': 'loaded from local wipeout config',
-            'AUTO': 'generated by the library from security rules'
+            'AUTO': 'generated by the library from security rules',
           };
           ejs.renderFile(
             'template.ejs',
@@ -619,32 +619,30 @@ exports.showWipeoutConfig = () => functions.https.onRequest((req, res) => {
       return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`)
         .set(true)
         .then(() => global.init.db.ref(`${common.BOOK_KEEPING_PATH}/rules`)
-              .once('value').then(snapshot => {
+              .once('value').then((snapshot) => {
                 ejs.renderFile(
                   'template_confirm.ejs',
                   {configs: snapshot.val()},
                   (err, html) => {
                     console.log('Problem rendering template: ', err);
                     res.send(html);
-                  });
-              }));
+                });
+            }));
     case 'Reset':
       return global.init.db.ref(`${common.BOOK_KEEPING_PATH}/confirm`)
         .set(false)
         .then(() => res.send(
-          'Initialize complete.  Remember to verify and confirm the wipeout\n' +
-            'rules to activate the library'));
+          'Initialize complete.  Remember to verify and confirm the\n' +
+          'wipeout rules to activate the library'));
     default:
       console.log(`Unexpected confirm value ${req.body.confirm}`);
       return;
     }
   default:
-      console.log(`Unsupported HTTP verb ${req.method}`);
-      return;
+    console.log(`Unsupported HTTP verb ${req.method}`);
+    return;
   }
-}
-                                                           );
-
+});
 
 
 // Only expose internal functions to tests.

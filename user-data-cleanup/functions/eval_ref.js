@@ -104,7 +104,7 @@ const evalMember = (obj, path) => {
   // dealing with functions
   switch (obj.property.name) {
     case 'child':
-      result.push('#CHILD'); //Child place holder
+      result.push('#CHILD'); // Child place holder
       return result;
 
     case 'parent':
@@ -131,7 +131,7 @@ and exists() now, ${obj.property.name} found`);
  *
  * @param {object} id input identifier (jsep parse tree)
  * @param {array} path current path
- * @return {string or list of string} representing identifier
+ * @return {string|array} representing identifier
  */
 const evalIdentifier = (id, path) => {
     if (id.type !== 'Identifier') {
@@ -156,8 +156,8 @@ const evalIdentifier = (id, path) => {
  * @param {object} obj input MemberExpression
  * @return {Boolean}
  */
-const checkAuth = obj =>
-    obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
+const checkAuth = (obj) =>
+      obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
       obj.property.name === 'uid';
 
 

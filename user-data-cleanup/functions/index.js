@@ -26,7 +26,7 @@ const WIPEOUT_CONFIG = {
     'db': admin.database(),
     'serverValue': admin.database.ServerValue,
     'users': functions.auth.user(),
-    'DB_URL': functions.config().firebase.databaseURL
+  'DB_URL': functions.config().firebase.databaseURL,
   };
 
 wipeout.initialize(WIPEOUT_CONFIG);

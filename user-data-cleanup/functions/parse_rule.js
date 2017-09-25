@@ -27,7 +27,7 @@ const refs = require('./eval_ref');
 /**
  * Parse a write rule to get the access and condition
  *
- * @param {string} write rule
+ * @param {string} rule write rule
  * @param {array} path list of strings staring with 'rules'
  * @return {Access} Access object of the write rule
  */
@@ -104,7 +104,7 @@ const parseBinary = (obj, path) => {
   if (refs.checkAuth(obj.right)) {
     return getAuthExp(obj.left, obj.operator, path);
   }
-  //no auth invovled
+  // no auth invovled
   const condLeft = getCond(obj.left, path);
   const condRight = getCond(obj.right, path);
   // if either part is null(contains newData), the condition is ignored.
@@ -121,6 +121,7 @@ const parseBinary = (obj, path) => {
  *
  * @param {obnject} obj operand besides auth in BinaryExpression
  * @param {string} op operator of the BinaryExpression
+ * @param {array} path
  * @return {Expresson} auth expression
  */
 const getAuthExp = (obj, op, path) => {

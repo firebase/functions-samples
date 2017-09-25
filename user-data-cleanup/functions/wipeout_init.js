@@ -14,7 +14,7 @@ const project = process.argv[2];
 request.post(
     {
       url: `https://us-central1-${project}.cloudfunctions.net/showWipeoutConfig`,
-      body: 'confirm=Reset'
+      body: 'confirm=Reset',
     },
     (error, response, body) => console.log(body)
 );

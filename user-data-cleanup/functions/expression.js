@@ -23,6 +23,11 @@ const NO_ACCESS = 0;
 const SINGLE_ACCESS = 1;
 const MULT_ACCESS = 2;
 
+/** Create an Expresson object.
+ * @param {string} value input string, should be TRUE/FALSE/UNDEFINED
+ * @param {array} list conjunction list, should be list of literal lists
+ * @param {string} condition the condition
+ */
 function Expression(value, list, condition = null) {
   if (!checkValue(value)) {
     throw new Error('Not a valid boolean value, can\'t initialize.');
@@ -32,7 +37,7 @@ function Expression(value, list, condition = null) {
     throw new Error('Condition needs to be a string or null');
   }
   if (value === FALSE) {
-    //An expression with FALSE booleanValue should not have conditions
+    // An expression with FALSE booleanValue should not have conditions
     condition = null;
   }
   this.condition = condition;
@@ -51,27 +56,32 @@ function Expression(value, list, condition = null) {
  * Helper function, validity checking for booleanValue.
  *
  * @param {string} value input string, should be TRUE/FALSE/UNDEFINED
+ * @return {Boolean}
  */
-const checkValue = value =>
+const checkValue = (value) =>
     (typeof value === 'string') && ([TRUE, FALSE, UNDEFINED].includes(value));
 
 /**
  * Helper function, validity checking for Literal lists (conjunction clause).
  *
  * @param {array} list literal list, should be list of strings/literal
+ * @return {Boolean}
  */
-const checkLiteralList = list =>
-    Array.isArray(list) && list.length > 0 && list.every(literal =>
-        typeof literal === 'string');
+const checkLiteralList = (list) =>
+      Array.isArray(list) && list.length > 0 && list.every(
+        (literal) => typeof literal === 'string'
+      );
 
 /**
  * Helper function, validity checking for conjunction lists.
  *
  * @param {array} list conjunction list, should be list of literal lists
+ * @return {Boolean}
  */
-const checkConjunctionLists = list =>
-  Array.isArray(list) && list.length > 0 && list.every(literalList =>
-      checkLiteralList(literalList));
+const checkConjunctionLists = (list) =>
+      Array.isArray(list) && list.length > 0 && list.every(
+        (literalList) => checkLiteralList(literalList)
+      );
 
 /**
  * Setter of conjunction lists.
@@ -80,7 +90,7 @@ const checkConjunctionLists = list =>
  */
 Expression.prototype.setConjunctionLists = function(list) {
   if (!checkConjunctionLists(list)) {
-    throw new Error('ot a valid conjunction list, can\'t set DNF expression');
+    throw new Error('not a valid conjunction list, can\'t set DNF expression');
   }
   this.conjunctionLists = list;
 };
@@ -143,10 +153,11 @@ Expression.prototype.getAccessNumber = function() {
 
  * @param {array} array to sort
  * @param {function} sortBy function indicating sorting principle
+ * @return {Array}
  */
 const sortRemoveDup = (array, sortBy) => {
   const exist = {};
-  const result = array.filter(element => {
+  const result = array.filter((element) => {
     const strConjunction = JSON.stringify(element);
     if (exist.hasOwnProperty(strConjunction)) {
       return false;
@@ -164,10 +175,11 @@ const sortRemoveDup = (array, sortBy) => {
 
  * @param {array} long sorted array, candidate superset
  * @param {array} short sorted array, candidate subset
+ * @return {Boolean}
  */
 const isContainSorted = (long, short) => {
-  //check if the arrays are stricly sorted (no duplicates allowed).
-  const isSorted = array =>
+  // check if the arrays are stricly sorted (no duplicates allowed).
+  const isSorted = (array) =>
       array.length > 0 && array.every((ele, index, arr) =>
           index === 0 ? true : arr[index] > arr[index - 1]);
 
@@ -181,7 +193,7 @@ const isContainSorted = (long, short) => {
     // early termination optimization for sorted arrays
     return false;
   }
-  return short.every(value => (long.includes(value)));
+  return short.every((value) => long.includes(value));
 };
 
 /**
@@ -228,7 +240,6 @@ const condOperation = (left, right, op) => {
     return left;
   }
   return `${left} ${op} ${right}`;
-
 };
 
 /**
@@ -237,6 +248,7 @@ const condOperation = (left, right, op) => {
  *
  * @param {Expression} left left operand of OR
  * @param {Expression} right right operand of OR
+ * @return {Expression}
  */
 Expression.or = (left, right) => {
   if (!(left instanceof Expression && right instanceof Expression)) {
@@ -264,9 +276,9 @@ Expression.or = (left, right) => {
  *
  * @param {Expression} left left operand of AND
  * @param {Expression} right right operand of AND
+ * @return {Expression}
  */
 Expression.and = (left, right) => {
-
   const crossProduct = (l1, l2) => {
     if (!(checkConjunctionLists(l1) && checkConjunctionLists(l2))) {
       throw new Error('Only supports crossproduct of two conjunction lists');
@@ -311,5 +323,5 @@ module.exports = {
   NO_ACCESS: NO_ACCESS,
   SINGLE_ACCESS: SINGLE_ACCESS,
   MULT_ACCESS: MULT_ACCESS,
-  condOperation: condOperation
+  condOperation: condOperation,
 };
