@@ -636,6 +636,7 @@ exports.showWipeoutConfig = () => functions.https.onRequest((req, res) => {
           'wipeout rules to activate the library'));
     default:
       console.log(`Unexpected confirm value ${req.body.confirm}`);
+      console.log(`req.body=${JSON.stringify(req.body)}`);
       return;
     }
   default:

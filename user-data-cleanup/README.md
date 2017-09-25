@@ -1,3 +1,4 @@
+
 # Wipeout user data when account deleted
 
 To be compliant with privacy regulations you may need to ensure that a
@@ -81,18 +82,18 @@ To configure it:
  your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
  1. Run local tests using `cd functions; npm test`
- 1. Deploy your project using `firebase deploy`
- 1. Initialized the library `npm start <project-id>`. If you don't
-    know your project ID, run `firebase list | grep current`
- 1. Please go to the url
-  `https://us-central1-<project-id>.cloudfunctions.net/showWipeoutConfig` to
-  verify the wipeout rules. The webpage will show the source of these wipeout
-  rules, either loaded from local config or generated from security rules.
+ 1. Deploy your project using `firebase deploy`, anbd note the showWipeoutConfig
+    URL printed out.
+ 1. Visit the showWipeoutConfig URL in a browser and Initialized the library for
+    this database by clicking the "INITIALIZE" button.
+ 1. Go to the showWipeoutConfig URL again to verify the wipeout rules. The
+  webpage will show the source of these wipeout rules, either loaded from local
+  config or generated from security rules.
 1. The format of wipeout rules are described in the next section. If the rules
-  are correct, click the confirm button, or else change the local configuration
-  file [functions/wipeout_config.json](functions/wipeout_conifg.json) and
-  redeploy. **Note a developer confirmation is required after every
-  deployment.**
+  are correct, click the "CONFIRM DEPLOYMENT" button, or else change the local
+  configuration file
+  [functions/wipeout_config.json](functions/wipeout_conifg.json) and redeploy.
+  **Note a developer confirmation is required after every deployment.**
  1. Open the app using `firebase open hosting:site`, this will open a browser.
  1. Sign in using Google Sign-In and delete the account using
   the provided button. You can check at each step of the way if the data
