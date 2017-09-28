@@ -1,0 +1,23 @@
+{
+  "name": "content-personalization-functions",
+  "description": "Use Firebase database triggers to personalize content",
+  "dependencies": {
+    "firebase-admin": "~4.2.1",
+    "firebase-functions": "^0.5.7",
+    "lodash.flatten": "^4.4.0",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2"
+  },
+  "private": true,
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "eslint": "^4.5.0",
+    "eslint-config-google": "^0.9.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "mocha": "^3.5.0"
+  },
+  "scripts": {
+    "fix": "eslint *.js test/*.js --fix",
+    "test": "mocha"
+  }
+}
