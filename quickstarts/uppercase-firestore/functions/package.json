@@ -1,0 +1,18 @@
+{
+  "name": "uppercase-firestore-quickstart-functions",
+  "description": "Uppercaser Firebase Functions Quickstart sample for Cloud Firestore",
+  "dependencies": {
+    "@google-cloud/firestore": "^0.7.0",
+    "firebase-admin": "^5.0.0",
+    "firebase-functions": "^0.7.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.7"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  }
+}
