@@ -9,8 +9,5 @@
     "firebase-admin": "^5.0.0",
     "firebase-functions": "^0.7.0"
   },
-  "private": true,
-  "devDependencies": {
-    "prettier": "^1.6.1"
-  }
+  "private": true
 }

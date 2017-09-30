@@ -1,0 +1,10 @@
+{
+  "name": "presence-firestore",
+  "description": "Presence for Firestore",
+  "dependencies": {
+    "@google-cloud/firestore": "^0.7.0",
+    "firebase-admin": "^5.0.0",
+    "firebase-functions": "^0.7.0"
+  },
+  "private": true
+}
