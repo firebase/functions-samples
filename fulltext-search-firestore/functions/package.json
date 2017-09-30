@@ -1,0 +1,16 @@
+{
+  "name": "full-text-search",
+  "description": "Full text search for Firestore",
+  "dependencies": {
+    "algoliasearch": "^3.24.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.1",
+    "@google-cloud/firestore": "^0.7.0",
+    "firebase-admin": "^5.0.0",
+    "firebase-functions": "^0.7.0"
+  },
+  "private": true,
+  "devDependencies": {
+    "prettier": "^1.6.1"
+  }
+}
