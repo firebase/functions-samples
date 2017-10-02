@@ -1,28 +1,28 @@
 /**
  * Copyright 2017 Google Inc. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an 'AS IS' BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
-const PROJECT_ID = ""          // Required - your Firebase project ID
-const ALGOLIA_APP_ID = "";     // Required - your Algolia app ID
-const ALGOLIA_SEARCH_KEY = ""; // Optional - Only used for unauthenticated search
+const PROJECT_ID = ''          // Required - your Firebase project ID
+const ALGOLIA_APP_ID = '';     // Required - your Algolia app ID
+const ALGOLIA_SEARCH_KEY = ''; // Optional - Only used for unauthenticated search
 
 function unauthenticated_search(query) {
 
   // [START search_index_unsecure]
   const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY);
-  const index = client.initIndex("notes");
+  const index = client.initIndex('notes');
 
   // Perform an Algolia search:
   // https://www.algolia.com/doc/api-reference/api-methods/search/
@@ -56,13 +56,13 @@ function authenticated_search(query) {
     .then(function (data) {
       // Data will contain the restricted key in the `key` field.
       client = algoliasearch(ALGOLIA_APP_ID, data.key);
-      index = client.initIndex("notes");
+      index = client.initIndex('notes');
 
       // Perform the search as usual.
       return index.search({query});
     })
     .then(responses => {
-      // Finally, use the search "hits" returned from Algolia.
+      // Finally, use the search 'hits' returned from Algolia.
       return responses.hits;
     });
   // [END search_index_secure]
@@ -70,11 +70,11 @@ function authenticated_search(query) {
 
 function search(query) {
   if (!PROJECT_ID) {
-    console.warn("Please set PROJECT_ID in /index.js!");
+    console.warn('Please set PROJECT_ID in /index.js!');
   } else if (!ALGOLIA_APP_ID) {
-    console.warn("Please set ALGOLIA_APP_ID in /index.js!");
+    console.warn('Please set ALGOLIA_APP_ID in /index.js!');
   } else if (ALGOLIA_SEARCH_KEY) {
-    console.log("Performing unauthenticated search...");
+    console.log('Performing unauthenticated search...');
     return unauthenticated_search(query);
   } else {
     return firebase.auth().signInAnonymously()
@@ -84,24 +84,24 @@ function search(query) {
         });
       }).catch(function (err) {
         console.warn(err);
-        console.warn("Please enable Anonymous Authentication in your Firebase Project!");
+        console.warn('Please enable Anonymous Authentication in your Firebase Project!');
       });
   }
 }
 
 // Other code to wire up the buttons and textboxes.
 
-document.querySelector("#do-add-note").addEventListener("click", function () {
-  firebase.firestore().collection("notes").add({
+document.querySelector('#do-add-note').addEventListener('click', function () {
+  firebase.firestore().collection('notes').add({
     author: [firebase.auth().currentUser.uid],
-    text: document.querySelector("#note-text").value
+    text: document.querySelector('#note-text').value
   }).then(function () {
-    document.querySelector("#note-text").value = "";
+    document.querySelector('#note-text').value = '';
   });
 });
 
-document.querySelector("#do-query").addEventListener("click", function () {
-  search(document.querySelector("#query-text").value).then(function (hits) {
-    document.querySelector("#results").innerHTML = JSON.stringify(hits, null, 2);
+document.querySelector('#do-query').addEventListener('click', function () {
+  search(document.querySelector('#query-text').value).then(function (hits) {
+    document.querySelector('#results').innerHTML = JSON.stringify(hits, null, 2);
   });
 });

@@ -8,7 +8,7 @@ See file [functions/index.js](functions/index.js) for the code.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
-## Sample Database Structure
+## Sample Cloud Firestore Structure
 
 As an example we'll be using a secure note structure:
 

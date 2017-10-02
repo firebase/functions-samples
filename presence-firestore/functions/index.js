@@ -1,3 +1,19 @@
+/**
+ * Copyright 2017 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the 'License');
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an 'AS IS' BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // [START presence_sync_function]
 const functions = require('firebase-functions');
 const Firestore = require('@google-cloud/firestore');
@@ -10,7 +26,7 @@ const firestore = new Firestore();
 // Create a new function which is triggered on changes to /status/{uid}
 // Note: This is a Realtime Database trigger, *not* Cloud Firestore.
 exports.onUserStatusChanged = functions.database
-    .ref("/status/{uid}").onUpdate((event) => {
+    .ref('/status/{uid}').onUpdate((event) => {
         // Get the data written to Realtime Database
         const eventStatus = event.data.val();
 
@@ -22,7 +38,7 @@ exports.onUserStatusChanged = functions.database
         // this event has already been overwritten by a fast change in
         // online / offline status, so we'll re-read the current data
         // and compare the timestamps.
-        return event.data.ref.once("value").then((statusSnapshot) => {
+        return event.data.ref.once('value').then((statusSnapshot) => {
             return statusSnapshot.val();
         }).then((status) => {
             console.log(status, eventStatus);

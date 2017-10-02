@@ -14,5 +14,6 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec"
-  }
+  },
+  "private": true
 }
