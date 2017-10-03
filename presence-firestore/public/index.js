@@ -21,7 +21,7 @@ function rtdb_presence() {
 
     // Create a reference to this user's specific status node.
     // This is where we will store data about being online/offline.
-    var userStatusDatabaseRef = firebase.database().ref(`/status/${uid}`);
+    var userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
 
     // We'll create two constants which we will write to 
     // the Realtime database when this device is offline
@@ -39,7 +39,7 @@ function rtdb_presence() {
     // Create a reference to the special '.info/connected' path in 
     // Realtime Database. This path returns `true` when connected
     // and `false` when disconnected.
-    firebase.database().ref('.info/connected').on('value', function (snapshot) {
+    firebase.database().ref('.info/connected').on('value', function(snapshot) {
         // If we're not currently connected, don't do anything.
         if (snapshot.val() == false) {
             return;
@@ -49,7 +49,7 @@ function rtdb_presence() {
         // method to add a set which will only trigger once this 
         // client has disconnected by closing the app, 
         // losing internet, or any other means.
-        userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function () {
+        userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
             // The promise returned from .onDisconnect().set() will
             // resolve as soon as the server acknowledges the onDisconnect() 
             // request, NOT once we've actually disconnected:
@@ -67,7 +67,7 @@ function rtdb_and_local_fs_presence() {
     // [START rtdb_and_local_fs_presence]
     // [START_EXCLUDE]
     var uid = firebase.auth().currentUser.uid;
-    var userStatusDatabaseRef = firebase.database().ref(`/status/${uid}`);
+    var userStatusDatabaseRef = firebase.database().ref('/status/' + uid);
 
     var isOfflineForDatabase = {
         state: 'offline',
@@ -80,7 +80,7 @@ function rtdb_and_local_fs_presence() {
     };
 
     // [END_EXCLUDE]
-    var userStatusFirestoreRef = firebase.firestore().doc(`/status/${uid}`);
+    var userStatusFirestoreRef = firebase.firestore().doc('/status/' + uid);
 
     // Firestore uses a different server timestamp value, so we'll 
     // create two more constants for Firestore state.
@@ -94,7 +94,7 @@ function rtdb_and_local_fs_presence() {
         last_changed: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
-    firebase.database().ref('.info/connected').on('value', function (snapshot) {
+    firebase.database().ref('.info/connected').on('value', function(snapshot) {
         if (snapshot.val() == false) {
             // Instead of simply returning, we'll also set Firestore's state
             // to 'offline'. This ensures that our Firestore cache is aware
@@ -103,7 +103,7 @@ function rtdb_and_local_fs_presence() {
             return;
         };
 
-        userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function () {
+        userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
             userStatusDatabaseRef.set(isOnlineForDatabase);
 
             // We'll also add Firestore set here for when we come online.
@@ -115,7 +115,7 @@ function rtdb_and_local_fs_presence() {
 
 function fs_listen() {
     // [START fs_onsnapshot]
-    userStatusFirestoreRef.onSnapshot(function (doc) {
+    userStatusFirestoreRef.onSnapshot(function(doc) {
         var isOnline = doc.data().state == 'online';
         // ... use isOnline
     });
@@ -127,17 +127,17 @@ function fs_listen_online() {
     // [START fs_onsnapshot_online]
     firebase.firestore().collection('status')
         .where('state', '==', 'online')
-        .onSnapshot(function (snapshot) {
-            snapshot.docChanges.forEach(function (change) {
+        .onSnapshot(function(snapshot) {
+            snapshot.docChanges.forEach(function(change) {
                 if (change.type === 'added') {
-                    var msg = `User ${change.doc.id} is online.`;
+                    var msg = 'User ' + change.doc.id + ' is online.';
                     console.log(msg);
                     // [START_EXCLUDE]
                     history.innerHTML += msg + '<br />';
                     // [END_EXCLUDE]
                 }
                 if (change.type === 'removed') {
-                    var msg = `User ${change.doc.id} is offline.`;
+                    var msg = 'User ' + change.doc.id + ' is offline.';
                     console.log(msg);
                     // [START_EXCLUDE]
                     history.innerHTML += msg + '<br />'
@@ -148,10 +148,10 @@ function fs_listen_online() {
     // [END fs_onsnapshot_online]
 }
 
-firebase.auth().signInAnonymously().then(function () {
+firebase.auth().signInAnonymously().then(function() {
     rtdb_and_local_fs_presence();
     fs_listen_online();
-}).catch(function (err) {
+}).catch(function(err) {
     console.warn(err);
     console.warn('Please enable Anonymous Authentication in your Firebase project!');
 });
