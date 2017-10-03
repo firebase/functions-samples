@@ -44,7 +44,7 @@ function authenticated_search(query) {
   // [START search_index_secure]
   // Use Firebase Authentication to request the underlying token
   return firebase.auth().currentUser.getIdToken()
-    .then(function (token) {
+    .then(function(token) {
       // The token is then passed to our getSearchKey Cloud Function
       return fetch('https://us-central1-' + PROJECT_ID + '.cloudfunctions.net/getSearchKey/', {
           headers: { Authorization: 'Bearer ' + token }
@@ -102,7 +102,7 @@ document.querySelector('#do-add-note').addEventListener('click', function() {
 });
 
 document.querySelector('#do-query').addEventListener('click', function() {
-  search(document.querySelector('#query-text').value).then(function (hits) {
+  search(document.querySelector('#query-text').value).then(function(hits) {
     document.querySelector('#results').innerHTML = JSON.stringify(hits, null, 2);
   });
 });
