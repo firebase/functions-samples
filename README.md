@@ -14,9 +14,9 @@ To learn how to get started with Cloud Functions for Firebase by having a look a
 
 This repository contains the following samples:
 
-### [Realtime database trigger quickstart: Uppercaser](/quickstarts/uppercase)
+### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Cloud Firestore](/quickstarts/uppercase-firestore)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database events**. The function uppercase messages written to the datastore.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Cloud Firestore events**. The function uppercase messages written to the datastore.
 
 ### [HTTPS trigger quickstart: Time Server](/quickstarts/time-server)
 
@@ -162,10 +162,10 @@ Uses a Realtime Database trigger.
 Copies Firebase Database elements into BigQuery automatically. This can be useful for instance for further logs analysis.
 Uses a Realtime Database trigger.
 
-### [Full-text search via Algolia](/fulltext-search)
+### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Cloud Firestore](/fulltext-search-firestore)
 
-Enable full-text search on firebase database elements by using an Algolia hosted search service.
-Uses a Realtime Database trigger.
+Enable full-text search on Firebase Database data or Cloud Firestore documents by using an Algolia hosted search service.
+Uses a Realtime Database or Cloud Firestore trigger.
 
 ### [Write Cloud Functions using ES2017 code](/es2017-transpile)
 
@@ -201,6 +201,10 @@ Uses an HTTP trigger.
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app get a new user or lose one.
 Uses an Analytics trigger.
+
+### [Presence for Cloud Firestore](/presence-firestore)
+
+Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
 
 ## Contributing
 
