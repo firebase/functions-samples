@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-const PROJECT_ID = ''          // Required - your Firebase project ID
-const ALGOLIA_APP_ID = '';     // Required - your Algolia app ID
-const ALGOLIA_SEARCH_KEY = ''; // Optional - Only used for unauthenticated search
+var PROJECT_ID = ''          // Required - your Firebase project ID
+var ALGOLIA_APP_ID = '';     // Required - your Algolia app ID
+var ALGOLIA_SEARCH_KEY = ''; // Optional - Only used for unauthenticated search
 
 function unauthenticated_search(query) {
 
   // [START search_index_unsecure]
-  const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY);
-  const index = client.initIndex('notes');
+  var client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY);
+  var index = client.initIndex('notes');
 
   // Perform an Algolia search:
   // https://www.algolia.com/doc/api-reference/api-methods/search/
@@ -30,7 +30,7 @@ function unauthenticated_search(query) {
     .seach({
       query
     })
-    .then(responses => {
+    .then(function(responses) {
       // Response from Algolia:
       // https://www.algolia.com/doc/api-reference/api-methods/search/#response-format
       console.log(responses.hits);
@@ -39,21 +39,22 @@ function unauthenticated_search(query) {
 }
 
 function authenticated_search(query) {
-  let client, index;
+  var client;
+  var index;
   // [START search_index_secure]
   // Use Firebase Authentication to request the underlying token
   return firebase.auth().currentUser.getIdToken()
     .then(function (token) {
       // The token is then passed to our getSearchKey Cloud Function
-      return fetch(`https://us-central1-${PROJECT_ID}.cloudfunctions.net/getSearchKey/`, {
-          headers: { Authorization: `Bearer ${token}` }
+      return fetch('https://us-central1-' + PROJECT_ID + '.cloudfunctions.net/getSearchKey/', {
+          headers: { Authorization: 'Bearer ' + token }
       });
     })
-    .then(function (response) {
+    .then(function(response) {
       // The Fetch API returns a stream, which we convert into a JSON object.
       return response.json();
     })
-    .then(function (data) {
+    .then(function(data) {
       // Data will contain the restricted key in the `key` field.
       client = algoliasearch(ALGOLIA_APP_ID, data.key);
       index = client.initIndex('notes');
@@ -78,11 +79,11 @@ function search(query) {
     return unauthenticated_search(query);
   } else {
     return firebase.auth().signInAnonymously()
-      .then(function () {
+      .then(function() {
         return authenticated_search(query).catch((err) => {
           console.warn(err);
         });
-      }).catch(function (err) {
+      }).catch(function(err) {
         console.warn(err);
         console.warn('Please enable Anonymous Authentication in your Firebase Project!');
       });
@@ -91,7 +92,7 @@ function search(query) {
 
 // Other code to wire up the buttons and textboxes.
 
-document.querySelector('#do-add-note').addEventListener('click', function () {
+document.querySelector('#do-add-note').addEventListener('click', function() {
   firebase.firestore().collection('notes').add({
     author: [firebase.auth().currentUser.uid],
     text: document.querySelector('#note-text').value
@@ -100,7 +101,7 @@ document.querySelector('#do-add-note').addEventListener('click', function () {
   });
 });
 
-document.querySelector('#do-query').addEventListener('click', function () {
+document.querySelector('#do-query').addEventListener('click', function() {
   search(document.querySelector('#query-text').value).then(function (hits) {
     document.querySelector('#results').innerHTML = JSON.stringify(hits, null, 2);
   });
