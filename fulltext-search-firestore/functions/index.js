@@ -51,10 +51,8 @@ admin.initializeApp(functions.config().firebase);
 function getFirebaseUser(req, res, next) {
   console.log('Check if request is authorized with Firebase ID token');
 
-  if (
-    !req.headers.authorization ||
-    !req.headers.authorization.startsWith('Bearer ')
-  ) {
+  if (!req.headers.authorization
+      || !req.headers.authorization.startsWith('Bearer ')) {
     console.error(
       'No Firebase ID token was passed as a Bearer token in the Authorization header.',
       'Make sure you authorize your request by providing the following HTTP header:',
