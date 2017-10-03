@@ -39,8 +39,7 @@ exports.onUserStatusChanged = functions.database
         // online / offline status, so we'll re-read the current data
         // and compare the timestamps.
         return event.data.ref.once('value').then(statusSnapshot => {
-            return statusSnapshot.val();
-        }).then(status => {
+            const status = statusSnapshot.val();
             console.log(status, eventStatus);
             // If the current timestamp for this data is newer than
             // the data that triggered this event, we exit this function.
