@@ -8,7 +8,7 @@ This library contains a Cloud Function triggered by account deletion.
 It wipes out all the data in the Firebase Realtime Database that
 belongs to the user that was deleted.
 
-To determine "belonging", the Cloud Function analyzes the app's
+To determine what data belonged to the user, the Cloud Function analyzes the app's
 Security Rules, considering any data that can only be written by a
 particular user to belong to that user.
 
@@ -82,7 +82,7 @@ To configure it:
  your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
  1. Run local tests using `cd functions; npm test`
- 1. Deploy your project using `firebase deploy`, anbd note the showWipeoutConfig
+ 1. Deploy your project using `firebase deploy`, and note the showWipeoutConfig
     URL printed out.
  1. Visit the showWipeoutConfig URL in a browser and Initialized the library for
     this database by clicking the "INITIALIZE" button.
