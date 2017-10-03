@@ -62,7 +62,7 @@ function authenticated_search(query) {
       // Perform the search as usual.
       return index.search({query});
     })
-    .then(responses => {
+    .then(function(responses) {
       // Finally, use the search 'hits' returned from Algolia.
       return responses.hits;
     });
@@ -80,7 +80,7 @@ function search(query) {
   } else {
     return firebase.auth().signInAnonymously()
       .then(function() {
-        return authenticated_search(query).catch((err) => {
+        return authenticated_search(query).catch(function(err) {
           console.warn(err);
         });
       }).catch(function(err) {
@@ -96,7 +96,7 @@ document.querySelector('#do-add-note').addEventListener('click', function() {
   firebase.firestore().collection('notes').add({
     author: [firebase.auth().currentUser.uid],
     text: document.querySelector('#note-text').value
-  }).then(function () {
+  }).then(function() {
     document.querySelector('#note-text').value = '';
   });
 });
