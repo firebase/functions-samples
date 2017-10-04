@@ -30,9 +30,9 @@ limitations under the License.
   <!-- Import and configure the Firebase SDK -->
   <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
   <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-  <script src="/__/firebase/4.0.0/firebase-app.js"></script>
-  <script src="/__/firebase/4.0.0/firebase-auth.js"></script>
-  <script src="/__/firebase/3.9.0/firebase-database.js"></script>
+  <script src="/__/firebase/4.5.0/firebase-app.js"></script>
+  <script src="/__/firebase/4.5.0/firebase-auth.js"></script>
+  <script src="/__/firebase/4.5.0/firebase-database.js"></script>
   <script src="/__/firebase/init.js"></script>
 
   <script type="text/javascript">
@@ -46,7 +46,7 @@ limitations under the License.
         // [END signout]
       } else {
         // [START authanon]
-        firebase.auth().signInAnonymously().catch(function (error) {
+        firebase.auth().signInAnonymously().catch(function(error) {
           // Handle Errors here.
           var errorCode = error.code;
           var errorMessage = error.message;
@@ -83,7 +83,7 @@ limitations under the License.
           document.getElementById('quickstart-sign-in').textContent = 'Sign out';
           // firebase.database().ref('users/' + uid).set({ paypal: "false"});
 
-          firebase.database().ref('users/' + uid).once('value').then(function (snapshot) {
+          firebase.database().ref('users/' + uid).once('value').then(function(snapshot) {
             var paypal = snapshot.val();
             document.getElementById('quickstart-account-details').textContent = JSON.stringify(paypal, null,
               '  ');
