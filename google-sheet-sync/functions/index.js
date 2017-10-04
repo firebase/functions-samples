@@ -37,8 +37,8 @@ const CONFIG_SHEET_ID = functions.config().googleapi.sheet_id;
 // watchedpaths.data_path = Firebase path for data to be synced to Google Sheet
 const CONFIG_DATA_PATH = functions.config().watchedpaths.data_path;
 
-// TODO: Update YOUR_FUNCTIONS_SUBDOMAIN
-const FUNCTIONS_REDIRECT = '{YOUR_FUNCTIONS_SUBDOMAIN}.cloudfunctions.net/OauthCallback';
+// The OAuth Callback Redirect.
+const FUNCTIONS_REDIRECT = `${process.env.GCLOUD_PROJECT}.firebaseapp.com/oauthcallback`;
 
 // setup for authGoogleAPI
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
@@ -61,20 +61,21 @@ const DB_TOKEN_PATH = '/api_tokens';
 
 // after you grant access, you will be redirected to the URL for this Function
 // this Function stores the tokens to your Firebase database
-exports.OauthCallback = functions.https.onRequest((req, res) => {
+exports.oauthcallback = functions.https.onRequest((req, res) => {
   const code = req.query.code;
   functionsOauthClient.getToken(code, (err, tokens) => {
     // Now tokens contains an access_token and an optional refresh_token. Save them.
     if (err) {
-      return res.status(400).send(err);
+      res.status(400).send(err);
+      return;
     }
-    return db.ref(DB_TOKEN_PATH).set(tokens).then(() => res.status(200).send('OK'));
+    db.ref(DB_TOKEN_PATH).set(tokens).then(() => res.status(200).send('OK'));
   });
 });
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
 exports.appendRecordToSpreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onWrite(
-  (event) => {
+  event => {
     const newRecord = event.data.current.val();
     return appendPromise({
       spreadsheetId: CONFIG_SHEET_ID,
@@ -90,7 +91,7 @@ exports.appendRecordToSpreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/
 // accepts an append request, returns a Promise to append it, enriching it with auth
 function appendPromise(requestWithoutAuth) {
   return new Promise((resolve, reject) => {
-    getAuthorizedClient().then((client) => {
+    getAuthorizedClient().then(client => {
       const sheets = google.sheets('v4');
       const request = requestWithoutAuth;
       request.auth = client;
@@ -111,7 +112,7 @@ function getAuthorizedClient() {
     if (oauthTokens) {
       return resolve(functionsOauthClient);
     }
-    db.ref(DB_TOKEN_PATH).once('value').then((snapshot) => {
+    db.ref(DB_TOKEN_PATH).once('value').then(snapshot => {
       oauthTokens = snapshot.val();
       functionsOauthClient.setCredentials(oauthTokens);
       return resolve(functionsOauthClient);
