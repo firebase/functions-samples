@@ -48,7 +48,7 @@ const functionsOauthClient = new auth.OAuth2(CONFIG_CLIENT_ID, CONFIG_CLIENT_SEC
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
-exports.authgoogleaPI = functions.https.onRequest((req, res) =>
+exports.authgoogleapi = functions.https.onRequest((req, res) =>
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
@@ -74,7 +74,7 @@ exports.oauthcallback = functions.https.onRequest((req, res) => {
 });
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
-exports.appendRecordToSpreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onWrite(
+exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onWrite(
   event => {
     const newRecord = event.data.current.val();
     return appendPromise({
