@@ -202,6 +202,11 @@ Uses an HTTP trigger.
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app get a new user or lose one.
 Uses an Analytics trigger.
 
+### [Sync Database to a Google Spreadsheet](google-sheet-sync)
+
+This sample demonstrates how to sync new data written to a Firebase database to a Google Sheet. It includes a method for obtaining, storing, and using Oauth2 tokens for Google API access.
+Uses HTTPS triggers and Realtime Database triggers.
+
 ### [Presence for Cloud Firestore](/presence-firestore)
 
 Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
