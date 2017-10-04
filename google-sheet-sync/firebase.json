@@ -7,6 +7,14 @@
       {
         "source": "/oauthcallback",
         "function": "oauthcallback"
+      },
+      {
+        "source": "/authgoogleapi",
+        "function": "authgoogleapi"
+      },
+      {
+        "source": "/testsheetwrite",
+        "function": "testsheetwrite"
       }
     ]
   }
