@@ -1,0 +1,16 @@
+{
+  "name": "paypal-functions",
+  "description": "Paypal Firebase Functions",
+  "dependencies": {
+    "cors": "^2.8.3",
+    "firebase-admin": "^4.2.1",
+    "firebase-functions": "^0.5.7",
+    "paypal-rest-sdk": "^1.7.1"
+  },
+  "private": true,
+  "devDependencies": {
+    "jshint": "^2.9.5",
+    "eslint": "^4.1.1",
+    "eslint-config-google": "^0.8.0"
+  }
+}
