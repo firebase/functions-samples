@@ -6,6 +6,10 @@
     "public": "public",
     "rewrites": [
       {
+        "source": "/process",
+        "function": "process"
+      },
+      {
         "source": "/pay",
         "function": "pay"
       },
