@@ -1,0 +1,21 @@
+{
+  "functions": {
+    "source": "functions"
+  },
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "/oauthcallback",
+        "function": "oauthcallback"
+      },
+      {
+        "source": "/authgoogleapi",
+        "function": "authgoogleapi"
+      },
+      {
+        "source": "/testsheetwrite",
+        "function": "testsheetwrite"
+      }
+    ]
+  }
+}
