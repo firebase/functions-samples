@@ -45,6 +45,8 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const auth = new googleAuth();
 const functionsOauthClient = new auth.OAuth2(CONFIG_CLIENT_ID, CONFIG_CLIENT_SECRET,
   FUNCTIONS_REDIRECT);
+
+// OAuth token cached locally.
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
@@ -69,7 +71,9 @@ exports.oauthcallback = functions.https.onRequest((req, res) => {
       res.status(400).send(err);
       return;
     }
-    db.ref(DB_TOKEN_PATH).set(tokens).then(() => res.status(200).send('OK'));
+    db.ref(DB_TOKEN_PATH).set(tokens).then(
+        () => res.status(200).send('App successfully configured with new Credentials. ' +
+                                   'You can now close this page.'));
   });
 });
 
@@ -108,16 +112,14 @@ function appendPromise(requestWithoutAuth) {
 
 // checks if oauthTokens have been loaded into memory, and if not, retrieves them
 function getAuthorizedClient() {
-  return new Promise((resolve, reject) => {
-    if (oauthTokens) {
-      return resolve(functionsOauthClient);
-    }
-    db.ref(DB_TOKEN_PATH).once('value').then(snapshot => {
-      oauthTokens = snapshot.val();
-      functionsOauthClient.setCredentials(oauthTokens);
-      return resolve(functionsOauthClient);
-    }).catch(() => reject());
-  });
+  if (oauthTokens) {
+    return Promise.success(functionsOauthClient);
+  }
+  return db.ref(DB_TOKEN_PATH).once('value').then(snapshot => {
+    oauthTokens = snapshot.val();
+    functionsOauthClient.setCredentials(oauthTokens);
+    return functionsOauthClient;
+  })
 }
 
 // HTTPS function to write new data to CONFIG_DATA_PATH, for testing
