@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "source": "functions"
+  },
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "/oauthcallback",
+        "function": "oauthcallback"
+      }
+    ]
+  }
+}
