@@ -48,7 +48,7 @@ const functionsOauthClient = new auth.OAuth2(CONFIG_CLIENT_ID, CONFIG_CLIENT_SEC
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
-exports.authGoogleAPI = functions.https.onRequest((req, res) =>
+exports.authgoogleaPI = functions.https.onRequest((req, res) =>
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
@@ -121,7 +121,7 @@ function getAuthorizedClient() {
 }
 
 // HTTPS function to write new data to CONFIG_DATA_PATH, for testing
-exports.testSheetWrite = functions.https.onRequest((req, res) => {
+exports.testsheetwrite = functions.https.onRequest((req, res) => {
   const random1 = Math.floor(Math.random() * 100);
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
