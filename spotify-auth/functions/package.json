@@ -7,5 +7,6 @@
     "firebase-admin": "^4.2.1",
     "firebase-functions": "^0.5.5",
     "spotify-web-api-node": "^2.3.6"
-  }
+  },
+  "private": true
 }
