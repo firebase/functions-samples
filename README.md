@@ -157,6 +157,11 @@ Uses a Realtime Database trigger.
 Make sure to keep the number of child nodes below a certain threshold. For instance this can be useful to limit the number of lines of logs or chat history below a given number.
 Uses a Realtime Database trigger.
 
+### [Removing old items from a list](/delete-old-child-nodes)
+
+This sample shows how to remove child nodes older than 2 hours from a Firebase Database list. This can be useful for removing outdated items from a collection.
+Uses a Realtime Database trigger.
+
 ### [Import data into Big Query](/bigquery-import)
 
 Copies Firebase Database elements into BigQuery automatically. This can be useful for instance for further logs analysis.
