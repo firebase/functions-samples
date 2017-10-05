@@ -6,7 +6,7 @@ This sample shows how to remove child nodes older than 2 hours from a Firebase D
 
 See file [functions/index.js](functions/index.js) for the code.
 
-Note that this code only runs when triggered by a write to the list. This means that if nothing gets written for a while, the list may still contain outdated items. If that does not match with your use-case, you should modify the code to trigger based on a time-interval as shown in [this sample](../child-count).
+Note that this code only runs when triggered by a write to the list. This means that if nothing gets written for a while, the list may still contain outdated items. If that does not match with your use-case, you should modify the code to trigger based on a time-interval as shown in [this sample](../delete-unused-accounts-cron).
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
