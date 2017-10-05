@@ -39,6 +39,8 @@ exports.appinstalled = functions.analytics.event('first_open').onLog(event => {
 
 /**
  * Triggers when the app is removed from the user device and sends a notification to your developer device.
+ * NOTE: for this trigger to  work, you must mark the `app_remove` event as a conversion event in Firebase's
+ * Analytics dashboard.
  *
  * The device model name, the city and the country of the user are sent in the notification message
  */
