@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 'use strict';
-//unit tests for the Access class
+
+// unit tests for the Access class
 
 const Access = require('../access');
 const testCommon = require('./test_common');
@@ -31,24 +32,23 @@ const expectCond = (acc, cond) =>
   expect(acc.getCondition()).to.equal(cond);
 
 describe('Access', () => {
-
   it('should only create object with illegal parameters', () => {
-    const new1 = () => new Access(exp.SINGLE_ACCESS,[]);
-    const new2 = () => new Access(exp.SINGLE_ACCESS,[[[]]]);
-    const new3 = () => new Access(exp.SINGLE_ACCESS,[[1,2,3]]);
-    const new4 = () => new Access(true,['1','2','3']);
+    const new1 = () => new Access(exp.SINGLE_ACCESS, []);
+    const new2 = () => new Access(exp.SINGLE_ACCESS, [[[]]]);
+    const new3 = () => new Access(exp.SINGLE_ACCESS, [[1, 2, 3]]);
+    const new4 = () => new Access(true, ['1', '2', '3']);
 
-    expect(new1).to.throw(`Not a valid list of variable for single access.`);
-    expect(new2).to.throw(`Not a valid list of variable for single access.`);
-    expect(new3).to.throw(`Not a valid list of variable for single access.`);
-    expect(new4).to.throw(`Not a valid access status.`);
+    expect(new1).to.throw('Not a valid list of variable for single access.');
+    expect(new2).to.throw('Not a valid list of variable for single access.');
+    expect(new3).to.throw('Not a valid list of variable for single access.');
+    expect(new4).to.throw('Not a valid access status.');
   });
 
   it('should have empty variableList with NO/MULT access', () => {
-    const acc1 = new Access(exp.NO_ACCESS,[[]]);
-    const acc2 = new Access(exp.NO_ACCESS,['a','b','c']);
-    const acc3 = new Access(exp.MULT_ACCESS,[[]]);
-    const acc4 = new Access(exp.MULT_ACCESS,[[1,2,3]]);
+    const acc1 = new Access(exp.NO_ACCESS, [[]]);
+    const acc2 = new Access(exp.NO_ACCESS, ['a', 'b', 'c']);
+    const acc3 = new Access(exp.MULT_ACCESS, [[]]);
+    const acc4 = new Access(exp.MULT_ACCESS, [[1, 2, 3]]);
 
     expectVar(acc1, []);
     expectVar(acc2, []);
@@ -57,11 +57,11 @@ describe('Access', () => {
   });
 
   it('should create correct object from exp', () => {
-    const expT = new exp.Expression(exp.TRUE,[]);
-    const expF = new exp.Expression(exp.FALSE,[]);
-    const expUS = new exp.Expression(exp.UNDEFINED,[['a','b']]);
+    const expT = new exp.Expression(exp.TRUE, []);
+    const expF = new exp.Expression(exp.FALSE, []);
+    const expUS = new exp.Expression(exp.UNDEFINED, [['a', 'b']]);
     const expUM = new exp.Expression(exp.UNDEFINED,
-        [['a','b'],['c']]);
+        [['a', 'b'], ['c']]);
 
     const accN = Access.fromExpression(expF);
     const accM = Access.fromExpression(expT);
@@ -76,11 +76,11 @@ describe('Access', () => {
   });
 
   it('should create correct object from rule and ancestor object', () => {
-    const single1 = new Access(exp.SINGLE_ACCESS,['a','b'], 'a != 1000');
-    const single2 = new Access(exp.SINGLE_ACCESS,['a','c']);
-    const single3 = new Access(exp.SINGLE_ACCESS,['a','b','c'], 'a>100');
-    const mult = new Access(exp.MULT_ACCESS,[]);
-    const no = new Access(exp.NO_ACCESS,[]);
+    const single1 = new Access(exp.SINGLE_ACCESS, ['a', 'b'], 'a != 1000');
+    const single2 = new Access(exp.SINGLE_ACCESS, ['a', 'c']);
+    const single3 = new Access(exp.SINGLE_ACCESS, ['a', 'b', 'c'], 'a>100');
+    const mult = new Access(exp.MULT_ACCESS, []);
+    const no = new Access(exp.NO_ACCESS, []);
 
     // ancestor has multiple access patterns
     expectAccess(Access.nodeAccess(mult, single1), exp.MULT_ACCESS);

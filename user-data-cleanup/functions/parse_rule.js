@@ -17,7 +17,6 @@
 
 // Parse write rules to get back the Access object of the rule.
 // Exports parseWriteRule()
-const common = require('./common');
 const exp = require('./expression');
 const Expression = exp.Expression;
 const jsep = require('jsep');
@@ -28,9 +27,9 @@ const refs = require('./eval_ref');
 /**
  * Parse a write rule to get the access and condition
  *
- * @param write rule
- * @param path, list of strings staring with 'rules'
- * @return Access object of the write rule
+ * @param {string} rule write rule
+ * @param {array} path list of strings staring with 'rules'
+ * @return {Access} Access object of the write rule
  */
 const parseWriteRule = (rule, path) => {
   let ruleTree;
@@ -47,9 +46,9 @@ const parseWriteRule = (rule, path) => {
  * Recursively parse logic expressions to get
  * the expression object of a logic expression.
  *
- * @param
- * @param path, list of strings staring with 'rules'
- * @return Expression object representing operands in logic expressions
+ * @param {object} obj from parse tree
+ * @param {array} path list of strings staring with 'rules'
+ * @return {Expression} object representing operands in logic expressions
  */
 const parseLogic = (obj, path) => {
   switch (obj.type) {
@@ -66,9 +65,9 @@ const parseLogic = (obj, path) => {
       if (obj.raw === 'false') {
         return new Expression(exp.FALSE, []);
       }
-      throw 'Literals else than true or false are not supported';
+    throw new Error('Literals else than true or false are not supported');
 
-    case 'LogicalExpression':
+    case 'LogicalExpression': {
       const left = parseLogic(obj.left, path);
       const right = parseLogic(obj.right, path);
 
@@ -78,7 +77,8 @@ const parseLogic = (obj, path) => {
       if (obj.operator === '&&') {
         return Expression.and(left, right);
       }
-      throw `Unsupported logic operation: ${obj.operator}`;
+      throw new Error(`Unsupported logic operation: ${obj.operator}`);
+    }
 
     default:
       return new Expression(exp.TRUE, []);
@@ -89,13 +89,13 @@ const parseLogic = (obj, path) => {
  * Parse BinaryExpression to get the expression object
  *
  *
- * @param obj BinaryExpression to parse
- * @param path, list of strings staring with 'rules'
- * @return expression object of the BinaryExpression.
+ * @param {object} obj BinaryExpression to parse
+ * @param {array} path list of strings staring with 'rules'
+ * @return {Expression} expression object of the BinaryExpression.
  */
 const parseBinary = (obj, path) => {
   if (obj.type !== 'BinaryExpression') {
-    throw 'Expect Binary Expreesion';
+    throw new Error('Expect Binary Expreesion');
   }
   // auth involved in BinaryExpression
   if (refs.checkAuth(obj.left)) {
@@ -104,16 +104,13 @@ const parseBinary = (obj, path) => {
   if (refs.checkAuth(obj.right)) {
     return getAuthExp(obj.left, obj.operator, path);
   }
-  //no auth invovled
-  let newCond;
+  // no auth invovled
   const condLeft = getCond(obj.left, path);
   const condRight = getCond(obj.right, path);
-  if (condLeft !== null && condRight !== null) {
-    newCond = `${condLeft} ${obj.operator} ${condRight}`;
-  } else {
-    // if either part is null(contains newData), the condition is ignored.
-    newCond = null;
-  }
+  // if either part is null(contains newData), the condition is ignored.
+  const newCond = (condLeft !== null && condRight !== null) ?
+        `${condLeft} ${obj.operator} ${condRight}` :
+        null;
   return new Expression(exp.TRUE, [], newCond);
 };
 
@@ -122,9 +119,10 @@ const parseBinary = (obj, path) => {
  * If one of the operand in BinaryExpression is auth,
  * parse the other side to get the auth expression.
  *
- * @param obj operand besides auth in BinaryExpression
- * @param op operator of the BinaryExpression
- * @return auth expression
+ * @param {obnject} obj operand besides auth in BinaryExpression
+ * @param {string} op operator of the BinaryExpression
+ * @param {array} path
+ * @return {Expresson} auth expression
  */
 const getAuthExp = (obj, op, path) => {
   if (op !== '==' && op !== '===') {
@@ -150,9 +148,9 @@ const getAuthExp = (obj, op, path) => {
  * If No auth in the BinaryExpression, parse the operand to
  * get candidates for conditions.
  *
- * @param obj operand of BinaryExpression
- * @param path, list of strings staring with 'rules'
- * @return string representing value of the operand or null
+ * @param {object} obj operand of BinaryExpression
+ * @param {array} path list of strings staring with 'rules'
+ * @return {string} representing value of the operand or null
  */
 const getCond = (obj, path) => {
   switch (obj.type) {
@@ -164,8 +162,10 @@ const getCond = (obj, path) => {
       return refs.evalRef(obj, path);
 
     default:
-      throw `Type of BinaryExpression candidate ${obj.type} not supported`;
+      throw new Error(
+          `Type of BinaryExpression candidate ${obj.type} not supported`);
   }
 };
 
+/** Parse a write rule to get the access and condition. */
 module.exports.parseWriteRule = parseWriteRule;

@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "spotifyAccessToken": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid"
+      }
+    }
+  }
+}

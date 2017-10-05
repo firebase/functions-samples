@@ -21,4 +21,3 @@ describe('Wipeout', () => {
   require('./access_spec.js');
   require('./extraction_spec.js');
 });
-

@@ -22,9 +22,9 @@ const common = require('./common');
 /**
  * Evaluates data references
  *
- * @param callExp input CallExpression
- * @param path current path
- * @return string which represents the value of the call expression
+ * @param {object} callExp input CallExpression
+ * @param {array} path current path
+ * @return {string} which represents the value of the call expression
  * or undefined if expression contains newData.
  */
 const evalRef = (callExp, path) => {
@@ -35,7 +35,7 @@ const evalRef = (callExp, path) => {
 
   const refValue = evalCallExp(callExp, path);
   if (refValue.length !== 1) {
-    throw 'Not a valid referece value. Did you forget .val() at the end?';
+    throw new Error('Not a valid value. Did you forget .val() at the end?');
   }
   return refValue[0];
 };
@@ -43,9 +43,9 @@ const evalRef = (callExp, path) => {
 /**
  * Evaluates CallExpression
  *
- * @param obj input CallExpression
- * @param path current path
- * @return list holding variables in the data reference
+ * @param {object}  obj input CallExpression
+ * @param {array} path current path
+ * @return {array} list holding variables in the data reference
  */
 const evalCallExp = (obj, path) => {
     const arg = obj.arguments;
@@ -56,7 +56,7 @@ const evalCallExp = (obj, path) => {
     if (arg.length === 0) {
       // if no argument
       if (result[result.length - 1] === '#CHILD') {
-        throw 'Needs a argument for child ()';
+        throw new Error('Needs a argument for child ()');
       }
       return result;
     }
@@ -64,7 +64,7 @@ const evalCallExp = (obj, path) => {
     const argVal = evalArg(arg['0'], path);
 
     if (result[result.length - 1] !== '#CHILD') {
-      throw 'Only supports argument for child()';
+      throw new Error('Only supports argument for child()');
     }
     // Replace the place holder with actuall argument
     result[result.length - 1] = argVal;
@@ -77,9 +77,9 @@ const evalCallExp = (obj, path) => {
  * The property is the function to call: child(), parent(), val(), exists()
  * The object is the entity which calls the function
  *
- * @param obj input MemberExpression
- * @param path current path
- * @return list holding variables in the data reference
+ * @param {object} obj input MemberExpression
+ * @param {array} path current path
+ * @return {array} holding variables in the data reference
  */
 const evalMember = (obj, path) => {
   let result = [];
@@ -93,22 +93,23 @@ const evalMember = (obj, path) => {
     break;
 
     default:
-      throw 'Invalid member object for data reference' + obj.object.type;
+      throw new Error('Invalid member object for data reference ' +
+                      obj.object.type);
   }
 
   if (obj.property.type !== 'Identifier') {
-    throw 'Property should be Identifiers';
+    throw new Error('Property should be Identifiers');
   }
 
   // dealing with functions
   switch (obj.property.name) {
     case 'child':
-      result.push('#CHILD'); //Child place holder
+      result.push('#CHILD'); // Child place holder
       return result;
 
     case 'parent':
       if (result.length <= 2) { // Index 0 is always 'rules'
-        throw 'No parent avaliable';
+        throw new Error('No parent avaliable');
       }
       result.splice(result.length - 1, 1);
       return result;
@@ -120,31 +121,31 @@ const evalMember = (obj, path) => {
       return ['exists(' + result.join(',') + ')'];
 
     default:
-      throw `Only support reference child(), parent(), val() \
-and exists() now, ${obj.property.name} found`;
+      throw new Error(`Only support reference child(), parent(), val() \
+and exists() now, ${obj.property.name} found`);
   }
 };
 
 /**
  * Evaluates Identifier, replace root/data with value.
  *
- * @param id input identifier
- * @param path current path
- * @return string or list of string representing identifier
+ * @param {object} id input identifier (jsep parse tree)
+ * @param {array} path current path
+ * @return {string|array} representing identifier
  */
 const evalIdentifier = (id, path) => {
     if (id.type !== 'Identifier') {
-      throw 'evalIdentifier() needs Identifiers as input';
+      throw new Error('evalIdentifier() needs Identifiers as input');
     }
     switch (id.name) {
       case 'root':
         return 'rules';
 
       case 'data':
-        const p = path.slice();
-        return p;
+        return path.slice();
+
       case 'newData':
-        throw 'newData not supported';
+        throw new Error('newData not supported');
     }
     return id.name;
   };
@@ -152,20 +153,20 @@ const evalIdentifier = (id, path) => {
 /**
  * Helper function, checks if a MemerberExpression is auth.uid
  *
- * @param obj input MemberExpression
- * @return true or false
+ * @param {object} obj input MemberExpression
+ * @return {Boolean}
  */
-const checkAuth = obj =>
-    obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
+const checkAuth = (obj) =>
+      obj.type === 'MemberExpression' && obj.object.name === 'auth' &&
       obj.property.name === 'uid';
 
 
 /**
  * Evaluates argument of functions
  *
- * @param arg input argument
- * @param path current path
- * @return string representing argument value
+ * @param {object} arg input argument (jsep parse tree)
+ * @param {array} path current path
+ * @return {string} representation of argument value
  */
 const evalArg = (arg, path) => {
   switch (arg.type) {
@@ -179,21 +180,23 @@ const evalArg = (arg, path) => {
       if (checkAuth(arg)) {
         return common.WIPEOUT_UID;
       }
-      throw 'MemberExpression as argument not supported, except auth.uid';
+    throw new Error('member reference not supported, except auth.uid');
 
-    case 'CallExpression':
+    case 'CallExpression': {
       const result = evalCallExp(arg, path);
 
       if (result.length !== 1) {
-        throw 'Invalid argument' + result.toString();
+        throw new Error('Invalid argument' + result.toString());
       }
       return result[0];
-
+    }
     default:
-      throw 'Unsupported argument type: ' + arg.type;
+      throw new Error('Unsupported argument type: ' + arg.type);
   }
 };
 
+/** Evaluates data references */
 module.exports.evalRef = evalRef;
-module.exports.checkAuth = checkAuth;
 
+/** Helper function, checks if a MemerberExpression is auth.uid */
+module.exports.checkAuth = checkAuth;

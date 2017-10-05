@@ -1,0 +1,10 @@
+{
+  "plugins": ["jasmine", "mocha"],
+  "extends": ["plugin:jasmine/recommended", "../.eslintrc.json"],
+  "env": {
+    "jasmine": true
+  },
+  "rules": {
+    "mocha/no-exclusive-tests": "error"
+  }
+}
