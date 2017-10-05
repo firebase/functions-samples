@@ -28,7 +28,7 @@ patterns from single rules and combining access pattern with possible
 higher level rules. It needs to deal with complex security rules with
 nested logic expressions and data dependent references. The access
 extraction of a single rule works by building an auth expression
-object in a bottom-up manners and express the final expression in
+object in a bottom-up manner and express the final expression in
 Disjunctive Normal Form (DNF). More details available in
 [Auto Rules Extraction][2].
 
@@ -37,17 +37,17 @@ GitHub][3] with documentation and an example app.
 
 
 ## Overall design
-                                   
+
 One important issue in protecting privacy of end-users of Firebase
-apps is to identify user data storing location. The knowledge about
+apps is to identify user data storing location. Understanding
 where data is stored is crucial to effectively managing and protecting
-user data in a the schemaless back-end storing system (Fiorebase
+user data in a schemaless back-end storing system (Firebase
 Realtime Database, Cloud Storage).
 
-One way to get these knowledge is to ask the developers to specify
-them. This is a good way to get accurate information so we allow
+One way to find where the user's data is stored is to ask the developers to specify
+the path in the databse. This is a good way to get accurate information so we allow
 developers to write local configurations describing user data storing
-patterns. The problem is this approach adds additional burden to the
+patterns. The problem is this approach is that it adds additional burden to the
 developers and may scare them away from using the feature.
 
 The better alternative is to provide a service which automatically
@@ -94,7 +94,7 @@ web confirmation UI is shown in the figure below:
 
 ## Wipeout rules spec
 
-The wipeout rules is a list of JSON object, each of them describes a
+The wipeout rules is a list of JSON objects, each of them describes a
 pattern of user data storage. When a user account is deleted, the
 library goes through every config to remove any match with these
 patterns. A single config rule can have four fields:
@@ -107,17 +107,16 @@ patterns. A single config rule can have four fields:
     is `/chat/$room`.
 *   `authVar`: Optional field, List of data references. Besides the
     locations marked by `#WIPEOUT_UID` in path, `authVar` is a list of
-    values/data references which should equals to the authentication
+    values/data references which should equal the authentication
     uid. For example, the previous chat app example could have
     `authVar: ['val(rules,chat,$room,creator)']` (see data reference
     below for format details). This will restrict the free variable
-    $room to the set of chat rooms created by the user who just
-    deleted the account because it requires data at
+    $room to the set of chat rooms created by the deleted user because it requires data at
     `/chat/$room/creator` to be `auth.uid`.
 *   `condition`: Optional field, string. Any additional restriction on
     the path which is not related to authentication. Logic && and ||
     supported, free variable not supported. An example condition:
-    `#WIPEOUT_UID !== someID && val(rules,user,#WIPEOUT_UID,creatYear)
+    `#WIPEOUT_UID !== someID && val(rules,user,#WIPEOUT_UID,createYear)
     > 2016`.
 *   `except`: Optional field. Subpath which doesn't belong to a single
     user, shouldn't be removed at account deletion. For example,
