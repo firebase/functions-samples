@@ -18,8 +18,8 @@ This repository contains a few categories of samples:
  1. [**Quickstarts**](#quickstarts) are minimal examples for each types of triggers.
  1. [**Development Environment Samples and Boilerplates**](#environment) illustrates how to get started with
 different, commonly used JavaScript development patterns such as Typescript, React SSR, ES2017 etc...
- 1. [**Image manipulation**](#image) shows a few ways where you can process and transform images using Cloud Functions such as generating thumbnails, converting images extracting metadata...
- 1. [**Firebase Realtime Database data consistency**](#rtdb) show how to implement automatic data consistency such as keeping a count of children, having a max amount of node childs, cleaning up old data etc...
+ 1. [**Image Processing**](#image) shows a few ways where you can process and transform images using Cloud Functions such as generating thumbnails, converting images extracting metadata...
+ 1. [**Firebase Realtime Database Data Consistency**](#rtdb) show how to implement automatic data consistency such as keeping a count of children, having a max amount of node childs, cleaning up old data etc... for your Realtime Database.
  1. [**Other common usecases**](#other) a set of other common usecases for Cloud Functions.
 
 
@@ -83,7 +83,7 @@ This sample demonstrates how to create an isomorphic React application with serv
 
 
 <a name="image"></a>
-## Image processing
+## Image Processing
 
 Here is a few sample that shows how you can process or analyze images using Cloud Functions.
 
@@ -118,7 +118,7 @@ Uses a Firebase Storage trigger.
 
 
 <a name="rtdb"></a>
-## Firebase Realtime Database data consistency
+## Firebase Realtime Database Data Consistency
 
 These samples show how to implement automatic data consistency such as keeping a count of children, having a max amount of node childs, cleaning up old data etc...
 
