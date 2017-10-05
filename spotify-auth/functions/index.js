@@ -27,29 +27,23 @@ admin.initializeApp({
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`
 });
 
-const OAUTH_SCOPES = ['user-read-email'];
+// Spotify OAuth 2 setup
+// TODO: Configure the `spotify.client_id` and `spotify.client_secret` Google Cloud environment variables.
+const SpotifyWebApi = require('spotify-web-api-node');
+const Spotify = new SpotifyWebApi({
+  clientId: functions.config().spotify.client_id,
+  clientSecret: functions.config().spotify.client_secret,
+  redirectUri: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`
+});
 
-/**
- * Creates a configured Spotify API Client instance.
- */
-function spotifyClient() {
-  // Spotify OAuth 2 setup
-  // TODO: Configure the `spotify.client_id` and `spotify.client_secret` Google Cloud environment variables.
-  var SpotifyWebApi = require('spotify-web-api-node');
-  return new SpotifyWebApi({
-    clientId: functions.config().spotify.client_id,
-    clientSecret: functions.config().spotify.client_secret,
-    redirectUri: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`
-  });
-}
+// Scopes to request.
+const OAUTH_SCOPES = ['user-read-email'];
 
 /**
  * Redirects the User to the Spotify authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
 exports.redirect = functions.https.onRequest((req, res) => {
-  const Spotify = spotifyClient();
-
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     console.log('Setting verification state:', state);
@@ -66,8 +60,6 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * 'callback' query parameter.
  */
 exports.token = functions.https.onRequest((req, res) => {
-  const Spotify = spotifyClient();
-
   try {
     cookieParser()(req, res, () => {
       console.log('Received verification state:', req.cookies.state);
