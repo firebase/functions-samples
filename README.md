@@ -62,18 +62,13 @@ Uses an HTTP trigger.
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification from a Realtime Database triggered Function when users get new followers. The sample also features a Web UI to experience the FCM notification.
 Uses a Realtime Database trigger.
 
-### [Authorize with LinkedIn](/linkedin-auth)
+### Authorize with [LinkedIn](/linkedin-auth), [Spotify](spotify-auth) or [Instagram](/instagram-auth)
 
-Demonstrates how to authorize with a 3rd party sign-in mechanism (LinkedIn in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
+Demonstrates how to authorize with a 3rd party sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
 
 ### [Image Maker](/image-maker)
 This sample demonstrates how to create various customized images through Cloud Functions and Hosting and serve it to the client.
-
-### [Authorize with Instagram](/instagram-auth)
-
-Demonstrates how to authorize with a 3rd party sign-in mechanism (Instagram in this case), create a Firebase custom auth token, update the user's profile and authorize Firebase.
-Uses an HTTP trigger.
 
 ### [Isomorphic React App](/isomorphic-react-app)
 This sample demonstrates how to create an isomorphic React application with server-side data fetching. This sample uses Cloud Functions, Hosting, and the Realtime Database.
