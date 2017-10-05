@@ -31,13 +31,15 @@ const WIPEOUT_CONFIG = {
 
 wipeout.initialize(WIPEOUT_CONFIG);
 
+/** expose cleanupUserDat as Cloud Function */
 exports.cleanupUserData = wipeout.cleanupUserData();
 
+/** expose showWipeoutConfig as Cloud Function */
 exports.showWipeoutConfig = wipeout.showWipeoutConfig();
 
 /** Cloud Function that adds demo data to app for a user. */
 exports.addDataDemo = functions.https.onRequest((req, res) => {
-  if (req.method == 'POST') {
+  if (req.method === 'POST') {
     const body = JSON.parse(req.body);
     if (typeof body.ref === 'undefined' || typeof body.content !== 'object') {
       return Promise.reject('Needs ref and content field to add demo data');

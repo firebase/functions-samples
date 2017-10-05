@@ -14,9 +14,9 @@ To learn how to get started with Cloud Functions for Firebase by having a look a
 
 This repository contains the following samples:
 
-### [Realtime database trigger quickstart: Uppercaser](/quickstarts/uppercase)
+### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Cloud Firestore](/quickstarts/uppercase-firestore)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database events**. The function uppercase messages written to the datastore.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Cloud Firestore events**. The function uppercase messages written to the datastore.
 
 ### [HTTPS trigger quickstart: Time Server](/quickstarts/time-server)
 
@@ -106,9 +106,9 @@ Uses a Firebase Storage trigger.
 
 Demonstrates how to automatically post GitHub commits to a Slack channel using an HTTPS triggered Function.
 
-### [Create and charge Stripe customers](/stripe)
+### Create and charge customers with [Stripe](/stripe) or [Paypal](/paypal)
 
-Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library.
+Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library and whows how to create HTTP endpoints to charge customers via Paypal.
 
 ### [Moderate offensive images](/moderate-images)
 
@@ -166,10 +166,10 @@ Uses a Realtime Database trigger.
 Copies Firebase Database elements into BigQuery automatically. This can be useful for instance for further logs analysis.
 Uses a Realtime Database trigger.
 
-### [Full-text search via Algolia](/fulltext-search)
+### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Cloud Firestore](/fulltext-search-firestore)
 
-Enable full-text search on firebase database elements by using an Algolia hosted search service.
-Uses a Realtime Database trigger.
+Enable full-text search on Firebase Database data or Cloud Firestore documents by using an Algolia hosted search service.
+Uses a Realtime Database or Cloud Firestore trigger.
 
 ### [Write Cloud Functions using ES2017 code](/es2017-transpile)
 
@@ -205,6 +205,15 @@ Uses an HTTP trigger.
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app get a new user or lose one.
 Uses an Analytics trigger.
+
+### [Sync Database to a Google Spreadsheet](google-sheet-sync)
+
+This sample demonstrates how to sync new data written to a Firebase database to a Google Sheet. It includes a method for obtaining, storing, and using Oauth2 tokens for Google API access.
+Uses HTTPS triggers and Realtime Database triggers.
+
+### [Presence for Cloud Firestore](/presence-firestore)
+
+Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
 
 ## Contributing
 

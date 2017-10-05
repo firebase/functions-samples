@@ -87,7 +87,7 @@ exports.cleanupUser = functions.auth.user().onDelete(event => {
   return admin.database().ref(`/stripe_customers/${event.data.uid}`).once('value').then(snapshot => {
     return snapshot.val();
   }).then(customer => {
-    return stripe.customers.del(customer);
+    return stripe.customers.del(customer.customer_id);
   }).then(() => {
     return admin.database().ref(`/stripe_customers/${event.data.uid}`).remove();
   });

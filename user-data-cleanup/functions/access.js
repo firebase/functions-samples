@@ -20,15 +20,16 @@ const common = require('./common');
 
 /**
  * Access Class, used to represent the access status of a write rule or node
- * @param status access status, could be NO_ACCESS/SINGLE_ACCESS/MULT_ACCESS
- * @param list variable list, should be empty list if status is NO/SINGLE,
+ * @constructor
+ * @param {integer} status  NO_ACCESS, SINGLE_ACCESS, or MULT_ACCESS
+ * @param {array} variableList should be empty if status is NO_/SINGLE,
  * else should be the list of literal in the conjunction of corresponding exp
- * @param condition optional condition for access status, inherited directly
- * from corresponding expression, default null
+ * @param {string} [condition] optional condition for access status, inherited
+ * directly from corresponding expression, default null
  */
-function Access(status, list, condition = null) {
+function Access(status, variableList, condition = null) {
   if (![exp.NO_ACCESS, exp.SINGLE_ACCESS, exp.MULT_ACCESS].includes(status)) {
-    throw 'Not a valid access status.';
+    throw new Error('Not a valid access status.');
   }
   this.accessStatus = status;
 
@@ -37,23 +38,26 @@ function Access(status, list, condition = null) {
     this.condition = null;
     return;
   }
-  if (!checkVariableList(list)) {
-    throw 'Not a valid list of variable for single access.';
+  if (!checkVariableList(variableList)) {
+    throw new Error('Not a valid list of variable for single access.');
   }
   this.condition = condition;
-  this.variableList = list;
+  this.variableList = variableList;
 }
 
 /**
  * Helper function, validity checking for variable list.
- * @param list input list, should be list of strings
+ * @param {array} list of strings
+ * @return {Boolean}
  */
-const checkVariableList = list =>
-    Array.isArray(list) && list.length > 0 && list.every(variable =>
-    typeof variable === 'string');
+const checkVariableList = (list) =>
+      Array.isArray(list) && list.length > 0 && list.every(
+        (variable) => typeof variable === 'string'
+      );
 
 /**
  * Getter of access status
+ * @return {integer}
  */
 Access.prototype.getAccessStatus = function() {
   return this.accessStatus;
@@ -61,25 +65,27 @@ Access.prototype.getAccessStatus = function() {
 
 /**
  * Getter of condition, could be null if no condition
+ * @return {string}
  */
 Access.prototype.getCondition = function() {
   return this.condition;
 };
 
-/** Check if a string represents a valid authVar, needs to be a single level of
- * val(...) If no variable in the path, return 'FIXED' If only the (length - 2)
- * location is variable, return 'AuthVar'
+/** Check if a string represents a valid authVar.
+ * @param {string} str needs to be a single level of val(...)
+ * @return {string} 'FIXED' if no variable in the path or 'AuthVar' if
+ * only the (length - 2) location is variable
  */
-const checkAuthVar = str => {
+const checkAuthVar = (str) => {
   if (!/val\((\w+(,\$?\w+)*)\)/.test(str)) {
     return 'FALSE';
   }
-  const varFlagList = str.slice(4, -1).split(',').map(i => i.startsWith('$'));
-  if (varFlagList.every(x => !x)) {
+  const varFlagList = str.slice(4, -1).split(',').map((i) => i.startsWith('$'));
+  if (varFlagList.every((x) => !x)) {
     return 'FIXED';
   }
   const removed = varFlagList.splice(-2, 1);
-  if (removed[0] && varFlagList.every(x => !x)) {
+  if (removed[0] && varFlagList.every((x) => !x)) {
     return 'AUTHVAR';
   }
   return 'FALSE';
@@ -94,14 +100,15 @@ const checkAuthVar = str => {
  */
 Access.prototype.getAccessPattern = function(path) {
   if (this.getAccessStatus() !== exp.SINGLE_ACCESS) {
-    throw 'Access Pattern only available for SINGLE ACCESS objects';
+    throw new Error('Access Pattern only available for SINGLE ACCESS objects');
   }
   if (path[0] !== 'rules') {
-    throw `A valid path starts with 'rules'`;
+    throw new Error('A valid path starts with "rules")');
   }
   const varList = this.getVariableList();
   const result = path.map(
-      cur => varList.includes(cur) ? common.WIPEOUT_UID : cur);
+    (cur) => varList.includes(cur) ? common.WIPEOUT_UID : cur
+  );
   result[0] = '';
   const ret = {'path': result.join('/')};
   let cond = this.getCondition();
@@ -132,6 +139,7 @@ ${common.WIPEOUT_UID} === ${varList[i]}`;
   return ret;
 };
 
+/** @return {array} list of strings */
 Access.prototype.getVariableList = function() {
   return this.variableList;
 };
@@ -139,9 +147,10 @@ Access.prototype.getVariableList = function() {
 /**
  * Create access object from expression object.
  * The access object describes the access pattern of the expression
- * @param expression input expression object
+ * @param {string} expression input expression object
+ * @return {Access}
  */
-Access.fromExpression = function(expression) {
+Access.fromExpression = (expression) => {
   const status = expression.getAccessNumber();
   const cond = expression.getCondition();
   if ((status === exp.NO_ACCESS) || (status === exp.MULT_ACCESS)) {
@@ -153,12 +162,12 @@ Access.fromExpression = function(expression) {
 /**
  * Get access status of the node, according to access of the
  * rule at the location and access status of its ancestor
- * @param ancestor access object of ancestor of the current node
- * @param ruleAccess access object of write rule at the current place
+ * @param {Access} ancestor access object of ancestor of the current node
+ * @param {Access} ruleAccess access object of write rule at the current place
+ * @return {Access}
  */
-Access.nodeAccess = function(ancestor, ruleAccess) {
+Access.nodeAccess = (ancestor, ruleAccess) => {
   switch (ancestor.getAccessStatus()) {
-
     case exp.MULT_ACCESS:
       // If either access is MULT then result is MULT
       return new Access(exp.MULT_ACCESS, []);
@@ -169,7 +178,6 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
 
     case exp.SINGLE_ACCESS:
       switch (ruleAccess.getAccessStatus()) {
-
         case exp.NO_ACCESS:
           // If rule adds no access, then ancestor access applies
           return ancestor;
@@ -178,14 +186,14 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
           // If either access is MULT then result is MULT
           return new Access(exp.MULT_ACCESS, []);
 
-        case exp.SINGLE_ACCESS:
+        case exp.SINGLE_ACCESS: {
           // If both accesses are SINGLE, then the result is either SINGLE or
           // MULT depending on whether every variables are a subset of the
           // rules variables (whether the rule grants additional access beyond
           // its ancestor).
           const noAdditionalAccess = ancestor.getVariableList().every(
-              ancVariable => ruleAccess.getVariableList().includes(ancVariable)
-              );
+            (ancVariable) => ruleAccess.getVariableList().includes(ancVariable)
+          );
           if (noAdditionalAccess) {
             // If the child node has single access, the child node condition
             // is the OR of child rule condition and parent node condition.
@@ -195,8 +203,12 @@ Access.nodeAccess = function(ancestor, ruleAccess) {
                 newCond);
           }
           return new Access(exp.MULT_ACCESS, []);
+        }
       }
   }
 };
 
+
+/** Access class is used to represent the access status of a write rule or
+ * node. */
 module.exports = Access;

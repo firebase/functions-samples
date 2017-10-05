@@ -16,8 +16,7 @@
 'use strict';
 
 
-
-// Initializes the Demo.
+/** Initializes the Demo. */
 function Demo() {
   document.addEventListener('DOMContentLoaded', function() {
     // Shortcuts to DOM Elements.
@@ -82,31 +81,40 @@ Demo.prototype.token = function() {
 };
 
 Demo.prototype.addDataDemo = function(body) {
-  const xhttp = new XMLHttpRequest();
+  var xhttp = new XMLHttpRequest();
   body.uid = this.user.uid;
   xhttp.open('POST', '/addDataDemo', true);
-  xhttp.send(JSON.stringify(body), (er,res,body) => console.log(er, res, body));
+  xhttp.send(
+    JSON.stringify(body),
+    function(er, res, body) {
+      console.log(er, res, body);
+    }
+  );
 };
 
 
 Demo.prototype.chat = function() {
-  const body = {
-    ref: `/chat/room${this.chatRoomId}`,
-    content:{creator: this.user.uid, members: [1,2,3], name: 'Chat Name'}};
+  var body = {
+    ref: '/chat/room' + this.chatRoomId,
+    content: {creator: this.user.uid, members: [1, 2, 3], name: 'Chat Name'}};
   this.addDataDemo(body);
   this.chatRoomId += 1;
 };
 
 Demo.prototype.accounts = function() {
-  const cont = {githubToken: 'TOKEN', profileNeedsUpdate: 'FOO', events: [1,2,3]};
-  const body = {ref: `/accounts/${this.user.uid}/`, content: cont};
+  var cont = {
+    githubToken: 'TOKEN',
+    profileNeedsUpdate: 'FOO',
+    events: [1, 2, 3],
+  };
+  var body = {ref: '/accounts/' + this.user.uid + '/', content: cont};
   this.addDataDemo(body);
 };
 
-Demo.prototype.record = function(year){
+Demo.prototype.record = function(year) {
   this.addDataDemo({
-      ref: `/record/${this.user.uid}`,
-      content: {content: 'Record data', createYear: year}
+      ref: '/record/' + this.user.uid,
+      content: {content: 'Record data', createYear: year},
     });
 };
 
@@ -126,8 +134,9 @@ Demo.prototype.deleteAccount = function() {
     window.alert('Account deleted');
   }).catch(function(error) {
     if (error.code === 'auth/requires-recent-login') {
-      window.alert(`You need to have recently signed-in to delete your account.
-Please sign-in and try again.`);
+      window.alert(
+        'You need to have recently signed-in to delete your account.\n' +
+          'Please sign-in and try again.');
       firebase.auth().signOut();
     }
   });

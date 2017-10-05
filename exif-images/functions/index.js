@@ -54,7 +54,7 @@ exports.metadata = functions.storage.object().onChange(event => {
   const bucket = gcs.bucket(object.bucket);
   return bucket.file(filePath).download({destination: tempLocalFile}).then(() => {
     // Get Metadata from image.
-    return spawn('identify', ['-verbose', tempLocalFile]).then(result => {
+    return spawn('identify', ['-verbose', tempLocalFile], { capture: [ 'stdout', 'stderr' ]}).then(result => {
       const metadata = imageMagickOutputToObject(result.stdout);
       // Save metadata to realtime datastore.
       return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata).then(() => {

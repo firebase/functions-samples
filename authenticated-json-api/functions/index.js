@@ -49,7 +49,7 @@ app.use(authenticate);
 // POST /api/messages
 // Create a new message, get its sentiment using Google Cloud NLP,
 // and categorize the sentiment before saving.
-app.post('/api/messages', (req, res) => {
+app.post('/messages', (req, res) => {
   const message = req.body.message;
 
   language.detectSentiment(message).then(results => {
@@ -69,7 +69,7 @@ app.post('/api/messages', (req, res) => {
 
 // GET /api/messages?category={category}
 // Get all messages, optionally specifying a category to filter on
-app.get('/api/messages', (req, res) => {
+app.get('/messages', (req, res) => {
   const category = req.query.category;
   let query = admin.database().ref(`/users/${req.user.uid}/messages`);
 
@@ -95,7 +95,7 @@ app.get('/api/messages', (req, res) => {
 
 // GET /api/message/{messageId}
 // Get details about a message
-app.get('/api/message/:messageId', (req, res) => {
+app.get('/message/:messageId', (req, res) => {
   const messageId = req.params.messageId;
   admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value').then(snapshot => {
     if (snapshot.val() !== null) {
