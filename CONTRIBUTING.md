@@ -172,7 +172,7 @@ changes to be accepted, the CLA must be signed. It's a quick process, we promise
 
 *This guide was inspired by the [AngularJS contribution guidelines](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md).*
 
-[github]: https://github.com/firebase/cloud-functions-templates
+[github]: https://github.com/firebase/functions-samples
 [google-cla]: https://cla.developers.google.com
 [js-style-guide]: http://google.github.io/styleguide/javascriptguide.xml
 [py-style-guide]: http://google.github.io/styleguide/pyguide.html
