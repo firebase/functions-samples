@@ -16,12 +16,14 @@
 
 // [START presence_sync_function]
 const functions = require('firebase-functions');
-const Firestore = require('@google-cloud/firestore');
+const admin = require('firebase-admin');
+
+admin.initializeApp(functions.config().firebase);
 
 // Since this code will be running in the Cloud Functions enviornment
 // we call initialize Firestore without any arguments because it
 // detects authentication from the environment.
-const firestore = new Firestore();
+const firestore = admin.firestore();
 
 // Create a new function which is triggered on changes to /status/{uid}
 // Note: This is a Realtime Database trigger, *not* Cloud Firestore.
