@@ -15,7 +15,6 @@
  */
 'use strict';
 
-// [START import]
 const functions = require('firebase-functions');
 const gcs = require('@google-cloud/storage')();
 const path = require('path');
@@ -23,17 +22,12 @@ const os = require('os');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpeg_static = require('ffmpeg-static');
-// [END import]
 
-// [START generateMonoAudio]
 /**
  * When an audio is uploaded in the Storage bucket We generate a mono channel audio automatically using
  * node-fluent-ffmpeg.
  */
-// [START generateMonoAudioTrigger]
 exports.generateMonoAudio = functions.storage.object().onChange(event => {
-// [END generateMonoAudioTrigger]
-  // [START eventAttributes]
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -41,9 +35,7 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
   const contentType = object.contentType; // File content type.
   const resourceState = object.resourceState; // The resourceState is 'exists' or 'not_exists' (for file/folder deletions).
   const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
-  // [END eventAttributes]
 
-  // [START stopConditions]
   // Exit if this is triggered on a file that is not an audio.
   if (!contentType.startsWith('audio/')) {
     console.log('This is not an audio.');
@@ -70,9 +62,7 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
     console.log('This is a metadata change event.');
     return;
   }
-  // [END stopConditions]
 
-  // [START audioConversion]
   // Download file from bucket.
   const bucket = gcs.bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
@@ -86,15 +76,15 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
   }).then(() => {
     console.log('Audio downloaded locally to', tempFilePath);
     // Convert the audio to mono channel using FFMPEG.
-    var command = ffmpeg(tempFilePath)
+    const command = ffmpeg(tempFilePath)
       .setFfmpegPath(ffmpeg_static.path)    
       .audioChannels(1)
       .audioFrequency(16000)
       .format('flac')
-      .on('error', function(err) {
+      .on('error', (err) => {
         console.log('An error occurred: ' + err.message);
       })
-      .on('end', function() {
+      .on('end', () => {
         console.log('Output audio created at', targetTempFilePath);
 
         // Uploading the audio.
@@ -110,6 +100,4 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
       })
       .save(targetTempFilePath);
   });
-  // [END audioConversion]
 });
-// [END generateMonoAudio]
