@@ -78,7 +78,7 @@ starter project:
    PROJECT=your-project-name
    mkdir $PROJECT; cd $PROJECT
    firebase init
-   firebase --use add $PROJECT
+   firebase use --add $PROJECT
    rm -rf functions
    cp -r ../functions-samples/typescript-getting-started/functions functions
    ```

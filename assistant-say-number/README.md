@@ -22,7 +22,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 To test this sample action:
 
  - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
- - Configure this sample to use your project using `firebase --use add` and select your project.
+ - Configure this sample to use your project using `firebase use --add` and select your project.
  - Deploy your project using `firebase deploy`
  - In the `action.json` file, update the two `<YOUR_PROJECT_ID>` placeholders with your Firebase project ID. The URL should match the `Function URL (sayNumber):` that was printed out by `firebase deploy`.
  - [Download](https://developers.google.com/actions/tools/gactions-cli) the `gaction` CLI
