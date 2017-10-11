@@ -1,0 +1,12 @@
+{
+  "name": "ffmpeg-convert-audio",
+  "description": "FFMPEG Convert Audio Firebase Functions sample",
+  "private": true,
+  "dependencies": {
+    "@google-cloud/storage": "^0.4.0",
+    "ffmpeg-static": "^2.0.0",
+    "firebase-admin": "^4.1.1",
+    "firebase-functions": "^0.5.1",
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}
