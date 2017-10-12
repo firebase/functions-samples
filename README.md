@@ -14,9 +14,9 @@ To learn how to get started with Cloud Functions for Firebase by having a look a
 
 This repository contains the following samples:
 
-### [Realtime database trigger quickstart: Uppercaser](/quickstarts/uppercase)
+### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Cloud Firestore](/quickstarts/uppercase-firestore)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database events**. The function uppercase messages written to the datastore.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Cloud Firestore events**. The function uppercase messages written to the datastore.
 
 ### [HTTPS trigger quickstart: Time Server](/quickstarts/time-server)
 
@@ -88,9 +88,14 @@ Uses an HTTP trigger.
 Demonstrates how to automatically convert images that are uploaded to Firebase Storage to JPEG using ImageMagick.
 Uses a Firebase Storage trigger.
 
-### [Generate image thumbnails after upload](/generate-thumbnail)
+### [Generate image thumbnails using ImageMagick](/generate-thumbnail)
 
-Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage.
+Demonstrates how to automatically generate a thumbnail for images that are uploaded to Firebase Storage using ImageMagick and generate a public download link for the images.
+Uses a Firebase Storage trigger.
+
+### [Generate image thumbnails using Node.js Stream & Sharp](/image-sharp)
+
+Demonstrates how to use Node.js Stream to read image from Cloud Storage, generate a thumbnail image using Sharp and upload it back to Cloud Storage.
 Uses a Firebase Storage trigger.
 
 ### [Post GitHub commits to Slack channel](/github-to-slack)
@@ -114,48 +119,58 @@ Uses a Firebase Storage trigger.
 ### [Text moderation](/text-moderation)
 
 How to moderate user input text for bad words. For example this can be used to moderate usernames, chat or forum messages.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
 
 ### [Email confirmation](/email-confirmation)
 
 Sends email confirmation after users subscribed to a mailing list.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
 
 ### [LastModified Firebase Database tracking](/lastmodified-tracking)
 
 Tracking when the Firebase Database (or a subset) was last modified.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
 
 ### [Webhook upon Firebase Database writes](/minimal-webhook)
 
 Writing to the Firebase Database triggers a request to a callback URL (a Webhook). The content of the modified Data is sent to the Webhook.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
 
 ### [Firebase Database child nodes count](/child-count)
 
 Keeps track of the number of child nodes of a Firebase Database element allowing clients to filter or order results using the child count.
 This can be useful to keep tack of the number of "likes" or "followers" of a somethings shares through social media.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
 
 ### [Automatic message translation](/message-translation)
 
 Integrates the Google Translate API to perform automatic text translation across any number of languages. Language codes can be stored in Firebase for on the fly changes.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
+
+### [Automatic URL shortener](/url-shortener)
+
+Integrates the Google URL Shortener API to shorten URLs automatically as they are added to the database.
+Uses a Realtime Database trigger.
 
 ### [Limit number of child nodes](/limit-children)
 
 Make sure to keep the number of child nodes below a certain threshold. For instance this can be useful to limit the number of lines of logs or chat history below a given number.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
 
 ### [Import data into Big Query](/bigquery-import)
 
 Copies Firebase Database elements into BigQuery automatically. This can be useful for instance for further logs analysis.
-Uses an Realtime Database trigger.
+Uses a Realtime Database trigger.
 
-### [Full-text search via Algolia](/fulltext-search)
+### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Cloud Firestore](/fulltext-search-firestore)
 
-Enable full-text search on firebase database elements by using an Algolia hosted search service.
-Uses an Realtime Database trigger.
+Enable full-text search on Firebase Database data or Cloud Firestore documents by using an Algolia hosted search service.
+Uses a Realtime Database or Cloud Firestore trigger.
+
+### [Write Cloud Functions using ES2017 code](/es2017-transpile)
+
+This sample shows how you can write your Cloud Functions code using the ES2017 syntax - which is not supported natively by Cloud Functions. This requires to run a preparation step where your code is transpiled to a supported version of JavaScript.
+Uses an Database trigger.
 
 ### [User data cleanup](/user-data-cleanup)
 
@@ -182,6 +197,14 @@ Uses an HTTPS trigger.
 Demonstrates how to authorize with a username/password sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
 
+### [Developer Motivator](developer-motivator)
+
+This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app get a new user or lose one.
+Uses an Analytics trigger.
+
+### [Presence for Cloud Firestore](/presence-firestore)
+
+Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
 
 ## Contributing
 
@@ -190,5 +213,4 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## License
 
-© Google, 2015. Licensed under an [Apache-2](LICENSE) license.
-Uses a Realtime Database trigger.
+© Google, 2015-2017. Licensed under an [Apache-2](LICENSE) license.

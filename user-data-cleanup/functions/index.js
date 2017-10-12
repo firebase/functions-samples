@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
+ * Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,36 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+const functions = require('firebase-functions');
 
-// Deletes the user data in the Realtime Datastore when the accounts are deleted.
-exports.cleanupUserData = functions.auth.user().onDelete(event => {
-  const uid = event.data.uid;
-  return admin.database().ref(`/users/${uid}`).remove();
+admin.initializeApp(functions.config().firebase);
+const wipeout = require('./wipeout');
+
+const WIPEOUT_CONFIG = {
+    'credential': admin.credential.applicationDefault(),
+    'db': admin.database(),
+    'serverValue': admin.database.ServerValue,
+    'users': functions.auth.user(),
+    'DB_URL': functions.config().firebase.databaseURL,
+  };
+
+wipeout.initialize(WIPEOUT_CONFIG);
+
+/** expose cleanupUserDat as Cloud Function */
+exports.cleanupUserData = wipeout.cleanupUserData();
+
+/** expose showWipeoutConfig as Cloud Function */
+exports.showWipeoutConfig = wipeout.showWipeoutConfig();
+
+/** Cloud Function that adds demo data to app for a user. */
+exports.addDataDemo = functions.https.onRequest((req, res) => {
+  if (req.method === 'POST') {
+    const body = JSON.parse(req.body);
+    if (typeof body.ref === 'undefined' || typeof body.content !== 'object') {
+      return Promise.reject('Needs ref and content field to add demo data');
+    }
+    return admin.database().ref(body.ref).set(body.content)
+        .then(() => res.send('data added'));
+  }
 });

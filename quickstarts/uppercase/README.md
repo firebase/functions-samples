@@ -6,7 +6,7 @@ This quickstart demonstrates using **Firebase SDK for Cloud Functions** setup wi
 ## Introduction
 
 This sample app does two things:
- - Create messages in the Firebase Realtime Database using a simple HTTPS request which is handled by an HTTPS Firebase Function
+ - Create messages in the Firebase Realtime Database using a simple HTTPS request which is handled by an HTTPS Firebase Function. Writing to the Realtime Database is done using the Firebase Admin SDK. 
  - When a message gets added in the Realtime Database, a Firebase Function triggers and automatically makes these messages all uppercase.
 
 ## Deploy and test

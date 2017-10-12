@@ -1,0 +1,178 @@
+{
+  "rules": {
+    // Basic rules 
+    "users": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid",
+        "messages": {
+          ".indexOn": [
+            "category"
+          ]
+        }
+      }
+    },
+    // Third-party directory
+    "instagramAccessToken": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid"
+      }
+    },
+    // functions-samples:    stripe 
+    "stripe_customers": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        "sources": {
+          "$chargeId": {
+            ".write": "auth.uid === data.parent().parent().child('charges').val()",
+            "token": {
+              ".validate": "newData.isString()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "charges": {
+          "$sourceId": {
+            ".write": "$uid === auth.uid",
+            "source": {
+              ".validate": "newData.isString()"
+            },
+            "amount": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    },
+    // Hubbub
+    "accounts": {
+      ".indexOn": "profileNeedsUpdate",
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        "githubToken": {
+          ".write": "$uid === auth.uid"
+        },
+        "profileNeedsUpdate": {
+          ".write": "$uid === auth.uid"
+        },
+        "events": {
+          ".indexOn": [
+            "startAt",
+            "endAt"
+          ]
+        }
+      }
+    },
+    "profiles": {
+      ".read": "true"
+    },
+    "events": {
+      ".read": "true",
+      ".indexOn": "startAt"
+    },
+    "assignments": {
+      "$eventId": {
+        "$topicId": {
+          ".read": "data.child('members/' + auth.uid).exists()"
+        }
+      }
+    },
+    "updateProfileQueue": {
+      ".indexOn": "updatedAt"
+    },
+    //Say-that
+    "admin": {
+      // Admin access:      only @google.com users.
+      ".read": "auth.token.email_verified == true && auth.token.email.matches(/.*@google.com$/)",
+      ".write": "auth.token.email_verified == true && auth.token.email.matches(/.*@google.com$/)",
+      "current_scene": {
+        // But everybody can see what scene we're in.
+        ".read": "auth != null"
+      },
+      "active": {
+        // Everybody can also see whether the game is active.
+        ".read": "auth != null"
+      }
+    },
+    "users-say-that": {
+      "$uid": {
+        // Users can read all information about themselves (including things like their score).
+        ".read": "auth.uid == $uid",
+        "scenes": {
+          "$scene": {
+            "nouns": {
+              // Users can write guesses for nouns, but not their score.
+              ".write": "auth.uid == $uid"
+            },
+            "in_progress": {
+              // Users can write to the in progress queue
+              ".write": "auth.uid == $uid"
+            }
+          }
+        },
+        // Users can write what their language selection is
+        "lang": {
+          ".write": "auth.uid == $uid"
+        }
+      }
+    },
+    "total_scores": {
+      // Everybody can read the combined scores.
+      ".read": "auth != null"
+    },
+    "total_langs": {
+      // Everybody can read the combined language count.
+      ".read": "auth != null"
+    },
+    "all_guesses": {
+      // Everybody can see all previous guesses, after they've already been evaluated
+      ".read": "auth != null"
+    },
+    "summary": {
+      // Only admin can see summary, which contains the answer key
+      ".read": "auth.token.email_verified == true && auth.token.email.matches(/.*@google.com$/)"
+    },
+    // firebase function samples:   fcm-notification
+    "users2": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth.uid === $uid && data.child('test').val() !== null && newData.val() !== null && data.exists()"
+      }
+    },
+    "followers": {
+      "$followedUid": {
+        "$followerUid": {
+          ".read": "auth.uid === $followerUid",
+          ".write": "auth.uid === $followerUid && $followerUid> 1000"
+        }
+      }
+    },
+    "chat": {
+      "$room": {
+        ".write": "auth.uid == data.child('creator').val()",
+        "members": {
+          ".write": "auth.uid != false"
+        }
+      }
+    },
+    "chat2": {
+      "$owner": {
+        ".write": "auth.uid == $owner",
+        "members": {
+          ".write": "auth.uid != false"
+        }
+      }
+    },
+    "record": {
+      "$uid": {
+        ".write": "auth.uid === $uid && data.child('createYear').val() > 2016"
+      }
+    }
+  }
+}

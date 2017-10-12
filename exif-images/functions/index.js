@@ -16,11 +16,15 @@
 'use strict';
 
 const functions = require('firebase-functions');
+const fs = require('fs');
+const crypto = require('crypto');
+const path = require('path');
+const os = require('os');
+
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 const gcs = require('@google-cloud/storage')();
-const exec = require('child-process-promise').exec;
-const LOCAL_TMP_FOLDER = '/tmp/';
+const spawn = require('child-process-promise').spawn;
 
 /**
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
@@ -29,8 +33,10 @@ const LOCAL_TMP_FOLDER = '/tmp/';
 exports.metadata = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
-  const fileName = filePath.split('/').pop();
-  const tempLocalFile = `${LOCAL_TMP_FOLDER}${fileName}`;
+
+  // Create random filename with same extension as uploaded file.
+  const randomFileName = crypto.randomBytes(20).toString('hex') + path.extname(filePath);
+  const tempLocalFile = path.join(os.tmpdir(), randomFileName);
 
   // Exit if this is triggered on a file that is not an image.
   if (!object.contentType.startsWith('image/')) {
@@ -46,17 +52,20 @@ exports.metadata = functions.storage.object().onChange(event => {
 
   // Download file from bucket.
   const bucket = gcs.bucket(object.bucket);
-  return bucket.file(filePath).download({
-    destination: tempLocalFile
-  }).then(() => {
+  return bucket.file(filePath).download({destination: tempLocalFile}).then(() => {
     // Get Metadata from image.
-    return exec(`identify -verbose "${tempLocalFile}"`).then(result => {
+    return spawn('identify', ['-verbose', tempLocalFile], { capture: [ 'stdout', 'stderr' ]}).then(result => {
       const metadata = imageMagickOutputToObject(result.stdout);
       // Save metadata to realtime datastore.
       return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata).then(() => {
         console.log('Wrote to:', filePath, 'data:', metadata);
       });
     });
+  }).then(() => {
+    // Cleanup temp directory after metadata is extracted
+    // Remove the file from temp directory
+    fs.unlinkSync(tempLocalFile);
+    console.log('cleanup successful!');
   });
 });
 

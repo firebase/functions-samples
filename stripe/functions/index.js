@@ -42,7 +42,7 @@ exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/
     if (val.source !== null) charge.source = val.source;
     return stripe.charges.create(charge, {idempotency_key});
   }).then(response => {
-      // If the result is seccessful, write it back to the database
+      // If the result is successful, write it back to the database
       return event.data.adminRef.set(response);
     }, error => {
       // We want to capture errors and render them in a user-friendly way, while
@@ -77,12 +77,12 @@ exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/so
       return event.data.adminRef.parent.set(response);
     }, error => {
       return event.data.adminRef.parent.child('error').set(userFacingMessage(error)).then(() => {
-        return reportError(error, {user: user});
+        return reportError(error, {user: event.params.userId});
       });
   });
 });
 
-// When a user deletes there account, clean up after them
+// When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(event => {
   return admin.database().ref(`/stripe_customers/${event.data.uid}`).once('value').then(snapshot => {
     return snapshot.val();

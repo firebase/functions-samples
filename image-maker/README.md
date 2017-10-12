@@ -15,10 +15,16 @@ It uses [node-canvas](https://github.com/Automattic/node-canvas) to create a can
 
 ## Deploy and test
 
-This sample comes with a web-based UI for testing the function. To test it out:
+This sample comes with a web-based UI for testing the function.
+To test locally do:
+
+ 1. Start serving your project locally using `firebase serve --only hosting,functions`
+ 1. Open the app in a browser at `https://localhost:5000`.
+
+To deploy and test on prod do:
 
  1. Deploy your project using `firebase deploy`
- 1. Open the app using `firebase open hosting:site`, this will open a browser.`
+ 1. Open the app using `firebase open hosting:site`, this will open a browser.
 
 
 ## Contributing

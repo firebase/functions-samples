@@ -22,7 +22,13 @@ The `src` folder contains the source code for React app. It also uses [Webpack](
 
 ## Deploy and test
 
-This sample comes with a web-based UI for testing the function. To test it out:
+This sample comes with a web-based UI for testing the function.
+To test locally do:
+
+ 1. Start serving your project locally using `firebase serve --only hosting,functions`
+ 1. Open the app in a browser at `https://localhost:5000`.
+
+To test it out:
 
  1. Deploy your project using `firebase deploy`
  1. Open the app using `firebase open hosting:site`, this will open a browser.

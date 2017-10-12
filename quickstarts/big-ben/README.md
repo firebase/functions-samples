@@ -36,6 +36,14 @@ npm install -g firebase-tools
 
 > Doesn't work? You may need to [change npm permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
+## Try the sample locally
+
+Start serving your project locally using `firebase serve --only hosting,functions`
+
+Open the app in a browser at `https://localhost:5000/bigben`.
+
+A page containing a repeated number of "BONG" will be displayed.
+
 
 ## Deploy the app to prod
 
@@ -58,7 +66,7 @@ This deploys and activates the `reverseString` Function.
 > The first time you call `firebase deploy` on a new project with Functions will take longer than usual.
 
 
-## Try the sample
+## Try the sample on prod
 
 After deploying the function you can open the following URL in your browser:
 

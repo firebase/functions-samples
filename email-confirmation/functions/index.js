@@ -45,6 +45,8 @@ exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(e
     mailOptions.text = 'Thanks you for subscribing to our newsletter. You will receive our next weekly newsletter.';
     return mailTransport.sendMail(mailOptions).then(() => {
       console.log('New subscription confirmation email sent to:', val.email);
+    }).catch(error => {
+      console.error('There was an error while sending the email:', error);  
     });
   }
 
@@ -53,5 +55,7 @@ exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(e
   mailOptions.text = 'I hereby confirm that I will stop sending you the newsletter.';
   return mailTransport.sendMail(mailOptions).then(() => {
     console.log('New unsubscription confirmation email sent to:', val.email);
+  }).catch(error => {
+    console.error('There was an error while sending the email:', error);  
   });
 });

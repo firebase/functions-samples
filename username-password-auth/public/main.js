@@ -66,20 +66,18 @@ Demo.prototype.signIn = function() {
   req.onload = function() {
     if (req.status === 400 || req.status === 401) {
       err.innerText = 'Invalid username or password';
-      return
+      return;
     }
     if (req.status !== 200) {
       err.innerText = 'Invalid response from Firebase Cloud Function ' + req.status;
-      return
+      return;
     }
     var data = JSON.parse(req.responseText);
     if (data.token) {
       firebase.auth().signInWithCustomToken(data.token);
-      return;
     } else {
       console.log('ERROR RESPONSE: ' + req.responseText);
       err.innerText = 'Invalid response from Firebase Cloud Function see developer console for details';
-      return;
     }
   };
   req.onerror = function() {
