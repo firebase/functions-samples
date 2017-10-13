@@ -242,10 +242,15 @@ Uses an Analytics trigger.
 Periodically deletes the accounts of users who have not signed in the last month.
 Uses an HTTPS trigger.
 
-### [Developer Motivator](developer-motivator)
+### [Developer Motivator](/developer-motivator)
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app get a new user or lose one.
 Uses an Analytics trigger.
+
+### [Audio Files Conversion](/ffmpeg-convert-audio)
+
+This sample uses ffmpeg / fluent-ffmpeg and automatically converts audio files that are uploaded to Cloud Storage to FLAC file format with mono-channel audio @ 16000hz.
+Uses a Storage trigger.
 
 ### [Presence for Cloud Firestore](/presence-firestore)
 
