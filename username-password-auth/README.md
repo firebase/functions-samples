@@ -1,6 +1,6 @@
 # Username/password sign in with Firebase
 
-This sample shows how to authenticate with a username/password to Sign-In with Firebase. In this sample we use a basic authentication request with the supplied credentials and if succesful create a Firebase Custom Token.
+This sample shows how to authenticate with a username/password to Sign-In with Firebase. In this sample we use a basic authentication request with the supplied credentials and if successful create a Firebase Custom Token.
 
 NOTE: [Firebase Authentication](https://firebase.google.com/docs/auth/web/password-auth) can be used for email address/password sign in. This sample specifically addresses the case in which an email address is not used as the unique identifier for a user.
 
