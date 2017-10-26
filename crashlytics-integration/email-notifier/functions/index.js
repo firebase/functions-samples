@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Google Inc. All Rights Reserved.
+ * Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,9 @@ exports.sendOnNewIssue = functions.crashlytics.onNewIssue(event => {
   };
 
   sendgridMail.send(emailDetails).then(() => {
-      console.log('Successfully sent new issue email');
-    })
-    .catch(error => {
-      console.error(error.toString());
+    console.log('Successfully sent new issue email');
+  }).catch(error => {
+    console.error(error.toString());
   });
 });
 
@@ -85,10 +84,9 @@ exports.sendOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
   };
 
   sendgridMail.send(emailDetails).then(() => {
-      console.log('Successfully sent regressed issue email');
-    })
-    .catch(error => {
-      console.error(error.toString());
+    console.log('Successfully sent regressed issue email');
+  }).catch(error => {
+    console.error(error.toString());
   });
 });
 
@@ -128,8 +126,7 @@ exports.sendOnVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
   };
   sendgridMail.send(emailDetails).then(() => {
     console.log('Successfully sent velocity alert email');
-  })
-  .catch(error => {
+  }).catch(error => {
     console.error(error.toString());
   });
 });
