@@ -2,10 +2,10 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
-    "firebase-admin": "~4.2.1",
-    "firebase-functions": "https://storage.googleapis.com/firebase-crash-preview-drop/firebase-functions-0.5.9-crashlytics-1.tgz",
-    "nodemailer": "^4.0.1"
+    "@sendgrid/mail": "6.1.4",
+    "firebase-admin": "^5.4.2",
+    // TODO Due 10/31/17: Substitute with public sdk version
+    "firebase-functions": "https://storage.googleapis.com/firebase-functions-crash-drop/firebase-functions-0.7.2-crashlytics-5.tgz"
   },
   "private": true
 }
-

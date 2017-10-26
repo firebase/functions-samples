@@ -18,7 +18,7 @@ Crashlytics will become the future crash reporter for Firebase. Learn more about
   1. Clone or download this repo and open the `crashlytics-integration/slack-notifier` directory.
   1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
   1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
-  1. Install dependencies locally by running: `cd functions; npm install;`
+  1. Install `npm` dependencies in the functions directory locally, by running: `cd functions; npm install;`
   1. Configure the Firebase CLI to set your Fabric Project ID `firebase functions:config:set fabric.project_id="<YOUR_FABRIC_PROJECT_ID>"`
       1. How do I find my Fabric Project ID? Go into App Settings in your Fabric Dashboard and select the app you would like to use. The URL will contain your Fabric Project Id: `https://fabric.io/settings/apps/<YOUR_FABRIC_PROJECT_ID>`
   

@@ -20,7 +20,7 @@ const functions = require('firebase-functions'),
 
 // Helper function that posts to Slack about the new issue
 const notifySlack = slackMessage => {
-  // see https://api.slack.com/docs/message-formatting on how
+  // See https://api.slack.com/docs/message-formatting on how
   // to customize the message payload
   return rp({
     method: 'POST',
@@ -33,11 +33,19 @@ const notifySlack = slackMessage => {
 };
 
 exports.postOnNewIssue = functions.crashlytics.onNewIssue(event => {
-  const { data } = event;
+  const data = event.data;
   // Available attributes for new issues
-  // data.issueId - {String} Issue id number
-  // data.issueTitle - {String} Issue Title (first line of the stack trace)
-  const { issueId, issueTitle } = data;
+  // data.issueid - {String} Issue id number
+  // data.issuetitle - {String} Issue Title (first line of the stack trace)
+  // data.appName - {String} Name of the app
+  // data.bundleId - {String} Bundle Id of the app
+  // data.platform - {String} Platform
+  const issueId = data.issueid; 
+  const issueTitle = data.issuetitle;
+  const appName = data.appName;
+  const bundleId = data.bundleId;
+  const platform = data.platform;
+
   const slackMessage = `<!here|here> There's a new issue (${issueId}) ` +
       `in your app - ${opts.issueTitle}`;
   return notifySlack(slackMessage).then(() => {
@@ -46,12 +54,21 @@ exports.postOnNewIssue = functions.crashlytics.onNewIssue(event => {
 });
 
 exports.postOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
-  const { data } = event;
+  const data = event.data;
   // Available attributes for regressed issues
   // data.issueId - {String} Issue id number
   // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  // data.appName - {String} Name of the app
+  // data.bundleId - {String} Bundle ID of the app
+  // data.platform - {String} Platform
   // data.resolvedAt - {Long} Timestamp in which the issue was resolved at
-  const { issueId, issueTitle, resolvedAt } = data;
+  const issueId = data.issueid; 
+  const issueTitle = data.issuetitle;
+  const appName = data.appName;
+  const bundleId = data.bundleId;
+  const platform = data.platform;
+  const resolvedAt = data.resolvedAt;
+
   const slackMessage = `<!here|here> There's a regressed issue (${issueId}) ` +
       `in your app - ${issueTitle}. This issue was previously resolved ` +
       `at ${new Date(resolvedAt).toString()}`;
@@ -61,14 +78,25 @@ exports.postOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
 });
 
 exports.postOnVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
-  const { data } = event;
-  // Available attributes for velocity alerts
-  // data.issueId - {String} Issue id number
-  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  const data = event.data;
+  // Available attributes for regressed issues
+  // data.issueid - {String} Issue id number
+  // data.issuetitle - {String} Issue Title (first line of the stack trace)
+  // data.appName - {String} Name of the app
+  // data.bundleId - {String} Bundle ID of the app
+  // data.platform - {String} Platform
   // data.crashPercentage - {double} Crash Percentage. Total crashes divided by total # of sessions.
   // data.buildVersion - {String} build version
   // data.crashes - {double} # of Crashes
-  const { issueId, issueTitle, crashPercentage, buildVersion, crashes } = data;
+  const issueId = data.issueid; 
+  const issueTitle = data.issuetitle;
+  const appName = data.appName;
+  const bundleId = data.bundleId;
+  const platform = data.platform;
+  const crashPercentage = data.crashPercentage;
+  const buildVersion = data.buildVersion;
+  const crashes = data.crashes;
+
   const slackMessage = `<!here|here> There's an issue (${issueId}) on ` +
       `version ${buildVersion} that is causing ` +
       `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;

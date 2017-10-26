@@ -18,18 +18,18 @@
 const functions = require('firebase-functions'),
       rp = require('request-promise');
 
-// Helper function that calculate the priority of the issue
+// Helper function that calculates the priority of the issue
 const calculateIssuePriority = eventType => {
-  // run some custom logic that can determine the priority or severity of this issue
-  // for example, you can parse the stack trace to determine which part of your app
+  // Run custom logic that can determine the priority or severity of this issue
+  // For example, you can parse the stack trace to determine which part of your app
   // is causing the crash and assign priorities based on that
 
-  // see https://docs.atlassian.com/jira/REST/cloud/#api/2/priority
+  // See https://docs.atlassian.com/jira/REST/cloud/#api/2/priority
   // to grab a list of priorities that's available for your project
-  // for a default project, priorities are:
+  // For a default project, priorities are:
   // [{"name":"Highest","id":"1"},{"name": "High","id": "2"},{"name": "Medium","id": "3"},{"name": "Low","id": "4"},{"name": "Lowest","id": "5"}]
 
-  // for the demonstration of this sample, let's assign a priority based on the event type
+  // For the demonstration of this sample, let's assign a priority based on the event type
   if (eventType === 'velocityAlert') {
     // high impacting, return highest priority
     return 1;
@@ -61,7 +61,7 @@ const createJiraIssue = (summary, description, priority) => {
   const baseUrl = [protocol, domain, contextPath].join('');
   const url = `${baseUrl}/rest/api/2/issue`;
 
-  // see https://developer.atlassian.com/jiradev/jira-apis/jira-rest-apis/jira-rest-api-tutorials/jira-rest-api-example-create-issue
+  // See https://developer.atlassian.com/jiradev/jira-apis/jira-rest-apis/jira-rest-api-tutorials/jira-rest-api-example-create-issue
   // to customize the new issue being created
   const newIssue = {
     fields: {
@@ -94,11 +94,19 @@ const createJiraIssue = (summary, description, priority) => {
 };
 
 exports.createNewIssue = functions.crashlytics.onNewIssue(event => {
-  const { data } = event;
+  const data = event.data;
   // Available attributes for new issues
-  // data.issueId - {String} Issue id number
-  // data.issueTitle - {String} Issue Title (first line of the stack trace)
-  const { issueId, issueTitle } = data;
+  // data.issueid - {String} Issue id number
+  // data.issuetitle - {String} Issue Title (first line of the stack trace)
+  // data.appName - {String} Name of the app
+  // data.bundleId - {String} Bundle Id of the app
+  // data.platform - {String} Platform
+  const issueId = data.issueid;
+  const issueTitle = data.issuetitle;
+  const appName = data.appName;
+  const bundleId = data.bundleId;
+  const platform = data.platform;
+
   const summary = `New Issue - ${issueId}`;
   const description = `There's a new issue in your app - ${issueTitle}`;
   const priority = calculateIssuePriority();
@@ -108,12 +116,21 @@ exports.createNewIssue = functions.crashlytics.onNewIssue(event => {
 });
 
 exports.createRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
-  const { data } = event;
+  const data = event.data;
   // Available attributes for regressed issues
   // data.issueId - {String} Issue id number
   // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  // data.appName - {String} Name of the app
+  // data.bundleId - {String} Bundle ID of the app
+  // data.platform - {String} Platform
   // data.resolvedAt - {Long} Timestamp in which the issue was resolved at
-  const { issueId, issueTitle, resolvedAt } = data;
+  const issueId = data.issueid;
+  const issueTitle = data.issuetitle;
+  const appName = data.appName;
+  const bundleId = data.bundleId;
+  const platform = data.platform;
+  const resolvedAt = data.resolvedAt;
+
   const summary = `Regressed Issue - ${issueId}`;
   const description = `There's a regressed issue in your app - ${issueTitle}` +
     ` This issue was previously resolved at ${new Date(resolvedAt).toString()}`;
@@ -124,14 +141,25 @@ exports.createRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
 });
 
 exports.createVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
-  const { data } = event;
+  const data = event.data;
   // Available attributes for regressed issues
-  // data.issueId - {String} Issue id number
-  // data.issueTitle - {String} Issue Title (first line of the stack trace)
+  // data.issueid - {String} Issue id number
+  // data.issuetitle - {String} Issue Title (first line of the stack trace)
+  // data.appName - {String} Name of the app
+  // data.bundleId - {String} Bundle ID of the app
+  // data.platform - {String} Platform
   // data.crashPercentage - {double} Crash Percentage. Total crashes divided by total # of sessions.
   // data.buildVersion - {String} build version
   // data.crashes - {double} # of Crashes
-  const { issueId, issueTitle, crashPercentage, buildVersion, crashes } = data;
+  const issueId = data.issueid;
+  const issueTitle = data.issuetitle;
+  const appName = data.appName;
+  const bundleId = data.bundleId;
+  const platform = data.platform;
+  const crashPercentage = data.crashPercentage;
+  const buildVersion = data.buildVersion;
+  const crashes = data.crashes;
+
   const summary = `Velocity Alert - ${issueId}`;
   const description = `A velocity alert has been reported - ${issueTitle}. ` +
     `This issue is occuring in build version ${buildVersion} and is causing ` +
