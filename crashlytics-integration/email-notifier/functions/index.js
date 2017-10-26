@@ -83,7 +83,7 @@ exports.sendOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
         <p>Originally Resolved On: ${new Date(resolvedAt).toString()}</p>`
   };
 
-  sendgridMail.send(emailDetails).then(() => {
+  return sendgridMail.send(emailDetails).then(() => {
     console.log('Successfully sent regressed issue email');
   }).catch(error => {
     console.error(error.toString());
@@ -124,7 +124,7 @@ exports.sendOnVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
         <p>Build Version: ${buildVersion}</p>
         <p># of Total Crashes: ${crashes.toString()}</p>`
   };
-  sendgridMail.send(emailDetails).then(() => {
+  return sendgridMail.send(emailDetails).then(() => {
     console.log('Successfully sent velocity alert email');
   }).catch(error => {
     console.error(error.toString());
