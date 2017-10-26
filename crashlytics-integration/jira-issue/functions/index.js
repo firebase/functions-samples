@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Google Inc. All Rights Reserved.
+ * Copyright 2017 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -133,7 +133,7 @@ exports.createRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
 
   const summary = `Regressed Issue - ${issueId}`;
   const description = `There's a regressed issue in your app - ${issueTitle}` +
-    ` This issue was previously resolved at ${new Date(resolvedAt).toString()}`;
+      ` This issue was previously resolved at ${new Date(resolvedAt).toString()}`;
   const priority = calculateIssuePriority('regressed');
   return createJiraIssue(summary, description, priority).then(() => {
     console.log(`Created issue ${issueId} successfully to Jira`);
@@ -162,8 +162,8 @@ exports.createVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
 
   const summary = `Velocity Alert - ${issueId}`;
   const description = `A velocity alert has been reported - ${issueTitle}. ` +
-    `This issue is occuring in build version ${buildVersion} and is causing ` +
-    `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
+      `This issue is occuring in build version ${buildVersion} and is causing ` +
+      `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
   const priority = calculateIssuePriority('velocityAlert');
   return createJiraIssue(summary, description, priority).then(() => {
     console.log(`Created issue ${issueId} successfully to Jira`);
