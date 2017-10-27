@@ -47,7 +47,7 @@ exports.postOnNewIssue = functions.crashlytics.onNewIssue(event => {
   const platform = data.platform;
 
   const slackMessage = `<!here|here> There's a new issue (${issueId}) ` +
-      `in your app - ${opts.issueTitle}`;
+      `in your app - ${issueTitle}`;
   return notifySlack(slackMessage).then(() => {
     console.log(`Posted new issue ${issueId} successfully to Slack`);
   });
