@@ -41,7 +41,6 @@ exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   const appId = data.appInfo.appId;
   const appPlatform = data.appInfo.appPlatform;
   const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
 
   const slackMessage = `<!here|here> There is a new issue - ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform}`;
