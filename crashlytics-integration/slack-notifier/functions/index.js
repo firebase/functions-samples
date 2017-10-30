@@ -38,10 +38,8 @@ exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   const issueId = data.issueId;
   const issueTitle = data.issueTitle;
   const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
   const appPlatform = data.appInfo.appPlatform;
   const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
 
   const slackMessage = `<!here|here> There is a new issue - ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform}`;
@@ -57,10 +55,8 @@ exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed(event =
   const issueId = data.issueId;
   const issueTitle = data.issueTitle;
   const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
   const appPlatform = data.appInfo.appPlatform;
   const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
   const resolvedTime = data.resolvedTime;
 
   const slackMessage = `<!here|here> There is a regressed issue ${issueTitle} (${issueId}) ` +
@@ -78,12 +74,9 @@ exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(even
   const issueId = data.issueId;
   const issueTitle = data.issueTitle;
   const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
   const appPlatform = data.appInfo.appPlatform;
   const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
   const crashPercentage = data.velocityAlert.crashPercentage;
-  const crashes = data.velocityAlert.crashes;
 
   const slackMessage = `<!here|here> There is an issue ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform} that is causing ` +

@@ -4,7 +4,7 @@
   "dependencies": {
     "@sendgrid/mail": "6.1.4",
     "firebase-admin": "^5.4.2",
-    "firebase-functions": "0.7.2"
+    "firebase-functions": "^0.7.2"
   },
   "private": true
 }

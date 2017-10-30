@@ -107,7 +107,6 @@ exports.createNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   const appId = data.appInfo.appId;
   const appPlatform = data.appInfo.appPlatform;
   const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
 
   const summary = `New Issue - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `There is a new issue - ${issueTitle} in ${appId}, ` +
@@ -127,7 +126,6 @@ exports.createRegressedIssue = functions.crashlytics.issue().onRegressed(event =
   const appId = data.appInfo.appId;
   const appPlatform = data.appInfo.appPlatform;
   const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
   const resolvedTime = data.resolvedTime;
 
   const summary = `Regressed Issue - ${issueId} in ${appName} on $(appPlatform)`;
@@ -149,9 +147,7 @@ exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert(even
   const appId = data.appInfo.appId;
   const appPlatform = data.appInfo.appPlatform;
   const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
   const crashPercentage = data.velocityAlert.crashPercentage;
-  const crashes = data.velocityAlert.crashes;
 
   const summary = `Velocity Alert - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `A velocity alert has been reported - ${issueTitle} in ${appId}. ` +
