@@ -3,9 +3,8 @@
   "description": "Cloud Functions for Firebase",
   "dependencies": {
     "firebase-admin": "^5.4.2",
-    // TODO Due 10/31/17: Substitute with public sdk version
-    "firebase-functions": "https://storage.googleapis.com/firebase-functions-crash-drop/firebase-functions-0.7.2-crashlytics-5.tgz",
-  	"request": "^2.81.0",
+    "firebase-functions": "0.7.2",
+    "request": "^2.81.0",
     "request-promise": "^4.2.1"
   },
   "private": true

@@ -111,14 +111,14 @@ exports.createNewIssue = functions.crashlytics.issue().onNewDetected(event => {
 
   const summary = `New Issue - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `There is a new issue - ${issueTitle} in ${appId}, ` +
-    `version ${latestAppVersion}`;
+      `version ${latestAppVersion}`;
   const priority = calculateIssuePriority();
   return createJiraIssue(summary, description, priority).then(() => {
     console.log(`Created issue ${issueId} in Jira successfully`);
   });
 });
 
-exports.createRegressedIssue = functions.crashlytics.issue().onRegressedIssue(event => {
+exports.createRegressedIssue = functions.crashlytics.issue().onRegressed(event => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -132,8 +132,8 @@ exports.createRegressedIssue = functions.crashlytics.issue().onRegressedIssue(ev
 
   const summary = `Regressed Issue - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `There is a regressed issue - ${issueTitle} in ${appId}, ` +
-    `version ${latestAppVersion}. This issue was previously resolved at ` +
-    `${new Date(resolvedTime).toString()}`;
+      `version ${latestAppVersion}. This issue was previously resolved at ` +
+      `${new Date(resolvedTime).toString()}`;
   const priority = calculateIssuePriority('regressed');
   return createJiraIssue(summary, description, priority).then(() => {
     console.log(`Created issue ${issueId} in Jira successfully`);
