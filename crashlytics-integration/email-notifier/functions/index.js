@@ -21,66 +21,63 @@ const functions = require('firebase-functions'),
 // Authentication for the SendGrid account
 sendgridMail.setApiKey(functions.config().sendgrid.api_key);
 
-exports.sendOnNewIssue = functions.crashlytics.onNewIssue(event => {
+exports.sendOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   const data = event.data;
-  // Available attributes for new issues
-  // data.issueid - {String} Issue id number
-  // data.issuetitle - {String} Issue Title (first line of the stack trace)
-  // data.appName - {String} Name of the app
-  // data.bundleId - {String} Bundle Id of the app
-  // data.platform - {String} Platform
-  const issueId = data.issueid;
-  const issueTitle = data.issuetitle;
-  const appName = data.appName;
-  const bundleId = data.bundleId;
-  const platform = data.platform;
+
+  const issueId = data.issueId;
+  const issueTitle = data.issueTitle;
+  const appName = data.appInfo.appName;
+  const appId = data.appInfo.appId;
+  const appPlatform = data.appInfo.appPlatform;
+  const latestAppVersion = data.appInfo.latestAppVersion;
+  const createTime = data.createTime;
 
   const emailDetails = {
     to: functions.config().email.destination_email,
     from: functions.config().email.from_email,
-    subject: `${appName} app has a new issue`,
-    html: `<h2>${appName} app has a new issue!</h2>
-        <p>App: ${appName}</p>
-        <p>Bundle Id: ${bundleId}</p>
-        <p>Platform: ${platform}</p>
+    subject: `${appName} on ${appPlatform} has a new issue`,
+    html: `<h2>${appName} on ${appPlatform} has a new issue!</h2>
+        <p>App Name: ${appName}</p>
+        <p>App Id: ${appId}</p>
+        <p>Platform: ${appPlatform}</p>
+        <p>Version: ${latestAppVersion}</p>
         <p>Issue Id: ${issueId}</p>
-        <p>Issue Title: ${issueTitle}</p>`
+        <p>Issue Title: ${issueTitle}</p>
+        <p>Creation Time: ${createTime}</p>`
   };
 
-  sendgridMail.send(emailDetails).then(() => {
+  return sendgridMail.send(emailDetails).then(() => {
     console.log('Successfully sent new issue email');
   }).catch(error => {
     console.error(error.toString());
   });
 });
 
-exports.sendOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
+exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed(event => {
   const data = event.data;
-  // Available attributes for regressed issues
-  // data.issueId - {String} Issue id number
-  // data.issueTitle - {String} Issue Title (first line of the stack trace)
-  // data.appName - {String} Name of the app
-  // data.bundleId - {String} Bundle ID of the app
-  // data.platform - {String} Platform
-  // data.resolvedAt - {Long} Timestamp in which the issue was resolved at
-  const issueId = data.issueid;
-  const issueTitle = data.issuetitle;
-  const appName = data.appName;
-  const bundleId = data.bundleId;
-  const platform = data.platform;
-  const resolvedAt = data.resolvedAt;
+
+  const issueId = data.issueId;
+  const issueTitle = data.issueTitle;
+  const appName = data.appInfo.appName;
+  const appId = data.appInfo.appId;
+  const appPlatform = data.appInfo.appPlatform;
+  const latestAppVersion = data.appInfo.latestAppVersion;
+  const createTime = data.createTime;
+  const resolvedTime = data.resolvedTime;
 
   const emailDetails = {
     to: functions.config().email.destination_email,
     from: functions.config().email.from_email,
-    subject: `${appName} app has a regressed issue`,
-    html: `<h2>${appName} app has a regressed issue!</h2>
-        <p>App: ${appName}</p>
-        <p>Bundle Id: ${bundleId}</p>
-        <p>Platform: ${platform}</p>
+    subject: `${appName} on ${appPlatform} has a regressed issue`,
+    html: `<h2>${appName} on ${appPlatform} has a regressed issue!</h2>
+        <p>App Name: ${appName}</p>
+        <p>App Id: ${appId}</p>
+        <p>Platform: ${appPlatform}</p>
+        <p>Version: ${latestAppVersion}</p>
         <p>Issue Id: ${issueId}</p>
         <p>Issue Title: ${issueTitle}</p>
-        <p>Originally Resolved On: ${new Date(resolvedAt).toString()}</p>`
+        <p>Creation Time: ${createTime}</p>
+        <p>Originally Resolved On: ${new Date(resolvedTime).toString()}</p>`
   };
 
   return sendgridMail.send(emailDetails).then(() => {
@@ -90,40 +87,35 @@ exports.sendOnRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
   });
 });
 
-exports.sendOnVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
+exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(event => {
   const data = event.data;
-  // Available attributes for regressed issues
-  // data.issueid - {String} Issue id number
-  // data.issuetitle - {String} Issue Title (first line of the stack trace)
-  // data.appName - {String} Name of the app
-  // data.bundleId - {String} Bundle ID of the app
-  // data.platform - {String} Platform
-  // data.crashPercentage - {double} Crash Percentage. Total crashes divided by total # of sessions.
-  // data.buildVersion - {String} build version
-  // data.crashes - {double} # of Crashes
-  const issueId = data.issueid;
-  const issueTitle = data.issuetitle;
-  const appName = data.appName;
-  const bundleId = data.bundleId;
-  const platform = data.platform;
-  const crashPercentage = data.crashPercentage;
-  const buildVersion = data.buildVersion;
-  const crashes = data.crashes;
+
+  const issueId = data.issueId;
+  const issueTitle = data.issueTitle;
+  const appName = data.appInfo.appName;
+  const appId = data.appInfo.appId;
+  const appPlatform = data.appInfo.appPlatform;
+  const latestAppVersion = data.appInfo.latestAppVersion;
+  const createTime = data.createTime;
+  const crashPercentage = data.velocityAlert.crashPercentage;
+  const crashes = data.velocityAlert.crashes;
 
   const emailDetails = {
     to: functions.config().email.destination_email,
     from: functions.config().email.from_email,
-    subject: `${appName} app has a velocity alert!`,
-    html: `<h2>${appName} app has a velocity alert!</h2>
+    subject: `${appName} on ${appPlatform} has a velocity alert!`,
+    html: `<h2>${appName} on ${appPlatform} has a velocity alert!</h2>
         <h3>This issue is causing ${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash</h3>
-        <p>App: ${appName}</p>
-        <p>Bundle Id: ${bundleId}</p>
-        <p>Platform: ${platform}</p>
+        <p>App Name: ${appName}</p>
+        <p>App Id: ${appId}</p>
+        <p>Platform: ${appPlatform}</p>
+        <p>Version: ${latestAppVersion}</p>
         <p>Issue Id: ${issueId}</p>
         <p>Issue Title: ${issueTitle}</p>
-        <p>Build Version: ${buildVersion}</p>
+        <p>Creation Time: ${createTime}</p>
         <p># of Total Crashes: ${crashes.toString()}</p>`
   };
+  
   return sendgridMail.send(emailDetails).then(() => {
     console.log('Successfully sent velocity alert email');
   }).catch(error => {

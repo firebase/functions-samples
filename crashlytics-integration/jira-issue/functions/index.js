@@ -56,7 +56,12 @@ const parseUrl = url => {
 
 // Helper function that posts to Jira to create a new issue
 const createJiraIssue = (summary, description, priority) => {
-  const { project_url, user, pass, issue_type, component_id } = functions.config().jira;
+  const project_url = functions.config().jira.project_url;
+  const user = functions.config().jira.user;
+  const pass = functions.config().jira.pass;
+  const issue_type = functions.config().jira.issue_type;
+  const component_id = functions.config().jira.component_id;
+  
   const { protocol, domain, contextPath, projectKey} = parseUrl(project_url);
   const baseUrl = [protocol, domain, contextPath].join('');
   const url = `${baseUrl}/rest/api/2/issue`;
@@ -93,79 +98,67 @@ const createJiraIssue = (summary, description, priority) => {
   });
 };
 
-exports.createNewIssue = functions.crashlytics.onNewIssue(event => {
+exports.createNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   const data = event.data;
-  // Available attributes for new issues
-  // data.issueid - {String} Issue id number
-  // data.issuetitle - {String} Issue Title (first line of the stack trace)
-  // data.appName - {String} Name of the app
-  // data.bundleId - {String} Bundle Id of the app
-  // data.platform - {String} Platform
-  const issueId = data.issueid;
-  const issueTitle = data.issuetitle;
-  const appName = data.appName;
-  const bundleId = data.bundleId;
-  const platform = data.platform;
 
-  const summary = `New Issue - ${issueId}`;
-  const description = `There's a new issue in your app - ${issueTitle}`;
+  const issueId = data.issueId;
+  const issueTitle = data.issueTitle;
+  const appName = data.appInfo.appName;
+  const appId = data.appInfo.appId;
+  const appPlatform = data.appInfo.appPlatform;
+  const latestAppVersion = data.appInfo.latestAppVersion;
+  const createTime = data.createTime;
+
+  const summary = `New Issue - ${issueId} in ${appName} on $(appPlatform)`;
+  const description = `There is a new issue - ${issueTitle} in ${appId}, ` +
+    `version ${latestAppVersion}`;
   const priority = calculateIssuePriority();
   return createJiraIssue(summary, description, priority).then(() => {
-    console.log(`Created issue ${issueId} successfully to Jira`);
+    console.log(`Created issue ${issueId} in Jira successfully`);
   });
 });
 
-exports.createRegressedIssue = functions.crashlytics.onRegressedIssue(event => {
+exports.createRegressedIssue = functions.crashlytics.issue().onRegressedIssue(event => {
   const data = event.data;
-  // Available attributes for regressed issues
-  // data.issueId - {String} Issue id number
-  // data.issueTitle - {String} Issue Title (first line of the stack trace)
-  // data.appName - {String} Name of the app
-  // data.bundleId - {String} Bundle ID of the app
-  // data.platform - {String} Platform
-  // data.resolvedAt - {Long} Timestamp in which the issue was resolved at
-  const issueId = data.issueid;
-  const issueTitle = data.issuetitle;
-  const appName = data.appName;
-  const bundleId = data.bundleId;
-  const platform = data.platform;
-  const resolvedAt = data.resolvedAt;
 
-  const summary = `Regressed Issue - ${issueId}`;
-  const description = `There's a regressed issue in your app - ${issueTitle}` +
-      ` This issue was previously resolved at ${new Date(resolvedAt).toString()}`;
+  const issueId = data.issueId;
+  const issueTitle = data.issueTitle;
+  const appName = data.appInfo.appName;
+  const appId = data.appInfo.appId;
+  const appPlatform = data.appInfo.appPlatform;
+  const latestAppVersion = data.appInfo.latestAppVersion;
+  const createTime = data.createTime;
+  const resolvedTime = data.resolvedTime;
+
+  const summary = `Regressed Issue - ${issueId} in ${appName} on $(appPlatform)`;
+  const description = `There is a regressed issue - ${issueTitle} in ${appId}, ` +
+    `version ${latestAppVersion}. This issue was previously resolved at ` +
+    `${new Date(resolvedTime).toString()}`;
   const priority = calculateIssuePriority('regressed');
   return createJiraIssue(summary, description, priority).then(() => {
-    console.log(`Created issue ${issueId} successfully to Jira`);
+    console.log(`Created issue ${issueId} in Jira successfully`);
   });
 });
 
-exports.createVelocityAlert = functions.crashlytics.onVelocityAlert(event => {
+exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert(event => {
   const data = event.data;
-  // Available attributes for regressed issues
-  // data.issueid - {String} Issue id number
-  // data.issuetitle - {String} Issue Title (first line of the stack trace)
-  // data.appName - {String} Name of the app
-  // data.bundleId - {String} Bundle ID of the app
-  // data.platform - {String} Platform
-  // data.crashPercentage - {double} Crash Percentage. Total crashes divided by total # of sessions.
-  // data.buildVersion - {String} build version
-  // data.crashes - {double} # of Crashes
-  const issueId = data.issueid;
-  const issueTitle = data.issuetitle;
-  const appName = data.appName;
-  const bundleId = data.bundleId;
-  const platform = data.platform;
-  const crashPercentage = data.crashPercentage;
-  const buildVersion = data.buildVersion;
-  const crashes = data.crashes;
 
-  const summary = `Velocity Alert - ${issueId}`;
-  const description = `A velocity alert has been reported - ${issueTitle}. ` +
-      `This issue is occuring in build version ${buildVersion} and is causing ` +
+  const issueId = data.issueId;
+  const issueTitle = data.issueTitle;
+  const appName = data.appInfo.appName;
+  const appId = data.appInfo.appId;
+  const appPlatform = data.appInfo.appPlatform;
+  const latestAppVersion = data.appInfo.latestAppVersion;
+  const createTime = data.createTime;
+  const crashPercentage = data.velocityAlert.crashPercentage;
+  const crashes = data.velocityAlert.crashes;
+
+  const summary = `Velocity Alert - ${issueId} in ${appName} on $(appPlatform)`;
+  const description = `A velocity alert has been reported - ${issueTitle} in ${appId}. ` +
+      `This issue is occuring in build version ${latestAppVersion} and is causing ` +
       `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
   const priority = calculateIssuePriority('velocityAlert');
   return createJiraIssue(summary, description, priority).then(() => {
-    console.log(`Created issue ${issueId} successfully to Jira`);
+    console.log(`Created issue ${issueId} in Jira successfully`);
   });
 });
