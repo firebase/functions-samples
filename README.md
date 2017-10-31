@@ -52,6 +52,10 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **PubSub events**. The functions log the PubSub payload in a Hello world message.
 
+### [Crashlytics trigger quickstart: Crashlytics Email Notifier](/crashlytics-integration/email-notifier)
+
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Crashlytics**. The functions Sends an email when there is a new issue in an important conversion flow.
+
 
 <a name="environment"></a>
 ## Development Environment Samples and Boilerplates
@@ -255,6 +259,17 @@ Uses a Storage trigger.
 ### [Presence for Cloud Firestore](/presence-firestore)
 
 Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
+Uses a Realtime Database trigger.
+
+### [Create Jira Issue upon new Crashlitics issue](/crashlytics-integration/jira-issue)
+
+Automatically create a new issue when a new issue in your Jira project when a new issue is repported in an important workflow via Crashlytics.
+Uses a Crashlytics trigger.
+
+### [Create Jira Issue upon new Crashlitics issue](/crashlytics-integration/slack-notifier)
+
+Automatically send a slack notification to a specific Slack channel when a new issue is repported in an important workflow via Crashlytics.
+Uses a Crashlytics trigger.
 
 
 ## Contributing
