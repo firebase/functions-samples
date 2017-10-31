@@ -54,7 +54,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Pub
 
 ### [Crashlytics trigger quickstart: Crashlytics Email Notifier](/crashlytics-integration/email-notifier)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Crashlytics**. The functions Sends an email when there is a new issue in an important conversion flow.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Crashlytics**. The functions send an email when there is a new issue in an important conversion flow.
 
 
 <a name="environment"></a>
@@ -261,14 +261,14 @@ Uses a Storage trigger.
 Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
 Uses a Realtime Database trigger.
 
-### [Create Jira Issue upon new Crashlitics issue](/crashlytics-integration/jira-issue)
+### [Create Jira Issue upon new Crashlytics issue](/crashlytics-integration/jira-issue)
 
-Automatically create a new issue when a new issue in your Jira project when a new issue is repported in an important workflow via Crashlytics.
+Automatically creates a new issue in your Jira project when a new issue is reported in Crashlytics.
 Uses a Crashlytics trigger.
 
-### [Create Jira Issue upon new Crashlitics issue](/crashlytics-integration/slack-notifier)
+### [Create Jira Issue upon new Crashlytics issue](/crashlytics-integration/slack-notifier)
 
-Automatically send a slack notification to a specific Slack channel when a new issue is repported in an important workflow via Crashlytics.
+Automatically sends a Slack notification to a specific Slack channel when a new issue is reported in Crashlytics.
 Uses a Crashlytics trigger.
 
 
