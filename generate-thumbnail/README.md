@@ -32,4 +32,4 @@ To deploy and test the sample:
  - Add the JSON service account credentials file to the **Functions** directory as **functions/service-account-credentials.json**.
  - Deploy your project using `firebase deploy`
  - Go to the Firebase Console **Storage** tab and upload an image. After a short time an thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
- - Go to the Firebase Console **Database** tab and see that a child of `images` has been created contiaining the Signed URLs for both images.
+ - Go to the Firebase Console **Database** tab and see that a child of `images` has been created containing the Signed URLs for both images.
