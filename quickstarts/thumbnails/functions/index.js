@@ -75,6 +75,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Download file from bucket.
   const bucket = gcs.bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
+  const metadata = { contentType: contentType };
   return bucket.file(filePath).download({
     destination: tempFilePath
   }).then(() => {
@@ -87,7 +88,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     const thumbFileName = `thumb_${fileName}`;
     const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
     // Uploading the thumbnail.
-    return bucket.upload(tempFilePath, {destination: thumbFilePath});
+    return bucket.upload(tempFilePath, { destination: thumbFilePath, metadata: metadata });
   // Once the thumbnail has been uploaded delete the local file to free up disk space.
   }).then(() => fs.unlinkSync(tempFilePath));
   // [END thumbnailGeneration]
