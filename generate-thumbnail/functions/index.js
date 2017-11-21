@@ -52,19 +52,19 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return;
+    return null;
   }
 
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith(THUMB_PREFIX)) {
     console.log('Already a Thumbnail.');
-    return;
+    return null;
   }
 
   // Exit if this is a move or deletion event.
   if (event.data.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return;
+    return null;
   }
 
   // Cloud Storage files.
