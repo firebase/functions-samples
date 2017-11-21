@@ -46,8 +46,10 @@ exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(e
   
   const subscribed = val.subscribedToMailingList;
 
+  // Building Email message.
   mailOptions.subject = subscribed ? 'Thanks and Welcome!' : 'Sad to see you go :`(';
   mailOptions.text = subscribed ? 'Thanks you for subscribing to our newsletter. You will receive our next weekly newsletter.' : 'I hereby confirm that I will stop sending you the newsletter.';
+  
   return mailTransport.sendMail(mailOptions)
     .then(() => console.log(`New ${subcribed ? '' : 'un'}subscription confirmation email sent to:`, val.email))
     .catch(error => console.error('There was an error while sending the email:', error));
