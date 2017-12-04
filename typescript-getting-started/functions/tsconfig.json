@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "lib": ["es6", "es2015.promise"],
+    "lib": ["es6"],
     "module": "commonjs",
-    "noImplicitAny": false,
-    "outDir": "build",
+    "noImplicitReturns": true,
+    "outDir": "lib",
     "sourceMap": true,
     "target": "es6"
   },
+  "compileOnSave": true,
   "include": [
-    "src/**/*.ts",
-    "spec/**/*.ts"
+    "src"
   ]
 }

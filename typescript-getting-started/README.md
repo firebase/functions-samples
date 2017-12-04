@@ -15,7 +15,7 @@ development of JavaScript with optional types. When types are used,
 supported editors provide auto-suggest for methods and properties along
 with syntax highlighting of errors, which speeds development.
 
-TypeScript supports targeting different browsers, and optimizes
+TypeScript supports targeting different browsers or node.js versions, and optimizes
 the resulting JavaScript. It is much easier to write clean, consistent code
 across a project and development team.  TypeScript offers support for the
 latest and evolving JavaScript features like async functions and decorators,
@@ -25,22 +25,21 @@ For a nice intro to TypeScript, check out the [TypeScript PlayGround](https://ww
 
 ### What is different about TypeScript in this example?
 
-The TypeScript source is in `functions/src` and then we need to do a build
-step before deploying (see steps below).  The main Cloud Function entry
-point is `src/index.ts` which compiled to `src/index.js` and that is specified
+The TypeScript source is in `functions/src` and these files need to be compiled before deploying (see steps below).  The main Cloud Function entry
+point is `src/index.ts` and it compiled to `lib/index.js` which is specified
 in `functions/package.json`.
 
-There are two key differences to the example Cloud Function:
+There are two key differences between the example Cloud Function in Typescript and ES2015:
 
 * `require` -> `import`
-* `exports.` -> `export let`
+* `exports.` -> `export const`
 
 JavaScript:
 ```
-var functions = require('firebase-functions');
+const functions = require('firebase-functions');
 
 exports.helloWorld = functions.https.onRequest((request, response) => {
- response.send("Hello from Firebase!\n\n");
+ response.send('Hello from Firebase!\n\n');
 });
 ```
 
@@ -48,50 +47,33 @@ TypeScript:
 ```
 import * as functions from 'firebase-functions'
 
-export let helloWorld = functions.https.onRequest((request, response) => {
- response.send("Hello from Firebase!\n\n");
+export const helloWorld = functions.https.onRequest((request, response) => {
+ response.send('Hello from Firebase!\n\n');
 });
 ```
 
 
-
 ### Project Setup
-
-This project was set up using [yarn](https://yarnpkg.com) which will ensure
-that your deployed Cloud Functions are using the exact same versions of
-npm modules that you are running locally. The specific version of each
-dependency is saved in [yarn.lock](functions/yarn.lock)
-
 
 This example has the default sample function. To use this example as a
 starter project:
 
 1. `npm install -g firebase-tools`
-2. `git clone https://github.com/firebase/functions-samples.git`
 3. Create a Firebase Project using the Firebase Developer Console
-4. Make a directory for your project and cd into it. Then initialize
-   the Firebase project and replace the default functions directory with
-   this one. The directory name doesn't have to be the same as your
-   Firebase project name -- that's just common practice. In the following
-   steps a shell variable is used to make it simple to change the first line:
-   ```
-   PROJECT=your-project-name
-   mkdir $PROJECT; cd $PROJECT
-   firebase init
-   firebase use --add $PROJECT
-   rm -rf functions
-   cp -r ../functions-samples/typescript-getting-started/functions functions
-   ```
-5. Install the dependencies and deploy
+2. Download the source code of this sample: `git clone https://github.com/firebase/functions-samples`
+4. Enter the right sample directory: `cd functions-samples/typescript-getting-started`
+5. Configure this project to use the Firebase project you have created: `firebase use --add` and select your project in the list.
+6. Install the dependencies and deploy
    ```
    cd functions
-   yarn     # or npm install
+   npm install
    npm run deploy
    ```
 
 Note: with TypeScript you need to build the JavaScript files before
-deploying, so there's an npm script that does the steps.  You can see
-that and a few other handy shortcuts in [package.json](functions/package.json)
+deploying, so an npm script does this steps.  You can see
+that and a few other handy shortcuts in [package.json](functions/package.json).
+Also a pre-deploy trigger ensures that the code is always transpied before deploying. You can see this in the [firebase.json](firebase.json).
 
 After the deploy is complete, you will see output with the URL of your
 Cloud Function endpoint. You can test the function with curl.  The following
