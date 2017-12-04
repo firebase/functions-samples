@@ -15,7 +15,7 @@ development of JavaScript with optional types. When types are used,
 supported editors provide auto-suggest for methods and properties along
 with syntax highlighting of errors, which speeds development.
 
-TypeScript supports targeting different browsers or node versions, and optimizes
+TypeScript supports targeting different browsers or node.js versions, and optimizes
 the resulting JavaScript. It is much easier to write clean, consistent code
 across a project and development team.  TypeScript offers support for the
 latest and evolving JavaScript features like async functions and decorators,
