@@ -5,5 +5,17 @@
     "firebase-admin": "^5.0.0",
     "firebase-functions": "^0.7.0"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
+  },
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint .",
+    "serve": "firebase serve --only functions",
+    "shell": "firebase experimental:functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  }
 }
