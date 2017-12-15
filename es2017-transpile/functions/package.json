@@ -14,6 +14,7 @@
     "eslint-plugin-promise": "^3.6.0"
   },
   "scripts": {
-    "prepare": "babel ./*.es7 --presets latest --retain-lines -d ./"
+    "prepare": "babel ./*.es7 --presets latest --retain-lines -d ./",
+    "lint": "./node_modules/.bin/eslint ."
   }
 }

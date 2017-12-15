@@ -4,7 +4,8 @@
   "scripts": {
     "buildClient": "./node_modules/.bin/webpack --config ./webpack.client.config.js",
     "buildServer": "./node_modules/.bin/webpack --config ./webpack.server.config.js",
-    "build": "npm run buildClient && npm run buildServer"
+    "build": "npm run buildClient && npm run buildServer",
+    "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {
     "firebase": "3.9.0",
