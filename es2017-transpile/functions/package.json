@@ -13,6 +13,6 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0"
   },
   "scripts": {
-    "prepare": "babel ./*.es7 --presets latest --retain-lines -d ./"
+    "prepare": "babel ./*.es7 --retain-lines -d ./"
   }
 }
