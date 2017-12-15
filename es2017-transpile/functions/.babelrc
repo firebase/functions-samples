@@ -1,6 +1,13 @@
 {
-  "presets": ["es2017"],
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "6.11"
+      }
+    }]
+  ],
   "plugins": [[
-    "transform-runtime", {"polyfill": false, "regenerator": true}
+    "transform-runtime", {"polyfill": false, "regenerator": true},
+    "transform-object-rest-spread"
   ]]
 }
