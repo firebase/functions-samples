@@ -7,11 +7,12 @@
     "firebase-functions": "^0.5.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-latest": "^6.24.1"
+    "babel-preset-env": "^1.6.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0"
   },
   "scripts": {
-    "prepare": "babel ./*.es7 --presets latest --retain-lines -d ./"
+    "prepare": "babel ./*.es7 --retain-lines -d ./"
   }
 }
