@@ -4,5 +4,9 @@
   "dependencies": {
     "firebase-admin": "^4.1.2",
     "firebase-functions": "^0.5.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   }
 }

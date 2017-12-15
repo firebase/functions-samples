@@ -9,7 +9,9 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-latest": "^6.24.1"
+    "babel-preset-latest": "^6.24.1",
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   },
   "scripts": {
     "prepare": "babel ./*.es7 --presets latest --retain-lines -d ./"

@@ -13,5 +13,9 @@
     "build-all": "yarn build-next && yarn build-firebase",
     "build-next": "cd \"src/app\" && yarn && yarn build",
     "build-firebase": "cd \"src/functions\" && yarn"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   }
 }

@@ -8,5 +8,9 @@
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "secure-compare": "^3.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   }
 }

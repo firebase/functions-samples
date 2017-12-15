@@ -8,5 +8,9 @@
     "request": "^2.74.0",
     "request-promise-native": "^1.0.3",
     "simple-oauth2": "^1.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   }
 }

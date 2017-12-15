@@ -9,5 +9,9 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
+  }
 }

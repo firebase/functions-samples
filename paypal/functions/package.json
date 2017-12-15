@@ -9,8 +9,9 @@
   },
   "private": true,
   "devDependencies": {
-    "jshint": "^2.9.5",
-    "eslint": "^4.1.1",
-    "eslint-config-google": "^0.8.0"
+    "eslint": "^4.13.1",
+    "eslint-config-google": "^0.8.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "jshint": "^2.9.5"
   }
 }

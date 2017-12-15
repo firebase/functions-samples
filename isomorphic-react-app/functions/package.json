@@ -9,5 +9,9 @@
     "react": "15.5.4",
     "react-dom": "15.5.4",
     "request": "2.81.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   }
 }

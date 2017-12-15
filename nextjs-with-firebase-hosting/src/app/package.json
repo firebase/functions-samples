@@ -9,5 +9,9 @@
   "scripts": {
     "dev": "next",
     "build": "next build"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   }
 }
