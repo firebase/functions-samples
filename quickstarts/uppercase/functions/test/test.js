@@ -128,7 +128,7 @@ describe('Cloud Functions', () => {
       // This mimics the behavior of a push to the database, which returns an object containing a
       // ref property representing the URL of the newly pushed item.
       databaseStub = sinon.stub(admin, 'database');
-      databaseStub.returns( { ref: refStub });
+      databaseStub.get(() => (() => ({ ref: refStub })));
       refStub.withArgs(refParam).returns( { push: pushStub });
       pushStub.withArgs(pushParam).returns( Promise.resolve({ ref: 'new_ref' }));
       // [END stubAdminDatabase]
