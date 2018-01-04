@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
 // [START all]
 // [START import]
@@ -35,9 +35,9 @@ exports.addMessage = functions.https.onRequest((req, res) => {
   const original = req.query.text;
   // [START adminSdkPush]
   // Push the new message into the Realtime Database using the Firebase Admin SDK.
-  admin.database().ref('/messages').push({original: original}).then(snapshot => {
+  return admin.database().ref('/messages').push({original: original}).then(snapshot => {
     // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-    res.redirect(303, snapshot.ref);
+    return res.redirect(303, snapshot.ref);
   });
   // [END adminSdkPush]
 });
@@ -48,7 +48,7 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // uppercase version of the message to /messages/:pushId/uppercase
 // [START makeUppercaseTrigger]
 exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
-    .onWrite(event => {
+.onWrite(event => {
 // [END makeUppercaseTrigger]
       // [START makeUppercaseBody]
       // Grab the current value of what was written to the Realtime Database.

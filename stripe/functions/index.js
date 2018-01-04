@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions'),
-      admin = require('firebase-admin'),
-      logging = require('@google-cloud/logging')();
+ const functions = require('firebase-functions'),
+ admin = require('firebase-admin'),
+ logging = require('@google-cloud/logging')();
 
-admin.initializeApp(functions.config().firebase);
+ admin.initializeApp(functions.config().firebase);
 
-const stripe = require('stripe')(functions.config().stripe.token),
-      currency = functions.config().stripe.currency || 'USD';
+ const stripe = require('stripe')(functions.config().stripe.token),
+ currency = functions.config().stripe.currency || 'USD';
 
 // [START chargecustomer]
 // Charge the Stripe customer whenever an amount is written to the Realtime database
@@ -47,12 +47,12 @@ exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/
     }, error => {
       // We want to capture errors and render them in a user-friendly way, while
       // still logging an exception with Stackdriver
-      return event.data.adminRef.child('error').set(userFacingMessage(error)).then(() => {
-        return reportError(error, {user: event.params.userId});
-      });
+      return event.data.adminRef.child('error').set(userFacingMessage(error))
     }
-  );
-});
+    ).then(() => {
+      return reportError(error, {user: event.params.userId});
+    });
+  });
 // [END chargecustomer]]
 
 // When a user is created, register them with Stripe
@@ -74,11 +74,11 @@ exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/so
   }).then(customer => {
     return stripe.customers.createSource(customer, {source});
   }).then(response => {
-      return event.data.adminRef.parent.set(response);
-    }, error => {
-      return event.data.adminRef.parent.child('error').set(userFacingMessage(error)).then(() => {
-        return reportError(error, {user: event.params.userId});
-      });
+    return event.data.adminRef.parent.set(response);
+  }, error => {
+    return event.data.adminRef.parent.child('error').set(userFacingMessage(error))
+  }).then(() => {
+    return reportError(error, {user: event.params.userId});
   });
 });
 

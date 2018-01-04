@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const cookieParser = require('cookie-parser');
-const crypto = require('crypto');
+ const functions = require('firebase-functions');
+ const cookieParser = require('cookie-parser');
+ const crypto = require('crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');
@@ -32,20 +32,20 @@ const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
 /**
  * Creates a configured LinkedIn API Client instance.
  */
-function linkedInClient() {
+ function linkedInClient() {
   // LinkedIn OAuth 2 setup
   // TODO: Configure the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables.
   return require('node-linkedin')(
-      functions.config().linkedin.client_id,
-      functions.config().linkedin.client_secret,
-      `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
+    functions.config().linkedin.client_id,
+    functions.config().linkedin.client_secret,
+    `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
 }
 
 /**
  * Redirects the User to the LinkedIn authentication consent screen. ALso the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
+ exports.redirect = functions.https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   cookieParser()(req, res, () => {
@@ -62,11 +62,11 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
  * 'callback' query parameter.
  */
-exports.token = functions.https.onRequest((req, res) => {
+ exports.token = functions.https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   try {
-    cookieParser()(req, res, () => {
+    return cookieParser()(req, res, () => {
       if (!req.cookies.state) {
         throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
       }
@@ -94,10 +94,10 @@ exports.token = functions.https.onRequest((req, res) => {
           const email = userResults.emailAddress;
 
           // Create a Firebase account and get the Custom Auth Token.
-          createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
-              firebaseToken => {
+          return createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
+            firebaseToken => {
                 // Serve an HTML page that signs the user in and updates the user profile.
-                res.jsonp({token: firebaseToken});
+                return res.jsonp({token: firebaseToken});
               });
         });
       });
@@ -114,13 +114,13 @@ exports.token = functions.https.onRequest((req, res) => {
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
+ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
   // The UID we'll assign to the user.
   const uid = `linkedin:${linkedinID}`;
 
   // Save the access token tot he Firebase Realtime Database.
   const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`)
-      .set(accessToken);
+  .set(accessToken);
 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {
@@ -145,9 +145,9 @@ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessT
   // Wait for all async task to complete then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    return admin.auth().createCustomToken(uid).then((token) => {
-      console.log('Created Custom token for UID "', uid, '" Token:', token);
-      return token;
-    });
+    return admin.auth().createCustomToken(uid)
+  }).then((token) => {
+    console.log('Created Custom token for UID "', uid, '" Token:', token);
+    return token;
   });
 }

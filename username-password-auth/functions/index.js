@@ -13,9 +13,9 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
+ const functions = require('firebase-functions');
 
 // CORS Express middleware to enable CORS Requests.
 const cors = require('cors')({
@@ -42,7 +42,7 @@ const basicAuthRequest = require('request');
  * If the request method is unsupported (not POST) return a 403 response.
  * If an error occurs log the details and return a 500 response.
  */
-exports.auth = functions.https.onRequest((req, res) => {
+ exports.auth = functions.https.onRequest((req, res) => {
   const handleError = (username, error) => {
     console.error({
       User: username
@@ -82,16 +82,16 @@ exports.auth = functions.https.onRequest((req, res) => {
       }
 
       // TODO(DEVELOPER): In production you'll need to update the `authenticate` function so that it authenticates with your own credentials system.
-      authenticate(username, password).then(valid => {
+      return authenticate(username, password).then(valid => {
         if (!valid) {
           return handleResponse(username, 401); // Invalid username/password
         }
 
         // On success return the Firebase Custom Auth Token.
-        return admin.auth().createCustomToken(username).then(firebaseToken => {
-          return handleResponse(username, 200, {
-            token: firebaseToken
-          });
+        return admin.auth().createCustomToken(username)
+      }).then(firebaseToken => {
+        return handleResponse(username, 200, {
+          token: firebaseToken
         });
       }).catch(error => {
         return handleError(username, error);
@@ -100,6 +100,7 @@ exports.auth = functions.https.onRequest((req, res) => {
   } catch (error) {
     return handleError(username, error);
   }
+  return null;
 });
 
 /**
@@ -107,7 +108,7 @@ exports.auth = functions.https.onRequest((req, res) => {
  * TODO(DEVELOPER): In production you'll need to update this function so that it authenticates with your own credentials system.
  * @returns {Promise<boolean>} success or failure.
  */
-function authenticate(username, password) {
+ function authenticate(username, password) {
 
   // For the purpose of this example use httpbin (https://httpbin.org) and send a basic authentication request.
   // (Only a password of `Testing123` will succeed)

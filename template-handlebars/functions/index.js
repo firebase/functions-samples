@@ -29,7 +29,7 @@ app.use(firebaseUser.validateFirebaseIdToken);
 
 app.get('/', (req, res) => {
   console.log('Signed-in user:', req.user);
-  res.render('user', {
+  return res.render('user', {
     user: req.user
   });
 });

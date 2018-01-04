@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+ const functions = require('firebase-functions');
+ const admin = require('firebase-admin');
+ admin.initializeApp(functions.config().firebase);
 
 // Keeps track of the length of the 'likes' child list in a separate property.
 exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}').onWrite(event => {
@@ -33,8 +33,10 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
     else if (!event.data.exists() && event.data.previous.exists()) {
       return (current || 0) - 1;
     }
+    // What to do in other cases?
+    return null;
   }).then(() => {
-    console.log('Counter updated.');
+    return console.log('Counter updated.');
   });
 });
 
@@ -47,6 +49,7 @@ exports.recountlikes = functions.database.ref('/posts/{postid}/likes_count').onW
     // Return the promise from counterRef.set() so our function 
     // waits for this async event to complete before it exits.
     return collectionRef.once('value')
-        .then(messagesData => counterRef.set(messagesData.numChildren()));
+    .then(messagesData => counterRef.set(messagesData.numChildren()));
   }
+  return null;
 });

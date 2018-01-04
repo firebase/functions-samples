@@ -13,22 +13,22 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const mkdirp = require('mkdirp-promise');
-const gcs = require('@google-cloud/storage')();
-const vision = require('@google-cloud/vision')();
-const spawn = require('child-process-promise').spawn;
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+ const functions = require('firebase-functions');
+ const mkdirp = require('mkdirp-promise');
+ const gcs = require('@google-cloud/storage')();
+ const vision = require('@google-cloud/vision')();
+ const spawn = require('child-process-promise').spawn;
+ const path = require('path');
+ const os = require('os');
+ const fs = require('fs');
 
 /**
  * When an image is uploaded we check if it is flagged as Adult or Violence by the Cloud Vision
  * API and if it is we blur it using ImageMagick.
  */
-exports.blurOffensiveImages = functions.storage.object().onChange(event => {
+ exports.blurOffensiveImages = functions.storage.object().onChange(event => {
   const object = event.data;
   const file = gcs.bucket(object.bucket).file(object.name);
 
@@ -45,13 +45,14 @@ exports.blurOffensiveImages = functions.storage.object().onChange(event => {
     if (safeSearch.adult || safeSearch.violence) {
       return blurImage(object.name, object.bucket, object.metadata);
     }
+    return null;
   });
 });
 
 /**
  * Blurs the given image located in the given bucket using ImageMagick.
  */
-function blurImage(filePath, bucketName, metadata) {
+ function blurImage(filePath, bucketName, metadata) {
   const tempLocalFile = path.join(os.tmpdir(), filePath);
   const tempLocalDir = path.dirname(tempLocalFile);
   const bucket = gcs.bucket(bucketName);
@@ -75,6 +76,6 @@ function blurImage(filePath, bucketName, metadata) {
   }).then(() => {
     console.log('Blurred image uploaded to Storage at', filePath);
     fs.unlinkSync(tempLocalFile);
-    console.log('Deleted local file', filePath);
+    return console.log('Deleted local file', filePath);
   });
 }

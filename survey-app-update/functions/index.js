@@ -49,6 +49,7 @@ exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog(even
       return sendSurveyEmail(email, name);
     });
   }
+  return null;
 });
 
 /**
@@ -65,6 +66,6 @@ function sendSurveyEmail(email, name) {
   };
 
   return mailTransport.sendMail(mailOptions).then(() => {
-    console.log('Upgrade App Survey email sent to:', email);
+    return console.log('Upgrade App Survey email sent to:', email);
   });
 }

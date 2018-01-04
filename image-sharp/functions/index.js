@@ -13,21 +13,21 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const gcs = require('@google-cloud/storage')();
-const path = require('path');
-const sharp = require('sharp');
+ const functions = require('firebase-functions');
+ const gcs = require('@google-cloud/storage')();
+ const path = require('path');
+ const sharp = require('sharp');
 
-const THUMB_MAX_WIDTH = 200;
-const THUMB_MAX_HEIGHT = 200;
+ const THUMB_MAX_WIDTH = 200;
+ const THUMB_MAX_HEIGHT = 200;
 
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * Sharp.
  */
-exports.generateThumbnail = functions.storage.object().onChange(event => {
+ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -39,7 +39,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return;
+    return null;
   }
 
   // Get the file name.
@@ -47,20 +47,20 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
     console.log('Already a Thumbnail.');
-    return;
+    return null;
   }
 
   // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return;
+    return null;
   }
 
   // Exit if file exists but is not new and is only being triggered
   // because of a metadata change.
   if (resourceState === 'exists' && metageneration > 1) {
     console.log('This is a metadata change event.');
-    return;
+    return null;
   }
 
   // Download file from bucket.
@@ -78,15 +78,15 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Create Sharp pipeline for resizing the image and use pipe to read from bucket read stream
   const pipeline = sharp();
   pipeline
-    .resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT)
-    .max()
-    .pipe(thumbnailUploadStream);
+  .resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT)
+  .max()
+  .pipe(thumbnailUploadStream);
 
   bucket.file(filePath).createReadStream().pipe(pipeline);
 
   const streamAsPromise = new Promise((resolve, reject) =>
     thumbnailUploadStream.on('finish', resolve).on('error', reject));
   return streamAsPromise.then(() => {
-    console.log('Thumbnail created successfully');
+    return console.log('Thumbnail created successfully');
   });
 });

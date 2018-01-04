@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+ const functions = require('firebase-functions');
+ const admin = require('firebase-admin');
+ admin.initializeApp(functions.config().firebase);
 
 /**
  * Triggers when a user gets a new follower and sends a notification.
@@ -25,7 +25,7 @@ admin.initializeApp(functions.config().firebase);
  * Followers add a flag to `/followers/{followedUid}/{followerUid}`.
  * Users save their device notification tokens to `/users/{followedUid}/notificationTokens/{notificationToken}`.
  */
-exports.sendFollowerNotification = functions.database.ref('/followers/{followedUid}/{followerUid}').onWrite(event => {
+ exports.sendFollowerNotification = functions.database.ref('/followers/{followedUid}/{followerUid}').onWrite(event => {
   const followerUid = event.params.followerUid;
   const followedUid = event.params.followedUid;
   // If un-follow we exit the function.
@@ -64,7 +64,8 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
     const tokens = Object.keys(tokensSnapshot.val());
 
     // Send notifications to all tokens.
-    return admin.messaging().sendToDevice(tokens, payload).then(response => {
+    return admin.messaging().sendToDevice(tokens, payload)
+  }).then(response => {
       // For each message check if there was an error.
       const tokensToRemove = [];
       response.results.forEach((result, index) => {
@@ -73,12 +74,11 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
           console.error('Failure sending notification to', tokens[index], error);
           // Cleanup the tokens who are not registered anymore.
           if (error.code === 'messaging/invalid-registration-token' ||
-              error.code === 'messaging/registration-token-not-registered') {
+            error.code === 'messaging/registration-token-not-registered') {
             tokensToRemove.push(tokensSnapshot.ref.child(tokens[index]).remove());
-          }
         }
-      });
+      }
+    });
       return Promise.all(tokensToRemove);
     });
-  });
 });

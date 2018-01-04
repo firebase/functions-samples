@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const rp = require('request-promise');
-const crypto = require('crypto');
-const secureCompare = require('secure-compare');
+ const functions = require('firebase-functions');
+ const rp = require('request-promise');
+ const crypto = require('crypto');
+ const secureCompare = require('secure-compare');
 
 /**
  * Webhook that will be called each time there is a new GitHub commit and will post a message to
  * Slack.
  */
-exports.githubWebhook = functions.https.onRequest((req, res) => {
+ exports.githubWebhook = functions.https.onRequest((req, res) => {
   const cipher = 'sha1';
   const signature = req.headers['x-hub-signature'];
 
@@ -33,26 +33,26 @@ exports.githubWebhook = functions.https.onRequest((req, res) => {
       // The JSON body is automatically parsed by Cloud Functions so we re-stringify it.
       .update(JSON.stringify(req.body, null, 0))
       .digest('hex');
-  const expectedSignature = `${cipher}=${hmac}`;
+      const expectedSignature = `${cipher}=${hmac}`;
 
   // Check that the body of the request has been signed with the GitHub Secret.
   if (secureCompare(signature, expectedSignature)) {
     postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
-      res.end();
+      return res.end();
     }).catch(error => {
       console.error(error);
-      res.status(500).send('Something went wrong while posting the message to Slack.');
+      return res.status(500).send('Something went wrong while posting the message to Slack.');
     });
-  } else {
-    console.error('x-hub-signature', signature, 'did not match', expectedSignature);
-    res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
-  }
+  } 
+  console.error('x-hub-signature', signature, 'did not match', expectedSignature);
+  return res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
+  
 });
 
 /**
  * Post a message to Slack about the new GitHub commit.
  */
-function postToSlack(url, commits, repo) {
+ function postToSlack(url, commits, repo) {
   return rp({
     method: 'POST',
     // TODO: Configure the `slack.webhook_url` Google Cloud environment variables.

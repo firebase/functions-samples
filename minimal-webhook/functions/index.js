@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const request = require('request-promise');
+ const functions = require('firebase-functions');
+ const request = require('request-promise');
 
 // This is the URL that we will callback and send the content of the updated data node.
 // As an example we're using a Request Bin from http://requestb.in
@@ -36,6 +36,6 @@ exports.webhook = functions.database.ref('/hooks/{hookId}').onWrite(event => {
     if (response.statusCode >= 400) {
       throw new Error(`HTTP Error: ${response.statusCode}`);
     }
-    console.log('SUCCESS! Posted', event.data.ref);
+    return console.log('SUCCESS! Posted', event.data.ref);
   });
 });

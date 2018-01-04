@@ -47,7 +47,7 @@ exports.sendOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   };
 
   return sendgridMail.send(emailDetails).then(() => {
-    console.log('Successfully sent new issue email');
+    return console.log('Successfully sent new issue email');
   }).catch(error => {
     console.error(error.toString());
   });
@@ -81,7 +81,7 @@ exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed(event =
   };
 
   return sendgridMail.send(emailDetails).then(() => {
-    console.log('Successfully sent regressed issue email');
+    return console.log('Successfully sent regressed issue email');
   }).catch(error => {
     console.error(error.toString());
   });
@@ -117,7 +117,7 @@ exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(even
   };
   
   return sendgridMail.send(emailDetails).then(() => {
-    console.log('Successfully sent velocity alert email');
+    return console.log('Successfully sent velocity alert email');
   }).catch(error => {
     console.error(error.toString());
   });

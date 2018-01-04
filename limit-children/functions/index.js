@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
+ const functions = require('firebase-functions');
 
 // Max number of lines of the chat history.
 const MAX_LOG_COUNT = 5;
@@ -28,7 +28,7 @@ exports.truncate = functions.database.ref('/chat/{messageid}').onWrite(event => 
     if (snapshot.numChildren() >= MAX_LOG_COUNT) {
       let childCount = 0;
       const updates = {};
-      snapshot.forEach(function(child) {
+      snapshot.forEach((child) => {
         if (++childCount <= snapshot.numChildren() - MAX_LOG_COUNT) {
           updates[child.key] = null;
         }
@@ -36,5 +36,6 @@ exports.truncate = functions.database.ref('/chat/{messageid}').onWrite(event => 
       // Update the parent. This effectively removes the extra children.
       return parentRef.update(updates);
     }
+    return null;
   });
 });

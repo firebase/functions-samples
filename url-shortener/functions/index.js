@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
-const request = require('request-promise');
+ const functions = require('firebase-functions');
+ const admin = require('firebase-admin');
+ admin.initializeApp(functions.config().firebase);
+ const request = require('request-promise');
 
 // Shorten URL
 exports.shortenUrl = functions.database.ref('/links/{linkID}').onWrite(event => {
   const snapshot = event.data;
   if (typeof snapshot.val() !== 'string') {
-    return;
+    return null;
   }
   return createShortenerPromise(snapshot);
 });

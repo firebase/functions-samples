@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const cookieParser = require('cookie-parser');
-const crypto = require('crypto');
+ const functions = require('firebase-functions');
+ const cookieParser = require('cookie-parser');
+ const crypto = require('crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');
@@ -43,7 +43,7 @@ const OAUTH_SCOPES = ['user-read-email'];
  * Redirects the User to the Spotify authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
+ exports.redirect = functions.https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     console.log('Setting verification state:', state);
@@ -59,7 +59,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
  * 'callback' query parameter.
  */
-exports.token = functions.https.onRequest((req, res) => {
+ exports.token = functions.https.onRequest((req, res) => {
   try {
     cookieParser()(req, res, () => {
       console.log('Received verification state:', req.cookies.state);
@@ -90,10 +90,10 @@ exports.token = functions.https.onRequest((req, res) => {
           const email = userResults.body['email'];
 
           // Create a Firebase account and get the Custom Auth Token.
-          createFirebaseAccount(spotifyUserID, userName, profilePic, email, accessToken).then(
-              firebaseToken => {
+          return createFirebaseAccount(spotifyUserID, userName, profilePic, email, accessToken).then(
+            firebaseToken => {
                 // Serve an HTML page that signs the user in and updates the user profile.
-                res.jsonp({token: firebaseToken});
+                return res.jsonp({token: firebaseToken});
               });
         });
       });
@@ -101,6 +101,7 @@ exports.token = functions.https.onRequest((req, res) => {
   } catch (error) {
     return res.jsonp({error: error.toString});
   }
+  return null;
 });
 
 /**
@@ -110,13 +111,13 @@ exports.token = functions.https.onRequest((req, res) => {
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-function createFirebaseAccount(spotifyID, displayName, photoURL, email, accessToken) {
+ function createFirebaseAccount(spotifyID, displayName, photoURL, email, accessToken) {
   // The UID we'll assign to the user.
   const uid = `spotify:${spotifyID}`;
 
   // Save the access token to the Firebase Realtime Database.
   const databaseTask = admin.database().ref(`/spotifyAccessToken/${uid}`)
-      .set(accessToken);
+  .set(accessToken);
 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {
@@ -141,9 +142,9 @@ function createFirebaseAccount(spotifyID, displayName, photoURL, email, accessTo
   // Wait for all async tasks to complete, then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    return admin.auth().createCustomToken(uid).then((token) => {
-      console.log('Created Custom token for UID "', uid, '" Token:', token);
-      return token;
-    });
+    return admin.auth().createCustomToken(uid)
+  }).then((token) => {
+    console.log('Created Custom token for UID "', uid, '" Token:', token);
+    return token;
   });
 }

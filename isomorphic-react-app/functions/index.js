@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions');
-const firebase = require('firebase');
-const app = require('express')();
-const React = require('react');
-const ReactDOMServer = require('react-dom/server');
+ const functions = require('firebase-functions');
+ const firebase = require('firebase');
+ const app = require('express')();
+ const React = require('react');
+ const ReactDOMServer = require('react-dom/server');
 
 // React App
 const ServerApp = React.createFactory(require('./build/server.bundle.js').default);
@@ -37,8 +37,8 @@ const renderApplication = (url, res, initialState) => {
   res.send(templatedHtml);
 };
 
-app.get('/favicon.ico', function(req, res) {
-  res.send(204);
+app.get('/favicon.ico', (req, res) => {
+  return res.send(204);
 });
 
 app.get('/:userId?', (req, res) => {
@@ -46,13 +46,13 @@ app.get('/:userId?', (req, res) => {
   if (req.params.userId) {
     // client is requesting user-details page with userId
     // load the data for that employee and its direct reports
-    database.getEmployeeById(req.params.userId).then(resp => {
-      renderApplication(req.url, res, resp);
+    return database.getEmployeeById(req.params.userId).then(resp => {
+      return renderApplication(req.url, res, resp);
     });
   } else {
     // index page. load data for all employees
-    database.getAllEmployees().then(resp => {
-      renderApplication(req.url, res, resp);
+    return database.getAllEmployees().then(resp => {
+      return renderApplication(req.url, res, resp);
     });
   }
 });

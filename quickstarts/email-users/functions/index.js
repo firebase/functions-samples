@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const nodemailer = require('nodemailer');
+ const functions = require('firebase-functions');
+ const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
 // For Gmail, enable these:
 // 1. https://www.google.com/settings/security/lesssecureapps
@@ -62,12 +62,12 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate(event => {
 // [START onDeleteTrigger]
 exports.sendByeEmail = functions.auth.user().onDelete(event => {
 // [END onDeleteTrigger]
-  const user = event.data;
+const user = event.data;
 
-  const email = user.email;
-  const displayName = user.displayName;
+const email = user.email;
+const displayName = user.displayName;
 
-  return sendGoodbyEmail(email, displayName);
+return sendGoodbyEmail(email, displayName);
 });
 // [END sendByeEmail]
 
@@ -82,7 +82,7 @@ function sendWelcomeEmail(email, displayName) {
   mailOptions.subject = `Welcome to ${APP_NAME}!`;
   mailOptions.text = `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
   return mailTransport.sendMail(mailOptions).then(() => {
-    console.log('New welcome email sent to:', email);
+    return console.log('New welcome email sent to:', email);
   });
 }
 
@@ -97,6 +97,6 @@ function sendGoodbyEmail(email, displayName) {
   mailOptions.subject = `Bye!`;
   mailOptions.text = `Hey ${displayName || ''}!, We confirm that we have deleted your ${APP_NAME} account.`;
   return mailTransport.sendMail(mailOptions).then(() => {
-    console.log('Account deletion confirmation email sent to:', email);
+    return console.log('Account deletion confirmation email sent to:', email);
   });
 }

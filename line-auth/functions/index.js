@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
 // Modules imports
 const functions = require('firebase-functions');
@@ -44,7 +44,7 @@ function generateLineApiRequest(apiEndpoint, lineAccessToken) {
  *
  * @returns {Promise<UserRecord>} The Firebase user record in a promise.
  */
-function getFirebaseUser(lineMid, lineAccessToken) {
+ function getFirebaseUser(lineMid, lineAccessToken) {
   // Generate Firebase user's uid based on LINE's mid
   const firebaseUid = `line:${lineMid}`;
 
@@ -54,11 +54,15 @@ function getFirebaseUser(lineMid, lineAccessToken) {
   return admin.auth().getUser(firebaseUid).catch(error => {
     // If user does not exist, fetch LINE profile and create a Firebase new user with it
     if (error.code === 'auth/user-not-found') {
-      return rp(getProfileOptions).then(response => {
+      return rp(getProfileOptions);
+    }
+    // If error other than auth/user-not-found occurred, fail the whole login process
+    throw error;
+  }).then(response => {
         // Parse user profile from LINE's get user profile API response
         const displayName = response.displayName;
         const photoURL = response.pictureUrl;
-   
+
         console.log('Create new Firebase user for LINE user mid = "', lineMid,'"');
         // Create a new Firebase user with LINE profile and return it
         return admin.auth().createUser({
@@ -67,10 +71,6 @@ function getFirebaseUser(lineMid, lineAccessToken) {
           photoURL: photoURL
         });
       });
-    }
-    // If error other than auth/user-not-found occurred, fail the whole login process
-    throw error;
-  });
 }
 
 /**
@@ -85,19 +85,19 @@ function getFirebaseUser(lineMid, lineAccessToken) {
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-function verifyLineToken(lineAccessToken) {
+ function verifyLineToken(lineAccessToken) {
   // Send request to LINE server for access token verification
   const verifyTokenOptions = generateLineApiRequest('https://api.line.me/v1/oauth/verify', lineAccessToken);
 
   // STEP 1: Verify with LINE server that a LINE access token is valid
   return rp(verifyTokenOptions)
-    .then(response => {
+  .then(response => {
       // Verify the token’s channelId match with my channelId to prevent spoof attack
       // <IMPORTANT> As LINE's Get user profiles API response doesn't include channelID,
       // you must not skip this step to make sure that the LINE access token is indeed
       // issued for your channel.
       //TODO: consider !== here
-      if (response.channelId != functions.config().line.channelid) {
+      if (response.channelId !== functions.config().line.channelid) {
         return Promise.reject(new Error('LINE channel ID mismatched'));
       }
 
@@ -105,13 +105,14 @@ function verifyLineToken(lineAccessToken) {
       const lineMid = response.mid;
       return getFirebaseUser(lineMid, lineAccessToken);
     })
-    .then(userRecord => {
+  .then(userRecord => {
       // STEP 3: Generate Firebase Custom Auth Token
-      return admin.auth().createCustomToken(userRecord.uid).then(token => {
-        console.log('Created Custom token for UID "', userRecord.uid, '" Token:', token);
-        return token;
-      });
-    });
+      return admin.auth().createCustomToken(userRecord.uid);
+    })
+  .then(token => {
+    console.log('Created Custom token for UID "', userRecord.uid, '" Token:', token);
+    return token;
+  });
 }
 
 // Verify LINE token and exchange for Firebase Custom Auth token
@@ -126,13 +127,13 @@ exports.verifyToken = functions.https.onRequest((req, res) => {
   const reqToken = req.body.token;
 
   // Verify LINE access token with LINE server then generate Firebase Custom Auth token
-  verifyLineToken(reqToken)
-    .then(customAuthToken => {
-      const ret = {
-        firebase_token: customAuthToken
-      };
-      return res.status(200).send(ret);   
-    }).catch(err => {
+  return verifyLineToken(reqToken)
+  .then(customAuthToken => {
+    const ret = {
+      firebase_token: customAuthToken
+    };
+    return res.status(200).send(ret);   
+  }).catch(err => {
       // If LINE access token verification failed, return error response to client
       const ret = {
         error_message: 'Authentication error: Cannot verify access token.'

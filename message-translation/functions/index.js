@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
-const request = require('request-promise');
+ const functions = require('firebase-functions');
+ const admin = require('firebase-admin');
+ admin.initializeApp(functions.config().firebase);
+ const request = require('request-promise');
 
 // List of output languages.
 const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
@@ -27,7 +27,7 @@ const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite(event => {
   const snapshot = event.data;
   if (snapshot.val().translated) {
-    return;
+    return null;
   }
   const promises = [];
   for (let i = 0; i < LANGUAGES.length; i++) {
@@ -48,12 +48,12 @@ function createTranslationPromise(source, target, snapshot) {
   const key = snapshot.key;
   const message = snapshot.val().message;
   return request(createTranslateUrl(source, target, message), {resolveWithFullResponse: true}).then(
-      response => {
-        if (response.statusCode === 200) {
-          const data = JSON.parse(response.body).data;
-          return admin.database().ref(`/messages/${target}/${key}`)
-              .set({message: data.translations[0].translatedText, translated: true});
-        }
-        throw response.body;
-      });
+    response => {
+      if (response.statusCode === 200) {
+        const data = JSON.parse(response.body).data;
+        return admin.database().ref(`/messages/${target}/${key}`)
+        .set({message: data.translations[0].translatedText, translated: true});
+      }
+      throw response.body;
+    });
 }

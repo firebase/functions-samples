@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const capitalizeSentence = require('capitalize-sentence');
-const Filter = require('bad-words');
-const badWordsFilter = new Filter();
+ const functions = require('firebase-functions');
+ const capitalizeSentence = require('capitalize-sentence');
+ const Filter = require('bad-words');
+ const badWordsFilter = new Filter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
 exports.moderator = functions.database
-    .ref('/messages/{messageId}').onWrite(event => {
-      const message = event.data.val();
+.ref('/messages/{messageId}').onWrite(event => {
+  const message = event.data.val();
 
-      if (message && !message.sanitized) {
+  if (message && !message.sanitized) {
         // Retrieved the message values.
         console.log('Retrieved message content: ', message);
 
@@ -40,6 +40,7 @@ exports.moderator = functions.database
           moderated: message.text !== moderatedMessage
         });
       }
+      return null;
     });
 
 // Moderates the given message if appropriate.

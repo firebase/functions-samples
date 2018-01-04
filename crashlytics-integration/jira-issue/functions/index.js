@@ -46,7 +46,7 @@ const calculateIssuePriority = eventType => {
 // of the url fragments
 const parseUrl = url => {
   // input url format: https://yourdomain.atlassian.net/projects/XX
-  const matches = url.match(/(https?:\/\/)(.+?)(\/.+)?\/(projects|browse)\/([\w\-]+)/);
+  const matches = url.match(/(https?:\/\/)(.+?)(\/.+)?\/(projects|browse)\/([\w-]+)/);
   if (matches && matches.length === 6) {
     return {protocol: matches[1], domain: matches[2], contextPath: matches[3] || '', projectKey: matches[5]};
   } else {
@@ -113,7 +113,7 @@ exports.createNewIssue = functions.crashlytics.issue().onNewDetected(event => {
       `version ${latestAppVersion}`;
   const priority = calculateIssuePriority();
   return createJiraIssue(summary, description, priority).then(() => {
-    console.log(`Created issue ${issueId} in Jira successfully`);
+    return console.log(`Created issue ${issueId} in Jira successfully`);
   });
 });
 
@@ -134,7 +134,7 @@ exports.createRegressedIssue = functions.crashlytics.issue().onRegressed(event =
       `${new Date(resolvedTime).toString()}`;
   const priority = calculateIssuePriority('regressed');
   return createJiraIssue(summary, description, priority).then(() => {
-    console.log(`Created issue ${issueId} in Jira successfully`);
+    return console.log(`Created issue ${issueId} in Jira successfully`);
   });
 });
 
@@ -155,6 +155,6 @@ exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert(even
       `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
   const priority = calculateIssuePriority('velocityAlert');
   return createJiraIssue(summary, description, priority).then(() => {
-    console.log(`Created issue ${issueId} in Jira successfully`);
+    return console.log(`Created issue ${issueId} in Jira successfully`);
   });
 });

@@ -13,21 +13,21 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const gcs = require('@google-cloud/storage')();
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpeg_static = require('ffmpeg-static');
+ const functions = require('firebase-functions');
+ const gcs = require('@google-cloud/storage')();
+ const path = require('path');
+ const os = require('os');
+ const fs = require('fs');
+ const ffmpeg = require('fluent-ffmpeg');
+ const ffmpeg_static = require('ffmpeg-static');
 
 /**
  * When an audio is uploaded in the Storage bucket We generate a mono channel audio automatically using
  * node-fluent-ffmpeg.
  */
-exports.generateMonoAudio = functions.storage.object().onChange(event => {
+ exports.generateMonoAudio = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -39,7 +39,7 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
   // Exit if this is triggered on a file that is not an audio.
   if (!contentType.startsWith('audio/')) {
     console.log('This is not an audio.');
-    return;
+    return null;
   }
 
   // Get the file name.
@@ -47,20 +47,20 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
   // Exit if the audio is already converted.
   if (fileName.endsWith('_output.flac')) {
     console.log('Already a converted audio.');
-    return;
+    return null;
   }
 
   // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return;
+    return null;
   }
 
   // Exit if file exists but is not new and is only being triggered
   // because of a metadata change.
   if (resourceState === 'exists' && metageneration > 1) {
     console.log('This is a metadata change event.');
-    return;
+    return null;
   }
 
   // Download file from bucket.
@@ -77,27 +77,28 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
     console.log('Audio downloaded locally to', tempFilePath);
     // Convert the audio to mono channel using FFMPEG.
     const command = ffmpeg(tempFilePath)
-      .setFfmpegPath(ffmpeg_static.path)    
-      .audioChannels(1)
-      .audioFrequency(16000)
-      .format('flac')
-      .on('error', (err) => {
-        console.log('An error occurred: ' + err.message);
-      })
-      .on('end', () => {
-        console.log('Output audio created at', targetTempFilePath);
+    .setFfmpegPath(ffmpeg_static.path)    
+    .audioChannels(1)
+    .audioFrequency(16000)
+    .format('flac')
+    .on('error', (err) => {
+      console.log('An error occurred: ' + err.message);
+    })
+    .on('end', () => {
+      console.log('Output audio created at', targetTempFilePath);
 
         // Uploading the audio.
-        return bucket.upload(targetTempFilePath, {destination: targetStorageFilePath}).then(() => {
-          console.log('Output audio uploaded to', targetStorageFilePath);
+        return bucket.upload(targetTempFilePath, {destination: targetStorageFilePath})
+      })
+    .save(targetTempFilePath);
+    return null;
+  }).then(() => {
+    console.log('Output audio uploaded to', targetStorageFilePath);
 
           // Once the audio has been uploaded delete the local file to free up disk space.     
           fs.unlinkSync(tempFilePath);
           fs.unlinkSync(targetTempFilePath);
 
-          console.log('Temporary files removed.', targetTempFilePath);
+          return console.log('Temporary files removed.', targetTempFilePath);
         });
-      })
-      .save(targetTempFilePath);
-  });
 });

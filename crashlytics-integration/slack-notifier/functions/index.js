@@ -45,7 +45,7 @@ exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
       `in ${appName}, version ${latestAppVersion} on ${appPlatform}`;
 
   return notifySlack(slackMessage).then(() => {
-    console.log(`Posted new issue ${issueId} successfully to Slack`);
+    return console.log(`Posted new issue ${issueId} successfully to Slack`);
   });
 });
 
@@ -64,7 +64,7 @@ exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed(event =
       `resolved at ${new Date(resolvedTime).toString()}`;
 
   return notifySlack(slackMessage).then(() => {
-    console.log(`Posted regressed issue ${issueId} successfully to Slack`);
+    return console.log(`Posted regressed issue ${issueId} successfully to Slack`);
   });
 });
 

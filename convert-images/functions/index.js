@@ -13,15 +13,15 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const mkdirp = require('mkdirp-promise');
-const gcs = require('@google-cloud/storage')();
-const spawn = require('child-process-promise').spawn;
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+ const functions = require('firebase-functions');
+ const mkdirp = require('mkdirp-promise');
+ const gcs = require('@google-cloud/storage')();
+ const spawn = require('child-process-promise').spawn;
+ const path = require('path');
+ const os = require('os');
+ const fs = require('fs');
 
 // File extension for the created JPEG files.
 const JPEG_EXTENSION = '.jpg';
@@ -30,7 +30,7 @@ const JPEG_EXTENSION = '.jpg';
  * When an image is uploaded in the Storage bucket it is converted to JPEG automatically using
  * ImageMagick.
  */
-exports.imageToJPG = functions.storage.object().onChange(event => {
+ exports.imageToJPG = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
   const baseFileName = path.basename(filePath, path.extname(filePath));
@@ -43,19 +43,19 @@ exports.imageToJPG = functions.storage.object().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!object.contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return;
+    return null;
   }
 
   // Exit if the image is already a JPEG.
   if (object.contentType.startsWith('image/jpeg')) {
     console.log('Already a JPEG.');
-    return;
+    return null;
   }
 
   // Exit if this is a move or deletion event.
   if (object.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return;
+    return null;
   }
 
   const bucket = gcs.bucket(object.bucket);
@@ -65,7 +65,7 @@ exports.imageToJPG = functions.storage.object().onChange(event => {
     return bucket.file(filePath).download({destination: tempLocalFile});
   }).then(() => {
     console.log('The file has been downloaded to',
-        tempLocalFile);
+      tempLocalFile);
     // Convert the image to JPEG using ImageMagick.
     return spawn('convert', [tempLocalFile, tempLocalJPEGFile]);
   }).then(() => {
@@ -77,5 +77,6 @@ exports.imageToJPG = functions.storage.object().onChange(event => {
     // Once the image has been converted delete the local files to free up disk space.
     fs.unlinkSync(tempLocalJPEGFile);
     fs.unlinkSync(tempLocalFile);
+    return;
   });
 });

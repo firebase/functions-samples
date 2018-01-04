@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const cookieParser = require('cookie-parser');
-const crypto = require('crypto');
+ const functions = require('firebase-functions');
+ const cookieParser = require('cookie-parser');
+ const crypto = require('crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');
@@ -33,7 +33,7 @@ const OAUTH_SCOPES = 'basic';
 /**
  * Creates a configured simple-oauth2 client for Instagram.
  */
-function instagramOAuth2Client() {
+ function instagramOAuth2Client() {
   // Instagram OAuth 2 setup
   // TODO: Configure the `instagram.client_id` and `instagram.client_secret` Google Cloud environment variables.
   const credentials = {
@@ -53,7 +53,7 @@ function instagramOAuth2Client() {
  * Redirects the User to the Instagram authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
+ exports.redirect = functions.https.onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   cookieParser()(req, res, () => {
@@ -76,11 +76,11 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token, display name, photo URL and Instagram acces token are sent back in a JSONP callback
  * function with function name defined by the 'callback' query parameter.
  */
-exports.token = functions.https.onRequest((req, res) => {
+ exports.token = functions.https.onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   try {
-    cookieParser()(req, res, () => {
+    return cookieParser()(req, res, () => {
       console.log('Received verification state:', req.cookies.state);
       console.log('Received state:', req.query.state);
       if (!req.cookies.state) {
@@ -92,8 +92,9 @@ exports.token = functions.https.onRequest((req, res) => {
       oauth2.authorizationCode.getToken({
         code: req.query.code,
         redirect_uri: OAUTH_REDIRECT_URI
-      }).then(results => {
-        console.log('Auth code exchange result received:', results);
+      })
+    }).then(results => {
+      console.log('Auth code exchange result received:', results);
 
         // We have an Instagram access token and the user identity now.
         const accessToken = results.access_token;
@@ -102,16 +103,15 @@ exports.token = functions.https.onRequest((req, res) => {
         const userName = results.user.full_name;
 
         // Create a Firebase account and get the Custom Auth Token.
-        createFirebaseAccount(instagramUserID, userName, profilePic, accessToken).then(firebaseToken => {
+        return createFirebaseAccount(instagramUserID, userName, profilePic, accessToken)
+      }).then(firebaseToken => {
           // Serve an HTML page that signs the user in and updates the user profile.
-          res.jsonp({token: firebaseToken});
+          return res.jsonp({token: firebaseToken});
         });
-      });
-    });
-  } catch (error) {
-    return res.jsonp({error: error.toString});
-  }
-});
+    } catch (error) {
+      return res.jsonp({error: error.toString});
+    }
+  });
 
 /**
  * Creates a Firebase account with the given user profile and returns a custom auth token allowing
@@ -120,13 +120,13 @@ exports.token = functions.https.onRequest((req, res) => {
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-function createFirebaseAccount(instagramID, displayName, photoURL, accessToken) {
+ function createFirebaseAccount(instagramID, displayName, photoURL, accessToken) {
   // The UID we'll assign to the user.
   const uid = `instagram:${instagramID}`;
 
   // Save the access token tot he Firebase Realtime Database.
   const databaseTask = admin.database().ref(`/instagramAccessToken/${uid}`)
-      .set(accessToken);
+  .set(accessToken);
 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {
@@ -147,9 +147,9 @@ function createFirebaseAccount(instagramID, displayName, photoURL, accessToken) 
   // Wait for all async task to complete then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    return admin.auth().createCustomToken(uid).then((token) => {
-      console.log('Created Custom token for UID "', uid, '" Token:', token);
-      return token;
-    });
+    return admin.auth().createCustomToken(uid)
+  }).then((token) => {
+    console.log('Created Custom token for UID "', uid, '" Token:', token);
+    return token;
   });
 }

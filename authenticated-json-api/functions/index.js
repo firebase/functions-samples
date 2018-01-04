@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-'use strict';
+ 'use strict';
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const Language = require('@google-cloud/language');
-const express = require('express');
+ const functions = require('firebase-functions');
+ const admin = require('firebase-admin');
+ const Language = require('@google-cloud/language');
+ const express = require('express');
 
-const app = express();
-const language = new Language({projectId: process.env.GCLOUD_PROJECT});
+ const app = express();
+ const language = new Language({projectId: process.env.GCLOUD_PROJECT});
 
-admin.initializeApp(functions.config().firebase);
+ admin.initializeApp(functions.config().firebase);
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
 // The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
@@ -38,7 +38,7 @@ const authenticate = (req, res, next) => {
   const idToken = req.headers.authorization.split('Bearer ')[1];
   admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
     req.user = decodedIdToken;
-    next();
+    return next();
   }).catch(error => {
     res.status(403).send('Unauthorized');
   });
@@ -60,7 +60,7 @@ app.post('/messages', (req, res) => {
     return snapshot.ref.once('value');
   }).then(snapshot => {
     const val = snapshot.val();
-    res.status(201).json({message: val.message, category: val.category});
+    return res.status(201).json({message: val.message, category: val.category});
   }).catch(error => {
     console.log('Error detecting sentiment or saving message', error.message);
     res.sendStatus(500);
@@ -80,7 +80,7 @@ app.get('/messages', (req, res) => {
     return res.status(404).json({errorCode: 404, errorMessage: `category '${category}' not found`});
   }
 
-  query.once('value').then(snapshot => {
+  return query.once('value').then(snapshot => {
     var messages = [];
     snapshot.forEach(childSnapshot => {
       messages.push({key: childSnapshot.key, message: childSnapshot.val().message});
@@ -101,9 +101,9 @@ app.get('/message/:messageId', (req, res) => {
     if (snapshot.val() !== null) {
       // Cache details in the browser for 5 minutes
       res.set('Cache-Control', 'private, max-age=300');
-      res.status(200).json(snapshot.val());
+      return res.status(200).json(snapshot.val());
     } else {
-      res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
+      return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
     }
   }).catch(error => {
     console.log('Error getting message details', messageId, error.message);
