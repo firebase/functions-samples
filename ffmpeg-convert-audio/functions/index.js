@@ -13,21 +13,42 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
- 'use strict';
+'use strict';
 
- const functions = require('firebase-functions');
- const gcs = require('@google-cloud/storage')();
- const path = require('path');
- const os = require('os');
- const fs = require('fs');
- const ffmpeg = require('fluent-ffmpeg');
- const ffmpeg_static = require('ffmpeg-static');
+const functions = require('firebase-functions');
+const gcs = require('@google-cloud/storage')();
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpeg_static = require('ffmpeg-static');
+
+/**
+ * Utility method to convert audio to mono channel using FFMPEG.
+*/
+function reencodeAsync(tempFilePath, targetTempFilePath) {
+  return new Promise((resolve, reject) => {
+    const command = ffmpeg(tempFilePath)
+      .setFfmpegPath(ffmpeg_static.path)
+      .audioChannels(1)
+      .audioFrequency(16000)
+      .format('flac')
+      .on('error', (err) => {
+        console.log('An error occurred: ' + err.message);
+        reject();
+      })
+      .on('end', () => {
+        console.log('Output audio created at', targetTempFilePath);
+      })
+      .save(targetTempFilePath);
+  });
+}
 
 /**
  * When an audio is uploaded in the Storage bucket We generate a mono channel audio automatically using
  * node-fluent-ffmpeg.
  */
- exports.generateMonoAudio = functions.storage.object().onChange(event => {
+exports.generateMonoAudio = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -70,35 +91,20 @@
   const targetTempFileName = fileName.replace(/\.[^/.]+$/, "") + '_output.flac';
   const targetTempFilePath = path.join(os.tmpdir(), targetTempFileName);
   const targetStorageFilePath = path.join(path.dirname(filePath), targetTempFileName);
-  
-  return bucket.file(filePath).download({
-    destination: tempFilePath
-  }).then(() => {
-    console.log('Audio downloaded locally to', tempFilePath);
-    // Convert the audio to mono channel using FFMPEG.
-    const command = ffmpeg(tempFilePath)
-    .setFfmpegPath(ffmpeg_static.path)    
-    .audioChannels(1)
-    .audioFrequency(16000)
-    .format('flac')
-    .on('error', (err) => {
-      console.log('An error occurred: ' + err.message);
-    })
-    .on('end', () => {
-      console.log('Output audio created at', targetTempFilePath);
 
-        // Uploading the audio.
-        return bucket.upload(targetTempFilePath, {destination: targetStorageFilePath})
-      })
-    .save(targetTempFilePath);
-    return null;
-  }).then(() => {
-    console.log('Output audio uploaded to', targetStorageFilePath);
-
-          // Once the audio has been uploaded delete the local file to free up disk space.     
-          fs.unlinkSync(tempFilePath);
-          fs.unlinkSync(targetTempFilePath);
-
-          return console.log('Temporary files removed.', targetTempFilePath);
-        });
+  return bucket.file(filePath)
+    .download({destination: tempFilePath})
+    .then(() => {
+      console.log('Audio downloaded locally to', tempFilePath);
+      reencodeAsync(tempFilePath, targetTempFilePath)
+    }).then(() => {
+      bucket.upload(targetTempFilePath, {destination: targetStorageFilePath})
+    }).then(() => {
+      console.log('Output audio uploaded to', targetStorageFilePath);
+      // Once the audio has been uploaded delete the local file to free up disk space.
+      fs.unlinkSync(tempFilePath);
+      fs.unlinkSync(targetTempFilePath);
+    }).then(() => {
+      return console.log('Temporary files removed.', targetTempFilePath);
+    });
 });

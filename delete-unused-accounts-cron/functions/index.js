@@ -13,15 +13,15 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
- 'use strict';
+'use strict';
 
- const functions = require('firebase-functions');
- const admin = require('firebase-admin');
- admin.initializeApp(functions.config().firebase);
- const rp = require('request-promise');
- const promisePool = require('es6-promise-pool');
- const PromisePool = promisePool.PromisePool;
- const secureCompare = require('secure-compare');
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
+const rp = require('request-promise');
+const promisePool = require('es6-promise-pool');
+const PromisePool = promisePool.PromisePool;
+const secureCompare = require('secure-compare');
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 
@@ -30,7 +30,7 @@ const MAX_CONCURRENT = 3;
  * The request needs to be authorized by passing a 'key' query parameter in the URL. This key must
  * match a key set as an environment variable using `firebase functions:config:set cron.key="YOUR_KEY"`.
  */
- exports.accountcleanup = functions.https.onRequest((req, res) => {
+exports.accountcleanup = functions.https.onRequest((req, res) => {
   const key = req.query.key;
 
   // Exit if the keys don't match
@@ -72,7 +72,7 @@ const MAX_CONCURRENT = 3;
 /**
  * Returns the list of all users with their ID and lastLogin timestamp.
  */
- function getUsers(userIds = [], nextPageToken, accessToken) {
+function getUsers(userIds = [], nextPageToken, accessToken) {
   return getAccessToken(accessToken).then(accessToken => {
     const options = {
       method: 'POST',
@@ -99,7 +99,7 @@ const MAX_CONCURRENT = 3;
 /**
  * Returns an access token using the Google Cloud metadata server.
  */
- function getAccessToken(accessToken) {
+function getAccessToken(accessToken) {
   // If we have an accessToken in cache to re-use we pass it directly.
   if (accessToken) {
     return Promise.resolve(accessToken);

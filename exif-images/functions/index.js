@@ -13,24 +13,24 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
- 'use strict';
+'use strict';
 
- const functions = require('firebase-functions');
- const fs = require('fs');
- const crypto = require('crypto');
- const path = require('path');
- const os = require('os');
+const functions = require('firebase-functions');
+const fs = require('fs');
+const crypto = require('crypto');
+const path = require('path');
+const os = require('os');
 
- const admin = require('firebase-admin');
- admin.initializeApp(functions.config().firebase);
- const gcs = require('@google-cloud/storage')();
- const spawn = require('child-process-promise').spawn;
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
+const gcs = require('@google-cloud/storage')();
+const spawn = require('child-process-promise').spawn;
 
 /**
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
  * output of ImageMagick's `identify -verbose`) is saved in the Realtime Database.
  */
- exports.metadata = functions.storage.object().onChange(event => {
+exports.metadata = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
 
@@ -54,8 +54,9 @@
   const bucket = gcs.bucket(object.bucket);
   return bucket.file(filePath).download({destination: tempLocalFile}).then(() => {
     // Get Metadata from image.
-    var result = spawn('identify', ['-verbose', tempLocalFile], { capture: [ 'stdout', 'stderr' ]})
-    const metadata = imageMagickOutputToObject(result.stdout);  
+    return spawn('identify', ['-verbose', tempLocalFile], { capture: [ 'stdout', 'stderr' ]})
+  }).then(() => {
+    const metadata = imageMagickOutputToObject(result.stdout);
     // Save metadata to realtime datastore.
     return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata)
   }).then(() => {
@@ -71,7 +72,7 @@
 /**
  * Convert the output of ImageMagick's `identify -verbose` command to a JavaScript Object.
  */
- function imageMagickOutputToObject(output) {
+function imageMagickOutputToObject(output) {
   let previousLineIndent = 0;
   const lines = output.match(/[^\r\n]+/g);
   lines.shift(); // Remove First line
@@ -102,6 +103,6 @@
  * Makes sure the given string does not contain characters that can't be used as Firebase
  * Realtime Database keys such as '.' and replaces them by '*'.
  */
- function makeKeyFirebaseCompatible(key) {
+function makeKeyFirebaseCompatible(key) {
   return key.replace(/\./g, '*');
 }

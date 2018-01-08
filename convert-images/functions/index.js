@@ -13,15 +13,15 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
- 'use strict';
+'use strict';
 
- const functions = require('firebase-functions');
- const mkdirp = require('mkdirp-promise');
- const gcs = require('@google-cloud/storage')();
- const spawn = require('child-process-promise').spawn;
- const path = require('path');
- const os = require('os');
- const fs = require('fs');
+const functions = require('firebase-functions');
+const mkdirp = require('mkdirp-promise');
+const gcs = require('@google-cloud/storage')();
+const spawn = require('child-process-promise').spawn;
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
 
 // File extension for the created JPEG files.
 const JPEG_EXTENSION = '.jpg';
@@ -30,7 +30,7 @@ const JPEG_EXTENSION = '.jpg';
  * When an image is uploaded in the Storage bucket it is converted to JPEG automatically using
  * ImageMagick.
  */
- exports.imageToJPG = functions.storage.object().onChange(event => {
+exports.imageToJPG = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
   const baseFileName = path.basename(filePath, path.extname(filePath));
@@ -64,8 +64,7 @@ const JPEG_EXTENSION = '.jpg';
     // Download file from bucket.
     return bucket.file(filePath).download({destination: tempLocalFile});
   }).then(() => {
-    console.log('The file has been downloaded to',
-      tempLocalFile);
+    console.log('The file has been downloaded to', tempLocalFile);
     // Convert the image to JPEG using ImageMagick.
     return spawn('convert', [tempLocalFile, tempLocalJPEGFile]);
   }).then(() => {

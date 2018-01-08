@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
- 'use strict';
+'use strict';
 
- const functions = require('firebase-functions');
- const admin = require('firebase-admin');
- const Language = require('@google-cloud/language');
- const express = require('express');
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const Language = require('@google-cloud/language');
+const express = require('express');
 
- const app = express();
- const language = new Language({projectId: process.env.GCLOUD_PROJECT});
+const app = express();
+const language = new Language({projectId: process.env.GCLOUD_PROJECT});
 
- admin.initializeApp(functions.config().firebase);
+admin.initializeApp(functions.config().firebase);
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
 // The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
@@ -98,13 +98,10 @@ app.get('/messages', (req, res) => {
 app.get('/message/:messageId', (req, res) => {
   const messageId = req.params.messageId;
   admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value').then(snapshot => {
-    if (snapshot.val() !== null) {
-      // Cache details in the browser for 5 minutes
-      res.set('Cache-Control', 'private, max-age=300');
-      return res.status(200).json(snapshot.val());
-    } else {
-      return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
+    if (snapshot.val() === null) {
+        return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
     }
+    return res.set('Cache-Control', 'private, max-age=300');
   }).catch(error => {
     console.log('Error getting message details', messageId, error.message);
     res.sendStatus(500);

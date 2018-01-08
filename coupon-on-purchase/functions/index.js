@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 'use strict';
+'use strict';
 
- const functions = require('firebase-functions');
- const admin = require('firebase-admin');
- admin.initializeApp(functions.config().firebase);
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 
 // [START all]
 /**
@@ -47,7 +47,7 @@ exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLo
  * @param {string} uid The UID of the user.
  * @param {string} userLanguage The user language in language-country format.
  */
- function sendCouponViaFCM(uid, userLanguage) {
+function sendCouponViaFCM(uid, userLanguage) {
   // Fetching all the user's device tokens.
   return getDeviceTokens(uid).then(tokens => {
     if (tokens.length > 0) {
@@ -82,7 +82,7 @@ exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLo
  * @param {string} uid The UID of the user.
  * @param {string} userLanguage The user language in language-country format.
  */
- function sendHighValueCouponViaFCM(uid, userLanguage) {
+function sendHighValueCouponViaFCM(uid, userLanguage) {
   // Fetching all the user's device tokens.
   return getDeviceTokens(uid).then(tokens => {
     if (tokens.length > 0) {
@@ -116,7 +116,7 @@ exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLo
  *
  * @param {string} uid The UID of the user.
  */
- function getDeviceTokens(uid) {
+function getDeviceTokens(uid) {
   return admin.database().ref(`/users/${uid}/tokens`).once('value').then(snap => {
     if (snap.exists()) {
       return Object.keys(snap.val());
