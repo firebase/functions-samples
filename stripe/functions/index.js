@@ -1,58 +1,58 @@
 /**
- * Copyright 2016 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- 'use strict';
+* Copyright 2016 Google Inc. All Rights Reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+'use strict';
 
- const functions = require('firebase-functions'),
- admin = require('firebase-admin'),
- logging = require('@google-cloud/logging')();
+const functions = require('firebase-functions'),
+  admin = require('firebase-admin'),
+  logging = require('@google-cloud/logging')();
 
- admin.initializeApp(functions.config().firebase);
+admin.initializeApp(functions.config().firebase);
 
- const stripe = require('stripe')(functions.config().stripe.token),
- currency = functions.config().stripe.currency || 'USD';
+const stripe = require('stripe')(functions.config().stripe.token),
+  currency = functions.config().stripe.currency || 'USD';
 
 // [START chargecustomer]
 // Charge the Stripe customer whenever an amount is written to the Realtime database
 exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/charges/{id}').onWrite(event => {
   const val = event.data.val();
   // This onWrite will trigger whenever anything is written to the path, so
-  // noop if the charge was deleted, errored out, or the Stripe API returned a result (id exists) 
+  // noop if the charge was deleted, errored out, or the Stripe API returned a result (id exists)
   if (val === null || val.id || val.error) return null;
   // Look up the Stripe customer id written in createStripeCustomer
   return admin.database().ref(`/stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
     return snapshot.val();
   }).then(customer => {
-    // Create a charge using the pushId as the idempotency key, protecting against double charges 
+    // Create a charge using the pushId as the idempotency key, protecting against double charges
     const amount = val.amount;
     const idempotency_key = event.params.id;
     let charge = {amount, currency, customer};
     if (val.source !== null) charge.source = val.source;
     return stripe.charges.create(charge, {idempotency_key});
   }).then(response => {
-      // If the result is successful, write it back to the database
-      return event.data.adminRef.set(response);
-    }, error => {
-      // We want to capture errors and render them in a user-friendly way, while
-      // still logging an exception with Stackdriver
-      return event.data.adminRef.child('error').set(userFacingMessage(error))
-    }
-    ).then(() => {
-      return reportError(error, {user: event.params.userId});
-    });
+    // If the result is successful, write it back to the database
+    return event.data.adminRef.set(response);
+  }, error => {
+    // We want to capture errors and render them in a user-friendly way, while
+    // still logging an exception with Stackdriver
+    return event.data.adminRef.child('error').set(userFacingMessage(error))
+  }
+  ).then(() => {
+    return reportError(error, {user: event.params.userId});
   });
+});
 // [END chargecustomer]]
 
 // When a user is created, register them with Stripe

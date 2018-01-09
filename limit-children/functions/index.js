@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 'use strict';
+'use strict';
 
- const functions = require('firebase-functions');
+const functions = require('firebase-functions');
 
 // Max number of lines of the chat history.
 const MAX_LOG_COUNT = 5;

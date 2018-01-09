@@ -1,19 +1,19 @@
 /**
- * Copyright 2016 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for t`he specific language governing permissions and
- * limitations under the License.
- */
- 'use strict';
+* Copyright 2016 Google Inc. All Rights Reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for t`he specific language governing permissions and
+* limitations under the License.
+*/
+'use strict';
 
 // [START import]
 const functions = require('firebase-functions');
@@ -26,12 +26,12 @@ const fs = require('fs');
 
 // [START generateThumbnail]
 /**
- * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
- * ImageMagick.
- */
+* When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
+* ImageMagick.
+*/
 // [START generateThumbnailTrigger]
 exports.generateThumbnail = functions.storage.object().onChange(event => {
-// [END generateThumbnailTrigger]
+  // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const object = event.data; // The Storage object.
 
@@ -89,8 +89,8 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
     // Uploading the thumbnail.
     return bucket.upload(tempFilePath, { destination: thumbFilePath, metadata: metadata });
-  // Once the thumbnail has been uploaded delete the local file to free up disk space.
-}).then(() => fs.unlinkSync(tempFilePath));
+    // Once the thumbnail has been uploaded delete the local file to free up disk space.
+  }).then(() => fs.unlinkSync(tempFilePath));
   // [END thumbnailGeneration]
 });
 // [END generateThumbnail]

@@ -1,23 +1,23 @@
 /**
- * Copyright 2016 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- 'use strict';
+* Copyright 2016 Google Inc. All Rights Reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+'use strict';
 
- const functions = require('firebase-functions');
- const cookieParser = require('cookie-parser');
- const crypto = require('crypto');
+const functions = require('firebase-functions');
+const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');
@@ -30,9 +30,9 @@ admin.initializeApp({
 const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
 
 /**
- * Creates a configured LinkedIn API Client instance.
- */
- function linkedInClient() {
+* Creates a configured LinkedIn API Client instance.
+*/
+function linkedInClient() {
   // LinkedIn OAuth 2 setup
   // TODO: Configure the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables.
   return require('node-linkedin')(
@@ -42,10 +42,10 @@ const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
 }
 
 /**
- * Redirects the User to the LinkedIn authentication consent screen. ALso the 'state' cookie is set for later state
- * verification.
- */
- exports.redirect = functions.https.onRequest((req, res) => {
+* Redirects the User to the LinkedIn authentication consent screen. ALso the 'state' cookie is set for later state
+* verification.
+*/
+exports.redirect = functions.https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   cookieParser()(req, res, () => {
@@ -57,12 +57,12 @@ const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
 });
 
 /**
- * Exchanges a given LinkedIn auth code passed in the 'code' URL query parameter for a Firebase auth token.
- * The request also needs to specify a 'state' query parameter which will be checked against the 'state' cookie.
- * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
- * 'callback' query parameter.
- */
- exports.token = functions.https.onRequest((req, res) => {
+* Exchanges a given LinkedIn auth code passed in the 'code' URL query parameter for a Firebase auth token.
+* The request also needs to specify a 'state' query parameter which will be checked against the 'state' cookie.
+* The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
+* 'callback' query parameter.
+*/
+exports.token = functions.https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   try {
@@ -96,9 +96,9 @@ const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
           // Create a Firebase account and get the Custom Auth Token.
           return createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
             firebaseToken => {
-                // Serve an HTML page that signs the user in and updates the user profile.
-                return res.jsonp({token: firebaseToken});
-              });
+              // Serve an HTML page that signs the user in and updates the user profile.
+              return res.jsonp({token: firebaseToken});
+            });
         });
       });
     });
@@ -108,19 +108,18 @@ const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
 });
 
 /**
- * Creates a Firebase account with the given user profile and returns a custom auth token allowing
- * signing-in this account.
- * Also saves the accessToken to the datastore at /linkedInAccessToken/$uid
- *
- * @returns {Promise<string>} The Firebase custom auth token in a promise.
- */
- function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
+* Creates a Firebase account with the given user profile and returns a custom auth token allowing
+* signing-in this account.
+* Also saves the accessToken to the datastore at /linkedInAccessToken/$uid
+*
+* @returns {Promise<string>} The Firebase custom auth token in a promise.
+*/
+function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
   // The UID we'll assign to the user.
   const uid = `linkedin:${linkedinID}`;
 
   // Save the access token tot he Firebase Realtime Database.
-  const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`)
-  .set(accessToken);
+  const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`).set(accessToken);
 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {

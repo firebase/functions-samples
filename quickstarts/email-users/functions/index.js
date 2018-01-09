@@ -1,22 +1,22 @@
 /**
- * Copyright 2015 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- 'use strict';
+* Copyright 2015 Google Inc. All Rights Reserved.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+'use strict';
 
- const functions = require('firebase-functions');
- const nodemailer = require('nodemailer');
+const functions = require('firebase-functions');
+const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
 // For Gmail, enable these:
 // 1. https://www.google.com/settings/security/lesssecureapps
@@ -39,11 +39,11 @@ const APP_NAME = 'Cloud Storage for Firebase quickstart';
 
 // [START sendWelcomeEmail]
 /**
- * Sends a welcome email to new user.
- */
+* Sends a welcome email to new user.
+*/
 // [START onCreateTrigger]
 exports.sendWelcomeEmail = functions.auth.user().onCreate(event => {
-// [END onCreateTrigger]
+  // [END onCreateTrigger]
   // [START eventAttributes]
   const user = event.data; // The Firebase user.
 
@@ -57,17 +57,17 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate(event => {
 
 // [START sendByeEmail]
 /**
- * Send an account deleted email confirmation to users who delete their accounts.
- */
+* Send an account deleted email confirmation to users who delete their accounts.
+*/
 // [START onDeleteTrigger]
 exports.sendByeEmail = functions.auth.user().onDelete(event => {
-// [END onDeleteTrigger]
-const user = event.data;
+  // [END onDeleteTrigger]
+  const user = event.data;
 
-const email = user.email;
-const displayName = user.displayName;
+  const email = user.email;
+  const displayName = user.displayName;
 
-return sendGoodbyEmail(email, displayName);
+  return sendGoodbyEmail(email, displayName);
 });
 // [END sendByeEmail]
 
