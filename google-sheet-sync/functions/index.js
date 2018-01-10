@@ -113,7 +113,7 @@ function appendPromise(requestWithoutAuth) {
 // checks if oauthTokens have been loaded into memory, and if not, retrieves them
 function getAuthorizedClient() {
   if (oauthTokens) {
-    return Promise.success(functionsOauthClient);
+    return Promise.resolve(functionsOauthClient);
   }
   return db.ref(DB_TOKEN_PATH).once('value').then(snapshot => {
     oauthTokens = snapshot.val();

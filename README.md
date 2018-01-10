@@ -266,7 +266,7 @@ Uses a Realtime Database trigger.
 Automatically creates a new issue in your Jira project when a new issue is reported in Crashlytics.
 Uses a Crashlytics trigger.
 
-### [Create Jira Issue upon new Crashlytics issue](/crashlytics-integration/slack-notifier)
+### [Notify a Slack channel upon new Crashlytics issue](/crashlytics-integration/slack-notifier)
 
 Automatically sends a Slack notification to a specific Slack channel when a new issue is reported in Crashlytics.
 Uses a Crashlytics trigger.

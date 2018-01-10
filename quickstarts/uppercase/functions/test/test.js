@@ -81,7 +81,7 @@ describe('Cloud Functions', () => {
         // the database item before the event, while the delta parameter represents the change that
         // occured to cause the event to fire. The last parameter is the database path, which we are
         // not making use of in this test. So we will omit it.
-        data: new functions.database.DeltaSnapshot(null, null, null, null, 'input'),
+        data: new functions.database.DeltaSnapshot(null, null, null, 'input'),
         // To mock a database delete event:
         // data: new functions.database.DeltaSnapshot(null, null, 'old_data', null)
       };
@@ -128,7 +128,7 @@ describe('Cloud Functions', () => {
       // This mimics the behavior of a push to the database, which returns an object containing a
       // ref property representing the URL of the newly pushed item.
       databaseStub = sinon.stub(admin, 'database');
-      databaseStub.returns( { ref: refStub });
+      databaseStub.get(() => (() => ({ ref: refStub })));
       refStub.withArgs(refParam).returns( { push: pushStub });
       pushStub.withArgs(pushParam).returns( Promise.resolve({ ref: 'new_ref' }));
       // [END stubAdminDatabase]
