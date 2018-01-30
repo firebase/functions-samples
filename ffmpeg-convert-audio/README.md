@@ -26,3 +26,8 @@ To deploy and test the sample:
  - Setup the CLI to use your Firebase project using `firebase use --add` and select your Firebase project
  - Deploy your project's code using `firebase deploy`
  - Go to the Firebase Console **Storage** tab and upload an audio. After a short time a converted audio with the same name but a `_output.flac` suffix will be created in the same folder (make sure you refresh the UI to see the new file).
+
+ ## Notes
+
+ - Take into account that the audio files produced should not exceed the size of the memory of your function.
+ - The audio conversion could take a certain amount of time, increase the timeout of your function using the cloud functions webgui so the function can run for a longer time.

@@ -7,6 +7,7 @@
     "ffmpeg-static": "^2.0.0",
     "firebase-admin": "^4.1.1",
     "firebase-functions": "^0.5.1",
-    "fluent-ffmpeg": "^2.1.2"
+    "fluent-ffmpeg": "^2.1.2",
+    "bluebird": "^3.5.1"
   }
 }
