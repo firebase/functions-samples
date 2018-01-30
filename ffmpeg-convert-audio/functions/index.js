@@ -24,17 +24,17 @@ const ffmpeg = require('fluent-ffmpeg');
 const ffmpeg_static = require('ffmpeg-static');
 
 function promisifyCommand(command) {
-  return new Promise(cb => {
+  return new Promise((resolve, reject) => {
     command
       .on('end', () => {
-        cb(null);
+        resolve();
       })
       .on('error', error => {
-        cb(error);
+        reject(error);
       })
       .run();
-  });
-};
+   });
+ };
 
 /**
  * When an audio is uploaded in the Storage bucket We generate a mono channel audio automatically using
