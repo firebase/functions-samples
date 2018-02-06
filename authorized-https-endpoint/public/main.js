@@ -25,7 +25,7 @@ function Demo() {
     this.responseContainerCookie = document.getElementById('demo-response-cookie');
     this.urlContainer = document.getElementById('demo-url');
     this.urlContainerCookie = document.getElementById('demo-url-cookie');
-    this.helloUserUrl = 'https://' + firebase.app().options.authDomain + '/hello';
+    this.helloUserUrl = window.location.href + 'hello';
     this.signedOutCard = document.getElementById('demo-signed-out-card');
     this.signedInCard = document.getElementById('demo-signed-in-card');
 
@@ -96,7 +96,7 @@ Demo.prototype.startFunctionsCookieRequest = function() {
     req.open('GET', this.helloUserUrl, true);
     req.send();
   }.bind(this));
-}
+};
 
 // Load the demo.
 window.demo = new Demo();

@@ -23,6 +23,19 @@ const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpeg_static = require('ffmpeg-static');
 
+function promisifyCommand(command) {
+  return new Promise((resolve, reject) => {
+    command
+      .on('end', () => {
+        resolve();
+      })
+      .on('error', error => {
+        reject(error);
+      })
+      .run();
+   });
+ };
+
 /**
  * Utility method to convert audio to mono channel using FFMPEG.
 */
@@ -92,19 +105,33 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
   const targetTempFilePath = path.join(os.tmpdir(), targetTempFileName);
   const targetStorageFilePath = path.join(path.dirname(filePath), targetTempFileName);
 
-  return bucket.file(filePath)
-    .download({destination: tempFilePath})
-    .then(() => {
-      console.log('Audio downloaded locally to', tempFilePath);
-      reencodeAsync(tempFilePath, targetTempFilePath)
-    }).then(() => {
-      bucket.upload(targetTempFilePath, {destination: targetStorageFilePath})
-    }).then(() => {
-      console.log('Output audio uploaded to', targetStorageFilePath);
-      // Once the audio has been uploaded delete the local file to free up disk space.
-      fs.unlinkSync(tempFilePath);
-      fs.unlinkSync(targetTempFilePath);
-    }).then(() => {
-      return console.log('Temporary files removed.', targetTempFilePath);
+  return bucket.file(filePath).download({
+    destination: tempFilePath
+  }).then(() => {
+    console.log('Audio downloaded locally to', tempFilePath);
+    // Convert the audio to mono channel using FFMPEG.
+
+    let command = ffmpeg(tempFilePath)
+      .setFfmpegPath(ffmpeg_static.path)
+      .audioChannels(1)
+      .audioFrequency(16000)
+      .format('flac')
+      .output(targetTempFilePath);
+
+    command = promisifyCommand(command);
+
+    return command.then(() => {
+      console.log('Output audio created at', targetTempFilePath);
+      // Uploading the audio.
+      return bucket.upload(targetTempFilePath, { destination: targetStorageFilePath }).then(() => {
+        console.log('Output audio uploaded to', targetStorageFilePath);
+
+        // Once the audio has been uploaded delete the local file to free up disk space.
+        fs.unlinkSync(tempFilePath);
+        fs.unlinkSync(targetTempFilePath);
+
+        console.log('Temporary files removed.', targetTempFilePath);
+      });
     });
+  });
 });

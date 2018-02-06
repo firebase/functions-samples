@@ -19,7 +19,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const googleAuth = require('google-auth-library');
+const { OAuth2Client } = require('google-auth-library');
 const google = require('googleapis');
 
 admin.initializeApp(functions.config().firebase);
@@ -38,25 +38,25 @@ const CONFIG_SHEET_ID = functions.config().googleapi.sheet_id;
 const CONFIG_DATA_PATH = functions.config().watchedpaths.data_path;
 
 // The OAuth Callback Redirect.
-const FUNCTIONS_REDIRECT = `${process.env.GCLOUD_PROJECT}.firebaseapp.com/oauthcallback`;
+const FUNCTIONS_REDIRECT = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/oauthcallback`;
 
 // setup for authGoogleAPI
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const auth = new googleAuth();
-const functionsOauthClient = new auth.OAuth2(CONFIG_CLIENT_ID, CONFIG_CLIENT_SECRET,
+const functionsOauthClient = new OAuth2Client(CONFIG_CLIENT_ID, CONFIG_CLIENT_SECRET,
   FUNCTIONS_REDIRECT);
 
 // OAuth token cached locally.
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
-exports.authgoogleapi = functions.https.onRequest((req, res) =>
+exports.authgoogleapi = functions.https.onRequest((req, res) => {
+  res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
     prompt: 'consent'
   }))
-);
+});
 
 // setup for OauthCallback
 const DB_TOKEN_PATH = '/api_tokens';
@@ -64,6 +64,7 @@ const DB_TOKEN_PATH = '/api_tokens';
 // after you grant access, you will be redirected to the URL for this Function
 // this Function stores the tokens to your Firebase database
 exports.oauthcallback = functions.https.onRequest((req, res) => {
+  res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   const code = req.query.code;
   functionsOauthClient.getToken(code, (err, tokens) => {
     // Now tokens contains an access_token and an optional refresh_token. Save them.
@@ -115,7 +116,7 @@ function appendPromise(requestWithoutAuth) {
 // checks if oauthTokens have been loaded into memory, and if not, retrieves them
 function getAuthorizedClient() {
   if (oauthTokens) {
-    return Promise.success(functionsOauthClient);
+    return Promise.resolve(functionsOauthClient);
   }
   return db.ref(DB_TOKEN_PATH).once('value').then(snapshot => {
     oauthTokens = snapshot.val();
