@@ -19,7 +19,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
  - Find your Firebase API Server key in the Firebase Console under **Project Settings > Cloud Messaging > Legacy server key**
  - Add your Firebase API Server key to your Firebase project configuration:
     ```bash
-    firebase functions:config:set keys.firebase_api=<YOUR FIREBASE API KEY>
+    firebase functions:config:set google.api_key=<YOUR FIREBASE API KEY>
     ```
  - Deploy the function using `firebase deploy`
  - Manually add an object to the Realtime Database following the structure described below.

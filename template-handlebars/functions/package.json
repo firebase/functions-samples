@@ -6,9 +6,9 @@
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "express-handlebars": "^3.0.0",
-    "firebase-admin": "^4.1.2",
-    "firebase-functions": "^0.5.1",
-    "handlebars": "^4.0.8"
+    "handlebars": "^4.0.8",
+    "firebase-admin": "~5.9.0",
+    "firebase-functions": "^1.0.0"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
@@ -21,5 +21,6 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
-  }
+  },
+  "private": true
 }

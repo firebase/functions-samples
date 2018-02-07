@@ -32,14 +32,12 @@ const notifySlack = (slackMessage) => {
   });
 };
 
-exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
+exports.postOnNewIssue = functions.crashlytics.issue().onNew((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
 
   const slackMessage = `<!here|here> There is a new issue - ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform}`;
@@ -49,15 +47,13 @@ exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected((event) => 
   });
 });
 
-exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
-  const resolvedTime = data.resolvedTime;
+exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
+  const resolvedTime = issue.resolvedTime;
 
   const slackMessage = `<!here|here> There is a regressed issue ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform}. This issue was previously ` +
@@ -68,15 +64,13 @@ exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed((event)
   });
 });
 
-exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
-  const crashPercentage = data.velocityAlert.crashPercentage;
+exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
+  const crashPercentage = issue.velocityAlert.crashPercentage;
 
   const slackMessage = `<!here|here> There is an issue ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform} that is causing ` +

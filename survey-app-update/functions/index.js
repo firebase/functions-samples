@@ -17,7 +17,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
 // For other types of transports such as Sendgrid see https://nodemailer.com/transports/
@@ -35,8 +35,8 @@ const LATEST_VERSION = '2.0';
  * After a user has updated the app. Send them a survey to compare the app with the old version.
  */
 exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog((event) => {
-  const uid = event.data.user.userId;
-  const appVerion = event.data.user.appInfo.appVersion;
+  const uid = event.user.userId;
+  const appVerion = event.user.appInfo.appVersion;
 
   // Check that the user has indeed upgraded to the latest version.
   if (appVerion === LATEST_VERSION) {

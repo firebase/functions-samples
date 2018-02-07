@@ -68,22 +68,11 @@
 </div>
 
 <!-- Firebase -->
-<!-- ***********************************************************************************************************************
-     * TODO(DEVELOPER): Paste the initialization snippet from: Firebase Console > Overview > Add Firebase to your web app. *
-     *********************************************************************************************************************** -->
-
-<script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyAu14Qhq_t4GbyZlRwVlFVLellEo4Gjmzs",
-    authDomain: "functions-email-confirmation.firebaseapp.com",
-    databaseURL: "https://functions-email-confirmation.firebaseio.com",
-    storageBucket: "functions-email-confirmation.appspot.com",
-    messagingSenderId: "207174568617"
-  };
-  firebase.initializeApp(config);
-</script>
+<script defer src="/__/firebase/4.8.0/firebase-app.js"></script>
+<script defer src="/__/firebase/4.8.0/firebase-auth.js"></script>
+<script defer src="/__/firebase/4.8.0/firebase-database.js"></script>
+<!-- initialize the SDK after all desired features are loaded -->
+<script defer src="/__/firebase/init.js"></script>
 
 <script src="main.js"></script>
 </body>

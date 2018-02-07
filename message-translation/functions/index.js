@@ -17,23 +17,23 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 const translate = require('@google-cloud/translate')();
 
 // List of output languages.
 const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 
 // Translate an incoming message.
-exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite((event) => {
-  const snapshot = event.data;
+exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite((change, context) => {
+  const snapshot = change.after.val();
   if (snapshot.val().translated) {
     return null;
   }
   const promises = [];
   for (let i = 0; i < LANGUAGES.length; i++) {
     const language = LANGUAGES[i];
-    if (language !== event.params.languageID) {
-      promises.push(translate.translate(snapshot.val().message, {from: event.params.languageID, to: language}).then(
+    if (language !== context.params.languageID) {
+      promises.push(translate.translate(snapshot.val().message, {from: context.params.languageID, to: language}).then(
           (results) => {
             return admin.database().ref(`/messages/${language}/${snapshot.key}`).set({
               message: results[0],

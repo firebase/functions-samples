@@ -16,12 +16,10 @@
 'use strict';
 
 const functions = require('firebase-functions');
-// CORS Express middleware to enable CORS Requests.
-const cors = require('cors')({origin: true});
 const paypal = require('paypal-rest-sdk');
 // firebase-admin SDK init
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 // Configure your environment
 paypal.configure({
   mode: 'sandbox', // sandbox or live
@@ -34,7 +32,7 @@ paypal.configure({
  * Initialize the payment and redirect the user to the PayPal payment page
  */
 exports.pay = functions.https.onRequest((req, res) => {
-  // 1.Set up a payment information object, Nuild PayPal payment request
+  // 1.Set up a payment information object, Build PayPal payment request
   const payReq = JSON.stringify({
     intent: 'sale',
     payer: {

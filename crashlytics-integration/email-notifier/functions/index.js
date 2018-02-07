@@ -21,16 +21,14 @@ const sendgridMail = require('@sendgrid/mail');
 // Authentication for the SendGrid account
 sendgridMail.setApiKey(functions.config().sendgrid.api_key);
 
-exports.sendOnNewIssue = functions.crashlytics.issue().onNewDetected((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
+exports.sendOnNewIssue = functions.crashlytics.issue().onNew((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appId = issue.appInfo.appId;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
+  const createTime = issue.createTime;
 
   const emailDetails = {
     to: functions.config().email.destination_email,
@@ -53,17 +51,15 @@ exports.sendOnNewIssue = functions.crashlytics.issue().onNewDetected((event) => 
   });
 });
 
-exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
-  const resolvedTime = data.resolvedTime;
+exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appId = issue.appInfo.appId;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
+  const createTime = issue.createTime;
+  const resolvedTime = issue.resolvedTime;
 
   const emailDetails = {
     to: functions.config().email.destination_email,
@@ -87,18 +83,16 @@ exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed((event)
   });
 });
 
-exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
-  const createTime = data.createTime;
-  const crashPercentage = data.velocityAlert.crashPercentage;
-  const crashes = data.velocityAlert.crashes;
+exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appId = issue.appInfo.appId;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
+  const createTime = issue.createTime;
+  const crashPercentage = issue.velocityAlert.crashPercentage;
+  const crashes = issue.velocityAlert.crashes;
 
   const emailDetails = {
     to: functions.config().email.destination_email,

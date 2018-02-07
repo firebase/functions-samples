@@ -19,11 +19,9 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+admin.initializeApp();
 const {OAuth2Client} = require('google-auth-library');
 const {google} = require('googleapis');
-
-admin.initializeApp(functions.config().firebase);
-const db = admin.database();
 
 // TODO: Use firebase functions:config:set to configure your googleapi object:
 // googleapi.client_id = Google API client ID,
@@ -71,7 +69,7 @@ exports.oauthcallback = functions.https.onRequest((req, res) => {
     if (err) {
       return res.status(400).send(err);
     }
-    return db.ref(DB_TOKEN_PATH).set(tokens)
+    return admin.database().ref(DB_TOKEN_PATH).set(tokens)
         .then(() => {
           return res.status(200).send('App successfully configured with new Credentials. '
             + 'You can now close this page.');
@@ -80,20 +78,19 @@ exports.oauthcallback = functions.https.onRequest((req, res) => {
 });
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
-exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onWrite(
-  (event) => {
-    const newRecord = event.data.current.val();
-    return appendPromise({
-      spreadsheetId: CONFIG_SHEET_ID,
-      range: 'A:C',
-      valueInputOption: 'USER_ENTERED',
-      insertDataOption: 'INSERT_ROWS',
-      resource: {
-        values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]],
-      },
+exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onCreate(
+    (snap) => {
+      const newRecord = snap.val();
+      return appendPromise({
+        spreadsheetId: CONFIG_SHEET_ID,
+        range: 'A:C',
+        valueInputOption: 'USER_ENTERED',
+        insertDataOption: 'INSERT_ROWS',
+        resource: {
+          values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]],
+        },
+      });
     });
-  }
-);
 
 // accepts an append request, returns a Promise to append it, enriching it with auth
 function appendPromise(requestWithoutAuth) {
@@ -118,7 +115,7 @@ function getAuthorizedClient() {
   if (oauthTokens) {
     return Promise.resolve(functionsOauthClient);
   }
-  return db.ref(DB_TOKEN_PATH).once('value').then((snapshot) => {
+  return admin.database().ref(DB_TOKEN_PATH).once('value').then((snapshot) => {
     oauthTokens = snapshot.val();
     functionsOauthClient.setCredentials(oauthTokens);
     return functionsOauthClient;
@@ -131,7 +128,7 @@ exports.testsheetwrite = functions.https.onRequest((req, res) => {
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
   const ID = new Date().getUTCMilliseconds();
-  return db.ref(`${CONFIG_DATA_PATH}/${ID}`).set({
+  return admin.database().ref(`${CONFIG_DATA_PATH}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
     thirdColumn: random3,

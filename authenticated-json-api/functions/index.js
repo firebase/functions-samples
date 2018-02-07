@@ -18,13 +18,12 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const Language = require('@google-cloud/language');
+admin.initializeApp();
+const language = require('@google-cloud/language');
+const client = new language.LanguageServiceClient();
 const express = require('express');
-
 const app = express();
-const language = new Language({projectId: process.env.GCLOUD_PROJECT});
 
-admin.initializeApp(functions.config().firebase);
 
 // Express middleware that validates Firebase ID Tokens passed in the Authorization HTTP header.
 // The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
@@ -52,8 +51,8 @@ app.use(authenticate);
 app.post('/messages', (req, res) => {
   const message = req.body.message;
 
-  language.detectSentiment(message).then((results) => {
-    const category = categorizeScore(results[0].score);
+  client.analyzeSentiment({document: message}).then((results) => {
+    const category = categorizeScore(results[0].documentSentiment.score);
     const data = {message: message, sentiment: results, category: category};
     return admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
   }).then((snapshot) => {

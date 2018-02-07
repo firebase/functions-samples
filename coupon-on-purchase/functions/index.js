@@ -17,7 +17,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 // [START all]
 /**
@@ -27,9 +27,9 @@ admin.initializeApp(functions.config().firebase);
 exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLog((event) => {
 // [END trigger]
   // [START attributes]
-  const user = event.data.user;
+  const user = event.user;
   const uid = user.userId; // The user ID set via the setUserId API.
-  const purchaseValue = event.data.valueInUSD; // Amount of the purchase in USD.
+  const purchaseValue = event.valueInUSD; // Amount of the purchase in USD.
   const userLanguage = user.deviceInfo.userDefaultLanguage; // The user language in language-country format.
   // [END attributes]
 

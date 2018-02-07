@@ -98,15 +98,13 @@ const createJiraIssue = (summary, description, priority) => {
   });
 };
 
-exports.createNewIssue = functions.crashlytics.issue().onNewDetected((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
+exports.createNewIssue = functions.crashlytics.issue().onNew((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appId = issue.appInfo.appId;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
 
   const summary = `New Issue - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `There is a new issue - ${issueTitle} in ${appId}, ` +
@@ -117,16 +115,14 @@ exports.createNewIssue = functions.crashlytics.issue().onNewDetected((event) => 
   });
 });
 
-exports.createRegressedIssue = functions.crashlytics.issue().onRegressed((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
-  const resolvedTime = data.resolvedTime;
+exports.createRegressedIssue = functions.crashlytics.issue().onRegressed((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appId = issue.appInfo.appId;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
+  const resolvedTime = issue.resolvedTime;
 
   const summary = `Regressed Issue - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `There is a regressed issue - ${issueTitle} in ${appId}, ` +
@@ -138,16 +134,14 @@ exports.createRegressedIssue = functions.crashlytics.issue().onRegressed((event)
   });
 });
 
-exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert((event) => {
-  const data = event.data;
-
-  const issueId = data.issueId;
-  const issueTitle = data.issueTitle;
-  const appName = data.appInfo.appName;
-  const appId = data.appInfo.appId;
-  const appPlatform = data.appInfo.appPlatform;
-  const latestAppVersion = data.appInfo.latestAppVersion;
-  const crashPercentage = data.velocityAlert.crashPercentage;
+exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert((issue) => {
+  const issueId = issue.issueId;
+  const issueTitle = issue.issueTitle;
+  const appName = issue.appInfo.appName;
+  const appId = issue.appInfo.appId;
+  const appPlatform = issue.appInfo.appPlatform;
+  const latestAppVersion = issue.appInfo.latestAppVersion;
+  const crashPercentage = issue.velocityAlert.crashPercentage;
 
   const summary = `Velocity Alert - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `A velocity alert has been reported - ${issueTitle} in ${appId}. ` +

@@ -17,7 +17,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 // This is a Hello World function which writes to the database.
 exports.helloWorld = functions.database.ref('/hello/{name}').onWrite(async event => {
