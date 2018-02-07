@@ -1,18 +1,18 @@
 /**
-* Copyright 2016 Google Inc. All Rights Reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for t`he specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for t`he specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 const functions = require('firebase-functions');
@@ -25,9 +25,9 @@ const os = require('os');
 const fs = require('fs');
 
 /**
-* When an image is uploaded we check if it is flagged as Adult or Violence by the Cloud Vision
-* API and if it is we blur it using ImageMagick.
-*/
+ * When an image is uploaded we check if it is flagged as Adult or Violence by the Cloud Vision
+ * API and if it is we blur it using ImageMagick.
+ */
 exports.blurOffensiveImages = functions.storage.object().onChange(event => {
   const object = event.data;
   const file = gcs.bucket(object.bucket).file(object.name);
@@ -50,8 +50,8 @@ exports.blurOffensiveImages = functions.storage.object().onChange(event => {
 });
 
 /**
-* Blurs the given image located in the given bucket using ImageMagick.
-*/
+ * Blurs the given image located in the given bucket using ImageMagick.
+ */
 function blurImage(filePath, bucketName, metadata) {
   const tempLocalFile = path.join(os.tmpdir(), filePath);
   const tempLocalDir = path.dirname(tempLocalFile);

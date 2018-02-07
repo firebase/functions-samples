@@ -115,7 +115,7 @@ exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(even
         <p>Creation Time: ${createTime}</p>
         <p># of Total Crashes: ${crashes.toString()}</p>`
   };
-  
+
   return sendgridMail.send(emailDetails).then(() => {
     return console.log('Successfully sent velocity alert email');
   }).catch(error => {

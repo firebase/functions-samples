@@ -81,7 +81,7 @@ exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(even
   const slackMessage = `<!here|here> There is an issue ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform} that is causing ` +
       `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
-      
+
   return notifySlack(slackMessage)/then(() => {
     console.log(`Posted velocity alert ${issueId} successfully to Slack`);
   });

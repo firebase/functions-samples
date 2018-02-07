@@ -1,18 +1,18 @@
 /**
-* Copyright 2016 Google Inc. All Rights Reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 // Modules imports
@@ -39,11 +39,11 @@ function generateLineApiRequest(apiEndpoint, lineAccessToken) {
 }
 
 /**
-* Look up Firebase user based on LINE's mid. If the Firebase user does not exist,
-+ fetch LINE profile and create a new Firebase user with it.
-*
-* @returns {Promise<UserRecord>} The Firebase user record in a promise.
-*/
+ * Look up Firebase user based on LINE's mid. If the Firebase user does not exist,
+ * fetch LINE profile and create a new Firebase user with it.
+ *
+ * @returns {Promise<UserRecord>} The Firebase user record in a promise.
+ */
 function getFirebaseUser(lineMid, lineAccessToken) {
   // Generate Firebase user's uid based on LINE's mid
   const firebaseUid = `line:${lineMid}`;
@@ -74,17 +74,17 @@ function getFirebaseUser(lineMid, lineAccessToken) {
 }
 
 /**
-* Verify LINE access token and return a custom auth token allowing signing-in
-* the corresponding Firebase account.
-*
-* Here are the steps involved:
-*  1. Verify with LINE server that a LINE access token is valid
-*  2. Check if a Firebase user corresponding to the LINE user already existed.
-*  If not, fetch user profile from LINE and generate a corresponding Firebase user.
-*  3. Return a custom auth token allowing signing-in the Firebase account.
-*
-* @returns {Promise<string>} The Firebase custom auth token in a promise.
-*/
+ * Verify LINE access token and return a custom auth token allowing signing-in
+ * the corresponding Firebase account.
+ *
+ * Here are the steps involved:
+ *  1. Verify with LINE server that a LINE access token is valid
+ *  2. Check if a Firebase user corresponding to the LINE user already existed.
+ *  If not, fetch user profile from LINE and generate a corresponding Firebase user.
+ *  3. Return a custom auth token allowing signing-in the Firebase account.
+ *
+ * @returns {Promise<string>} The Firebase custom auth token in a promise.
+ */
 function verifyLineToken(lineAccessToken) {
   // Send request to LINE server for access token verification
   const verifyTokenOptions = generateLineApiRequest('https://api.line.me/v1/oauth/verify', lineAccessToken);

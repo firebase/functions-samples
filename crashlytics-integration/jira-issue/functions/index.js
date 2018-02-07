@@ -61,7 +61,7 @@ const createJiraIssue = (summary, description, priority) => {
   const pass = functions.config().jira.pass;
   const issue_type = functions.config().jira.issue_type;
   const component_id = functions.config().jira.component_id;
-  
+
   const { protocol, domain, contextPath, projectKey} = parseUrl(project_url);
   const baseUrl = [protocol, domain, contextPath].join('');
   const url = `${baseUrl}/rest/api/2/issue`;
