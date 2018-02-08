@@ -61,7 +61,7 @@ function reencodeAsync(tempFilePath, targetTempFilePath) {
  * When an audio is uploaded in the Storage bucket We generate a mono channel audio automatically using
  * node-fluent-ffmpeg.
  */
-exports.generateMonoAudio = functions.storage.object().onChange(event => {
+exports.generateMonoAudio = functions.storage.object().onChange((event) => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.

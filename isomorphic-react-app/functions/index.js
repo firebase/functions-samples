@@ -42,19 +42,19 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 app.get('/:userId?', (req, res) => {
-	res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
-	if (req.params.userId) {
-		// client is requesting user-details page with userId
-		// load the data for that employee and its direct reports
-		return database.getEmployeeById(req.params.userId).then(resp => {
-			return renderApplication(req.url, res, resp);
-		});
-	} else {
-		// index page. load data for all employees
-		return database.getAllEmployees().then(resp => {
-			return renderApplication(req.url, res, resp);
-		});
-	}
+  res.set('Cache-Control', 'public, max-age=60, s-maxage=180');
+  if (req.params.userId) {
+    // client is requesting user-details page with userId
+    // load the data for that employee and its direct reports
+    return database.getEmployeeById(req.params.userId).then((resp) => {
+      return renderApplication(req.url, res, resp);
+    });
+  } else {
+    // index page. load data for all employees
+    return database.getAllEmployees().then((resp) => {
+      return renderApplication(req.url, res, resp);
+    });
+  }
 });
 
 exports.app = functions.https.onRequest(app);
