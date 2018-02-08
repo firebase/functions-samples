@@ -38,7 +38,7 @@ exports.blurOffensiveImages = functions.storage.object().onChange(event => {
   }
 
   // Check the image content using the Cloud Vision API.
-  return vision.detectSafeSearch(file).then(data => {
+  return vision.detectSafeSearch(file).then((data) => {
     const safeSearch = data[0];
     console.log('SafeSearch results on image', safeSearch);
 
@@ -71,7 +71,7 @@ function blurImage(filePath, bucketName, metadata) {
     // Uploading the Blurred image.
     return bucket.upload(tempLocalFile, {
       destination: filePath,
-      metadata: {metadata: metadata} // Keeping custom metadata.
+      metadata: {metadata: metadata}, // Keeping custom metadata.
     });
   }).then(() => {
     console.log('Blurred image uploaded to Storage at', filePath);

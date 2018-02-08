@@ -21,33 +21,33 @@ const logging = require('@google-cloud/logging')();
 
 admin.initializeApp(functions.config().firebase);
 
-const stripe = require('stripe')(functions.config().stripe.token),
-  currency = functions.config().stripe.currency || 'USD';
+const stripe = require('stripe')(functions.config().stripe.token);
+const currency = functions.config().stripe.currency || 'USD';
 
 // [START chargecustomer]
 // Charge the Stripe customer whenever an amount is written to the Realtime database
-exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/charges/{id}').onWrite(event => {
+exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/charges/{id}').onWrite((event) => {
   const val = event.data.val();
   // This onWrite will trigger whenever anything is written to the path, so
   // noop if the charge was deleted, errored out, or the Stripe API returned a result (id exists)
   if (val === null || val.id || val.error) return null;
   // Look up the Stripe customer id written in createStripeCustomer
-  return admin.database().ref(`/stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
+  return admin.database().ref(`/stripe_customers/${event.params.userId}/customer_id`).once('value').then((snapshot) => {
     return snapshot.val();
-  }).then(customer => {
+  }).then((customer) => {
     // Create a charge using the pushId as the idempotency key, protecting against double charges
     const amount = val.amount;
     const idempotency_key = event.params.id;
     let charge = {amount, currency, customer};
     if (val.source !== null) charge.source = val.source;
     return stripe.charges.create(charge, {idempotency_key});
-  }).then(response => {
+  }).then((response) => {
     // If the result is successful, write it back to the database
     return event.data.adminRef.set(response);
-  }).catch(error => {
+  }).catch((error) => {
     // We want to capture errors and render them in a user-friendly way, while
     // still logging an exception with Stackdriver
-    return event.data.adminRef.child('error').set(userFacingMessage(error))
+    return event.data.adminRef.child('error').set(userFacingMessage(error));
   }).then(() => {
     return reportError(error, {user: event.params.userId});
   });
@@ -55,37 +55,37 @@ exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/
 // [END chargecustomer]]
 
 // When a user is created, register them with Stripe
-exports.createStripeCustomer = functions.auth.user().onCreate(event => {
+exports.createStripeCustomer = functions.auth.user().onCreate((event) => {
   const data = event.data;
   return stripe.customers.create({
-    email: data.email
-  }).then(customer => {
+    email: data.email,
+  }).then((customer) => {
     return admin.database().ref(`/stripe_customers/${data.uid}/customer_id`).set(customer.id);
   });
 });
 
 // Add a payment source (card) for a user by writing a stripe payment source token to Realtime database
-exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/sources/{pushId}/token').onWrite(event => {
+exports.addPaymentSource = functions.database.ref('/stripe_customers/{userId}/sources/{pushId}/token').onWrite((event) => {
   const source = event.data.val();
   if (source === null) return null;
-  return admin.database().ref(`/stripe_customers/${event.params.userId}/customer_id`).once('value').then(snapshot => {
+  return admin.database().ref(`/stripe_customers/${event.params.userId}/customer_id`).once('value').then((snapshot) => {
     return snapshot.val();
-  }).then(customer => {
+  }).then((customer) => {
     return stripe.customers.createSource(customer, {source});
-  }).then(response => {
+  }).then((response) => {
     return event.data.adminRef.parent.set(response);
-  }, error => {
-    return event.data.adminRef.parent.child('error').set(userFacingMessage(error))
+  }, (error) => {
+    return event.data.adminRef.parent.child('error').set(userFacingMessage(error));
   }).then(() => {
     return reportError(error, {user: event.params.userId});
   });
 });
 
 // When a user deletes their account, clean up after them
-exports.cleanupUser = functions.auth.user().onDelete(event => {
-  return admin.database().ref(`/stripe_customers/${event.data.uid}`).once('value').then(snapshot => {
+exports.cleanupUser = functions.auth.user().onDelete((event) => {
+  return admin.database().ref(`/stripe_customers/${event.data.uid}`).once('value').then((snapshot) => {
     return snapshot.val();
-  }).then(customer => {
+  }).then((customer) => {
     return stripe.customers.del(customer.customer_id);
   }).then(() => {
     return admin.database().ref(`/stripe_customers/${event.data.uid}`).remove();
@@ -107,8 +107,8 @@ function reportError(err, context = {}) {
   const metadata = {
     resource: {
       type: 'cloud_function',
-      labels: { function_name: process.env.FUNCTION_NAME }
-    }
+      labels: {function_name: process.env.FUNCTION_NAME},
+    },
   };
 
   // https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorEvent
@@ -116,15 +116,17 @@ function reportError(err, context = {}) {
     message: err.stack,
     serviceContext: {
       service: process.env.FUNCTION_NAME,
-      resourceType: 'cloud_function'
+      resourceType: 'cloud_function',
     },
-    context: context
+    context: context,
   };
 
   // Write the error log entry
   return new Promise((resolve, reject) => {
-    log.write(log.entry(metadata, errorEvent), error => {
-      if (error) { reject(error); }
+    log.write(log.entry(metadata, errorEvent), (error) => {
+      if (error) {
+ reject(error);
+}
       resolve();
     });
   });

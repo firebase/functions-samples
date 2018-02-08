@@ -21,7 +21,7 @@ const Filter = require('bad-words');
 const badWordsFilter = new Filter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
-exports.moderator = functions.database.ref('/messages/{messageId}').onWrite(event => {
+exports.moderator = functions.database.ref('/messages/{messageId}').onWrite((event) => {
   const message = event.data.val();
 
   if (message && !message.sanitized) {
@@ -36,7 +36,7 @@ exports.moderator = functions.database.ref('/messages/{messageId}').onWrite(even
     return event.data.adminRef.update({
       text: moderatedMessage,
       sanitized: true,
-      moderated: message.text !== moderatedMessage
+      moderated: message.text !== moderatedMessage,
     });
   }
   return null;

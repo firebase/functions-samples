@@ -24,7 +24,7 @@ const admin = require('firebase-admin');
 const serviceAccount = require('./service-account.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`
+  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
 const OAUTH_REDIRECT_URI = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`;
@@ -39,12 +39,12 @@ function instagramOAuth2Client() {
   const credentials = {
     client: {
       id: functions.config().instagram.client_id,
-      secret: functions.config().instagram.client_secret
+      secret: functions.config().instagram.client_secret,
     },
     auth: {
       tokenHost: 'https://api.instagram.com',
-      tokenPath: '/oauth/access_token'
-    }
+      tokenPath: '/oauth/access_token',
+    },
   };
   return require('simple-oauth2').create(credentials);
 }
@@ -62,12 +62,12 @@ exports.redirect = functions.https.onRequest((req, res) => {
     res.cookie('state', state.toString(), {
       maxAge: 3600000,
       secure: true,
-      httpOnly: true
+      httpOnly: true,
     });
     const redirectUri = oauth2.authorizationCode.authorizeURL({
       redirect_uri: OAUTH_REDIRECT_URI,
       scope: OAUTH_SCOPES,
-      state: state
+      state: state,
     });
     console.log('Redirecting to:', redirectUri);
     res.redirect(redirectUri);
@@ -95,9 +95,9 @@ exports.token = functions.https.onRequest((req, res) => {
       console.log('Received auth code:', req.query.code);
       oauth2.authorizationCode.getToken({
         code: req.query.code,
-        redirect_uri: OAUTH_REDIRECT_URI
-      })
-    }).then(results => {
+        redirect_uri: OAUTH_REDIRECT_URI,
+      });
+    }).then((results) => {
       console.log('Auth code exchange result received:', results);
 
       // We have an Instagram access token and the user identity now.
@@ -107,16 +107,16 @@ exports.token = functions.https.onRequest((req, res) => {
       const userName = results.user.full_name;
 
       // Create a Firebase account and get the Custom Auth Token.
-      return createFirebaseAccount(instagramUserID, userName, profilePic, accessToken)
-    }).then(firebaseToken => {
+      return createFirebaseAccount(instagramUserID, userName, profilePic, accessToken);
+    }).then((firebaseToken) => {
       // Serve an HTML page that signs the user in and updates the user profile.
       return res.jsonp({
-        token: firebaseToken
+        token: firebaseToken,
       });
     });
   } catch (error) {
     return res.jsonp({
-      error: error.toString
+      error: error.toString,
     });
   }
 });
@@ -138,14 +138,14 @@ function createFirebaseAccount(instagramID, displayName, photoURL, accessToken) 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {
     displayName: displayName,
-    photoURL: photoURL
-  }).catch(error => {
+    photoURL: photoURL,
+  }).catch((error) => {
     // If user does not exists we create it.
     if (error.code === 'auth/user-not-found') {
       return admin.auth().createUser({
         uid: uid,
         displayName: displayName,
-        photoURL: photoURL
+        photoURL: photoURL,
       });
     }
     throw error;
@@ -154,7 +154,7 @@ function createFirebaseAccount(instagramID, displayName, photoURL, accessToken) 
   // Wait for all async task to complete then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    return admin.auth().createCustomToken(uid)
+    return admin.auth().createCustomToken(uid);
   }).then((token) => {
     console.log('Created Custom token for UID "', uid, '" Token:', token);
     return token;

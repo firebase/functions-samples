@@ -23,7 +23,7 @@ const functions = require('firebase-functions');
 const moment = require('moment');
 // CORS Express middleware to enable CORS Requests.
 const cors = require('cors')({
-  origin: true
+  origin: true,
 });
 // [END additionalimports]
 

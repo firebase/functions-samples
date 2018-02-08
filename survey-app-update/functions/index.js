@@ -34,7 +34,7 @@ const LATEST_VERSION = '2.0';
 /**
  * After a user has updated the app. Send them a survey to compare the app with the old version.
  */
-exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog(event => {
+exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog((event) => {
   const uid = event.data.user.userId;
   const appVerion = event.data.user.appInfo.appVersion;
 
@@ -43,7 +43,7 @@ exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog(even
     // Fetch the email of the user. In this sample we assume that the app is using Firebase Auth and
     // has set the Firebase Analytics User ID to be the same as the Firebase Auth uid using the
     // setUserId API.
-    return admin.auth().getUser(uid).then(user => {
+    return admin.auth().getUser(uid).then((user) => {
       const email = user.email;
       const name = user.displayName;
       return sendSurveyEmail(email, name);
@@ -62,7 +62,7 @@ function sendSurveyEmail(email, name) {
     subject: 'How did you like our new app?',
     text: `Hey ${name}, We've seen that you have upgraded to the new version of our app!
            It would be awesome if you could tell us how you like it.
-           Fill out our survey: ${LINK_TO_SURVEY}`
+           Fill out our survey: ${LINK_TO_SURVEY}`,
   };
 
   return mailTransport.sendMail(mailOptions).then(() => {

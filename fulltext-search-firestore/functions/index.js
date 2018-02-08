@@ -31,7 +31,7 @@ const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
 // [START update_index_function]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(event => {
+exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate((event) => {
   // Get the note document
   const note = event.data.data();
 
@@ -66,14 +66,14 @@ function getFirebaseUser(req, res, next) {
     idToken = req.headers.authorization.split('Bearer ')[1];
   }
 
-  admin
+  return admin
     .auth()
     .verifyIdToken(idToken)
-    .then(decodedIdToken => {
+    .then((decodedIdToken) => {
       console.log('ID Token correctly decoded', decodedIdToken);
       req.user = decodedIdToken;
       return next();
-    }).catch(error => {
+    }).catch((error) => {
       console.error('Error while verifying Firebase ID token:', error);
       return res.status(403).send('Unauthorized');
     });
@@ -87,7 +87,7 @@ const app = require('express')();
 
 // We'll enable CORS support to allow the function to be invoked
 // from our app client-side.
-app.use(require('cors')({ origin: true }));
+app.use(require('cors')({origin: true}));
 
 // Then we'll also use a special 'getFirebaseUser' middleware which
 // verifies the Authorization header and adds a `user` field to the
@@ -103,14 +103,14 @@ app.get('/', (req, res) => {
     // This filter ensures that only documents where author == user_id will be readable
     filters: `author:${req.user.user_id}`,
     // We also proxy the user_id as a unique token for this key.
-    userToken: req.user.user_id
+    userToken: req.user.user_id,
   };
 
   // Call the Algolia API to generate a unique key based on our search key
   const key = client.generateSecuredApiKey(ALGOLIA_SEARCH_KEY, params);
 
   // Then return this key as {key: '...key'}
-  res.json({ key });
+  res.json({key});
 });
 
 // Finally, pass our ExpressJS app to Cloud Functions as a function

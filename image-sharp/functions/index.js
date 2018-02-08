@@ -67,7 +67,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const bucket = gcs.bucket(fileBucket);
 
   const metadata = {
-    contentType: contentType
+    contentType: contentType,
   };
   // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
   const thumbFileName = `thumb_${fileName}`;

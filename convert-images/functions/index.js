@@ -30,7 +30,7 @@ const JPEG_EXTENSION = '.jpg';
  * When an image is uploaded in the Storage bucket it is converted to JPEG automatically using
  * ImageMagick.
  */
-exports.imageToJPG = functions.storage.object().onChange(event => {
+exports.imageToJPG = functions.storage.object().onChange((event) => {
   const object = event.data;
   const filePath = object.name;
   const baseFileName = path.basename(filePath, path.extname(filePath));

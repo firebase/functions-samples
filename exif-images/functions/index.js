@@ -30,7 +30,7 @@ const spawn = require('child-process-promise').spawn;
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
  * output of ImageMagick's `identify -verbose`) is saved in the Realtime Database.
  */
-exports.metadata = functions.storage.object().onChange(event => {
+exports.metadata = functions.storage.object().onChange((event) => {
   const object = event.data;
   const filePath = object.name;
 
@@ -54,11 +54,11 @@ exports.metadata = functions.storage.object().onChange(event => {
   const bucket = gcs.bucket(object.bucket);
   return bucket.file(filePath).download({destination: tempLocalFile}).then(() => {
     // Get Metadata from image.
-    return spawn('identify', ['-verbose', tempLocalFile], { capture: [ 'stdout', 'stderr' ]})
+    return spawn('identify', ['-verbose', tempLocalFile], {capture: ['stdout', 'stderr']});
   }).then(() => {
     const metadata = imageMagickOutputToObject(result.stdout);
     // Save metadata to realtime datastore.
-    return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata)
+    return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata);
   }).then(() => {
     return console.log('Wrote to:', filePath, 'data:', metadata);
   }).then(() => {

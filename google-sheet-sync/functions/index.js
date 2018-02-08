@@ -19,7 +19,7 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const { OAuth2Client } = require('google-auth-library');
+const {OAuth2Client} = require('google-auth-library');
 const google = require('googleapis');
 
 admin.initializeApp(functions.config().firebase);
@@ -54,8 +54,8 @@ exports.authgoogleapi = functions.https.onRequest((req, res) => {
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
-    prompt: 'consent'
-  }))
+    prompt: 'consent',
+  }));
 });
 
 // setup for OauthCallback
@@ -81,7 +81,7 @@ exports.oauthcallback = functions.https.onRequest((req, res) => {
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
 exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onWrite(
-  event => {
+  (event) => {
     const newRecord = event.data.current.val();
     return appendPromise({
       spreadsheetId: CONFIG_SHEET_ID,
@@ -89,8 +89,8 @@ exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]]
-      }
+        values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]],
+      },
     });
   }
 );
@@ -98,7 +98,7 @@ exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/
 // accepts an append request, returns a Promise to append it, enriching it with auth
 function appendPromise(requestWithoutAuth) {
   return new Promise((resolve, reject) => {
-    return getAuthorizedClient().then(client => {
+    return getAuthorizedClient().then((client) => {
       const sheets = google.sheets('v4');
       const request = requestWithoutAuth;
       request.auth = client;
@@ -118,11 +118,11 @@ function getAuthorizedClient() {
   if (oauthTokens) {
     return Promise.resolve(functionsOauthClient);
   }
-  return db.ref(DB_TOKEN_PATH).once('value').then(snapshot => {
+  return db.ref(DB_TOKEN_PATH).once('value').then((snapshot) => {
     oauthTokens = snapshot.val();
     functionsOauthClient.setCredentials(oauthTokens);
     return functionsOauthClient;
-  })
+  });
 }
 
 // HTTPS function to write new data to CONFIG_DATA_PATH, for testing
@@ -134,7 +134,7 @@ exports.testsheetwrite = functions.https.onRequest((req, res) => {
   return db.ref(`${CONFIG_DATA_PATH}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
-    thirdColumn: random3
+    thirdColumn: random3,
   }).then(() => res.status(200).send(
     `Wrote ${random1}, ${random2}, ${random3} to DB, trigger should now update Sheet.`));
 });

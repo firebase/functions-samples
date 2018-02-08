@@ -31,7 +31,7 @@ app.use(firebaseUser.validateFirebaseIdToken);
 app.get('/', (req, res) => {
   console.log('Signed-in user:', req.user);
   return res.render('user', {
-    user: req.user
+    user: req.user,
   });
 });
 

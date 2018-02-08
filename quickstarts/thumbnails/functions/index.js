@@ -30,7 +30,7 @@ const fs = require('fs');
  * ImageMagick.
  */
 // [START generateThumbnailTrigger]
-exports.generateThumbnail = functions.storage.object().onChange(event => {
+exports.generateThumbnail = functions.storage.object().onChange((event) => {
   // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const object = event.data; // The Storage object.
@@ -76,10 +76,10 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const bucket = gcs.bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
   const metadata = {
-    contentType: contentType
+    contentType: contentType,
   };
   return bucket.file(filePath).download({
-    destination: tempFilePath
+    destination: tempFilePath,
   }).then(() => {
     console.log('Image downloaded locally to', tempFilePath);
     // Generate a thumbnail using ImageMagick.
@@ -92,7 +92,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     // Uploading the thumbnail.
     return bucket.upload(tempFilePath, {
       destination: thumbFilePath,
-      metadata: metadata
+      metadata: metadata,
     });
     // Once the thumbnail has been uploaded delete the local file to free up disk space.
   }).then(() => fs.unlinkSync(tempFilePath));

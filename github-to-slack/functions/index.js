@@ -41,7 +41,7 @@ exports.githubWebhook = functions.https.onRequest((req, res) => {
   }
   return postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
     return res.end();
-  }).catch(error => {
+  }).catch((error) => {
     console.error(error);
     return res.status(500).send('Something went wrong while posting the message to Slack.');
   });
@@ -56,8 +56,8 @@ function postToSlack(url, commits, repo) {
     // TODO: Configure the `slack.webhook_url` Google Cloud environment variables.
     uri: functions.config().slack.webhook_url,
     body: {
-      text: `<${url}|${commits} new commit${commits > 1 ? 's' : ''}> pushed to <${repo.url}|${repo.full_name}>.`
+      text: `<${url}|${commits} new commit${commits > 1 ? 's' : ''}> pushed to <${repo.url}|${repo.full_name}>.`,
     },
-    json: true
+    json: true,
   });
 }

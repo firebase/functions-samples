@@ -15,11 +15,11 @@
  */
 'use strict';
 
-const functions = require('firebase-functions'),
-      rp = require('request-promise');
+const functions = require('firebase-functions');
+const rp = require('request-promise');
 
 // Helper function that posts to Slack about the new issue
-const notifySlack = slackMessage => {
+const notifySlack = (slackMessage) => {
   // See https://api.slack.com/docs/message-formatting on how
   // to customize the message payload
   return rp({
@@ -28,11 +28,11 @@ const notifySlack = slackMessage => {
     body: {
       text: slackMessage,
     },
-    json: true
+    json: true,
   });
 };
 
-exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
+exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected((event) => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -49,7 +49,7 @@ exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   });
 });
 
-exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed(event => {
+exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed((event) => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -68,7 +68,7 @@ exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed(event =
   });
 });
 
-exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(event => {
+exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((event) => {
   const data = event.data;
 
   const issueId = data.issueId;

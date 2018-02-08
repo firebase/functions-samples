@@ -44,10 +44,10 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
 
   // Fetch all user details.
   return getUsers();
-}).then(users => {
+}).then((users) => {
     // Find users that have not signed in in the last 30 days.
     const inactiveUsers = users.filter(
-        user => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
+        (user) => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
     const promisePool = new PromisePool(() => {
@@ -62,7 +62,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
     return promisePool.start();
   }).then(() => {
     return console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
-  }).catch(error => {
+  }).catch((error) => {
     console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
   }).then(() => {
     console.log('User cleanup finished');
@@ -73,19 +73,19 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
  * Returns the list of all users with their ID and lastLogin timestamp.
  */
 function getUsers(userIds = [], nextPageToken, accessToken) {
-  return getAccessToken(accessToken).then(accessToken => {
+  return getAccessToken(accessToken).then((accessToken) => {
     const options = {
       method: 'POST',
       uri: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/downloadAccount?fields=users/localId,users/lastLoginAt,nextPageToken&access_token=' + accessToken,
       body: {
         nextPageToken: nextPageToken,
-        maxResults: 1000
+        maxResults: 1000,
       },
-      json: true
+      json: true,
     };
 
-    return rp(options)
-  }).then(resp => {
+    return rp(options);
+  }).then((resp) => {
     if (!resp.users) {
       return userIds;
     }
@@ -108,8 +108,8 @@ function getAccessToken(accessToken) {
   const options = {
     uri: 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',
     headers: {'Metadata-Flavor': 'Google'},
-    json: true
+    json: true,
   };
 
-  return rp(options).then(resp => resp.access_token);
+  return rp(options).then((resp) => resp.access_token);
 }

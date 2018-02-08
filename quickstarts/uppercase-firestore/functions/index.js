@@ -35,7 +35,7 @@ exports.addMessage = functions.https.onRequest((req, res) => {
   const original = req.query.text;
   // [START adminSdkAdd]
   // Push the new message into the Realtime Database using the Firebase Admin SDK.
-  return admin.firestore().collection('messages').add({original: original}).then(writeResult => {
+  return admin.firestore().collection('messages').add({original: original}).then((writeResult) => {
     // Send back a message that we've succesfully written the message
     return res.json({result: `Message with ID: ${writeResult.id} added.`});
   });
@@ -47,7 +47,7 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // Listens for new messages added to /messages/:documentId/original and creates an
 // uppercase version of the message to /messages/:documentId/uppercase
 // [START makeUppercaseTrigger]
-exports.makeUppercase = functions.firestore.document('/messages/{documentId}').onCreate(event => {
+exports.makeUppercase = functions.firestore.document('/messages/{documentId}').onCreate((event) => {
 // [END makeUppercaseTrigger]
   // [START makeUppercaseBody]
 

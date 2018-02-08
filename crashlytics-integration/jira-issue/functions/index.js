@@ -15,11 +15,11 @@
  */
 'use strict';
 
-const functions = require('firebase-functions'),
-      rp = require('request-promise');
+const functions = require('firebase-functions');
+const rp = require('request-promise');
 
 // Helper function that calculates the priority of the issue
-const calculateIssuePriority = eventType => {
+const calculateIssuePriority = (eventType) => {
   // Run custom logic that can determine the priority or severity of this issue
   // For example, you can parse the stack trace to determine which part of your app
   // is causing the crash and assign priorities based on that
@@ -44,7 +44,7 @@ const calculateIssuePriority = eventType => {
 
 // Helper function that parses the Jira project url and returns an object
 // of the url fragments
-const parseUrl = url => {
+const parseUrl = (url) => {
   // input url format: https://yourdomain.atlassian.net/projects/XX
   const matches = url.match(/(https?:\/\/)(.+?)(\/.+)?\/(projects|browse)\/([\w-]+)/);
   if (matches && matches.length === 6) {
@@ -62,7 +62,7 @@ const createJiraIssue = (summary, description, priority) => {
   const issue_type = functions.config().jira.issue_type;
   const component_id = functions.config().jira.component_id;
 
-  const { protocol, domain, contextPath, projectKey} = parseUrl(project_url);
+  const {protocol, domain, contextPath, projectKey} = parseUrl(project_url);
   const baseUrl = [protocol, domain, contextPath].join('');
   const url = `${baseUrl}/rest/api/2/issue`;
 
@@ -71,16 +71,16 @@ const createJiraIssue = (summary, description, priority) => {
   const newIssue = {
     fields: {
       components: [{id: component_id || '10000'}],
-      project: {key: projectKey },
+      project: {key: projectKey},
       summary,
       description,
       issuetype: {
-        name: issue_type || 'Bug'
+        name: issue_type || 'Bug',
       },
       priority: {
         id: priority.toString(),
-      }
-    }
+      },
+    },
   };
 
   // Uses Basic Authentication
@@ -89,16 +89,16 @@ const createJiraIssue = (summary, description, priority) => {
   return rp({
     auth: {
       'user': user,
-      'pass': pass
+      'pass': pass,
     },
     method: 'POST',
     uri: url,
     body: newIssue,
-    json: true
+    json: true,
   });
 };
 
-exports.createNewIssue = functions.crashlytics.issue().onNewDetected(event => {
+exports.createNewIssue = functions.crashlytics.issue().onNewDetected((event) => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -117,7 +117,7 @@ exports.createNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   });
 });
 
-exports.createRegressedIssue = functions.crashlytics.issue().onRegressed(event => {
+exports.createRegressedIssue = functions.crashlytics.issue().onRegressed((event) => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -138,7 +138,7 @@ exports.createRegressedIssue = functions.crashlytics.issue().onRegressed(event =
   });
 });
 
-exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert(event => {
+exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert((event) => {
   const data = event.data;
 
   const issueId = data.issueId;
