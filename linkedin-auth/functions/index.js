@@ -36,9 +36,9 @@ function linkedInClient() {
   // LinkedIn OAuth 2 setup
   // TODO: Configure the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables.
   return require('node-linkedin')(
-    functions.config().linkedin.client_id,
-    functions.config().linkedin.client_secret,
-    `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
+      functions.config().linkedin.client_id,
+      functions.config().linkedin.client_secret,
+      `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
 }
 
 /**

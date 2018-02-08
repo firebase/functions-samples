@@ -18,6 +18,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
+
 const express = require('express');
 const exphbs = require('express-handlebars');
 const app = express();
