@@ -37,7 +37,7 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
   // Return the promise from countRef.transaction() so our function
   // waits for this async event to complete before it exits.
   return countRef.transaction(current => {
-    (current || 0) + increment;
+    return (current || 0) + increment;
   }).then(() => {
     return console.log('Counter updated.');
   });

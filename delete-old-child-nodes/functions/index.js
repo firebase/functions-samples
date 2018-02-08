@@ -27,18 +27,18 @@ const CUT_OFF_TIME = 2 * 60 * 60 * 1000; // 2 Hours in milliseconds.
  * cut-off time. Each child needs to have a `timestamp` attribute.
  */
 exports.deleteOldItems = functions.database.ref('/path/to/items/{pushId}')
-  .onWrite(event => {
-    const ref = event.data.ref.parent; // reference to the items
-    const now = Date.now();
-    const cutoff = now - CUT_OFF_TIME;
-    const oldItemsQuery = ref.orderByChild('timestamp').endAt(cutoff);
-    return oldItemsQuery.once('value').then(snapshot => {
-      // create a map with all children that need to be removed
-      const updates = {};
-      snapshot.forEach(child => {
-        updates[child.key] = null;
+    .onWrite(event => {
+      const ref = event.data.ref.parent; // reference to the items
+      const now = Date.now();
+      const cutoff = now - CUT_OFF_TIME;
+      const oldItemsQuery = ref.orderByChild('timestamp').endAt(cutoff);
+      return oldItemsQuery.once('value').then(snapshot => {
+        // create a map with all children that need to be removed
+        const updates = {};
+        snapshot.forEach(child => {
+          updates[child.key] = null;
+        });
+        // execute all updates in one go and return the result to end the function
+        return ref.update(updates);
       });
-      // execute all updates in one go and return the result to end the function
-      return ref.update(updates);
-    });
   });

@@ -25,39 +25,39 @@ const secureCompare = require('secure-compare');
  * Slack.
  */
 exports.githubWebhook = functions.https.onRequest((req, res) => {
- const cipher = 'sha1';
- const signature = req.headers['x-hub-signature'];
+  const cipher = 'sha1';
+  const signature = req.headers['x-hub-signature'];
 
- // TODO: Configure the `github.secret` Google Cloud environment variables.
- const hmac = crypto.createHmac(cipher, functions.config().github.secret)
-  .update(req.body)
-  .digest('hex');
- const expectedSignature = `${cipher}=${hmac}`;
+  // TODO: Configure the `github.secret` Google Cloud environment variables.
+  const hmac = crypto.createHmac(cipher, functions.config().github.secret)
+    .update(req.body)
+    .digest('hex');
+  const expectedSignature = `${cipher}=${hmac}`;
 
- // Check that the body of the request has been signed with the GitHub Secret.
- if (!secureCompare(signature, expectedSignature)) {
-  console.error('x-hub-signature', signature, 'did not match', expectedSignature);
-  return res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
- }
- return postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
-  return res.end();
- }).catch(error => {
-  console.error(error);
-  return res.status(500).send('Something went wrong while posting the message to Slack.');
- });
+  // Check that the body of the request has been signed with the GitHub Secret.
+  if (!secureCompare(signature, expectedSignature)) {
+    console.error('x-hub-signature', signature, 'did not match', expectedSignature);
+    return res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
+  }
+  return postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
+    return res.end();
+  }).catch(error => {
+    console.error(error);
+    return res.status(500).send('Something went wrong while posting the message to Slack.');
+  });
 });
 
 /**
  * Post a message to Slack about the new GitHub commit.
  */
 function postToSlack(url, commits, repo) {
- return rp({
-  method: 'POST',
-  // TODO: Configure the `slack.webhook_url` Google Cloud environment variables.
-  uri: functions.config().slack.webhook_url,
-  body: {
-   text: `<${url}|${commits} new commit${commits > 1 ? 's' : ''}> pushed to <${repo.url}|${repo.full_name}>.`
-  },
-  json: true
- });
+  return rp({
+    method: 'POST',
+    // TODO: Configure the `slack.webhook_url` Google Cloud environment variables.
+    uri: functions.config().slack.webhook_url,
+    body: {
+      text: `<${url}|${commits} new commit${commits > 1 ? 's' : ''}> pushed to <${repo.url}|${repo.full_name}>.`
+    },
+    json: true
+  });
 }

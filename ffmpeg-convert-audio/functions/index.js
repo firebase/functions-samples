@@ -26,13 +26,13 @@ const ffmpeg_static = require('ffmpeg-static');
 function promisifyCommand(command) {
   return new Promise((resolve, reject) => {
     command
-    .on('end', () => {
-      resolve();
-    })
-    .on('error', error => {
-      reject(error);
-    })
-    .run();
+      .on('end', () => {
+        resolve();
+      })
+      .on('error', error => {
+        reject(error);
+      })
+      .run();
   });
 }
 
@@ -42,18 +42,18 @@ function promisifyCommand(command) {
 function reencodeAsync(tempFilePath, targetTempFilePath) {
   return new Promise((resolve, reject) => {
     const command = ffmpeg(tempFilePath)
-    .setFfmpegPath(ffmpeg_static.path)
-    .audioChannels(1)
-    .audioFrequency(16000)
-    .format('flac')
-    .on('error', (err) => {
-      console.log('An error occurred: ' + err.message);
-      reject(err);
-    })
-    .on('end', () => {
-      console.log('Output audio created at', targetTempFilePath);
-    })
-    .save(targetTempFilePath);
+      .setFfmpegPath(ffmpeg_static.path)
+      .audioChannels(1)
+      .audioFrequency(16000)
+      .format('flac')
+      .on('error', (err) => {
+        console.log('An error occurred: ' + err.message);
+        reject(err);
+      })
+      .on('end', () => {
+        console.log('Output audio created at', targetTempFilePath);
+      })
+      .save(targetTempFilePath);
   });
 }
 
@@ -112,11 +112,11 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
     // Convert the audio to mono channel using FFMPEG.
 
     let command = ffmpeg(tempFilePath)
-    .setFfmpegPath(ffmpeg_static.path)
-    .audioChannels(1)
-    .audioFrequency(16000)
-    .format('flac')
-    .output(targetTempFilePath);
+      .setFfmpegPath(ffmpeg_static.path)
+      .audioChannels(1)
+      .audioFrequency(16000)
+      .format('flac')
+      .output(targetTempFilePath);
 
     command = promisifyCommand(command);
 
@@ -124,7 +124,7 @@ exports.generateMonoAudio = functions.storage.object().onChange(event => {
   }).then(() => {
     console.log('Output audio created at', targetTempFilePath);
     // Uploading the audio.
-    return bucket.upload(targetTempFilePath, { destination: targetStorageFilePath })
+    return bucket.upload(targetTempFilePath, {destination: targetStorageFilePath})
   }).then(() => {
     console.log('Output audio uploaded to', targetStorageFilePath);
 
