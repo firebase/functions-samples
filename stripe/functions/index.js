@@ -15,9 +15,9 @@
  */
 'use strict';
 
-const functions = require('firebase-functions'),
-  admin = require('firebase-admin'),
-  logging = require('@google-cloud/logging')();
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const logging = require('@google-cloud/logging')();
 
 admin.initializeApp(functions.config().firebase);
 
@@ -44,12 +44,11 @@ exports.createStripeCharge = functions.database.ref('/stripe_customers/{userId}/
   }).then(response => {
     // If the result is successful, write it back to the database
     return event.data.adminRef.set(response);
-  }, error => {
+  }).catch(error => {
     // We want to capture errors and render them in a user-friendly way, while
     // still logging an exception with Stackdriver
     return event.data.adminRef.child('error').set(userFacingMessage(error))
-  }
-  ).then(() => {
+  }).then(() => {
     return reportError(error, {user: event.params.userId});
   });
 });

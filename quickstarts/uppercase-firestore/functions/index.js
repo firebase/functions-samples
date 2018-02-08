@@ -30,7 +30,7 @@ admin.initializeApp(functions.config().firebase);
 // Realtime Database under the path /messages/:documentId/original
 // [START addMessageTrigger]
 exports.addMessage = functions.https.onRequest((req, res) => {
-  // [END addMessageTrigger]
+// [END addMessageTrigger]
   // Grab the text parameter.
   const original = req.query.text;
   // [START adminSdkAdd]
@@ -48,7 +48,7 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // uppercase version of the message to /messages/:documentId/uppercase
 // [START makeUppercaseTrigger]
 exports.makeUppercase = functions.firestore.document('/messages/{documentId}').onCreate(event => {
-  // [END makeUppercaseTrigger]
+// [END makeUppercaseTrigger]
   // [START makeUppercaseBody]
 
   // Grab the current value of what was written to the Realtime Database.

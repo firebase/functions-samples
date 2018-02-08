@@ -91,10 +91,10 @@ exports.token = functions.https.onRequest((req, res) => {
 
           // Create a Firebase account and get the Custom Auth Token.
           return createFirebaseAccount(spotifyUserID, userName, profilePic, email, accessToken).then(
-            firebaseToken => {
-              // Serve an HTML page that signs the user in and updates the user profile.
-              return res.jsonp({token: firebaseToken});
-            });
+              firebaseToken => {
+                // Serve an HTML page that signs the user in and updates the user profile.
+                return res.jsonp({token: firebaseToken});
+              });
         });
       });
     });

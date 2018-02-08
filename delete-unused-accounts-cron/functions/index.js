@@ -47,7 +47,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
 }).then(users => {
     // Find users that have not signed in in the last 30 days.
     const inactiveUsers = users.filter(
-      user => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
+        user => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
     const promisePool = new PromisePool(() => {

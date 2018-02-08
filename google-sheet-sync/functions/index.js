@@ -72,10 +72,10 @@ exports.oauthcallback = functions.https.onRequest((req, res) => {
       return res.status(400).send(err);
     }
     return db.ref(DB_TOKEN_PATH).set(tokens)
-      .then(() => {
-        return res.status(200).send('App successfully configured with new Credentials. '
-          + 'You can now close this page.');
-      });
+        .then(() => {
+          return res.status(200).send('App successfully configured with new Credentials. '
+            + 'You can now close this page.');
+        });
   });
 });
 

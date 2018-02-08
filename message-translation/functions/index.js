@@ -48,12 +48,12 @@ function createTranslationPromise(source, target, snapshot) {
   const key = snapshot.key;
   const message = snapshot.val().message;
   return request(createTranslateUrl(source, target, message), {resolveWithFullResponse: true}).then(
-    response => {
-      if (response.statusCode === 200) {
-        const data = JSON.parse(response.body).data;
-        return admin.database().ref(`/messages/${target}/${key}`)
-        .set({message: data.translations[0].translatedText, translated: true});
-      }
-      throw response.body;
-    });
+      response => {
+        if (response.statusCode === 200) {
+          const data = JSON.parse(response.body).data;
+          return admin.database().ref(`/messages/${target}/${key}`)
+          .set({message: data.translations[0].translatedText, translated: true});
+        }
+        throw response.body;
+      });
 }
