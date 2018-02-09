@@ -37,17 +37,15 @@ const getAllEmployees = () => {
 // Get and return an employee by their id number
 // also fetch all of the employee's direct reports (if any)
 const getEmployeeById = employeeId => {
+  let employee;
   return firebase.database().ref(`/employees/${employeeId}`).once('value').then(snap => {
-    const promises = [];
-    const snapshot = snap.val();
-    if (snapshot.reports) {
-      Object.keys(snapshot.reports).forEach(userId => {
-        promises.push(firebase.database().ref(`/employees/${userId}`).once('value').then(snap => snap.val()));
-      });
-    }
-    return firebase.Promise.all(promises).then((resp) => {
-      return {currentEmployee: {employee: snapshot, reports: resp}};
-    });
+    employee = snap.val();
+    const reportIds = snapshot.reports || [];
+    const getReports = reportIds.map(userId => firebase.database().ref(`/employees/${userId}`).once('value'));
+    return Promise.all(getReports);
+  }).then(reportSnapshots => {
+    reports = reportSnapshots.map(snap => snap.val());
+    return {currentEmployee: employee, reports: reports};
   });
 };
 

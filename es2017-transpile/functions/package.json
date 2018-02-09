@@ -10,9 +10,12 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0"
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
   },
   "scripts": {
-    "prepare": "babel ./*.es7 --retain-lines -d ./"
+    "prepare": "babel ./*.es7 --retain-lines -d ./",
+    "lint": "./node_modules/.bin/eslint ."
   }
 }

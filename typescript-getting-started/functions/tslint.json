@@ -71,9 +71,6 @@
     // Expressions must always return a value. Avoids common errors like const myValue = functionReturningVoid();
     "no-void-expression": [true, "ignore-arrow-function-shorthand"],
 
-    // Makes sure result of typeof is compared to correct string values.
-    "typeof-compare": true,
-
     // Disallow duplicate imports in the same file.
     "no-duplicate-imports": true,
 
