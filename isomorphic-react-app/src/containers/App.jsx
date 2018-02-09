@@ -30,7 +30,7 @@ export default class App extends React.Component {
         currentEmployee
       });
     });
-  }
+  };
 
   // Loads all employees
   getAllEmployees = () => {
@@ -39,7 +39,7 @@ export default class App extends React.Component {
         employees
       });
     });
-  }
+  };
 
   render() {
     return (

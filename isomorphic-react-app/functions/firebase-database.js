@@ -15,18 +15,17 @@
  */
 
 // Client and Server Data Fetching Logic
-// Uses either the client firebase (initialized from hosting init script)
-// Or serverside firebase
-const firebase = global.firebase || require('firebase');
 
-// Initialize Firebase SDK
-// Only should be called once on the server
-// the client should already be initialized from hosting init script
-const initializeApp = config => {
-  if (firebase.apps.length === 0) {
-    firebase.initializeApp(config);
-  }
-};
+// Import the Firebase base SDK.
+const firebase = require('firebase/app');
+// Load the Firebase database module.
+// Here you should load all modules of Firebase that you need.
+require('firebase/database');
+
+// We initialize Firebase using a client-side config.
+const firebaseConfig = require('./firebase-config.json').result;
+firebase.initializeApp(firebaseConfig);
+
 
 // Get and return all employees
 const getAllEmployees = () => {
@@ -54,6 +53,5 @@ const getEmployeeById = employeeId => {
 
 module.exports = {
   getAllEmployees,
-  getEmployeeById,
-  initializeApp
+  getEmployeeById
 };

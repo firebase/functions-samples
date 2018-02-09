@@ -2,12 +2,13 @@
   "name": "employee-directory-app",
   "description": "Sample employee directory app built with React and Firebase",
   "scripts": {
+    "createfirebaseconf": "firebase setup:web --json > ../functions/firebase-config.json",
     "buildClient": "./node_modules/.bin/webpack --config ./webpack.client.config.js",
     "buildServer": "./node_modules/.bin/webpack --config ./webpack.server.config.js",
-    "build": "npm run buildClient && npm run buildServer"
+    "build": "npm run createfirebaseconf && npm run buildClient && npm run buildServer"
   },
   "dependencies": {
-    "firebase": "3.9.0",
+    "firebase": "4.8.0",
     "lodash": "4.17.4",
     "react": "15.5.4",
     "react-dom": "15.5.4",

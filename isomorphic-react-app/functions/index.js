@@ -15,7 +15,6 @@
  */
 
 const functions = require('firebase-functions');
-const firebase = require('firebase');
 const app = require('express')();
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
@@ -25,14 +24,12 @@ const ServerApp = React.createFactory(require('./build/server.bundle.js').defaul
 const template = require('./template');
 
 // Server-side Data Loading
-const appConfig = functions.config().firebase;
 const database = require('./firebase-database');
-database.initializeApp(appConfig);
 
 // Helper function to get the markup from React, inject the initial state, and
 // send the server-side markup to the client
 const renderApplication = (url, res, initialState) => {
-    const html = ReactDOMServer.renderToString(ServerApp({url: url, context: {}, initialState, appConfig}));
+    const html = ReactDOMServer.renderToString(ServerApp({url: url, context: {}, initialState}));
     const templatedHtml = template({body: html, initialState: JSON.stringify(initialState)});
     res.send(templatedHtml);
 };
