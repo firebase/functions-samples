@@ -26,42 +26,21 @@ const ffmpeg_static = require('ffmpeg-static');
 function promisifyCommand(command) {
   return new Promise((resolve, reject) => {
     command
-        .on('end', () => {
-          resolve();
-        })
-        .on('error', (error) => {
-          reject(error);
-        })
-        .run();
-  });
-}
-
-/**
- * Utility method to convert audio to mono channel using FFMPEG.
- */
-function reencodeAsync(tempFilePath, targetTempFilePath) {
-  return new Promise((resolve, reject) => {
-    const command = ffmpeg(tempFilePath)
-        .setFfmpegPath(ffmpeg_static.path)
-        .audioChannels(1)
-        .audioFrequency(16000)
-        .format('flac')
-        .on('error', (err) => {
-          console.log('An error occurred: ' + err.message);
-          reject(err);
-        })
-        .on('end', () => {
-          console.log('Output audio created at', targetTempFilePath);
-        })
-        .save(targetTempFilePath);
-  });
-}
+      .on('end', () => {
+        resolve();
+      })
+      .on('error', error => {
+        reject(error);
+      })
+      .run();
+   });
+ };
 
 /**
  * When an audio is uploaded in the Storage bucket We generate a mono channel audio automatically using
  * node-fluent-ffmpeg.
  */
-exports.generateMonoAudio = functions.storage.object().onChange((event) => {
+exports.generateMonoAudio = functions.storage.object().onChange(event => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -73,7 +52,7 @@ exports.generateMonoAudio = functions.storage.object().onChange((event) => {
   // Exit if this is triggered on a file that is not an audio.
   if (!contentType.startsWith('audio/')) {
     console.log('This is not an audio.');
-    return null;
+    return;
   }
 
   // Get the file name.
@@ -81,57 +60,57 @@ exports.generateMonoAudio = functions.storage.object().onChange((event) => {
   // Exit if the audio is already converted.
   if (fileName.endsWith('_output.flac')) {
     console.log('Already a converted audio.');
-    return null;
+    return;
   }
 
   // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return null;
+    return;
   }
 
   // Exit if file exists but is not new and is only being triggered
   // because of a metadata change.
   if (resourceState === 'exists' && metageneration > 1) {
     console.log('This is a metadata change event.');
-    return null;
+    return;
   }
 
   // Download file from bucket.
   const bucket = gcs.bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
   // We add a '_output.flac' suffix to target audio file name. That's where we'll upload the converted audio.
-  const targetTempFileName = fileName.replace(/\.[^/.]+$/, '') + '_output.flac';
+  const targetTempFileName = fileName.replace(/\.[^/.]+$/, "") + '_output.flac';
   const targetTempFilePath = path.join(os.tmpdir(), targetTempFileName);
   const targetStorageFilePath = path.join(path.dirname(filePath), targetTempFileName);
 
   return bucket.file(filePath).download({
-    destination: tempFilePath,
+    destination: tempFilePath
   }).then(() => {
     console.log('Audio downloaded locally to', tempFilePath);
     // Convert the audio to mono channel using FFMPEG.
 
     let command = ffmpeg(tempFilePath)
-        .setFfmpegPath(ffmpeg_static.path)
-        .audioChannels(1)
-        .audioFrequency(16000)
-        .format('flac')
-        .output(targetTempFilePath);
+      .setFfmpegPath(ffmpeg_static.path)
+      .audioChannels(1)
+      .audioFrequency(16000)
+      .format('flac')
+      .output(targetTempFilePath);
 
     command = promisifyCommand(command);
 
-    return command;
-  }).then(() => {
-    console.log('Output audio created at', targetTempFilePath);
-    // Uploading the audio.
-    return bucket.upload(targetTempFilePath, {destination: targetStorageFilePath});
-  }).then(() => {
-    console.log('Output audio uploaded to', targetStorageFilePath);
+    return command.then(() => {
+      console.log('Output audio created at', targetTempFilePath);
+      // Uploading the audio.
+      return bucket.upload(targetTempFilePath, { destination: targetStorageFilePath }).then(() => {
+        console.log('Output audio uploaded to', targetStorageFilePath);
 
-    // Once the audio has been uploaded delete the local file to free up disk space.
-    fs.unlinkSync(tempFilePath);
-    fs.unlinkSync(targetTempFilePath);
+        // Once the audio has been uploaded delete the local file to free up disk space.
+        fs.unlinkSync(tempFilePath);
+        fs.unlinkSync(targetTempFilePath);
 
-    return console.log('Temporary files removed.', targetTempFilePath);
+        console.log('Temporary files removed.', targetTempFilePath);
+      });
+    });
   });
 });

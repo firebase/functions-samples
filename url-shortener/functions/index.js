@@ -21,10 +21,10 @@ admin.initializeApp(functions.config().firebase);
 const request = require('request-promise');
 
 // Shorten URL
-exports.shortenUrl = functions.database.ref('/links/{linkID}').onWrite((event) => {
+exports.shortenUrl = functions.database.ref('/links/{linkID}').onWrite(event => {
   const snapshot = event.data;
   if (typeof snapshot.val() !== 'string') {
-    return null;
+    return;
   }
   return createShortenerPromise(snapshot);
 });
@@ -35,25 +35,25 @@ function createShortenerRequest(sourceUrl) {
     method: 'POST',
     uri: `https://www.googleapis.com/urlshortener/v1/url?key=${functions.config().firebase.apiKey}`,
     body: {
-      longUrl: sourceUrl,
+      longUrl: sourceUrl
     },
     json: true,
-    resolveWithFullResponse: true,
+    resolveWithFullResponse: true
   };
 }
 
 function createShortenerPromise(snapshot) {
   const key = snapshot.key;
   const originalUrl = snapshot.val();
-  return request(createShortenerRequest(originalUrl)).then((response) => {
+  return request(createShortenerRequest(originalUrl)).then(response => {
     if (response.statusCode === 200) {
       return response.body.id;
     }
     throw response.body;
-  }).then((shortUrl) => {
+  }).then(shortUrl => {
     return admin.database().ref(`/links/${key}`).set({
       original: originalUrl,
-      short: shortUrl,
+      short: shortUrl
     });
   });
 }

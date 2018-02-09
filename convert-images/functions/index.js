@@ -30,7 +30,7 @@ const JPEG_EXTENSION = '.jpg';
  * When an image is uploaded in the Storage bucket it is converted to JPEG automatically using
  * ImageMagick.
  */
-exports.imageToJPG = functions.storage.object().onChange((event) => {
+exports.imageToJPG = functions.storage.object().onChange(event => {
   const object = event.data;
   const filePath = object.name;
   const baseFileName = path.basename(filePath, path.extname(filePath));
@@ -43,19 +43,19 @@ exports.imageToJPG = functions.storage.object().onChange((event) => {
   // Exit if this is triggered on a file that is not an image.
   if (!object.contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return null;
+    return;
   }
 
   // Exit if the image is already a JPEG.
   if (object.contentType.startsWith('image/jpeg')) {
     console.log('Already a JPEG.');
-    return null;
+    return;
   }
 
   // Exit if this is a move or deletion event.
   if (object.resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return null;
+    return;
   }
 
   const bucket = gcs.bucket(object.bucket);
@@ -64,7 +64,8 @@ exports.imageToJPG = functions.storage.object().onChange((event) => {
     // Download file from bucket.
     return bucket.file(filePath).download({destination: tempLocalFile});
   }).then(() => {
-    console.log('The file has been downloaded to', tempLocalFile);
+    console.log('The file has been downloaded to',
+        tempLocalFile);
     // Convert the image to JPEG using ImageMagick.
     return spawn('convert', [tempLocalFile, tempLocalJPEGFile]);
   }).then(() => {
@@ -76,6 +77,5 @@ exports.imageToJPG = functions.storage.object().onChange((event) => {
     // Once the image has been converted delete the local files to free up disk space.
     fs.unlinkSync(tempLocalJPEGFile);
     fs.unlinkSync(tempLocalFile);
-    return;
   });
 });

@@ -30,12 +30,12 @@ exports.sayNumber = functions.https.onRequest((req, res) => {
   const reprompts = [
     'I didn\'t hear a number',
     'If you\'re still there, what\'s the number?',
-    'What is the number?',
+    'What is the number?'
   ];
 
   const actionMap = new Map();
 
-  actionMap.set(assistant.StandardIntents.MAIN, (assistant) => {
+  actionMap.set(assistant.StandardIntents.MAIN, assistant => {
     const inputPrompt = assistant.buildInputPrompt(true, `<speak>
         Hi! <break time="1"/>
         I can read out an ordinal number like <say-as interpret-as="ordinal">123</say-as>.
@@ -45,7 +45,7 @@ exports.sayNumber = functions.https.onRequest((req, res) => {
     assistant.ask(inputPrompt);
   });
 
-  actionMap.set(assistant.StandardIntents.TEXT, (assistant) => {
+  actionMap.set(assistant.StandardIntents.TEXT, assistant => {
     const rawInput = assistant.getRawInput();
     if (rawInput === 'bye') {
       assistant.tell('Goodbye!');

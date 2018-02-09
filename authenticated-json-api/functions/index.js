@@ -36,10 +36,10 @@ const authenticate = (req, res, next) => {
     return;
   }
   const idToken = req.headers.authorization.split('Bearer ')[1];
-  admin.auth().verifyIdToken(idToken).then((decodedIdToken) => {
+  admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
     req.user = decodedIdToken;
-    return next();
-  }).catch(() => {
+    next();
+  }).catch(error => {
     res.status(403).send('Unauthorized');
   });
 };
@@ -52,16 +52,16 @@ app.use(authenticate);
 app.post('/messages', (req, res) => {
   const message = req.body.message;
 
-  language.detectSentiment(message).then((results) => {
+  language.detectSentiment(message).then(results => {
     const category = categorizeScore(results[0].score);
     const data = {message: message, sentiment: results, category: category};
     return admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
-  }).then((snapshot) => {
+  }).then(snapshot => {
     return snapshot.ref.once('value');
-  }).then((snapshot) => {
+  }).then(snapshot => {
     const val = snapshot.val();
-    return res.status(201).json({message: val.message, category: val.category});
-  }).catch((error) => {
+    res.status(201).json({message: val.message, category: val.category});
+  }).catch(error => {
     console.log('Error detecting sentiment or saving message', error.message);
     res.sendStatus(500);
   });
@@ -80,14 +80,14 @@ app.get('/messages', (req, res) => {
     return res.status(404).json({errorCode: 404, errorMessage: `category '${category}' not found`});
   }
 
-  return query.once('value').then((snapshot) => {
-    let messages = [];
-    snapshot.forEach((childSnapshot) => {
+  query.once('value').then(snapshot => {
+    var messages = [];
+    snapshot.forEach(childSnapshot => {
       messages.push({key: childSnapshot.key, message: childSnapshot.val().message});
     });
 
     return res.status(200).json(messages);
-  }).catch((error) => {
+  }).catch(error => {
     console.log('Error getting messages', error.message);
     res.sendStatus(500);
   });
@@ -97,12 +97,15 @@ app.get('/messages', (req, res) => {
 // Get details about a message
 app.get('/message/:messageId', (req, res) => {
   const messageId = req.params.messageId;
-  admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value').then((snapshot) => {
-    if (snapshot.val() === null) {
-        return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
+  admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value').then(snapshot => {
+    if (snapshot.val() !== null) {
+      // Cache details in the browser for 5 minutes
+      res.set('Cache-Control', 'private, max-age=300');
+      res.status(200).json(snapshot.val());
+    } else {
+      res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
     }
-    return res.set('Cache-Control', 'private, max-age=300');
-  }).catch((error) => {
+  }).catch(error => {
     console.log('Error getting message details', messageId, error.message);
     res.sendStatus(500);
   });
@@ -112,7 +115,7 @@ app.get('/message/:messageId', (req, res) => {
 exports.api = functions.https.onRequest(app);
 
 // Helper function to categorize a sentiment score as positive, negative, or neutral
-const categorizeScore = (score) => {
+const categorizeScore = score => {
   if (score > 0.25) {
     return 'positive';
   } else if (score < -0.25) {

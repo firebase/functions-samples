@@ -15,11 +15,11 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
-const rp = require('request-promise');
+const functions = require('firebase-functions'),
+      rp = require('request-promise');
 
 // Helper function that posts to Slack about the new issue
-const notifySlack = (slackMessage) => {
+const notifySlack = slackMessage => {
   // See https://api.slack.com/docs/message-formatting on how
   // to customize the message payload
   return rp({
@@ -28,11 +28,11 @@ const notifySlack = (slackMessage) => {
     body: {
       text: slackMessage,
     },
-    json: true,
+    json: true
   });
 };
 
-exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected((event) => {
+exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected(event => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -45,11 +45,11 @@ exports.postOnNewIssue = functions.crashlytics.issue().onNewDetected((event) => 
       `in ${appName}, version ${latestAppVersion} on ${appPlatform}`;
 
   return notifySlack(slackMessage).then(() => {
-    return console.log(`Posted new issue ${issueId} successfully to Slack`);
+    console.log(`Posted new issue ${issueId} successfully to Slack`);
   });
 });
 
-exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed((event) => {
+exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed(event => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -64,11 +64,11 @@ exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed((event)
       `resolved at ${new Date(resolvedTime).toString()}`;
 
   return notifySlack(slackMessage).then(() => {
-    return console.log(`Posted regressed issue ${issueId} successfully to Slack`);
+    console.log(`Posted regressed issue ${issueId} successfully to Slack`);
   });
 });
 
-exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((event) => {
+exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(event => {
   const data = event.data;
 
   const issueId = data.issueId;
@@ -81,7 +81,7 @@ exports.postOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((eve
   const slackMessage = `<!here|here> There is an issue ${issueTitle} (${issueId}) ` +
       `in ${appName}, version ${latestAppVersion} on ${appPlatform} that is causing ` +
       `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
-
+      
   return notifySlack(slackMessage)/then(() => {
     console.log(`Posted velocity alert ${issueId} successfully to Slack`);
   });

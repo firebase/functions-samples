@@ -25,7 +25,7 @@ admin.initializeApp(functions.config().firebase);
  * Followers add a flag to `/followers/{followedUid}/{followerUid}`.
  * Users save their device notification tokens to `/users/{followedUid}/notificationTokens/{notificationToken}`.
  */
-exports.sendFollowerNotification = functions.database.ref('/followers/{followedUid}/{followerUid}').onWrite((event) => {
+exports.sendFollowerNotification = functions.database.ref('/followers/{followedUid}/{followerUid}').onWrite(event => {
   const followerUid = event.params.followerUid;
   const followedUid = event.params.followedUid;
   // If un-follow we exit the function.
@@ -40,7 +40,7 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
   // Get the follower profile.
   const getFollowerProfilePromise = admin.auth().getUser(followerUid);
 
-  return Promise.all([getDeviceTokensPromise, getFollowerProfilePromise]).then((results) => {
+  return Promise.all([getDeviceTokensPromise, getFollowerProfilePromise]).then(results => {
     const tokensSnapshot = results[0];
     const follower = results[1];
 
@@ -56,28 +56,29 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       notification: {
         title: 'You have a new follower!',
         body: `${follower.displayName} is now following you.`,
-        icon: follower.photoURL,
-      },
+        icon: follower.photoURL
+      }
     };
 
     // Listing all tokens.
     const tokens = Object.keys(tokensSnapshot.val());
 
     // Send notifications to all tokens.
-    return admin.messaging().sendToDevice(tokens, payload);
-  }).then((response) => {
-    // For each message check if there was an error.
-    const tokensToRemove = [];
-    response.results.forEach((result, index) => {
-      const error = result.error;
-      if (error) {
-        console.error('Failure sending notification to', tokens[index], error);
-        // Cleanup the tokens who are not registered anymore.
-        if (error.code === 'messaging/invalid-registration-token' || error.code === 'messaging/registration-token-not-registered') {
-          tokensToRemove.push(tokensSnapshot.ref.child(tokens[index]).remove());
+    return admin.messaging().sendToDevice(tokens, payload).then(response => {
+      // For each message check if there was an error.
+      const tokensToRemove = [];
+      response.results.forEach((result, index) => {
+        const error = result.error;
+        if (error) {
+          console.error('Failure sending notification to', tokens[index], error);
+          // Cleanup the tokens who are not registered anymore.
+          if (error.code === 'messaging/invalid-registration-token' ||
+              error.code === 'messaging/registration-token-not-registered') {
+            tokensToRemove.push(tokensSnapshot.ref.child(tokens[index]).remove());
+          }
         }
-      }
+      });
+      return Promise.all(tokensToRemove);
     });
-    return Promise.all(tokensToRemove);
   });
 });

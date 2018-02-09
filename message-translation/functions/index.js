@@ -24,14 +24,14 @@ const request = require('request-promise');
 const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 
 // Translate an incoming message.
-exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite((event) => {
+exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite(event => {
   const snapshot = event.data;
   if (snapshot.val().translated) {
-    return null;
+    return;
   }
   const promises = [];
   for (let i = 0; i < LANGUAGES.length; i++) {
-    let language = LANGUAGES[i];
+    var language = LANGUAGES[i];
     if (language !== event.params.languageID) {
       promises.push(createTranslationPromise(event.params.languageID, language, snapshot));
     }
@@ -48,11 +48,11 @@ function createTranslationPromise(source, target, snapshot) {
   const key = snapshot.key;
   const message = snapshot.val().message;
   return request(createTranslateUrl(source, target, message), {resolveWithFullResponse: true}).then(
-      (response) => {
+      response => {
         if (response.statusCode === 200) {
           const data = JSON.parse(response.body).data;
           return admin.database().ref(`/messages/${target}/${key}`)
-          .set({message: data.translations[0].translatedText, translated: true});
+              .set({message: data.translations[0].translatedText, translated: true});
         }
         throw response.body;
       });
