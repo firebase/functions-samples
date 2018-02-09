@@ -27,7 +27,7 @@ const THUMB_MAX_HEIGHT = 200;
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * Sharp.
  */
-exports.generateThumbnail = functions.storage.object().onChange(event => {
+exports.generateThumbnail = functions.storage.object().onChange((event) => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -39,7 +39,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return;
+    return null;
   }
 
   // Get the file name.
@@ -47,27 +47,27 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
     console.log('Already a Thumbnail.');
-    return;
+    return null;
   }
 
   // Exit if this is a move or deletion event.
   if (resourceState === 'not_exists') {
     console.log('This is a deletion event.');
-    return;
+    return null;
   }
 
   // Exit if file exists but is not new and is only being triggered
   // because of a metadata change.
   if (resourceState === 'exists' && metageneration > 1) {
     console.log('This is a metadata change event.');
-    return;
+    return null;
   }
 
   // Download file from bucket.
   const bucket = gcs.bucket(fileBucket);
 
   const metadata = {
-    contentType: contentType
+    contentType: contentType,
   };
   // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
   const thumbFileName = `thumb_${fileName}`;
@@ -86,7 +86,8 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
 
   const streamAsPromise = new Promise((resolve, reject) =>
     thumbnailUploadStream.on('finish', resolve).on('error', reject));
+
   return streamAsPromise.then(() => {
-    console.log('Thumbnail created successfully');
+    return console.log('Thumbnail created successfully');
   });
 });

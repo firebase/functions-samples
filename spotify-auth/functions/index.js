@@ -24,7 +24,7 @@ const admin = require('firebase-admin');
 const serviceAccount = require('./service-account.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`
+  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
 // Spotify OAuth 2 setup
@@ -33,7 +33,7 @@ const SpotifyWebApi = require('spotify-web-api-node');
 const Spotify = new SpotifyWebApi({
   clientId: functions.config().spotify.client_id,
   clientSecret: functions.config().spotify.client_secret,
-  redirectUri: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`
+  redirectUri: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`,
 });
 
 // Scopes to request.
@@ -76,7 +76,7 @@ exports.token = functions.https.onRequest((req, res) => {
         }
         console.log('Received Access Token:', data.body['access_token']);
         Spotify.setAccessToken(data.body['access_token']);
-        
+
         Spotify.getMe((error, userResults) => {
           if (error) {
             throw error;
@@ -90,10 +90,10 @@ exports.token = functions.https.onRequest((req, res) => {
           const email = userResults.body['email'];
 
           // Create a Firebase account and get the Custom Auth Token.
-          createFirebaseAccount(spotifyUserID, userName, profilePic, email, accessToken).then(
-              firebaseToken => {
+          return createFirebaseAccount(spotifyUserID, userName, profilePic, email, accessToken).then(
+              (firebaseToken) => {
                 // Serve an HTML page that signs the user in and updates the user profile.
-                res.jsonp({token: firebaseToken});
+                return res.jsonp({token: firebaseToken});
               });
         });
       });
@@ -101,6 +101,7 @@ exports.token = functions.https.onRequest((req, res) => {
   } catch (error) {
     return res.jsonp({error: error.toString});
   }
+  return null;
 });
 
 /**
@@ -116,15 +117,15 @@ function createFirebaseAccount(spotifyID, displayName, photoURL, email, accessTo
 
   // Save the access token to the Firebase Realtime Database.
   const databaseTask = admin.database().ref(`/spotifyAccessToken/${uid}`)
-      .set(accessToken);
+  .set(accessToken);
 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {
     displayName: displayName,
     photoURL: photoURL,
     email: email,
-    emailVerified: true
-  }).catch(error => {
+    emailVerified: true,
+  }).catch((error) => {
     // If user does not exists we create it.
     if (error.code === 'auth/user-not-found') {
       return admin.auth().createUser({
@@ -132,7 +133,7 @@ function createFirebaseAccount(spotifyID, displayName, photoURL, email, accessTo
         displayName: displayName,
         photoURL: photoURL,
         email: email,
-        emailVerified: true
+        emailVerified: true,
       });
     }
     throw error;
@@ -141,9 +142,9 @@ function createFirebaseAccount(spotifyID, displayName, photoURL, email, accessTo
   // Wait for all async tasks to complete, then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    return admin.auth().createCustomToken(uid).then((token) => {
-      console.log('Created Custom token for UID "', uid, '" Token:', token);
-      return token;
-    });
+    return admin.auth().createCustomToken(uid);
+  }).then((token) => {
+    console.log('Created Custom token for UID "', uid, '" Token:', token);
+    return token;
   });
 }

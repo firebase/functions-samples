@@ -26,15 +26,14 @@ const deviceToken = functions.config().dev_motivator.device_token;
  *
  * The device model name, the city and the country of the user are sent in the notification message
  */
-exports.appinstalled = functions.analytics.event('first_open').onLog(event => {
-    const payload = {
-      notification: {
-        title: 'you have a new user \uD83D\uDE43',
-        body: event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country
-      }
-    };
-
-    admin.messaging().sendToDevice(deviceToken, payload);
+exports.appinstalled = functions.analytics.event('first_open').onLog((event) => {
+  const payload = {
+    notification: {
+      title: 'you have a new user \uD83D\uDE43',
+      body: event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country,
+    },
+  };
+  admin.messaging().sendToDevice(deviceToken, payload);
 });
 
 /**
@@ -44,14 +43,14 @@ exports.appinstalled = functions.analytics.event('first_open').onLog(event => {
  *
  * The device model name, the city and the country of the user are sent in the notification message
  */
-exports.appremoved = functions.analytics.event('app_remove').onLog(event => {
-    const payload = {
-      notification: {
-        title: 'you lost a user \uD83D\uDE1E',
-        body: event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country
-      }
-    };
+exports.appremoved = functions.analytics.event('app_remove').onLog((event) => {
+  const payload = {
+    notification: {
+      title: 'you lost a user \uD83D\uDE1E',
+      body: event.data.user.deviceInfo.mobileModelName + ' from ' + event.data.user.geoInfo.city + ', ' + event.data.user.geoInfo.country,
+    },
+  };
 
-    admin.messaging().sendToDevice(deviceToken, payload);
+  admin.messaging().sendToDevice(deviceToken, payload);
 });
 

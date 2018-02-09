@@ -24,7 +24,7 @@ admin.initializeApp(functions.config().firebase);
  * After a user has completed a purchase, send them a coupon via FCM valid on their next purchase.
  */
 // [START trigger]
-exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLog(event => {
+exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLog((event) => {
 // [END trigger]
   // [START attributes]
   const user = event.data.user;
@@ -49,14 +49,14 @@ exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLo
  */
 function sendCouponViaFCM(uid, userLanguage) {
   // Fetching all the user's device tokens.
-  return getDeviceTokens(uid).then(tokens => {
+  return getDeviceTokens(uid).then((tokens) => {
     if (tokens.length > 0) {
       // Notification details.
       let payload = {
         notification: {
           title: 'Thanks for your Purchase!',
-          body: 'Get 10% off your next purchase with "COMEBACK10".'
-        }
+          body: 'Get 10% off your next purchase with "COMEBACK10".',
+        },
       };
 
       // Notification in French.
@@ -64,14 +64,15 @@ function sendCouponViaFCM(uid, userLanguage) {
         payload = {
           notification: {
             title: 'Merci pour votre achat!',
-            body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK10".'
-          }
+            body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK10".',
+          },
         };
       }
 
       // Send notifications to all tokens.
       return admin.messaging().sendToDevice(tokens, payload);
     }
+    return null;
   });
 }
 
@@ -83,14 +84,14 @@ function sendCouponViaFCM(uid, userLanguage) {
  */
 function sendHighValueCouponViaFCM(uid, userLanguage) {
   // Fetching all the user's device tokens.
-  return getDeviceTokens(uid).then(tokens => {
+  return getDeviceTokens(uid).then((tokens) => {
     if (tokens.length > 0) {
       // Notification details.
       let payload = {
         notification: {
           title: 'Thanks for your Purchase!',
-          body: 'Get 30% off your next purchase with "COMEBACK30".'
-        }
+          body: 'Get 30% off your next purchase with "COMEBACK30".',
+        },
       };
 
       // Notification in French.
@@ -98,14 +99,15 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
         payload = {
           notification: {
             title: 'Merci pour votre achat!',
-            body: 'Obtenez 30% de réduction sur votre prochain achat avec "COMEBACK30".'
-          }
+            body: 'Obtenez 30% de réduction sur votre prochain achat avec "COMEBACK30".',
+          },
         };
       }
 
       // Send notifications to all tokens.
       return admin.messaging().sendToDevice(tokens, payload);
     }
+    return null;
   });
 }
 
@@ -115,7 +117,7 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
  * @param {string} uid The UID of the user.
  */
 function getDeviceTokens(uid) {
-  return admin.database().ref(`/users/${uid}/tokens`).once('value').then(snap => {
+  return admin.database().ref(`/users/${uid}/tokens`).once('value').then((snap) => {
     if (snap.exists()) {
       return Object.keys(snap.val());
     }

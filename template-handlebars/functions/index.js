@@ -18,6 +18,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
+
 const express = require('express');
 const exphbs = require('express-handlebars');
 const app = express();
@@ -29,8 +30,8 @@ app.use(firebaseUser.validateFirebaseIdToken);
 
 app.get('/', (req, res) => {
   console.log('Signed-in user:', req.user);
-  res.render('user', {
-    user: req.user
+  return res.render('user', {
+    user: req.user,
   });
 });
 

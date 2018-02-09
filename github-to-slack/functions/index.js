@@ -30,23 +30,21 @@ exports.githubWebhook = functions.https.onRequest((req, res) => {
 
   // TODO: Configure the `github.secret` Google Cloud environment variables.
   const hmac = crypto.createHmac(cipher, functions.config().github.secret)
-      // The JSON body is automatically parsed by Cloud Functions so we re-stringify it.
-      .update(JSON.stringify(req.body, null, 0))
-      .digest('hex');
+    .update(req.body)
+    .digest('hex');
   const expectedSignature = `${cipher}=${hmac}`;
 
   // Check that the body of the request has been signed with the GitHub Secret.
-  if (secureCompare(signature, expectedSignature)) {
-    postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
-      res.end();
-    }).catch(error => {
-      console.error(error);
-      res.status(500).send('Something went wrong while posting the message to Slack.');
-    });
-  } else {
+  if (!secureCompare(signature, expectedSignature)) {
     console.error('x-hub-signature', signature, 'did not match', expectedSignature);
-    res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
+    return res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
   }
+  return postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
+    return res.end();
+  }).catch((error) => {
+    console.error(error);
+    return res.status(500).send('Something went wrong while posting the message to Slack.');
+  });
 });
 
 /**
@@ -58,8 +56,8 @@ function postToSlack(url, commits, repo) {
     // TODO: Configure the `slack.webhook_url` Google Cloud environment variables.
     uri: functions.config().slack.webhook_url,
     body: {
-      text: `<${url}|${commits} new commit${commits > 1 ? 's' : ''}> pushed to <${repo.url}|${repo.full_name}>.`
+      text: `<${url}|${commits} new commit${commits > 1 ? 's' : ''}> pushed to <${repo.url}|${repo.full_name}>.`,
     },
-    json: true
+    json: true,
   });
 }

@@ -24,7 +24,7 @@ const admin = require('firebase-admin');
 const serviceAccount = require('./service-account.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`
+  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
 const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
@@ -51,7 +51,11 @@ exports.redirect = functions.https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     console.log('Setting verification state:', state);
-    res.cookie('state', state.toString(), {maxAge: 3600000, secure: true, httpOnly: true});
+    res.cookie('state', state.toString(), {
+      maxAge: 3600000,
+      secure: true,
+      httpOnly: true,
+    });
     Linkedin.auth.authorize(res, OAUTH_SCOPES, state.toString());
   });
 });
@@ -66,7 +70,7 @@ exports.token = functions.https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   try {
-    cookieParser()(req, res, () => {
+    return cookieParser()(req, res, () => {
       if (!req.cookies.state) {
         throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
       }
@@ -94,16 +98,20 @@ exports.token = functions.https.onRequest((req, res) => {
           const email = userResults.emailAddress;
 
           // Create a Firebase account and get the Custom Auth Token.
-          createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
-              firebaseToken => {
-                // Serve an HTML page that signs the user in and updates the user profile.
-                res.jsonp({token: firebaseToken});
+          return createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
+            (firebaseToken) => {
+              // Serve an HTML page that signs the user in and updates the user profile.
+              return res.jsonp({
+                token: firebaseToken,
               });
+            });
         });
       });
     });
   } catch (error) {
-    return res.jsonp({error: error.toString});
+    return res.jsonp({
+      error: error.toString,
+    });
   }
 });
 
@@ -119,16 +127,15 @@ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessT
   const uid = `linkedin:${linkedinID}`;
 
   // Save the access token tot he Firebase Realtime Database.
-  const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`)
-      .set(accessToken);
+  const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`).set(accessToken);
 
   // Create or update the user account.
   const userCreationTask = admin.auth().updateUser(uid, {
     displayName: displayName,
     photoURL: photoURL,
     email: email,
-    emailVerified: true
-  }).catch(error => {
+    emailVerified: true,
+  }).catch((error) => {
     // If user does not exists we create it.
     if (error.code === 'auth/user-not-found') {
       return admin.auth().createUser({
@@ -136,7 +143,7 @@ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessT
         displayName: displayName,
         photoURL: photoURL,
         email: email,
-        emailVerified: true
+        emailVerified: true,
       });
     }
     throw error;
@@ -145,9 +152,9 @@ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessT
   // Wait for all async task to complete then generate and return a custom auth token.
   return Promise.all([userCreationTask, databaseTask]).then(() => {
     // Create a Firebase custom auth token.
-    return admin.auth().createCustomToken(uid).then((token) => {
-      console.log('Created Custom token for UID "', uid, '" Token:', token);
-      return token;
-    });
+    return admin.auth().createCustomToken(uid);
+  }).then((token) => {
+    console.log('Created Custom token for UID "', uid, '" Token:', token);
+    return token;
   });
 }

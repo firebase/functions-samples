@@ -50,11 +50,11 @@ const validateFirebaseIdToken = (req, res, next) => {
     // Read the ID Token from cookie.
     idToken = req.cookies.__session;
   }
-  admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
+  admin.auth().verifyIdToken(idToken).then((decodedIdToken) => {
     console.log('ID Token correctly decoded', decodedIdToken);
     req.user = decodedIdToken;
-    next();
-  }).catch(error => {
+    return next();
+  }).catch((error) => {
     console.error('Error while verifying Firebase ID token:', error);
     res.status(403).send('Unauthorized');
   });

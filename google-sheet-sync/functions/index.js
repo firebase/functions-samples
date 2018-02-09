@@ -19,15 +19,15 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const { OAuth2Client } = require('google-auth-library');
+const {OAuth2Client} = require('google-auth-library');
 const google = require('googleapis');
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.database();
 
 // TODO: Use firebase functions:config:set to configure your googleapi object:
-// googleapi.client_id = Google API client ID, 
-// googleapi.client_secret = client secret, and 
+// googleapi.client_id = Google API client ID,
+// googleapi.client_secret = client secret, and
 // googleapi.sheet_id = Google Sheet id (long string in middle of sheet URL)
 const CONFIG_CLIENT_ID = functions.config().googleapi.client_id;
 const CONFIG_CLIENT_SECRET = functions.config().googleapi.client_secret;
@@ -54,8 +54,8 @@ exports.authgoogleapi = functions.https.onRequest((req, res) => {
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
     scope: SCOPES,
-    prompt: 'consent'
-  }))
+    prompt: 'consent',
+  }));
 });
 
 // setup for OauthCallback
@@ -69,18 +69,19 @@ exports.oauthcallback = functions.https.onRequest((req, res) => {
   functionsOauthClient.getToken(code, (err, tokens) => {
     // Now tokens contains an access_token and an optional refresh_token. Save them.
     if (err) {
-      res.status(400).send(err);
-      return;
+      return res.status(400).send(err);
     }
-    db.ref(DB_TOKEN_PATH).set(tokens).then(
-        () => res.status(200).send('App successfully configured with new Credentials. ' +
-                                   'You can now close this page.'));
+    return db.ref(DB_TOKEN_PATH).set(tokens)
+        .then(() => {
+          return res.status(200).send('App successfully configured with new Credentials. '
+            + 'You can now close this page.');
+        });
   });
 });
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
 exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onWrite(
-  event => {
+  (event) => {
     const newRecord = event.data.current.val();
     return appendPromise({
       spreadsheetId: CONFIG_SHEET_ID,
@@ -88,26 +89,27 @@ exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       resource: {
-        values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]]
-      }
+        values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]],
+      },
     });
-});
+  }
+);
 
 // accepts an append request, returns a Promise to append it, enriching it with auth
 function appendPromise(requestWithoutAuth) {
   return new Promise((resolve, reject) => {
-    getAuthorizedClient().then(client => {
+    return getAuthorizedClient().then((client) => {
       const sheets = google.sheets('v4');
       const request = requestWithoutAuth;
       request.auth = client;
-      sheets.spreadsheets.values.append(request, (err, response) => {
+      return sheets.spreadsheets.values.append(request, (err, response) => {
         if (err) {
           console.log(`The API returned an error: ${err}`);
-          return reject();
+          return reject(err);
         }
         return resolve(response);
       });
-    }).catch(() => reject());
+    });
   });
 }
 
@@ -116,11 +118,11 @@ function getAuthorizedClient() {
   if (oauthTokens) {
     return Promise.resolve(functionsOauthClient);
   }
-  return db.ref(DB_TOKEN_PATH).once('value').then(snapshot => {
+  return db.ref(DB_TOKEN_PATH).once('value').then((snapshot) => {
     oauthTokens = snapshot.val();
     functionsOauthClient.setCredentials(oauthTokens);
     return functionsOauthClient;
-  })
+  });
 }
 
 // HTTPS function to write new data to CONFIG_DATA_PATH, for testing
@@ -132,7 +134,7 @@ exports.testsheetwrite = functions.https.onRequest((req, res) => {
   return db.ref(`${CONFIG_DATA_PATH}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
-    thirdColumn: random3
+    thirdColumn: random3,
   }).then(() => res.status(200).send(
     `Wrote ${random1}, ${random2}, ${random3} to DB, trigger should now update Sheet.`));
 });

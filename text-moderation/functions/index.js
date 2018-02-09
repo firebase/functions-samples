@@ -21,26 +21,26 @@ const Filter = require('bad-words');
 const badWordsFilter = new Filter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
-exports.moderator = functions.database
-    .ref('/messages/{messageId}').onWrite(event => {
-      const message = event.data.val();
+exports.moderator = functions.database.ref('/messages/{messageId}').onWrite((event) => {
+  const message = event.data.val();
 
-      if (message && !message.sanitized) {
-        // Retrieved the message values.
-        console.log('Retrieved message content: ', message);
+  if (message && !message.sanitized) {
+    // Retrieved the message values.
+    console.log('Retrieved message content: ', message);
 
-        // Run moderation checks on on the message and moderate if needed.
-        const moderatedMessage = moderateMessage(message.text);
+    // Run moderation checks on on the message and moderate if needed.
+    const moderatedMessage = moderateMessage(message.text);
 
-        // Update the Firebase DB with checked message.
-        console.log('Message has been moderated. Saving to DB: ', moderatedMessage);
-        return event.data.adminRef.update({
-          text: moderatedMessage,
-          sanitized: true,
-          moderated: message.text !== moderatedMessage
-        });
-      }
+    // Update the Firebase DB with checked message.
+    console.log('Message has been moderated. Saving to DB: ', moderatedMessage);
+    return event.data.adminRef.update({
+      text: moderatedMessage,
+      sanitized: true,
+      moderated: message.text !== moderatedMessage,
     });
+  }
+  return null;
+});
 
 // Moderates the given message if appropriate.
 function moderateMessage(message) {

@@ -38,7 +38,7 @@ const THUMB_PREFIX = 'thumb_';
  * After the thumbnail has been generated and uploaded to Cloud Storage,
  * we write the public URL to the Firebase Realtime Database.
  */
-exports.generateThumbnail = functions.storage.object().onChange(event => {
+exports.generateThumbnail = functions.storage.object().onChange((event) => {
   // File and directory paths.
   const filePath = event.data.name;
   const contentType = event.data.contentType; // This is the image Mimme type
@@ -71,7 +71,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   const bucket = gcs.bucket(event.data.bucket);
   const file = bucket.file(filePath);
   const thumbFile = bucket.file(thumbFilePath);
-  const metadata = { contentType: contentType };
+  const metadata = {contentType: contentType};
 
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {
@@ -84,7 +84,7 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
   }).then(() => {
     console.log('Thumbnail created at', tempLocalThumbFile);
     // Uploading the Thumbnail.
-    return bucket.upload(tempLocalThumbFile, { destination: thumbFilePath, metadata: metadata });
+    return bucket.upload(tempLocalThumbFile, {destination: thumbFilePath, metadata: metadata});
   }).then(() => {
     console.log('Thumbnail uploaded to Storage at', thumbFilePath);
     // Once the image has been uploaded delete the local files to free up disk space.
@@ -93,13 +93,13 @@ exports.generateThumbnail = functions.storage.object().onChange(event => {
     // Get the Signed URLs for the thumbnail and original image.
     const config = {
       action: 'read',
-      expires: '03-01-2500'
+      expires: '03-01-2500',
     };
     return Promise.all([
       thumbFile.getSignedUrl(config),
-      file.getSignedUrl(config)
+      file.getSignedUrl(config),
     ]);
-  }).then(results => {
+  }).then((results) => {
     console.log('Got Signed URLs.');
     const thumbResult = results[0];
     const originalResult = results[1];
