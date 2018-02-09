@@ -50,7 +50,7 @@ exports.date = functions.https.onRequest((req, res) => {
   // [START sendError]
   // Forbidding PUT requests.
   if (req.method === 'PUT') {
-    res.status(403).send('Forbidden!');
+    return res.status(403).send('Forbidden!');
   }
   // [END sendError]
 
