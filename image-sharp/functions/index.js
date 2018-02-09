@@ -27,7 +27,7 @@ const THUMB_MAX_HEIGHT = 200;
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * Sharp.
  */
-exports.generateThumbnail = functions.storage.object().onChange(event => {
+exports.generateThumbnail = functions.storage.object().onChange((event) => {
   const object = event.data; // The Storage object.
 
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
