@@ -88,6 +88,6 @@ exports.generateThumbnail = functions.storage.object().onChange((event) => {
     thumbnailUploadStream.on('finish', resolve).on('error', reject));
 
   return streamAsPromise.then(() => {
-    return console.log('Thumbnail created successfully');
+    console.log('Thumbnail created successfully');
   });
 });
