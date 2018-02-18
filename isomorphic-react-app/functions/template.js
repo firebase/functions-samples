@@ -19,7 +19,7 @@
 
 const template = opts => {
   return `
-  <!DOCTYLE html>
+  <!DOCTYPE html>
   <html>
     <head>
       <title>Employee Directory</title>
