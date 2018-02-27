@@ -38,9 +38,6 @@
     // Requre the use of === and !==
     "eqeqeq": 2,
 
-    // Return inside each then() to create readable and reusable Promise chains.
-    "promise/always-return": 2,
-
     // Disallow the use of alert, confirm, and prompt
     "no-alert": 2,
 
