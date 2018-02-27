@@ -89,5 +89,6 @@ exports.generateThumbnail = functions.storage.object().onChange((event) => {
 
   return streamAsPromise.then(() => {
     console.log('Thumbnail created successfully');
+    return null;
   });
 });
