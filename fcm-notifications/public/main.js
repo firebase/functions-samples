@@ -160,16 +160,24 @@ Demo.prototype.deleteAccount = function() {
   });
 };
 
-// Called when a notification is received while the app is in focus.
+// This is called when a notification is received while the app is in focus.
+// When the app is not in focus or if the tab is closed, this function is not called and the FCM notifications is
+// handled by the Service worker which displays a browser popup notification if the browser supports it.
 Demo.prototype.onMessage = function(payload) {
   console.log('Notifications received.', payload);
 
-  // If we get a notification while focus on the app
+  // Normally our Function sends a notification payload, we check just in case.
   if (payload.notification) {
-    let data = {
-      message: payload.notification.body
-    };
-    this.snackbar.MaterialSnackbar.showSnackbar(data);
+    // If notifications are supported on this browser we display one.
+    // Note: This is for demo purposes only. For a good user experience it is not recommended to display browser
+    // notifications while the app is in focus. In a production app you probably want to only display some form of
+    // in-app notifications like the snackbar (see below).
+    if (window.Notification instanceof Function) {
+      // This displays a notification if notifications have been granted.
+      new Notification(payload.notification.title, payload.notification);
+    }
+    // Display the notification content in the Snackbar too.
+    this.snackbar.MaterialSnackbar.showSnackbar({message: payload.notification.body});
   }
 };
 
