@@ -14,7 +14,6 @@
     "sinon": "^1.17.7"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec",
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
     "serve": "firebase serve --only functions",
     "shell": "firebase experimental:functions:shell",
