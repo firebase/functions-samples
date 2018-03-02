@@ -56,7 +56,7 @@ exports.date = functions.https.onRequest((req, res) => {
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
-  cors(req, res, () => {
+  return cors(req, res, () => {
     // [END usingMiddleware]
     // Reading date format from URL query parameter.
     // [START readQueryParam]

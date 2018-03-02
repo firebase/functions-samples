@@ -1,0 +1,11 @@
+{
+  "name": "functions-samples",
+  "version": "1.0.0",
+  "description": "Samples for Cloud Functions for Firebase",
+  "author": "Firebase (https://firebase.google.com/)",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "lerna": "^2.8.0"
+  }
+}

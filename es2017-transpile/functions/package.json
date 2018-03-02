@@ -16,6 +16,6 @@
   },
   "scripts": {
     "prepare": "babel ./*.es7 --retain-lines -d ./",
-    "lint": "./node_modules/.bin/eslint ."
+    "lint": "./node_modules/.bin/eslint --max-warnings=0 ."
   }
 }
