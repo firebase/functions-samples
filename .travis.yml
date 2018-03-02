@@ -5,6 +5,7 @@ install:
   - npm install -g lerna
   - npm install -g eslint
   - npm install -g eslint-plugin-promise
+  - npm install -g typescript
   - npm install -g tslint
 script:
   - ./scripts/test.sh
