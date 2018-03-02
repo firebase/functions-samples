@@ -4,4 +4,4 @@ lerna run lint
 
 # Run tests
 echo "Testing..."
-lerna run test
+lerna run ci-test
