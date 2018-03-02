@@ -4,6 +4,6 @@ node_js:
 install:
   - npm install -g lerna
   - npm install -g eslint
-  - lerna bootstrap
+  - travis_wait lerna bootstrap
 script:
   - ./scripts/test.sh
