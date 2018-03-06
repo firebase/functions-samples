@@ -12,8 +12,9 @@
     "sinon": "^4.1.3"
   },
   "scripts": {
+    "ci-test": "npm install && npm run test",
     "test": "./node_modules/.bin/mocha --reporter spec",
-    "lint": "./node_modules/.bin/eslint .",
+    "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
     "serve": "firebase serve --only functions",
     "shell": "firebase experimental:functions:shell",
     "start": "npm run shell",
