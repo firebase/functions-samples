@@ -33,7 +33,7 @@ exports.shortenUrl = functions.database.ref('/links/{linkID}').onWrite((event) =
 function createShortenerRequest(sourceUrl) {
   return {
     method: 'POST',
-    uri: `https://www.googleapis.com/urlshortener/v1/url?key=${functions.config().firebaseApiKey}`,
+    uri: `https://www.googleapis.com/urlshortener/v1/url?key=${functions.config().keys.firebase_api}`,
     body: {
       longUrl: sourceUrl,
     },

@@ -34,5 +34,5 @@ This way, you can display a clean URL by fetching `/links/$linkId/short`.
 ## Deploy and test
 - Add your Firebase API key to firebase config:
     ```bash
-    firebase functions:config:set firebaseApiKey=<YOUR FIREBASE API KEY>
+    firebase functions:config:set keys.firebase_api=<YOUR FIREBASE API KEY>
     ```
