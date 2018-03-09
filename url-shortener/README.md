@@ -30,3 +30,9 @@ This way, you can display a clean URL by fetching `/links/$linkId/short`.
             original: "https://my.super.long-link.com/api/user/profile/-jEHitne10395-k3593085",
             short: "https://goo.gl/EKDdza"
 ```
+
+## Deploy and test
+- Add your Firebase API key to firebase config:
+    ```bash
+    firebase functions:config:set firebaseApiKey=<YOUR FIREBASE API KEY>
+    ```
