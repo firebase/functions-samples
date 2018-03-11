@@ -20,7 +20,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const {OAuth2Client} = require('google-auth-library');
-const google = require('googleapis');
+const {google} = require('googleapis');
 
 admin.initializeApp(functions.config().firebase);
 const db = admin.database();
