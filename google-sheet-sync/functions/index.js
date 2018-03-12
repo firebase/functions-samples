@@ -107,7 +107,7 @@ function appendPromise(requestWithoutAuth) {
           console.log(`The API returned an error: ${err}`);
           return reject(err);
         }
-        return resolve(response);
+        return resolve(response.data);
       });
     });
   });
