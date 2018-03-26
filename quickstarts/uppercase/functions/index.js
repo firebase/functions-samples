@@ -48,11 +48,11 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // uppercase version of the message to /messages/:pushId/uppercase
 // [START makeUppercaseTrigger]
 exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
-    .onCreate((snap, context) => {
+    .onWrite((change, context) => {
 // [END makeUppercaseTrigger]
       // [START makeUppercaseBody]
       // Grab the current value of what was written to the Realtime Database.
-      const original = snap.val();
+      const original = change.after.val();
       console.log('Uppercasing', context.params.pushId, original);
       const uppercase = original.toUpperCase();
       // You must return a Promise when performing asynchronous tasks inside a Functions such as
