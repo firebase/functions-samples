@@ -41,7 +41,7 @@ const THUMB_PREFIX = 'thumb_';
 exports.generateThumbnail = functions.storage.object().onChange((event) => {
   // File and directory paths.
   const filePath = event.data.name;
-  const contentType = event.data.contentType; // This is the image Mimme type
+  const contentType = event.data.contentType; // This is the image MIME type
   const fileDir = path.dirname(filePath);
   const fileName = path.basename(filePath);
   const thumbFilePath = path.normalize(path.join(fileDir, `${THUMB_PREFIX}${fileName}`));
