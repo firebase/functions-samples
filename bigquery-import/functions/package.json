@@ -3,7 +3,7 @@
   "description": "Import data to BigQuery Firebase Functions sample",
   "dependencies": {
     "@google-cloud/bigquery": "^0.6.0",
-    "firebase-admin": "~5.9.0",
+    "firebase-admin": "~5.11.0",
     "firebase-functions": "^1.0.0"
   },
   "devDependencies": {

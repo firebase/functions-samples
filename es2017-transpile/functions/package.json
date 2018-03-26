@@ -3,7 +3,7 @@
   "description": "Sample app showing how to transpile ES7 code in cloud Functions.",
   "dependencies": {
     "babel-runtime": "^6.23.0",
-    "firebase-admin": "~5.9.0",
+    "firebase-admin": "~5.11.0",
     "firebase-functions": "^1.0.0"
   },
   "devDependencies": {

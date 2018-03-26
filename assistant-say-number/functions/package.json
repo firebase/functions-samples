@@ -3,7 +3,7 @@
   "description": "Firebase Functions",
   "dependencies": {
     "actions-on-google": "^1.0.7",
-    "firebase-admin": "~5.9.0",
+    "firebase-admin": "~5.11.0",
     "firebase-functions": "^1.0.0"
   },
   "devDependencies": {
