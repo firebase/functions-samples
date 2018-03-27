@@ -61,7 +61,7 @@ Deploy to Firebase using the following command:
 firebase deploy
 ```
 
-This deploys and activates the `reverseString` Function.
+This deploys and activates the `bigben` Function.
 
 > The first time you call `firebase deploy` on a new project with Functions will take longer than usual.
 
