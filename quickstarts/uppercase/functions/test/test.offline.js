@@ -29,30 +29,22 @@ chai.use(chaiAsPromised);
 // Sinon is a library used for mocking or verifying function calls in JavaScript.
 const sinon = require('sinon');
 
+// Require firebase-admin so we can stub out some of its methods.
+const admin = require('firebase-admin');
+// Require and initialize firebase-functions-test. Since we are not passing in any parameters, it will
+// be initialized in an "offline mode", which means we have to stub out all the methods that interact
+// with Firebase services.
+const test = require('firebase-functions-test')();
 
 describe('Cloud Functions', () => {
-  // [START stubConfig]
-  var myFunctions, configStub, adminInitStub, functions, admin;
+  var myFunctions, adminInitStub;
 
   before(() => {
-    // Since index.js makes calls to functions.config and admin.initializeApp at the top of the file,
-    // we need to stub both of these functions before requiring index.js. This is because the
+    // Since index.js calls admin.initializeApp at the top of the file,
+    // we need to stub it out before requiring index.js. This is because the
     // functions will be executed as a part of the require process.
     // Here we stub admin.initializeApp to be a dummy function that doesn't do anything.
-    admin =  require('firebase-admin');
     adminInitStub = sinon.stub(admin, 'initializeApp');
-    // Next we stub functions.config(). Normally config values are loaded from Cloud Runtime Config;
-    // here we'll just provide some fake values for firebase.databaseURL and firebase.storageBucket
-    // so that an error is not thrown during admin.initializeApp's parameter check
-    functions = require('firebase-functions');
-    configStub = sinon.stub(functions, 'config').returns({
-        firebase: {
-          databaseURL: 'https://not-a-project.firebaseio.com',
-          storageBucket: 'not-a-project.appspot.com',
-        }
-        // You can stub any other config values needed by your functions here, for example:
-        // foo: 'bar'
-      });
     // Now we can require index.js and save the exports inside a namespace called myFunctions.
     // This includes our cloud functions, which can now be accessed at myFunctions.makeUppercase
     // and myFunctions.addMessage
@@ -60,32 +52,16 @@ describe('Cloud Functions', () => {
   });
 
   after(() => {
-    // Restoring our stubs to the original methods.
-    configStub.restore();
+    // Restore admin.initializeApp() to its original method.
     adminInitStub.restore();
+    // Do other cleanup tasks.
+    test.cleanUp();
   });
-  // [END stubConfig]
 
   describe('makeUpperCase', () => {
     // Test Case: setting messages/11111/original to 'input' should cause 'INPUT' to be written to
     // messages/11111/uppercase
     it('should upper case input and write it to /uppercase', () => {
-
-      // [START fakeEvent]
-      const fakeEvent = {
-        // The DeltaSnapshot constructor is used by the Functions SDK to transform a raw event from
-        // your database into an object with utility functions such as .val().
-        // Its signature is: DeltaSnapshot(app: firebase.app.App, adminApp: firebase.app.App,
-        // data: any, delta: any, path?: string);
-        // We can pass null for the first 2 parameters. The data parameter represents the state of
-        // the database item before the event, while the delta parameter represents the change that
-        // occured to cause the event to fire. The last parameter is the database path, which we are
-        // not making use of in this test. So we will omit it.
-        data: new functions.database.DeltaSnapshot(null, null, null, 'input'),
-        // To mock a database delete event:
-        // data: new functions.database.DeltaSnapshot(null, null, 'old_data', null)
-      };
-      // [END fakeEvent]
 
       // [START stubDataRef]
       const childParam = 'uppercase';
@@ -93,33 +69,50 @@ describe('Cloud Functions', () => {
       // Stubs are objects that fake and/or record function calls.
       // These are excellent for verifying that functions have been called and to validate the
       // parameters passed to those functions.
-      const refStub = sinon.stub();
       const childStub = sinon.stub();
       const setStub = sinon.stub();
-      // The following 4 lines override the behavior of event.data.ref.parent.child('uppercase')
-      // .set('INPUT') to return true
-      Object.defineProperty(fakeEvent.data, 'ref', { get: refStub });
-      refStub.returns({ parent: { child: childStub}});
+      // The following lines creates a fake snapshot, 'snap', which returns 'input' when snap.val() is called,
+      // and returns true when snap.ref.parent.child('uppercase').set('INPUT') is called.
+      const snap = {
+        val: () => 'input',
+        ref: {
+          parent: {
+            child: childStub,
+          }
+        }
+      };
       childStub.withArgs(childParam).returns( { set: setStub });
       setStub.withArgs(setParam).returns(true);
       // [END stubDataRef]
 
       // [START verifyDataWrite]
-      // All non-HTTPS cloud functions return a promise that resolves with the return value of your
-      // code. In this case, we've stubbed it to return true if
-      // event.data.ref.parent.child(childParam).set(setParam) was called with the parameters we
-      // expect. We assert that makeUppercase returns a promise that eventually resolves with true.
-      return assert.eventually.equal(myFunctions.makeUppercase(fakeEvent), true);
+      // TODO
+      const wrapped = test.wrap(myFunctions.makeUppercase);
+      // Since we've stubbed snap.ref.parent.child(childParam).set(setParam) to return true if it was
+      // called with the parameters we expect, we assert that it indeed returned true.
+      return assert.equal(wrapped(snap), true);
       // [END verifyDataWrite]
     })
   });
 
   describe('addMessage', () => {
+    let oldDatabase;
+    before(() => {
+      // Save the old database method so it can be restored after the test.
+      oldDatabase = admin.database;
+    });
+
+    after(() => {
+      // Restoring admin.database() to the original method.
+      admin.database = oldDatabase;
+    });
+
     it('should return a 303 redirect', (done) => {
 
       // [START stubAdminDatabase]
       const refParam = '/messages';
       const pushParam = { original: 'input' };
+      const databaseStub = sinon.stub();
       const refStub = sinon.stub();
       const pushStub = sinon.stub();
 
@@ -127,10 +120,12 @@ describe('Cloud Functions', () => {
       // .push({ original: 'input' }) to return a promise that resolves with { ref: 'new_ref' }.
       // This mimics the behavior of a push to the database, which returns an object containing a
       // ref property representing the URL of the newly pushed item.
-      databaseStub = sinon.stub(admin, 'database');
-      databaseStub.get(() => (() => ({ ref: refStub })));
-      refStub.withArgs(refParam).returns( { push: pushStub });
-      pushStub.withArgs(pushParam).returns( Promise.resolve({ ref: 'new_ref' }));
+
+      Object.defineProperty(admin, 'database', { get: () => databaseStub });
+      databaseStub.returns({ ref: refStub });
+      refStub.withArgs(refParam).returns({ push: pushStub });
+      pushStub.withArgs(pushParam).returns(Promise.resolve({ ref: 'new_ref' }));
+
       // [END stubAdminDatabase]
 
       // [START invokeHTTPS]
@@ -150,9 +145,6 @@ describe('Cloud Functions', () => {
       // assertions in the response object to be evaluated.
       myFunctions.addMessage(req, res);
       // [END invokeHTTPS]
-
-      // Restoring admin.database() to the original method
-      databaseStub.restore();
     });
   });
 })
