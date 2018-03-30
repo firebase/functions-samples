@@ -20,12 +20,6 @@
 const chai = require('chai');
 const assert = chai.assert;
 
-// Chai As Promised extends Chai so that a test function can be asynchronous with promises instead
-// of using callbacks. It is recommended when testing Cloud Functions for Firebase due to its heavy
-// use of Promises.
-const chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
-
 // Sinon is a library used for mocking or verifying function calls in JavaScript.
 const sinon = require('sinon');
 
@@ -40,30 +34,29 @@ describe('Cloud Functions', () => {
   var myFunctions, adminInitStub;
 
   before(() => {
-    // Since index.js calls admin.initializeApp at the top of the file,
+    // [START stubAdminInit]
+    // If index.js calls admin.initializeApp at the top of the file,
     // we need to stub it out before requiring index.js. This is because the
     // functions will be executed as a part of the require process.
     // Here we stub admin.initializeApp to be a dummy function that doesn't do anything.
     adminInitStub = sinon.stub(admin, 'initializeApp');
     // Now we can require index.js and save the exports inside a namespace called myFunctions.
-    // This includes our cloud functions, which can now be accessed at myFunctions.makeUppercase
-    // and myFunctions.addMessage
     myFunctions = require('../index');
+    // [END stubAdminInit]
   });
 
   after(() => {
     // Restore admin.initializeApp() to its original method.
     adminInitStub.restore();
     // Do other cleanup tasks.
-    test.cleanUp();
+    test.cleanup();
   });
 
   describe('makeUpperCase', () => {
-    // Test Case: setting messages/11111/original to 'input' should cause 'INPUT' to be written to
-    // messages/11111/uppercase
+    // Test Case: setting messages/{pushId}/original to 'input' should cause 'INPUT' to be written to
+    // messages/{pushId}/uppercase
     it('should upper case input and write it to /uppercase', () => {
-
-      // [START stubDataRef]
+      // [START assertOffline]
       const childParam = 'uppercase';
       const setParam = 'INPUT';
       // Stubs are objects that fake and/or record function calls.
@@ -71,6 +64,7 @@ describe('Cloud Functions', () => {
       // parameters passed to those functions.
       const childStub = sinon.stub();
       const setStub = sinon.stub();
+      // [START fakeSnap]
       // The following lines creates a fake snapshot, 'snap', which returns 'input' when snap.val() is called,
       // and returns true when snap.ref.parent.child('uppercase').set('INPUT') is called.
       const snap = {
@@ -83,15 +77,13 @@ describe('Cloud Functions', () => {
       };
       childStub.withArgs(childParam).returns( { set: setStub });
       setStub.withArgs(setParam).returns(true);
-      // [END stubDataRef]
-
-      // [START verifyDataWrite]
-      // TODO
+      // [END fakeSnap]
+      // Wrap the makeUppercase function.
       const wrapped = test.wrap(myFunctions.makeUppercase);
       // Since we've stubbed snap.ref.parent.child(childParam).set(setParam) to return true if it was
       // called with the parameters we expect, we assert that it indeed returned true.
       return assert.equal(wrapped(snap), true);
-      // [END verifyDataWrite]
+      // [END assertOffline]
     })
   });
 
@@ -108,15 +100,13 @@ describe('Cloud Functions', () => {
     });
 
     it('should return a 303 redirect', (done) => {
-
-      // [START stubAdminDatabase]
       const refParam = '/messages';
       const pushParam = { original: 'input' };
       const databaseStub = sinon.stub();
       const refStub = sinon.stub();
       const pushStub = sinon.stub();
 
-      // The following 4 lines override the behavior of admin.database().ref('/messages')
+      // The following lines override the behavior of admin.database().ref('/messages')
       // .push({ original: 'input' }) to return a promise that resolves with { ref: 'new_ref' }.
       // This mimics the behavior of a push to the database, which returns an object containing a
       // ref property representing the URL of the newly pushed item.
@@ -126,9 +116,7 @@ describe('Cloud Functions', () => {
       refStub.withArgs(refParam).returns({ push: pushStub });
       pushStub.withArgs(pushParam).returns(Promise.resolve({ ref: 'new_ref' }));
 
-      // [END stubAdminDatabase]
-
-      // [START invokeHTTPS]
+      // [START assertHTTP]
       // A fake request object, with req.query.text set to 'input'
       const req = { query: {text: 'input'} };
       // A fake response object, with a stubbed redirect function which asserts that it is called
@@ -144,7 +132,7 @@ describe('Cloud Functions', () => {
       // Invoke addMessage with our fake request and response objects. This will cause the
       // assertions in the response object to be evaluated.
       myFunctions.addMessage(req, res);
-      // [END invokeHTTPS]
+      // [END assertHTTP]
     });
   });
 })

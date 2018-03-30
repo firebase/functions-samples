@@ -15,8 +15,9 @@
   },
   "scripts": {
     "ci-test": "npm install && npm run test",
-    "test-online": "./node_modules/.bin/mocha --reporter spec test/test.online.js --exit",
-    "test-offline": "./node_modules/.bin/mocha --reporter spec test/test.offline.js --exit",
+    "test": "npm run test-offline",
+    "test-online": "mocha --reporter spec test/test.online.js --exit",
+    "test-offline": "mocha --reporter spec test/test.offline.js --exit",
     "serve": "firebase serve --only functions",
     "shell": "firebase experimental:functions:shell",
     "start": "npm run shell",

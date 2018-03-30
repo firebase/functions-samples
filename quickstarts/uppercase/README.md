@@ -9,9 +9,9 @@ This sample app does two things:
  - Create messages in the Firebase Realtime Database using a simple HTTPS request which is handled by an HTTPS Firebase Function. Writing to the Realtime Database is done using the Firebase Admin SDK. 
  - When a message gets added in the Realtime Database, a Firebase Function triggers and automatically makes these messages all uppercase.
 
-## Deploy and test
+## Deploy and try out
 
-To deploy and test the sample:
+To deploy and try out the sample:
 
  - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com)
  - Install the required dependencies by running `npm install` in the `functions` directory
@@ -20,8 +20,20 @@ To deploy and test the sample:
 
  The function executes and redirects the browser to the Firebase console at the database location where the text string was stored. You should see your text value displayed in the console and uppercase.
 
+## Run unit tests
 
+The test folder has unit tests written with `firebase-functions-test`. There are 2 sets of tests: online and offline.
 
+To run the offline tests: run `npm test` inside the functions folder.
+
+To run the online tests:
+ - Replace the `projectConfig` variable in `test/test.online.js` with configuration values from your project.
+ - Download a service account key by following these instructions:
+ ..* Open the Service Accounts pane of the Google Cloud Console.
+ ..* Select the App Engine default service account, and use the options menu at right to select Create key.
+ ..* When prompted, select JSON for the key type, and click Create.
+ - Save the file in the test folder, and name it `service-account-key.json`
+ - Run `npm run test-online` inside the functions folder.
 
 ## Contributing
 
