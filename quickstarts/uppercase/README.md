@@ -29,9 +29,9 @@ To run the offline tests: run `npm test` inside the functions folder.
 To run the online tests:
  - Replace the `projectConfig` variable in `test/test.online.js` with configuration values from your project.
  - Download a service account key by following these instructions:
- ..* Open the [Service Accounts pane](https://console.cloud.google.com/iam-admin/serviceaccounts) of the Google Cloud Console.
- ..* Select the App Engine default service account, and use the options menu at right to select Create key.
- ..* When prompted, select JSON for the key type, and click Create.
+ ⋅⋅* Open the [Service Accounts pane](https://console.cloud.google.com/iam-admin/serviceaccounts) of the Google Cloud Console.
+ ⋅⋅* Select the App Engine default service account, and use the options menu at right to select Create key.
+ ⋅⋅* When prompted, select JSON for the key type, and click Create.
  - Save the file in the test folder, and name it `service-account-key.json`
  - Run `npm run test-online` inside the functions folder.
 
