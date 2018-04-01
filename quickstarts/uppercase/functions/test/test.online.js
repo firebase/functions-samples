@@ -33,7 +33,7 @@ const projectConfig = {
 const test = require('firebase-functions-test')(projectConfig, './service-account-key.json');
 
 describe('Cloud Functions', () => {
-  var myFunctions;
+  const myFunctions;
 
   before(() => {
     // Require index.js and save the exports inside a namespace called myFunctions.
@@ -83,7 +83,7 @@ describe('Cloud Functions', () => {
           // Assert code is 303
           assert.equal(code, 303);
           // If the database push is successful, then the URL sent back will have the following format:
-          var expectedRef = new RegExp(projectConfig.databaseURL + '/messages/');
+          const expectedRef = new RegExp(projectConfig.databaseURL + '/messages/');
           assert.isTrue(expectedRef.test(url));
           done();
         }

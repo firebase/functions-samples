@@ -22,7 +22,7 @@ To deploy and try out the sample:
 
 ## Run unit tests
 
-The test folder has unit tests written with `firebase-functions-test`. There are 2 sets of tests: online and offline.
+The test folder has unit tests written with [`firebase-functions-test`](https://github.com/Firebase/firebase-functions-test). There are 2 sets of tests: online and offline.
 
 To run the offline tests: run `npm test` inside the functions folder.
 

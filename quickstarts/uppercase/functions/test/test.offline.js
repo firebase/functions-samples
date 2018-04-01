@@ -31,7 +31,7 @@ const admin = require('firebase-admin');
 const test = require('firebase-functions-test')();
 
 describe('Cloud Functions', () => {
-  var myFunctions, adminInitStub;
+  const myFunctions, adminInitStub;
 
   before(() => {
     // [START stubAdminInit]
@@ -75,7 +75,7 @@ describe('Cloud Functions', () => {
           }
         }
       };
-      childStub.withArgs(childParam).returns( { set: setStub });
+      childStub.withArgs(childParam).returns({ set: setStub });
       setStub.withArgs(setParam).returns(true);
       // [END fakeSnap]
       // Wrap the makeUppercase function.
