@@ -22,7 +22,7 @@ const path = require('path');
 const os = require('os');
 
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 const gcs = require('@google-cloud/storage')();
 const spawn = require('child-process-promise').spawn;
 
@@ -30,8 +30,7 @@ const spawn = require('child-process-promise').spawn;
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
  * output of ImageMagick's `identify -verbose`) is saved in the Realtime Database.
  */
-exports.metadata = functions.storage.object().onChange((event) => {
-  const object = event.data;
+exports.metadata = functions.storage.object().onFinalize((object) => {
   const filePath = object.name;
 
   // Create random filename with same extension as uploaded file.
@@ -41,12 +40,6 @@ exports.metadata = functions.storage.object().onChange((event) => {
   // Exit if this is triggered on a file that is not an image.
   if (!object.contentType.startsWith('image/')) {
     console.log('This is not an image.');
-    return null;
-  }
-
-  // Exit if this is a move or deletion event.
-  if (object.resourceState === 'not_exists') {
-    console.log('This is a deletion event.');
     return null;
   }
 

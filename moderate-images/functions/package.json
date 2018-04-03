@@ -5,10 +5,10 @@
     "@google-cloud/storage": "^0.4.0",
     "@google-cloud/vision": "^0.5.0",
     "child-process-promise": "^2.2.0",
-    "firebase-admin": "^4.1.1",
-    "firebase-functions": "^0.5.1",
     "mkdirp": "^0.5.1",
-    "mkdirp-promise": "^4.0.0"
+    "mkdirp-promise": "^4.0.0",
+    "firebase-admin": "~5.11.0",
+    "firebase-functions": "^1.0.0"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
@@ -21,5 +21,6 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
-  }
+  },
+  "private": true
 }

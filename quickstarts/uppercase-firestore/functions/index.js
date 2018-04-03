@@ -22,7 +22,7 @@ const functions = require('firebase-functions');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 // [END import]
 
 // [START addMessage]
@@ -47,19 +47,19 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // Listens for new messages added to /messages/:documentId/original and creates an
 // uppercase version of the message to /messages/:documentId/uppercase
 // [START makeUppercaseTrigger]
-exports.makeUppercase = functions.firestore.document('/messages/{documentId}').onCreate((event) => {
+exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
+    .onCreate((snap, context) => {
 // [END makeUppercaseTrigger]
-  // [START makeUppercaseBody]
-
-  // Grab the current value of what was written to the Realtime Database.
-  const original = event.data.data().original;
-  console.log('Uppercasing', event.params.documentId, original);
-  const uppercase = original.toUpperCase();
-  // You must return a Promise when performing asynchronous tasks inside a Functions such as
-  // writing to the Firebase Realtime Database.
-  // Setting an 'uppercase' sibling in the Realtime Database returns a Promise.
-  return event.data.ref.set({uppercase}, {merge: true});
-  // [END makeUppercaseBody]
-});
+      // [START makeUppercaseBody]
+      // Grab the current value of what was written to the Realtime Database.
+      const original = snap.data().original;
+      console.log('Uppercasing', context.params.documentId, original);
+      const uppercase = original.toUpperCase();
+      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // writing to the Firebase Realtime Database.
+      // Setting an 'uppercase' sibling in the Realtime Database returns a Promise.
+      return snap.ref.set({uppercase}, {merge: true});
+      // [END makeUppercaseBody]
+    });
 // [END makeUppercase]
 // [END all]

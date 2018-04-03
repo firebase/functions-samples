@@ -3,8 +3,8 @@
   "description": "Sample app showing how to transpile ES7 code in cloud Functions.",
   "dependencies": {
     "babel-runtime": "^6.23.0",
-    "firebase-admin": "^4.1.1",
-    "firebase-functions": "^0.5.1"
+    "firebase-admin": "~5.11.0",
+    "firebase-functions": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -17,5 +17,6 @@
   "scripts": {
     "prepare": "babel ./*.es7 --retain-lines -d ./",
     "lint": "./node_modules/.bin/eslint --max-warnings=0 ."
-  }
+  },
+  "private": true
 }

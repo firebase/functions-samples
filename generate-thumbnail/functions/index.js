@@ -20,7 +20,7 @@ const mkdirp = require('mkdirp-promise');
 // Include a Service Account Key to use a Signed URL
 const gcs = require('@google-cloud/storage')({keyFilename: 'service-account-credentials.json'});
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
@@ -38,10 +38,10 @@ const THUMB_PREFIX = 'thumb_';
  * After the thumbnail has been generated and uploaded to Cloud Storage,
  * we write the public URL to the Firebase Realtime Database.
  */
-exports.generateThumbnail = functions.storage.object().onChange((event) => {
+exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
   // File and directory paths.
-  const filePath = event.data.name;
-  const contentType = event.data.contentType; // This is the image MIME type
+  const filePath = object.name;
+  const contentType = object.contentType; // This is the image MIME type
   const fileDir = path.dirname(filePath);
   const fileName = path.basename(filePath);
   const thumbFilePath = path.normalize(path.join(fileDir, `${THUMB_PREFIX}${fileName}`));
@@ -61,14 +61,8 @@ exports.generateThumbnail = functions.storage.object().onChange((event) => {
     return null;
   }
 
-  // Exit if this is a move or deletion event.
-  if (event.data.resourceState === 'not_exists') {
-    console.log('This is a deletion event.');
-    return null;
-  }
-
   // Cloud Storage files.
-  const bucket = gcs.bucket(event.data.bucket);
+  const bucket = gcs.bucket(object.bucket);
   const file = bucket.file(filePath);
   const thumbFile = bucket.file(thumbFilePath);
   const metadata = {contentType: contentType};

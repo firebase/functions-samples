@@ -25,12 +25,11 @@ const functions = require('firebase-functions');
  * topic.
  */
 // [START trigger]
-exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish((event) => {
+exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish((message) => {
 // [END trigger]
   // [START readBase64]
-  const pubSubMessage = event.data;
   // Decode the PubSub Message body.
-  const messageBody = pubSubMessage.data ? Buffer.from(pubSubMessage.data, 'base64').toString() : null;
+  const messageBody = message.data ? Buffer.from(message.data, 'base64').toString() : null;
   // [END readBase64]
   // Print the message in the logs.
   console.log(`Hello ${messageBody || 'World'}!`);
@@ -41,13 +40,12 @@ exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish((event) => 
  * Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
  * topic as JSON.
  */
-exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish((event) => {
+exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish((message) => {
   // [START readJson]
-  const pubSubMessage = event.data;
   // Get the `name` attribute of the PubSub message JSON body.
   let name = null;
   try {
-    name = pubSubMessage.json.name;
+    name = message.json.name;
   } catch (e) {
     console.error('PubSub message was not JSON', e);
   }
@@ -60,11 +58,10 @@ exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish
  * Cloud Function to be triggered by Pub/Sub that logs a message using the data attributes
  * published to the topic.
  */
-exports.helloPubSubAttributes = functions.pubsub.topic('yet-another-topic-name').onPublish((event) => {
+exports.helloPubSubAttributes = functions.pubsub.topic('yet-another-topic-name').onPublish((message) => {
   // [START readAttributes]
-  const pubSubMessage = event.data;
   // Get the `name` attribute of the message.
-  const name = pubSubMessage.attributes.name;
+  const name = message.attributes.name;
   // [END readAttributes]
   // Print the message in the logs.
   console.log(`Hello ${name || 'World'}!`);

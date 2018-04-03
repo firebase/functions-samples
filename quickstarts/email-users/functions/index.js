@@ -42,11 +42,9 @@ const APP_NAME = 'Cloud Storage for Firebase quickstart';
  * Sends a welcome email to new user.
  */
 // [START onCreateTrigger]
-exports.sendWelcomeEmail = functions.auth.user().onCreate((event) => {
-  // [END onCreateTrigger]
+exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
+// [END onCreateTrigger]
   // [START eventAttributes]
-  const user = event.data; // The Firebase user.
-
   const email = user.email; // The email of the user.
   const displayName = user.displayName; // The display name of the user.
   // [END eventAttributes]
@@ -60,10 +58,8 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((event) => {
  * Send an account deleted email confirmation to users who delete their accounts.
  */
 // [START onDeleteTrigger]
-exports.sendByeEmail = functions.auth.user().onDelete((event) => {
-  // [END onDeleteTrigger]
-  const user = event.data;
-
+exports.sendByeEmail = functions.auth.user().onDelete((user) => {
+// [END onDeleteTrigger]
   const email = user.email;
   const displayName = user.displayName;
 

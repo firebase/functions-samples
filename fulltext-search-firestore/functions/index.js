@@ -31,12 +31,12 @@ const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 
 // [START update_index_function]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate((event) => {
+exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate((snap, context) => {
   // Get the note document
-  const note = event.data.data();
+  const note = snap.data();
 
   // Add an 'objectID' field which Algolia requires
-  note.objectID = event.params.noteId;
+  note.objectID = context.params.noteId;
 
   // Write to the algolia index
   const index = client.initIndex(ALGOLIA_INDEX_NAME);
@@ -46,7 +46,7 @@ exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(
 
 // [START get_firebase_user]
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 function getFirebaseUser(req, res, next) {
   console.log('Check if request is authorized with Firebase ID token');

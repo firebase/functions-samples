@@ -16,44 +16,25 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
-const request = require('request-promise');
-
-// Shorten URL
-exports.shortenUrl = functions.database.ref('/links/{linkID}').onWrite((event) => {
-  const snapshot = event.data;
-  if (typeof snapshot.val() !== 'string') {
-    return null;
-  }
-  return createShortenerPromise(snapshot);
+const {google} = require('googleapis');
+const urlshortener = google.urlshortener({
+  version: 'v1',
+  auth: functions.config().google ? functions.config().google.api_key: undefined,
 });
 
-// URL to the Google URL Shortener API.
-function createShortenerRequest(sourceUrl) {
-  return {
-    method: 'POST',
-    uri: `https://www.googleapis.com/urlshortener/v1/url?key=${functions.config().keys.firebase_api}`,
-    body: {
-      longUrl: sourceUrl,
-    },
-    json: true,
-    resolveWithFullResponse: true,
-  };
-}
-
-function createShortenerPromise(snapshot) {
-  const key = snapshot.key;
-  const originalUrl = snapshot.val();
-  return request(createShortenerRequest(originalUrl)).then((response) => {
-    if (response.statusCode === 200) {
-      return response.body.id;
-    }
-    throw response.body;
-  }).then((shortUrl) => {
-    return admin.database().ref(`/links/${key}`).set({
-      original: originalUrl,
-      short: shortUrl,
+// Shorten URL written to /links/{linkID}.
+exports.shortenUrl = functions.database.ref('/links/{linkID}').onCreate((snap) => {
+  const originalUrl = snap.val();
+  return new Promise((resolve, reject) => {
+    urlshortener.url.insert({resource: {longUrl: originalUrl}}, (err, response) => {
+      if (err) {
+        reject(err);
+      } else {
+        snap.ref.set({
+          original: originalUrl,
+          short: response.data.id,
+        }).then(() => resolve()).catch(err => reject(err));
+      }
     });
   });
-}
+});

@@ -28,14 +28,8 @@ const fs = require('fs');
  * When an image is uploaded we check if it is flagged as Adult or Violence by the Cloud Vision
  * API and if it is we blur it using ImageMagick.
  */
-exports.blurOffensiveImages = functions.storage.object().onChange((event) => {
-  const object = event.data;
+exports.blurOffensiveImages = functions.storage.object().onFinalize((object) => {
   const file = gcs.bucket(object.bucket).file(object.name);
-
-  // Exit if this is a move or deletion event.
-  if (object.resourceState === 'not_exists') {
-    return console.log('This is a deletion event.');
-  }
 
   // Check the image content using the Cloud Vision API.
   return vision.detectSafeSearch(file).then((data) => {
