@@ -60,12 +60,15 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
 
     return promisePool.start();
   }).then(() => {
-    return console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
+    console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
+    return null;
   }).catch((error) => {
     console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
+    return null;
   }).then(() => {
     console.log('User cleanup finished');
-    return res.send('User cleanup finished');
+    res.send('User cleanup finished');
+    return null;
   });
 
 /**
