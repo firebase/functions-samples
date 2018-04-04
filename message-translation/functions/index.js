@@ -25,7 +25,7 @@ const LANGUAGES = ['en', 'es', 'de', 'fr', 'sv', 'ga', 'it', 'jp'];
 
 // Translate an incoming message.
 exports.translate = functions.database.ref('/messages/{languageID}/{messageID}').onWrite((change, context) => {
-  const snapshot = change.after.val();
+  const snapshot = change.after;
   if (snapshot.val().translated) {
     return null;
   }
