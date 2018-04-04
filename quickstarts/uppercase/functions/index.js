@@ -46,20 +46,16 @@ exports.addMessage = functions.https.onRequest((req, res) => {
 // [START makeUppercase]
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
-// [START makeUppercaseTrigger]
 exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
-    .onWrite((change, context) => {
-// [END makeUppercaseTrigger]
-      // [START makeUppercaseBody]
+    .onCreate((snapshot, context) => {
       // Grab the current value of what was written to the Realtime Database.
-      const original = change.after.val();
+      const original = snapshot.val();
       console.log('Uppercasing', context.params.pushId, original);
       const uppercase = original.toUpperCase();
       // You must return a Promise when performing asynchronous tasks inside a Functions such as
       // writing to the Firebase Realtime Database.
       // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
-      return snap.ref.parent.child('uppercase').set(uppercase);
-      // [END makeUppercaseBody]
+      return snapshot.ref.parent.child('uppercase').set(uppercase);
     });
 // [END makeUppercase]
 // [END all]
