@@ -36,39 +36,39 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   // Exit if the keys don't match
   if (!secureCompare(key, functions.config().cron.key)) {
     console.log('The key provided in the request does not match the key set in the environment. Check that', key,
-      'matches the cron.key attribute in `firebase env:get`');
+        'matches the cron.key attribute in `firebase env:get`');
     res.status(403).send('Security key does not match. Make sure your "key" URL query parameter matches the ' +
-      'cron.key environment variable.');
+        'cron.key environment variable.');
     return null;
   }
-
+  
   // Fetch all user details.
   return getUsers().then((users) => {
     // Find users that have not signed in in the last 30 days.
     const inactiveUsers = users.filter(
-        (user) => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
+        user => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
     const promisePool = new PromisePool(() => {
       if (inactiveUsers.length > 0) {
         const userToDelete = inactiveUsers.pop();
+
         // Delete the inactive user.
-        return admin.auth().deleteUser(userToDelete.localId);
+        return admin.auth().deleteUser(userToDelete.localId).then(() => {
+          console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
+          return null;
+        }).catch(error => {
+          console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
+          return null;
+        });
       }
-      return reject();
     }, MAX_CONCURRENT);
 
-    return promisePool.start();
-  }).then(() => {
-    console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
-    return null;
-  }).catch((error) => {
-    console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
-    return null;
-  }).then(() => {
-    console.log('User cleanup finished');
-    res.send('User cleanup finished');
-    return null;
+    return promisePool.start().then(() => {
+      console.log('User cleanup finished');
+      res.send('User cleanup finished');
+      return null;
+    });
   });
 });
 
