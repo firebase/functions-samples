@@ -43,8 +43,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   }
 
   // Fetch all user details.
-  return getUsers();
-}).then((users) => {
+  return getUsers().then((users) => {
     // Find users that have not signed in in the last 30 days.
     const inactiveUsers = users.filter(
         (user) => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
