@@ -70,6 +70,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
     res.send('User cleanup finished');
     return null;
   });
+});
 
 /**
  * Returns the list of all users with their ID and lastLogin timestamp.
