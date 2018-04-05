@@ -37,5 +37,6 @@ exports.webhook = functions.database.ref('/hooks/{hookId}').onCreate((snap) => {
       throw new Error(`HTTP Error: ${response.statusCode}`);
     }
     console.log('SUCCESS! Posted', snap.ref);
+    return null;
   });
 });
