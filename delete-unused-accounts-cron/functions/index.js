@@ -90,6 +90,6 @@ function getInactiveUsers(users = [], nextPageToken) {
       return getInactiveUsers(users, result.pageToken);
     }
     
-    return userIds;
+    return users;
   });
 }
