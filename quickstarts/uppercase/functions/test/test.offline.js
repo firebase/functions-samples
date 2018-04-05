@@ -31,7 +31,7 @@ const admin = require('firebase-admin');
 const test = require('firebase-functions-test')();
 
 describe('Cloud Functions', () => {
-  const myFunctions, adminInitStub;
+  let myFunctions, adminInitStub;
 
   before(() => {
     // [START stubAdminInit]
