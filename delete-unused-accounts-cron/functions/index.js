@@ -87,7 +87,7 @@ function getInactiveUsers(users = [], nextPageToken) {
     
     // If there are more users to fetch we fecthc them.
     if (result.pageToken) {
-      return getUsers(users, result.pageToken);
+      return getInactiveUsers(users, result.pageToken);
     }
     
     return userIds;
