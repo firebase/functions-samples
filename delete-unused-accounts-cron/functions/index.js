@@ -45,20 +45,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   // Fetch all user details.
   return getUsers().then((inactiveUsers) => {
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
-    const promisePool = new PromisePool(() => {
-      if (inactiveUsers.length > 0) {
-        const userToDelete = inactiveUsers.pop();
-
-        // Delete the inactive user.
-        return admin.auth().deleteUser(userToDelete.localId).then(() => {
-          console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
-          return null;
-        }).catch(error => {
-          console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
-          return null;
-        });
-      }
-    }, MAX_CONCURRENT);
+    const promisePool = new PromisePool(() => deleteInactiveUser(inactiveUsers), MAX_CONCURRENT);
 
     return promisePool.start().then(() => {
       console.log('User cleanup finished');
@@ -67,6 +54,24 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
     });
   });
 });
+
+/**
+ * Deletes one inactive user from the list.
+ */
+function deleteInactiveUser(inactiveUsers) {
+  if (inactiveUsers.length > 0) {
+    const userToDelete = inactiveUsers.pop();
+
+    // Delete the inactive user.
+    return admin.auth().deleteUser(userToDelete.localId).then(() => {
+      console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
+      return null;
+    }).catch(error => {
+      console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
+      return null;
+    });
+  }
+}
 
 /**
  * Returns the list of all inactive users.
