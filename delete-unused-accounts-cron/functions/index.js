@@ -43,11 +43,7 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   }
   
   // Fetch all user details.
-  return getUsers().then((users) => {
-    // Find users that have not signed in in the last 30 days.
-    const inactiveUsers = users.filter(
-        user => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
-
+  return getUsers().then((inactiveUsers) => {
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
     const promisePool = new PromisePool(() => {
       if (inactiveUsers.length > 0) {
@@ -73,46 +69,22 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
 });
 
 /**
- * Returns the list of all users with their ID and lastLogin timestamp.
+ * Returns the list of all inactive users.
  */
-function getUsers(userIds = [], nextPageToken, accessToken) {
-  return getAccessToken(accessToken).then((accessToken) => {
-    const options = {
-      method: 'POST',
-      uri: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/downloadAccount?fields=users/localId,users/lastLoginAt,nextPageToken&access_token=' + accessToken,
-      body: {
-        nextPageToken: nextPageToken,
-        maxResults: 1000,
-      },
-      json: true,
-    };
-
-    return rp(options);
-  }).then((resp) => {
-    if (!resp.users) {
-      return userIds;
+function getInactiveUsers(users = [], nextPageToken) {
+  return admin.auth().listUsers(1000, nextPageToken).then((result) => {   
+    // Find users that have not signed in in the last 30 days.
+    const inactiveUsers = result.users.filter(
+        user => Date.parse(user.metadata.lastSignInTime) < (Date.now() - 30 * 24 * 60 * 60 * 1000));
+    
+    // Concat with list of previously foud inactive users if there was more than 1000 users.
+    users = users.concat(inactiveUsers);
+    
+    // If there are more users to fetch we fecthc them.
+    if (result.pageToken) {
+      return getUsers(users, result.pageToken);
     }
-    if (resp.nextPageToken) {
-      return getUsers(userIds.concat(resp.users), resp.nextPageToken, accessToken);
-    }
-    return userIds.concat(resp.users);
+    
+    return userIds;
   });
-}
-
-/**
- * Returns an access token using the Google Cloud metadata server.
- */
-function getAccessToken(accessToken) {
-  // If we have an accessToken in cache to re-use we pass it directly.
-  if (accessToken) {
-    return Promise.resolve(accessToken);
-  }
-
-  const options = {
-    uri: 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',
-    headers: {'Metadata-Flavor': 'Google'},
-    json: true,
-  };
-
-  return rp(options).then((resp) => resp.access_token);
 }
