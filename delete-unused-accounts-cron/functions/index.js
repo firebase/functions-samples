@@ -43,76 +43,53 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   }
   
   // Fetch all user details.
-  return getUsers().then((users) => {
-    // Find users that have not signed in in the last 30 days.
-    const inactiveUsers = users.filter(
-        user => parseInt(user.lastLoginAt, 10) < Date.now() - 30 * 24 * 60 * 60 * 1000);
-
+  return getUsers().then((inactiveUsers) => {
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
-    const promisePool = new PromisePool(() => {
-      if (inactiveUsers.length > 0) {
-        const userToDelete = inactiveUsers.pop();
-
-        // Delete the inactive user.
-        return admin.auth().deleteUser(userToDelete.localId).then(() => {
-          console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
-          return null;
-        }).catch(error => {
-          console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
-          return null;
-        });
-      }
-    }, MAX_CONCURRENT);
-
-    return promisePool.start().then(() => {
-      console.log('User cleanup finished');
-      res.send('User cleanup finished');
-      return null;
-    });
+    const promisePool = new PromisePool(() => deleteInactiveUser(inactiveUsers), MAX_CONCURRENT);
+    return promisePool.start();
+  }).then(() => {
+    console.log('User cleanup finished');
+    res.send('User cleanup finished');
+    return null;
   });
 });
 
 /**
- * Returns the list of all users with their ID and lastLogin timestamp.
+ * Deletes one inactive user from the list.
  */
-function getUsers(userIds = [], nextPageToken, accessToken) {
-  return getAccessToken(accessToken).then((accessToken) => {
-    const options = {
-      method: 'POST',
-      uri: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/downloadAccount?fields=users/localId,users/lastLoginAt,nextPageToken&access_token=' + accessToken,
-      body: {
-        nextPageToken: nextPageToken,
-        maxResults: 1000,
-      },
-      json: true,
-    };
+function deleteInactiveUser(inactiveUsers) {
+  if (inactiveUsers.length > 0) {
+    const userToDelete = inactiveUsers.pop();
 
-    return rp(options);
-  }).then((resp) => {
-    if (!resp.users) {
-      return userIds;
-    }
-    if (resp.nextPageToken) {
-      return getUsers(userIds.concat(resp.users), resp.nextPageToken, accessToken);
-    }
-    return userIds.concat(resp.users);
-  });
+    // Delete the inactive user.
+    return admin.auth().deleteUser(userToDelete.localId).then(() => {
+      console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
+      return null;
+    }).catch(error => {
+      console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
+      return null;
+    });
+  }
+  return null;
 }
 
 /**
- * Returns an access token using the Google Cloud metadata server.
+ * Returns the list of all inactive users.
  */
-function getAccessToken(accessToken) {
-  // If we have an accessToken in cache to re-use we pass it directly.
-  if (accessToken) {
-    return Promise.resolve(accessToken);
-  }
-
-  const options = {
-    uri: 'http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',
-    headers: {'Metadata-Flavor': 'Google'},
-    json: true,
-  };
-
-  return rp(options).then((resp) => resp.access_token);
+function getInactiveUsers(users = [], nextPageToken) {
+  return admin.auth().listUsers(1000, nextPageToken).then((result) => {   
+    // Find users that have not signed in in the last 30 days.
+    const inactiveUsers = result.users.filter(
+        user => Date.parse(user.metadata.lastSignInTime) < (Date.now() - 30 * 24 * 60 * 60 * 1000));
+    
+    // Concat with list of previously foud inactive users if there was more than 1000 users.
+    users = users.concat(inactiveUsers);
+    
+    // If there are more users to fetch we fecthc them.
+    if (result.pageToken) {
+      return getUsers(users, result.pageToken);
+    }
+    
+    return userIds;
+  });
 }

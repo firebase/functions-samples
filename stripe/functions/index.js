@@ -131,7 +131,7 @@ function reportError(err, context = {}) {
       if (error) {
        return reject(error);
       }
-      resolve();
+      return resolve();
     });
   });
 }
