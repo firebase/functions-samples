@@ -46,12 +46,11 @@ exports.accountcleanup = functions.https.onRequest((req, res) => {
   return getUsers().then((inactiveUsers) => {
     // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
     const promisePool = new PromisePool(() => deleteInactiveUser(inactiveUsers), MAX_CONCURRENT);
-
-    return promisePool.start().then(() => {
-      console.log('User cleanup finished');
-      res.send('User cleanup finished');
-      return null;
-    });
+    return promisePool.start();
+  }).then(() => {
+    console.log('User cleanup finished');
+    res.send('User cleanup finished');
+    return null;
   });
 });
 
@@ -71,6 +70,7 @@ function deleteInactiveUser(inactiveUsers) {
       return null;
     });
   }
+  return null;
 }
 
 /**
