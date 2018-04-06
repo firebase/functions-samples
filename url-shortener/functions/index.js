@@ -16,25 +16,16 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const {google} = require('googleapis');
-const urlshortener = google.urlshortener({
-  version: 'v1',
-  auth: functions.config().google ? functions.config().google.api_key: undefined,
-});
+const BitlyClient = require('bitly');
+const bitly = BitlyClient(functions.config().bitly.access_token);
 
 // Shorten URL written to /links/{linkID}.
 exports.shortenUrl = functions.database.ref('/links/{linkID}').onCreate((snap) => {
   const originalUrl = snap.val();
-  return new Promise((resolve, reject) => {
-    urlshortener.url.insert({resource: {longUrl: originalUrl}}, (err, response) => {
-      if (err) {
-        reject(err);
-      } else {
-        snap.ref.set({
-          original: originalUrl,
-          short: response.data.id,
-        }).then(() => resolve()).catch(err => reject(err));
-      }
-    });
+  return bitly.shorten(originalUrl).then((response) => {
+    return snap.ref.set({
+      original: originalUrl,
+      short: response.data.url,
+    })
   });
 });

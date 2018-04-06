@@ -2,7 +2,7 @@
   "name": "url-shortener-functions",
   "description": "URL Shortener Firebase Functions sample",
   "dependencies": {
-    "googleapis": "^26.0.1",
+    "bitly": "^5.0.12",
     "firebase-admin": "~5.11.0",
     "firebase-functions": "^1.0.0"
   },
