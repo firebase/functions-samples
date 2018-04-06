@@ -17,6 +17,7 @@
 
 const functions = require('firebase-functions');
 const BitlyClient = require('bitly');
+// TODO: Make sure to set the bitly.access_token cloud functions config using the CLI.
 const bitly = BitlyClient(functions.config().bitly.access_token);
 
 // Shorten URL written to /links/{linkID}.
