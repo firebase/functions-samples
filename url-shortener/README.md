@@ -7,20 +7,19 @@ This template shows how to shorten URLs automatically as they are added.
 
 See file [functions/index.js](functions/index.js) for the code.
 
-This uses the [Google URL Shortener API](https://developers.google.com/url-shortener/).
+This uses the [Bit.ly API](https://developers.google.com/url-shortener/).
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Setting up the sample
 
  - Create a Firebase project using the [Firebase Console](https://console.firebase.google.com).
- - [Enable the URL Shortener API](https://console.cloud.google.com/apis/library/urlshortener.googleapis.com/?project=_) on your Firebase Project.
+ - Create a [Bit.ly application](https://bitly.com/a/oauth_apps) and generate an **Access Tokens**.
  - Set the sample ot use your Firebase project using `firebase use --add` and select your new Firebase project.
- - Find your Firebase API Server key in the Firebase Console under **Project Settings > Cloud Messaging > Legacy server key**
- - Add your Firebase API Server key to your Firebase project configuration:
-    ```bash
-    firebase functions:config:set google.api_key=<YOUR FIREBASE API KEY>
-    ```
+ - Set your Bit.ly app's access token on your function by running:
+     ```bash
+     firebase functions:config:set bitly.access_token=XXXXXXXXXXXXX
+     ```
  - Deploy the function using `firebase deploy`
  - Manually add an object to the Realtime Database following the structure described below.
 

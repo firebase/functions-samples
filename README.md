@@ -203,7 +203,7 @@ Uses a Realtime Database trigger.
 
 ### [Automatic URL shortener](/url-shortener)
 
-Integrates the Google URL Shortener API to shorten URLs automatically as they are added to the database.
+Integrates the Bit.ly API to shorten URLs automatically as they are added to the database.
 Uses a Realtime Database trigger.
 
 ### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Cloud Firestore](/fulltext-search-firestore)
