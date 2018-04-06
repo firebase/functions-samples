@@ -33,7 +33,7 @@ const MAX_CONCURRENT = 3;
 exports.accountcleanup = functions.https.onRequest((req, res) => {
   const key = req.query.key;
 
-  // Exit if the keys don't match
+  // Exit if the keys don't match.
   if (!secureCompare(key, functions.config().cron.key)) {
     console.log('The key provided in the request does not match the key set in the environment. Check that', key,
         'matches the cron.key attribute in `firebase env:get`');
@@ -82,10 +82,10 @@ function getInactiveUsers(users = [], nextPageToken) {
     const inactiveUsers = result.users.filter(
         user => Date.parse(user.metadata.lastSignInTime) < (Date.now() - 30 * 24 * 60 * 60 * 1000));
     
-    // Concat with list of previously foud inactive users if there was more than 1000 users.
+    // Concat with list of previously found inactive users if there was more than 1000 users.
     users = users.concat(inactiveUsers);
     
-    // If there are more users to fetch we fecthc them.
+    // If there are more users to fetch we fetch them.
     if (result.pageToken) {
       return getInactiveUsers(users, result.pageToken);
     }
