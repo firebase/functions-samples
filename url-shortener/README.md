@@ -7,7 +7,7 @@ This template shows how to shorten URLs automatically as they are added.
 
 See file [functions/index.js](functions/index.js) for the code.
 
-This uses the [Bit.ly API](https://developers.google.com/url-shortener/).
+This uses the [Bit.ly API](https://dev.bitly.com/).
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
