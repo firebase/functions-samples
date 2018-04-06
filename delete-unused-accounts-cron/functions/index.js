@@ -62,11 +62,11 @@ function deleteInactiveUser(inactiveUsers) {
     const userToDelete = inactiveUsers.pop();
 
     // Delete the inactive user.
-    return admin.auth().deleteUser(userToDelete.localId).then(() => {
-      console.log('Deleted user account', userToDelete.localId, 'because of inactivity');
+    return admin.auth().deleteUser(userToDelete.uid).then(() => {
+      console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
       return null;
     }).catch(error => {
-      console.error('Deletion of inactive user account', userToDelete.localId, 'failed:', error);
+      console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
       return null;
     });
   }
