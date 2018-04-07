@@ -26,9 +26,9 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
       const countRef = collectionRef.parent.child('likes_count');
 
       let increment;
-      if (change.after.exists() && !change.after.previous.exists()) {
+      if (change.after.exists() && !change.before.exists()) {
         increment = 1;
-      } else if (!change.after.exists() && change.after.previous.exists()) {
+      } else if (!change.after.exists() && change.before.exists()) {
         increment = -1;
       } else {
         return null;
