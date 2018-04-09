@@ -65,8 +65,12 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
   const bucket = gcs.bucket(object.bucket);
   const file = bucket.file(filePath);
   const thumbFile = bucket.file(thumbFilePath);
-  const metadata = {contentType: contentType};
-
+  const metadata = {
+    contentType: contentType,
+    // To enable Client-side caching you can set the Cache-Control headers here. Uncomment below.
+    // 'Cache-Control': 'public,max-age=3600',
+  };
+  
   // Create the temp directory where the storage file will be downloaded.
   return mkdirp(tempLocalDir).then(() => {
     // Download file from bucket.
