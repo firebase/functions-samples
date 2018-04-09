@@ -52,7 +52,7 @@ exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
 // [END makeUppercaseTrigger]
       // [START makeUppercaseBody]
       // Grab the current value of what was written to the Realtime Database.
-      const original = snap.data().original;
+      const original = snap.data();
       console.log('Uppercasing', context.params.documentId, original);
       const uppercase = original.toUpperCase();
       // You must return a Promise when performing asynchronous tasks inside a Functions such as
