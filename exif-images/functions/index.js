@@ -43,22 +43,27 @@ exports.metadata = functions.storage.object().onFinalize((object) => {
     return null;
   }
 
+  let metadata;
   // Download file from bucket.
   const bucket = gcs.bucket(object.bucket);
   return bucket.file(filePath).download({destination: tempLocalFile}).then(() => {
     // Get Metadata from image.
-    return spawn('identify', ['-verbose', tempLocalFile], {capture: ['stdout', 'stderr']});
-  }).then(() => {
-    const metadata = imageMagickOutputToObject(result.stdout);
+    return spawn('identify', ['-verbose', tempLocalFile], {capture: ['stdout', 'stderr']})
+  }).then((result) => {
     // Save metadata to realtime datastore.
-    return admin.database().ref(makeKeyFirebaseCompatible(filePath)).set(metadata);
+    metadata = imageMagickOutputToObject(result.stdout);
+    const safeKey = makeKeyFirebaseCompatible(filePath);
+    return admin.database().ref(safeKey).set(metadata);
   }).then(() => {
-    return console.log('Wrote to:', filePath, 'data:', metadata);
+    console.log('Wrote to:', filePath, 'data:', metadata);
+    return null;
   }).then(() => {
     // Cleanup temp directory after metadata is extracted
     // Remove the file from temp directory
-    fs.unlinkSync(tempLocalFile);
-    return console.log('cleanup successful!');
+    return fs.unlinkSync(tempLocalFile)
+  }).then(() => {
+    console.log('cleanup successful!');
+    return null;
   });
 });
 
