@@ -25,7 +25,7 @@ export default class App extends React.Component {
     this.setState({
       currentEmployee: {}
     });
-    database.getEmployeeById(employeeId).then(({ currentEmployee }) => {
+    database.getEmployeeById(employeeId).then((currentEmployee) => {
       this.setState({
         currentEmployee
       });
