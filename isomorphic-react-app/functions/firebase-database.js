@@ -40,12 +40,12 @@ const getEmployeeById = employeeId => {
   let employee;
   return firebase.database().ref(`/employees/${employeeId}`).once('value').then(snap => {
     employee = snap.val();
-    const reportIds = snapshot.reports || [];
+    const reportIds = Object.keys(employee.reports || []);
     const getReports = reportIds.map(userId => firebase.database().ref(`/employees/${userId}`).once('value'));
     return Promise.all(getReports);
   }).then(reportSnapshots => {
     reports = reportSnapshots.map(snap => snap.val());
-    return {currentEmployee: employee, reports: reports};
+    return { employee, reports: reports};
   });
 };
 
