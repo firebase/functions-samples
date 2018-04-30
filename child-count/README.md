@@ -1,6 +1,6 @@
 # Tracking the number of elements in a list
 
-This template shows how to keep track of the number of elements in a Firebase Database list. For instance this can be useful to keep tack of the number of "likes" or "followers" of something shared on a social platform.
+This template shows how to keep track of the number of elements in a Firebase Database list. For instance this can be useful to keep track of the number of "likes" or "followers" of something shared on a social platform.
 
 ## Functions Code
 
