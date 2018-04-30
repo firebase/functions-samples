@@ -1,4 +1,4 @@
-# Get notified each time a new user open your app the first time or remove your app from his device.
+# Get notified each time a new user opens your app the first time or removes your app from his device.
 
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification from a Analytics triggered Function.
 
@@ -14,7 +14,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Trigger rules
 
-The functions triggers every time a new user open your app the first time or remove your app from his device.
+The functions triggers every time a new user opens your app the first time or removes your app from his device.
 
 
 ## Setup and test this sample section
@@ -36,5 +36,5 @@ To deploy and test the sample:
     firebase functions:config:set dev_motivator.device_token="your_developer_device_token"
     ```
  - Deploy your project's code using `firebase deploy`
- - You'll now get a notification on your mobile when a user opens your app for the first tie and when they uninstall your app.
+ - You'll now get a notification on your mobile when a user opens your app for the first time and when they uninstall your app.
 
