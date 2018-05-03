@@ -1,6 +1,6 @@
 # Use LINE Login with Firebase
 
-This sample shows how to Sign in Firebase using [LINE Login](https://developers.line.me/line-login/overview). In this sample we use LINE iOS and Android SDK to get LINE user information then create a Firebase Custom Token (using the Instagram user ID).
+This sample shows how to Sign in Firebase using [LINE Login](https://developers.line.me/line-login/overview). In this sample we use LINE iOS and Android SDK to get LINE user information then create a Firebase Custom Token (using the Line user ID).
 
 ## Setup the sample
 
@@ -52,4 +52,4 @@ Then update your iOS and Android app with the domain name of your Cloud Function
 
 ### iOS, Android
 
-Build the sample iOS and Android app and run them on your devices. Those sample apps should be working by now. If you seeing any compile errors or the apps crash when start, please refer back to the setup instruction above and check if you missed anything.
+Build the sample iOS and Android app and run them on your devices. Those sample apps should be working by now. If you see any compile errors or the apps crash when starting, please refer back to the setup instruction above and check if you missed anything.
