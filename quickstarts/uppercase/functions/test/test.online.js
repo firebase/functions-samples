@@ -33,7 +33,7 @@ const projectConfig = {
 const test = require('firebase-functions-test')(projectConfig, './service-account-key.json');
 
 describe('Cloud Functions', () => {
-  const myFunctions;
+  let myFunctions;
 
   before(() => {
     // Require index.js and save the exports inside a namespace called myFunctions.
