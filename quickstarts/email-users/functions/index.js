@@ -63,7 +63,7 @@ exports.sendByeEmail = functions.auth.user().onDelete((user) => {
   const email = user.email;
   const displayName = user.displayName;
 
-  return sendGoodbyEmail(email, displayName);
+  return sendGoodbyeEmail(email, displayName);
 });
 // [END sendByeEmail]
 
@@ -83,7 +83,7 @@ function sendWelcomeEmail(email, displayName) {
 }
 
 // Sends a goodbye email to the given user.
-function sendGoodbyEmail(email, displayName) {
+function sendGoodbyeEmail(email, displayName) {
   const mailOptions = {
     from: `${APP_NAME} <noreply@firebase.com>`,
     to: email,
