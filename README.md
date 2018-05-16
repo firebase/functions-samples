@@ -30,7 +30,7 @@ Here is a set of minimal samples for each Cloud Functions trigger types.
 
 ### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Cloud Firestore](/quickstarts/uppercase-firestore)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Cloud Firestore events**. The function sets messages that are written to the datastore, to uppercase.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Cloud Firestore events**. The function transforms message text written to Firestore to uppercase.
 
 ### [HTTPS trigger quickstart: Time Server](/quickstarts/time-server)
 
@@ -38,7 +38,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **HTT
 
 ### [Hosting triggered HTTPS function quickstart: Big Ben](/quickstarts/big-ben)
 
-This quickstart demonstrates using **Cloud Functions** with an HTTPS trigger that's triggered through a Firebase Hosting URL. The function will display a repeated number of "BONG"s, depending on the hour of the day.
+This quickstart demonstrates using **Cloud Functions** with an HTTPS trigger that's triggered through a Firebase Hosting URL. The function will display a repeated number of "BONG"s depending on the hour of the day.
 
 ### [Cloud Storage trigger quickstart: Thumbnail generator](/quickstarts/thumbnails)
 
@@ -46,7 +46,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 ### [Auth trigger quickstart: Welcome Email](/quickstarts/email-users)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Auth events**. The functions sends a Welcome Email when user accounts are created (or when users sign-in using an Identity Provider for the first time) and sends a Goodbye Email when user accounts are deleted.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Auth events**. The function sends a Welcome Email when user accounts are created (or when users sign-in using an Identity Provider for the first time) and sends a Goodbye Email when user accounts are deleted.
 
 ### [PubSub trigger quickstart: Hello World](/quickstarts/pubsub-helloworld)
 
@@ -73,14 +73,14 @@ Uses an **HTTPS request**.
 
 ### [Write Cloud Functions using ES2017 code](/es2017-transpile)
 
-This sample shows how you can write your Cloud Functions code using the ES2017
-syntax. This requires you to run a preparation step where your code is transpiled to
+This sample shows how to write Cloud Functions code using the ES2017
+syntax. This requires running a preparation step where the code is transpiled to
 a supported version of JavaScript.
 Uses a **Firebase Realtime Database trigger**.
 
 ### [Server-side generated pages w/ Handlebars templating and user sessions](/template-handlebars)
 
-This sample shows how to serve server-side generated HTML pages using the [HandlebarsJs](http://handlebarsjs.com/) templating system and serve User specific content by always passing the Firebase ID token in a `__session` cookie.
+This sample shows how to serve server-side generated HTML pages using the [HandlebarsJs](http://handlebarsjs.com/) templating system and serve user-specific content by always passing the Firebase ID token in a `__session` cookie.
 
 ### [Isomorphic React App](/isomorphic-react-app)
 This sample demonstrates how to create an isomorphic React application with server-side data fetching. This sample uses Cloud Functions, Hosting, and the Realtime Database.
@@ -139,7 +139,7 @@ Uses a Realtime Database trigger.
 
 ### [Limit number of child nodes](/limit-children)
 
-Makes sure that the number of child nodes stays below a certain threshold. For instance this can be useful to limit the number of lines of logs or chat history below a given number.
+Makes sure that the number of child nodes stays below a certain threshold. This can be useful to limit the number of lines of logs or chat history below a given number.
 Uses a Realtime Database trigger.
 
 ### [Removing old items from a list](/delete-old-child-nodes)
@@ -188,7 +188,7 @@ Demonstrates hows to integrate Firebase Auth and the Realtime database with Stri
 
 ### [Text moderation](/text-moderation)
 
-Demonstrates how to moderate user input text for bad words. For example this can be used to moderate usernames, chat or forum messages.
+Demonstrates how to moderate user input text for bad words. This can be used to moderate usernames, chat or forum messages.
 Uses a Realtime Database trigger.
 
 ### [Email confirmation](/email-confirmation)
@@ -213,7 +213,7 @@ Uses a Realtime Database or Cloud Firestore trigger.
 
 ### [User data cleanup](/user-data-cleanup)
 
-Deletes all associated user data that is in the Realtime database when a user deletes his Firebase account.
+Deletes all associated user data in the Realtime database when a user deletes his Firebase account.
 Uses an Auth trigger.
 **This code has moved to its own repo at
 https://github.com/firebase/user-data-protection**
@@ -245,12 +245,12 @@ Uses an Analytics trigger.
 
 ### [Delete inactive users accounts via cron](/delete-unused-accounts-cron)
 
-Periodically deletes the accounts of users who have not signed-in in the last month.
+Periodically deletes the accounts of users who have not signed in in the last month.
 Uses an HTTPS trigger.
 
 ### [Developer Motivator](/developer-motivator)
 
-This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app gets a new user or loses one.
+This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification to the developer device each time your app gains or loses a user.
 Uses an Analytics trigger.
 
 ### [Audio Files Conversion](/ffmpeg-convert-audio)
