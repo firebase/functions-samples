@@ -10,7 +10,7 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for t`he specific language governing permissions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 'use strict';
@@ -48,12 +48,6 @@ exports.imageToJPG = functions.storage.object().onFinalize((object) => {
   // Exit if the image is already a JPEG.
   if (object.contentType.startsWith('image/jpeg')) {
     console.log('Already a JPEG.');
-    return null;
-  }
-
-  // Exit if this is a move or deletion event.
-  if (object.resourceState === 'not_exists') {
-    console.log('This is a deletion event.');
     return null;
   }
 
