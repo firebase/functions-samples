@@ -1,6 +1,6 @@
 # Accept PayPal payment in functions firebase
 
-This sample demonstrates how to use the Paypal-rest-sdk with a Google CLoud Functions.
+This sample demonstrates how to use the Paypal-rest-sdk with a Google Cloud Functions.
 
 
 ## Functions Code
