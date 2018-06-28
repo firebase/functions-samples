@@ -27,7 +27,7 @@ This sample comes with a web-based UI for testing the function.
 To test locally do:
 
  1. Start serving your project locally using `firebase serve --only hosting,functions`
- 1. Open the app in a browser at `https://localhost:5000`.
+ 1. Open the app in a browser at `http://localhost:5000`.
  1. Sign in the web app in the browser using Google Sign-In and two authenticated requests will be performed from the client and the result will be displayed on the page, normally "Hello <user displayname>".
 
 
