@@ -68,7 +68,7 @@ app.post('/messages', (req, res) => {
 
 // GET /api/messages?category={category}
 // Get all messages, optionally specifying a category to filter on
-app.get('/messages', (req, res) => {
+app.get('/messages', async (req, res) => {
   const category = req.query.category;
   let query = admin.database().ref(`/users/${req.user.uid}/messages`);
 
@@ -78,33 +78,34 @@ app.get('/messages', (req, res) => {
   } else if (category) {
     return res.status(404).json({errorCode: 404, errorMessage: `category '${category}' not found`});
   }
-
-  return query.once('value').then((snapshot) => {
+  try {
+    const snapshot = await query.once('value');
     let messages = [];
     snapshot.forEach((childSnapshot) => {
       messages.push({key: childSnapshot.key, message: childSnapshot.val().message});
     });
 
-    return res.status(200).json(messages);
-  }).catch((error) => {
+    res.status(200).json(messages);
+  } catch(error) {
     console.log('Error getting messages', error.message);
     res.sendStatus(500);
-  });
+  }
 });
 
 // GET /api/message/{messageId}
 // Get details about a message
-app.get('/message/:messageId', (req, res) => {
+app.get('/message/:messageId', async (req, res) => {
   const messageId = req.params.messageId;
-  admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value').then((snapshot) => {
-    if (snapshot.val() === null) {
-        return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
+  try {
+    const snapshot = await admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value');
+    if (!snapshot.exists()) {
+      return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
     }
     return res.set('Cache-Control', 'private, max-age=300');
-  }).catch((error) => {
+  } catch(error) {
     console.log('Error getting message details', messageId, error.message);
     res.sendStatus(500);
-  });
+  }
 });
 
 // Expose the API as a function
