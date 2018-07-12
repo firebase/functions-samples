@@ -48,22 +48,19 @@ app.use(authenticate);
 // POST /api/messages
 // Create a new message, get its sentiment using Google Cloud NLP,
 // and categorize the sentiment before saving.
-app.post('/messages', (req, res) => {
+app.post('/messages', async (req, res) => {
   const message = req.body.message;
-
-  client.analyzeSentiment({document: message}).then((results) => {
+  try {
+    const results = await client.analyzeSentiment({document: message});
     const category = categorizeScore(results[0].documentSentiment.score);
     const data = {message: message, sentiment: results, category: category};
-    return admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
-  }).then((snapshot) => {
-    return snapshot.ref.once('value');
-  }).then((snapshot) => {
+    const snapshot = await admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
     const val = snapshot.val();
-    return res.status(201).json({message: val.message, category: val.category});
-  }).catch((error) => {
+    res.status(201).json({message: val.message, category: val.category});
+  } catch(error) {
     console.log('Error detecting sentiment or saving message', error.message);
     res.sendStatus(500);
-  });
+  }
 });
 
 // GET /api/messages?category={category}
@@ -76,7 +73,8 @@ app.get('/messages', async (req, res) => {
     // Update the query with the valid category
     query = query.orderByChild('category').equalTo(category);
   } else if (category) {
-    return res.status(404).json({errorCode: 404, errorMessage: `category '${category}' not found`});
+    res.status(404).json({errorCode: 404, errorMessage: `category '${category}' not found`});
+    return;
   }
   try {
     const snapshot = await query.once('value');

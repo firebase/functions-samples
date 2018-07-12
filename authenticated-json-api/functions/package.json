@@ -7,7 +7,6 @@
     "firebase-admin": "~5.11.0",
     "firebase-functions": "^1.0.0"
   },
-  "private": true,
   "devDependencies": {
     "eslint": "^4.13.1",
     "eslint-plugin-promise": "^3.6.0"
@@ -22,5 +21,6 @@
   },
   "engines": {
     "node": "8"
-  }
+  },
+  "private": true
 }
