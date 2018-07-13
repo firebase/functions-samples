@@ -48,7 +48,7 @@ exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-function getFirebaseUser(req, res, next) {
+async function getFirebaseUser(req, res, next) {
   console.log('Check if request is authorized with Firebase ID token');
 
   if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
@@ -66,17 +66,15 @@ function getFirebaseUser(req, res, next) {
     idToken = req.headers.authorization.split('Bearer ')[1];
   }
 
-  return admin
-    .auth()
-    .verifyIdToken(idToken)
-    .then((decodedIdToken) => {
-      console.log('ID Token correctly decoded', decodedIdToken);
-      req.user = decodedIdToken;
-      return next();
-    }).catch((error) => {
-      console.error('Error while verifying Firebase ID token:', error);
-      return res.status(403).send('Unauthorized');
-    });
+  try {
+    const decodedIdToken = admin.auth().verifyIdToken(idToken);
+    console.log('ID Token correctly decoded', decodedIdToken);
+    req.user = decodedIdToken;
+    next();
+  } catch(error) {
+    console.error('Error while verifying Firebase ID token:', error);
+    res.status(403).send('Unauthorized');
+  }
 }
 // [END get_firebase_user]
 
