@@ -18,9 +18,7 @@
 const functions = require('firebase-functions');
 
 // CORS Express middleware to enable CORS Requests.
-const cors = require('cors')({
-  origin: true,
-});
+const cors = require('cors')({origin: true});
 
 // Firebase Setup
 const admin = require('firebase-admin');
@@ -44,30 +42,29 @@ const basicAuthRequest = require('request');
  */
 exports.auth = functions.https.onRequest((req, res) => {
   const handleError = (username, error) => {
-    console.error({
-      User: username,
-    }, error);
-    return res.sendStatus(500);
+    console.error({User: username}, error);
+    res.sendStatus(500);
+    return;
   };
 
   const handleResponse = (username, status, body) => {
-    console.log({
-      User: username,
-    }, {
+    console.log({User: username}, {
       Response: {
         Status: status,
         Body: body,
       },
     });
     if (body) {
-      return res.status(200).json(body);
+      res.status(200).json(body);
+      return;
     }
-    return res.sendStatus(status);
+    res.sendStatus(status);
+    return;
   };
 
   let username = '';
   try {
-    cors(req, res, () => {
+    cors(req, res, async () => {
       // Authentication requests are POSTed, other requests are forbidden
       if (req.method !== 'POST') {
         return handleResponse(username, 403);
@@ -82,25 +79,20 @@ exports.auth = functions.https.onRequest((req, res) => {
       }
 
       // TODO(DEVELOPER): In production you'll need to update the `authenticate` function so that it authenticates with your own credentials system.
-      return authenticate(username, password).then((valid) => {
-        if (!valid) {
-          return handleResponse(username, 401); // Invalid username/password
-        }
+      const valid = await authenticate(username, password)
+      if (!valid) {
+        return handleResponse(username, 401); // Invalid username/password
+      }
 
-        // On success return the Firebase Custom Auth Token.
-        return admin.auth().createCustomToken(username);
-      }).then((firebaseToken) => {
-        return handleResponse(username, 200, {
-          token: firebaseToken,
-        });
-      }).catch((error) => {
-        return handleError(username, error);
+      // On success return the Firebase Custom Auth Token.
+      const firebaseToken = await admin.auth().createCustomToken(username);
+      return handleResponse(username, 200, {
+        token: firebaseToken,
       });
     });
   } catch (error) {
     return handleError(username, error);
   }
-  return null;
 });
 
 /**
