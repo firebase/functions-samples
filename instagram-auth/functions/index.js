@@ -132,20 +132,12 @@ async function createFirebaseAccount(instagramID, displayName, photoURL, accessT
 
   // Save the access token to the Firebase Realtime Database.
   const databaseTask = admin.database().ref(`/instagramAccessToken/${uid}`).set(accessToken);
-  try {
-    // Create or update the user account.
-    const userCreationTask = admin.auth().updateUser(uid, {
-      displayName: displayName,
-      photoURL: photoURL,
-    });
 
-    // Wait for all async task to complete then generate and return a custom auth token.
-    await Promise.all([userCreationTask, databaseTask]);
-    // Create a Firebase custom auth token.
-    const token = await admin.auth().createCustomToken(uid);
-    console.log('Created Custom token for UID "', uid, '" Token:', token);
-    return token;
-  } catch(error) {
+  // Create or update the user account.
+  const userCreationTask = admin.auth().updateUser(uid, {
+    displayName: displayName,
+    photoURL: photoURL,
+  }).catch((error) => {
     // If user does not exists we create it.
     if (error.code === 'auth/user-not-found') {
       return admin.auth().createUser({
@@ -155,5 +147,12 @@ async function createFirebaseAccount(instagramID, displayName, photoURL, accessT
       });
     }
     throw error;
-  }
+  });
+
+  // Wait for all async task to complete then generate and return a custom auth token.
+  await Promise.all([userCreationTask, databaseTask]);
+  // Create a Firebase custom auth token.
+  const token = await admin.auth().createCustomToken(uid);
+  console.log('Created Custom token for UID "', uid, '" Token:', token);
+  return token;
 }
