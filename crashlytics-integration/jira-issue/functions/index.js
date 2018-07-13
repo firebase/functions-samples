@@ -19,7 +19,7 @@ const functions = require('firebase-functions');
 const rp = require('request-promise');
 
 // Helper function that calculates the priority of the issue
-const calculateIssuePriority = (eventType) => {
+function calculateIssuePriority(eventType) {
   // Run custom logic that can determine the priority or severity of this issue
   // For example, you can parse the stack trace to determine which part of your app
   // is causing the crash and assign priorities based on that
@@ -44,7 +44,7 @@ const calculateIssuePriority = (eventType) => {
 
 // Helper function that parses the Jira project url and returns an object
 // of the url fragments
-const parseUrl = (url) => {
+function parseUrl(url) {
   // input url format: https://yourdomain.atlassian.net/projects/XX
   const matches = url.match(/(https?:\/\/)(.+?)(\/.+)?\/(projects|browse)\/([\w-]+)/);
   if (matches && matches.length === 6) {
@@ -55,7 +55,7 @@ const parseUrl = (url) => {
 };
 
 // Helper function that posts to Jira to create a new issue
-const createJiraIssue = (summary, description, priority) => {
+function createJiraIssue(summary, description, priority) {
   const project_url = functions.config().jira.project_url;
   const user = functions.config().jira.user;
   const pass = functions.config().jira.pass;
@@ -98,7 +98,7 @@ const createJiraIssue = (summary, description, priority) => {
   });
 };
 
-exports.createNewIssue = functions.crashlytics.issue().onNew((issue) => {
+exports.createNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -110,12 +110,11 @@ exports.createNewIssue = functions.crashlytics.issue().onNew((issue) => {
   const description = `There is a new issue - ${issueTitle} in ${appId}, ` +
       `version ${latestAppVersion}`;
   const priority = calculateIssuePriority();
-  return createJiraIssue(summary, description, priority).then(() => {
-    return console.log(`Created issue ${issueId} in Jira successfully`);
-  });
+  await createJiraIssue(summary, description, priority);
+  console.log(`Created issue ${issueId} in Jira successfully`);
 });
 
-exports.createRegressedIssue = functions.crashlytics.issue().onRegressed((issue) => {
+exports.createRegressedIssue = functions.crashlytics.issue().onRegressed(async (issue) => {
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -129,12 +128,11 @@ exports.createRegressedIssue = functions.crashlytics.issue().onRegressed((issue)
       `version ${latestAppVersion}. This issue was previously resolved at ` +
       `${new Date(resolvedTime).toString()}`;
   const priority = calculateIssuePriority('regressed');
-  return createJiraIssue(summary, description, priority).then(() => {
-    return console.log(`Created issue ${issueId} in Jira successfully`);
-  });
+  await createJiraIssue(summary, description, priority);
+  console.log(`Created issue ${issueId} in Jira successfully`);
 });
 
-exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert((issue) => {
+exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert(async (issue) => {
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -148,7 +146,6 @@ exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert((iss
       `This issue is occuring in build version ${latestAppVersion} and is causing ` +
       `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
   const priority = calculateIssuePriority('velocityAlert');
-  return createJiraIssue(summary, description, priority).then(() => {
-    return console.log(`Created issue ${issueId} in Jira successfully`);
-  });
+  await createJiraIssue(summary, description, priority);
+  console.log(`Created issue ${issueId} in Jira successfully`);
 });
