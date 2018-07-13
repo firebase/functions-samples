@@ -34,7 +34,7 @@ const LATEST_VERSION = '2.0';
 /**
  * After a user has updated the app. Send them a survey to compare the app with the old version.
  */
-exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog((event) => {
+exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog(async (event) => {
   const uid = event.user.userId;
   const appVerion = event.user.appInfo.appVersion;
 
@@ -43,11 +43,10 @@ exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog((eve
     // Fetch the email of the user. In this sample we assume that the app is using Firebase Auth and
     // has set the Firebase Analytics User ID to be the same as the Firebase Auth uid using the
     // setUserId API.
-    return admin.auth().getUser(uid).then((user) => {
-      const email = user.email;
-      const name = user.displayName;
-      return sendSurveyEmail(email, name);
-    });
+    const user = await admin.auth().getUser(uid);
+    const email = user.email;
+    const name = user.displayName;
+    return sendSurveyEmail(email, name);
   }
   return null;
 });
@@ -55,7 +54,7 @@ exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog((eve
 /**
  * Sends an email pointing to the Upgraded App survey.
  */
-function sendSurveyEmail(email, name) {
+async function sendSurveyEmail(email, name) {
   const mailOptions = {
     from: '"MyCoolApp" <noreply@firebase.com>',
     to: email,
@@ -65,7 +64,6 @@ function sendSurveyEmail(email, name) {
            Fill out our survey: ${LINK_TO_SURVEY}`,
   };
 
-  return mailTransport.sendMail(mailOptions).then(() => {
-    return console.log('Upgrade App Survey email sent to:', email);
-  });
+  await mailTransport.sendMail(mailOptions);
+  console.log('Upgrade App Survey email sent to:', email);
 }
