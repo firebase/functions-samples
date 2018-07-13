@@ -26,6 +26,7 @@ paypal.configure({
   client_id: functions.config().paypal.client_id, // run: firebase functions:config:set paypal.client_id="yourPaypalClientID"
   client_secret: functions.config().paypal.client_secret // run: firebase functions:config:set paypal.client_secret="yourPaypalClientSecret"
 });
+
 /**
  * Expected in the body the amount
  * Set up the payment information object
@@ -85,12 +86,12 @@ exports.pay = functions.https.onRequest((req, res) => {
 });
 
 // 3.Complete the payment. Use the payer and payment IDs provided in the query string following the redirect.
-exports.process = functions.https.onRequest((req, res) => {
+exports.process = functions.https.onRequest(async (req, res) => {
   const paymentId = req.query.paymentId;
   const payerId = {
     payer_id: req.query.PayerID
   };
-  return paypal.payment.execute(paymentId, payerId, (error, payment) => {
+  const r = await paypal.payment.execute(paymentId, payerId, (error, payment) => {
     if (error) {
       console.error(error);
       res.redirect(`${req.protocol}://${req.get('host')}/error`); // replace with your url page error
@@ -114,5 +115,6 @@ exports.process = functions.https.onRequest((req, res) => {
         res.redirect(`https://console.firebase.google.com/project/${process.env.GCLOUD_PROJECT}/functions/logs?search=&severity=DEBUG`);
       }
     }
-  }).then(r => console.info('promise: ', r));
+  });
+  console.info('promise: ', r);
 });
