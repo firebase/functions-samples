@@ -31,7 +31,7 @@ const mailTransport = nodemailer.createTransport({
 });
 
 // Sends an email confirmation when a user changes his mailing list subscription.
-exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite((change) => {
+exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(async (change) => {
   const snapshot = change.after;
   const val = snapshot.val();
 
@@ -51,9 +51,11 @@ exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite((
   mailOptions.text = subscribed ?
       'Thanks you for subscribing to our newsletter. You will receive our next weekly newsletter.' :
       'I hereby confirm that I will stop sending you the newsletter.';
-
-  return mailTransport.sendMail(mailOptions)
-    .then(() => console.log(`New ${subscribed ? '' : 'un'}subscription confirmation email sent to:`,
-        val.email))
-    .catch((error) => console.error('There was an error while sending the email:', error));
+  
+  try {
+    await mailTransport.sendMail(mailOptions);
+    console.log(`New ${subscribed ? '' : 'un'}subscription confirmation email sent to:`, val.email);
+  } catch(error) {
+    console.error('There was an error while sending the email:', error);
+  }
 });
