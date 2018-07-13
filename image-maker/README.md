@@ -12,7 +12,6 @@ It uses [node-canvas](https://github.com/Automattic/node-canvas) to create a can
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install;`
 
-
 ## Deploy and test
 
 This sample comes with a web-based UI for testing the function.
@@ -26,11 +25,9 @@ To deploy and test on prod do:
  1. Deploy your project using `firebase deploy`
  1. Open the app using `firebase open hosting:site`, this will open a browser.
 
-
 ## Contributing
 
 We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../CONTRIBUTING.md).
-
 
 ## License
 
