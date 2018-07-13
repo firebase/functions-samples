@@ -73,13 +73,6 @@ This requires a build step, included as an npm script, which transpiles the
 source code to a supported version of JavaScript.
 Uses an **HTTPS request**.
 
-### [Write Cloud Functions using ES2017 code](/es2017-transpile)
-
-This sample shows how to write Cloud Functions code using the ES2017
-syntax. This requires running a preparation step where the code is transpiled to
-a supported version of JavaScript.
-Uses a **Firebase Realtime Database trigger**.
-
 ### [Server-side generated pages w/ Handlebars templating and user sessions](/template-handlebars)
 
 This sample shows how to serve server-side generated HTML pages using the [HandlebarsJs](http://handlebarsjs.com/) templating system and serve user-specific content by always passing the Firebase ID token in a `__session` cookie.
