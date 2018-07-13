@@ -17,8 +17,6 @@
 
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
-// Include a Service Account Key to use a Signed URL
-const gcs = require('@google-cloud/storage')({keyFilename: 'service-account-credentials.json'});
 const admin = require('firebase-admin');
 admin.initializeApp();
 const spawn = require('child-process-promise').spawn;
@@ -62,7 +60,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   }
 
   // Cloud Storage files.
-  const bucket = gcs.bucket(object.bucket);
+  const bucket = admin.storage().bucket(object.bucket);
   const file = bucket.file(filePath);
   const thumbFile = bucket.file(thumbFilePath);
   const metadata = {

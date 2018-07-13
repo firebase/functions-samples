@@ -2,7 +2,6 @@
   "name": "generate-thumbnail-functions",
   "description": "Generate Thumbnail Firebase Functions sample",
   "dependencies": {
-    "@google-cloud/storage": "^0.4.0",
     "child-process-promise": "^2.2.0",
     "mkdirp": "^0.5.1",
     "mkdirp-promise": "^4.0.0",

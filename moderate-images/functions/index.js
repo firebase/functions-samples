@@ -17,7 +17,6 @@
 
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
-const gcs = require('@google-cloud/storage')();
 const vision = require('@google-cloud/vision')();
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
@@ -29,7 +28,7 @@ const fs = require('fs');
  * API and if it is we blur it using ImageMagick.
  */
 exports.blurOffensiveImages = functions.storage.object().onFinalize(async (object) => {
-  const file = gcs.bucket(object.bucket).file(object.name);
+  const file = admin.storage().bucket(object.bucket).file(object.name);
 
   // Check the image content using the Cloud Vision API.
   const data = await vision.detectSafeSearch(file);
@@ -47,7 +46,7 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
 async function blurImage(filePath, bucketName, metadata) {
   const tempLocalFile = path.join(os.tmpdir(), filePath);
   const tempLocalDir = path.dirname(tempLocalFile);
-  const bucket = gcs.bucket(bucketName);
+  const bucket = admin.storage().bucket(bucketName);
 
   // Create the temp directory where the storage file will be downloaded.
   await mkdirp(tempLocalDir);

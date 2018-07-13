@@ -17,7 +17,6 @@
 
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
-const gcs = require('@google-cloud/storage')();
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
@@ -51,7 +50,7 @@ exports.imageToJPG = functions.storage.object().onFinalize(async (object) => {
     return null;
   }
 
-  const bucket = gcs.bucket(object.bucket);
+  const bucket = admin.storage().bucket(object.bucket);
   // Create the temp directory where the storage file will be downloaded.
   await mkdirp(tempLocalDir);
   // Download file from bucket.
