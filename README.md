@@ -1,8 +1,6 @@
-# Cloud Functions for Firebase Sample Library
-
----
 ## Cloud Functions now supports Node 8. Have a look at the [**Node8** branch](https://github.com/firebase/functions-samples/tree/Node-8) for samples updated to ES2017 syntax and the Node 8 runtime.
-----
+
+# Cloud Functions for Firebase Sample Library
 
 This repository contains a collection of samples showcasing some typical uses of [Cloud Functions for Firebase](https://firebase.google.com/features/functions).
 
