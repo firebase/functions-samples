@@ -33,7 +33,7 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       if (!change.after.val()) {
         return console.log('User ', followerUid, 'un-followed user', followedUid);
       }
-      console.log('We have a new follower UID:', followerUid, 'for user:', followerUid);
+      console.log('We have a new follower UID:', followerUid, 'for user:', followedUid);
 
       // Get the list of device notification tokens.
       const getDeviceTokensPromise = admin.database()
