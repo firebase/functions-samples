@@ -1,17 +1,17 @@
-# Periodically delete unused accounts.
+# Periodically delete unused accounts
 
 This sample demonstrates how to delete the accounts of users who have not signed-in in the last month.
 
 
 ## Functions Code
 
-See file [functions/index.js](functions/index.js) for the code.
+See the file [functions/index.js](functions/index.js) for the code.
 
-Cloud Functions does not natively supports cron jobs. We are working around this by executing the code as an HTTPS triggered function. Then simply use an external service to periodically "ping" the URL.
+Cloud Functions does not natively supports cron jobs. We are working around this by executing the code as an HTTPS-triggered function. Then simply use an external service to periodically "ping" the URL.
 
 Here is a non-exhaustive list of external services for cron jobs:
- - https://www.setcronjob.com/
  - https://cron-job.org/
+ - https://www.setcronjob.com/
  - https://www.easycron.com/
  - https://zapier.com/zapbook/webhook/
 
@@ -25,7 +25,7 @@ The function triggers when the HTTP URL of the Function is requested.
 
 ## Deploy and test
 
-Set the `cron.key` Google Cloud environment variables to a randomly generated key, this will be used to authorize requests coming from the 3rd-party cron service. For this use:
+Set the `cron.key` Google Cloud environment variables to a randomly generated key. This will be used to authorize requests coming from the 3rd-party cron service. For this use:
 
 ```bash
 firebase functions:config:set cron.key="YOUR-KEY"
@@ -34,7 +34,6 @@ firebase functions:config:set cron.key="YOUR-KEY"
 You can generate a random key, for instance, by running:
 
 ```bash
-npm install -g crypto
 node -e "console.log(require('crypto').randomBytes(20).toString('hex'))"
 ```
 
