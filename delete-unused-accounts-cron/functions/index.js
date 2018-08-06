@@ -53,17 +53,18 @@ exports.accountcleanup = functions.https.onRequest(async (req, res) => {
 /**
  * Deletes one inactive user from the list.
  */
-async function deleteInactiveUser(inactiveUsers) {
+function deleteInactiveUser(inactiveUsers) {
   if (inactiveUsers.length > 0) {
     const userToDelete = inactiveUsers.pop();
-
-    try {
-      // Delete the inactive user.
-      await admin.auth().deleteUser(userToDelete.uid);
+    
+    // Delete the inactive user.
+    return admin.auth().deleteUser(userToDelete.uid).then(() => {
       console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
-    } catch(error) {
+    }).catch((error) => {
       console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
-    }
+    });
+  } else {
+    return null;
   }
 }
 
