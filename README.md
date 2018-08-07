@@ -1,4 +1,4 @@
-## Cloud Functions now supports Node 8. Have a look at the [**Node8** branch](https://github.com/firebase/functions-samples/tree/Node-8) for samples updated to ES2017 syntax and the Node 8 runtime.
+## All the samples on this branch are using the Node 8 runtime which is in beta and use ES2017 syntax. If you'd like to use ES2015 syntax because you're using the Node 6 runtime have a look at the [**master** branch](https://github.com/firebase/functions-samples/tree/master).
 
 # Cloud Functions for Firebase Sample Library
 
