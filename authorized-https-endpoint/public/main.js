@@ -59,6 +59,8 @@ Demo.prototype.signIn = function() {
 // Signs-out of Firebase.
 Demo.prototype.signOut = function() {
   firebase.auth().signOut();
+  // clear the __session cookie
+  document.cookie = '__session=';
 };
 
 // Does an authenticated request to a Firebase Functions endpoint using an Authorization header.
