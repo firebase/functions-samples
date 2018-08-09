@@ -43,7 +43,7 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
     });
 
 // If the number of likes gets deleted, recount the number of likes
-exports.recountlikes = functions.database.ref('/posts/{postid}/likes_count').onDelete((snap) => {
+exports.recountlikes = functions.database.ref('/posts/{postid}/likes_count').onDelete(async (snap) => {
   const counterRef = snap.ref;
   const collectionRef = counterRef.parent.child('likes');
 
