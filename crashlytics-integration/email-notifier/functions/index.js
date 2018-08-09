@@ -21,7 +21,9 @@ const sendgridMail = require('@sendgrid/mail');
 // Authentication for the SendGrid account
 sendgridMail.setApiKey(functions.config().sendgrid.api_key);
 
+// [START on_new_issue]
 exports.sendOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
+  // [END on_new_issue]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -52,7 +54,9 @@ exports.sendOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
   }
 });
 
+// [START on_regressed_issue]
 exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed(async (issue) => {
+  // [END on_regressed_issue]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -85,7 +89,9 @@ exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed(async (
   }
 });
 
+// [START on_velocity_alert]
 exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(async (issue) => {
+  // [END on_velocity_alert]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
