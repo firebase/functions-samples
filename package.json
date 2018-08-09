@@ -4,8 +4,14 @@
   "description": "Samples for Cloud Functions for Firebase",
   "author": "Firebase (https://firebase.google.com/)",
   "license": "Apache-2.0",
+  "scripts": {
+    "test": "echo 'Linting...' && lerna run lint && echo 'Testing...' && lerna run ci-test"
+  },
   "devDependencies": {
     "eslint": "^4.17.0",
-    "lerna": "^2.8.0"
+    "eslint-plugin-promise": "^3.8.0",
+    "lerna": "^2.8.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
   }
 }
