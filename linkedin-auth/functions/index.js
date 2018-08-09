@@ -152,4 +152,5 @@ async function createFirebaseAccount(linkedinID, displayName, photoURL, email, a
   // Create a Firebase custom auth token.
   const token = await admin.auth().createCustomToken(uid);
   console.log('Created Custom token for UID "', uid, '" Token:', token);
+  return token;
 }
