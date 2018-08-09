@@ -32,6 +32,7 @@ function notifySlack(slackMessage) {
   });
 }
 
+// [START on_new_issue]
 exports.postOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
@@ -45,6 +46,7 @@ exports.postOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
   await notifySlack(slackMessage);
   console.log(`Posted new issue ${issueId} successfully to Slack`);
 });
+// [END on_new_issue]
 
 exports.postOnRegressedIssue = functions.crashlytics.issue().onRegressed(async (issue) => {
   const issueId = issue.issueId;
