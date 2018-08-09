@@ -70,10 +70,10 @@ async function getFirebaseUser(req, res, next) {
     const decodedIdToken = admin.auth().verifyIdToken(idToken);
     console.log('ID Token correctly decoded', decodedIdToken);
     req.user = decodedIdToken;
-    next();
+    return next();
   } catch(error) {
     console.error('Error while verifying Firebase ID token:', error);
-    res.status(403).send('Unauthorized');
+    return res.status(403).send('Unauthorized');
   }
 }
 // [END get_firebase_user]

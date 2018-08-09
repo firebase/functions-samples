@@ -107,9 +107,7 @@ exports.token = functions.https.onRequest((req, res) => {
       });
     });
   } catch (error) {
-    res.jsonp({
-      error: error.toString,
-    });
+    return res.jsonp({ error: error.toString });
   }
 });
 

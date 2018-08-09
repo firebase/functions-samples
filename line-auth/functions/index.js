@@ -116,8 +116,7 @@ exports.verifyToken = functions.https.onRequest(async (req, res) => {
     const ret = {
       error_message: 'Access Token not found',
     };
-    res.status(400).send(ret);
-    return;
+    return res.status(400).send(ret);
   }
 
   const reqToken = req.body.token;
@@ -128,7 +127,7 @@ exports.verifyToken = functions.https.onRequest(async (req, res) => {
     const ret = {
       firebase_token: customAuthToken,
     };
-    res.status(200).send(ret);
+    return res.status(200).send(ret);
   } catch(err) {
     // If LINE access token verification failed, return error response to client
     const ret = {

@@ -30,7 +30,7 @@ function notifySlack(slackMessage) {
     },
     json: true,
   });
-};
+}
 
 exports.postOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
   const issueId = issue.issueId;

@@ -57,7 +57,7 @@ exports.metadata = functions.storage.object().onFinalize(async (object) => {
   // Cleanup temp directory after metadata is extracted
   // Remove the file from temp directory
   await fs.unlinkSync(tempLocalFile)
-  console.log('cleanup successful!');
+  return console.log('cleanup successful!');
 });
 
 /**

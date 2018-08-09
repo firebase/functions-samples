@@ -40,7 +40,7 @@ function calculateIssuePriority(eventType) {
     // new issues - return low priority
     return 4;
   }
-};
+}
 
 // Helper function that parses the Jira project url and returns an object
 // of the url fragments
@@ -52,7 +52,7 @@ function parseUrl(url) {
   } else {
     throw new Error('Unexpected URL Format');
   }
-};
+}
 
 // Helper function that posts to Jira to create a new issue
 function createJiraIssue(summary, description, priority) {
@@ -96,7 +96,7 @@ function createJiraIssue(summary, description, priority) {
     body: newIssue,
     json: true,
   });
-};
+}
 
 exports.createNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
   const issueId = issue.issueId;

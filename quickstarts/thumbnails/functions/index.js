@@ -41,16 +41,14 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   // [START stopConditions]
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
-    console.log('This is not an image.');
-    return null;
+    return console.log('This is not an image.');
   }
 
   // Get the file name.
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
-    console.log('Already a Thumbnail.');
-    return null;
+    return console.log('Already a Thumbnail.');
   }
   // [END stopConditions]
 
@@ -75,7 +73,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
     metadata: metadata,
   });
   // Once the thumbnail has been uploaded delete the local file to free up disk space.
-  fs.unlinkSync(tempFilePath);
+  return fs.unlinkSync(tempFilePath);
   // [END thumbnailGeneration]
 });
 // [END generateThumbnail]

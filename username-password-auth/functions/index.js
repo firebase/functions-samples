@@ -43,8 +43,7 @@ const basicAuthRequest = require('request');
 exports.auth = functions.https.onRequest((req, res) => {
   const handleError = (username, error) => {
     console.error({User: username}, error);
-    res.sendStatus(500);
-    return;
+    return res.sendStatus(500);
   };
 
   const handleResponse = (username, status, body) => {
@@ -55,16 +54,14 @@ exports.auth = functions.https.onRequest((req, res) => {
       },
     });
     if (body) {
-      res.status(200).json(body);
-      return;
+      return res.status(200).json(body);
     }
-    res.sendStatus(status);
-    return;
+    return res.sendStatus(status);
   };
 
   let username = '';
   try {
-    cors(req, res, async () => {
+    return cors(req, res, async () => {
       // Authentication requests are POSTed, other requests are forbidden
       if (req.method !== 'POST') {
         return handleResponse(username, 403);
@@ -86,9 +83,7 @@ exports.auth = functions.https.onRequest((req, res) => {
 
       // On success return the Firebase Custom Auth Token.
       const firebaseToken = await admin.auth().createCustomToken(username);
-      return handleResponse(username, 200, {
-        token: firebaseToken,
-      });
+      return handleResponse(username, 200, { token: firebaseToken });
     });
   } catch (error) {
     return handleError(username, error);

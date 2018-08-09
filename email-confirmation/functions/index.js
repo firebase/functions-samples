@@ -58,4 +58,5 @@ exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(a
   } catch(error) {
     console.error('There was an error while sending the email:', error);
   }
+  return null;
 });

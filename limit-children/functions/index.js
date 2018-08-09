@@ -36,4 +36,5 @@ exports.truncate = functions.database.ref('/chat/{messageid}').onWrite(async (ch
     // Update the parent. This effectively removes the extra children.
     return parentRef.update(updates);
   }
+  return null;
 });

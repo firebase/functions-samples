@@ -84,7 +84,7 @@ exports.token = functions.https.onRequest(async (req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   try {
-    return cookieParser()(req, res, () => {
+    return cookieParser()(req, res, async () => {
       console.log('Received verification state:', req.cookies.state);
       console.log('Received state:', req.query.state);
       if (!req.cookies.state) {
@@ -108,12 +108,10 @@ exports.token = functions.https.onRequest(async (req, res) => {
       // Create a Firebase account and get the Custom Auth Token.
       const firebaseToken = await createFirebaseAccount(instagramUserID, userName, profilePic, accessToken);
       // Serve an HTML page that signs the user in and updates the user profile.
-      res.jsonp({
-        token: firebaseToken,
-      });
+      return res.jsonp({ token: firebaseToken});
     });
   } catch(error) {
-    res.jsonp({
+    return res.jsonp({
       error: error.toString(),
     });
   }

@@ -42,10 +42,10 @@ exports.githubWebhook = functions.https.onRequest(async (req, res) => {
   
   try {
     await postToSlack(req.body.compare, req.body.commits.length, req.body.repository);
-    res.end();
+    return res.end();
   } catch(error) {
     console.error(error);
-    res.status(500).send('Something went wrong while posting the message to Slack.');
+    return res.status(500).send('Something went wrong while posting the message to Slack.');
   }
 });
 

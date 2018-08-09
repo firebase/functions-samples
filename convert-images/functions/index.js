@@ -65,4 +65,5 @@ exports.imageToJPG = functions.storage.object().onFinalize(async (object) => {
   // Once the image has been converted delete the local files to free up disk space.
   fs.unlinkSync(tempLocalJPEGFile);
   fs.unlinkSync(tempLocalFile);
+  return null;
 });

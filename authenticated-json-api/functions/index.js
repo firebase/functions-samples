@@ -39,8 +39,10 @@ const authenticate = async (req, res, next) => {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedIdToken;
     next();
+    return;
   } catch(e) {
     res.status(403).send('Unauthorized');
+    return;
   }
 };
 
@@ -103,7 +105,7 @@ app.get('/message/:messageId', async (req, res) => {
     return res.set('Cache-Control', 'private, max-age=300');
   } catch(error) {
     console.log('Error getting message details', messageId, error.message);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 });
 

@@ -64,15 +64,15 @@ const DB_TOKEN_PATH = '/api_tokens';
 exports.oauthcallback = functions.https.onRequest(async (req, res) => {
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   const code = req.query.code;
-  functionsOauthClient.getToken(code, (err, tokens) => {
+  try {
+    const tokens = await functionsOauthClient.getToken(code);
     // Now tokens contains an access_token and an optional refresh_token. Save them.
-    if (err) {
-      return res.status(400).send(err);
-    }
     await admin.database().ref(DB_TOKEN_PATH).set(tokens);
     return res.status(200).send('App successfully configured with new Credentials. '
         + 'You can now close this page.');
-  });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
 });
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH

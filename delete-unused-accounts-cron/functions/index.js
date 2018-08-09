@@ -48,6 +48,7 @@ exports.accountcleanup = functions.https.onRequest(async (req, res) => {
   await promisePool.start();
   console.log('User cleanup finished');
   res.send('User cleanup finished');
+  return null;
 });
 
 /**
@@ -59,9 +60,9 @@ function deleteInactiveUser(inactiveUsers) {
     
     // Delete the inactive user.
     return admin.auth().deleteUser(userToDelete.uid).then(() => {
-      console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
+      return console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
     }).catch((error) => {
-      console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
+      return console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
     });
   } else {
     return null;

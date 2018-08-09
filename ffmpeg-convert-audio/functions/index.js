@@ -82,5 +82,5 @@ exports.generateMonoAudio = functions.storage.object().onFinalize(async (object)
   fs.unlinkSync(tempFilePath);
   fs.unlinkSync(targetTempFilePath);
 
-  console.log('Temporary files removed.', targetTempFilePath);
+  return console.log('Temporary files removed.', targetTempFilePath);
 });

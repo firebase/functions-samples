@@ -40,6 +40,7 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
         return (current || 0) + increment;
       });
       console.log('Counter updated.');
+      return null;
     });
 
 // If the number of likes gets deleted, recount the number of likes
@@ -50,5 +51,5 @@ exports.recountlikes = functions.database.ref('/posts/{postid}/likes_count').onD
   // Return the promise from counterRef.set() so our function
   // waits for this async event to complete before it exits.
   const messagesData = await collectionRef.once('value');
-  await counterRef.set(messagesData.numChildren());
+  return await counterRef.set(messagesData.numChildren());
 });

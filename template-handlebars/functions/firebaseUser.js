@@ -31,7 +31,7 @@ async function validateFirebaseIdToken (req, res, next) {
     await addDecodedIdTokenToRequest(idToken, req);
   }
   next();
-};
+}
 
 /**
  * Returns a Promise with the Firebase ID Token if found in the Authorization or the __session cookie.

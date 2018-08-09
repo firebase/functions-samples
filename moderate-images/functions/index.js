@@ -38,6 +38,7 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
   if (safeSearch.adult || safeSearch.violence) {
     return blurImage(object.name, object.bucket, object.metadata);
   }
+  return null;
 });
 
 /**
