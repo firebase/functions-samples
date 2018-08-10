@@ -23,7 +23,7 @@ sendgridMail.setApiKey(functions.config().sendgrid.api_key);
 
 // [START on_new_issue]
 exports.sendOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
-  // [END on_new_issue]
+  // [START_EXCLUDE]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -52,11 +52,13 @@ exports.sendOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
   } catch (error) {
     console.error(error.toString());
   }
+  // [END_EXCLUDE]
 });
+// [END on_new_issue]
 
 // [START on_regressed_issue]
 exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed(async (issue) => {
-  // [END on_regressed_issue]
+  // [START_EXCLUDE]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -87,11 +89,13 @@ exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed(async (
   } catch(error) {
     console.error(error.toString());
   }
+  // [END_EXCLUDE]
 });
+// [END on_regressed_issue]
 
 // [START on_velocity_alert]
 exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(async (issue) => {
-  // [END on_velocity_alert]
+  // [START_EXCLUDE]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -124,4 +128,6 @@ exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(asyn
   } catch(error) {
     console.error(error.toString());
   }
+  // [END_EXCLUDE]
 });
+// [END on_velocity_alert]
