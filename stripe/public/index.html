@@ -18,7 +18,7 @@
           <div v-if="stripeCustomerInitialized">
             <h3>Credit Cards</h3>
             <ul>
-              <li v-for="(source, id) in sources">
+              <li v-for="source in sources">
                 <span v-if="source.id">
                   {{ source.brand }} &hellip;{{ source.last4 }}
                   (exp. {{ source.exp_month }}/{{ source.exp_year }})
@@ -101,16 +101,17 @@
     <!-- Import and configure the Firebase SDK -->
     <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
     <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-    <script src="/__/firebase/4.2.0/firebase-app.js"></script>
-    <script src="/__/firebase/4.2.0/firebase-auth.js"></script>
-    <script src="/__/firebase/4.2.0/firebase-database.js"></script>
+    <script src="/__/firebase/5.2.0//firebase-app.js"></script>
+    <script src="/__/firebase/5.2.0//firebase-auth.js"></script>
+    <script src="/__/firebase/5.2.0//firebase-database.js"></script>
+    <script src="/__/firebase/5.2.0//firebase-firestore.js"></script>
     <script src="/__/firebase/init.js"></script>
 
     <!-- Import Firebase UI -->
     <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
 
     <script>
-      Stripe.setPublishableKey( /* TODO: add your stripe publishable key */ );
+      Stripe.setPublishableKey("pk_test_QMdQmCUoloO0twNP4R7q5nNm");
       var firebaseUI = new firebaseui.auth.AuthUI(firebase.auth());
       var firebaseAuthOptions = {
         callbacks: {
@@ -155,19 +156,32 @@
         },
         methods: {
           listen: function() {
-            firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/customer_id`).on('value', snapshot => {
-              this.stripeCustomerInitialized = (snapshot.val() !== null);
+            firebase.firestore().collection('stripe_customers').doc(`${this.currentUser.uid}`).onSnapshot(snapshot => {
+              this.stripeCustomerInitialized = (snapshot.data() !== null);
             }, () => {
               this.stripeCustomerInitialized = false;
             });
-            firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/sources`).on('value', snapshot => {
-              this.sources = snapshot.val();
+            //firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/sources`).on('value', snapshot => {
+            firebase.firestore().collection('stripe_customers').doc(`${this.currentUser.uid}`).collection('sources').onSnapshot(snapshot => {
+              console.log("stripe customers collection");
+             let newSources = {};
+              snapshot.forEach(doc => {
+                const id = doc.id;
+                newSources[id] = doc.data();
+              })
+              this.sources = newSources;
             }, () => {
               this.sources = {};
             });
-            firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/charges`).on('value', snapshot => {
-              this.charges = snapshot.val();
+            firebase.firestore().collection('stripe_customers').doc(`${this.currentUser.uid}`).collection('charges').onSnapshot(snapshot => {
+            let newCharges = {};
+             snapshot.forEach(doc => {
+               const id = doc.id;
+               newCharges[id] = doc.data();
+             })
+             this.charges = newCharges;
             }, () => {
+              console.log("cleared charges");
               this.charges = {};
             });
           },
@@ -182,7 +196,7 @@
               if (response.error) {
                 this.newCreditCard.error = response.error.message;
               } else {
-                firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/sources`).push({token: response.id}).then(() => {
+                firebase.firestore().collection('stripe_customers').doc(this.currentUser.uid).collection('sources').add({token: response.id}).then(() => {
                   this.newCreditCard = {
                     number: '',
                     cvc: '',
@@ -195,7 +209,7 @@
             });
           },
           submitNewCharge: function() {
-            firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/charges`).push({
+            firebase.firestore().collection('stripe_customers').doc(this.currentUser.uid).collection('charges').add({
               source: this.newCharge.source,
               amount: parseInt(this.newCharge.amount)
             });
