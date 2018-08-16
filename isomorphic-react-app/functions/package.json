@@ -7,8 +7,8 @@
     "react": "15.5.4",
     "react-dom": "15.5.4",
     "request": "2.81.0",
-    "firebase-admin": "~5.11.0",
-    "firebase-functions": "^1.0.0"
+    "firebase-admin": "~5.13.1",
+    "firebase-functions": "^2.0.0"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
@@ -21,6 +21,9 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "8"
   },
   "private": true
 }

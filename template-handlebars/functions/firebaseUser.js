@@ -23,18 +23,15 @@ const cookieParser = require('cookie-parser')();
 // The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
 // `Authorization: Bearer <Firebase ID Token>`.
 // When decoded successfully, the ID Token content will be added as `req.user`.
-const validateFirebaseIdToken = (req, res, next) => {
+async function validateFirebaseIdToken (req, res, next) {
   console.log('Check if request is authorized with Firebase ID token');
 
-  return getIdTokenFromRequest(req, res).then(idToken => {
-    if (idToken) {
-      return addDecodedIdTokenToRequest(idToken, req);
-    }
-    return next();
-  }).then(() => {
-    return next();
-  });
-};
+  const idToken = await getIdTokenFromRequest(req, res);
+  if (idToken) {
+    await addDecodedIdTokenToRequest(idToken, req);
+  }
+  next();
+}
 
 /**
  * Returns a Promise with the Firebase ID Token if found in the Authorization or the __session cookie.
@@ -61,13 +58,14 @@ function getIdTokenFromRequest(req, res) {
 /**
  * Returns a Promise with the Decoded ID Token and adds it to req.user.
  */
-function addDecodedIdTokenToRequest(idToken, req) {
-  return admin.auth().verifyIdToken(idToken).then(decodedIdToken => {
+async function addDecodedIdTokenToRequest(idToken, req) {
+  try {
+    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedIdToken;
-    return console.log('ID Token correctly decoded', decodedIdToken);
-  }).catch(error => {
+    console.log('ID Token correctly decoded', decodedIdToken);
+  } catch (error) {
     console.error('Error while verifying Firebase ID token:', error);
-  });
+  }
 }
 
 exports.validateFirebaseIdToken = validateFirebaseIdToken;

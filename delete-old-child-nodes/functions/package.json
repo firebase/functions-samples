@@ -2,8 +2,11 @@
   "name": "delete-old-child-nodes",
   "description": "Delete nodes of a Realtime Database collection that are older than a given threshold.",
   "dependencies": {
-    "firebase-admin": "~5.11.0",
-    "firebase-functions": "^1.0.0"
+    "firebase-admin": "~5.13.1",
+    "firebase-functions": "^2.0.0"
+  },
+  "engines": {
+    "node": "8"
   },
   "private": true
 }

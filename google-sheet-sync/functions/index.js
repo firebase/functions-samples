@@ -61,20 +61,18 @@ const DB_TOKEN_PATH = '/api_tokens';
 
 // after you grant access, you will be redirected to the URL for this Function
 // this Function stores the tokens to your Firebase database
-exports.oauthcallback = functions.https.onRequest((req, res) => {
+exports.oauthcallback = functions.https.onRequest(async (req, res) => {
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   const code = req.query.code;
-  functionsOauthClient.getToken(code, (err, tokens) => {
+  try {
+    const tokens = await functionsOauthClient.getToken(code);
     // Now tokens contains an access_token and an optional refresh_token. Save them.
-    if (err) {
-      return res.status(400).send(err);
-    }
-    return admin.database().ref(DB_TOKEN_PATH).set(tokens)
-        .then(() => {
-          return res.status(200).send('App successfully configured with new Credentials. '
-            + 'You can now close this page.');
-        });
-  });
+    await admin.database().ref(DB_TOKEN_PATH).set(tokens);
+    return res.status(200).send('App successfully configured with new Credentials. '
+        + 'You can now close this page.');
+  } catch (error) {
+    return res.status(400).send(error);
+  }
 });
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
@@ -111,27 +109,26 @@ function appendPromise(requestWithoutAuth) {
 }
 
 // checks if oauthTokens have been loaded into memory, and if not, retrieves them
-function getAuthorizedClient() {
+async function getAuthorizedClient() {
   if (oauthTokens) {
-    return Promise.resolve(functionsOauthClient);
-  }
-  return admin.database().ref(DB_TOKEN_PATH).once('value').then((snapshot) => {
-    oauthTokens = snapshot.val();
-    functionsOauthClient.setCredentials(oauthTokens);
     return functionsOauthClient;
-  });
+  }
+  const snapshot = await admin.database().ref(DB_TOKEN_PATH).once('value');
+  oauthTokens = snapshot.val();
+  functionsOauthClient.setCredentials(oauthTokens);
+  return functionsOauthClient;
 }
 
 // HTTPS function to write new data to CONFIG_DATA_PATH, for testing
-exports.testsheetwrite = functions.https.onRequest((req, res) => {
+exports.testsheetwrite = functions.https.onRequest(async (req, res) => {
   const random1 = Math.floor(Math.random() * 100);
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
   const ID = new Date().getUTCMilliseconds();
-  return admin.database().ref(`${CONFIG_DATA_PATH}/${ID}`).set({
+  await admin.database().ref(`${CONFIG_DATA_PATH}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
     thirdColumn: random3,
-  }).then(() => res.status(200).send(
-    `Wrote ${random1}, ${random2}, ${random3} to DB, trigger should now update Sheet.`));
+  });
+  res.send(`Wrote ${random1}, ${random2}, ${random3} to DB, trigger should now update Sheet.`);
 });

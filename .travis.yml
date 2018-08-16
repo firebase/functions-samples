@@ -1,11 +1,7 @@
 language: node_js
 node_js:
-  - "7"
+  - "8"
 install:
-  - npm install -g lerna
-  - npm install -g eslint
-  - npm install -g eslint-plugin-promise
-  - npm install -g typescript
-  - npm install -g tslint
+  - npm install
 script:
-  - ./scripts/test.sh
+  - npm run test

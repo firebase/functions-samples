@@ -24,14 +24,14 @@ const secureCompare = require('secure-compare');
  * Webhook that will be called each time there is a new GitHub commit and will post a message to
  * Slack.
  */
-exports.githubWebhook = functions.https.onRequest((req, res) => {
+exports.githubWebhook = functions.https.onRequest(async (req, res) => {
   const cipher = 'sha1';
   const signature = req.headers['x-hub-signature'];
 
   // TODO: Configure the `github.secret` Google Cloud environment variables.
   const hmac = crypto.createHmac(cipher, functions.config().github.secret)
-    .update(req.body)
-    .digest('hex');
+      .update(req.body)
+      .digest('hex');
   const expectedSignature = `${cipher}=${hmac}`;
 
   // Check that the body of the request has been signed with the GitHub Secret.
@@ -39,12 +39,14 @@ exports.githubWebhook = functions.https.onRequest((req, res) => {
     console.error('x-hub-signature', signature, 'did not match', expectedSignature);
     return res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
   }
-  return postToSlack(req.body.compare, req.body.commits.length, req.body.repository).then(() => {
+  
+  try {
+    await postToSlack(req.body.compare, req.body.commits.length, req.body.repository);
     return res.end();
-  }).catch((error) => {
+  } catch(error) {
     console.error(error);
     return res.status(500).send('Something went wrong while posting the message to Slack.');
-  });
+  }
 });
 
 /**
