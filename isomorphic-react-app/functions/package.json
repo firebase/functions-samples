@@ -3,12 +3,12 @@
   "description": "A sample isomorphic React app using Functions and Hosting",
   "dependencies": {
     "express": "4.15.2",
-    "firebase": "4.8.0",
+    "firebase": "5.4.0",
     "react": "15.5.4",
     "react-dom": "15.5.4",
     "request": "2.81.0",
-    "firebase-admin": "~5.13.1",
-    "firebase-functions": "^2.0.0"
+    "firebase-admin": "~6.0.0",
+    "firebase-functions": "^2.0.5"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
