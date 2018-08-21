@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "authenticated-json-api-functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
     "@google-cloud/language": "^1.1.0",

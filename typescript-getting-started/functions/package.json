@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "typescript-functions",
   "description": "TypeScript sample Cloud Functions for Firebase",
   "dependencies": {
     "firebase-admin": "~6.0.0",

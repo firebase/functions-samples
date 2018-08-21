@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "assistant-say-numer-functions",
   "description": "Firebase Functions",
   "dependencies": {
     "actions-on-google": "^1.0.7",

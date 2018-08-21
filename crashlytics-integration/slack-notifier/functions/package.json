@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "slack-notifier-functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
     "request": "^2.81.0",

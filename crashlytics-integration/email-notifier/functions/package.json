@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "email-notifier-functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
     "@sendgrid/mail": "6.1.4",
