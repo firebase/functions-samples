@@ -179,7 +179,7 @@ Demonstrates how to automatically post GitHub commits to a Slack channel using a
 
 ### Create and charge customers with [Stripe](/stripe) or [Paypal](/paypal)
 
-Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library and whows how to create HTTP endpoints to charge customers via Paypal.
+Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library and shows how to create HTTP endpoints to charge customers via Paypal.
 
 ### [Text moderation](/text-moderation)
 
