@@ -96,22 +96,22 @@ exports.token = functions.https.onRequest((req, res) => {
       oauth2.authorizationCode.getToken({
         code: req.query.code,
         redirect_uri: OAUTH_REDIRECT_URI,
-      });
-    }).then((results) => {
-      console.log('Auth code exchange result received:', results);
+      }).then((results) => {
+        console.log('Auth code exchange result received:', results);
 
-      // We have an Instagram access token and the user identity now.
-      const accessToken = results.access_token;
-      const instagramUserID = results.user.id;
-      const profilePic = results.user.profile_picture;
-      const userName = results.user.full_name;
+        // We have an Instagram access token and the user identity now.
+        const accessToken = results.access_token;
+        const instagramUserID = results.user.id;
+        const profilePic = results.user.profile_picture;
+        const userName = results.user.full_name;
 
-      // Create a Firebase account and get the Custom Auth Token.
-      return createFirebaseAccount(instagramUserID, userName, profilePic, accessToken);
-    }).then((firebaseToken) => {
-      // Serve an HTML page that signs the user in and updates the user profile.
-      return res.jsonp({
-        token: firebaseToken,
+        // Create a Firebase account and get the Custom Auth Token.
+        return createFirebaseAccount(instagramUserID, userName, profilePic, accessToken);
+      }).then((firebaseToken) => {
+        // Serve an HTML page that signs the user in and updates the user profile.
+        return res.jsonp({
+          token: firebaseToken,
+        });
       });
     });
   } catch (error) {
