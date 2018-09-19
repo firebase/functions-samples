@@ -1,0 +1,20 @@
+{
+  "name": "Redmine Issue functions",
+  "description": "Allow Firebase Crashlytics issues to be pushed to a Redmine instance",
+  "scripts": {
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "~6.0.0",
+    "firebase-functions": "^2.0.5",
+    "request-promise": "^4.2.1"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "private": true
+}
