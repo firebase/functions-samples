@@ -103,7 +103,6 @@
     <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
     <script src="/__/firebase/5.2.0//firebase-app.js"></script>
     <script src="/__/firebase/5.2.0//firebase-auth.js"></script>
-    <script src="/__/firebase/5.2.0//firebase-database.js"></script>
     <script src="/__/firebase/5.2.0//firebase-firestore.js"></script>
     <script src="/__/firebase/init.js"></script>
 
@@ -111,7 +110,7 @@
     <script src="https://cdn.firebase.com/libs/firebaseui/1.0.0/firebaseui.js"></script>
 
     <script>
-      Stripe.setPublishableKey("pk_test_QMdQmCUoloO0twNP4R7q5nNm");
+      Stripe.setPublishableKey( /* TODO: add your stripe publishable key */ );
       var firebaseUI = new firebaseui.auth.AuthUI(firebase.auth());
       var firebaseAuthOptions = {
         callbacks: {
@@ -161,9 +160,7 @@
             }, () => {
               this.stripeCustomerInitialized = false;
             });
-            //firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/sources`).on('value', snapshot => {
             firebase.firestore().collection('stripe_customers').doc(`${this.currentUser.uid}`).collection('sources').onSnapshot(snapshot => {
-              console.log("stripe customers collection");
              let newSources = {};
               snapshot.forEach(doc => {
                 const id = doc.id;
@@ -181,7 +178,6 @@
              })
              this.charges = newCharges;
             }, () => {
-              console.log("cleared charges");
               this.charges = {};
             });
           },
@@ -196,7 +192,7 @@
               if (response.error) {
                 this.newCreditCard.error = response.error.message;
               } else {
-                firebase.firestore().collection('stripe_customers').doc(this.currentUser.uid).collection('sources').add({token: response.id}).then(() => {
+                firebase.firestore().collection('stripe_customers').doc(this.currentUser.uid).collection('tokens').add({token: response.id}).then(() => {
                   this.newCreditCard = {
                     number: '',
                     cvc: '',
