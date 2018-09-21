@@ -21,8 +21,8 @@ const Filter = require('bad-words');
 const badWordsFilter = new Filter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.
-exports.moderator = functions.database.ref('/messages/{messageId}').onWrite((snap) => {
-  const message = snap.val();
+exports.moderator = functions.database.ref('/messages/{messageId}').onWrite((change) => {
+  const message = change.after.val();
 
   if (message && !message.sanitized) {
     // Retrieved the message values.
@@ -33,7 +33,7 @@ exports.moderator = functions.database.ref('/messages/{messageId}').onWrite((sna
 
     // Update the Firebase DB with checked message.
     console.log('Message has been moderated. Saving to DB: ', moderatedMessage);
-    return snap.ref.update({
+    return change.after.ref.update({
       text: moderatedMessage,
       sanitized: true,
       moderated: message.text !== moderatedMessage,
