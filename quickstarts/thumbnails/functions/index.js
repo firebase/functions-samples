@@ -17,6 +17,8 @@
 
 // [START import]
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp()
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
