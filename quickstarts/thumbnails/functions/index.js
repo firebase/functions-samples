@@ -18,6 +18,7 @@
 // [START import]
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+admin.initializeApp()
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
@@ -55,7 +56,6 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
 
   // [START thumbnailGeneration]
   // Download file from bucket.
-  admin.initializeApp()
   const bucket = admin.storage().bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
   const metadata = {
