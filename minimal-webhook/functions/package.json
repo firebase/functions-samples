@@ -3,8 +3,8 @@
   "description": "Queries a Webhook Firebase Functions sample",
   "dependencies": {
     "request-promise": "^2.0.0",
-    "firebase-admin": "~5.11.0",
-    "firebase-functions": "^1.0.0"
+    "firebase-admin": "~6.0.0",
+    "firebase-functions": "^2.0.5"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
