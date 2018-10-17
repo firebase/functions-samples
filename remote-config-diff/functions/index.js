@@ -5,6 +5,7 @@ const jsonDiff = require('json-diff');
 
 admin.initializeApp();
 
+// [START js_remote_config_function]
 exports.showConfigDiff = functions.remoteConfig.onUpdate(versionMetadata => {
   return admin.credential.applicationDefault().getAccessToken()
     .then(accessTokenObj => {
@@ -32,6 +33,7 @@ exports.showConfigDiff = functions.remoteConfig.onUpdate(versionMetadata => {
       return null;
     });
 });
+// [END js_remote_config_function]
 
 function getTemplate(version, accessToken) {
   const options = {
