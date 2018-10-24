@@ -3,7 +3,7 @@
   "description": "Queries a Webhook Firebase Functions sample",
   "dependencies": {
     "request-promise": "^2.0.0",
-    "firebase-admin": "~6.0.0",
+    "firebase-admin": "~6.1.0",
     "firebase-functions": "^2.0.5"
   },
   "devDependencies": {

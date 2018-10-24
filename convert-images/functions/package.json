@@ -5,7 +5,7 @@
     "child-process-promise": "^2.2.0",
     "mkdirp": "^0.5.1",
     "mkdirp-promise": "^4.0.0",
-    "firebase-admin": "~6.0.0",
+    "firebase-admin": "~6.1.0",
     "firebase-functions": "^2.0.5"
   },
   "devDependencies": {
