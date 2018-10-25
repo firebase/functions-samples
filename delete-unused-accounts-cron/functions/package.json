@@ -5,7 +5,7 @@
     "es6-promise-pool": "^2.4.4",
     "secure-compare": "^3.0.1",
     "firebase-admin": "~6.1.0",
-    "firebase-functions": "^2.0.5"
+    "firebase-functions": "^2.1.0"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
