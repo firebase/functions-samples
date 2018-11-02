@@ -33,6 +33,7 @@ exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish((message) =
   // [END readBase64]
   // Print the message in the logs.
   console.log(`Hello ${messageBody || 'World'}!`);
+  return null;
 });
 // [END helloWorld]
 
@@ -52,6 +53,7 @@ exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish
   // [END readJson]
   // Print the message in the logs.
   console.log(`Hello ${name || 'World'}!`);
+  return null;
 });
 
 /**
@@ -65,4 +67,5 @@ exports.helloPubSubAttributes = functions.pubsub.topic('yet-another-topic-name')
   // [END readAttributes]
   // Print the message in the logs.
   console.log(`Hello ${name || 'World'}!`);
+  return null;
 });
