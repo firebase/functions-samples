@@ -10,6 +10,7 @@ See the file [functions/index.js](functions/index.js) for the code.
 Cloud Functions does not natively supports cron jobs. We are working around this by executing the code as an HTTPS-triggered function. Then simply use an external service to periodically "ping" the URL.
 
 Here is a non-exhaustive list of external services for cron jobs:
+ - https://cloud.google.com/scheduler/
  - https://cron-job.org/
  - https://www.setcronjob.com/
  - https://www.easycron.com/
