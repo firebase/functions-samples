@@ -10,7 +10,7 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "firebase-admin": "~6.1.0",
+    "firebase-admin": "~6.2.0",
     "firebase-functions": "^2.1.0",
     "json-diff": "^0.5.3",
     "request": "^2.88.0",

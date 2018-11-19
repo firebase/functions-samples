@@ -7,7 +7,7 @@
     "react": "15.5.4",
     "react-dom": "15.5.4",
     "request": "2.81.0",
-    "firebase-admin": "~6.1.0",
+    "firebase-admin": "~6.2.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

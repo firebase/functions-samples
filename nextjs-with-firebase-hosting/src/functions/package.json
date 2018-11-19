@@ -6,7 +6,7 @@
     "next": "beta",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "firebase-admin": "~6.1.0",
+    "firebase-admin": "~6.2.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

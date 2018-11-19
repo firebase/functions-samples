@@ -4,7 +4,7 @@
   "dependencies": {
     "cors": "^2.8.1",
     "moment": "^2.17.1",
-    "firebase-admin": "~6.1.0",
+    "firebase-admin": "~6.2.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {
