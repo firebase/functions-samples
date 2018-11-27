@@ -41,6 +41,7 @@ app.get('/', (req, res) => {
   </html>`);
 });
 
+// This endpoint is the BONG API.
 app.get('/api', (req, res) => {
   const date = new Date();
   const hours = (date.getHours() % 12) + 1; // London is UTC + 1hr;
