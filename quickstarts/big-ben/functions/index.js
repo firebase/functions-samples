@@ -15,26 +15,45 @@
  */
 'use strict';
 
-// [START all]
 const functions = require('firebase-functions');
+const express = require('express');
+const cors = require('cors')({origin: true});
+const app = express();
 
-exports.bigben = functions.https.onRequest((req, res) => {
-  const hours = (new Date().getHours() % 12) + 1; // london is UTC + 1hr;
-  // [START_EXCLUDE silent]
-  // [START cachecontrol]
-  res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
-  // [END cachecontrol]
-  // [START vary]
-  res.set('Vary', 'Accept-Encoding, X-My-Custom-Header');
-  // [END vary]
-  // [END_EXCLUDE]
-  res.status(200).send(`<!doctype html>
+app.use(cors);
+
+// This endpoint provides displays the index page.
+app.get('/', (req, res) => {
+  const date = new Date();
+  const hours = (date.getHours() % 12) + 1; // London is UTC + 1hr;
+  res.set('Cache-Control', `public, max-age=${secondsLeftBeforeEndOfHour(date)}`);
+  res.send(`
+  <!doctype html>
     <head>
       <title>Time</title>
+      <link rel="stylesheet" href="/style.css">
+      <script src="/script.js"></script>
     </head>
     <body>
-      ${'BONG '.repeat(hours)}
+      <p>In London, the clock strikes: <span id="bongs">${'BONG '.repeat(hours)}</span></p>
+      <button onClick="refresh(this)">Refresh</button>
     </body>
   </html>`);
 });
-// [END all]
+
+app.get('/api', (req, res) => {
+  const date = new Date();
+  const hours = (date.getHours() % 12) + 1; // London is UTC + 1hr;
+  res.set('Cache-Control', `public, max-age=${secondsLeftBeforeEndOfHour(date)}`);
+  res.send('BONG '.repeat(hours));
+});
+
+// Returns the number of seconds left before the next hour starts.
+function secondsLeftBeforeEndOfHour(date) {
+  const m = date.getMinutes();
+  const s = date.getSeconds();
+  return 3600 - (m*60) - s;
+}
+
+// 
+exports.app = functions.https.onRequest(app);
