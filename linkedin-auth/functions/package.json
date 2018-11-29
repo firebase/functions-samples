@@ -4,7 +4,7 @@
   "dependencies": {
     "cookie-parser": "^1.4.3",
     "node-linkedin": "^0.5.4",
-    "firebase-admin": "~6.2.0",
+    "firebase-admin": "~6.3.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

@@ -4,7 +4,7 @@
   "dependencies": {
     "@google-cloud/language": "^1.1.0",
     "express": "^4.15.2",
-    "firebase-admin": "~6.2.0",
+    "firebase-admin": "~6.3.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {
