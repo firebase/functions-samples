@@ -79,7 +79,7 @@ exports.addPaymentSource = functions.firestore.document('/stripe_customers/{user
 
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
-  const snapshot = await admin.database().ref(`/stripe_customers/${user.uid}`).once('value');
+  const snapshot = await admin.firestore().collection('stripe_customers').doc(user.uid).get();
   const customer = snapshot.data();
   await stripe.customers.del(customer.customer_id);
   return admin.firestore().collection('stripe_customers').doc(user.uid).delete();
