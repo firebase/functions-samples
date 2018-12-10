@@ -10,7 +10,8 @@
     "serve": "firebase serve",
     "predeploy": "npm run build-all",
     "deploy": "firebase deploy",
-    "build-all": "npm run build-next && npm run build-firebase",
+    "clean": "cd \"src/functions\" && rm -r next",
+    "build-all": "npm run clean && npm run build-next && npm run build-firebase",
     "build-next": "cd \"src/app\" && npm install && npm build",
     "build-firebase": "cd \"src/functions\" && npm install"
   }
