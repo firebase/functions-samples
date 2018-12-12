@@ -28,7 +28,7 @@ function refresh(_this) {
       var bongsContainer = document.getElementById('bongs');
       if (request.status === 200) {
         // Replace the BONG text with the response from the API.
-        bongsContainer.innerHTML = request.responseText;
+        bongsContainer.innerHTML = JSON.parse(request.responseText).bongs;
       } else {
         bongsContainer.innerHTML = 'An error occurred during your request: ' +  request.status + ' ' + request.statusText;
       }
