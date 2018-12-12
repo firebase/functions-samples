@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
 // [END index]
 
 // [START api]
-// This endpoint is the BONG API.
+// This endpoint is the BONG API. It returns the bongs as an API.
 app.get('/api', (req, res) => {
   const date = new Date();
   const hours = (date.getHours() % 12) + 1; // London is UTC + 1hr;
@@ -59,7 +59,7 @@ app.get('/api', (req, res) => {
   res.set('Cache-Control', `public, max-age=${secondsLeftBeforeEndOfHour(date)}`);
   // [END cache]
   // [END_EXCLUDE silent]
-  res.send('BONG '.repeat(hours));
+  res.json({bongs: 'BONG '.repeat(hours)});
 });
 // [END api]
 
