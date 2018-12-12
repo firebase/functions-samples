@@ -8,7 +8,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
-    "firebase-functions-test": "0.1.5",
+    "firebase-functions-test": "0.1.6",
     "mocha": "^5.0.5",
     "sinon": "^4.1.3"
   },
