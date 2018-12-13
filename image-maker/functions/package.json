@@ -5,7 +5,7 @@
     "canvas-prebuilt": "1.*",
     "express": "4.15.2",
     "lodash": "4.17.4",
-    "firebase-admin": "~6.3.0",
+    "firebase-admin": "~6.4.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

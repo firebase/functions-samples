@@ -3,7 +3,7 @@
   "description": "Transalte Messages Firebase Functions sample",
   "dependencies": {
     "@google-cloud/translate": "^1.1.0",
-    "firebase-admin": "~6.3.0",
+    "firebase-admin": "~6.4.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

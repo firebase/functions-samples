@@ -2,7 +2,7 @@
   "name": "coupon-on-crash-functions",
   "description": "Send a coupon via FCM to your users who have experienced a crash.",
   "dependencies": {
-    "firebase-admin": "~6.3.0",
+    "firebase-admin": "~6.4.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {
