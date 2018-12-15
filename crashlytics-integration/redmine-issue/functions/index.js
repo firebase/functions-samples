@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Benoit Duffez All Rights Reserved.
+ * Copyright 2018 The Cloud Functions for Firebase Sample Library Authors All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,12 @@ function getIssuePriorities() {
 }
 
 // Helper function that calculates the priority of the issue
-async function calculateIssuePriority(callback, eventType) {
+async function calculateIssuePriority(eventType) {
     // Get list of available issue priorities
     const result = await getIssuePriorities();
 
     // Map the Redmine priority label from the event type
-    var priorityName;
+    let priorityName;
     if (eventType === 'velocityAlert') {
       priorityName = 'Urgent';
     } else if (eventType === 'regressed') {
@@ -48,14 +48,14 @@ async function calculateIssuePriority(callback, eventType) {
     console.log(`Event type is ${eventType} => ${priorityName}; try to get the best priority from: ${result.issue_priorities}`);
 
     // Search for the target priority
-    for (var i = 0; i < result.issue_priorities.length; i++) {
+    for (let i = 0; i < result.issue_priorities.length; i++) {
       if (result.issue_priorities[i].name == priorityName) {
         return result.issue_priorities[i].id;
       }
     }
 
     // Not found? Use Redmine's default priority
-    for (var i = 0; i < result.issue_priorities.length; i++) {
+    for (let i = 0; i < result.issue_priorities.length; i++) {
       if (result.issue_priorities[i].is_default === true) {
         return result.issue_priorities[i].id;
       }

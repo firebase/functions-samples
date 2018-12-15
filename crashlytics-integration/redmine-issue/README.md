@@ -35,30 +35,16 @@ firebase deploy --only functions
 
 Once you have configured the API key (please create a dedicated user for that), server URL, project identifier (numeric or string) and the issue type (tracker, by default 1=Bug):
 
-1. The code is triggered by an issue on Firebase Crashlytics
+1. The code is triggered when a new issue is created on Firebase Crashlytics
 1. The list of available issue priorities is downloaded from Redmine
 1. The best issue priority is found, based on Firebase Crashlytics issue settings and Redmine default issue priority
 1. The issue is then created on Redmine
 
 # Contribute
 
-I've never done any Firebase Functions development so I have no idea if this is how things should be done. Any contribution welcome.
+We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../CONTRIBUTING.md).
 
 # License
 
-```plain
-Copyright 2018 Benoit Duffez
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
+© Google, 2017. Licensed under an [Apache-2](../LICENSE) license.
 
