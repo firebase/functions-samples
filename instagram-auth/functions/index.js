@@ -93,7 +93,7 @@ exports.token = functions.https.onRequest((req, res) => {
         throw new Error('State validation failed');
       }
       console.log('Received auth code:', req.query.code);
-      oauth2.authorizationCode.getToken({
+      return oauth2.authorizationCode.getToken({
         code: req.query.code,
         redirect_uri: OAUTH_REDIRECT_URI,
       }).then((results) => {

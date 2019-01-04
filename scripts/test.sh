@@ -1,7 +1,11 @@
+# Install dependencies
+echo "Installing dependencies..."
+npm install
+
 # Run linter
 echo "Linting..."
-lerna run lint
+npm run lint
 
 # Run tests
 echo "Testing..."
-lerna run ci-test
+npm run ci-test
