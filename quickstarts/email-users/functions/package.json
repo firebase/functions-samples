@@ -3,7 +3,7 @@
   "description": "Send an email to new users and users who delete their account",
   "dependencies": {
     "nodemailer": "^4.0.1",
-    "firebase-admin": "~6.4.0",
+    "firebase-admin": "~6.5.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

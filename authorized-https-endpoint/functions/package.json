@@ -5,7 +5,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
     "express": "^4.14.1",
-    "firebase-admin": "~6.4.0",
+    "firebase-admin": "~6.5.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

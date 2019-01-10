@@ -4,7 +4,7 @@
   "dependencies": {
     "es6-promise-pool": "^2.4.4",
     "secure-compare": "^3.0.1",
-    "firebase-admin": "~6.4.0",
+    "firebase-admin": "~6.5.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

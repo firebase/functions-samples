@@ -5,7 +5,7 @@
     "cookie-parser": "^1.4.3",
     "crypto": "0.0.3",
     "spotify-web-api-node": "^2.3.6",
-    "firebase-admin": "~6.4.0",
+    "firebase-admin": "~6.5.0",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {
