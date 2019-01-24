@@ -5,7 +5,7 @@
     "algoliasearch": "^3.24.0",
     "cors": "^2.8.4",
     "express": "^4.16.1",
-    "firebase-admin": "~6.5.0",
+    "firebase-admin": "~6.5.1",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {

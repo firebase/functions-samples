@@ -7,7 +7,7 @@
     "express": "^4.14.1",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.8",
-    "firebase-admin": "~6.5.0",
+    "firebase-admin": "~6.5.1",
     "firebase-functions": "^2.1.0"
   },
   "devDependencies": {
