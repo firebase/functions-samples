@@ -2,8 +2,8 @@
   "name": "typescript-functions",
   "description": "TypeScript sample Cloud Functions for Firebase",
   "dependencies": {
-    "firebase-admin": "~6.5.1",
-    "firebase-functions": "^2.1.0"
+    "firebase-admin": "~7.0.0",
+    "firebase-functions": "^2.2.0"
   },
   "devDependencies": {
     "@types/express": "^4.0.37",
