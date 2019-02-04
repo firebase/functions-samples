@@ -34,9 +34,9 @@ exports.addMessage = functions.https.onRequest((req, res) => {
   // Grab the text parameter.
   const original = req.query.text;
   // [START adminSdkAdd]
-  // Push the new message into the Realtime Database using the Firebase Admin SDK.
+  // Push the new message into the Cloud Firestore using the Firebase Admin SDK.
   return admin.firestore().collection('messages').add({original: original}).then((writeResult) => {
-    // Send back a message that we've succesfully written the message
+    // Send back a message that we've successfully written the message
     return res.json({result: `Message with ID: ${writeResult.id} added.`});
   });
   // [END adminSdkAdd]
