@@ -24,7 +24,7 @@ require('firebase/database');
 
 // We initialize Firebase using a client-side config.
 const firebaseConfig = require('./firebase-config.json').result;
-firebase.initializeApp(firebaseConfig);
+(firebase.default || firebase).initializeApp(firebaseConfig);
 
 
 // Get and return all employees
