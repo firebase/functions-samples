@@ -4,14 +4,14 @@
       "$uid": {
         ".read": "$uid === auth.uid",
         "sources": {
-          "$chargeId" : {
+          "$sourceId" : {
             ".write": "$uid === auth.uid",
             "token": { ".validate": "newData.isString()" },
             "$other": { ".validate": false }
           }
         },
         "charges": {
-          "$sourceId" : {
+          "$chargeId" : {
             ".write": "$uid === auth.uid",
             "source": { ".validate": "newData.isString()" },
             "amount": { ".validate": "newData.isNumber()" },
