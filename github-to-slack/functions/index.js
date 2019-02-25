@@ -30,7 +30,7 @@ exports.githubWebhook = functions.https.onRequest(async (req, res) => {
 
   // TODO: Configure the `github.secret` Google Cloud environment variables.
   const hmac = crypto.createHmac(cipher, functions.config().github.secret)
-      .update(req.body)
+      .update(req.rawBody)
       .digest('hex');
   const expectedSignature = `${cipher}=${hmac}`;
 
