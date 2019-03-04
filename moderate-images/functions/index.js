@@ -19,7 +19,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const mkdirp = require('mkdirp-promise');
-const vision = require('@google-cloud/vision')();
+const vision = require('@google-cloud/vision');
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
@@ -32,15 +32,34 @@ const fs = require('fs');
 exports.blurOffensiveImages = functions.storage.object().onFinalize(async (object) => {
   const file = admin.storage().bucket(object.bucket).file(object.name);
 
-  // Check the image content using the Cloud Vision API.
-  const data = await vision.detectSafeSearch(file);
-  const safeSearch = data[0];
-  console.log('SafeSearch results on image', safeSearch);
+  const bucketName = object.bucket;
+    const fileName = object.name;
+    console.log(bucketName, fileName);
 
-  if (safeSearch.adult || safeSearch.violence) {
-    return blurImage(object.name, object.bucket, object.metadata);
-  }
-  return null;
+    const client = new vision.ImageAnnotatorClient();
+
+    // Check the image content using the Cloud Vision API.
+    const [result] = await client.safeSearchDetection(
+      `gs://${bucketName}/${fileName}`
+    );
+    const detections = result.safeSearchAnnotation;
+    console.log(detections);
+
+    if (
+      detections.adult === "POSSIBLE" ||
+      detections.adult === "LIKELY" ||
+      detections.adult === "VERY_LIKELY" ||
+      detections.violence === "POSSIBLE" ||
+      detections.violence === "LIKELY" ||
+      detections.violence === "VERY_LIKELY" ||
+      detections.medical === "POSSIBLE" ||
+      detections.medical === "LIKELY" ||
+      detections.medical === "VERY_LIKELY"
+//       DO NOT USE 'RACY' HERE AS BLURRED IMAGES WILL ALWAYS DETECT AS 'RACY' CAUSING AN INFINITE LOOP
+    ) {
+      return blurImage(object.name, object.bucket, object.metadata);
+    }
+    return null;
 });
 
 /**
