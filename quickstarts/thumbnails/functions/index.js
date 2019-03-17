@@ -17,11 +17,15 @@
 
 // [START import]
 const functions = require('firebase-functions');
-const gcs = require('@google-cloud/storage')();
+const {Storage} = require('@google-cloud/storage');
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+const projectId = 'YOUR_PROJECT_ID';
+const storage = new Storage({
+    projectId: projectId,
+  });
 // [END import]
 
 // [START generateThumbnail]
@@ -57,7 +61,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
 
   // [START thumbnailGeneration]
   // Download file from bucket.
-  const bucket = gcs.bucket(fileBucket);
+  const bucket = storage.bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
   const metadata = {
     contentType: contentType,
