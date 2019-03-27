@@ -63,20 +63,16 @@
     pify "^4.0.0"
     retry-request "^4.0.0"
 
-"@google-cloud/firestore@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@google-cloud/firestore/-/firestore-1.0.1.tgz#7e8fd44e026dc3cd28663ec9050bc1bc2f708fae"
-  integrity sha512-h8DxYkrP62VZjmwUJWwsm9F+fUagne2ANML9eIOPT3JWBS+41ZBxNgxOjH8hR5Htxz6GD+xsrr0KYxKBd1eepQ==
+"@google-cloud/firestore@^1.1.0":
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/@google-cloud/firestore/-/firestore-1.2.0.tgz#ac81f84f7e55c5a25956011ebab628e1bbf4b2b0"
+  integrity sha512-Xku0KpZ/N+vbqX7rETlJVHV9YannCYja2v8vVvqe4sR9Rz0WkHqyDCZcjaXmcIC4DDKN+vzrb3IinBKDsniFag==
   dependencies:
-    "@google-cloud/projectify" "^0.3.0"
     bun "^0.0.12"
     deep-equal "^1.0.1"
-    extend "^3.0.1"
     functional-red-black-tree "^1.0.1"
-    google-gax "^0.24.0"
-    is "^3.2.1"
+    google-gax "^0.25.0"
     lodash.merge "^4.6.1"
-    protobufjs "^6.8.6"
     through2 "^3.0.0"
 
 "@google-cloud/paginator@^0.1.0":
@@ -90,7 +86,7 @@
     split-array-stream "^2.0.0"
     stream-events "^1.0.4"
 
-"@google-cloud/projectify@^0.3.0", "@google-cloud/projectify@^0.3.2":
+"@google-cloud/projectify@^0.3.2":
   version "0.3.2"
   resolved "https://registry.npmjs.org/@google-cloud/projectify/-/projectify-0.3.2.tgz#ed54c98cae646dc03a742eac288184a13d33a4c2"
   integrity sha512-t1bs5gE105IpgikX7zPCJZzVyXM5xZ/1kJomUPim2E2pNp4OUUFNyvKm/T2aM6GBP2F30o8abCD+/wbOhHWYYA==
@@ -99,6 +95,11 @@
   version "0.3.1"
   resolved "https://registry.npmjs.org/@google-cloud/promisify/-/promisify-0.3.1.tgz#f641e6d944a8e0a05ee0cb1091dfa60089becdba"
   integrity sha512-QzB0/IMvB0eFxFK7Eqh+bfC8NLv3E9ScjWQrPOk6GgfNroxcVITdTlT8NRsRrcp5+QQJVPLkRqKG0PUdaWXmHw==
+
+"@google-cloud/promisify@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.npmjs.org/@google-cloud/promisify/-/promisify-0.4.0.tgz#4fbfcf4d85bb6a2e4ccf05aa63d2b10d6c9aad9b"
+  integrity sha512-4yAHDC52TEMCNcMzVC8WlqnKKKq+Ssi2lXoUg9zWWkZ6U6tq9ZBRYLHHCRdfU+EU9YJsVmivwGcKYCjRGjnf4Q==
 
 "@google-cloud/storage@^2.3.0":
   version "2.4.2"
@@ -221,7 +222,7 @@
   dependencies:
     "@types/express" "*"
 
-"@types/duplexify@^3.5.0":
+"@types/duplexify@^3.5.0", "@types/duplexify@^3.6.0":
   version "3.6.0"
   resolved "https://registry.npmjs.org/@types/duplexify/-/duplexify-3.6.0.tgz#dfc82b64bd3a2168f5bd26444af165bf0237dcd8"
   integrity sha512-5zOA53RUlzN74bvrSGwjudssD9F3a797sDZQkiYpUOxW+WHaXTCPz4/d5Dgi6FKnOqZ2CpaTo0DhgIfsXAOE/A==
@@ -1862,6 +1863,13 @@ detect-libc@^1.0.2:
   resolved "https://registry.npmjs.org/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
   integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
+dicer@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.npmjs.org/dicer/-/dicer-0.3.0.tgz#eacd98b3bfbf92e8ab5c2fdb71aaac44bb06b872"
+  integrity sha512-MdceRRWqltEG2dZqO769g27N/3PXfcKl04VhYnBlo2YhH7zPi88VebsjTKclaOyiuMaGU72hTfw3VkUitGcVCA==
+  dependencies:
+    streamsearch "0.1.2"
+
 diffie-hellman@^5.0.0:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/diffie-hellman/-/diffie-hellman-5.0.2.tgz#b5835739270cfe26acf632099fded2a07f209e5e"
@@ -2417,24 +2425,25 @@ find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
-firebase-admin@~7.0.0:
-  version "7.0.0"
-  resolved "https://registry.npmjs.org/firebase-admin/-/firebase-admin-7.0.0.tgz#0075c650f3bf7f009eb320477683a011074765dc"
-  integrity sha512-uYJVRuq8/b9PeJrgZwE2OIfr/MQAVhWxUpOa4AnWEEjzM7hzw2CQjY2iFzH6o0/7rTyAiGeFPQQQLBMg/xuQ6w==
+firebase-admin@~7.1.1:
+  version "7.1.1"
+  resolved "https://registry.npmjs.org/firebase-admin/-/firebase-admin-7.1.1.tgz#4889149d40f0fac03821ff270268c81ea8805508"
+  integrity sha512-AitJc9vUBOzxpM5OKJw2018L0iccRusnBnXcKoWNiKoplajYQGfDBvUkhd7NUqEQigxw/xx8+DrZrlBlPaKV5A==
   dependencies:
     "@firebase/app" "^0.3.4"
     "@firebase/database" "^0.3.6"
     "@types/node" "^8.0.53"
+    dicer "^0.3.0"
     jsonwebtoken "8.1.0"
     node-forge "0.7.4"
   optionalDependencies:
-    "@google-cloud/firestore" "^1.0.1"
+    "@google-cloud/firestore" "^1.1.0"
     "@google-cloud/storage" "^2.3.0"
 
-firebase-functions@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.npmjs.org/firebase-functions/-/firebase-functions-2.2.0.tgz#499d4703f97b15cd59420b0fb4f0e5e5014484cc"
-  integrity sha512-83rJvXreTH98q1XEEUZ4G9nFZ0sUVaqkxPC+v25L9FuXsWgAFpW7G28K0MJ9DBPNo/RaeNNw0zvZVtDw11CEbQ==
+firebase-functions@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.npmjs.org/firebase-functions/-/firebase-functions-2.2.1.tgz#f5b6de47860819eb8d41b969c8d6d2c1000dc422"
+  integrity sha512-k2FA3j8XFGPOGBjgKoBUQQc4Hfqe4PdcG8hfS/RHireW1vQhkplx8XhzaknJNqsBCIoglMFuUsXpuAh9pbhtxw==
   dependencies:
     "@types/cors" "^2.8.1"
     "@types/express" "^4.11.1"
@@ -2716,24 +2725,26 @@ google-auth-library@^3.0.0:
     lru-cache "^5.0.0"
     semver "^5.5.0"
 
-google-gax@^0.24.0:
-  version "0.24.0"
-  resolved "https://registry.npmjs.org/google-gax/-/google-gax-0.24.0.tgz#accf46a8d038c6e394c6b38de894ff4f99f029bf"
-  integrity sha512-x+eeMgHlAFXScvuw3gm0r/DkN8519QtdST8U0KMt934dwfsavF2iFvOhnXaNvEL99CXtDImOON+NqkTfIzq/FQ==
+google-gax@^0.25.0:
+  version "0.25.5"
+  resolved "https://registry.npmjs.org/google-gax/-/google-gax-0.25.5.tgz#90b1f63929f92f8d75a6c284356e2ff5c62e4511"
+  integrity sha512-+x6Ys6v5agnX5+xqNw3IRCLjJL/wk50sT81x8InWo2cpnWmJwHMsBsjSYThHO23FDaBv3GkV8PpIMQhO18khAw==
   dependencies:
     "@grpc/grpc-js" "^0.3.0"
     "@grpc/proto-loader" "^0.4.0"
+    "@types/duplexify" "^3.6.0"
     duplexify "^3.6.0"
     google-auth-library "^3.0.0"
-    google-proto-files "^0.18.0"
+    google-proto-files "^0.20.0"
     grpc "^1.16.0"
+    grpc-gcp "^0.1.1"
     is-stream-ended "^0.1.4"
     lodash.at "^4.6.0"
     lodash.has "^4.5.2"
     protobufjs "^6.8.8"
     retry-request "^4.0.0"
     semver "^5.5.1"
-    walkdir "0.0.12"
+    walkdir "^0.3.2"
 
 google-p12-pem@^1.0.0:
   version "1.0.3"
@@ -2743,13 +2754,14 @@ google-p12-pem@^1.0.0:
     node-forge "^0.7.5"
     pify "^4.0.0"
 
-google-proto-files@^0.18.0:
-  version "0.18.0"
-  resolved "https://registry.npmjs.org/google-proto-files/-/google-proto-files-0.18.0.tgz#5be91bac15b38dbeae00393b0e47b9acb6c51cf2"
-  integrity sha512-blJ5rA3TWEiZIw7Qm0GHNERDdZeezDj46wE4O5uGnOWpZI/STQjeI6rPbqiwjmxzG+b592Hrp2+GKYfbmKR+Lg==
+google-proto-files@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.npmjs.org/google-proto-files/-/google-proto-files-0.20.0.tgz#dfcd1635a0c3f00f49ca057462cf369108ff4b5e"
+  integrity sha512-ORU+XhOeDv/UPtnCYLkO1ItmfhRCRPR3ZoeVQ7GfVzEs7PVitPIhsYlY5ZzG8XXnsdmtK27ENurfQ1jhAWpZHg==
   dependencies:
+    "@google-cloud/promisify" "^0.4.0"
     protobufjs "^6.8.0"
-    walkdir "0.0.12"
+    walkdir "^0.3.0"
 
 graceful-fs@^4.1.11:
   version "4.1.15"
@@ -2759,6 +2771,14 @@ graceful-fs@^4.1.11:
 graceful-fs@^4.1.2, graceful-fs@^4.1.4:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
+
+grpc-gcp@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/grpc-gcp/-/grpc-gcp-0.1.1.tgz#a11be8a7e7a6edf5f636b44a6a24fb4cc028f71f"
+  integrity sha512-MAt0Ae9QuL2Lbbt2d+kDta5AxqRD1JVXtBcJuQKp9GeFL5TxPw/hxIyDNyivPjKEXjbG3cBGwSE3CXq6a3KHEQ==
+  dependencies:
+    grpc "^1.16.0"
+    protobufjs "^6.8.8"
 
 grpc@^1.16.0:
   version "1.18.0"
@@ -4987,6 +5007,11 @@ stream-shift@^1.0.0:
   resolved "https://registry.npmjs.org/stream-shift/-/stream-shift-1.0.0.tgz#d5c752825e5367e786f78e18e445ea223a155952"
   integrity sha1-1cdSgl5TZ+eG944Y5EXqIjoVWVI=
 
+streamsearch@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/streamsearch/-/streamsearch-0.1.2.tgz#808b9d0e56fc273d809ba57338e929919a1a9f1a"
+  integrity sha1-gIudDlb8Jz2Am6VzOOkpkZoanxo=
+
 string-hash@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/string-hash/-/string-hash-1.1.1.tgz#8e85bed291e0763b8f6809d9c3368fea048db3dc"
@@ -5397,10 +5422,10 @@ walk@^2.3.9:
   dependencies:
     foreachasync "^3.0.0"
 
-walkdir@0.0.12:
-  version "0.0.12"
-  resolved "https://registry.npmjs.org/walkdir/-/walkdir-0.0.12.tgz#2f24f1ade64aab1e458591d4442c8868356e9281"
-  integrity sha512-HFhaD4mMWPzFSqhpyDG48KDdrjfn409YQuVW7ckZYhW4sE87mYtWifdB/+73RA7+p4s4K18n5Jfx1kHthE1gBw==
+walkdir@^0.3.0, walkdir@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.npmjs.org/walkdir/-/walkdir-0.3.2.tgz#ac8437a288c295656848ebc19981ebc677a5f590"
+  integrity sha512-0Twghia4Z5wDGDYWURlhZmI47GvERMCsXIu0QZWVVZyW9ZjpbbZvD9Zy9M6cWiQQRRbAcYajIyKNavaZZDt1Uw==
 
 watchpack@^1.3.1:
   version "1.3.1"
