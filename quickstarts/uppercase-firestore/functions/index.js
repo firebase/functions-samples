@@ -26,8 +26,8 @@ admin.initializeApp();
 // [END import]
 
 // [START addMessage]
-// Take the text parameter passed to this HTTP endpoint and insert it into the
-// Realtime Database under the path /messages/:documentId/original
+// Take the text parameter passed to this HTTP endpoint and insert it into 
+// Cloud Firestore under the path /messages/:documentId/original
 // [START addMessageTrigger]
 exports.addMessage = functions.https.onRequest(async (req, res) => {
 // [END addMessageTrigger]
