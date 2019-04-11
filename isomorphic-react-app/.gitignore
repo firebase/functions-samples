@@ -1,3 +1,4 @@
 .firebaserc
 node_modules
 *.bundle.js
+functions/firebase-config.json
