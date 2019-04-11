@@ -1,4 +1,4 @@
-## All the samples on this branch are using the Node 8 runtime which is in beta and use ES2017 syntax. If you'd like to use ES2015 syntax because you're using the Node 6 runtime have a look at the [**master** branch](https://github.com/firebase/functions-samples/tree/master).
+## All samples use the Node 8 runtime with ES2017 syntax.
 
 # Cloud Functions for Firebase Sample Library
 
