@@ -35,7 +35,7 @@ const renderApplication = (url, res, initialState) => {
 };
 
 app.get('/favicon.ico', (req, res) => {
-  res.send(204);
+  res.sendStatus(204);
 });
 
 app.get('/:userId?', async (req, res) => {
