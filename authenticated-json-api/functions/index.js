@@ -29,18 +29,21 @@ const app = express();
 // The Firebase ID token needs to be passed as a Bearer token in the Authorization HTTP header like this:
 // `Authorization: Bearer <Firebase ID Token>`.
 // when decoded successfully, the ID Token content will be added as `req.user`.
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
     res.status(403).send('Unauthorized');
     return;
   }
   const idToken = req.headers.authorization.split('Bearer ')[1];
-  admin.auth().verifyIdToken(idToken).then((decodedIdToken) => {
+  try {
+    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedIdToken;
-    return next();
-  }).catch(() => {
+    next();
+    return;
+  } catch(e) {
     res.status(403).send('Unauthorized');
-  });
+    return;
+  }
 };
 
 app.use(authenticate);
@@ -48,27 +51,24 @@ app.use(authenticate);
 // POST /api/messages
 // Create a new message, get its sentiment using Google Cloud NLP,
 // and categorize the sentiment before saving.
-app.post('/messages', (req, res) => {
+app.post('/messages', async (req, res) => {
   const message = req.body.message;
-
-  client.analyzeSentiment({document: message}).then((results) => {
+  try {
+    const results = await client.analyzeSentiment({document: message});
     const category = categorizeScore(results[0].documentSentiment.score);
     const data = {message: message, sentiment: results, category: category};
-    return admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
-  }).then((snapshot) => {
-    return snapshot.ref.once('value');
-  }).then((snapshot) => {
+    const snapshot = await admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
     const val = snapshot.val();
-    return res.status(201).json({message: val.message, category: val.category});
-  }).catch((error) => {
+    res.status(201).json({message: val.message, category: val.category});
+  } catch(error) {
     console.log('Error detecting sentiment or saving message', error.message);
     res.sendStatus(500);
-  });
+  }
 });
 
 // GET /api/messages?category={category}
 // Get all messages, optionally specifying a category to filter on
-app.get('/messages', (req, res) => {
+app.get('/messages', async (req, res) => {
   const category = req.query.category;
   let query = admin.database().ref(`/users/${req.user.uid}/messages`);
 
@@ -76,35 +76,37 @@ app.get('/messages', (req, res) => {
     // Update the query with the valid category
     query = query.orderByChild('category').equalTo(category);
   } else if (category) {
-    return res.status(404).json({errorCode: 404, errorMessage: `category '${category}' not found`});
+    res.status(404).json({errorCode: 404, errorMessage: `category '${category}' not found`});
+    return;
   }
-
-  return query.once('value').then((snapshot) => {
+  try {
+    const snapshot = await query.once('value');
     let messages = [];
     snapshot.forEach((childSnapshot) => {
       messages.push({key: childSnapshot.key, message: childSnapshot.val().message});
     });
 
-    return res.status(200).json(messages);
-  }).catch((error) => {
+    res.status(200).json(messages);
+  } catch(error) {
     console.log('Error getting messages', error.message);
     res.sendStatus(500);
-  });
+  }
 });
 
 // GET /api/message/{messageId}
 // Get details about a message
-app.get('/message/:messageId', (req, res) => {
+app.get('/message/:messageId', async (req, res) => {
   const messageId = req.params.messageId;
-  admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value').then((snapshot) => {
-    if (snapshot.val() === null) {
-        return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
+  try {
+    const snapshot = await admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value');
+    if (!snapshot.exists()) {
+      return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
     }
     return res.set('Cache-Control', 'private, max-age=300');
-  }).catch((error) => {
+  } catch(error) {
     console.log('Error getting message details', messageId, error.message);
-    res.sendStatus(500);
-  });
+    return res.sendStatus(500);
+  }
 });
 
 // Expose the API as a function

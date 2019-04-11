@@ -23,37 +23,10 @@ const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpeg_static = require('ffmpeg-static');
 
+// Makes an ffmpeg command return a promise.
 function promisifyCommand(command) {
   return new Promise((resolve, reject) => {
-    command
-        .on('end', () => {
-          resolve();
-        })
-        .on('error', (error) => {
-          reject(error);
-        })
-        .run();
-  });
-}
-
-/**
- * Utility method to convert audio to mono channel using FFMPEG.
- */
-function reencodeAsync(tempFilePath, targetTempFilePath) {
-  return new Promise((resolve, reject) => {
-    const command = ffmpeg(tempFilePath)
-        .setFfmpegPath(ffmpeg_static.path)
-        .audioChannels(1)
-        .audioFrequency(16000)
-        .format('flac')
-        .on('error', (err) => {
-          console.log('An error occurred: ' + err.message);
-          reject(err);
-        })
-        .on('end', () => {
-          console.log('Output audio created at', targetTempFilePath);
-        })
-        .save(targetTempFilePath);
+    command.on('end', resolve).on('error', reject).run();
   });
 }
 
@@ -61,11 +34,10 @@ function reencodeAsync(tempFilePath, targetTempFilePath) {
  * When an audio is uploaded in the Storage bucket We generate a mono channel audio automatically using
  * node-fluent-ffmpeg.
  */
-exports.generateMonoAudio = functions.storage.object().onFinalize((object) => {
+exports.generateMonoAudio = functions.storage.object().onFinalize(async (object) => {
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
   const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.
-  const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
 
   // Exit if this is triggered on a file that is not an audio.
   if (!contentType.startsWith('audio/')) {
@@ -89,33 +61,26 @@ exports.generateMonoAudio = functions.storage.object().onFinalize((object) => {
   const targetTempFilePath = path.join(os.tmpdir(), targetTempFileName);
   const targetStorageFilePath = path.join(path.dirname(filePath), targetTempFileName);
 
-  return bucket.file(filePath).download({
-    destination: tempFilePath,
-  }).then(() => {
-    console.log('Audio downloaded locally to', tempFilePath);
-    // Convert the audio to mono channel using FFMPEG.
+  await bucket.file(filePath).download({destination: tempFilePath});
+  console.log('Audio downloaded locally to', tempFilePath);
+  // Convert the audio to mono channel using FFMPEG.
 
-    let command = ffmpeg(tempFilePath)
-        .setFfmpegPath(ffmpeg_static.path)
-        .audioChannels(1)
-        .audioFrequency(16000)
-        .format('flac')
-        .output(targetTempFilePath);
+  let command = ffmpeg(tempFilePath)
+      .setFfmpegPath(ffmpeg_static.path)
+      .audioChannels(1)
+      .audioFrequency(16000)
+      .format('flac')
+      .output(targetTempFilePath);
 
-    command = promisifyCommand(command);
+  await promisifyCommand(command);
+  console.log('Output audio created at', targetTempFilePath);
+  // Uploading the audio.
+  await bucket.upload(targetTempFilePath, {destination: targetStorageFilePath});
+  console.log('Output audio uploaded to', targetStorageFilePath);
 
-    return command;
-  }).then(() => {
-    console.log('Output audio created at', targetTempFilePath);
-    // Uploading the audio.
-    return bucket.upload(targetTempFilePath, {destination: targetStorageFilePath});
-  }).then(() => {
-    console.log('Output audio uploaded to', targetStorageFilePath);
+  // Once the audio has been uploaded delete the local file to free up disk space.
+  fs.unlinkSync(tempFilePath);
+  fs.unlinkSync(targetTempFilePath);
 
-    // Once the audio has been uploaded delete the local file to free up disk space.
-    fs.unlinkSync(tempFilePath);
-    fs.unlinkSync(targetTempFilePath);
-
-    return console.log('Temporary files removed.', targetTempFilePath);
-  });
+  return console.log('Temporary files removed.', targetTempFilePath);
 });

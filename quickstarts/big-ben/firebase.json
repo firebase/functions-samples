@@ -5,7 +5,7 @@
 
     // Add the following rewrites section *within* "hosting".
     "rewrites": [ {
-      "source": "/bigben", "function": "bigben"
+      "source": "**", "function": "app"
     } ]
   }
 }

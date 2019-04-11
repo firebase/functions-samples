@@ -1,15 +1,14 @@
 {
-  "name": "functions",
+  "name": "nextjs-functions",
   "description": "Cloud Functions for Firebase",
   "version": "1.0.0",
   "dependencies": {
     "next": "beta",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "firebase-admin": "~5.11.0",
-    "firebase-functions": "^1.0.0"
+    "firebase-admin": "~7.1.1",
+    "firebase-functions": "^2.2.1"
   },
-  "private": true,
   "devDependencies": {
     "eslint": "^4.13.1",
     "eslint-plugin-promise": "^3.6.0"
@@ -21,5 +20,9 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
-  }
+  },
+  "engines": {
+    "node": "8"
+  },
+  "private": true
 }

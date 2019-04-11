@@ -1,6 +1,6 @@
-# Create Stripe customers and charge them on RTDB write
+# Create Stripe customers and charge them on Cloud Firestore write
 
-This sample shows how to create Stripe customers and charge them when the Realtime Database is written to.
+This sample shows how to create Stripe customers and charge them when Cloud Firestore is written to.
 
 Further reading:
  - Stripe Node API: https://stripe.com/docs/api/node

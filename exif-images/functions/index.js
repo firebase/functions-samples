@@ -30,7 +30,7 @@ const spawn = require('child-process-promise').spawn;
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
  * output of ImageMagick's `identify -verbose`) is saved in the Realtime Database.
  */
-exports.metadata = functions.storage.object().onFinalize((object) => {
+exports.metadata = functions.storage.object().onFinalize(async (object) => {
   const filePath = object.name;
 
   // Create random filename with same extension as uploaded file.
@@ -46,25 +46,18 @@ exports.metadata = functions.storage.object().onFinalize((object) => {
   let metadata;
   // Download file from bucket.
   const bucket = gcs.bucket(object.bucket);
-  return bucket.file(filePath).download({destination: tempLocalFile}).then(() => {
-    // Get Metadata from image.
-    return spawn('identify', ['-verbose', tempLocalFile], {capture: ['stdout', 'stderr']})
-  }).then((result) => {
-    // Save metadata to realtime datastore.
-    metadata = imageMagickOutputToObject(result.stdout);
-    const safeKey = makeKeyFirebaseCompatible(filePath);
-    return admin.database().ref(safeKey).set(metadata);
-  }).then(() => {
-    console.log('Wrote to:', filePath, 'data:', metadata);
-    return null;
-  }).then(() => {
-    // Cleanup temp directory after metadata is extracted
-    // Remove the file from temp directory
-    return fs.unlinkSync(tempLocalFile)
-  }).then(() => {
-    console.log('cleanup successful!');
-    return null;
-  });
+  await bucket.file(filePath).download({destination: tempLocalFile});
+  // Get Metadata from image.
+  const result = await spawn('identify', ['-verbose', tempLocalFile], {capture: ['stdout', 'stderr']});
+  // Save metadata to realtime datastore.
+  metadata = imageMagickOutputToObject(result.stdout);
+  const safeKey = makeKeyFirebaseCompatible(filePath);
+  await admin.database().ref(safeKey).set(metadata);
+  console.log('Wrote to:', filePath, 'data:', metadata);
+  // Cleanup temp directory after metadata is extracted
+  // Remove the file from temp directory
+  await fs.unlinkSync(tempLocalFile)
+  return console.log('cleanup successful!');
 });
 
 /**

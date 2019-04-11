@@ -5,14 +5,13 @@
   "author": "Firebase (https://firebase.google.com/)",
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "lerna run lint",
-    "ci-test": "lerna run ci-test"
+    "test": "echo 'Linting...' && lerna run lint && echo 'Testing...' && lerna run ci-test"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-plugin-promise": "^4.0.1",
+    "eslint": "^4.17.0",
+    "eslint-plugin-promise": "^3.8.0",
     "lerna": "^2.8.0",
-    "tslint": "^5.12.0",
-    "typescript": "^3.2.2"
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
   }
 }

@@ -1,0 +1,18 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /stripe_customers/{uid} {
+      allow read, write: if request.auth.uid == uid;
+
+      match /sources/{sourceId} {
+        allow read: if request.auth.uid == uid;
+      }
+      match /tokens/{sourceId} {
+        allow read,write: if request.auth.uid == uid;
+      }
+      match /charges/{chargeId} {
+        allow read, write: if request.auth.uid == uid;
+      }
+
+    }
+  }
+}
