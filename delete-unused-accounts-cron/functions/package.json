@@ -3,9 +3,8 @@
   "description": "Periodically delete unused Firebase accounts",
   "dependencies": {
     "es6-promise-pool": "^2.4.4",
-    "secure-compare": "^3.0.1",
     "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "firebase-functions": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^4.13.1",
