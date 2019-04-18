@@ -20,35 +20,20 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const promisePool = require('es6-promise-pool');
 const PromisePool = promisePool.PromisePool;
-const secureCompare = require('secure-compare');
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 
 /**
- * When requested this Function will delete every user accounts that has been inactive for 30 days.
- * The request needs to be authorized by passing a 'key' query parameter in the URL. This key must
- * match a key set as an environment variable using `firebase functions:config:set cron.key="YOUR_KEY"`.
+ * Run once a day at midnight, to cleanup the users
+ * Manually run the task here https://console.cloud.google.com/cloudscheduler
  */
-exports.accountcleanup = functions.https.onRequest(async (req, res) => {
-  const key = req.query.key;
-
-  // Exit if the keys don't match.
-  if (!secureCompare(key, functions.config().cron.key)) {
-    console.log('The key provided in the request does not match the key set in the environment. Check that', key,
-        'matches the cron.key attribute in `firebase env:get`');
-    res.status(403).send('Security key does not match. Make sure your "key" URL query parameter matches the ' +
-        'cron.key environment variable.');
-    return null;
-  }
-  
+exports.accountcleanup = functions.pubsub.schedule('every day 00:00').onRun(async context => {
   // Fetch all user details.
   const inactiveUsers = await getInactiveUsers();
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
   const promisePool = new PromisePool(() => deleteInactiveUser(inactiveUsers), MAX_CONCURRENT);
   await promisePool.start();
   console.log('User cleanup finished');
-  res.send('User cleanup finished');
-  return null;
 });
 
 /**
