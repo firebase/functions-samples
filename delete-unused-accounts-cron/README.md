@@ -21,4 +21,4 @@ To set up the sample:
  - Setup the sample with your project `firebase use --add` and follow the instructions.
  - Install node dependencies of your Functions `cd functions; npm install; cd -`
  - Deploy your project using `firebase deploy`.
- - The pubsub task should then run once a day and delete any inactive users
+ - The pubsub task should then run once a day and delete any inactive users. You can manually run the task by [navigating to Cloud Scheduler in the Google Cloud Platform Console](https://console.cloud.google.com/cloudscheduler).

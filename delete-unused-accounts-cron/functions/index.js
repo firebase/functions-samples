@@ -25,6 +25,7 @@ const MAX_CONCURRENT = 3;
 
 /**
  * Run once a day, to cleanup the users
+ * Manually run the task here https://console.cloud.google.com/cloudscheduler
  */
 exports.accountcleanup = functions.pubsub.schedule('every day').onRun(async context => {
   // Fetch all user details.
