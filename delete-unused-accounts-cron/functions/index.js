@@ -24,10 +24,10 @@ const PromisePool = promisePool.PromisePool;
 const MAX_CONCURRENT = 3;
 
 /**
- * Run once a day, to cleanup the users
+ * Run once a day at midnight, to cleanup the users
  * Manually run the task here https://console.cloud.google.com/cloudscheduler
  */
-exports.accountcleanup = functions.pubsub.schedule('every day').onRun(async context => {
+exports.accountcleanup = functions.pubsub.schedule('every day 00:00').onRun(async context => {
   // Fetch all user details.
   const inactiveUsers = await getInactiveUsers();
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
