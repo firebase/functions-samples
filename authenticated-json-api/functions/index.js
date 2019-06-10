@@ -36,10 +36,14 @@ const authenticate = async (req, res, next) => {
   }
   const idToken = req.headers.authorization.split('Bearer ')[1];
   try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    req.user = decodedIdToken;
+    const decodedIdToken = await admin.auth().verifyIdToken(idToken).then((claims)=>{
+    
+    req.user = claims;
     next();
     return;
+    
+    });
+   
   } catch(e) {
     res.status(403).send('Unauthorized');
     return;
