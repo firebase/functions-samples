@@ -73,6 +73,6 @@ function secondsLeftBeforeEndOfHour(date) {
 // [END seconds_left]
 
 // [START export]
-// Export the express app as an HTTP Cloud Functions
+// Export the express app as an HTTP Cloud Function
 exports.app = functions.https.onRequest(app);
 // [END export]
