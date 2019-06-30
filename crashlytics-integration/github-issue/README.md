@@ -22,7 +22,7 @@ Note: This assumes that you have Crashlytics in Firebase. [Learn more about Cras
   
  Integrating with Github
   1. Configure the required environment variables for Github: `firebase functions:config:set github.repository_url="https://github.com/:owner/:repo/" github.user="username" github.pass="password"`
-  1. You may also specify two optional environment variables as well `firebase functions:config:set github.labels="bug,crashyltics""`
+  1. You may also specify two optional environment variables as well `firebase functions:config:set github.labels="bug,crashlytics"`
 
    
 ## Deploy and test

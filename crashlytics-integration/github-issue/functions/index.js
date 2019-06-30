@@ -43,7 +43,7 @@ function createGithubIssue(summary, description) {
   const newIssue = {
       title: summary,
       body: description,
-      labels: (labels !== null) ? labels.split(',') : []
+      labels: (labels != null) ? labels.split(',') : []
   };
 
   // Uses Basic Authentication
