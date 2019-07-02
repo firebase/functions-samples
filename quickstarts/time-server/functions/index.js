@@ -29,7 +29,7 @@ const cors = require('cors')({
 
 // [START all]
 /**
- * Returns the server's date. You must provide a `format` URL query parameter or `format` vaue in
+ * Returns the server's date. You must provide a `format` URL query parameter or `format` value in
  * the request body with which we'll try to format the date.
  *
  * Format must follow the Node moment library. See: http://momentjs.com/
