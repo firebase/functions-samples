@@ -1,6 +1,6 @@
 # Presence in Firestore
 
-This template shows you how to build a presence (understanding which users are online / offline) in Cloud Firestore and Realtime Database.
+This template shows you how to build a presence system (understanding which users are online / offline) in Cloud Firestore with some help from the Realtime Database. An explanation of why this is necessary, how it works, and what changes you need to implement in a client app can be found [in the docs](https://firebase.google.com/docs/firestore/solutions/presence).
 
 ## Functions Code
 
