@@ -58,6 +58,10 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Pub
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Crashlytics**. The functions send an email when there is a new issue in an important conversion flow.
 
+### [Test Lab trigger quickstart: Log when a matrix completes](/quickstarts/test-complete)
+
+This quickstart demonstrates how to trigger a function in response to the
+completion of a test matrix in **Firebase Test Lab**.
 
 <a name="environment"></a>
 ## Development Environment Samples and Boilerplates
