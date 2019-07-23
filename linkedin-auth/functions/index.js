@@ -84,7 +84,7 @@ exports.token = functions.https.onRequest((req, res) => {
         }
         console.log('Received Access Token:', results.access_token);
         const linkedin = Linkedin.init(results.access_token);
-        linkedin.people.me((error, userResults) => {
+        linkedin.people.me(async (error, userResults) => {
           if (error) {
             throw error;
           }
@@ -98,20 +98,16 @@ exports.token = functions.https.onRequest((req, res) => {
           const email = userResults.emailAddress;
 
           // Create a Firebase account and get the Custom Auth Token.
-          return createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken).then(
-            (firebaseToken) => {
-              // Serve an HTML page that signs the user in and updates the user profile.
-              return res.jsonp({
-                token: firebaseToken,
-              });
-            });
+          const firebaseToken = await createFirebaseAccount(linkedInUserID, userName, profilePic, email, accessToken);
+          // Serve an HTML page that signs the user in and updates the user profile.
+          res.jsonp({
+            token: firebaseToken,
+          });
         });
       });
     });
   } catch (error) {
-    return res.jsonp({
-      error: error.toString,
-    });
+    return res.jsonp({ error: error.toString });
   }
 });
 
@@ -122,7 +118,7 @@ exports.token = functions.https.onRequest((req, res) => {
  *
  * @returns {Promise<string>} The Firebase custom auth token in a promise.
  */
-function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
+async function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
   // The UID we'll assign to the user.
   const uid = `linkedin:${linkedinID}`;
 
@@ -150,11 +146,9 @@ function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessT
   });
 
   // Wait for all async task to complete then generate and return a custom auth token.
-  return Promise.all([userCreationTask, databaseTask]).then(() => {
-    // Create a Firebase custom auth token.
-    return admin.auth().createCustomToken(uid);
-  }).then((token) => {
-    console.log('Created Custom token for UID "', uid, '" Token:', token);
-    return token;
-  });
+  await Promise.all([userCreationTask, databaseTask]);
+  // Create a Firebase custom auth token.
+  const token = await admin.auth().createCustomToken(uid);
+  console.log('Created Custom token for UID "', uid, '" Token:', token);
+  return token;
 }

@@ -10,7 +10,7 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for t`he specific language governing permissions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 'use strict';
@@ -60,18 +60,10 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
 
   // Create Sharp pipeline for resizing the image and use pipe to read from bucket read stream
   const pipeline = sharp();
-  pipeline
-    .resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT)
-    .max()
-    .pipe(thumbnailUploadStream);
+  pipeline.resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT).max().pipe(thumbnailUploadStream);
 
   bucket.file(filePath).createReadStream().pipe(pipeline);
 
-  const streamAsPromise = new Promise((resolve, reject) =>
-    thumbnailUploadStream.on('finish', resolve).on('error', reject));
-
-  return streamAsPromise.then(() => {
-    console.log('Thumbnail created successfully');
-    return null;
-  });
+  return new Promise((resolve, reject) =>
+      thumbnailUploadStream.on('finish', resolve).on('error', reject));
 });

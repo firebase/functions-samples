@@ -1,3 +1,5 @@
+## All samples use the Node 8 runtime with ES2017 syntax.
+
 # Cloud Functions for Firebase Sample Library
 
 This repository contains a collection of samples showcasing some typical uses of [Cloud Functions for Firebase](https://firebase.google.com/features/functions).
@@ -70,13 +72,6 @@ This sample shows how you can write your Cloud Functions code using Typescript.
 This requires a build step, included as an npm script, which transpiles the
 source code to a supported version of JavaScript.
 Uses an **HTTPS request**.
-
-### [Write Cloud Functions using ES2017 code](/es2017-transpile)
-
-This sample shows how to write Cloud Functions code using the ES2017
-syntax. This requires running a preparation step where the code is transpiled to
-a supported version of JavaScript.
-Uses a **Firebase Realtime Database trigger**.
 
 ### [Server-side generated pages w/ Handlebars templating and user sessions](/template-handlebars)
 
@@ -184,7 +179,7 @@ Demonstrates how to automatically post GitHub commits to a Slack channel using a
 
 ### Create and charge customers with [Stripe](/stripe) or [Paypal](/paypal)
 
-Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library and whows how to create HTTP endpoints to charge customers via Paypal.
+Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library and shows how to create HTTP endpoints to charge customers via Paypal.
 
 ### [Text moderation](/text-moderation)
 

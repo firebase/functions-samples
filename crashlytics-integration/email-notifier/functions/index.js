@@ -21,7 +21,9 @@ const sendgridMail = require('@sendgrid/mail');
 // Authentication for the SendGrid account
 sendgridMail.setApiKey(functions.config().sendgrid.api_key);
 
-exports.sendOnNewIssue = functions.crashlytics.issue().onNew((issue) => {
+// [START on_new_issue]
+exports.sendOnNewIssue = functions.crashlytics.issue().onNew(async (issue) => {
+  // [START_EXCLUDE]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -44,14 +46,19 @@ exports.sendOnNewIssue = functions.crashlytics.issue().onNew((issue) => {
         <p>Creation Time: ${createTime}</p>`,
   };
 
-  return sendgridMail.send(emailDetails).then(() => {
-    return console.log('Successfully sent new issue email');
-  }).catch((error) => {
+  try {
+    await sendgridMail.send(emailDetails);
+    console.log('Successfully sent new issue email');
+  } catch (error) {
     console.error(error.toString());
-  });
+  }
+  // [END_EXCLUDE]
 });
+// [END on_new_issue]
 
-exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed((issue) => {
+// [START on_regressed_issue]
+exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed(async (issue) => {
+  // [START_EXCLUDE]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -76,14 +83,19 @@ exports.sendOnRegressedIssue = functions.crashlytics.issue().onRegressed((issue)
         <p>Originally Resolved On: ${new Date(resolvedTime).toString()}</p>`,
   };
 
-  return sendgridMail.send(emailDetails).then(() => {
-    return console.log('Successfully sent regressed issue email');
-  }).catch((error) => {
+  try {
+    await sendgridMail.send(emailDetails);
+    console.log('Successfully sent regressed issue email');
+  } catch(error) {
     console.error(error.toString());
-  });
+  }
+  // [END_EXCLUDE]
 });
+// [END on_regressed_issue]
 
-exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((issue) => {
+// [START on_velocity_alert]
+exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(async (issue) => {
+  // [START_EXCLUDE]
   const issueId = issue.issueId;
   const issueTitle = issue.issueTitle;
   const appName = issue.appInfo.appName;
@@ -110,9 +122,12 @@ exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert((iss
         <p># of Total Crashes: ${crashes.toString()}</p>`,
   };
 
-  return sendgridMail.send(emailDetails).then(() => {
-    return console.log('Successfully sent velocity alert email');
-  }).catch((error) => {
+  try {
+    await sendgridMail.send(emailDetails);
+    console.log('Successfully sent velocity alert email');
+  } catch(error) {
     console.error(error.toString());
-  });
+  }
+  // [END_EXCLUDE]
 });
+// [END on_velocity_alert]

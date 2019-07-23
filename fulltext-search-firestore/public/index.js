@@ -27,7 +27,7 @@ function unauthenticated_search(query) {
   // Perform an Algolia search:
   // https://www.algolia.com/doc/api-reference/api-methods/search/
   index
-    .seach({
+    .search({
       query
     })
     .then(function(responses) {

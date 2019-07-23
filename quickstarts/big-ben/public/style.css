@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Google Inc. All Rights Reserved.
+ * Copyright 2018 Google Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+ 
+ body {
+    font-family: sans-serif;
+    text-align: center;
+}
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp();
+#bongs {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
 
-// This is a Hello World function which writes to the database.
-exports.helloWorld = functions.database.ref('/hello/{name}').onWrite(async event => {
-  await event.data.ref.set(`Hello ${event.params.name}`);
-  console.log('Counter updated.');
-  return;
-});
+button {
+    cursor: pointer;
+}

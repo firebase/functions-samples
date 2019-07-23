@@ -21,12 +21,11 @@ const BitlyClient = require('bitly');
 const bitly = BitlyClient(functions.config().bitly.access_token);
 
 // Shorten URL written to /links/{linkID}.
-exports.shortenUrl = functions.database.ref('/links/{linkID}').onCreate((snap) => {
+exports.shortenUrl = functions.database.ref('/links/{linkID}').onCreate(async (snap) => {
   const originalUrl = snap.val();
-  return bitly.shorten(originalUrl).then((response) => {
-    return snap.ref.set({
-      original: originalUrl,
-      short: response.data.url,
-    })
-  });
+  const response = await bitly.shorten(originalUrl);
+  return snap.ref.set({
+    original: originalUrl,
+    short: response.data.url,
+  })
 });

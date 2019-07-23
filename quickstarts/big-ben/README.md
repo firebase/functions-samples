@@ -40,9 +40,11 @@ npm install -g firebase-tools
 
 Start serving your project locally using `firebase serve --only hosting,functions`
 
-Open the app in a browser at `https://localhost:5000/bigben`.
+Open the app in a browser at `https://localhost:5000/`.
 
-A page containing a repeated number of "BONG" will be displayed.
+A page containing a repeated number of "BONG" - One for each hour of the day - will be displayed.
+
+You can click on the **Refresh** button which will call the API by doing an XHR to `/api` and refresh the "BONG" display on the page.
 
 
 ## Deploy the app to prod

@@ -35,7 +35,7 @@
     // Warn if no return statements in callbacks of array methods
     "array-callback-return": 1,
 
-    // Requre the use of === and !==
+    // Require the use of === and !==
     "eqeqeq": 2,
 
     // Disallow the use of alert, confirm, and prompt
@@ -111,6 +111,7 @@
     "prefer-arrow-callback": 1,
 
     // Return inside each then() to create readable and reusable Promise chains.
+    // Forces developers to return console logs and http calls in promises. 
     "promise/always-return": 2,
 
     //Enforces the use of catch() on un-returned promises

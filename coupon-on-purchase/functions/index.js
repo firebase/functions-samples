@@ -47,33 +47,32 @@ exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLo
  * @param {string} uid The UID of the user.
  * @param {string} userLanguage The user language in language-country format.
  */
-function sendCouponViaFCM(uid, userLanguage) {
+async function sendCouponViaFCM(uid, userLanguage) {
   // Fetching all the user's device tokens.
-  return getDeviceTokens(uid).then((tokens) => {
-    if (tokens.length > 0) {
-      // Notification details.
-      let payload = {
+  const tokens = await getDeviceTokens(uid);
+  if (tokens.length > 0) {
+    // Notification details.
+    let payload = {
+      notification: {
+        title: 'Thanks for your Purchase!',
+        body: 'Get 10% off your next purchase with "COMEBACK10".',
+      },
+    };
+
+    // Notification in French.
+    if (userLanguage.split('-')[0] === 'fr') {
+      payload = {
         notification: {
-          title: 'Thanks for your Purchase!',
-          body: 'Get 10% off your next purchase with "COMEBACK10".',
+          title: 'Merci pour votre achat!',
+          body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK10".',
         },
       };
-
-      // Notification in French.
-      if (userLanguage.split('-')[0] === 'fr') {
-        payload = {
-          notification: {
-            title: 'Merci pour votre achat!',
-            body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK10".',
-          },
-        };
-      }
-
-      // Send notifications to all tokens.
-      return admin.messaging().sendToDevice(tokens, payload);
     }
-    return null;
-  });
+
+    // Send notifications to all tokens.
+    return admin.messaging().sendToDevice(tokens, payload);
+  }
+  return null;
 }
 
 /**
@@ -82,33 +81,32 @@ function sendCouponViaFCM(uid, userLanguage) {
  * @param {string} uid The UID of the user.
  * @param {string} userLanguage The user language in language-country format.
  */
-function sendHighValueCouponViaFCM(uid, userLanguage) {
+async function sendHighValueCouponViaFCM(uid, userLanguage) {
   // Fetching all the user's device tokens.
-  return getDeviceTokens(uid).then((tokens) => {
-    if (tokens.length > 0) {
-      // Notification details.
-      let payload = {
+  const tokens = await getDeviceTokens(uid);
+  if (tokens.length > 0) {
+    // Notification details.
+    let payload = {
+      notification: {
+        title: 'Thanks for your Purchase!',
+        body: 'Get 30% off your next purchase with "COMEBACK30".',
+      },
+    };
+
+    // Notification in French.
+    if (userLanguage.split('-')[0] === 'fr') {
+      payload = {
         notification: {
-          title: 'Thanks for your Purchase!',
-          body: 'Get 30% off your next purchase with "COMEBACK30".',
+          title: 'Merci pour votre achat!',
+          body: 'Obtenez 30% de réduction sur votre prochain achat avec "COMEBACK30".',
         },
       };
-
-      // Notification in French.
-      if (userLanguage.split('-')[0] === 'fr') {
-        payload = {
-          notification: {
-            title: 'Merci pour votre achat!',
-            body: 'Obtenez 30% de réduction sur votre prochain achat avec "COMEBACK30".',
-          },
-        };
-      }
-
-      // Send notifications to all tokens.
-      return admin.messaging().sendToDevice(tokens, payload);
     }
-    return null;
-  });
+
+    // Send notifications to all tokens.
+    return admin.messaging().sendToDevice(tokens, payload);
+  }
+  return null;
 }
 
 /**
@@ -116,11 +114,10 @@ function sendHighValueCouponViaFCM(uid, userLanguage) {
  *
  * @param {string} uid The UID of the user.
  */
-function getDeviceTokens(uid) {
-  return admin.database().ref(`/users/${uid}/tokens`).once('value').then((snap) => {
-    if (snap.exists()) {
-      return Object.keys(snap.val());
-    }
-    return [];
-  });
+async function getDeviceTokens(uid) {
+  const snap = await admin.database().ref(`/users/${uid}/tokens`).once('value');
+  if (snap.exists()) {
+    return Object.keys(snap.val());
+  }
+  return [];
 }

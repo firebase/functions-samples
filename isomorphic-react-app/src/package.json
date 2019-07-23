@@ -8,12 +8,12 @@
     "build": "npm run createfirebaseconf && npm run buildClient && npm run buildServer"
   },
   "dependencies": {
-    "firebase": "4.8.0",
+    "firebase": "5.9.1",
     "lodash": "4.17.4",
     "react": "15.5.4",
     "react-dom": "15.5.4",
-    "react-router": "4.1.1",
-    "react-router-dom": "4.1.1"
+    "react-router": "5.0.0",
+    "react-router-dom": "5.0.0"
   },
   "devDependencies": {
     "babel-core": "6.24.1",
