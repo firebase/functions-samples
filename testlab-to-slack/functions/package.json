@@ -14,7 +14,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "firebase-admin": "^8.0.0",
-    "firebase-functions": "^3.1.0"
+    "firebase-functions": "^3.2.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.1.6"
