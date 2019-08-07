@@ -44,7 +44,7 @@ Before running your iOS and Android sample app, you need to deploy your function
  ```bash
  firebase functions:config:set line.channelid="<your_channel_id>"
  ```
- 1. Run `firebase deploy ---only functions` to deploy the sample. The first time the Functions are deployed the process can take several minutes.
+ 1. Run `firebase deploy --only functions` to deploy the sample. The first time the Functions are deployed the process can take several minutes.
 
 Then update your iOS and Android app with the domain name of your Cloud Functions. You can find it in the log of Firebase CLI after sucessfully deploying the function. It should look like `https://us-central1-<your Firebase project id>.cloudfunctions.net`
  * iOS: In `Constant.h`, replace the placeholder text with your domain.
