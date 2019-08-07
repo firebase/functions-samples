@@ -127,7 +127,7 @@ Demo.prototype.authenticatedRequest = function(method, url, body) {
   }
 
   // Get the Firebase auth token to authenticate the request
-  return firebase.auth().currentUser.getToken().then(function(token) {
+  return firebase.auth().currentUser.getIdToken().then(function(token) {
     var request = {
       method: method,
       url: url,

@@ -18,7 +18,15 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
+
+// Follow instructions to set up admin credentials:
+// https://firebase.google.com/docs/functions/local-emulator#set_up_admin_credentials_optional
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+  // TODO: ADD YOUR DATABASE URL
+  databaseURL: undefined
+});
+
 const language = require('@google-cloud/language');
 const client = new language.LanguageServiceClient();
 const express = require('express');
@@ -51,15 +59,22 @@ app.use(authenticate);
 // POST /api/messages
 // Create a new message, get its sentiment using Google Cloud NLP,
 // and categorize the sentiment before saving.
-app.post('/messages', async (req, res) => {
+app.post('/api/messages', async (req, res) => {
   const message = req.body.message;
+
+  console.log(`ANALYZING MESSAGE: "${message}"`);
+
   try {
-    const results = await client.analyzeSentiment({document: message});
+    const results = await client.analyzeSentiment({
+      document: { content: message, type: 'PLAIN_TEXT' }
+    });
+
     const category = categorizeScore(results[0].documentSentiment.score);
-    const data = {message: message, sentiment: results, category: category};
-    const snapshot = await admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
-    const val = snapshot.val();
-    res.status(201).json({message: val.message, category: val.category});
+    const data = {message: message, sentiment: results[0], category: category};
+
+    await admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
+
+    res.status(201).json({message, category});
   } catch(error) {
     console.log('Error detecting sentiment or saving message', error.message);
     res.sendStatus(500);
@@ -68,7 +83,7 @@ app.post('/messages', async (req, res) => {
 
 // GET /api/messages?category={category}
 // Get all messages, optionally specifying a category to filter on
-app.get('/messages', async (req, res) => {
+app.get('/api/messages', async (req, res) => {
   const category = req.query.category;
   let query = admin.database().ref(`/users/${req.user.uid}/messages`);
 
@@ -95,14 +110,19 @@ app.get('/messages', async (req, res) => {
 
 // GET /api/message/{messageId}
 // Get details about a message
-app.get('/message/:messageId', async (req, res) => {
+app.get('/api/message/:messageId', async (req, res) => {
   const messageId = req.params.messageId;
+
+  console.log(`LOOKING UP MESSAGE "${messageId}"`);
+
   try {
     const snapshot = await admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value');
+
     if (!snapshot.exists()) {
       return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
     }
-    return res.set('Cache-Control', 'private, max-age=300');
+    res.set('Cache-Control', 'private, max-age=300');
+    return res.status(200).json(snapshot.val());
   } catch(error) {
     console.log('Error getting message details', messageId, error.message);
     return res.sendStatus(500);
