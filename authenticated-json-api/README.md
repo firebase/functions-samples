@@ -26,6 +26,7 @@ detected by the [Cloud Natural Language API](https://cloud.google.com/natural-la
 This sample comes with a web-based UI for testing the function.
 To test locally do:
 
+  1. [Set up admin credentials](https://firebase.google.com/docs/functions/local-emulator#set_up_admin_credentials_optional) so that the emulator can talk to the Natural Language API
   1. Start serving your project locally using `firebase serve --only hosting,functions`
   1. Open the app in a browser at `https://localhost:5000`.
   1. Sign in to the web app in the browser using Google Sign-In
