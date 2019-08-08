@@ -23,7 +23,7 @@ const stripe = require('stripe')(functions.config().stripe.token);
 const currency = functions.config().stripe.currency || 'USD';
 
 // [START chargecustomer]
-// Charge the Stripe customer whenever an amount is written to the Realtime database
+// Charge the Stripe customer whenever an amount is created in Cloud Firestore
 exports.createStripeCharge = functions.firestore.document('stripe_customers/{userId}/charges/{id}').onCreate(async (snap, context) => {
       const val = snap.data();
       try {
@@ -58,7 +58,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   return admin.firestore().collection('stripe_customers').doc(user.uid).set({customer_id: customer.id});
 });
 
-// Add a payment source (card) for a user by writing a stripe payment source token to Realtime database
+// Add a payment source (card) for a user by writing a stripe payment source token to Cloud Firestore
 exports.addPaymentSource = functions.firestore.document('/stripe_customers/{userId}/tokens/{pushId}').onCreate(async (snap, context) => {
   const source = snap.data();
   const token = source.token;
