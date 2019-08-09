@@ -26,11 +26,11 @@ exports.truncate = functions.database.ref('/chat').onWrite((change) => {
   const parentRef = change.after.ref;
   const snapshot = change.after
 
-  if (snapshot.numChildren() >= MAX_USERS) {
+  if (snapshot.numChildren() >= MAX_LOG_COUNT) {
     let childCount = 0;
     const updates = {};
     snapshot.forEach((child) => {
-      if (++childCount <= snapshot.numChildren() - MAX_USERS) {
+      if (++childCount <= snapshot.numChildren() - MAX_LOG_COUNT) {
         updates[child.key] = null;
       }
     });
