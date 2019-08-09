@@ -2,7 +2,6 @@
 
 This sample demonstrates how to automatically moderate offensive images uploaded to Firebase Storage. It uses The Google Cloud Vision API to detect if the image contains adult or violent content and if so uses ImageMagick to blur the image.
 
-
 ## Functions Code
 
 See file [functions/index.js](functions/index.js) for the moderation code.
@@ -12,11 +11,9 @@ The image blurring is performed using ImageMagick which is installed by default 
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
-
 ## Trigger rules
 
 The function triggers on upload of any file to your Firebase project's default Cloud Storage bucket.
-
 
 ## Setting up the sample
 
@@ -26,11 +23,10 @@ The function triggers on upload of any file to your Firebase project's default C
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
- 
 
 ## Deploy and test
 
 To test the sample:
 
 1. Deploy your Cloud Functions using `firebase deploy`
-1. Go to the Firebase Console **Storage** tab and upload an image that contains adult or violent content. After a short time the image will be replaced by a blurred version of itself.
+1. Go to the Firebase Console **Storage** tab and upload an image that contains adult or violent content. After a short time, refresh the page. You'll see a new folder that contains a blurred version of your uploaded image.
