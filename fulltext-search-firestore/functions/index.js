@@ -67,7 +67,7 @@ async function getFirebaseUser(req, res, next) {
   }
 
   try {
-    const decodedIdToken = admin.auth().verifyIdToken(idToken);
+    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     console.log('ID Token correctly decoded', decodedIdToken);
     req.user = decodedIdToken;
     return next();
