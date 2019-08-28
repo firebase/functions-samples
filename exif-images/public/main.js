@@ -66,9 +66,13 @@ Demo.prototype.handleFileSelect = function(e) {
   var filePath = String(Date.now()) + '/' + file.name;
   firebase.storage().ref(filePath).put(file, metadata).then(function(snapshot) {
     console.log('Uploaded', snapshot.totalBytes, 'bytes.');
-    var url = snapshot.metadata.downloadURLs[0];
-    console.log('File available at', url);
-    this.linkContainer.innerHTML = '<a href="' + url + '">/' + filePath + '</a>';
+
+    snapshot.ref.getDownloadURL().then(function(downloadURL) {
+      var url = downloadURL;
+      console.log('File available at', url);
+      this.linkContainer.innerHTML = '<a href="' + url + '">/' + filePath + '</a>';
+    }.bind(this));
+
     this.fileInput.disabled = false;
   }.bind(this)).catch(function(error) {
     console.error('Upload failed:', error);
