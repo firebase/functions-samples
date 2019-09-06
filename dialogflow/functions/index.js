@@ -21,7 +21,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-const projectId = "functions-c0adb";
+const projectId = "YOUR_PROJECT_ID_HERE";
 
 // a sample function that sends the text written at the set reference to the dialogflow API and writes the response as
 // another message in that same conversation
