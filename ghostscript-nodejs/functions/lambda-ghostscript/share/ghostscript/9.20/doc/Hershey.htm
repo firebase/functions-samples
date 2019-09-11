@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Hershey fonts for Ghostscript</title>
+<!-- Originally: hershey.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Hershey fonts for Ghostscript</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>
+This file, unlike the rest of Ghostscript, consists entirely of information
+copied from public sources.  It therefore is not covered by the
+Ghostscript copyright or license: it is in the public domain.
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>. You can also read about <a href="Fonts.htm">Ghostscript
+fonts</a> in general.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<pre>
+Mod.sources:  Volume 4, Issue 42
+Submitted by: pyramid!octopus!pete (Pete Holzmann)
+
+This is part 1 of five parts of the first Usenet distribution of
+the Hershey Fonts. See the README file for more details.
+
+Peter Holzmann, Octopus Enterprises
+USPS: 19611 La Mar Court, Cupertino, CA 95014
+UUCP: {hplabs!hpdsd,pyramid}!octopus!pete
+Phone: 408/996-7746
+
+This distribution is made possible through the collective encouragement
+of the Usenet Font Consortium, a mailing list that sprang to life to get
+this accomplished and that will now most likely disappear into the mists
+of time... Thanks are especially due to Jim Hurt, who provided the packed
+font data for the distribution, along with a lot of other help.
+
+This file describes the Hershey Fonts in general, along with a description of
+the other files in this distribution and a simple re-distribution restriction.
+
+USE RESTRICTION:
+        This distribution of the Hershey Fonts may be used by anyone for
+        any purpose, commercial or otherwise, providing that:
+                1. The following acknowledgements must be distributed with
+                        the font data:
+                        - The Hershey Fonts were originally created by Dr.
+                                A. V. Hershey while working at the U. S.
+                                National Bureau of Standards.
+                        - The format of the Font data in this distribution
+                                was originally created by
+                                        James Hurt
+                                        Cognition, Inc.
+                                        900 Technology Park Drive
+                                        Billerica, MA 01821
+                                        (mit-eddie!ci-dandelion!hurt)
+                2. The font data in this distribution may be converted into
+                        any other format *EXCEPT* the format distributed by
+                        the U.S. NTIS (which organization holds the rights
+                        to the distribution and use of the font data in that
+                        particular format). Not that anybody would really
+                        *want* to use their format... each point is described
+                        in eight bytes as "xxx yyy:", where xxx and yyy are
+                        the coordinate values as ASCII numbers.
+
+*PLEASE* be reassured: The legal implications of NTIS' attempt to control
+a particular form of the Hershey Fonts *are* troubling. HOWEVER: We have
+been endlessly and repeatedly assured by NTIS that they do not care what
+we do with our version of the font data, they do not want to know about it,
+they understand that we are distributing this information all over the world,
+etc etc etc... but because it isn't in their *exact* distribution format, they
+just don't care!!! So go ahead and use the data with a clear conscience! (If
+you feel bad about it, take a smaller deduction for something on your taxes
+next week...)
+
+The Hershey Fonts:
+        - are a set of more than 2000 glyph (symbol) descriptions in vector
+                ( &lt;x,y&gt; point-to-point ) format
+        - can be grouped as almost 20 'occidental' (english, greek,
+                cyrillic) fonts, 3 or more 'oriental' (Kanji, Hiragana,
+                and Katakana) fonts, and a few hundred miscellaneous
+                symbols (mathematical, musical, cartographic, etc etc)
+        - are suitable for typographic quality output on a vector device
+                (such as a plotter) when used at an appropriate scale.
+        - were digitized by Dr. A. V. Hershey while working for the U.S.
+                Government National Bureau of Standards (NBS).
+        - are in the public domain, with a few caveats:
+                - They are available from NTIS (National Technical Info.
+                        Service) in a computer-readable from which is *not*
+                        in the public domain. This format is described in
+                        a hardcopy publication "Tables of Coordinates for
+                        Hershey's Repertory of Occidental Type Fonts and
+                        Graphic Symbols" available from NTIS for less than
+                        &#36;20 US (phone number +1 703 487 4763).
+                - NTIS does not care about and doesn't want to know about
+                        what happens to Hershey Font data that is not
+                        distributed in their exact format.
+                - This distribution is not in the NTIS format, and thus is
+                        only subject to the simple restriction described
+                        at the top of this file.
+
+Hard Copy samples of the Hershey Fonts are best obtained by purchasing the
+book described above from NTIS. It contains a sample of all of the Occidental
+symbols (but none of the Oriental symbols).
+
+This distribution:
+        - contains
+                * a complete copy of the Font data using the original
+                        glyph-numbering sequence
+                * a set of translation tables that could be used to generate
+                        ASCII-sequence fonts in various typestyles
+                * a couple of sample programs in C and Fortran that are
+                        capable of parsing the font data and displaying it
+                        on a graphic device (we recommend that if you
+                        wish to write programs using the fonts, you should
+                        hack up one of these until it works on your system)
+
+        - consists of the following files...
+                hershey.doc - details of the font data format, typestyles and
+                                symbols included, etc.
+                hersh.oc[1-4] - The Occidental font data (these files can
+                                        be catenated into one large database)
+                hersh.or[1-4] - The Oriental font data (likewise here)
+                *.hmp - Occidental font map files. Each file is a translation
+                                table from Hershey glyph numbers to ASCII
+                                sequence for a particular typestyle.
+                hershey.f77 - A fortran program that reads and displays all
+                                of the glyphs in a Hershey font file.
+                hershey.c   - The same, in C, using GKS, for MS-DOS and the
+                                PC-Color Graphics Adaptor.
+
+Additional Work To Be Done (volunteers welcome!):
+
+        - Integrate this complete set of data with the hershey font typesetting
+                program recently distributed to mod.sources
+        - Come up with an integrated data structure and supporting routines
+                that make use of the ASCII translation tables
+        - Digitize additional characters for the few places where non-ideal
+                symbol substitutions were made in the ASCII translation tables.
+        - Make a version of the demo program (hershey.c or hershey.f77) that
+                uses the standard Un*x plot routines.
+        - Write a banner-style program using Hershey Fonts for input and
+                non-graphic terminals or printers for output.
+        - Anything else you'd like!
+
+This file provides a brief description of the contents of the Occidental
+Hershey Font Files. For a complete listing of the fonts in hard copy, order
+NBS Special Publication 424, "A contribution to computer typesetting
+techniques: Tables of Coordinates for Hershey's Repertory of Occidental
+Type Fonts and Graphic Symbols". You can get it from NTIS (phone number is
++1 703 487 4763) for less than twenty dollars US.
+
+Basic Glyph (symbol) data:
+
+        hersh.oc1       - numbers 1 to 1199
+        hersh.oc2       - numbers 1200 to 2499
+        hersh.oc3       - numbers 2500 to 3199
+        hersh.oc4       - numbers 3200 to 3999
+
+        These four files contain approximately 19 different fonts in
+the A-Z alphabet plus greek and cyrillic, along with hundreds of special
+symbols, described generically below.
+
+        There are also four files of Oriental fonts (hersh.or[1-4]). These
+files contain symbols from three Japanese alphabets (Kanji, Hiragana, and
+Katakana). It is unknown what other symbols may be contained therein, nor
+is it known what order the symbols are in (I don't know Japanese!).
+
+        Back to the Occidental files:
+
+Fonts:
+        Roman: Plain, Simplex, Duplex, Complex Small, Complex, Triplex
+        Italic: Complex Small, Complex, Triplex
+        Script: Simplex, Complex
+        Gothic: German, English, Italian
+        Greek: Plain, Simplex, Complex Small, Complex
+        Cyrillic: Complex
+
+Symbols:
+        Mathematical (227-229,232,727-779,732,737-740,1227-1270,2227-2270,
+                        1294-1412,2294-2295,2401-2412)
+        Daggers (for footnotes, etc) (1276-1279, 2276-2279)
+        Astronomical (1281-1293,2281-2293)
+        Astrological (2301-2312)
+        Musical (2317-2382)
+        Typesetting (ffl,fl,fi sorts of things) (miscellaneous places)
+        Miscellaneous (mostly in 741-909, but also elsewhere):
+                - Playing card suits
+                - Meteorology
+                - Graphics (lines, curves)
+                - Electrical
+                - Geometric (shapes)
+                - Cartographic
+                - Naval
+                - Agricultural
+                - Highways
+                - Etc...
+
+ASCII sequence translation files:
+
+        The Hershey glyphs, while in a particular order, are not in an
+        ASCII sequence. I have provided translation files that give the
+        sequence of glyph numbers that will most closely approximate the
+        ASCII printing sequence (from space through ~, with the degree
+        circle tacked on at the end) for each of the above fonts:
+
+        File names are made up of fffffftt.hmp,
+
+                where ffffff is the font style, one of:
+                        roman   Roman
+                        greek   Greek
+                        italic  Italic
+                        script  Script
+                        cyril   Cyrillic (some characters not placed in
+                                           the ASCII sequence)
+                        gothgr  Gothic German
+                        gothgb  Gothic English
+                        gothit  Gothic Italian
+
+                and tt is the font type, one of:
+                    p       Plain (very small, no lower case)
+                    s       Simplex (plain, normal size, no serifs)
+                    d       Duplex (normal size, no serifs, doubled lines)
+                    c       Complex (normal size, serifs, doubled lines)
+                    t       Triplex (normal size, serifs, tripled lines)
+                    cs      Complex Small (Complex, smaller than normal size)
+
+The three sizes are coded with particular base line (bottom of a capital
+        letter) and cap line (top of a capital letter) values for 'y':
+
+        Size            Base Line       Cap Line
+
+        Very Small         -5              +4
+        Small              -6              +7
+        Normal             -9              +12
+
+        (Note: some glyphs in the 'Very Small' fonts are actually 'Small')
+
+The top line and bottom line, which are normally used to define vertical
+        spacing, are not given. Maybe somebody can determine appropriate
+        values for these!
+
+The left line and right line, which are used to define horizontal spacing,
+        are provided with each character in the database.
+
+Format of Hershey glyphs:
+
+5 bytes - glyphnumber
+3 bytes - length of data  length in 16-bit words including left&amp;right numbers
+1 byte  - x value of left margin
+1 byte  - x value of right margin
+(length*2)-2 bytes      - stroke data
+
+left&amp;right margins and stroke data are biased by the value of the letter 'R'
+Subtract the letter 'R' to get the data.
+
+e.g. if the data byte is 'R', the data is 0
+     if the data byte is 'T', the data is +2
+     if the data byte is 'J', the data is -8
+
+and so on...
+
+The coordinate system is x-y, with the origin (0,0) in the center of the
+glyph.  X increases to the right and y increases *down*.
+
+The stroke data is pairs of bytes, one byte for x followed by one byte for y.
+
+An 'R' in the stroke data indicates a 'lift pen and move' instruction.
+</pre>
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+
+<hr>
+
+<p>
+<small>Public Domain.</small>
+<small>Distributed with Ghostscript 6.50, November 2000</small>
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% impath.ps
+% Reverse-rasterize a bitmap to produce a Type 1 outline.
+% (This was formerly a Ghostscript operator implemented in C.)
+
+%	<image> <width> <height> <wx> <wy> <ox> <oy> <string>
+%	  type1imagepath <substring>
+%		Converts an image (bitmap) description of a character into
+%		  a scalable description in Adobe Type 1 format.  The
+%		  current transformation matrix should be the same as the
+%		  FontMatrix of the font in which this character will be
+%		  used: this establishes the scaling relationship between
+%		  image pixels (the image is assumed to be 1 unit high in
+%		  user space) and the character coordinate system used in
+%		  the scalable description.  wx and wy are the character
+%		  width, and ox and oy are the character origin relative
+%		  to the lower left corner of the bitmap, in *pixels*.
+%		The image is assumed to be stored in left-to-right,
+%		  top-to-bottom order.  Note that this is not consistent
+%		  with the `image' operator's interpretation of the CTM.
+%		All coordinates in the scalable description are rounded to
+%		  integers, so the coefficients in the FontMatrix should
+%		  be on the order of 1/N for some value of N that is
+%		  either a multiple of the height/width or is large
+%		  compared to the width and height.  (There is a
+%		  convention, which some PostScript programs rely on, that
+%		  N=1000.)
+%		Note that the encoded description has *not* been subjected
+%		  to CharString encryption, which is necessary before the
+%		  description can be given to type1addpath: to do this,
+%		  follow the type1imagepath with
+%			4330 exch dup .type1encrypt exch pop
+%		If the description is too complex to fit into the supplied
+%		  string, a limitcheck error results.  A good rule of
+%		  thumb is that the size of the string should be about 6
+%		  times the number of 1-bits in the image that are not
+%		  completely surrounded by other 1-bits.
+
+% Import the Type 1 opcodes.
+(type1ops.ps) runlibfile
+
+100 dict
+dup /type1imagepath_dict exch def
+begin
+
+/rc { round cvi } bind def
+/moving [/rmoveto /hmoveto /vmoveto] def
+/drawing [/rlineto /hlineto /vlineto] def
+
+% Convert the current path to a Type 1 token array.
+/putxy			% x y ops -> cs_elements
+ { 3 -1 roll dup x sub rc exch /x exch def
+   3 -1 roll dup y sub rc exch /y exch def
+   % stack: ops dx dy
+   dup 0 eq
+    { % dy = 0, use hmoveto/lineto
+      pop exch 1 get
+    }
+    { 1 index 0 eq
+       { % dx = 0, use vmoveto/lineto
+         exch pop exch 2 get
+       }
+       { % use rmoveto/rlineto
+         3 -1 roll 0 get
+       }
+      ifelse
+    }
+   ifelse
+ } bind def
+/pathtotype1		% -> charstack
+ { 3 dict begin /x 0 def /y 0 def
+   mark
+   { moving putxy
+   }
+   { drawing putxy
+   }
+   { % Convert curve to relative form
+     x y 3
+      { exch neg 7 index add rc
+        exch neg 6 index add rc
+        8 -2 roll
+      }
+     repeat /y exch def /x exch def
+     1 index 0 eq 5 index 0 eq and	% dy1=dx3=0, hv
+      { 5 -1 roll pop exch pop /hvcurveto
+      }
+      { dup 0 eq 6 index 0 eq and	% dx1=dy3=0, vh
+         { 6 -1 roll pop pop /vhcurveto
+         }
+         { /rrcurveto			% none of the above
+         }
+        ifelse
+      }
+     ifelse
+   }
+   { /closepath
+   }
+   pathforall end
+ } bind def
+
+end	% type1imagepath_dict
+
+% The main program
+/type1imagepath		% image width height wx wy ox oy string ->
+                        % substring
+ { type1imagepath_dict begin
+   /tsave save def
+   /ostring exch def
+   /oy exch def   /ox exch def
+   /wy exch def   /wx exch def
+   /height exch def   /width exch def
+   /data exch def
+
+   /ofilter ostring /NullEncode filter def
+   /raster width 7 add 8 idiv def
+
+% Construct the coordinate transformation.
+   height dup scale
+     matrix currentmatrix matrix invertmatrix setmatrix
+
+% Determine the left side bearing.
+   /lsbx width
+   0 1 width 1 sub
+    { dup dup 8 idiv 0 exch
+      raster raster height mul 1 sub
+       { data exch get or }
+      for exch 8 mod bitshift 128 and 0 ne
+       { exch pop exit }
+      if pop
+    }
+   for def
+
+% Compute and encode the origin, width, and side bearing.
+   mark
+   ox oy dtransform
+     rc /opty exch def   rc /optx exch def
+   wx wy dtransform
+     rc /iwy exch def	rc /iwx exch def
+   lsbx ox sub 0 dtransform
+     rc /ilsby exch def   rc /ilsbx exch def
+   ilsbx
+   iwy 0 ne ilsby 0 ne or
+    { ilsby iwx iwy /sbw }
+    { iwx /hsbw }
+   ifelse
+   ofilter charstack_write
+
+% Flip over the Y axis, because the image is stored top-to-bottom.
+   [1 0 0 -1 0 height] concat
+% Account for the character origin.
+   lsbx oy translate
+% Trace the outline.
+   newpath
+   width height data .imagepath
+   gsave matrix setmatrix pathtotype1 grestore
+   ofilter charstack_write
+% Terminate the output
+   mark /endchar ofilter charstack_write
+
+   ofilter .fileposition ofilter closefile	% flush buffers
+   ostring 0 3 -1 roll getinterval
+   tsave restore
+   end
+ } bind def

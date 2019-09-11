@@ -1,0 +1,53 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Redefine pathforall for tracing.
+% Can't be used recursively.
+
+/# {( )print} def
+
+/-mat matrix def
+/-imat matrix def
+/-smat { //-mat currentmatrix pop //-imat setmatrix } bind def
+/-rmat { //-mat setmatrix } bind def
+/-pathforall /pathforall load def
+/-p2 { ( ) print exch =only ( ) print =only } bind def
+/-dp2 { 2 copy -p2 2 { exch 4096 mul dup cvi dup ( ) print =only sub dup 0 eq { pop } { (+) print =only } ifelse } repeat } bind def
+/-tp2 { //-mat itransform -p2 } bind def
+/-dict 5 dict def
+
+/pathforall
+ { -dict begin
+   /-close exch def  /-curve exch def  /-line exch def  /-move exch def
+   end -smat -mat ==only ( setmatrix) =
+   {2 copy -tp2 ( moveto\t%)print
+    2 copy -dp2 (\n)print
+    flush -dict /-move get -rmat exec -smat}
+   {2 copy -tp2 ( lineto\t%)print
+    2 copy -dp2 (\n)print
+    flush -dict /-line get -rmat exec -smat}
+   {5 index 5 index -tp2 3 index 3 index -tp2 2 copy -tp2 ( curveto\t%)print
+    5 index 5 index -dp2 3 index 3 index -dp2 2 copy -dp2 (\n)print
+    flush -dict /-curve get -rmat exec -smat}
+   {(closepath\n)print flush   -dict /-close get -rmat exec -smat}
+   -pathforall -rmat
+ }
+def
+
+% Just print the current path
+
+/printpath {
+  {pop pop} {pop pop} {pop pop pop pop pop pop} {} pathforall
+} def

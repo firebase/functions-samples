@@ -1,0 +1,37 @@
+#!/bin/sh
+# Convert PDF to PostScript.
+
+# This definition is changed on install to match the
+# executable name set in the makefile
+GS_EXECUTABLE=gs
+gs="`dirname \"$0\"`/$GS_EXECUTABLE"
+if test ! -x "$gs"; then
+	gs="$GS_EXECUTABLE"
+fi
+GS_EXECUTABLE="$gs"
+
+OPTIONS=""
+while true
+do
+	case "$1" in
+	-?*) OPTIONS="$OPTIONS $1" ;;
+	*)  break ;;
+	esac
+	shift
+done
+
+if [ $# -eq 2 ] 
+then
+    outfile=$2
+elif [ $# -eq 1 ]
+then
+    outfile=`basename "$1" \.pdf`.ps
+else
+    echo "Usage: `basename \"$0\"` [-dASCII85EncodePages=false] [-dLanguageLevel=1|2|3] input.pdf [output.ps]" 1>&2
+    exit 1
+fi
+
+# Doing an initial 'save' helps keep fonts from being flushed between pages.
+# We have to include the options twice because -I only takes effect if it
+# appears before other options.
+exec "$GS_EXECUTABLE" $OPTIONS -q -dNOPAUSE -dBATCH -P- -dSAFER -sDEVICE=ps2write "-sOutputFile=$outfile" $OPTIONS -c save pop -f "$1"

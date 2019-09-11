@@ -1,0 +1,34 @@
+#! /bin/sh
+
+# psf2dsc: generates an index of a PDF file.
+#
+# Yves Arrouye <arrouye@debian.org>, 1996.
+# 2000-05-18 lpd <ghost@aladdin.com> added -dSAFER
+
+# This definition is changed on install to match the
+# executable name set in the makefile
+GS_EXECUTABLE=gs
+gs="`dirname \"$0\"`/$GS_EXECUTABLE"
+if test ! -x "$gs"; then
+	gs="$GS_EXECUTABLE"
+fi
+GS_EXECUTABLE="$gs"
+
+me=`basename $0`
+
+usage() {
+    >&2 echo usage: $me "pdffile [ dscfile ]"
+    exit 1
+}
+
+if [ $# -gt 2 ]
+then
+    usage
+fi
+
+pdffile=$1
+dscfile=$2
+: ${dscfile:=`echo $pdffile | sed 's,\.[^/.]*,,'`.dsc}
+
+exec "$GS_EXECUTABLE" -q -dNODISPLAY -P- -dSAFER -dDELAYSAFER\
+    -sPDFname="$pdffile" -sDSCname="$dscfile" pdf2dsc.ps -c quit

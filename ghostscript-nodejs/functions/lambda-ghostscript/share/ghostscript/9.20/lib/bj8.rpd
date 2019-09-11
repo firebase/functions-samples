@@ -1,0 +1,17 @@
+
+StartEntry: U_CanonBJC8200
+GSDriver: uniprint 
+Description: {Canon BJC-8200 (UP)}
+About: { \
+	 Canon BJC-8200 uniprint driver settings.\
+       }
+Resolution: {NA} {NA} {}
+  BitsPerPixel: {bj8pp12f} {1200x1200DpI, photo paper pro, color, rendered}
+  BitsPerPixel: {bj8hg12f} {1200x1200DpI, high gloss photo film, color, rendered}
+  BitsPerPixel: {bj8gc12f} {1200x1200DpI, glossy photo cards, color, rendered}
+  BitsPerPixel: {bj8oh06n} {600x600DpI, transparencies, color, rendered}
+  BitsPerPixel: {bj8ts06n} {600x600DpI, t-shirt transfer, color, rendered}
+  BitsPerPixel: {bj8pa06n} {600x600DpI, plain paper, color, rendered}
+
+EndEntry
+#

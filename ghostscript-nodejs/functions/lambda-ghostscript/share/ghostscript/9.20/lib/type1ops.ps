@@ -1,0 +1,236 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% type1ops.ps
+% Define the Type 1 and Type 2 font opcodes for use by Ghostscript utilities.
+
+% Define the default value of lenIV.
+% Note that this expects the current font to be on the dictionary stack.
+
+/lenIV { FontType 2 eq { -1 } { 4 } ifelse } def
+
+% ---------------- Encoding ---------------- %
+
+/Type1encode 70 dict
+
+        % Data types
+
+dup /nulltype {
+  pop ()
+} put
+dup /nametype {
+  Type1encode exch get
+} put
+dup /stringtype {
+} put
+dup /integertype {
+  dup dup -107 ge exch 107 le and {
+    139 add (x) dup 0 4 -1 roll put
+  } {
+    dup dup -1131 ge exch 1131 le and {
+      dup 0 ge { 16#f694 } { neg 16#fa94 } ifelse add
+      (xx) dup dup 0 4 index -8 bitshift put
+      1 4 -1 roll 255 and put
+    } {
+      (\377xxxx) 1 1 4 {
+        dup 8 mul 32 sub 3 index exch bitshift 255 and
+        2 index 3 1 roll put
+      } for exch pop
+    } ifelse
+  } ifelse
+} put
+
+        % Operators
+
+% Identical or similar in Type 1 and Type 2.
+/c_hstem 1 def   dup /hstem <01> put
+/c_vstem 3 def   dup /vstem <03> put
+/c_vmoveto 4 def   dup /vmoveto <04> put
+/c_rlineto 5 def   dup /rlineto <05> put
+/c_hlineto 6 def   dup /hlineto <06> put
+/c_vlineto 7 def   dup /vlineto <07> put
+/c_rrcurveto 8 def   dup /rrcurveto <08> put
+/c_callsubr 10 def   /s_callsubr <0a> def   dup /callsubr s_callsubr put
+/c_return 11 def   dup /return <0b> put
+/c_escape 12 def
+  /ce_div 12 def   /s_div <0c0c> def   dup /div s_div put
+/c_endchar 14 def   /s_endchar <0e> def   dup /endchar s_endchar put
+/c_rmoveto 21 def   dup /rmoveto <15> put
+/c_hmoveto 22 def   dup /hmoveto <16> put
+/c_vhcurveto 30 def   dup /vhcurveto <1e> put
+/c_hvcurveto 31 def   dup /hvcurveto <1f> put
+% Only in Type 1.
+/c_closepath 9 def   dup /closepath <09> put
+/c_hsbw 13 def   /s_hsbw <0d> def   dup /hsbw s_hsbw put
+  /ce_dotsection 0 def   /s_dotsection <0c06> def   dup /dotsection s_dotsection put
+  /ce_vstem3 1 def   /s_vstem3 <0c01> def   dup /vstem3 s_vstem3 put
+  /ce_hstem3 2 def   /s_hstem3 <0c02> def   dup /hstem3 s_hstem3 put
+  /ce_seac 6 def   /s_seac <0c06> def	dup /seac s_seac put
+  /ce_sbw 7 def   /s_sbw <0c07> def   dup /sbw s_sbw put
+  /ce_callothersubr 16 def   /s_callothersubr <0c10> def   dup /callothersubr s_callothersubr put
+  /ce_pop 17 def   /s_pop <0c11> def   dup /pop s_pop put
+  /ce_setcurrentpoint 33 def   /s_setcurrentpoint <0c21> def   dup /setcurrentpoint s_setcurrentpoint put
+  /s_setcurrentpoint_hmoveto s_setcurrentpoint <8b16> concatstrings def
+% Only in Type 2.
+dup /blend <10> put
+dup /hstemhm <12> put
+dup /hintmask <13> put
+dup /cntrmask <14> put
+dup /vstemhm <17> put
+dup /rcurveline <18> put
+dup /rlinecurve <19> put
+dup /vvcurveto <1a> put
+dup /hhcurveto <1b> put
+dup /callgsubr <1d> put
+  dup /and <0c03> put
+  dup /or <0c04> put
+  dup /not <0c05> put
+  dup /store <0c08> put
+  dup /abs <0c09> put
+  dup /add <0c0a> put
+  dup /sub <0c0b> put
+  dup /load <0c0d> put
+  dup /neg <0c0c> put
+  dup /eq <0c0f> put
+  dup /drop <0c12> put
+  dup /put <0c14> put
+  dup /get <0c15> put
+  dup /ifelse <0c16> put
+  dup /random <0c17> put
+  dup /mul <0c18> put
+  dup /sqrt <0c1a> put
+  dup /dup <0c1b> put
+  dup /exch <0c1c> put
+  dup /index <0c1d> put
+  dup /roll <0c1e> put
+  dup /hflex <0c22> put
+  dup /flex <0c23> put
+  dup /hflex1 <0c24> put
+  dup /flex1 <0c25> put
+
+readonly def
+
+% ---------------- Decoding ---------------- %
+
+/Type1decode 512 array
+
+Type1encode {
+  dup type /stringtype eq {
+    dup length 1 eq { 0 get } { 1 get 256 add } ifelse
+                % stack: array key code
+    exch 2 index 3 1 roll put
+  } {
+    pop pop
+  } ifelse
+} forall
+
+dup 12 {
+  dup read pop dup Type1decode exch 256 add get dup null ne
+    { exch pop }
+    { pop 2 string dup 0 12 put dup 1 4 -1 roll put }
+  ifelse
+} put
+dup 28 {		% Type 2 only
+  dup read pop 128 xor 128 sub 8 bitshift
+  1 index read pop add
+} put
+32 1 246 { 2 copy dup 139 sub put pop } for
+dup 247 { dup read pop 108 add } put
+dup 248 { dup read pop 364 add } put
+dup 249 { dup read pop 620 add } put
+dup 250 { dup read pop 876 add } put
+dup 251 { dup read pop 108 add neg } put
+dup 252 { dup read pop 364 add neg } put
+dup 253 { dup read pop 620 add neg } put
+dup 254 { dup read pop 876 add neg } put
+dup 255 {		% Different for Type 1 and Type 2
+  dup read pop 128 xor 128 sub
+  3 { 8 bitshift 1 index read pop add } repeat
+  FontType 2 eq { 65536.0 div } if
+} put
+
+readonly def
+
+% ---------------- Procedures ---------------- %
+
+% For these utilities, a CharString is represented by a sequence of
+% integers, reals, strings, and names, either in an array or on the stack.
+% Integers and reals represent themselves; strings are other data that
+% appears in the CharString; names are CharString operator names.
+% A CharString in an array is called a "charproc"; a CharString on
+% the stack is called a "charstack", and is delimited by a mark.
+% Individual elements are called "chartokens".
+
+% ------ Encoding ------ %
+
+% Get the string for a chartoken.
+% Note that this string may be overwritten by the next call.
+/chartoken_string {	% <chartoken> chartoken_string <string>
+  dup type Type1encode exch get exec
+} bind def
+% Compute the length of a CharString.
+/chartoken_length {	% <chartoken> chartoken_length <length>
+  chartoken_string length
+} bind def
+/charproc_length {	% <charproc> charproc_length <length>
+  0 exch { chartoken_length add } forall
+} bind def
+/charstack_length {	% <charstack> charstack_length <charstack> <length>
+  counttomark 0 exch -1 1 { index chartoken_length add } for
+} bind def
+
+% Write a CharString to a file.  Normally this will be a NullEncode filter
+% writing on a string of the correct length.
+/chartoken_write {	% <file> <chartoken> chartoken_write -
+  chartoken_string writestring
+} bind def
+/charproc_write {	% <file> <charproc> charproc_write -
+  { 1 index exch chartoken_write } forall pop
+} bind def
+% Note that the arguments of charstack_write are backwards.
+/charstack_write {	% <charstack> <file> charstack_write -
+  counttomark 1 sub -1 1 { index 1 index exch chartoken_write } for
+  cleartomark
+} bind def
+
+% Convert a charproc or charstack to an *un*encrypted CharString.
+/charproc_string {	% <charproc> charproc_string <string>
+  mark exch aload pop charstack_string
+} bind def
+/charstack_string {	% <charstack> charstack_string <string>
+  charstack_length lenIV 0 gt {
+    lenIV add string
+    dup dup length lenIV sub lenIV exch getinterval	% skip lenIV
+  } {
+    string
+  } ifelse
+  /NullEncode filter
+  exch 1 index counttomark 1 add 2 roll
+  charstack_write closefile
+%   lenIV 0 ge { 4330 exch dup .type1encrypt exch pop readonly } if
+} bind def
+
+% ------ Decoding ------ %
+
+% Decode a CharString (unencrypted).
+/charstack_read {	% <file> charstack_read <no-mark-charstack>
+  { dup read not { pop exit } if
+    Type1decode 1 index get dup null eq {
+      pop 1 string dup 0 4 -1 roll put
+    } {
+      exch pop exec
+    } ifelse exch
+  } loop
+} bind def

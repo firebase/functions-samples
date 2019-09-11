@@ -1,0 +1,1021 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>.ps files distributed with Ghostscript</title>
+<!-- Originally: psfiles.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>PostScript files distributed with Ghostscript</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#General">Generally used system files</a>
+<li><a href="#Obscure">More obscure system files</a>
+<li><a href="#Config">Configuration files</a>
+<li><a href="#PDF_specific">PDF-specific system files</a>
+<li><a href="#DPS_specific">Display PostScript-specific system files</a>
+<li><a href="#Art">Art and examples</a>
+<li><a href="#Utilities">Utilities</a>
+<li><a href="#Development_tools">Development tools</a>
+<li><a href="#Miscellany">Odds and ends</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="General"></a>Generally used system files</h2>
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><tt>gs_*_e.ps</tt>
+<dd><p>
+These files define the Encodings known to Ghostscript.  All of
+them except <code>gs_std_e.ps</code> and <code>gs_il1_e.ps</code>
+are loaded only if referred to.
+
+<dl>
+
+<dt>
+PostScript Encodings:
+<dd>
+<a href="../lib/gs_ce_e.ps"><tt>gs_ce_e.ps</tt></a>,
+<a href="../Resource/Init/gs_il1_e.ps"><tt>gs_il1_e.ps</tt></a>,
+<a href="../Resource/Init/gs_std_e.ps"><tt>gs_std_e.ps</tt></a>,
+<a href="../Resource/Init/gs_sym_e.ps"><tt>gs_sym_e.ps</tt></a>.
+
+<dt>
+PDF Encodings:
+<dd>
+<a href="../Resource/Init/gs_mex_e.ps"><tt>gs_mex_e.ps</tt></a>,
+<a href="../Resource/Init/gs_mro_e.ps"><tt>gs_mro_e.ps</tt></a>,
+<a href="../Resource/Init/gs_pdf_e.ps"><tt>gs_pdf_e.ps</tt></a>,
+<a href="../Resource/Init/gs_wan_e.ps"><tt>gs_wan_e.ps</tt></a>.
+
+<dt>
+Non-standard Encodings:
+<dd>
+<a href="../Resource/Init/gs_dbt_e.ps"><tt>gs_dbt_e.ps</tt></a>,
+<a href="../lib/gs_il2_e.ps"><tt>gs_il2_e.ps</tt></a>,
+<a href="../lib/gs_ksb_e.ps"><tt>gs_ksb_e.ps</tt></a>,
+<a href="../lib/gs_wl1_e.ps"><tt>gs_wl1_e.ps</tt></a>,
+<a href="../lib/gs_wl2_e.ps"><tt>gs_wl2_e.ps</tt></a>,
+<a href="../lib/gs_wl5_e.ps"><tt>gs_wl5_e.ps</tt></a>.
+
+<dt>
+Pseudo-encodings:
+<dd>
+<a href="../Resource/Init/gs_css_e.ps"><tt>gs_css_e.ps</tt></a>,
+<a href="../lib/gs_lgo_e.ps"><tt>gs_lgo_e.ps</tt></a>,
+<a href="../lib/gs_lgx_e.ps"><tt>gs_lgx_e.ps</tt></a>,
+<a href="../Resource/Init/gs_mgl_e.ps"><tt>gs_mgl_e.ps</tt></a>.
+
+</dl>
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_btokn.ps"><tt>gs_btokn.ps</tt></a>
+<dd><code>gs_init.ps</code> reads this in if the <code>btoken</code>
+feature is included in the configuration.  It provides support for binary
+tokens.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_ccfnt.ps"><tt>gs_ccfnt.ps</tt></a>
+<dd><code>gs_init.ps</code> reads this in if the <code>ccfonts</code>
+feature is included in the configuration.  It provides support for compiled
+fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cff.ps"><tt>gs_cff.ps</tt></a>
+<dd>Load CFF (compressed) fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_fntem.ps"><tt>gs_fntem.ps</tt></a>
+<dd>Code for emulating PostScript fonts with non-PostScript font technologies.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cidtt.ps"><tt>gs_cidtt.ps</tt></a>
+<dd>Code for emulating CID fonts with TrueType fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cidcm.ps"><tt>gs_cidcm.ps</tt></a>
+<dd>Code for recognizing font names of the form CIDFont-CMap (or
+CIDFont--CMap) and creating the font automatically.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_ciddc.ps"><tt>gs_ciddc.ps</tt></a>
+<dd>Defines Decoding and CIDDecoding resource categories and related procsets.
+Used for for emulating PostScript fonts with non-PostScript font technologies.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cidfm.ps"><tt>gs_cidfm.ps</tt></a>
+<dd>Provides resource mapping for CIDFont category.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cidfn.ps"><tt>gs_cidfn.ps</tt></a>
+<dd><code>ProcSet</code> for implementing <code>CIDFont</code> and
+<code>CIDMap</code> resources.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cmap.ps"><tt>gs_cmap.ps</tt></a>
+<dd><code>ProcSet</code> for implementing <code>CMap</code> resources.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cspace.ps"><tt>gs_cspace.ps</tt></a>
+<dd> PostScript portion of the basic color space handling;
+see the extensive comment at the head of the file
+for information.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_dscp.ps"><tt>gs_dscp.ps</tt></a>
+<dd>Code to compensate for badly written PostScript files by setting
+Orientation according to the DSC comments.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_epsf.ps"><tt>gs_epsf.ps</tt></a>
+<dd>Allow the interpreter to recognize DOS EPSF file headers, and skip to the
+PostScript section of the file.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_fapi.ps"><tt>gs_fapi.ps</tt></a>
+<dd>Font API support.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_fonts.ps"><tt>gs_fonts.ps</tt></a>
+<dd><code>gs_init.ps</code> reads this in.  It initializes Ghostscript's
+font machinery and provides some utility procedures that work with fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_frsd.ps"><tt>gs_frsd.ps</tt></a>
+<dd>Support for the PostScript LanguageLevel 3
+<code>ReusableStreamDecode</code> filter.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_img.ps"><tt>gs_img.ps</tt></a>
+<dd>Implementation of the traditional (non-dictionary)
+form of the image and imagemask operators, and the
+colorimage operator (including the Next alphaimage
+facility).
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_init.ps"><tt>gs_init.ps</tt></a>
+<dd>Ghostscript reads this automatically when it starts up.  It contains
+definitions of many standard procedures and initialization for a wide
+variety of things.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_lev2.ps"><tt>gs_lev2.ps</tt></a>
+<dd><code>gs_init.ps</code> reads this in if the Ghostscript interpreter
+includes Level 2 PostScript functions.  It contains definitions of
+procedures and miscellaneous initialization for the Level 2 functions.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_ll3.ps"><tt>gs_ll3.ps</tt></a>
+<dd>Initialize PostScript LanguageLevel 3 functions.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_resmp.ps"><tt>gs_resmp.ps</tt></a>
+<dd>A procset for redefining resource categories with a resource map.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_resst.ps"><tt>gs_resst.ps</tt></a>
+<dd>A procset which allow to put resource files into static data segment
+of Ghostscript executable.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_stres.ps"><tt>gs_stres.ps</tt></a>
+<dd>A map for generating the static data segment with including
+resource files, and for retrieving resources from there.          
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_res.ps"><tt>gs_res.ps</tt></a>
+<dd><code>gs_init.ps</code> reads this in if the Level 2 resource
+machinery is included.  Currently, this is the case for all Level 2
+configurations.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_setpd.ps"><tt>gs_setpd.ps</tt></a>
+<dd>Implementation of the <code>setpagedevice</code> operator.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_statd.ps"><tt>gs_statd.ps</tt></a>
+<dd><code>gs_init.ps</code> reads this in.  It creates a dummy
+<code>statusdict</code> and some other environmental odds and ends for
+the benefit of PostScript files that really want to be printed on a
+LaserWriter.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_trap.ps"><tt>gs_trap.ps</tt></a>
+<dd>Stub support for the PostScript LanguageLevel 3 "In-RIP trapping"
+feature.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_ttf.ps"><tt>gs_ttf.ps</tt></a>
+<dd>Support code for direct use of TrueType fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_typ32.ps"><tt>gs_typ32.ps</tt></a>
+<dd>Initialization file for Type 32 fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_typ42.ps"><tt>gs_typ42.ps</tt></a>
+<dd>Support code for Type 42 fonts (TrueType font in a PostScript "wrapper").
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_type1.ps"><tt>gs_type1.ps</tt></a>
+<dd><code>gs_init.ps</code> reads this in if the Ghostscript interpreter
+includes Type 1 font capability (which it normally does).
+</dl>
+
+<hr>
+
+<h2><a name="Config"></a>Configuration files</h2>
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution. Users are allowed to modify them
+to configure Ghostscript.
+
+<dl>
+<dt><a href="../Resource/Init/Fontmap"><tt>Fontmap</tt></a>
+<dd>Font mapping table.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/cidfmap"><tt>cidfmap</tt></a>
+<dd>CID font mapping table. Allows substitution of a CID font for another CID font or
+a TrueType font for a CID font.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/FAPIconfig"><tt>FAPIconfig</tt></a>
+<dd>A configuration file for Font API client.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/FAPIfontmap"><tt>FAPIfontmap</tt></a>
+<dd>Font mapping table for Font-API-handled fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/FAPIcidfmap"><tt>FAPIcidfmap</tt></a>
+<dd>Font mapping table for Font-API-handled CID fonts.
+</dl>
+
+<hr>
+
+<h2><a name="Obscure"></a>More obscure system files</h2>
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><a href="../lib/font2c.ps"><tt>font2c.ps</tt></a>
+<dd>Convert a PostScript Type 0 or Type 1 font to C code that can be compiled
+and linked into Ghostscript; see the documentation on fonts for <a
+href="Fonts.htm#Precompiling">how to do this</a>.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_agl.ps"><tt>gs_agl.ps</tt></a>
+<dd>Contains the mapping from Adobe glyph names to Unicode values, used to
+support TrueType fonts.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_cet.ps"><tt>gs_cet.ps</tt></a>
+<dd>Sets a number of alternate defaults to make Ghostscript
+behave more like Adobe CPSI. Useful for running the CET conformance
+test suite.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_cmdl.ps"><tt>gs_cmdl.ps</tt></a>
+<dd>This file is not used yet.  Eventually it will replace C code that
+parses the Ghostscript command line.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_diskf.ps"><tt>gs_diskf.ps</tt></a>
+<dd>This file implements the <code>-dDISKFONTS</code> feature
+(<code>diskfont.dev</code>).  See the the usage documentation for <a
+href="Use.htm#DISKFONTS">a description of this feature</a>.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_diskn.ps"><tt>gs_diskn.ps</tt></a>
+<dd>This file implements the <code>%disk</code> IODevice
+(<code>diskn.dev</code> feature).  See the the language documentation
+for information on the use of the %disk# devices. These PostScript
+modifications primarily perform the searching of all Searchable file
+systems in a defined SearchOrder when a file reference does not contain
+an explicit %device% specifier (such as <code>%os%</code> or
+<code>%disk0</code>%). This is required to emulate undocumented
+behaviour of Adobe PostScript printers that have a disk and was
+experimentally determined.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_fform.ps"><tt>gs_fform.ps</tt></a>
+<dd>A usable but imperfect PostScript implementation of Form caching.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_kanji.ps"><tt>gs_kanji.ps</tt></a>
+<dd>This file provides support for the Wadalab free Kanji font.  It is not
+included automatically in any configuration.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_pdfwr.ps"><tt>gs_pdfwr.ps</tt></a>
+<dd>This file contains some patches for providing information to the
+<code>pdfwrite</code> driver.  It is included only if the
+<code>pdfwrite</code> driver is included.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_pfile.ps"><tt>gs_pfile.ps</tt></a>
+<dd>This file provides runtime support for packed fonts.  It is not
+included automatically in any configuration.
+</dl>
+
+<dl>
+<dt><a href="../lib/gs_rdlin.ps"><tt>gs_rdlin.ps</tt></a>
+<dd>A tiny patch for systems with built-in readline support.
+</dl>
+
+<dl>
+<dt><a href="../lib/ht_ccsto.ps"><tt>ht_ccsto.ps</tt></a>
+<dd>A default stochastic CMYK halftone.  This file is in the public domain.
+</dl>
+
+<dl>
+<dt><a href="../lib/stcolor.ps"><tt>stcolor.ps</tt></a>
+<dd>Configure the (Epson) <code>stcolor</code> driver
+</dl>
+
+<hr>
+
+<h2><a name="PDF_specific"></a>PDF-specific system files</h2>
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><a href="../Resource/Init/gs_l2img.ps"><tt>gs_l2img.ps</tt></a>
+<dd>The <code>ProcSet</code> that emulates the PostScript Level 2
+"<code>image</code>" operator on Level 1 systems.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_base.ps"><tt>pdf_base.ps</tt></a>
+<dd>Utilities for interpreting PDF objects and streams.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_draw.ps"><tt>pdf_draw.ps</tt></a>
+<dd>The interpreter for drawing-related PDF operations.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_font.ps"><tt>pdf_font.ps</tt></a>
+<dd>Code for handling fonts in PDF files.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_main.ps"><tt>pdf_main.ps</tt></a>
+<dd>Document- and page-level control for interpreting PDF files.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_ops.ps"><tt>pdf_ops.ps</tt></a>
+<dd>Definitions for most of the PDF operators.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_rbld.ps"><tt>pdf_rbld.ps</tt></a>
+<dd>Contains procedures for bebuilding damaged PDF files.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_sec.ps"><tt>pdf_sec.ps</tt></a>
+<dd>PDF security (encryption) code.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/pdf_cslayer.ps"><tt>pdf_cslayer.ps</tt></a>
+<dd>Layer data extraction utilities of Illustrator files.
+</dl>
+
+<dl>
+<dt><a href="../lib/pdfwrite.ps"><tt>pdfwrite.ps</tt></a>
+<dd>Support for writing PDF files.  Currently used only by the linearizer,
+but potentially useful for other kinds of PDF-processing utilities.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_icc.ps"><tt>gs_icc.ps</tt></a> <dd>Support for
+ICC color profiles. These are not a standard PostScript feature, but
+are used in the PDF interpreter, as ICC profiles may be embedded in
+PDF files.
+</dl>
+
+<dl>
+<dt><a href="../lib/opdfread.ps"><tt>opdfread.ps</tt></a>
+<dd>Postscript procset for reading an ordered PDF file. This
+is used by the <code>ps2ps</code>, <code>ps2ps2</code> scripts.
+<p>
+It is now deprecated, and the contents are included in a ps2write
+header file.
+</dl>
+
+<dl>
+<dt><a href="../lib/EndOfTask.ps"><tt>EndOfTask.ps</tt></a>
+<dd>An auxiliary file used by the <code>ps2write</code> script.
+</dl>
+
+<dl>
+<dt><a href="../lib/PDFX_def.ps"><tt>PDFX_def.ps</tt></a>
+<dd>This is a sample prefix file for creating a PDF/X-3 document 
+with the <code>pdfwrite</code> device.
+</dl>
+
+<dl>
+<dt><a href="../lib/PDFA_def.ps"><tt>PDFA_def.ps</tt></a>
+<dd>This is a sample prefix file for creating a PDF/A document 
+with the <code>pdfwrite</code> device.
+</dl>
+
+<hr>
+
+<h2><a name="DPS_specific"></a>Display PostScript-specific system files</h2>
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><a href="../Resource/Init/gs_dpnxt.ps"><tt>gs_dpnxt.ps</tt></a>
+<dd>NeXT Display PostScript extensions.
+</dl>
+
+<dl>
+<dt><a href="../Resource/Init/gs_dps.ps"><tt>gs_dps.ps</tt></a>,
+<a href="../Resource/Init/gs_dps1.ps"><tt>gs_dps1.ps</tt></a>,
+<a href="../Resource/Init/gs_dps2.ps"><tt>gs_dps2.ps</tt></a>
+<dd><code>gs_init.ps</code> reads these in if the <code>dps</code>
+feature is included in the configuration.  They provide support for various
+Display PostScript and Level 2 features.
+</dl>
+
+<hr>
+
+<h2><a name="Art"></a>Art and examples</h2>
+
+<p>
+These files are found in the <code>examples</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><a href="../examples/alphabet.ps"><tt>alphabet.ps</tt></a>
+<dd>Prints a sample alphabet at several different sizes.
+</dl>
+
+<dl>
+<dt><a href="../examples/annots.pdf"><tt>annots.pdf</tt></a>
+<dd>A sample file with a wide variety of PDF "annotations".
+</dl>
+
+<dl>
+<dt><a href="../examples/cheq.ps"><tt>cheq.ps</tt></a>
+<dd>A chessboard "font" used by chess.ps (obtained from Adobe).
+</dl>
+
+<dl>
+<dt><a href="../examples/chess.ps"><tt>chess.ps</tt></a>
+<dd>A black-and-white chessboard.
+</dl>
+
+<dl>
+<dt><a href="../examples/colorcir.ps"><tt>colorcir.ps</tt></a>
+<dd>A set of nested ellipses made up of colored bars.
+</dl>
+
+<dl>
+<dt><a href="../examples/doretree.ps"><tt>doretree.ps</tt></a>
+<dd>A 3-D image produced by a modeling program.  This file is in the public
+domain.
+</dl>
+
+<dl>
+<dt><a href="../examples/escher.ps"><tt>escher.ps</tt></a>
+<dd>A colored version of a hexagonally symmetric Escher drawing of
+interlocking butterflies.  Can be printed on monochrome devices, with
+somewhat less dramatic results.
+</dl>
+
+<dl>
+<dt><a href="../examples/golfer.eps"><tt>golfer.eps</tt></a>
+<dd>A gray-scale picture of a stylishly dressed woman swinging a golf club.
+</dl>
+
+<dl>
+<dt><a href="../examples/grayalph.ps"><tt>grayalph.ps</tt></a>
+<dd>Grayscaled text test pattern.
+</dl>
+
+<dl>
+<dt><a href="../examples/ridt91.eps"><tt>ridt91.eps</tt></a>
+<dd>The RIDT '91 logo.  Note that since this is an EPS file, you will have
+to add "<code>-c&nbsp;showpage</code>" at the end of the command line to
+print it or convert it to a raster file.
+</dl>
+
+<dl>
+<dt><a href="../examples/snowflak.ps"><tt>snowflak.ps</tt></a>
+<dd>A rectangular grid of intricate colored snowflakes.  (May render very
+slowly.)
+</dl>
+
+<dl>
+<dt><a href="../examples/tiger.eps"><tt>tiger.eps</tt></a>
+<dd>A dramatic colored picture of a tiger's head.
+</dl>
+
+<dl>
+<dt><a href="../examples/transparency_example.ps"><tt>transparency_example.ps</tt></a>
+<dd>A simple example of transparency.
+</dl>
+
+<dl>
+<dt><a href="../examples/vasarely.ps"><tt>vasarely.ps</tt></a>
+<dd>Colored rectangles and ellipses inspired by Victor Vasarely's experiments
+with tilting circles and squares.
+</dl>
+
+<dl>
+<dt><a href="../examples/waterfal.ps"><tt>waterfal.ps</tt></a>
+<dd>Prints text in a variety of different sizes, to help evaluate the
+quality of text rendering.
+</dl>
+
+<hr>
+
+<h2><a name="Utilities"></a>Utilities</h2>
+
+<p>
+For more information on these utility programs, see the comments at the
+beginnings of the files.  The ones marked (*) have batch files or shell
+scripts of the same name (like <code>bdftops</code> and
+<code>bdftops.bat</code>) to invoke them conveniently.
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><a href="../lib/addxchar.ps"><tt>addxchar.ps</tt></a>
+<dd>A utility to add Central European and other Adobe extended Latin
+characters to a Type 1 font.
+</dl>
+
+<dl>
+<dt><a href="../lib/align.ps"><tt>align.ps</tt></a>
+<dd>A test page for determining the proper margin and offset parameters for
+your printer.
+</dl>
+
+<dl>
+<dt><a href="../lib/bdftops.ps"><tt>bdftops.ps</tt></a> *
+<dd>A utility for converting BDF fonts to outline form: see the <a
+href="Fonts.htm">documentation on fonts</a>.
+</dl>
+
+<dl>
+<dt><a href="../lib/bench.ps"><tt>bench.ps</tt></a>
+<dd>A file useful for running benchmarks.
+</dl>
+
+<dl>
+<dt><a href="../lib/caption.ps"><tt>caption.ps</tt></a>
+<dd>A file for putting a caption in a box at the bottom of each page,
+useful for trade show demos.
+</dl>
+
+<dl>
+<dt><a href="../lib/cat.ps"><tt>cat.ps</tt></a>
+<dd>Appends one file to another. Primarily used to overcome the 
+'copy' limitation of Windows command shell for ps2epsi
+</dl>
+
+<dl>
+<dt><a href="../lib/cid2code.ps"><tt>cid2code.ps</tt></a>
+<dd>A utility for creating maps from CIDs to Unicode, useful when
+substituting a TrueType font for an Adobe font.
+</dl>
+
+<dl>
+<dt><a href="../lib/docie.ps"><tt>docie.ps</tt></a>
+<dd>An emulation of the CIE color mapping algorithms.
+</dl>
+
+<dl>
+<dt><a href="../lib/errpage.ps"><tt>errpage.ps</tt></a>
+<dd>A file that you can put in front of your own files to make Ghostscript
+(or a PostScript printer) produce an informative error page if something
+goes wrong during the processing of your file(s).
+</dl>
+
+<dl>
+<dt><a href="../lib/font2pcl.ps"><tt>font2pcl.ps</tt></a>
+<dd>A utility to write a font as a PCL bitmap font.
+</dl>
+
+<dl>
+<dt><a href="../lib/gslp.ps"><tt>gslp.ps</tt></a> *
+<dd>A utility for doing "line printing" of plain text files.
+</dl>
+
+<dl>
+<dt><a href="../lib/gsnup.ps"><tt>gsnup.ps</tt></a>
+<dd>A file that you can concatenate in front of (very well-behaved)
+PostScript files to do N-up printing.  It is deliberately simple and naive:
+for more generality, use <code>psnup</code> (which, however, requires DSC
+comments).
+</dl>
+
+<dl>
+<dt><a href="../lib/jispaper.ps"><tt>jispaper.ps</tt></a>
+<dd>A file that makes the <code>b0</code> through <code>b6</code>
+procedures refer to JIS B paper sizes rather than ISO B.
+</dl>
+
+
+<dl>
+<dt><a href="../lib/impath.ps"><tt>impath.ps</tt></a>
+<dd>A utility for reconstructing outlines from bitmap images, used by
+<code>bdftops</code>.
+</dl>
+
+<dl>
+<dt><a href="../lib/landscap.ps"><tt>landscap.ps</tt></a>
+<dd>A file that you can put in front of your own files to get them rendered
+in landscape mode.
+</dl>
+
+<dl>
+<dt><a href="../lib/level1.ps"><tt>level1.ps</tt></a>
+<dd>A file that turns off any Level 2 features.
+</dl>
+
+<dl>
+<dt><a href="../lib/mkcidfm.ps"><tt>mkcidfm.ps</tt></a>
+<dd>A utility for creating a CID font mapping table <code>cidfmap</code>
+from fonts found in a specified directory.
+</dl>
+
+<dl>
+<dt><a href="../lib/packfile.ps"><tt>packfile.ps</tt></a>
+<dd>A utility for compressing fonts into a single file.
+</dl>
+
+<dl>
+<dt><a href="../lib/pdf2dsc.ps"><tt>pdf2dsc.ps</tt></a>
+<dd>A utility to read a PDF file and produce a DSC "index" file.
+</dl>
+
+<dl>
+<dt><a href="../lib/pf2afm.ps"><tt>pf2afm.ps</tt></a> *
+<dd>A utility for producing AFM files from PFA, PFB, and optionally PFM
+files.
+</dl>
+
+<dl>
+<dt><a href="../lib/pfbtopfa.ps"><tt>pfbtopfa.ps</tt></a> *
+<dd>A utility to convert PFB (binary) font files to PFA (text) format.
+</dl>
+
+<dl>
+<dt><a href="../lib/prfont.ps"><tt>prfont.ps</tt></a>
+<dd>A utility to print a font catalog.
+</dl>
+
+<dl>
+<dt><a href="../lib/printafm.ps"><tt>printafm.ps</tt></a>
+<dd>A utility to print an AFM file on standard output.
+</dl>
+
+<dl>
+<dt><a href="../lib/ps2ai.ps"><tt>ps2ai.ps</tt></a>
+<dd>A utility for converting an arbitrary PostScript file into a form
+compatible with Adobe Illustrator.  NOTE: <code>ps2ai</code> doesn't
+work properly with Adobe's Helvetica-Oblique font, and other fonts whose
+original <code>FontMatrix</code> involves skewing or rotation.
+</dl>
+
+<dl>
+<dt><a href="../lib/ps2ascii.ps"><tt>ps2ascii.ps</tt></a> *
+<dd>A utility for extracting the ASCII text from PostScript source files.
+It redefines many operators.  For more information, see the comments in the
+file.
+</dl>
+
+<dl>
+<dt><a href="../lib/ps2epsi.ps"><tt>ps2epsi.ps</tt></a> *
+<dd>A utility for converting an arbitrary PostScript file into EPSI form.
+</dl>
+
+<dl>
+<dt><a href="../lib/quit.ps"><tt>quit.ps</tt></a>
+<dd>A file containing just the word "<code>quit</code>".  (The
+<code>-c</code> switch now makes this unnecessary; this file exists for
+backward compatibility.)
+</dl>
+
+<dl>
+<dt><a href="../lib/rollconv.ps"><tt>rollconv.ps</tt></a>
+<dd>A utility for converting files produced by Macromedia's
+<code>Rollup</code> program to a Type 0 form directly usable by
+Ghostscript.
+</dl>
+
+<dl>
+<dt><a href="../lib/showpage.ps"><tt>showpage.ps</tt></a>
+<dd>A file containing just the word "<code>showpage</code>".  (The
+<code>-c</code> switch now makes this unnecessary; this file exists for
+backward compatibility.)
+</dl>
+
+<dl>
+<dt><a href="../lib/stocht.ps"><tt>stocht.ps</tt></a>
+<dd>A file that installs the StochasticDefault halftone as the default,
+which may improve output quality on inkjet printers.  See the file for more
+information.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewcmyk.ps"><tt>viewcmyk.ps</tt></a>
+<dd>A utility for displaying CMYK files.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewgif.ps"><tt>viewgif.ps</tt></a>
+<dd>A utility for displaying GIF files.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewjpeg.ps"><tt>viewjpeg.ps</tt></a>
+<dd>A utility for displaying JPEG files.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewmiff.ps"><tt>viewmiff.ps</tt></a>
+<dd>A utility for displaying MIFF files.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewpbm.ps"><tt>viewpbm.ps</tt></a>
+<dd>A utility for displaying PBM/PGM/PPM files.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewpcx.ps"><tt>viewpcx.ps</tt></a>
+<dd>A utility for displaying PCX files.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewrgb.ps"><tt>viewrgb.ps</tt></a>
+<dd>A utility for displaying files created by -sDEVICE=bitrgb.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewraw.ps"><tt>viewraw.ps</tt></a>
+<dd>An extended utility for displaying files created by -sDEVICE=bitrgb.
+</dl>
+
+<dl>
+<dt><a href="../lib/waterfal.ps"><tt>waterfal.ps</tt></a>
+<dd>A utility to print a "waterfall" of fonts at different sizes.
+</dl>
+
+<hr>
+
+<h2><a name="Development_tools"></a>Development tools</h2>
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><a href="../lib/acctest.ps"><tt>acctest.ps</tt></a>
+<dd>A utility that checks whether the interpreter enforces access
+restrictions.
+</dl>
+
+<dl>
+<dt><a href="../lib/decrypt.ps"><tt>decrypt.ps</tt></a>
+<dd>A utility for decrypting the <code>eexec</code> section of a font.
+</dl>
+
+<dl>
+<dt><a href="../lib/image-qa.ps"><tt>image-qa.ps</tt></a>
+<dd>A comprehensive test of the image display operators.
+</dl>
+
+<dl>
+<dt><a href="../lib/markpath.ps"><tt>markpath.ps</tt></a>
+<dd>A utility for showing the points on a path.
+</dl>
+
+<dl>
+<dt><a href="../lib/pcharstr.ps"><tt>pcharstr.ps</tt></a>
+<dd>A utility for printing out the <code>CharStrings</code> and
+<code>Subrs</code> in a Type 1 font.
+</dl>
+
+<dl>
+<dt><a href="../lib/ppath.ps"><tt>ppath.ps</tt></a>
+<dd>A couple of utilities for printing out the current path, for debugging.
+</dl>
+
+<dl>
+<dt><a href="../lib/pphs.ps"><tt>pphs.ps</tt></a>
+<dd>A utility to print the Primary Hint Stream of a linearized PDF file.
+</dl>
+
+<dl>
+<dt><a href="../lib/traceimg.ps"><tt>traceimg.ps</tt></a>
+<dd>Trace the data supplied to the <code>image</code> operator.
+</dl>
+
+<dl>
+<dt><a href="../lib/traceop.ps"><tt>traceop.ps</tt></a>
+<dd>A utility for tracing uses of any procedure or operator for debugging.
+</dl>
+
+<dl>
+<dt><a href="../lib/type1enc.ps"><tt>type1enc.ps</tt></a>
+<dd>The Type 1 font format encryption and decryption algorithms, written in
+PostScript.
+</dl>
+
+<dl>
+<dt><a href="../lib/uninfo.ps"><tt>uninfo.ps</tt></a>
+<dd>Some utilities for printing out PostScript data structures.
+</dl>
+
+<dl>
+<dt><a href="../lib/unprot.ps"><tt>unprot.ps</tt></a>
+<dd>A prologue to disable access checking.
+</dl>
+
+<dl>
+<dt><a href="../lib/viewps2a.ps"><tt>viewps2a.ps</tt></a>
+<dd>A utility for displaying the output of <code>ps2ascii.ps</code>.
+</dl>
+
+<dl>
+<dt><a href="../lib/wftopfa.ps"><tt>wftopfa.ps</tt></a>
+<dd>Convert a Wadalab (Japanese) base font to <code>.PFA</code> (or
+<code>.PFB</code>) format.
+</dl>
+
+<dl>
+<dt><a href="../lib/winmaps.ps"><tt>winmaps.ps</tt></a>
+<dd>A utility for creating mappings between the Adobe encodings and the
+Microsoft Windows character sets.
+</dl>
+
+<dl>
+<dt><a href="../lib/wrfont.ps"><tt>wrfont.ps</tt></a>
+<dd>A utility for writing out an unprotected Type 1 font, such as the
+standard Ghostscript fonts.
+</dl>
+
+<dl>
+<dt><a href="../lib/zeroline.ps"><tt>zeroline.ps</tt></a>
+<dd>A utility for testing how interpreters handle zero-width lines.
+</dl>
+
+<hr>
+
+<h2><a name="Miscellany"></a>Odds and ends</h2>
+
+<p>
+These files are found in the <code>lib</code> subdirectory of
+the Ghostscript source distribution.
+
+<dl>
+<dt><a href="../lib/jobseparator.ps"><tt>jobseparator.ps</tt></a>
+<dd>Convience file containing a job separator sequence for use
+when passing files with -dJOBSERVER.
+</dl>
+ 
+<dl>
+<dt><a href="../lib/lines.ps"><tt>lines.ps</tt></a>
+<dd>A test program for line joins and caps.
+</dl>
+
+<dl>
+<dt><a href="../lib/markhint.ps"><tt>markhint.ps</tt></a>
+<dd>Draw the hints for a Type 1 font.
+</dl>
+
+<dl>
+<dt><a href="../lib/showchar.ps"><tt>showchar.ps</tt></a>
+<dd>Show a character's outline and rasterized forms.
+</dl>
+
+<dl>
+<dt><a href="../lib/stcinfo.ps"><tt>stcinfo.ps</tt></a>
+<dd>Print and show parameters of the (Epson) <code>stcolor</code> driver.
+</dl>
+
+<dl>
+<dt><a href="../lib/type1ops.ps"><tt>type1ops.ps</tt></a>
+<dd>The Type 1 font format opcodes.
+</dl>
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

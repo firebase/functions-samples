@@ -1,0 +1,191 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% viewpcx.ps
+% Display a PCX file.
+% Requires the Level 2 `image' operator (to handle variable pixel widths).
+% If SCALE is defined, maps input pixels to output pixels with that scale;
+% if SCALE is undefined, scales the image to fit the page.
+% If FITPAGE is true it fits the output page size to the image, honouring SCALE
+% ****NOTE: does not handle multi-plane images with palette.
+
+/pcxbytes [
+  0 1 255 {
+    64 string exch 0 1 63 {
+      3 copy exch put pop
+    } for pop
+  } for
+] readonly def
+/readpcx {			% - readpcx <str>
+  f				% gets replaced
+  dup read not {
+    pop ()
+  } {
+    dup 192 lt {
+      ( ) dup 0 4 -1 roll put exch pop
+    } {
+      192 sub //pcxbytes 3 -1 roll read pop get exch 0 exch getinterval
+    } ifelse
+  } ifelse
+} def
+/get2				% <string> <index> get2 <int>
+ { 2 copy get 3 1 roll 1 add get 8 bitshift add
+ } bind def
+/dsproc
+ { df s readstring pop		% s gets filled in
+   s1 () ne { df s1 readstring pop pop } if % discard padding bytes
+ } def				% don't bind, must be writable
+/viewpcx			% <filename> viewpcx -
+ { 100 dict begin
+   /fname 1 index def
+   /f exch (r) file def
+                % Read and unpack the header.
+   /header f 128 string readstring pop def
+   /version header 1 get def
+   /bpp header 3 get def
+   /w header 8 get2 header 4 get2 sub 1 add def
+   /h header 10 get2 header 6 get2 sub 1 add def
+   /FITPAGE where
+   {
+     /FITPAGE get
+     {
+       5 dict begin
+       /SCALE where
+       {
+         pop
+         /Width w SCALE mul def
+         /Height h SCALE mul def
+       }
+       {
+         /Width w def
+         /Height h def
+       } ifelse
+       % we've already set the image color space, so
+       % push it on the stack, and set it again after
+       % setting the page size
+       <</PageSize [Width Height] >> setpagedevice
+       end
+     } if
+   }
+   {
+     /FITPAGE false def
+   } ifelse
+   /nplanes header 65 get def
+   /bpl header 66 get2 def
+   /palinfo header 68 get2 def
+   /nbits bpp nplanes mul def
+   version 5 eq
+    { nbits 8 le
+       { /cspace
+           [/Indexed   /DeviceRGB   1 bpp bitshift 1 sub
+         f fileposition
+         1 nbits bitshift 3 mul string
+         fname status pop pop pop exch pop
+         1 index length sub f exch setfileposition
+         f exch readstring pop
+         exch f exch setfileposition
+           ] def
+         /decode [0 cspace 2 get] def
+       }
+       { /cspace /DeviceRGB def
+         /decode [0 1 0 1 0 1] def
+       }
+      ifelse
+    }
+    { /cspace
+        [/Indexed   /DeviceRGB   1 bpp bitshift 1 sub
+         header 16 1 nbits bitshift 16 .min 3 mul getinterval
+        ] def
+      /decode [0 cspace 2 get] def
+    }
+   ifelse
+                % Set up scaling.
+   /SCALE where
+    {
+      pop
+      FITPAGE
+      {
+        % Map pixels SCALE-for-1.  Assume orthogonal transformation.
+        w SCALE mul
+        h SCALE mul
+      }
+      {
+        % Map pixels SCALE-for-1.  Assume orthogonal transformation.
+        w 1 0 dtransform add abs div SCALE mul
+        h 0 1 dtransform add abs div SCALE mul
+      } ifelse
+    }
+    {
+      FITPAGE
+      {
+        w h
+      }
+      {
+        % Scale the image (uniformly) to fit the page.
+        clippath pathbbox pop pop translate
+        pathbbox .min exch pop exch pop ceiling
+        dup h w gt { w mul h div exch } { h mul w div } ifelse
+      } ifelse
+    }
+   ifelse scale
+                % Since the number of bytes per line is always even,
+                % it may not match the width specification.
+   /wbpl w bpp mul 7 add 8 idiv def
+                % Define the data source procedure.
+   /s1 bpl wbpl sub string def
+   /df /readpcx load copyarray dup 0 f put cvx bind readonly
+     0 () /SubFileDecode filter def
+   /dsource [ nplanes
+    { /dsproc load copyarray
+      dup 1 wbpl string put
+      cvx bind readonly
+    }
+   repeat ] def
+                % Construct the image dictionary.
+   20 dict begin		% image dictionary
+     /ImageType 1 def
+     /Width w def
+     /Height h def
+     /ImageMatrix [w 0 0 h neg 0 h] def
+     /BitsPerComponent bpp def
+     /Decode decode def
+     /DataSource dsource dup length 1 gt
+      { /MultipleDataSources true def }
+      { 0 get }
+     ifelse def
+   currentdict end
+                % Finally, display the image.
+   cspace setcolorspace
+   image
+   showpage
+   df closefile
+   f closefile
+   end
+ } bind def
+
+% If the program was invoked from the command line, run it now.
+[ shellarguments
+ { counttomark 1 ge
+    { ] { viewpcx } forall
+    }
+    { cleartomark
+      (Usage: gs -- viewpcx.ps filename.pcx ...\n) print
+      ( e.g.: gs -- viewpcx.ps my.pcx another.pcx\n) print flush
+    }
+   ifelse
+ }
+ { pop
+ }
+ifelse
