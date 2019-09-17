@@ -15,7 +15,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
  - Create a Firebase project using the [Firebase Console](https://console.firebase.google.com).
  - Create a [Bit.ly application](https://bitly.com/a/oauth_apps) and generate an **Access Tokens**.
- - Set the sample ot use your Firebase project using `firebase use --add` and select your new Firebase project.
+ - Set the sample to use your Firebase project using `firebase use --add` and select your new Firebase project.
  - Set your Bit.ly app's access token on your function by running:
      ```bash
      firebase functions:config:set bitly.access_token=XXXXXXXXXXXXX
