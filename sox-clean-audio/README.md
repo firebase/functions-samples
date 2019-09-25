@@ -1,5 +1,5 @@
 # Automatically denoise and normalize audio with SoX
-This sample uses a static SoX (Swiss Army knife of sound processing) executable and automatically remove background noise from audio and then normalize the audio volume to a certain level. The input is supposed to be voice recordings recorded with a smartphone.
+This sample uses a static SoX (Swiss Army knife of sound processing) executable and automatically removes background noise from audio and then normalizes the audio volume to a given level. The input is supposed to be voice recordings recorded by a smartphone.
 
 ## Functions Code
 
