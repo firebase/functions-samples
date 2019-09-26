@@ -96,7 +96,7 @@ exports.denoiseAudio = functions.storage.object().onFinalize(async (object) => {
       contentType: "audio/x-wav"
     }
   });
-  console.log('Normmalized audio uploaded to ', normedStorageFilePath);
+  console.log('Normalized audio uploaded to ', normedStorageFilePath);
 
   // Once the audio has been uploaded delete the local file to free up disk space
   fs.unlinkSync(tempFilePath);
