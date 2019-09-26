@@ -58,9 +58,11 @@ exports.denoiseAudio = functions.storage.object().onFinalize(async (object) => {
   const normedTempFilePath = path.join(os.tmpdir(), normedTempFileName);
   const normedStorageFilePath = path.join(path.dirname(filePath), normedTempFileName);
 
+  // Download the original audio to your temporary directory
   await bucket.file(filePath).download({destination: tempFilePath});
   console.log("Audio uploaded locally to ", tempFilePath);
 
+  // Compute a noise profile of the original audio
   await spawn(soxPath, [
     tempFilePath, "-n", "noiseprof", noiseProfPath
   ], {capture : ['stdout', 'stderr']})
@@ -69,6 +71,7 @@ exports.denoiseAudio = functions.storage.object().onFinalize(async (object) => {
   })
   console.log("Noise profile created at", noiseProfPath)
 
+  // Do denoising in your temporary directory
   await spawn(soxPath, [
     tempFilePath, denoisedTempFilePath, "noisered", noiseProfPath, "0.1"
   ], {capture : ['stdout', 'stderr']})
@@ -77,21 +80,23 @@ exports.denoiseAudio = functions.storage.object().onFinalize(async (object) => {
   })
   console.log("Denoised audio created at", denoisedTempFilePath)
 
+  // Do normalization in your temporary directory
   await spawn(soxPath, [
     `--norm=${normLevel}`, denoisedTempFilePath, normedTempFilePath
   ], {capture : ['stdout', 'stderr']})
   .catch(err => {
     console.log(err)
   });
-  console.log('Normed audio created at', normedTempFilePath);
+  console.log('Normalized audio created at', normedTempFilePath);
 
+  // Upload the normalized audio to your storage
   await bucket.upload(normedTempFilePath, {
     destination: normedStorageFilePath,
     metadata: {
       contentType: "audio/x-wav"
     }
   });
-  console.log('Normed audio uploaded to ', normedStorageFilePath);
+  console.log('Normmalized audio uploaded to ', normedStorageFilePath);
 
   // Once the audio has been uploaded delete the local file to free up disk space
   fs.unlinkSync(tempFilePath);
