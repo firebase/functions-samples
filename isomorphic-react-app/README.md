@@ -7,7 +7,7 @@ The server will then load any data that's necessary for your app (through the Re
 
 This sample uses `react-router` to demonstrate simple routing logic for React.
 
-The `src` folder contains the source code for React app. It also uses [Webpack](https://github.com/webpack/webpack) to bundle the app and generate two bundles, one for the server, and one for the client. The server bundle is required by the express server to generate the initial markup (also knows as Server-Side Rendering). The client bundle is loaded by the browser.
+The `src` folder contains the source code for React app. It also uses [Webpack](https://github.com/webpack/webpack) to bundle the app and generate two bundles, one for the server, and one for the client. The server bundle is required by the express server to generate the initial markup (also known as Server-Side Rendering). The client bundle is loaded by the browser.
 
 ## Setting up the sample
 
