@@ -29,4 +29,4 @@ To deploy and test the sample:
  - Deploy your project using `firebase deploy`
  - Go to your project's [**Cloud Console > IAM & admin > IAM**](https://console.cloud.google.com/iam-admin/iam?project=_), Find the **App Engine default service account** and add the **Service Account Token Creator** role to that member. This will allow your app to create signed public URLs to the images.
  - Go to the Firebase Console **Storage** tab and upload an image. After a short time an thumbnail image with the same name but a `thumb_` prefix will be created in the same folder (make sure you refresh the UI to see the new file).
- - Go to the Firebase Console **Database** tab and see that a child of `images` has been created containing the Signed URLs for both images.
+ - Go to the Firebase Console **Database** (Realtime Database not Cloud Firestore) tab and see that a child of `images` has been created containing the Signed URLs for both images.
