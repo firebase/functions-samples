@@ -16,11 +16,14 @@
 'use strict';
 
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const mkdirp = require('mkdirp-promise');
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+
+admin.initializeApp();
 
 // File extension for the created JPEG files.
 const JPEG_EXTENSION = '.jpg';
