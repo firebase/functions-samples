@@ -8,7 +8,7 @@ This is a alternative approach for using ImageMagick, see [generate-thumbnail](.
 
 See file [functions/index.js](functions/index.js) for the thumbnail generation code.
 
-The thumbnail generation is performed using [Sharp](http://sharp.dimens.io/en/stable/).
+The thumbnail generation is performed using [Sharp](https://sharp.pixelplumbing.com/en/stable/).
 Download, resize input/output and upload uses Node.js [Stream](https://nodejs.org/api/stream.html) 
 
 The dependencies are listed in [functions/package.json](functions/package.json).
