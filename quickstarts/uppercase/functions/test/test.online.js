@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-// Follow the instructions in uppercase/README.md for running these tests
+// Follow the instructions in uppercase/README.md for running these tests.
+// Visit https://firebase.google.com/docs/functions/unit-testing to learn more
+// about using the `firebase-functions-test` SDK.
 
 // Chai is a commonly used library for creating unit test suites. It is easily extended with plugins.
 const chai = require('chai');

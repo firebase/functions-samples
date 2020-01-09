@@ -15,6 +15,8 @@
  */
 
 // You can run these unit tests by running "npm test" inside the uppercase/functions directory.
+// Visit https://firebase.google.com/docs/functions/unit-testing to learn more
+// about using the `firebase-functions-test` SDK.
 
 // Chai is a commonly used library for creating unit test suites. It is easily extended with plugins.
 const chai = require('chai');
