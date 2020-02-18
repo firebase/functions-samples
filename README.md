@@ -88,7 +88,7 @@ This sample demonstrates how to create an isomorphic React application with serv
 <a name="image"></a>
 ## Image Processing
 
-Here is a few sample that shows how you can process or analyze images using Cloud Functions.
+Here are a few samples that show how you can process or analyze images using Cloud Functions.
 
 ### [Image Maker](/image-maker)
 This sample demonstrates how to create various customized images such as sparkline or sphere charts through Cloud Functions and Hosting and serve it to the client.
