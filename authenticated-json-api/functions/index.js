@@ -49,7 +49,7 @@ const authenticate = async (req, res, next) => {
     next();
     return;
   } catch(e) {
-    res.status(401).send('Unauthorized');
+    res.status(403).send('Forbidden');
     return;
   }
 };
