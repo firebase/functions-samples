@@ -1,5 +1,5 @@
 {
-  "name": "generate-thumbnail-functions",
+  "name": "generate-thumbnail-functions-quickstart",
   "description": "Generate Thumbnail Firebase Functions sample",
   "dependencies": {
     "child-process-promise": "^2.2.1",
