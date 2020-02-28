@@ -15,7 +15,7 @@
     "eslint-plugin-promise": "4.2.1"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+    "lint": "./node_modules/.bin/eslint --max-warnings=0 *.js",
     "serve": "firebase serve --only functions",
     "shell": "firebase experimental:functions:shell",
     "start": "npm run shell",
