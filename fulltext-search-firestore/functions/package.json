@@ -2,15 +2,15 @@
   "name": "full-text-search",
   "description": "Full text search for Firestore",
   "dependencies": {
-    "algoliasearch": "^3.24.0",
-    "cors": "^2.8.4",
-    "express": "^4.16.1",
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "algoliasearch": "^4.0.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

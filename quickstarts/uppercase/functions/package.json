@@ -2,15 +2,15 @@
   "name": "uppercase-quickstart-functions",
   "description": "Uppercaser Firebase Functions Quickstart sample",
   "dependencies": {
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "firebase-functions-test": "0.1.6",
-    "mocha": "^5.0.5",
-    "sinon": "^4.1.3"
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "firebase-functions-test": "0.2.0",
+    "mocha": "^7.1.0",
+    "sinon": "^9.0.0"
   },
   "scripts": {
     "ci-test": "npm install && npm run test",

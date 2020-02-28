@@ -2,14 +2,14 @@
   "name": "stripe-functions",
   "description": "Stripe Firebase Functions",
   "dependencies": {
-    "@google-cloud/logging": "^0.7.1",
-    "stripe": "^8.4.0",
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "@google-cloud/logging": "^7.2.3",
+    "stripe": "^8.24.0",
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

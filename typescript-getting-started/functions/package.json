@@ -2,13 +2,13 @@
   "name": "typescript-functions",
   "description": "TypeScript sample Cloud Functions for Firebase",
   "dependencies": {
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "@types/express": "^4.0.37",
-    "tslint": "^5.8.0",
-    "typescript": "^2.6.1"
+    "@types/express": "^4.17.2",
+    "tslint": "^6.0.0",
+    "typescript": "^3.8.2"
   },
   "scripts": {
     "lint": "./node_modules/.bin/tslint -p tsconfig.json",

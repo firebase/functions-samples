@@ -8,20 +8,20 @@
     "build": "npm run createfirebaseconf && npm run buildClient && npm run buildServer"
   },
   "dependencies": {
-    "firebase": "7.6.1",
+    "firebase": "7.9.2",
     "lodash": "4.17.15",
-    "react": "16.12.0",
-    "react-dom": "16.12.0",
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
     "react-router": "5.1.2",
     "react-router-dom": "5.1.2"
   },
   "devDependencies": {
-    "@babel/core": "7.7.7",
-    "@babel/plugin-proposal-class-properties": "7.7.4",
-    "@babel/preset-env": "7.7.7",
-    "@babel/preset-react": "7.7.4",
+    "@babel/core": "7.8.6",
+    "@babel/plugin-proposal-class-properties": "7.8.3",
+    "@babel/preset-env": "7.8.6",
+    "@babel/preset-react": "7.8.3",
     "babel-loader": "8.0.6",
-    "webpack": "4.41.5",
-    "webpack-cli": "3.3.10"
+    "webpack": "4.41.6",
+    "webpack-cli": "3.3.11"
   }
 }
