@@ -1,6 +1,4 @@
-
 {
-  "lerna": "2.8.0",
   "packages": [
     "assistant-say-number/functions",
     "authenticated-json-api/functions",
