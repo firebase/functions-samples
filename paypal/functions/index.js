@@ -72,7 +72,7 @@ exports.pay = functions.https.onRequest((req, res) => {
         };
       });
       // If redirect url present, redirect user
-      if (links.hasOwnProperty('approval_url')) {
+      if ( Object.prototype.hasOwnProperty.call(links, 'approval_url')) {
         // REDIRECT USER TO links['approval_url'].href
         console.info(links.approval_url.href);
         // res.json({"approval_url":links.approval_url.href});
