@@ -2,16 +2,16 @@
   "name": "instagram-auth-functions",
   "description": "Authenticate with Instagram Firebase Functions sample",
   "dependencies": {
-    "cookie-parser": "^1.4.3",
-    "request": "^2.74.0",
-    "request-promise-native": "^1.0.3",
-    "simple-oauth2": "^1.0.0",
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "cookie-parser": "^1.4.4",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.8",
+    "simple-oauth2": "^3.3.0",
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

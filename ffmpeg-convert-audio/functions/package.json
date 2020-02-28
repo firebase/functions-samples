@@ -2,15 +2,15 @@
   "name": "ffmpeg-convert-audio",
   "description": "FFMPEG Convert Audio Firebase Functions sample",
   "dependencies": {
-    "@google-cloud/storage": "^0.4.0",
-    "ffmpeg-static": "^2.0.0",
+    "@google-cloud/storage": "^4.3.1",
+    "ffmpeg-static": "^4.0.1",
     "fluent-ffmpeg": "^2.1.2",
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

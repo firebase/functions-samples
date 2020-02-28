@@ -2,14 +2,14 @@
   "name": "text-moderation-functions",
   "description": "Moderate text using Firebase Functions",
   "dependencies": {
-    "bad-words": "^1.3.1",
-    "capitalize-sentence": "^0.1.2",
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "bad-words": "^3.0.3",
+    "capitalize-sentence": "^0.1.5",
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

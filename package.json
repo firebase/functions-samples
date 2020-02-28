@@ -8,10 +8,10 @@
     "test": "echo 'Linting...' && lerna run lint && echo 'Testing...' && lerna run ci-test"
   },
   "devDependencies": {
-    "eslint": "^4.17.0",
-    "eslint-plugin-promise": "^3.8.0",
-    "lerna": "^2.8.0",
-    "tslint": "^5.11.0",
-    "typescript": "^3.0.1"
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "lerna": "^3.20.2",
+    "tslint": "^6.0.0",
+    "typescript": "^3.8.2"
   }
 }

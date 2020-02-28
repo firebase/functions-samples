@@ -2,16 +2,16 @@
   "name": "uppercase-firestore-quickstart-functions",
   "description": "Uppercaser Firebase Functions Quickstart sample for Cloud Firestore",
   "dependencies": {
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "eslint": "^4.13.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "mocha": "^3.2.0",
-    "sinon": "^1.17.7"
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "mocha": "^7.1.0",
+    "sinon": "^9.0.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

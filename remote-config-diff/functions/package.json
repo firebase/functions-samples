@@ -10,15 +10,15 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1",
-    "json-diff": "^0.5.3",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.2"
+    "firebase-admin": "~8.9.2",
+    "firebase-functions": "^3.3.0",
+    "json-diff": "^0.5.4",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5"
   },
   "devDependencies": {
-    "eslint": "^4.12.0",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^6.8.0",
+    "eslint-plugin-promise": "^4.2.1"
   },
   "private": true
 }
