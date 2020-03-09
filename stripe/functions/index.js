@@ -22,6 +22,23 @@ const logging = require('@google-cloud/logging')();
 const stripe = require('stripe')(functions.config().stripe.token);
 const currency = functions.config().stripe.currency || 'USD';
 
+
+exports.createStripePaymentIntent = functions.firestore.document('stripe_customers/{userId}/charges/{id}').onCreate(async (snap, context) => {
+      const val = snap.data();
+      const method = val.method;
+      try{
+       const response = await stripe.paymentIntents.create(
+         {
+           amount: 2000,
+           currency: 'usd',
+           payment_method: method,
+         },
+        );
+        return snap.ref.set(response, { merge: true });
+      }catch (error){
+        return reportError(error, {user: context.params.userId});
+      }
+})
 // [START chargecustomer]
 // Charge the Stripe customer whenever an amount is created in Cloud Firestore
 exports.createStripeCharge = functions.firestore.document('stripe_customers/{userId}/charges/{id}').onCreate(async (snap, context) => {
