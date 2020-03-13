@@ -4,7 +4,6 @@
   "dependencies": {
     "child-process-promise": "^2.2.1",
     "mkdirp": "^1.0.3",
-    "mkdirp-promise": "^5.0.1",
     "firebase-admin": "~8.9.2",
     "firebase-functions": "^3.3.0"
   },
