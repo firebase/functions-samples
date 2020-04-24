@@ -1,13 +1,10 @@
 const functions = require('firebase-functions');
 
-const slackAPI = 'https://slack.com/api/chat.postMessage';
-const slackToken = functions.config().slack.token;
-const slackChannelId = functions.config().slack.channelid;
 const axios = require('axios');
 
 function postToSlack(title, details) {
   return axios.post(
-    slackAPI,
+    functions.config().slack.webhook_url,
     {
       blocks: [
         {
@@ -27,13 +24,7 @@ function postToSlack(title, details) {
             text: details
           }
         }
-      ],
-      channel: slackChannelId
-    },
-    {
-      headers: {
-        Authorization: 'Bearer ' + slackToken
-      }
+      ]
     }
   );
 }
