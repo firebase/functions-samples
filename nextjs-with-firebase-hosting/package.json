@@ -11,7 +11,7 @@
     "predeploy": "npm run build-all",
     "deploy": "firebase deploy",
     "build-all": "npm run build-next && npm run build-firebase",
-    "build-next": "cd \"src/app\" && npm install && npm build",
+    "build-next": "cd \"src/app\" && npm install && npm run build",
     "build-firebase": "cd \"src/functions\" && npm install"
   }
 }
