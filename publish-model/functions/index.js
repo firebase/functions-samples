@@ -59,7 +59,7 @@ exports.createFirebaseTFLiteModel = functions.storage.object().onFinalize(async 
   // List models with same name
   const modelsResult = await ml.listModels({filter: `display_name = ${modelName}`});
   
-  var model;
+  let model;
   if (modelsResult.models.length > 0) {
     // The model already exists. (Guaranteed 0 or 1 models for above filter. displayName is unique.)
     // Check the source to see if it matches
@@ -81,6 +81,6 @@ exports.createFirebaseTFLiteModel = functions.storage.object().onFinalize(async 
   }
 
   const publishedModel = await ml.publishModel(model.modelId);
-  return console.log(`Model ${modelName} published.`)
+  return console.log(`Model ${modelName} published at ${publishedModel.updateTime}.`)
 });
 // [END publishModel]
