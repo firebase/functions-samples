@@ -272,6 +272,9 @@ Uses a Crashlytics trigger.
 Automatically sends a Slack notification to a specific Slack channel when a new issue is reported in Crashlytics.
 Uses a Crashlytics trigger.
 
+### [Publish Models to Firebase ML](/publish-model)
+
+Automatically publishes models to Firebase ML for each TensorFlow Lite file that is uploaded to Firebase Storage.
 
 ## Contributing
 
