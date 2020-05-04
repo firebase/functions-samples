@@ -283,7 +283,7 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## License
 
-© Google, 2015-2017. Licensed under an [Apache-2](LICENSE) license.
+© Google, 2015-2020. Licensed under an [Apache-2](LICENSE) license.
 
 ## Build Status
 
