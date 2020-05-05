@@ -18,7 +18,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
-// The source for the SDK can be found: https://github.com/firebase/firebase-admin-node/tree/master/src/machine-learning
+
 const ml = admin.machineLearning();
 const path = require('path');
 
@@ -33,8 +33,8 @@ const path = require('path');
 exports.createFirebaseTFLiteModel = functions.storage.object().onFinalize(async (object) => {
 // [END publishModelTrigger]
   // [START eventAttributes]
-  const fileBucket = object.bucket; // The Storage bucket that contains the file.  // E.g. fir-ml-sdks-bugbash1.appspot.com
-  const filePath = object.name; // File path in the bucket.                        // E.g. /Firebase/models/MyModel1.tflite
+  const fileBucket = object.bucket; // The Storage bucket that contains the file.
+  const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type. E.g. application/octet-stream
   const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
   // [END eventAttributes]
@@ -45,23 +45,30 @@ exports.createFirebaseTFLiteModel = functions.storage.object().onFinalize(async 
     return console.log(`Content type is: ${contentType}. This is not a TFLite file.`);
   }
   // [END stopConditions]
-  
-  // Get the file name. E.g. "MyModel1"
+
+  // Get the file name without the path or extension.
   const modelName = path.basename(filePath, '.tflite');
 
+  // Make sure the file name matches model name requirements (regex).
+  const re = /^[A-Za-z\d_-]{1,32}$/;
+  if (!re.test(modelName)) {
+    const errMsg = "Model name must be 1 to 32 characters long, and may only consist of alphanumeric characters, underscores, and hyphens.";
+    return console.log(`Not creating model '${modelName}'. ${errMsg}`);
+  }
+
   const gcsUri = `gs://${fileBucket}/${filePath}`;
-  
+
   const modelOptions = {
     displayName: modelName,
     tfliteModel: { gcsTfliteUri: gcsUri }
   };
-  
-  // List models with same name
+
+  // List models with same name. (Display name is unique - this returns exactly 0 or 1 models)
   const modelsResult = await ml.listModels({filter: `display_name = ${modelName}`});
-  
+
   let model;
   if (modelsResult.models.length > 0) {
-    // The model already exists. (Guaranteed 0 or 1 models for above filter. displayName is unique.)
+    // The model already exists.
     // Check the source to see if it matches
     const existingModel = modelsResult.models[0];
     if (existingModel.tfliteModel.gcsTfliteUri === gcsUri) {
