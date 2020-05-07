@@ -90,7 +90,7 @@ app.use(require('cors')({origin: true}));
 // Then we'll also use a special 'getFirebaseUser' middleware which
 // verifies the Authorization header and adds a `user` field to the
 // incoming request:
-// https://gist.github.com/abehaskins/832d6f8665454d0cd99ef08c229afb42
+// https://gist.github.com/abeisgoat/832d6f8665454d0cd99ef08c229afb42
 app.use(getFirebaseUser);
 
 // Add a route handler to the app to generate the secured key
