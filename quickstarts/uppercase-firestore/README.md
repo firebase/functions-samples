@@ -10,7 +10,7 @@ This sample app does two things:
 - Creates messages in Cloud Firestore using a simple HTTPS request which is
   handled by an HTTP function. Writing to Cloud Firestore is done using the
   Firebase Admin SDK.
-- When a message gets added in the Cloud Firestore, a function triggers and
+- When a message gets added in Cloud Firestore, a function triggers and
   automatically makes these messages all uppercase.
 
 ## Run locally with the Firebase Emulator suite
@@ -23,18 +23,18 @@ a Firebase project.
 1. Create a Firebase project in the
    [Firebase Console](https://console.firebase.google.com)
    > _Wondering why this step is needed?_ Even though the emulator will run this
-   > sample on your local machine, it needs to associate with a Firebase project
+   > sample on your local machine, it needs to interact with a Firebase project
    > to retrieve some configuration values.
 1. [Set up or update the Firebase CLI](https://firebase.google.com/docs/cli#setup_update_cli)
 1. Run `firebase emulators:start`
 1. Open the Emulator Suite UI
-   1. Look in the output of the `firebase emulators:start` command for the url
+   1. Look in the output of the `firebase emulators:start` command for the URL
       of the Emulator Suite UI. It defaults to
       [localhost:4000](http://localhost:4000), but may be hosted on a different
       port on your machine.
    1. Enter that URL in your browser to open the UI.
 1. Trigger the functions
-   1. Look in the output of the `firebase emulators:start` command for the url
+   1. Look in the output of the `firebase emulators:start` command for the URL
       of the http function "addMessage". It will look similar to:
       `http://localhost:5001/MY_PROJECT/us-central1/addMessage`
       1. `MY_PROJECT` will be replaced with your project ID
