@@ -128,7 +128,7 @@ function fs_listen_online() {
     firebase.firestore().collection('status')
         .where('state', '==', 'online')
         .onSnapshot(function(snapshot) {
-            snapshot.docChanges.forEach(function(change) {
+            snapshot.docChanges().forEach(function(change) {
                 if (change.type === 'added') {
                     var msg = 'User ' + change.doc.id + ' is online.';
                     console.log(msg);
