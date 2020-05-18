@@ -13,6 +13,11 @@ This sample app does two things:
 - When a message gets added in Cloud Firestore, a function triggers and
   automatically makes these messages all uppercase.
 
+## Set up the sample
+
+Before you can test the functions locally or deploy to a Firebase project,
+you'll need to run `npm install` in the `functions` directory.
+
 ## Run locally with the Firebase Emulator suite
 
 The
@@ -64,8 +69,6 @@ To deploy and test the sample:
 
 1. Create a Firebase project on the
    [Firebase Console](https://console.firebase.google.com)
-1. Install the required dependencies by running `npm install` in the `functions`
-   directory
 1. Deploy your project's code using `firebase deploy`
 1. Create a message by opening the following URL in your browser:
    https://us-central1-[MY_PROJECT].cloudfunctions.net/addMessage?text=uppercaseme
