@@ -20,7 +20,7 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 const functions = require('firebase-functions');
 
-// The Firebase Admin SDK to access the Cloud Firestore.
+// The Firebase Admin SDK to access Cloud Firestore.
 const admin = require('firebase-admin');
 admin.initializeApp();
 // [END import]
@@ -50,13 +50,16 @@ exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
     .onCreate((snap, context) => {
 // [END makeUppercaseTrigger]
       // [START makeUppercaseBody]
-      // Grab the current value of what was written to the Cloud Firestore.
+      // Grab the current value of what was written to Cloud Firestore.
       const original = snap.data().original;
+
       console.log('Uppercasing', context.params.documentId, original);
+      
       const uppercase = original.toUpperCase();
+      
       // You must return a Promise when performing asynchronous tasks inside a Functions such as
-      // writing to the Cloud Firestore.
-      // Setting an 'uppercase' field in the Cloud Firestore document returns a Promise.
+      // writing to Cloud Firestore.
+      // Setting an 'uppercase' field in Cloud Firestore document returns a Promise.
       return snap.ref.set({uppercase}, {merge: true});
       // [END makeUppercaseBody]
     });
