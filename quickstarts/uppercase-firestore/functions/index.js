@@ -53,6 +53,7 @@ exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
       // Grab the current value of what was written to Cloud Firestore.
       const original = snap.data().original;
 
+      // Access the parameter `{documentId}` with `context.params`
       console.log('Uppercasing', context.params.documentId, original);
       
       const uppercase = original.toUpperCase();
