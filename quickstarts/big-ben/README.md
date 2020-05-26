@@ -46,7 +46,7 @@ cd functions && npm install; cd ..
 
 Start serving your project locally using `firebase serve`
 
-Open the app in a browser at `https://localhost:5000/`.
+Open the app in a browser at [https://localhost:5000/](https://localhost:5000/).
 
 A page containing a repeated number of "BONG" - One for each hour of the day - will be displayed.
 
