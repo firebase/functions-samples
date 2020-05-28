@@ -3,7 +3,7 @@
   "description": "Generate Thumbnail with Sharp Firebase Functions sample",
   "dependencies": {
     "@google-cloud/storage": "^4.3.1",
-    "sharp": "^0.24.1",
+    "sharp": "0.23.4",
     "firebase-admin": "~8.9.2",
     "firebase-functions": "^3.3.0"
   },
