@@ -16,9 +16,12 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const gcs = require('@google-cloud/storage')();
+const { Storage } = require('@google-cloud/storage');
+const gcs = new Storage();
 const path = require('path');
 const sharp = require('sharp');
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 
 const THUMB_MAX_WIDTH = 200;
 const THUMB_MAX_HEIGHT = 200;
@@ -28,42 +31,74 @@ const THUMB_MAX_HEIGHT = 200;
  * Sharp.
  */
 exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
-  const fileBucket = object.bucket; // The Storage bucket that contains the file.
-  const filePath = object.name; // File path in the bucket.
-  const contentType = object.contentType; // File content type.
+	const fileBucket = object.bucket; // The Storage bucket that contains the file.
+	const filePath = object.name; // File path in the bucket.
+	const contentType = object.contentType; // File content type.
 
-  // Exit if this is triggered on a file that is not an image.
-  if (!contentType.startsWith('image/')) {
-    console.log('This is not an image.');
-    return null;
-  }
+	// Exit if this is triggered on a file that is not an image.
+	if (!contentType.startsWith('image/')) {
+		console.log('This is not an image.');
+		return null;
+	}
 
-  // Get the file name.
-  const fileName = path.basename(filePath);
-  // Exit if the image is already a thumbnail.
-  if (fileName.startsWith('thumb_')) {
-    console.log('Already a Thumbnail.');
-    return null;
-  }
+	// Get the file name.
+	const fileName = path.basename(filePath);
+	// Exit if the image is already a thumbnail.
+	if (fileName.startsWith('thumb_')) {
+		console.log('Already a Thumbnail.');
+		return null;
+	}
 
-  // Download file from bucket.
-  const bucket = gcs.bucket(fileBucket);
+	// Download file from bucket.
+	const bucket = gcs.bucket(fileBucket);
 
-  const metadata = {
-    contentType: contentType,
-  };
-  // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
-  const thumbFileName = `thumb_${fileName}`;
-  const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-  // Create write stream for uploading thumbnail
-  const thumbnailUploadStream = bucket.file(thumbFilePath).createWriteStream({metadata});
+	const metadata = {
+		contentType: contentType,
+	};
+	// We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
+	const thumbFileName = `thumb_${fileName}`;
+	const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
+	// Create write stream for uploading thumbnail
+	const thumbnailUploadStream = bucket.file(thumbFilePath).createWriteStream({ metadata });
 
-  // Create Sharp pipeline for resizing the image and use pipe to read from bucket read stream
-  const pipeline = sharp();
-  pipeline.resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT).max().pipe(thumbnailUploadStream);
+	// Create Sharp pipeline for resizing the image and use pipe to read from bucket read stream
+	const pipeline = sharp();
+	pipeline.rotate().resize(THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT).pipe(thumbnailUploadStream);
 
-  bucket.file(filePath).createReadStream().pipe(pipeline);
+	bucket.file(filePath).createReadStream().pipe(pipeline);
 
-  return new Promise((resolve, reject) =>
-      thumbnailUploadStream.on('finish', resolve).on('error', reject));
+	const saveToDatabase = async () => {
+		const fileDir = path.dirname(filePath);
+		let nameParts = fileDir.split('/');
+		let userId;
+		// Get the user id from the filePath
+		if (nameParts[0] === 'profile_photos') {
+			userId = nameParts[1];
+		}
+		// Save the Signed URLs for the thumbnail and original image to the user profile.
+		const config = {
+			action: 'read',
+			expires: '03-01-2500',
+		};
+		const thumbFile = bucket.file(thumbFilePath);
+		const file = bucket.file(filePath);
+		const results = await Promise.all([thumbFile.getSignedUrl(config), file.getSignedUrl(config)]);
+		console.log('Got Signed URLs.');
+		const thumbResult = results[0];
+		const originalResult = results[1];
+		const thumbFileUrl = thumbResult[0];
+		const fileUrl = originalResult[0];
+		// Add the URLs to the Database
+		await admin.database().ref(`users/${userId}/profile/photo`).set({ path: fileUrl, thumbnail: thumbFileUrl });
+		console.log('Thumbnail URLs saved to database.');
+	};
+
+	return new Promise((resolve, reject) =>
+		thumbnailUploadStream
+			.on('finish', () => {
+				saveToDatabase();
+				resolve;
+			})
+			.on('error', reject)
+	);
 });

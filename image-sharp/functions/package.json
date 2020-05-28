@@ -1,26 +1,26 @@
 {
-  "name": "generate-thumbnail-sharp-functions",
-  "description": "Generate Thumbnail with Sharp Firebase Functions sample",
-  "dependencies": {
-    "@google-cloud/storage": "^4.3.1",
-    "sharp": "^0.24.1",
-    "firebase-admin": "~8.9.2",
-    "firebase-functions": "^3.3.0"
-  },
-  "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.2.1"
-  },
-  "scripts": {
-    "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
-    "serve": "firebase serve --only functions",
-    "shell": "firebase experimental:functions:shell",
-    "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
-  },
-  "engines": {
-    "node": "8"
-  },
-  "private": true
+	"name": "generate-thumbnail-sharp-functions",
+	"description": "Generate Thumbnail with Sharp Firebase Functions sample",
+	"dependencies": {
+		"@google-cloud/storage": "^4.3.1",
+		"sharp": "^0.25.3",
+		"firebase-admin": "~8.9.2",
+		"firebase-functions": "^3.3.0"
+	},
+	"devDependencies": {
+		"eslint": "^6.8.0",
+		"eslint-plugin-promise": "^4.2.1"
+	},
+	"scripts": {
+		"lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+		"serve": "firebase serve --only functions",
+		"shell": "firebase experimental:functions:shell",
+		"start": "npm run shell",
+		"deploy": "firebase deploy --only functions",
+		"logs": "firebase functions:log"
+	},
+	"engines": {
+		"node": "8"
+	},
+	"private": true
 }
