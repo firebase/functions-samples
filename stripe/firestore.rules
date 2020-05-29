@@ -3,13 +3,10 @@ service cloud.firestore {
     match /stripe_customers/{uid} {
       allow read, write: if request.auth.uid == uid;
 
-      match /sources/{sourceId} {
-        allow read: if request.auth.uid == uid;
-      }
-      match /tokens/{sourceId} {
+      match /payment_methods/{id} {
         allow read,write: if request.auth.uid == uid;
       }
-      match /charges/{chargeId} {
+      match /payments/{id} {
         allow read, write: if request.auth.uid == uid;
       }
 

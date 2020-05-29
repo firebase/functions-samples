@@ -68,11 +68,13 @@ exports.createStripeCharge = functions.firestore
 // When a user is created, register them with Stripe
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
-  return admin
-    .firestore()
-    .collection('stripe_customers')
-    .doc(user.uid)
-    .set({ customer_id: customer.id });
+  const intent = await stripe.setupIntents.create({
+    customer: customer.id,
+  });
+  return admin.firestore().collection('stripe_customers').doc(user.uid).set({
+    customer_id: customer.id,
+    setup_secret: intent.client_secret,
+  });
 });
 
 // Add a payment source (card) for a user by writing a stripe payment source token to Cloud Firestore
