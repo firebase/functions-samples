@@ -18,71 +18,110 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
-const logging = require('@google-cloud/logging')();
-const stripe = require('stripe')(functions.config().stripe.token);
+const { Logging } = require('@google-cloud/logging');
+const logging = new Logging({
+  projectId: 'functions-sample-stripe-79aef',
+});
+const stripe = require('stripe')(functions.config().stripe.token, {
+  apiVersion: '2020-03-02',
+});
 const currency = functions.config().stripe.currency || 'USD';
 
 // [START chargecustomer]
 // Charge the Stripe customer whenever an amount is created in Cloud Firestore
-exports.createStripeCharge = functions.firestore.document('stripe_customers/{userId}/charges/{id}').onCreate(async (snap, context) => {
-      const val = snap.data();
-      try {
-        // Look up the Stripe customer id written in createStripeCustomer
-        const snapshot = await admin.firestore().collection(`stripe_customers`).doc(context.params.userId).get()
-        const snapval = snapshot.data();
-        const customer = snapval.customer_id
-        // Create a charge using the pushId as the idempotency key
-        // protecting against double charges
-        const amount = val.amount;
-        const idempotencyKey = context.params.id;
-        const charge = {amount, currency, customer};
-        if (val.source !== null) {
-          charge.source = val.source;
-        }
-        const response = await stripe.charges.create(charge, {idempotency_key: idempotencyKey});
-        // If the result is successful, write it back to the database
-        return snap.ref.set(response, { merge: true });
-      } catch(error) {
-        // We want to capture errors and render them in a user-friendly way, while
-        // still logging an exception with StackDriver
-        console.log(error);
-        await snap.ref.set({error: userFacingMessage(error)}, { merge: true });
-        return reportError(error, {user: context.params.userId});
+exports.createStripeCharge = functions.firestore
+  .document('stripe_customers/{userId}/charges/{id}')
+  .onCreate(async (snap, context) => {
+    const val = snap.data();
+    try {
+      // Look up the Stripe customer id written in createStripeCustomer
+      const snapshot = await admin
+        .firestore()
+        .collection(`stripe_customers`)
+        .doc(context.params.userId)
+        .get();
+      const snapval = snapshot.data();
+      const customer = snapval.customer_id;
+      // Create a charge using the pushId as the idempotency key
+      // protecting against double charges
+      const amount = val.amount;
+      const idempotencyKey = context.params.id;
+      const charge = { amount, currency, customer };
+      if (val.source !== null) {
+        charge.source = val.source;
       }
-    });
+      const response = await stripe.charges.create(charge, {
+        idempotency_key: idempotencyKey,
+      });
+      // If the result is successful, write it back to the database
+      return snap.ref.set(response, { merge: true });
+    } catch (error) {
+      // We want to capture errors and render them in a user-friendly way, while
+      // still logging an exception with StackDriver
+      console.log(error);
+      await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
+      return reportError(error, { user: context.params.userId });
+    }
+  });
 // [END chargecustomer]]
 
 // When a user is created, register them with Stripe
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
-  const customer = await stripe.customers.create({email: user.email});
-  return admin.firestore().collection('stripe_customers').doc(user.uid).set({customer_id: customer.id});
+  const customer = await stripe.customers.create({ email: user.email });
+  return admin
+    .firestore()
+    .collection('stripe_customers')
+    .doc(user.uid)
+    .set({ customer_id: customer.id });
 });
 
 // Add a payment source (card) for a user by writing a stripe payment source token to Cloud Firestore
-exports.addPaymentSource = functions.firestore.document('/stripe_customers/{userId}/tokens/{pushId}').onCreate(async (snap, context) => {
-  const source = snap.data();
-  const token = source.token;
-  if (source === null){
-    return null;
-  }
+exports.addPaymentSource = functions.firestore
+  .document('/stripe_customers/{userId}/tokens/{pushId}')
+  .onCreate(async (snap, context) => {
+    const source = snap.data();
+    const token = source.token;
+    if (source === null) {
+      return null;
+    }
 
-  try {
-    const snapshot = await admin.firestore().collection('stripe_customers').doc(context.params.userId).get();
-    const customer =  snapshot.data().customer_id;
-    const response = await stripe.customers.createSource(customer, {source: token});
-    return admin.firestore().collection('stripe_customers').doc(context.params.userId).collection("sources").doc(response.fingerprint).set(response, {merge: true});
-  } catch (error) {
-    await snap.ref.set({'error':userFacingMessage(error)},{merge:true});
-    return reportError(error, {user: context.params.userId});
-  }
-});
+    try {
+      const snapshot = await admin
+        .firestore()
+        .collection('stripe_customers')
+        .doc(context.params.userId)
+        .get();
+      const customer = snapshot.data().customer_id;
+      const response = await stripe.customers.createSource(customer, {
+        source: token,
+      });
+      return admin
+        .firestore()
+        .collection('stripe_customers')
+        .doc(context.params.userId)
+        .collection('sources')
+        .doc(response.fingerprint)
+        .set(response, { merge: true });
+    } catch (error) {
+      await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
+      return reportError(error, { user: context.params.userId });
+    }
+  });
 
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
-  const snapshot = await admin.firestore().collection('stripe_customers').doc(user.uid).get();
+  const snapshot = await admin
+    .firestore()
+    .collection('stripe_customers')
+    .doc(user.uid)
+    .get();
   const customer = snapshot.data();
   await stripe.customers.del(customer.customer_id);
-  return admin.firestore().collection('stripe_customers').doc(user.uid).delete();
+  return admin
+    .firestore()
+    .collection('stripe_customers')
+    .doc(user.uid)
+    .delete();
 });
 
 // To keep on top of errors, we should raise a verbose error report with Stackdriver rather
@@ -100,7 +139,7 @@ function reportError(err, context = {}) {
   const metadata = {
     resource: {
       type: 'cloud_function',
-      labels: {function_name: process.env.FUNCTION_NAME},
+      labels: { function_name: process.env.FUNCTION_NAME },
     },
   };
 
@@ -118,7 +157,7 @@ function reportError(err, context = {}) {
   return new Promise((resolve, reject) => {
     log.write(log.entry(metadata, errorEvent), (error) => {
       if (error) {
-       return reject(error);
+        return reject(error);
       }
       return resolve();
     });
@@ -128,5 +167,7 @@ function reportError(err, context = {}) {
 
 // Sanitize the error message for the user
 function userFacingMessage(error) {
-  return error.type ? error.message : 'An error occurred, developers have been alerted';
+  return error.type
+    ? error.message
+    : 'An error occurred, developers have been alerted';
 }

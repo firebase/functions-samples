@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Cloud Functions for Firebase (Stripe example)</title>
     <script src="https://js.stripe.com/v2/"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css" />
+    <link
+      rel="stylesheet"
+      href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css"
+    />
   </head>
   <body>
     <div class="container">
@@ -20,8 +23,8 @@
             <ul>
               <li v-for="source in sources">
                 <span v-if="source.id">
-                  {{ source.brand }} &hellip;{{ source.last4 }}
-                  (exp. {{ source.exp_month }}/{{ source.exp_year }})
+                  {{ source.brand }} &hellip;{{ source.last4 }} (exp. {{
+                  source.exp_month }}/{{ source.exp_year }})
                 </span>
                 <span v-else>&hellip;</span>
               </li>
@@ -29,25 +32,21 @@
             <div>
               <h4>New</h4>
               <div>
-                <label>
-                  Number <input v-model="newCreditCard.number">
-                </label>
+                <label> Number <input v-model="newCreditCard.number" /> </label>
               </div>
               <div>
-                <label>
-                  CCV <input v-model="newCreditCard.cvc">
-                </label>
+                <label> CCV <input v-model="newCreditCard.cvc" /> </label>
               </div>
               <div>
                 <label>
                   Exp
-                  <input v-model="newCreditCard.exp_month" size="2"> /
-                  <input v-model="newCreditCard.exp_year" size="4">
+                  <input v-model="newCreditCard.exp_month" size="2" /> /
+                  <input v-model="newCreditCard.exp_year" size="4" />
                 </label>
               </div>
               <div>
                 <label>
-                  Zip <input v-model="newCreditCard.address_zip">
+                  Zip <input v-model="newCreditCard.address_zip" />
                 </label>
               </div>
               <div>
@@ -63,9 +62,9 @@
                   {{ charge.error }}
                 </span>
                 <span v-else-if="charge.outcome">
-                  {{ charge.outcome.seller_message }}
-                  {{ charge.source.brand }} &hellip;{{ charge.source.last4 }}
-                  (exp. {{ charge.source.exp_month }}/{{ charge.source.exp_year }})
+                  {{ charge.outcome.seller_message }} {{ charge.source.brand }}
+                  &hellip;{{ charge.source.last4 }} (exp. {{
+                  charge.source.exp_month }}/{{ charge.source.exp_year }})
                 </span>
                 <span v-else>&hellip;</span>
               </li>
@@ -76,17 +75,19 @@
                 Card
                 <select v-model="newCharge.source">
                   <option :value="null">Default payment method</option>
-                  <option v-for="(source, id) in sources" v-bind:value="source.id" v-if="source.id">
-                    {{ source.brand }} &hellip;{{ source.last4 }}
-                    (exp. {{ source.exp_month }}/{{ source.exp_year }})
+                  <option
+                    v-for="(source, id) in sources"
+                    v-bind:value="source.id"
+                    v-if="source.id"
+                  >
+                    {{ source.brand }} &hellip;{{ source.last4 }} (exp. {{
+                    source.exp_month }}/{{ source.exp_year }})
                   </option>
                 </select>
               </label>
             </div>
             <div>
-              <label>
-                Amount <input v-model="newCharge.amount">
-              </label>
+              <label> Amount <input v-model="newCharge.amount" /> </label>
             </div>
             <div>
               <button v-on:click="submitNewCharge">Charge</button>
@@ -110,19 +111,23 @@
     <script src="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.js"></script>
 
     <script>
-      Stripe.setPublishableKey( /* TODO: add your stripe publishable key */ );
+      Stripe.setPublishableKey('pk_test_vLrqIOp4auLRV7z07T36fiTC00ZuF9N2o2');
       var firebaseUI = new firebaseui.auth.AuthUI(firebase.auth());
       var firebaseAuthOptions = {
         callbacks: {
-          signInSuccess: (currentUser, credential, redirectUrl) => { return false; },
-          uiShown: () => { document.getElementById('loader').style.display = 'none'; }
+          signInSuccess: (currentUser, credential, redirectUrl) => {
+            return false;
+          },
+          uiShown: () => {
+            document.getElementById('loader').style.display = 'none';
+          },
         },
         signInFlow: 'popup',
         signInSuccessUrl: '/',
-        signInOptions: [ firebase.auth.GoogleAuthProvider.PROVIDER_ID ],
-        tosUrl: '/'
+        signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
+        tosUrl: '/',
       };
-      firebase.auth().onAuthStateChanged(firebaseUser => {
+      firebase.auth().onAuthStateChanged((firebaseUser) => {
         if (firebaseUser) {
           document.getElementById('loader').style.display = 'none';
           app.currentUser = firebaseUser;
@@ -143,77 +148,113 @@
             cvc: '111',
             exp_month: 1,
             exp_year: 2020,
-            address_zip: '00000'
+            address_zip: '00000',
           },
           charges: {},
           newCharge: {
             source: null,
-            amount: 2000
-          }
+            amount: 2000,
+          },
         },
-        ready: () => {
-        },
+        ready: () => {},
         methods: {
-          listen: function() {
-            firebase.firestore().collection('stripe_customers').doc(`${this.currentUser.uid}`).onSnapshot(snapshot => {
-              this.stripeCustomerInitialized = (snapshot.data() !== null);
-            }, () => {
-              this.stripeCustomerInitialized = false;
-            });
-            firebase.firestore().collection('stripe_customers').doc(`${this.currentUser.uid}`).collection('sources').onSnapshot(snapshot => {
-             let newSources = {};
-              snapshot.forEach(doc => {
-                const id = doc.id;
-                newSources[id] = doc.data();
-              })
-              this.sources = newSources;
-            }, () => {
-              this.sources = {};
-            });
-            firebase.firestore().collection('stripe_customers').doc(`${this.currentUser.uid}`).collection('charges').onSnapshot(snapshot => {
-            let newCharges = {};
-             snapshot.forEach(doc => {
-               const id = doc.id;
-               newCharges[id] = doc.data();
-             })
-             this.charges = newCharges;
-            }, () => {
-              this.charges = {};
-            });
+          listen: function () {
+            firebase
+              .firestore()
+              .collection('stripe_customers')
+              .doc(`${this.currentUser.uid}`)
+              .onSnapshot(
+                (snapshot) => {
+                  this.stripeCustomerInitialized = snapshot.data() !== null;
+                },
+                () => {
+                  this.stripeCustomerInitialized = false;
+                }
+              );
+            firebase
+              .firestore()
+              .collection('stripe_customers')
+              .doc(`${this.currentUser.uid}`)
+              .collection('sources')
+              .onSnapshot(
+                (snapshot) => {
+                  let newSources = {};
+                  snapshot.forEach((doc) => {
+                    const id = doc.id;
+                    newSources[id] = doc.data();
+                  });
+                  this.sources = newSources;
+                },
+                () => {
+                  this.sources = {};
+                }
+              );
+            firebase
+              .firestore()
+              .collection('stripe_customers')
+              .doc(`${this.currentUser.uid}`)
+              .collection('charges')
+              .onSnapshot(
+                (snapshot) => {
+                  let newCharges = {};
+                  snapshot.forEach((doc) => {
+                    const id = doc.id;
+                    newCharges[id] = doc.data();
+                  });
+                  this.charges = newCharges;
+                },
+                () => {
+                  this.charges = {};
+                }
+              );
           },
-          submitNewCreditCard: function() {
-            Stripe.card.createToken({
-              number: this.newCreditCard.number,
-              cvc: this.newCreditCard.cvc,
-              exp_month: this.newCreditCard.exp_month,
-              exp_year: this.newCreditCard.exp_year,
-              address_zip: this.newCreditCard.address_zip
-            }, (status, response) => {
-              if (response.error) {
-                this.newCreditCard.error = response.error.message;
-              } else {
-                firebase.firestore().collection('stripe_customers').doc(this.currentUser.uid).collection('tokens').add({token: response.id}).then(() => {
-                  this.newCreditCard = {
-                    number: '',
-                    cvc: '',
-                    exp_month: 1,
-                    exp_year: 2017,
-                    address_zip: ''
-                  };
-                });
+          submitNewCreditCard: function () {
+            Stripe.card.createToken(
+              {
+                number: this.newCreditCard.number,
+                cvc: this.newCreditCard.cvc,
+                exp_month: this.newCreditCard.exp_month,
+                exp_year: this.newCreditCard.exp_year,
+                address_zip: this.newCreditCard.address_zip,
+              },
+              (status, response) => {
+                if (response.error) {
+                  this.newCreditCard.error = response.error.message;
+                } else {
+                  firebase
+                    .firestore()
+                    .collection('stripe_customers')
+                    .doc(this.currentUser.uid)
+                    .collection('tokens')
+                    .add({ token: response.id })
+                    .then(() => {
+                      this.newCreditCard = {
+                        number: '',
+                        cvc: '',
+                        exp_month: 1,
+                        exp_year: 2017,
+                        address_zip: '',
+                      };
+                    });
+                }
               }
-            });
+            );
           },
-          submitNewCharge: function() {
-            firebase.firestore().collection('stripe_customers').doc(this.currentUser.uid).collection('charges').add({
-              source: this.newCharge.source,
-              amount: parseInt(this.newCharge.amount)
-            });
+          submitNewCharge: function () {
+            firebase
+              .firestore()
+              .collection('stripe_customers')
+              .doc(this.currentUser.uid)
+              .collection('charges')
+              .add({
+                source: this.newCharge.source,
+                amount: parseInt(this.newCharge.amount),
+              });
           },
-          signOut: function() {
-            firebase.auth().signOut()
-          }
-        }
+          signOut: function () {
+            firebase.auth().signOut();
+          },
+        },
       });
     </script>
   </body>

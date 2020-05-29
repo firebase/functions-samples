@@ -3,9 +3,9 @@
   "description": "Stripe Firebase Functions",
   "dependencies": {
     "@google-cloud/logging": "^7.2.3",
-    "stripe": "^8.24.0",
     "firebase-admin": "~8.9.2",
-    "firebase-functions": "^3.3.0"
+    "firebase-functions": "^3.3.0",
+    "stripe": "^8.56.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -20,7 +20,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "8"
+    "node": "10"
   },
   "private": true
 }
