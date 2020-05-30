@@ -15,6 +15,15 @@
       href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css"
     />
   </head>
+  <style>
+    fieldset {
+      background-color: antiquewhite;
+    }
+    #error-message {
+      color: red;
+      height: 2em;
+    }
+  </style>
   <body>
     <section id="firebaseui-auth-container"></section>
     <div id="loader">Loading &hellip;</div>
@@ -24,23 +33,56 @@
       </button>
       <div>
         <h1>Payment Methods</h1>
-        <ul></ul>
+        <details id="add-new-card">
+          <summary>Add new</summary>
+          <form id="payment-method-form">
+            <label>
+              Cardholder name
+              <input type="text" name="name" required />
+            </label>
+            <fieldset>
+              <div id="card-element"></div>
+            </fieldset>
+            <div id="error-message" role="alert"></div>
+            <button>Save Card</button>
+          </form>
+        </details>
         <hr />
-        <h2>Add new</h2>
-        <form>
-          <label>
-            Cardholder name
-            <input type="text" name="name" />
-          </label>
-          <fieldset>
-            <legend>Card details</legend>
-            <div id="card-element"></div>
-          </fieldset>
-          <button>Save Card</button>
+        <form id="payment-form">
+          <div>
+            <label>
+              Card:
+              <select name="payment-method" required></select>
+            </label>
+          </div>
+          <div>
+            <label>
+              Amount:
+              <input
+                name="amount"
+                type="number"
+                min="1"
+                max="99999999"
+                value="100"
+                required
+              />
+            </label>
+            <label>
+              Currency:
+              <select name="currency">
+                <option value="usd">USD</option>
+                <option value="eur">EUR</option>
+                <option value="gbp">GBP</option>
+                <option value="jpy">JPY</option>
+              </select>
+            </label>
+          </div>
+          <button>Charge selected card</button>
         </form>
       </div>
       <div>
-        <h1>Charges</h1>
+        <h1>Payments</h1>
+        <ul id="payments-list"></ul>
       </div>
     </section>
 
@@ -83,6 +125,7 @@
             .onSnapshot((snapshot) => {
               if (snapshot.data()) {
                 customerData = snapshot.data();
+                startDataListeners();
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
               }
@@ -98,8 +141,82 @@
       const elements = stripe.elements();
       const cardElement = elements.create('card');
       cardElement.mount('#card-element');
+      cardElement.on('change', ({ error }) => {
+        const displayError = document.getElementById('error-message');
+        if (error) {
+          displayError.textContent = error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
 
       /* Data listeners */
+      function startDataListeners() {
+        // Get payment methods for customer
+        firebase
+          .firestore()
+          .collection('stripe_customers')
+          .doc(currentUser.uid)
+          .collection('payment_methods')
+          .onSnapshot((snapshot) => {
+            if (snapshot.empty)
+              document.querySelector('#add-new-card').open = true;
+            document
+              .querySelectorAll('select[name=payment-method] option')
+              .forEach((el) => el.remove());
+            snapshot.forEach(function (doc) {
+              const paymentMethod = doc.data();
+              if (!paymentMethod.card) return;
+              const content = document.createTextNode(
+                `${paymentMethod.card.brand} •••• ${paymentMethod.card.last4} | Expires ${paymentMethod.card.exp_month}/${paymentMethod.card.exp_year}`
+              );
+              const option = document.createElement('option');
+              option.value = paymentMethod.id;
+              option.appendChild(content);
+              document
+                .querySelector('select[name=payment-method]')
+                .appendChild(option);
+            });
+          });
+        // Get all payments for customer
+        firebase
+          .firestore()
+          .collection('stripe_customers')
+          .doc(currentUser.uid)
+          .collection('payments')
+          .onSnapshot((snapshot) => {
+            document
+              .querySelectorAll('#payments-list li')
+              .forEach((el) => el.remove());
+            snapshot.forEach((doc) => {
+              const payment = doc.data();
+              let content = '';
+              if (payment.status === 'new') {
+                content = `Creating Payment for ${formatAmount(
+                  payment.amount,
+                  payment.currency
+                )}`;
+              } else if (payment.status === 'succeeded') {
+                const card =
+                  payment.charges.data[0].payment_method_details.card;
+                content = `✅ Payment for ${formatAmount(
+                  payment.amount,
+                  payment.currency
+                )} on ${card.brand} card •••• ${card.last4}.`;
+              } else if (payment.status === 'requires_action') {
+                content = `🚨 Payment for ${formatAmount(
+                  payment.amount,
+                  payment.currency
+                )} ${payment.status}`;
+                handleCardAction(payment, doc.id);
+              }
+              const contentNode = document.createTextNode(content);
+              const li = document.createElement('li');
+              li.appendChild(contentNode);
+              document.querySelector('#payments-list').appendChild(li);
+            });
+          });
+      }
 
       /* Event listeners */
       // Signout button
@@ -108,9 +225,10 @@
         .addEventListener('click', () => firebase.auth().signOut());
       // Add new card form
       document
-        .querySelector('form')
+        .querySelector('#payment-method-form')
         .addEventListener('submit', async (event) => {
           event.preventDefault();
+          if (!event.target.reportValidity()) return;
           document
             .querySelectorAll('button')
             .forEach((button) => (button.disabled = true));
@@ -131,10 +249,12 @@
           );
 
           if (error) {
-            console.warn(error);
+            document.querySelector('#error-message').textContent =
+              error.message;
             document
               .querySelectorAll('button')
               .forEach((button) => (button.disabled = false));
+            return;
           }
 
           await firebase
@@ -142,8 +262,70 @@
             .collection('stripe_customers')
             .doc(currentUser.uid)
             .collection('payment_methods')
-            .add({ payment_method: setupIntent.payment_method });
+            .add({ id: setupIntent.payment_method });
+
+          document.querySelector('#add-new-card').open = false;
+          document
+            .querySelectorAll('button')
+            .forEach((button) => (button.disabled = false));
         });
+
+      // Create payment form
+      document
+        .querySelector('#payment-form')
+        .addEventListener('submit', async (event) => {
+          event.preventDefault();
+          document
+            .querySelectorAll('button')
+            .forEach((button) => (button.disabled = true));
+
+          const form = new FormData(event.target);
+          const data = {
+            payment_method: form.get('payment-method'),
+            currency: form.get('currency'),
+            amount: Number(form.get('amount')),
+            status: 'new',
+          };
+
+          await firebase
+            .firestore()
+            .collection('stripe_customers')
+            .doc(currentUser.uid)
+            .collection('payments')
+            .add(data);
+
+          document
+            .querySelectorAll('button')
+            .forEach((button) => (button.disabled = false));
+        });
+
+      /* Helper functions */
+      // Format amount for nice display
+      function formatAmount(amount, currency) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency,
+        }).format((amount / 100).toFixed(2));
+      }
+      // Format amount for Stripe with zero decimal currency detection
+      function formatAmountForStripe(amount, currency) {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency,
+        }).format((amount / 100).toFixed(2));
+      }
+      // Handle card actions like 3D Secure
+      async function handleCardAction(payment, docId) {
+        const result = await stripe.confirmCardPayment(payment.client_secret);
+        if (result.error) return;
+        await firebase
+          .firestore()
+          .collection('stripe_customers')
+          .doc(currentUser.uid)
+          .collection('payments')
+          .doc(docId)
+          .set(result.paymentIntent, { merge: true });
+      }
     </script>
   </body>
 </html>

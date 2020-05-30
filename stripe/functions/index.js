@@ -22,48 +22,10 @@ const { Logging } = require('@google-cloud/logging');
 const logging = new Logging({
   projectId: 'functions-sample-stripe-79aef',
 });
-const stripe = require('stripe')(functions.config().stripe.token, {
+const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-03-02',
 });
 const currency = functions.config().stripe.currency || 'USD';
-
-// [START chargecustomer]
-// Charge the Stripe customer whenever an amount is created in Cloud Firestore
-exports.createStripeCharge = functions.firestore
-  .document('stripe_customers/{userId}/charges/{id}')
-  .onCreate(async (snap, context) => {
-    const val = snap.data();
-    try {
-      // Look up the Stripe customer id written in createStripeCustomer
-      const snapshot = await admin
-        .firestore()
-        .collection(`stripe_customers`)
-        .doc(context.params.userId)
-        .get();
-      const snapval = snapshot.data();
-      const customer = snapval.customer_id;
-      // Create a charge using the pushId as the idempotency key
-      // protecting against double charges
-      const amount = val.amount;
-      const idempotencyKey = context.params.id;
-      const charge = { amount, currency, customer };
-      if (val.source !== null) {
-        charge.source = val.source;
-      }
-      const response = await stripe.charges.create(charge, {
-        idempotency_key: idempotencyKey,
-      });
-      // If the result is successful, write it back to the database
-      return snap.ref.set(response, { merge: true });
-    } catch (error) {
-      // We want to capture errors and render them in a user-friendly way, while
-      // still logging an exception with StackDriver
-      console.log(error);
-      await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
-      return reportError(error, { user: context.params.userId });
-    }
-  });
-// [END chargecustomer]]
 
 // When a user is created, register them with Stripe
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
@@ -77,34 +39,62 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   });
 });
 
-// Add a payment source (card) for a user by writing a stripe payment source token to Cloud Firestore
-exports.addPaymentSource = functions.firestore
-  .document('/stripe_customers/{userId}/tokens/{pushId}')
+// Using the payment method ID we added client-side, let's add the payment method details.
+exports.addPaymentMethodDetails = functions.firestore
+  .document('/stripe_customers/{userId}/payment_methods/{pushId}')
   .onCreate(async (snap, context) => {
-    const source = snap.data();
-    const token = source.token;
-    if (source === null) {
-      return null;
-    }
-
     try {
-      const snapshot = await admin
-        .firestore()
-        .collection('stripe_customers')
-        .doc(context.params.userId)
-        .get();
-      const customer = snapshot.data().customer_id;
-      const response = await stripe.customers.createSource(customer, {
-        source: token,
+      const paymentMethodId = snap.data().id;
+      const paymentMethod = await stripe.paymentMethods.retrieve(
+        paymentMethodId
+      );
+      await snap.ref.set(paymentMethod);
+      // Create a new SetupIntent so the customer can add a new method next time.
+      const intent = await stripe.setupIntents.create({
+        customer: paymentMethod.customer,
       });
-      return admin
-        .firestore()
-        .collection('stripe_customers')
-        .doc(context.params.userId)
-        .collection('sources')
-        .doc(response.fingerprint)
-        .set(response, { merge: true });
+      await snap.ref.parent.parent.set(
+        {
+          setup_secret: intent.client_secret,
+        },
+        { merge: true }
+      );
+      return;
     } catch (error) {
+      await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
+      return reportError(error, { user: context.params.userId });
+    }
+  });
+
+// Create a payment on the customers stored card
+exports.createStripePayment = functions.firestore
+  .document('stripe_customers/{userId}/payments/{pushId}')
+  .onCreate(async (snap, context) => {
+    const { amount, currency, payment_method } = snap.data();
+    try {
+      // Look up the Stripe customer id written in createStripeCustomer
+      const customer = (await snap.ref.parent.parent.get()).data().customer_id;
+      // Create a charge using the pushId as the idempotency key
+      // protecting against double charges
+      const idempotencyKey = context.params.pushId;
+      const payment = await stripe.paymentIntents.create(
+        {
+          amount,
+          currency,
+          customer,
+          payment_method,
+          off_session: false,
+          confirm: true,
+          confirmation_method: 'manual',
+        },
+        { idempotencyKey }
+      );
+      // If the result is successful, write it back to the database
+      return snap.ref.set(payment);
+    } catch (error) {
+      // We want to capture errors and render them in a user-friendly way, while
+      // still logging an exception with StackDriver
+      console.log(error);
       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
       return reportError(error, { user: context.params.userId });
     }
@@ -112,18 +102,17 @@ exports.addPaymentSource = functions.firestore
 
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
-  const snapshot = await admin
-    .firestore()
-    .collection('stripe_customers')
-    .doc(user.uid)
-    .get();
-  const customer = snapshot.data();
+  const dbRef = admin.firestore().collection('stripe_customers');
+  const customer = (await dbRef.doc(user.uid).get()).data();
   await stripe.customers.del(customer.customer_id);
-  return admin
-    .firestore()
-    .collection('stripe_customers')
+  // Delete the customers payment methods in firestore
+  const snapshot = await dbRef
     .doc(user.uid)
-    .delete();
+    .collection('payment_methods')
+    .get();
+  snapshot.forEach((doc) => doc.delete());
+  await dbRef.doc(user.uid).delete();
+  return;
 });
 
 // To keep on top of errors, we should raise a verbose error report with Stackdriver rather
