@@ -7,6 +7,10 @@ Further reading:
 - Stripe Node API: https://stripe.com/docs/api/node
 - Firebase SDK: https://firebase.google.com/docs/functions
 
+## Demo
+
+- https://functions-sample-stripe-79aef.firebaseapp.com/
+
 ## Functions Code
 
 See file [functions/index.js](functions/index.js) for the code.

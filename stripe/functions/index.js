@@ -100,6 +100,18 @@ exports.createStripePayment = functions.firestore
     }
   });
 
+// Finalise the payment after 3D Secure was performed
+exports.confirmStripePayment = functions.firestore
+  .document('stripe_customers/{userId}/payments/{pushId}')
+  .onUpdate(async (change, context) => {
+    if (change.after.data().status === 'requires_confirmation') {
+      const payment = await stripe.paymentIntents.confirm(
+        change.after.data().id
+      );
+      change.after.ref.set(payment);
+    }
+  });
+
 // When a user deletes their account, clean up after them
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   const dbRef = admin.firestore().collection('stripe_customers');
@@ -110,7 +122,7 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
     .doc(user.uid)
     .collection('payment_methods')
     .get();
-  snapshot.forEach((doc) => doc.delete());
+  snapshot.forEach((snap) => snap.ref.delete());
   await dbRef.doc(user.uid).delete();
   return;
 });

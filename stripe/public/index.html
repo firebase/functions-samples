@@ -191,7 +191,10 @@
             snapshot.forEach((doc) => {
               const payment = doc.data();
               let content = '';
-              if (payment.status === 'new') {
+              if (
+                payment.status === 'new' ||
+                payment.status === 'requires_confirmation'
+              ) {
                 content = `Creating Payment for ${formatAmount(
                   payment.amount,
                   payment.currency
@@ -209,6 +212,11 @@
                   payment.currency
                 )} ${payment.status}`;
                 handleCardAction(payment, doc.id);
+              } else {
+                content = `⚠️ Payment for ${formatAmount(
+                  payment.amount,
+                  payment.currency
+                )} ${payment.status}`;
               }
               const contentNode = document.createTextNode(content);
               const li = document.createElement('li');
@@ -280,10 +288,12 @@
             .forEach((button) => (button.disabled = true));
 
           const form = new FormData(event.target);
+          const amount = Number(form.get('amount'));
+          const currency = form.get('currency');
           const data = {
             payment_method: form.get('payment-method'),
-            currency: form.get('currency'),
-            amount: Number(form.get('amount')),
+            currency,
+            amount: formatAmountForStripe(amount, currency),
             status: 'new',
           };
 
@@ -302,21 +312,39 @@
       /* Helper functions */
       // Format amount for nice display
       function formatAmount(amount, currency) {
+        amount = zeroDecimalCurrency(amount, currency)
+          ? amount
+          : (amount / 100).toFixed(2);
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
           currency,
-        }).format((amount / 100).toFixed(2));
+        }).format(amount);
       }
       // Format amount for Stripe with zero decimal currency detection
       function formatAmountForStripe(amount, currency) {
-        return new Intl.NumberFormat('en-US', {
+        return zeroDecimalCurrency(amount, currency)
+          ? amount
+          : Math.round(amount * 100);
+      }
+      // Check if we have a zero decimal currency
+      function zeroDecimalCurrency(amount, currency) {
+        let numberFormat = new Intl.NumberFormat(['en-US'], {
           style: 'currency',
-          currency,
-        }).format((amount / 100).toFixed(2));
+          currency: currency,
+          currencyDisplay: 'symbol',
+        });
+        const parts = numberFormat.formatToParts(amount);
+        let zeroDecimalCurrency = true;
+        for (let part of parts) {
+          if (part.type === 'decimal') {
+            zeroDecimalCurrency = false;
+          }
+        }
+        return zeroDecimalCurrency;
       }
       // Handle card actions like 3D Secure
       async function handleCardAction(payment, docId) {
-        const result = await stripe.confirmCardPayment(payment.client_secret);
+        const result = await stripe.handleCardAction(payment.client_secret);
         if (result.error) return;
         await firebase
           .firestore()
