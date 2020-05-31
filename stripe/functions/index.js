@@ -36,10 +36,11 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const intent = await stripe.setupIntents.create({
     customer: customer.id,
   });
-  return admin.firestore().collection('stripe_customers').doc(user.uid).set({
+  await admin.firestore().collection('stripe_customers').doc(user.uid).set({
     customer_id: customer.id,
     setup_secret: intent.client_secret,
   });
+  return;
 });
 
 /**
@@ -68,7 +69,8 @@ exports.addPaymentMethodDetails = functions.firestore
       return;
     } catch (error) {
       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
-      return reportError(error, { user: context.params.userId });
+      reportError(error, { user: context.params.userId });
+      return;
     }
   });
 
@@ -101,13 +103,15 @@ exports.createStripePayment = functions.firestore
         { idempotencyKey }
       );
       // If the result is successful, write it back to the database.
-      return snap.ref.set(payment);
+      await snap.ref.set(payment);
+      return;
     } catch (error) {
       // We want to capture errors and render them in a user-friendly way, while
       // still logging an exception with StackDriver
       console.log(error);
       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
-      return reportError(error, { user: context.params.userId });
+      reportError(error, { user: context.params.userId });
+      return;
     }
   });
 
