@@ -20,7 +20,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const { Logging } = require('@google-cloud/logging');
 const logging = new Logging({
-  projectId: '< ADD YOUR FIREBASE PROJECT ID >',
+  projectId: '<YOUR FIREBASE PROJECT ID>',
 });
 const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-03-02',

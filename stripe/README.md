@@ -4,11 +4,11 @@ This sample shows you how to create Stripe customers when your users sign up, se
 
 ### Features
 
-- Create a customer object in Stripe when a new users signs up. ([view code]())
-- Securel collect a customers card details with Stripe Elements and set them up for future usage. ([view code]())
-- Create a payment on the customer's card when a new document is written to the `payments` collection. ([view code]())
+- Create a customer object in Stripe when a new users signs up. ([view code](./functions/index.js#L29))
+- Securel collect a customers card details with Stripe Elements and set them up for future usage. ([view code](./public/javascript/app.js#L69))
+- Create a payment on the customer's card when a new document is written to the `payments` collection. ([view code](./functions/index.js#L75))
   - **NOTE:** Note that this example creates the payment document on the client with amount and currency inputted by the user. In a real application you need to validate price details in your function, e.g. based on product information stored in your Firestore.
-- Handle 3D Secure authentication if required by the card issuer. Read more about 3D Secure and SCA [here](). ([view code]())
+- Handle 3D Secure authentication if required by the card issuer. Read more about 3D Secure and SCA [here](https://stripe.com/payments/strong-customer-authentication). ([view code](./functions/index.js#L114))
 
 #### Further reading:
 
@@ -20,11 +20,9 @@ This sample shows you how to create Stripe customers when your users sign up, se
 
 - https://cloud-functions-stripe-sample.web.app/
 
-![Firebase Stripe demo gif](/demo.gif)
+![Firebase Stripe demo gif](./demo.gif)
 
 ## Deploy and test
-
-To test this integration:
 
 - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
 - Enable billing on your project by switching to the Blaze or Flame plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
@@ -36,11 +34,11 @@ To test this integration:
   ```bash
   firebase functions:config:set stripe.secret=<YOUR STRIPE SECRET KEY>
   ```
-- Set your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) for the `STRIPE_PUBLISHABLE_KEY` const in [`/public/javascript/app.js`](/public/javascript/app.js#L16)
+- Set your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) for the `STRIPE_PUBLISHABLE_KEY` const in [`/public/javascript/app.js`](./public/javascript/app.js#L16)
 - Deploy your project using `firebase deploy`
 - Test your Stripe integration by viewing your deployed site `firebase open hosting:site`
 
-## Run the client locally
+### Run the client locally
 
 Since this project uses Firebase Auth triggers, the functions need to be deployed. However, when making changes to your client application in the `/public` folder, you can serve it locally to quickly preview changes.
 
