@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_vLrqIOp4auLRV7z07T36fiTC00ZuF9N2o2';
+const STRIPE_PUBLISHABLE_KEY = '< YOUR STRIPE PUBLISHABLE KEY >';
 let currentUser = {};
 let customerData = {};
 
-/* Firebase auth */
+/**
+ * Firebase auth configuration
+ */
 const firebaseUI = new firebaseui.auth.AuthUI(firebase.auth());
 const firebaseUiConfig = {
   callbacks: {
@@ -64,7 +66,9 @@ firebase.auth().onAuthStateChanged((firebaseUser) => {
   }
 });
 
-/* Set up Stripe Elements */
+/**
+ * Set up Stripe Elements
+ */
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 const elements = stripe.elements();
 const cardElement = elements.create('card');
@@ -78,22 +82,30 @@ cardElement.on('change', ({ error }) => {
   }
 });
 
-/* Data listeners */
+/**
+ * Set up Firestore data listeners
+ */
 function startDataListeners() {
-  // Get payment methods for customer
+  /**
+   * Get all payment methods for the logged in customer
+   */
   firebase
     .firestore()
     .collection('stripe_customers')
     .doc(currentUser.uid)
     .collection('payment_methods')
     .onSnapshot((snapshot) => {
-      if (snapshot.empty) document.querySelector('#add-new-card').open = true;
+      if (snapshot.empty) {
+        document.querySelector('#add-new-card').open = true;
+      }
       document
         .querySelectorAll('select[name=payment-method] option')
         .forEach((el) => el.remove());
       snapshot.forEach(function (doc) {
         const paymentMethod = doc.data();
-        if (!paymentMethod.card) return;
+        if (!paymentMethod.card) {
+          return;
+        }
         const content = document.createTextNode(
           `${paymentMethod.card.brand} •••• ${paymentMethod.card.last4} | Expires ${paymentMethod.card.exp_month}/${paymentMethod.card.exp_year}`
         );
@@ -105,17 +117,21 @@ function startDataListeners() {
           .appendChild(option);
       });
     });
-  // Get all payments for customer
+
+  /**
+   * Get all payments for the logged in customer
+   */
   firebase
     .firestore()
     .collection('stripe_customers')
     .doc(currentUser.uid)
     .collection('payments')
     .onSnapshot((snapshot) => {
-      if (!snapshot.empty)
+      if (!snapshot.empty) {
         document
           .querySelectorAll('#payments-list li')
           .forEach((el) => el.remove());
+      }
       snapshot.forEach((doc) => {
         const payment = doc.data();
         let content = '';
@@ -153,17 +169,23 @@ function startDataListeners() {
     });
 }
 
-/* Event listeners */
+/**
+ * Event listeners
+ */
+
 // Signout button
 document
   .getElementById('signout')
   .addEventListener('click', () => firebase.auth().signOut());
+
 // Add new card form
 document
   .querySelector('#payment-method-form')
   .addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (!event.target.reportValidity()) return;
+    if (!event.target.reportValidity()) {
+      return;
+    }
     document
       .querySelectorAll('button')
       .forEach((button) => (button.disabled = true));
@@ -235,8 +257,11 @@ document
       .forEach((button) => (button.disabled = false));
   });
 
-/* Helper functions */
-// Format amount for nice display
+/**
+ * Helper functions
+ */
+
+// Format amount for diplay in the UI
 function formatAmount(amount, currency) {
   amount = zeroDecimalCurrency(amount, currency)
     ? amount
@@ -246,13 +271,16 @@ function formatAmount(amount, currency) {
     currency,
   }).format(amount);
 }
-// Format amount for Stripe with zero decimal currency detection
+
+// Format amount for Stripe
 function formatAmountForStripe(amount, currency) {
   return zeroDecimalCurrency(amount, currency)
     ? amount
     : Math.round(amount * 100);
 }
+
 // Check if we have a zero decimal currency
+// https://stripe.com/docs/currencies#zero-decimal
 function zeroDecimalCurrency(amount, currency) {
   let numberFormat = new Intl.NumberFormat(['en-US'], {
     style: 'currency',
@@ -268,15 +296,24 @@ function zeroDecimalCurrency(amount, currency) {
   }
   return zeroDecimalCurrency;
 }
+
 // Handle card actions like 3D Secure
 async function handleCardAction(payment, docId) {
-  const result = await stripe.handleCardAction(payment.client_secret);
-  if (result.error) return;
+  const { error, paymentIntent } = await stripe.handleCardAction(
+    payment.client_secret
+  );
+  if (error) {
+    alert(error.message);
+    payment = error.payment_intent;
+  } else if (paymentIntent) {
+    payment = paymentIntent;
+  }
+
   await firebase
     .firestore()
     .collection('stripe_customers')
     .doc(currentUser.uid)
     .collection('payments')
     .doc(docId)
-    .set(result.paymentIntent, { merge: true });
+    .set(payment, { merge: true });
 }

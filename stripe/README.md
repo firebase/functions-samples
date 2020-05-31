@@ -1,23 +1,26 @@
 # Create Stripe customers and charge them on Cloud Firestore write
 
-This sample shows how to create Stripe customers and charge them when Cloud Firestore is written to.
+This sample shows you how to create Stripe customers when your users sign up, secure collect and store their payment details, and charge them when a new document is written to your Firestore.
 
-Further reading:
+### Features
 
-- Stripe: https://stripe.com/docs/api/node
-- Firebase: https://firebase.google.com/docs/functions
+- Create a customer object in Stripe when a new users signs up. ([view code]())
+- Securel collect a customers card details with Stripe Elements and set them up for future usage. ([view code]())
+- Create a payment on the customer's card when a new document is written to the `payments` collection. ([view code]())
+  - **NOTE:** Note that this example creates the payment document on the client with amount and currency inputted by the user. In a real application you need to validate price details in your function, e.g. based on product information stored in your Firestore.
+- Handle 3D Secure authentication if required by the card issuer. Read more about 3D Secure and SCA [here](). ([view code]())
+
+#### Further reading:
+
+- Stripe docs: https://stripe.com/docs/payments/save-and-reuse
+- 3D Secure and SCA regulation: https://stripe.com/payments/strong-customer-authentication
+- Firebase docs: https://firebase.google.com/docs/functions
 
 ## Demo
 
 - https://cloud-functions-stripe-sample.web.app/
 
 ![Firebase Stripe demo gif](/demo.gif)
-
-## Functions Code
-
-See file [functions/index.js](functions/index.js) for the code.
-
-The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Deploy and test
 
@@ -31,15 +34,18 @@ To test this integration:
 - Install dependencies locally by running: `cd functions; npm install; cd -`
 - [Add your Stripe API Secret Key](https://dashboard.stripe.com/account/apikeys) to firebase config:
   ```bash
-  firebase functions:config:set stripe.secret=<YOUR STRIPE API KEY>
+  firebase functions:config:set stripe.secret=<YOUR STRIPE SECRET KEY>
   ```
-- Pass your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) to the `Stripe.setPublishableKey` call in `public/index.html`
+- Set your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) for the `STRIPE_PUBLISHABLE_KEY` const in [`/public/javascript/app.js`](/public/javascript/app.js#L16)
 - Deploy your project using `firebase deploy`
 - Test your Stripe integration by viewing your deployed site `firebase open hosting:site`
 
-## Run client locally
+## Run the client locally
+
+Since this project uses Firebase Auth triggers, the functions need to be deployed. However, when making changes to your client application in the `/public` folder, you can serve it locally to quickly preview changes.
 
 ```
-firebase deploy --only functions
+firebase deploy --only functions ## only needs to be run when you make changes to your functions
+
 firebase serve --only hosting
 ```

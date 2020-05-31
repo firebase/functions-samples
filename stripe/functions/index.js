@@ -20,13 +20,17 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const { Logging } = require('@google-cloud/logging');
 const logging = new Logging({
-  projectId: 'functions-sample-stripe-79aef',
+  projectId: '< ADD YOUR FIREBASE PROJECT ID >',
 });
 const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-03-02',
 });
 
-// When a user is created, register them with Stripe
+/**
+ * When a user is created, create a Stripe customer object for them.
+ *
+ * @see https://stripe.com/docs/payments/save-and-reuse#web-create-customer
+ */
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
   const intent = await stripe.setupIntents.create({
@@ -38,7 +42,10 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   });
 });
 
-// Using the payment method ID we added client-side, let's add the payment method details.
+/**
+ * When adding the payment method ID on the clinet,
+ * this function is triggered to retrieve the payment method details.
+ */
 exports.addPaymentMethodDetails = functions.firestore
   .document('/stripe_customers/{userId}/payment_methods/{pushId}')
   .onCreate(async (snap, context) => {
@@ -65,16 +72,21 @@ exports.addPaymentMethodDetails = functions.firestore
     }
   });
 
-// Create a payment on the customers stored card
+/**
+ * When a payment document is written on the client,
+ * this function is triggered to create the payment in Stripe.
+ *
+ * @see https://stripe.com/docs/payments/save-and-reuse#web-create-payment-intent-off-session
+ */
 exports.createStripePayment = functions.firestore
   .document('stripe_customers/{userId}/payments/{pushId}')
   .onCreate(async (snap, context) => {
     const { amount, currency, payment_method } = snap.data();
     try {
-      // Look up the Stripe customer id written in createStripeCustomer
+      // Look up the Stripe customer id.
       const customer = (await snap.ref.parent.parent.get()).data().customer_id;
       // Create a charge using the pushId as the idempotency key
-      // protecting against double charges
+      // to protect against double charges.
       const idempotencyKey = context.params.pushId;
       const payment = await stripe.paymentIntents.create(
         {
@@ -88,7 +100,7 @@ exports.createStripePayment = functions.firestore
         },
         { idempotencyKey }
       );
-      // If the result is successful, write it back to the database
+      // If the result is successful, write it back to the database.
       return snap.ref.set(payment);
     } catch (error) {
       // We want to capture errors and render them in a user-friendly way, while
@@ -99,7 +111,12 @@ exports.createStripePayment = functions.firestore
     }
   });
 
-// Finalise the payment after 3D Secure was performed
+/**
+ * When 3D Secure is performed, we need to reconfirm the payment
+ * after authentication has been performed.
+ *
+ * @see https://stripe.com/docs/payments/accept-a-payment-synchronously#web-confirm-payment
+ */
 exports.confirmStripePayment = functions.firestore
   .document('stripe_customers/{userId}/payments/{pushId}')
   .onUpdate(async (change, context) => {
@@ -111,12 +128,14 @@ exports.confirmStripePayment = functions.firestore
     }
   });
 
-// When a user deletes their account, clean up after them
+/**
+ * When a user deletes their account, clean up after them
+ */
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   const dbRef = admin.firestore().collection('stripe_customers');
   const customer = (await dbRef.doc(user.uid).get()).data();
   await stripe.customers.del(customer.customer_id);
-  // Delete the customers payment methods in firestore
+  // Delete the customers payments & payment methods in firestore.
   const snapshot = await dbRef
     .doc(user.uid)
     .collection('payment_methods')
@@ -126,10 +145,11 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   return;
 });
 
-// To keep on top of errors, we should raise a verbose error report with Stackdriver rather
-// than simply relying on console.error. This will calculate users affected + send you email
-// alerts, if you've opted into receiving them.
-// [START reporterror]
+/**
+ * To keep on top of errors, we should raise a verbose error report with Stackdriver rather
+ * than simply relying on console.error. This will calculate users affected + send you email
+ * alerts, if you've opted into receiving them.
+ */
 function reportError(err, context = {}) {
   // This is the name of the StackDriver log stream that will receive the log
   // entry. This name can be any valid log stream name, but must contain "err"
@@ -165,9 +185,10 @@ function reportError(err, context = {}) {
     });
   });
 }
-// [END reporterror]
 
-// Sanitize the error message for the user
+/**
+ * Sanitize the error message for the user.
+ */
 function userFacingMessage(error) {
   return error.type
     ? error.message
