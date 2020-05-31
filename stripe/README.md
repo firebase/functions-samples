@@ -4,12 +4,14 @@ This sample shows how to create Stripe customers and charge them when Cloud Fire
 
 Further reading:
 
-- Stripe Node API: https://stripe.com/docs/api/node
-- Firebase SDK: https://firebase.google.com/docs/functions
+- Stripe: https://stripe.com/docs/api/node
+- Firebase: https://firebase.google.com/docs/functions
 
 ## Demo
 
-- https://functions-sample-stripe-79aef.firebaseapp.com/
+- https://cloud-functions-stripe-sample.web.app/
+
+![Firebase Stripe demo gif](/demo.gif)
 
 ## Functions Code
 
@@ -31,7 +33,6 @@ To test this integration:
   ```bash
   firebase functions:config:set stripe.secret=<YOUR STRIPE API KEY>
   ```
-- _Optional:_ change your default currency `firebase functions:config:set stripe.currency=GBP`
 - Pass your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) to the `Stripe.setPublishableKey` call in `public/index.html`
 - Deploy your project using `firebase deploy`
 - Test your Stripe integration by viewing your deployed site `firebase open hosting:site`

@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cloud Functions for Firebase (Stripe example)</title>
-    <script src="https://js.stripe.com/v3/"></script>
+    <title>Cloud Functions for Firebase with Stripe Payments</title>
     <link
       type="text/css"
       rel="stylesheet"
@@ -25,6 +24,7 @@
     }
   </style>
   <body>
+    <h1>Cloud Functions for Firebase with Stripe Payments</h1>
     <section id="firebaseui-auth-container"></section>
     <div id="loader">Loading &hellip;</div>
     <section id="content" style="display: none;">
@@ -32,7 +32,7 @@
         Sign out
       </button>
       <div>
-        <h1>Payment Methods</h1>
+        <h2>Payment Methods</h2>
         <details id="add-new-card">
           <summary>Add new</summary>
           <form id="payment-method-form">
@@ -81,10 +81,20 @@
         </form>
       </div>
       <div>
-        <h1>Payments</h1>
-        <ul id="payments-list"></ul>
+        <h2>Payments</h2>
+        <ul id="payments-list">
+          <li>No payments yet. Add a new card and then charge it!</li>
+        </ul>
       </div>
     </section>
+    <hr />
+    <footer>
+      <a
+        href="https://github.com/firebase/functions-samples/tree/master/stripe"
+      >
+        View source code
+      </a>
+    </footer>
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="/__/firebase/7.14.5/firebase-app.js"></script>
@@ -95,265 +105,10 @@
     <!-- Import Firebase UI -->
     <script src="https://www.gstatic.com/firebasejs/ui/4.5.0/firebase-ui-auth.js"></script>
 
-    <script>
-      let currentUser = {};
-      let customerData = {};
+    <!-- Stripe's JS library -->
+    <script src="https://js.stripe.com/v3/"></script>
 
-      /* Firebase auth */
-      const firebaseUI = new firebaseui.auth.AuthUI(firebase.auth());
-      const firebaseAuthOptions = {
-        callbacks: {
-          signInSuccess: (currentUser, credential, redirectUrl) => {
-            return false;
-          },
-          uiShown: () => {
-            document.getElementById('loader').style.display = 'none';
-          },
-        },
-        signInFlow: 'popup',
-        signInSuccessUrl: '/',
-        signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
-        tosUrl: '/',
-      };
-      firebase.auth().onAuthStateChanged((firebaseUser) => {
-        if (firebaseUser) {
-          currentUser = firebaseUser;
-          firebase
-            .firestore()
-            .collection('stripe_customers')
-            .doc(currentUser.uid)
-            .onSnapshot((snapshot) => {
-              if (snapshot.data()) {
-                customerData = snapshot.data();
-                startDataListeners();
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-              }
-            });
-        } else {
-          document.getElementById('content').style.display = 'none';
-          firebaseUI.start('#firebaseui-auth-container', firebaseAuthOptions);
-        }
-      });
-
-      /* Set up Stripe Elements */
-      const stripe = Stripe('pk_test_vLrqIOp4auLRV7z07T36fiTC00ZuF9N2o2');
-      const elements = stripe.elements();
-      const cardElement = elements.create('card');
-      cardElement.mount('#card-element');
-      cardElement.on('change', ({ error }) => {
-        const displayError = document.getElementById('error-message');
-        if (error) {
-          displayError.textContent = error.message;
-        } else {
-          displayError.textContent = '';
-        }
-      });
-
-      /* Data listeners */
-      function startDataListeners() {
-        // Get payment methods for customer
-        firebase
-          .firestore()
-          .collection('stripe_customers')
-          .doc(currentUser.uid)
-          .collection('payment_methods')
-          .onSnapshot((snapshot) => {
-            if (snapshot.empty)
-              document.querySelector('#add-new-card').open = true;
-            document
-              .querySelectorAll('select[name=payment-method] option')
-              .forEach((el) => el.remove());
-            snapshot.forEach(function (doc) {
-              const paymentMethod = doc.data();
-              if (!paymentMethod.card) return;
-              const content = document.createTextNode(
-                `${paymentMethod.card.brand} •••• ${paymentMethod.card.last4} | Expires ${paymentMethod.card.exp_month}/${paymentMethod.card.exp_year}`
-              );
-              const option = document.createElement('option');
-              option.value = paymentMethod.id;
-              option.appendChild(content);
-              document
-                .querySelector('select[name=payment-method]')
-                .appendChild(option);
-            });
-          });
-        // Get all payments for customer
-        firebase
-          .firestore()
-          .collection('stripe_customers')
-          .doc(currentUser.uid)
-          .collection('payments')
-          .onSnapshot((snapshot) => {
-            document
-              .querySelectorAll('#payments-list li')
-              .forEach((el) => el.remove());
-            snapshot.forEach((doc) => {
-              const payment = doc.data();
-              let content = '';
-              if (
-                payment.status === 'new' ||
-                payment.status === 'requires_confirmation'
-              ) {
-                content = `Creating Payment for ${formatAmount(
-                  payment.amount,
-                  payment.currency
-                )}`;
-              } else if (payment.status === 'succeeded') {
-                const card =
-                  payment.charges.data[0].payment_method_details.card;
-                content = `✅ Payment for ${formatAmount(
-                  payment.amount,
-                  payment.currency
-                )} on ${card.brand} card •••• ${card.last4}.`;
-              } else if (payment.status === 'requires_action') {
-                content = `🚨 Payment for ${formatAmount(
-                  payment.amount,
-                  payment.currency
-                )} ${payment.status}`;
-                handleCardAction(payment, doc.id);
-              } else {
-                content = `⚠️ Payment for ${formatAmount(
-                  payment.amount,
-                  payment.currency
-                )} ${payment.status}`;
-              }
-              const contentNode = document.createTextNode(content);
-              const li = document.createElement('li');
-              li.appendChild(contentNode);
-              document.querySelector('#payments-list').appendChild(li);
-            });
-          });
-      }
-
-      /* Event listeners */
-      // Signout button
-      document
-        .getElementById('signout')
-        .addEventListener('click', () => firebase.auth().signOut());
-      // Add new card form
-      document
-        .querySelector('#payment-method-form')
-        .addEventListener('submit', async (event) => {
-          event.preventDefault();
-          if (!event.target.reportValidity()) return;
-          document
-            .querySelectorAll('button')
-            .forEach((button) => (button.disabled = true));
-
-          const form = new FormData(event.target);
-          const cardholderName = form.get('name');
-
-          const { setupIntent, error } = await stripe.confirmCardSetup(
-            customerData.setup_secret,
-            {
-              payment_method: {
-                card: cardElement,
-                billing_details: {
-                  name: cardholderName,
-                },
-              },
-            }
-          );
-
-          if (error) {
-            document.querySelector('#error-message').textContent =
-              error.message;
-            document
-              .querySelectorAll('button')
-              .forEach((button) => (button.disabled = false));
-            return;
-          }
-
-          await firebase
-            .firestore()
-            .collection('stripe_customers')
-            .doc(currentUser.uid)
-            .collection('payment_methods')
-            .add({ id: setupIntent.payment_method });
-
-          document.querySelector('#add-new-card').open = false;
-          document
-            .querySelectorAll('button')
-            .forEach((button) => (button.disabled = false));
-        });
-
-      // Create payment form
-      document
-        .querySelector('#payment-form')
-        .addEventListener('submit', async (event) => {
-          event.preventDefault();
-          document
-            .querySelectorAll('button')
-            .forEach((button) => (button.disabled = true));
-
-          const form = new FormData(event.target);
-          const amount = Number(form.get('amount'));
-          const currency = form.get('currency');
-          const data = {
-            payment_method: form.get('payment-method'),
-            currency,
-            amount: formatAmountForStripe(amount, currency),
-            status: 'new',
-          };
-
-          await firebase
-            .firestore()
-            .collection('stripe_customers')
-            .doc(currentUser.uid)
-            .collection('payments')
-            .add(data);
-
-          document
-            .querySelectorAll('button')
-            .forEach((button) => (button.disabled = false));
-        });
-
-      /* Helper functions */
-      // Format amount for nice display
-      function formatAmount(amount, currency) {
-        amount = zeroDecimalCurrency(amount, currency)
-          ? amount
-          : (amount / 100).toFixed(2);
-        return new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency,
-        }).format(amount);
-      }
-      // Format amount for Stripe with zero decimal currency detection
-      function formatAmountForStripe(amount, currency) {
-        return zeroDecimalCurrency(amount, currency)
-          ? amount
-          : Math.round(amount * 100);
-      }
-      // Check if we have a zero decimal currency
-      function zeroDecimalCurrency(amount, currency) {
-        let numberFormat = new Intl.NumberFormat(['en-US'], {
-          style: 'currency',
-          currency: currency,
-          currencyDisplay: 'symbol',
-        });
-        const parts = numberFormat.formatToParts(amount);
-        let zeroDecimalCurrency = true;
-        for (let part of parts) {
-          if (part.type === 'decimal') {
-            zeroDecimalCurrency = false;
-          }
-        }
-        return zeroDecimalCurrency;
-      }
-      // Handle card actions like 3D Secure
-      async function handleCardAction(payment, docId) {
-        const result = await stripe.handleCardAction(payment.client_secret);
-        if (result.error) return;
-        await firebase
-          .firestore()
-          .collection('stripe_customers')
-          .doc(currentUser.uid)
-          .collection('payments')
-          .doc(docId)
-          .set(result.paymentIntent, { merge: true });
-      }
-    </script>
+    <!-- Our application script -->
+    <script src="/javascript/app.js"></script>
   </body>
 </html>
