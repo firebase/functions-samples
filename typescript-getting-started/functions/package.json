@@ -8,6 +8,11 @@
   "devDependencies": {
     "@types/express": "^4.17.2",
     "tslint": "^6.0.0",
+    "@types/mocha": "7.0.2",
+    "@types/chai": "4.2.11",
+    "@testdeck/mocha": "0.1.0",
+    "mocha": "7.1.1",
+    "chai": "4.2.0",
     "typescript": "^3.8.2"
   },
   "scripts": {
@@ -17,7 +22,9 @@
     "shell": "npm run build && firebase experimental:functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "pretest": "./node_modules/.bin/tsc",
+    "test": "mocha lib/test --timeout=10000"
   },
   "engines": {
     "node": "8"
