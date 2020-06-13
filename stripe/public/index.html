@@ -35,6 +35,13 @@
         <h2>Payment Methods</h2>
         <details id="add-new-card">
           <summary>Add new</summary>
+          <p>
+            Use any of the
+            <a href="https://stripe.com/docs/testing#international-cards"
+              >Stripe test cards</a
+            >
+            for this demo!
+          </p>
           <form id="payment-method-form">
             <label>
               Cardholder name
@@ -82,9 +89,7 @@
       </div>
       <div>
         <h2>Payments</h2>
-        <ul id="payments-list">
-          <li>No payments yet. Add a new card and then charge it!</li>
-        </ul>
+        <ul id="payments-list"></ul>
       </div>
     </section>
     <hr />
@@ -103,7 +108,7 @@
     <script src="/__/firebase/7.14.6/firebase-auth.js"></script>
     <script src="/__/firebase/7.14.6/firebase-firestore.js"></script>
     <script src="/__/firebase/init.js"></script>
-    
+
     <!-- Import Firebase UI -->
     <script src="https://www.gstatic.com/firebasejs/ui/4.5.0/firebase-ui-auth.js"></script>
 

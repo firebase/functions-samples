@@ -58,6 +58,10 @@ firebase.auth().onAuthStateChanged((firebaseUser) => {
           startDataListeners();
           document.getElementById('loader').style.display = 'none';
           document.getElementById('content').style.display = 'block';
+        } else {
+          console.warn(
+            `No Stripe customer found in Firestore for user: ${currentUser.uid}`
+          );
         }
       });
   } else {
@@ -98,23 +102,26 @@ function startDataListeners() {
       if (snapshot.empty) {
         document.querySelector('#add-new-card').open = true;
       }
-      document
-        .querySelectorAll('select[name=payment-method] option')
-        .forEach((el) => el.remove());
       snapshot.forEach(function (doc) {
         const paymentMethod = doc.data();
         if (!paymentMethod.card) {
           return;
         }
-        const content = document.createTextNode(
-          `${paymentMethod.card.brand} •••• ${paymentMethod.card.last4} | Expires ${paymentMethod.card.exp_month}/${paymentMethod.card.exp_year}`
-        );
-        const option = document.createElement('option');
-        option.value = paymentMethod.id;
-        option.appendChild(content);
-        document
-          .querySelector('select[name=payment-method]')
-          .appendChild(option);
+
+        const optionId = `card-${doc.id}`;
+        let optionElement = document.getElementById(optionId);
+
+        // Add a new option if one doesn't exist yet.
+        if (!optionElement) {
+          optionElement = document.createElement('option');
+          optionElement.id = optionId;
+          document
+            .querySelector('select[name=payment-method]')
+            .appendChild(optionElement);
+        }
+
+        optionElement.value = paymentMethod.id;
+        optionElement.text = `${paymentMethod.card.brand} •••• ${paymentMethod.card.last4} | Expires ${paymentMethod.card.exp_month}/${paymentMethod.card.exp_year}`;
       });
     });
 
@@ -127,13 +134,15 @@ function startDataListeners() {
     .doc(currentUser.uid)
     .collection('payments')
     .onSnapshot((snapshot) => {
-      if (!snapshot.empty) {
-        document
-          .querySelectorAll('#payments-list li')
-          .forEach((el) => el.remove());
-      }
       snapshot.forEach((doc) => {
         const payment = doc.data();
+
+        let liElement = document.getElementById(`payment-${doc.id}`);
+        if (!liElement) {
+          liElement = document.createElement('li');
+          liElement.id = `payment-${doc.id}`;
+        }
+
         let content = '';
         if (
           payment.status === 'new' ||
@@ -161,10 +170,8 @@ function startDataListeners() {
             payment.currency
           )} ${payment.status}`;
         }
-        const contentNode = document.createTextNode(content);
-        const li = document.createElement('li');
-        li.appendChild(contentNode);
-        document.querySelector('#payments-list').appendChild(li);
+        liElement.innerText = content;
+        document.querySelector('#payments-list').appendChild(liElement);
       });
     });
 }

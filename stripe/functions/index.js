@@ -20,7 +20,7 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const { Logging } = require('@google-cloud/logging');
 const logging = new Logging({
-  projectId: '<YOUR FIREBASE PROJECT ID>',
+  projectId: process.env.GCLOUD_PROJECT,
 });
 const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-03-02',
@@ -44,7 +44,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
 });
 
 /**
- * When adding the payment method ID on the clinet,
+ * When adding the payment method ID on the client,
  * this function is triggered to retrieve the payment method details.
  */
 exports.addPaymentMethodDetails = functions.firestore
