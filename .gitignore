@@ -1,5 +1,6 @@
 .idea
 **/node_modules/*
+**/.firebase
 **/.firebaserc
 */npm-debug.log
 lerna-debug.log
