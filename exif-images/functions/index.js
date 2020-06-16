@@ -23,7 +23,8 @@ const os = require('os');
 
 const admin = require('firebase-admin');
 admin.initializeApp();
-const gcs = require('@google-cloud/storage')();
+const { Storage } = require("@google-cloud/storage");
+const storage = new Storage();
 const spawn = require('child-process-promise').spawn;
 
 /**
@@ -45,7 +46,7 @@ exports.metadata = functions.storage.object().onFinalize(async (object) => {
 
   let metadata;
   // Download file from bucket.
-  const bucket = gcs.bucket(object.bucket);
+  const bucket = storage.bucket(object.bucket);
   await bucket.file(filePath).download({destination: tempLocalFile});
   // Get Metadata from image.
   const result = await spawn('identify', ['-verbose', tempLocalFile], {capture: ['stdout', 'stderr']});
