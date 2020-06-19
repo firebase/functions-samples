@@ -69,8 +69,7 @@ exports.addPaymentMethodDetails = functions.firestore
       return;
     } catch (error) {
       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
-      reportError(error, { user: context.params.userId });
-      return;
+      await reportError(error, { user: context.params.userId });
     }
   });
 
@@ -80,6 +79,9 @@ exports.addPaymentMethodDetails = functions.firestore
  *
  * @see https://stripe.com/docs/payments/save-and-reuse#web-create-payment-intent-off-session
  */
+
+// [START chargecustomer]
+
 exports.createStripePayment = functions.firestore
   .document('stripe_customers/{userId}/payments/{pushId}')
   .onCreate(async (snap, context) => {
@@ -104,16 +106,16 @@ exports.createStripePayment = functions.firestore
       );
       // If the result is successful, write it back to the database.
       await snap.ref.set(payment);
-      return;
     } catch (error) {
       // We want to capture errors and render them in a user-friendly way, while
       // still logging an exception with StackDriver
       console.log(error);
       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
-      reportError(error, { user: context.params.userId });
-      return;
+      await reportError(error, { user: context.params.userId });
     }
   });
+
+// [END chargecustomer]
 
 /**
  * When 3D Secure is performed, we need to reconfirm the payment
