@@ -54,7 +54,7 @@ exports.makeUppercase = functions.firestore.document('/messages/{documentId}')
       const original = snap.data().original;
 
       // Access the parameter `{documentId}` with `context.params`
-      console.log('Uppercasing', context.params.documentId, original);
+      functions.logger.log('Uppercasing', context.params.documentId, original);
       
       const uppercase = original.toUpperCase();
       
