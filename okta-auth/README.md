@@ -59,15 +59,15 @@ and install the Firebase CLI tool:
 1.  Make sure the Firebase CLI tool is set to use your Firebase project:
 
     ```
-    $ cd firebase-okta-demo
-    firebase-okta-demo$ firebase login
-    firebase-okta-demo$ firebase use <YOUR_FIREBASE_PROJECT_ID>
+    $ cd functions-samples/okta-auth
+    okta-auth$ firebase login
+    okta-auth$ firebase use <YOUR_FIREBASE_PROJECT_ID>
     ```
 
 2.  Run `setup.js` from the Firebase project directory:
 
     ```
-    firebase-okta-demo$ node setup.js
+    okta-auth$ node setup.js
     ```
 
     The script will prompt you for some of your Okta and Firebase configuration
@@ -77,7 +77,7 @@ and install the Firebase CLI tool:
 3.  Start the emulators:
 
     ```
-    firebase-okta-demo$ firebase emulators:start
+    okta-auth$ firebase emulators:start
     ```
 
 4.  Open the web app: [`http://localhost:5000`](http://localhost:5000).
@@ -98,15 +98,15 @@ and install the Firebase CLI tool:
 3.  Make sure the Firebase CLI tool is set to use your Firebase project:
 
     ```
-    $ cd firebase-okta-demo
-    firebase-okta-demo$ firebase login
-    firebase-okta-demo$ firebase use <YOUR_FIREBASE_PROJECT_ID>
+    $ cd functions-samples/okta-auth
+    okta-auth$ firebase login
+    okta-auth$ firebase use <YOUR_FIREBASE_PROJECT_ID>
     ```
 
 4.  Run `setup.js -d` from the Firebase project directory:
 
     ```
-    firebase-okta-demo$ node setup.js -d
+    okta-auth$ node setup.js -d
     ```
 
     The script will prompt you for some of your Okta and Firebase configuration
@@ -117,7 +117,7 @@ and install the Firebase CLI tool:
 5.  Deploy the project:
 
     ```
-    firebase-okta-demo$ firebase deploy
+    okta-auth$ firebase deploy
     ```
 
 6.  Open the web app at: `https://<YOUR_FIREBASE_PROJECT_ID>.web.app`
