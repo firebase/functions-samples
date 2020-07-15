@@ -3,10 +3,16 @@
  * validating Okta access tokens and minting Firebase custom authentication
  * tokens.
  */
-require('dotenv').config()  // Only needed for local testing.
-
 const express = require('express');
 const app = express();
+
+// For local testing, use GOOGLE_APPLICATION_CREDENTIALS from `.env` instead of
+// the value set by the emulator.
+const envCfg = require('dotenv').config();
+if (envCfg.parsed && envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS) {
+    process.env.GOOGLE_APPLICATION_CREDENTIALS =
+            envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS;
+}
 
 const functions = require('firebase-functions');
 const firebaseAdmin = require('firebase-admin');

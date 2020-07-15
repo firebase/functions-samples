@@ -155,7 +155,7 @@ if (OKTA_ORG_URL === ''
     } catch {
         console.log(`Can't find ${runtimeconfigJson}. Configuring...\n`)
         oktaOrgUrl = oktaOrgUrl || await ask(OKTA_URL_PROMPT);
-        const contents = `{ "okta_auth.org_url": "${oktaOrgUrl}" }\n`;
+        const contents = `{"okta_auth": {"org_url": "${oktaOrgUrl}"}}`;
         fs.writeFileSync(`${PROJECT_DIR}/${runtimeconfigJson}`, contents);
     }
 
