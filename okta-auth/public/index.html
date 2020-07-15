@@ -27,7 +27,7 @@
 </div>
 <div id="signin-widget" hidden></div>
 <script>
-(async () => {
+window.onload = async () => {
     const oktaSignIn = new OktaSignIn({
         baseUrl: OKTA_ORG_URL,
         redirectUri: window.location.url,
@@ -108,7 +108,7 @@
             document.getElementById('signin-widget').hidden = false;
         }
     });
-})();
+}
 </script>
 </body>
 </html>
