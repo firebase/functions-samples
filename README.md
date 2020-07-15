@@ -172,7 +172,7 @@ Only users who pass a valid Firebase ID token as a Bearer token in the `Authoriz
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 Uses an HTTP trigger.
 
-### Authorize with [LinkedIn](/linkedin-auth), [Spotify](spotify-auth), [Instagram](/instagram-auth), [LINE](/line-auth) or [Basic Auth](/username-password-auth)
+### Authorize with [Okta](/okta-auth), [LinkedIn](/linkedin-auth), [Spotify](spotify-auth), [Instagram](/instagram-auth), [LINE](/line-auth) or [Basic Auth](/username-password-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
