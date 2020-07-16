@@ -43,7 +43,7 @@ Note that this value is required only when using the emulator.
 
 const EXAMPLE_ENDPOINT = (
         DEPLOYING ? `
-When you deploy the Cloud Function. the endpoint looks like:
+When you deploy the Cloud Function, the endpoint looks like:
 https://<YOUR_PROJECT_AND_LOCATION>.cloudfunctions.net/api/firebaseCustomToken`
         : `
 When using the emulator, the endpoint is the following:

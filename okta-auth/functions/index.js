@@ -7,7 +7,8 @@ const express = require('express');
 const app = express();
 
 // For local testing, use GOOGLE_APPLICATION_CREDENTIALS from `.env` instead of
-// the value set by the emulator.
+// the value set by the emulator. Generate a .`env` file with `setup.js`, or
+// create it manually.
 const envCfg = require('dotenv').config();
 if (envCfg.parsed && envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS) {
     process.env.GOOGLE_APPLICATION_CREDENTIALS =

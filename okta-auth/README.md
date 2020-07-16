@@ -103,7 +103,14 @@ and install the Firebase CLI tool:
     okta-auth$ firebase use <YOUR_FIREBASE_PROJECT_ID>
     ```
 
-4.  Run `setup.js -d` from the Firebase project directory:
+4.  Optional: If you have configuration files from local testing, delete them:
+
+    ```
+    okta-auth$ rm public/okta-config.js ; rm functions/.env ; rm .runtimeconfig.json
+    ```
+
+5.  Run `setup.js -d` from the Firebase project directory. The `-d` flag
+    configures the web app and backend for deployment.
 
     ```
     okta-auth$ node setup.js -d
@@ -114,10 +121,10 @@ and install the Firebase CLI tool:
     environment settings. The script won't overwrite existing files or Cloud
     Functions environment settings.
 
-5.  Deploy the project:
+6.  Deploy the project:
 
     ```
     okta-auth$ firebase deploy
     ```
 
-6.  Open the web app at: `https://<YOUR_FIREBASE_PROJECT_ID>.web.app`
+7.  Open the web app at: `https://<YOUR_FIREBASE_PROJECT_ID>.web.app`
