@@ -40,8 +40,10 @@ and install the Firebase CLI tool:
        later.
     2. On the Project Overview page, add a new web app. Be sure **Also set up
        Firebase Hosting for this app** is selected.
-    3. If you plan to try the demo in the emulator, [generate and download a
-       service account key][svcacct].
+    3. On the Project Settings page, open the [Service Accounts][svcacct]
+       section and take note of your Admin SDK service account ID (it looks
+       like an email address). If you plan to try the demo in the emulator,
+       also generate and download a service account key file.
 
 3.  If you don't already have a Node.js 10 (or newer) environment,
     [install Node.js](https://nodejs.org/).
@@ -85,17 +87,10 @@ and install the Firebase CLI tool:
 ## Deploy the demo to Firebase Hosting and Cloud Functions
 
 1.  [Upgrade your Firebase project to the Blaze (pay as you go) plan](https://console.firebase.google.com/project/_/overview?purchaseBillingPlan=metered).
-    The Blaze plan is required to access external services (Okta) from Cloud
-    Functions.
+    The Blaze plan is required to access external services (in this case, Okta)
+    from Cloud Functions.
 
-2.  In the Google Cloud console:
-
-    1.  [Enable the IAM Service Account Credentials API](https://console.cloud.google.com/apis/api/iamcredentials.googleapis.com/overview?project=_).
-    2.  On the [IAM](https://console.developers.google.com/iam-admin/iam?project=_)
-        page, edit the account named **App Engine default service account** and
-        add the **Service Account Token Creator** role.
-
-3.  Make sure the Firebase CLI tool is set to use your Firebase project:
+2.  Make sure the Firebase CLI tool is set to use your Firebase project:
 
     ```
     $ cd functions-samples/okta-auth
@@ -103,13 +98,13 @@ and install the Firebase CLI tool:
     okta-auth$ firebase use <YOUR_FIREBASE_PROJECT_ID>
     ```
 
-4.  Optional: If you have configuration files from local testing, delete them:
+3.  Optional: If you have configuration files from local testing, delete them:
 
     ```
     okta-auth$ rm public/okta-config.js ; rm functions/.env ; rm .runtimeconfig.json
     ```
 
-5.  Run `setup.js -d` from the Firebase project directory. The `-d` flag
+4.  Run `setup.js -d` from the Firebase project directory. The `-d` flag
     configures the web app and backend for deployment.
 
     ```
@@ -121,10 +116,22 @@ and install the Firebase CLI tool:
     environment settings. The script won't overwrite existing files or Cloud
     Functions environment settings.
 
-6.  Deploy the project:
+5.  Deploy the project:
 
     ```
     okta-auth$ firebase deploy
     ```
+
+6.  In the Google Cloud console:
+
+    1.  [Enable the IAM Service Account Credentials API](https://console.cloud.google.com/apis/api/iamcredentials.googleapis.com/overview?project=_).
+    2.  On the [Cloud Functions](https://console.cloud.google.com/functions/list?project=_)
+        page, 
+        1.  Click the name of your Cloud Function (**`api`**) to open the
+            Function Details page.
+        2.  Click **Edit**.
+        3.  Set the service account to your Admin SDK service account.
+        4.  Click **Deploy** to redeploy your Cloud Function to run as the
+            updated service account.
 
 7.  Open the web app at: `https://<YOUR_FIREBASE_PROJECT_ID>.web.app`
