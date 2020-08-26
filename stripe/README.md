@@ -1,13 +1,13 @@
 # Create Stripe customers and charge them on Cloud Firestore write
 
-This sample shows you how to create Stripe customers when your users sign up, secure collect and store their payment details, and charge them when a new document is written to your Firestore.
+This sample shows you how to create Stripe customers when your users sign up, securely collect and store their payment details, and charge them when a new document is written to your Firestore.
 
 ### Features
 
-- Create a customer object in Stripe when a new users signs up. ([view code](./functions/index.js#L29)).
-- Securel collect a customers card details with Stripe Elements and set them up for future usage. ([view code](./public/javascript/app.js#L69)).
+- Create a customer object in Stripe when a new user signs up. ([view code](./functions/index.js#L29)).
+- Securely collect a customers card details with Stripe Elements and set them up for future usage. ([view code](./public/javascript/app.js#L69)).
 - Create a payment on the customer's card when a new document is written to the `payments` collection. ([view code](./functions/index.js#L75)).
-  - **NOTE:** Note that this example creates the payment document on the client with amount and currency inputted by the user. In a real application you need to validate price details in your function, e.g. based on product information stored in your Firestore.
+  - **NOTE:** Note that this example creates the payment document on the client with an amount and currency inputted by the user. In a real application, you need to validate price details in your function, e.g. based on product information stored in your Firestore.
 - Handle 3D Secure authentication if required by the card issuer. Read more about 3D Secure and SCA [here](https://stripe.com/payments/strong-customer-authentication). ([view code](./functions/index.js#L114))
 
 #### Further reading:
