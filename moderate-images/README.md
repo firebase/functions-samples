@@ -18,7 +18,7 @@ The function triggers on upload of any file to your Firebase project's default C
 ## Setting up the sample
 
  1. Create a Firebase project on the [Firebase Console](https://console.firebase.google.com).
- 1. In the Google Cloud Console [enable the **Google Cloud Vision API**](https://console.cloud.google.com/apis/api/vision.googleapis.com/overview?project=_). Note: Billing is required to enable the Cloud Vision API so enable Billing on your Firebase project by switching to the Blaze or Flame plans. For more information have a look at the [pricing page](https://firebase.google.com/pricing/).
+ 1. In the Google Cloud Console [enable the **Google Cloud Vision API**](https://console.cloud.google.com/apis/api/vision.googleapis.com/overview?project=_). Note: Billing is required to enable the Cloud Vision API so enable Billing on your Firebase project by switching to the Blaze plan. For more information have a look at the [pricing page](https://firebase.google.com/pricing/).
  1. Clone or download this repo and open the `moderate-image` directory.
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
