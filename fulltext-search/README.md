@@ -45,7 +45,7 @@ tree.
 
 Create an Algolia account at [www.algolia.com](https://www.algolia.com/).
 
-Enable Billing on your Firebase project by switching to the Blaze or Flame plans you need billing enabled to allow external requests. For more information have a look at the [pricing page](https://firebase.google.com/pricing/).
+Enable Billing on your Firebase project by switching to the Blaze plan. You need billing enabled to allow external requests. For more information have a look at the [pricing page](https://firebase.google.com/pricing/).
 
 Set the `algolia.app_id` and `algolia.api_key` Google Cloud environment variables to match the Algolia application ID and API key of your account. For this use:
 

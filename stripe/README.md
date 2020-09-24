@@ -25,7 +25,7 @@ This sample shows you how to create Stripe customers when your users sign up, se
 ## Deploy and test
 
 - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
-- Enable billing on your project by switching to the Blaze or Flame plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
+- Enable billing on your project by switching to the Blaze plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
 - Enable Google & Email sign-in in your [authentication provider settings](https://console.firebase.google.com/project/_/authentication/providers).
 - Install [Firebase CLI Tools](https://github.com/firebase/firebase-tools) if you have not already and log in with `firebase login`.
 - Configure this sample to use your project using `firebase use --add` and select your project.

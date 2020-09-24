@@ -14,7 +14,7 @@ detected by the [Cloud Natural Language API](https://cloud.google.com/natural-la
 
  1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
  1. Enable the **Google** Provider in the **Auth** section.
- 1. Enable Billing on your project (to connect to the Natural Language API) by switching to the Blaze or Flame plan.
+ 1. Enable Billing on your project (to connect to the Natural Language API) by switching to the Blaze plan.
  1. Clone or download this repo and open the `authenticated-json-api` directory.
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
