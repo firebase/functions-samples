@@ -5,9 +5,8 @@ import vision from "@google-cloud/vision";
 admin.initializeApp();
 const client = new vision.ImageAnnotatorClient();
 
-// This will allow only authenticated users of your app to access the Vision
-// API.
-//
+// This will allow only requests with an auth token to access the Vision
+// API, including anonymous ones.
 // It is highly recommended to limit access only to signed-in users. This may
 // be done by adding the following condition to the if statement:
 //    || context.auth.token?.firebase?.sign_in_provider === 'anonymous'
