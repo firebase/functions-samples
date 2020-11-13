@@ -1,8 +1,6 @@
 import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
 import vision from "@google-cloud/vision";
 
-admin.initializeApp();
 const client = new vision.ImageAnnotatorClient();
 
 // This will allow only requests with an auth token to access the Vision
