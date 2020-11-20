@@ -36,7 +36,7 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
   // [START adminSdkAdd]
   // Push the new message into Cloud Firestore using the Firebase Admin SDK.
   const writeResult = await admin.firestore().collection('messages').add({original: original});
-  // Send back a message that we've succesfully written the message
+  // Send back a message that we've successfully written the message
   res.json({result: `Message with ID: ${writeResult.id} added.`});
   // [END adminSdkAdd]
 });
