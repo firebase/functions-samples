@@ -3,7 +3,7 @@
   "description": "A sample isomorphic React app using Functions and Hosting",
   "dependencies": {
     "express": "4.17.1",
-    "firebase": "7.9.2",
+    "firebase": "^8.1.1",
     "firebase-admin": "^9.4.1",
     "firebase-functions": "^3.12.0",
     "react": "16.13.0",
