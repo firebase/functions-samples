@@ -7,3 +7,7 @@ lerna-debug.log
 *~
 service-account-credentials.json
 **/package-lock.json
+**/ui-debug.log
+**/database-debug.log
+**/firebase-debug.log
+**/pubsub-debug.log
