@@ -3,12 +3,14 @@
     "lib": ["es2017"],
     "module": "commonjs",
     "noImplicitReturns": true,
+    "experimentalDecorators": true,
     "outDir": "lib",
     "sourceMap": true,
     "target": "es2017"
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src",
+    "test"
   ]
 }
