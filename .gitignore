@@ -11,3 +11,4 @@ service-account-credentials.json
 **/database-debug.log
 **/firebase-debug.log
 **/pubsub-debug.log
+**/tsconfig-compile.json

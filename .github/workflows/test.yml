@@ -29,4 +29,5 @@ jobs:
       - run: npm install
       - run: npm run bootstrap
       - run: npm run lint
+      - run: npm run compile
       - run: npm run test
