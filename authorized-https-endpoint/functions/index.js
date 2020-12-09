@@ -72,6 +72,7 @@ app.use(cors);
 app.use(cookieParser);
 app.use(validateFirebaseIdToken);
 app.get('/hello', (req, res) => {
+  // @ts-ignore
   res.send(`Hello ${req.user.name}`);
 });
 
