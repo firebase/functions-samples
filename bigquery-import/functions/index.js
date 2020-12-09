@@ -16,7 +16,9 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const bigquery = require('@google-cloud/bigquery')();
+const { BigQuery } = require('@google-cloud/bigquery');
+
+const bigquery = new BigQuery();
 
 /**
  * Writes all logs from the Realtime Database into bigquery.
