@@ -5,6 +5,7 @@
   "author": "Firebase (https://firebase.google.com/)",
   "license": "Apache-2.0",
   "scripts": {
+    "lerna-bootstrap": "lerna bootstrap",
     "test": "echo 'Linting...' && lerna run lint && echo 'Testing...' && lerna run ci-test"
   },
   "devDependencies": {
