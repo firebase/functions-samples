@@ -5,8 +5,8 @@
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "firebase-admin": "~8.9.2",
-    "firebase-functions": "^3.3.0"
+    "firebase-admin": "^9.4.1",
+    "firebase-functions": "^3.12.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -21,7 +21,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "8"
+    "node": "12"
   },
   "private": true
 }
