@@ -287,4 +287,7 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## Build Status
 
-[![Build Status](https://travis-ci.org/firebase/functions-samples.svg?branch=master)](https://travis-ci.org/firebase/functions-samples)
+[![Actions Status][gh-actions-badge]][gh-actions]
+
+[gh-actions]: https://github.com/firebase/functions-samples/actions
+[gh-actions-badge]: https://github.com/firebase/functions-samples/workflows/CI%20Tests/badge.svg

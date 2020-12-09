@@ -16,7 +16,7 @@
 
 const functions = require('firebase-functions');
 const app = require('express')();
-const Canvas = require('canvas-prebuilt');
+const Canvas = require('canvas');
 const _ = require('lodash');
 
 const clock = require('./clock');
