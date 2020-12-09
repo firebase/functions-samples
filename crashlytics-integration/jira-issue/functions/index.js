@@ -144,7 +144,7 @@ exports.createVelocityAlert = functions.crashlytics.issue().onVelocityAlert(asyn
   const summary = `Velocity Alert - ${issueId} in ${appName} on $(appPlatform)`;
   const description = `A velocity alert has been reported - ${issueTitle} in ${appId}. ` +
       `This issue is occuring in build version ${latestAppVersion} and is causing ` +
-      `${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash.`;
+      `${crashPercentage.toFixed(2)}% of all sessions to crash.`;
   const priority = calculateIssuePriority('velocityAlert');
   await createJiraIssue(summary, description, priority);
   console.log(`Created issue ${issueId} in Jira successfully`);
