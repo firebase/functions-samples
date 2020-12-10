@@ -4,8 +4,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "request": "^2.88.2",
-    "firebase-admin": "^9.4.1",
-    "firebase-functions": "^3.12.0"
+    "firebase-admin": "^9.4.2",
+    "firebase-functions": "^3.13.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
