@@ -62,7 +62,7 @@ exports.pay = functions.https.onRequest((req, res) => {
     const links = {};
     if (error) {
       console.error(error);
-      res.status('500').end();
+      res.status(500).end();
     } else {
       // Capture HATEOAS links
       payment.links.forEach((linkObj) => {
@@ -79,7 +79,7 @@ exports.pay = functions.https.onRequest((req, res) => {
         res.redirect(302, links.approval_url.href);
       } else {
         console.error('no redirect URI present');
-        res.status('500').end();
+        res.status(500).end();
       }
     }
   });
