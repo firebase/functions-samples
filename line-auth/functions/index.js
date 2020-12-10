@@ -42,7 +42,7 @@ function generateLineApiRequest(apiEndpoint, lineAccessToken) {
  * Look up Firebase user based on LINE's mid. If the Firebase user does not exist,
  * fetch LINE profile and create a new Firebase user with it.
  *
- * @returns {Promise<UserRecord>} The Firebase user record in a promise.
+ * @returns {Promise<admin.auth.UserRecord>} The Firebase user record in a promise.
  */
 async function getFirebaseUser(lineMid, lineAccessToken) {
   // Generate Firebase user's uid based on LINE's mid
@@ -55,7 +55,7 @@ async function getFirebaseUser(lineMid, lineAccessToken) {
     const response = await admin.auth().getUser(firebaseUid);
     // Parse user profile from LINE's get user profile API response
     const displayName = response.displayName;
-    const photoURL = response.pictureUrl;
+    const photoURL = response.photoURL;
 
     console.log('Create new Firebase user for LINE user mid = "', lineMid, '"');
     // Create a new Firebase user with LINE profile and return it
@@ -116,7 +116,8 @@ exports.verifyToken = functions.https.onRequest(async (req, res) => {
     const ret = {
       error_message: 'Access Token not found',
     };
-    return res.status(400).send(ret);
+    res.status(400).send(ret);
+    return;
   }
 
   const reqToken = req.body.token;
@@ -127,13 +128,13 @@ exports.verifyToken = functions.https.onRequest(async (req, res) => {
     const ret = {
       firebase_token: customAuthToken,
     };
-    return res.status(200).send(ret);
+    res.status(200).send(ret);
   } catch(err) {
     // If LINE access token verification failed, return error response to client
     const ret = {
       error_message: 'Authentication error: Cannot verify access token.',
     };
     console.error('LINE token verification failed: ', err);
-    return res.status(403).send(ret);
+    res.status(403).send(ret);
   }
 });
