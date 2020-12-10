@@ -21,7 +21,7 @@ admin.initializeApp();
 
 // Authenticate to Algolia Database.
 // TODO: Make sure you configure the `algolia.app_id` and `algolia.api_key` Google Cloud environment variables.
-const algoliasearch = require('algoliasearch');
+const algoliasearch = require('algoliasearch').default;
 const client = algoliasearch(functions.config().algolia.app_id, functions.config().algolia.api_key);
 
 // Name fo the algolia index for Blog posts content.

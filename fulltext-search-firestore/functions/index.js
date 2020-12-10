@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions');
-const algoliasearch = require('algoliasearch');
+const algoliasearch = require('algoliasearch').default;
 
 // [START init_algolia]
 // Initialize Algolia, requires installing Algolia dependencies:
@@ -95,13 +95,16 @@ app.use(getFirebaseUser);
 
 // Add a route handler to the app to generate the secured key
 app.get('/', (req, res) => {
+  // @ts-ignore
+  const uid = req.user.uid;
+
   // Create the params object as described in the Algolia documentation:
   // https://www.algolia.com/doc/guides/security/api-keys/#generating-api-keys
   const params = {
-    // This filter ensures that only documents where author == user_id will be readable
-    filters: `author:${req.user.user_id}`,
-    // We also proxy the user_id as a unique token for this key.
-    userToken: req.user.user_id,
+    // This filter ensures that only documents where author == uid will be readable
+    filters: `author:${uid}`,
+    // We also proxy the uid as a unique token for this key.
+    userToken: uid,
   };
 
   // Call the Algolia API to generate a unique key based on our search key
