@@ -8,7 +8,7 @@
     "bootstrap": "lerna bootstrap --no-ci",
     "lint": "lerna run lint",
     "test": "lerna run test",
-    "compile": "lerna run compile --parallel"
+    "compile": "lerna run compile --concurrency=8"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

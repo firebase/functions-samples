@@ -63,15 +63,15 @@ const DB_TOKEN_PATH = '/api_tokens';
 // this Function stores the tokens to your Firebase database
 exports.oauthcallback = functions.https.onRequest(async (req, res) => {
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
-  const code = req.query.code;
+  const code = `${req.query.code}`;
   try {
-    const {tokens} = await functionsOauthClient.getToken(code);
+    const { tokens } = await functionsOauthClient.getToken(code);
     // Now tokens contains an access_token and an optional refresh_token. Save them.
     await admin.database().ref(DB_TOKEN_PATH).set(tokens);
-    return res.status(200).send('App successfully configured with new Credentials. '
+    res.status(200).send('App successfully configured with new Credentials. '
         + 'You can now close this page.');
   } catch (error) {
-    return res.status(400).send(error);
+    res.status(400).send(error);
   }
 });
 
