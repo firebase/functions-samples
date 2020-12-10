@@ -16,12 +16,14 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const gcs = require('@google-cloud/storage')();
+const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const sharp = require('sharp');
 
 const THUMB_MAX_WIDTH = 200;
 const THUMB_MAX_HEIGHT = 200;
+
+const gcs = new Storage();
 
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using

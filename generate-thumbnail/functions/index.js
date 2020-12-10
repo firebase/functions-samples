@@ -82,13 +82,15 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   fs.unlinkSync(tempLocalFile);
   fs.unlinkSync(tempLocalThumbFile);
   // Get the Signed URLs for the thumbnail and original image.
-  const config = {
-    action: 'read',
-    expires: '03-01-2500',
-  };
   const results = await Promise.all([
-    thumbFile.getSignedUrl(config),
-    file.getSignedUrl(config),
+    thumbFile.getSignedUrl({
+      action: 'read',
+      expires: '03-01-2500',
+    }),
+    file.getSignedUrl({
+      action: 'read',
+      expires: '03-01-2500',
+    }),
   ]);
   console.log('Got Signed URLs.');
   const thumbResult = results[0];
