@@ -18,7 +18,7 @@
     "test": "npm run test-offline",
     "test-online": "mocha --reporter spec test/test.online.js --exit",
     "test-offline": "mocha --reporter spec test/test.offline.js --exit",
-    "serve": "firebase serve --only functions",
+    "serve": "firebase emulators:start --only functions",
     "shell": "firebase experimental:functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",

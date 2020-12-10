@@ -14,7 +14,7 @@
     "eslint-plugin-promise": "^4.2.1"
   },
   "scripts": {
-    "serve": "firebase serve --only functions",
+    "serve": "firebase emulators:start --only functions",
     "shell": "firebase experimental:functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
