@@ -23,8 +23,10 @@ const os = require('os');
 
 const admin = require('firebase-admin');
 admin.initializeApp();
-const gcs = require('@google-cloud/storage')();
+const { Storage } = require('@google-cloud/storage');
 const spawn = require('child-process-promise').spawn;
+
+const gcs = new Storage();
 
 /**
  * When an image is uploaded in the Storage bucket the information and metadata of the image (the
