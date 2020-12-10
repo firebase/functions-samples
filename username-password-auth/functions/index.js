@@ -22,6 +22,7 @@ const cors = require('cors')({origin: true});
 
 // Firebase Setup
 const admin = require('firebase-admin');
+// @ts-ignore
 const serviceAccount = require('./service-account.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -115,7 +116,7 @@ function authenticate(username, password) {
         return resolve(false);
       }
       if (statusCode !== 200) {
-        return reject(Error('invalid response returned from ', authEndpoint, ' status code ', statusCode));
+        return reject(new Error(`invalid response returned from ${authEndpoint} status code ${statusCode}`));
       }
       return resolve(true);
     });

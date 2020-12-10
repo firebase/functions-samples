@@ -22,8 +22,10 @@ const { Logging } = require('@google-cloud/logging');
 const logging = new Logging({
   projectId: process.env.GCLOUD_PROJECT,
 });
-const stripe = require('stripe')(functions.config().stripe.secret, {
-  apiVersion: '2020-03-02',
+
+const { Stripe } = require('stripe');
+const stripe = new Stripe(functions.config().stripe.secret, {
+  apiVersion: '2020-08-27',
 });
 
 /**
@@ -58,7 +60,7 @@ exports.addPaymentMethodDetails = functions.firestore
       await snap.ref.set(paymentMethod);
       // Create a new SetupIntent so the customer can add a new method next time.
       const intent = await stripe.setupIntents.create({
-        customer: paymentMethod.customer,
+        customer: `${paymentMethod.customer}`,
       });
       await snap.ref.parent.parent.set(
         {

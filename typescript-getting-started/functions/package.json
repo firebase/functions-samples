@@ -17,7 +17,8 @@
     "shell": "npm run build && firebase experimental:functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "compile": "npm run build"
   },
   "engines": {
     "node": "12"
