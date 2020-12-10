@@ -2,8 +2,8 @@
   "name": "google-sheet-sync",
   "description": "Syncs new Firebase data to a Google Sheet",
   "dependencies": {
-    "firebase-admin": "^9.4.1",
-    "firebase-functions": "^3.12.0",
+    "firebase-admin": "^9.4.2",
+    "firebase-functions": "^3.13.0",
     "google-auth-library": "^5.10.1",
     "googleapis": "^47.0.0"
   },
