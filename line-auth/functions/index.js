@@ -21,6 +21,7 @@ const rp = require('request-promise');
 
 // Firebase Setup
 const admin = require('firebase-admin');
+// @ts-ignore
 const serviceAccount = require('./service-account.json');
 
 admin.initializeApp({
