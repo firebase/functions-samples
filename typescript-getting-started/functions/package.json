@@ -13,7 +13,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/tslint -p tsconfig.json",
     "build": "./node_modules/.bin/tsc",
-    "serve": "npm run build && firebase serve --only functions",
+    "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase experimental:functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
