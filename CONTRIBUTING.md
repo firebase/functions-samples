@@ -7,18 +7,17 @@ We'd love for you to contribute to our source code and to make the Firebase Clou
  - [Issues and Bugs](#issue)
  - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
- - [Coding Rules](#rules)
  - [Signing the CLA](#cla)
 
 ## <a name="coc"></a> Code of Conduct
 
 As contributors and maintainers of the Firebase functions-samples project, we pledge to respect everyone who contributes by posting issues, updating documentation, submitting pull requests, providing feedback in comments, and any other activities.
 
-Communication through any of Firebase's channels (GitHub, StackOverflow, Google+, Twitter, etc.) must be constructive and never resort to personal attacks, trolling, public or private harassment, insults, or other unprofessional conduct.
+Communication through any of Firebase's channels (GitHub, StackOverflow, Twitter, etc.) must be constructive and never resort to personal attacks, trolling, public or private harassment, insults, or other unprofessional conduct.
 
 We promise to extend courtesy and respect to everyone involved in this project regardless of gender, gender identity, sexual orientation, disability, age, race, ethnicity, religion, or level of experience. We expect anyone contributing to the project to do the same.
 
-If any member of the community violates this code of conduct, the maintainers of the Firebase Cloud Functions Templates Library project may take action, removing issues, comments, and PRs or blocking accounts as deemed appropriate.
+If any member of the community violates this code of conduct, the maintainers of this project may take action, removing issues, comments, and PRs or blocking accounts as deemed appropriate.
 
 If you are subject to or witness unacceptable behavior, or have any other concerns, please drop us a line at [Firebase support](https://firebase.google.com/support).
 
@@ -30,6 +29,7 @@ If you are subject to or witness unacceptable behavior, or have any other concer
 - If you have a problem specific to your Firebase project, or would like to report an issue with Firebase itself, contact [Firebase support](https://firebase.google.com/support).
 
 ## <a name="issue"></a> Found an Issue?
+
 If you find a bug in the source code or a mistake in the documentation, you can help us by
 submitting an issue to our [GitHub Repository][github]. Even better, you can submit a Pull Request
 with a fix.
@@ -39,110 +39,42 @@ See [below](#submit) for some guidelines.
 ## <a name="submit"></a> Submission Guidelines
 
 ### Submitting an Issue
+
 Before you submit your issue search the archive in case your question was already answered.
 
-If your issue appears to be a bug, and hasn't been reported, open a new issue.
 Help us to maximize the effort we can spend fixing issues and adding new
-features by not reporting duplicate issues.  Providing the following information will increase the chances of your issue being dealt with quickly:
+features by not reporting duplicate issues. 
 
-* **Overview of the Issue** - if an error is being thrown a non-minified stack trace helps
-* **Motivation for or Use Case** - explain why this is a bug for you
-* **Browsers and Operating System** - is this a problem with all browsers or only IE9?
-* **Reproduce the Error** - provide a live example (using JSBin) or a unambiguous set of steps.
-* **Related Issues** - has a similar issue been reported before?
-* **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
-  causing the problem (line of code or commit)
+The more information you can provide in an issue, the faster we can resolve it. Issues that don't make an attempt to follow the issue template will likely be closed.
 
-**If you get help, help others. Good karma rulez!**
+### New samples
 
-### Submitting a Pull Request
+Given the maintenance cost of the large number of samples that are already in this repository, we are unlikely to add new samples. However, if you have an idea for a sample and would like to discuss it with others, take a look at the ["ideas" section of this repository's discussions](https://github.com/firebase/functions-samples/discussions?discussions_q=category%3AIdeas).
 
-Before you submit your pull request consider the following guidelines:
+Pull Requests that contain new samples will only be considered if they meet the following criteria:
 
-* Search [GitHub](https://github.com/firebase/functions-samples/pulls) for an open or closed Pull Request
-  that relates to your submission. You don't want to duplicate effort.
-* Please sign our [Contributor License Agreement (CLA)](#cla) before sending pull
-  requests. We cannot accept code without this.
-* Make your changes in a new git branch:
+- Solve a common use-case for Cloud Functions for Firebase with minimal non-Firebase setup required
+- Thoroughly documented
+- Thoroughly tested
+- Simple enough to be maintained alongside all other samples in the repository
 
-     ```shell
-     git checkout -b my-fix-branch master
-     ```
-
-* Create your patch, **including appropriate test cases**.
-* Follow our [Coding Rules](#rules).
-* Avoid checking in files that shouldn't be tracked (e.g `node_modules`, `gulp-cache`, `.tmp`, `.idea`). We recommend using a [global](#global-gitignore) gitignore for this.
-* Make sure **not** to include a recompiled version of the files found in `/css` and `/js` as part of your PR. We will generate these automatically.
-* Commit your changes using a descriptive commit message.
-
-     ```shell
-     git commit -a
-     ```
-  Note: the optional commit `-a` command line option will automatically "add" and "rm" edited files.
-
-* Build your changes locally to ensure all the tests pass:
-
-    ```shell
-   gulp
-    ```
-
-* Push your branch to GitHub:
-
-    ```shell
-    git push origin my-fix-branch
-    ```
-
-* In GitHub, send a pull request to `functions-samples:master`.
-* If we suggest changes then:
-  * Make the required updates.
-  * Rebase your branch and force push to your GitHub repository (this will update your Pull Request):
-
-    ```shell
-    git rebase master -i
-    git push origin my-fix-branch -f
-    ```
-
-That's it! Thank you for your contribution!
-
-#### After your pull request is merged
-
-After your pull request is merged, you can safely delete your branch and pull the changes
-from the main (upstream) repository:
-
-* Delete the remote branch on GitHub either through the GitHub web UI or your local shell as follows:
-
-    ```shell
-    git push origin --delete my-fix-branch
-    ```
-
-* Check out the master branch:
-
-    ```shell
-    git checkout master -f
-    ```
-
-* Delete the local branch:
-
-    ```shell
-    git branch -D my-fix-branch
-    ```
-
-* Update your master with the latest upstream version:
-
-    ```shell
-    git pull --ff upstream master
-    ```
-
-## <a name="rules"></a> Coding Rules
-
-We generally follow the [Google JavaScript style guide][js-style-guide].
+If your Pull Request isn't accepted, consider hosting it in your own GitHub repository, and adding it to our [list of community-built extensions](./community.md)!
 
 ## <a name="cla"></a> Signing the CLA
 
+Contributions to this project must be accompanied by a Contributor License
+Agreement (CLA). You (or your employer) retain the copyright to your
+contribution; this simply gives us permission to use and redistribute your
+contributions as part of the project. Head over to
+<https://cla.developers.google.com/> to see your current agreements on file or
+to sign a new one.
+
+You generally only need to submit a CLA once, so if you've already submitted one
+(even if it was for a different project), you probably don't need to do it
+again.
+
 Please sign our [Contributor License Agreement][google-cla] (CLA) before sending pull requests. For any code
 changes to be accepted, the CLA must be signed. It's a quick process, we promise!
-
-*This guide was inspired by the [AngularJS contribution guidelines](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md).*
 
 [github]: https://github.com/firebase/functions-samples
 [google-cla]: https://cla.developers.google.com
