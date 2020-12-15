@@ -12,7 +12,7 @@ We'd love for you to contribute to our source code and to make the Firebase Clou
 
 ## <a name="coc"></a> Code of Conduct
 
-As contributors and maintainers of the Firebase Cloud Functions Templates Library project, we pledge to respect everyone who contributes by posting issues, updating documentation, submitting pull requests, providing feedback in comments, and any other activities.
+As contributors and maintainers of the Firebase functions-samples project, we pledge to respect everyone who contributes by posting issues, updating documentation, submitting pull requests, providing feedback in comments, and any other activities.
 
 Communication through any of Firebase's channels (GitHub, StackOverflow, Google+, Twitter, etc.) must be constructive and never resort to personal attacks, trolling, public or private harassment, insults, or other unprofessional conduct.
 
@@ -20,26 +20,18 @@ We promise to extend courtesy and respect to everyone involved in this project r
 
 If any member of the community violates this code of conduct, the maintainers of the Firebase Cloud Functions Templates Library project may take action, removing issues, comments, and PRs or blocking accounts as deemed appropriate.
 
-If you are subject to or witness unacceptable behavior, or have any other concerns, please drop us a line at nivco@google.com.
+If you are subject to or witness unacceptable behavior, or have any other concerns, please drop us a line at [Firebase support](https://firebase.google.com/support).
 
 ## <a name="question"></a> Got a Question or Problem?
 
-If you have questions about how to use the Firebase Cloud Functions Templates Library, please direct these to [StackOverflow][stackoverflow] and use the `firebase` tag. We are also available on GitHub issues.
-
-If you feel that we're missing an important bit of documentation, feel free to
-file an issue so we can help. Here's an example to get you started:
-
-```
-What are you trying to do or find out more about?
-
-Where have you looked?
-
-Where did you expect to find this information?
-```
+- To report specific problems with the samples in this repository, file an [issue](#issue).
+- If you have questions about a sample in this repository, try opening a [discussion](https://github.com/firebase/functions-samples/discussions). 
+- For general Cloud Functions for Firebase questions, please ask on [StackOverflow][stackoverflow] and use the `firebase` tag.
+- If you have a problem specific to your Firebase project, or would like to report an issue with Firebase itself, contact [Firebase support](https://firebase.google.com/support).
 
 ## <a name="issue"></a> Found an Issue?
 If you find a bug in the source code or a mistake in the documentation, you can help us by
-submitting an issue to our [GitHub Repository][github]. Even better you can submit a Pull Request
+submitting an issue to our [GitHub Repository][github]. Even better, you can submit a Pull Request
 with a fix.
 
 See [below](#submit) for some guidelines.
@@ -47,12 +39,11 @@ See [below](#submit) for some guidelines.
 ## <a name="submit"></a> Submission Guidelines
 
 ### Submitting an Issue
-Before you submit your issue search the archive, maybe your question was already answered.
+Before you submit your issue search the archive in case your question was already answered.
 
 If your issue appears to be a bug, and hasn't been reported, open a new issue.
 Help us to maximize the effort we can spend fixing issues and adding new
-features, by not reporting duplicate issues.  Providing the following information will increase the
-chances of your issue being dealt with quickly:
+features by not reporting duplicate issues.  Providing the following information will increase the chances of your issue being dealt with quickly:
 
 * **Overview of the Issue** - if an error is being thrown a non-minified stack trace helps
 * **Motivation for or Use Case** - explain why this is a bug for you
@@ -64,30 +55,11 @@ chances of your issue being dealt with quickly:
 
 **If you get help, help others. Good karma rulez!**
 
-Here's a template to get you started:
-
-```
-Browser:
-Browser version:
-Operating system:
-Operating system version:
-
-What steps will reproduce the problem:
-1.
-2.
-3.
-
-What is the expected result?
-
-What happens instead of that?
-
-Please provide any other information below, and attach a screenshot if possible.
-```
-
 ### Submitting a Pull Request
+
 Before you submit your pull request consider the following guidelines:
 
-* Search [GitHub](https://github.com/firebase/firebase-quickstart-web/pulls) for an open or closed Pull Request
+* Search [GitHub](https://github.com/firebase/functions-samples/pulls) for an open or closed Pull Request
   that relates to your submission. You don't want to duplicate effort.
 * Please sign our [Contributor License Agreement (CLA)](#cla) before sending pull
   requests. We cannot accept code without this.
