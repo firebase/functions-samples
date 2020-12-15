@@ -18,7 +18,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
-const mkdirp = require('mkdirp-promise');
+const mkdirp = require('mkdirp');
 const vision = require('@google-cloud/vision');
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
