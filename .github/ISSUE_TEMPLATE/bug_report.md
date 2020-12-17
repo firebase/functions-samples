@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Report an issue with a specific sample
-title: "[BUG] in sample: "
+title: '[BUG] in sample: '
 labels: 'type: bug'
 assignees: ''
-
 ---
 
 ### Which sample has a bug?
@@ -23,7 +22,8 @@ assignees: ''
 
 <!-- Provide any error messages or screenshots of unexpected behavior -->
 
-**Errors in the [console logs](https://console.firebase.google.com/project/_/functions/logs?search=&severity=DEBUG)**
+**Errors in the
+[console logs](https://console.firebase.google.com/project/_/functions/logs?search=&severity=DEBUG)**
 
 **Screenshots**
 
