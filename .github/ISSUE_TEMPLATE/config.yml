@@ -2,7 +2,7 @@
 
 blank_issues_enabled: false
 contact_links:
-  - name: Discussion
+  - name: Propose a new sample, or get help setting up a sample
     url: https://github.com/firebase/functions-samples/discussions
     about: Informal help and discussion about the samples in this repository.
   - name: Issues with the Firebase platform
