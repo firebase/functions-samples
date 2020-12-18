@@ -144,11 +144,17 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   const customer = (await dbRef.doc(user.uid).get()).data();
   await stripe.customers.del(customer.customer_id);
   // Delete the customers payments & payment methods in firestore.
-  const snapshot = await dbRef
+  const paymetsMethodsSnapshot = await dbRef
     .doc(user.uid)
     .collection('payment_methods')
     .get();
-  snapshot.forEach((snap) => snap.ref.delete());
+  paymetsMethodsSnapshot.forEach((snap) => snap.ref.delete());
+  const paymentsSnapshot = await dbRef
+    .doc(user.uid)
+    .collection('payments')
+    .get();
+  paymentsSnapshot.forEach((snap) => snap.ref.delete());
+
   await dbRef.doc(user.uid).delete();
   return;
 });
