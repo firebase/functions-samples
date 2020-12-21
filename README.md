@@ -276,6 +276,11 @@ Uses a Crashlytics trigger.
 
 Automatically publishes models to Firebase ML for each TensorFlow Lite file that is uploaded to Firebase Storage.
 
+### [Get information about a YouTube channel](/youtube)
+
+This sample shows how to query the Youtube Data API.
+Uses an HTTPS trigger.
+
 ## Contributing
 
 We'd love that you contribute to the project. Before doing so please read our [Contributor guide](CONTRIBUTING.md).
