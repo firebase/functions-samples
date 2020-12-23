@@ -25,18 +25,12 @@
     "image-maker/functions",
     "image-sharp/functions",
     "instagram-auth/functions",
-    "isomorphic-react-app/functions",
-    "isomorphic-react-app/src",
     "lastmodified-tracking/functions",
     "limit-children/functions",
-    "line-auth/functions",
     "linkedin-auth/functions",
     "message-translation/functions",
     "minimal-webhook/functions",
     "moderate-images/functions",
-    "nextjs-with-firebase-hosting",
-    "nextjs-with-firebase-hosting/src/app",
-    "nextjs-with-firebase-hosting/src/functions",
     "paypal/functions",
     "presence-firestore/functions",
     "quickstarts/big-ben/functions",
@@ -51,9 +45,9 @@
     "survey-app-update/functions",
     "template-handlebars/functions",
     "text-moderation/functions",
-    "typescript-getting-started/functions",
     "url-shortener/functions",
-    "username-password-auth/functions"
+    "username-password-auth/functions",
+    "youtube/functions"
   ],
   "version": "1.0.0"
 }

@@ -64,26 +64,13 @@ This quickstart demonstrates how to trigger a function in response to the
 completion of a test matrix in **Firebase Test Lab**.
 
 <a name="environment"></a>
-## Development Environment Samples and Boilerplates
+## Development Boilerplates
 
-The Firebase CLI generates sample code for Cloud Functions using JavaScript
-that is natively supported in NodeJS. Most developers use more modern
-JavaScript or TypeScript which requires additional tools.
-
-### [Write Cloud Functions using TypeScript](/typescript-getting-started)
-
-This sample shows how you can write your Cloud Functions code using Typescript.
-This requires a build step, included as an npm script, which transpiles the
-source code to a supported version of JavaScript.
-Uses an **HTTPS request**.
+The Firebase CLI generates sample code for Cloud Functions using JavaScript or TypeScript.
 
 ### [Server-side generated pages w/ Handlebars templating and user sessions](/template-handlebars)
 
 This sample shows how to serve server-side generated HTML pages using the [HandlebarsJs](http://handlebarsjs.com/) templating system and serve user-specific content by always passing the Firebase ID token in a `__session` cookie.
-
-### [Isomorphic React App](/isomorphic-react-app)
-This sample demonstrates how to create an isomorphic React application with server-side data fetching. This sample uses Cloud Functions, Hosting, and the Realtime Database.
-
 
 <a name="image"></a>
 ## Image Processing
@@ -172,7 +159,7 @@ Only users who pass a valid Firebase ID token as a Bearer token in the `Authoriz
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 Uses an HTTP trigger.
 
-### Authorize with [Okta](/okta-auth), [LinkedIn](/linkedin-auth), [Spotify](spotify-auth), [Instagram](/instagram-auth), [LINE](/line-auth) or [Basic Auth](/username-password-auth)
+### Authorize with [Okta](/okta-auth), [LinkedIn](/linkedin-auth), [Spotify](spotify-auth), [Instagram](/instagram-auth), or [Basic Auth](/username-password-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
