@@ -98,7 +98,7 @@ exports.token = functions.https.onRequest((req, res) => {
       });
     });
   } catch (error) {
-    res.jsonp({error: error.toString});
+    res.jsonp({error: error.toString()});
   }
   return null;
 });
