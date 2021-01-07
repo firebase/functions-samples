@@ -1,6 +1,6 @@
 # Full Text search via Algolia
 
-This template shows how to enable full text search on Cloud Firestore documents by using an [Algolia](https://algolia.com) hosted search service.
+This template shows how to enable full text search on Firestore documents by using an [Algolia](https://algolia.com) hosted search service.
 
 ## Functions Code
 
@@ -8,7 +8,7 @@ See file [functions/index.js](functions/index.js) for the code.
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
-## Sample Cloud Firestore Structure
+## Sample Firestore Structure
 
 As an example we'll be using a secure note structure:
 
@@ -31,4 +31,4 @@ limits which documents they can search through.
 ## Setting up the sample
 
 For setup and overview, please see the [Full Text Search Solution](https://firebase.google.com/docs/firestore/solutions/search) in the
-Cloud Firestore documentation.
+Firestore documentation.

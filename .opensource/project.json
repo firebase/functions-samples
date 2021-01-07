@@ -13,7 +13,7 @@
         "quickstarts/thumbnails/README.md": "Quickstart: Cloud Storage Trigger",
         "quickstarts/time-server/README.md": "Quickstart: HTTP Trigger",
         "quickstarts/uppercase/README.md": "Quickstart: RTDB Trigger",
-        "quickstarts/uppercase-firestore/README.md": "Quickstart: Cloud Firestore Trigger"
+        "quickstarts/uppercase-firestore/README.md": "Quickstart: Firestore Trigger"
     },
     "related": [
         "firebase/firebase-functions"

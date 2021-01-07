@@ -1,4 +1,4 @@
-# Create Stripe customers and charge them on Cloud Firestore write
+# Create Stripe customers and charge them on Firestore write
 
 This sample shows you how to create Stripe customers when your users sign up, securely collect and store their payment details, and charge them when a new document is written to your Firestore.
 
