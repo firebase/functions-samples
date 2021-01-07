@@ -30,9 +30,9 @@ different, commonly used JavaScript development patterns such as Typescript, Rea
 
 Here is a set of minimal samples for each Cloud Functions trigger types.
 
-### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Cloud Firestore](/quickstarts/uppercase-firestore)
+### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Firestore](/quickstarts/uppercase-firestore)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Cloud Firestore events**. The function transforms message text written to Firestore to uppercase.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Firestore events**. The function transforms message text written to Firestore to uppercase.
 
 ### [HTTPS trigger quickstart: Time Server](/quickstarts/time-server)
 
@@ -192,10 +192,10 @@ Uses a Realtime Database trigger.
 Integrates the Bit.ly API to shorten URLs automatically as they are added to the database.
 Uses a Realtime Database trigger.
 
-### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Cloud Firestore](/fulltext-search-firestore)
+### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Firestore](/fulltext-search-firestore)
 
-Enable full-text search on Firebase Database data or Cloud Firestore documents by using an Algolia hosted search service.
-Uses a Realtime Database or Cloud Firestore trigger.
+Enable full-text search on Firebase Database data or Firestore documents by using an Algolia hosted search service.
+Uses a Realtime Database or Firestore trigger.
 
 ### [User data cleanup](/user-data-cleanup)
 
@@ -244,9 +244,9 @@ Uses an Analytics trigger.
 This sample uses ffmpeg / fluent-ffmpeg and automatically converts audio files that are uploaded to Cloud Storage to FLAC file format with mono-channel audio @ 16000hz.
 Uses a Storage trigger.
 
-### [Presence for Cloud Firestore](/presence-firestore)
+### [Presence for Firestore](/presence-firestore)
 
-Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
+Build a simple online / offline status indicator for your users by leveraging Firestore and Realtime Database together.
 Uses a Realtime Database trigger.
 
 ### [Create Jira Issue upon new Crashlytics issue](/crashlytics-integration/jira-issue)

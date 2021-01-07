@@ -1,16 +1,16 @@
-# Firebase SDK for Cloud Functions Quickstart - Cloud Firestore
+# Firebase SDK for Cloud Functions Quickstart - Firestore
 
 This quickstart demonstrates using the **Firebase SDK for Cloud Functions** with
-**Cloud Firestore**.
+**Firestore**.
 
 ## Introduction
 
 This sample app does two things:
 
-- Creates messages in Cloud Firestore using a simple HTTPS request which is
-  handled by an HTTP function. Writing to Cloud Firestore is done using the
+- Creates messages in Firestore using a simple HTTPS request which is
+  handled by an HTTP function. Writing to Firestore is done using the
   Firebase Admin SDK.
-- When a message gets added in Cloud Firestore, a function triggers and
+- When a message gets added in Firestore, a function triggers and
   automatically makes these messages all uppercase.
 
 ## Set up the sample

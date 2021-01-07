@@ -1,6 +1,6 @@
 {
   "name": "uppercase-firestore-quickstart-functions",
-  "description": "Uppercaser Firebase Functions Quickstart sample for Cloud Firestore",
+  "description": "Uppercaser Firebase Functions Quickstart sample for Firestore",
   "dependencies": {
     "firebase-admin": "^9.4.2",
     "firebase-functions": "^3.13.0"
