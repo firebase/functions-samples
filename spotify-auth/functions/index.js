@@ -21,6 +21,7 @@ const crypto = require('crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');
+// @ts-ignore
 const serviceAccount = require('./service-account.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -97,7 +98,7 @@ exports.token = functions.https.onRequest((req, res) => {
       });
     });
   } catch (error) {
-    return res.jsonp({error: error.toString});
+    res.jsonp({error: error.toString()});
   }
   return null;
 });

@@ -21,6 +21,7 @@ const crypto = require('crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');
+// @ts-ignore
 const serviceAccount = require('./service-account.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

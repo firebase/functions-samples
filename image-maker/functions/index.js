@@ -16,7 +16,7 @@
 
 const functions = require('firebase-functions');
 const app = require('express')();
-const Canvas = require('canvas-prebuilt');
+const { Canvas } = require('canvas');
 const _ = require('lodash');
 
 const clock = require('./clock');
@@ -24,7 +24,7 @@ const spark = require('./sparkline');
 const ray = require('./ray');
 
 app.get('/api/ray', (req, res) => {
-  const tracers = JSON.parse(req.query.tracers);
+  const tracers = JSON.parse(`${req.query.tracers}`);
   if (!_.isArray(tracers) ||
     !_.every(tracers, (depth) => typeof depth === 'number')) {
     // invalid format
@@ -38,7 +38,7 @@ app.get('/api/ray', (req, res) => {
   }
   res.set('Cache-Control', 'public, max-age=60, s-maxage=31536000');
   res.writeHead(200, {'Content-Type': 'image/png'});
-  canvas.pngStream().pipe(res);
+  canvas.createPNGStream().pipe(res);
 });
 
 app.get('/api/clock', (req, res) => {
@@ -48,11 +48,11 @@ app.get('/api/clock', (req, res) => {
   clock(ctx, colorOpts);
   res.set('Cache-Control', 'public, max-age=60, s-maxage=31536000');
   res.writeHead(200, {'Content-Type': 'image/png'});
-  canvas.pngStream().pipe(res);
+  canvas.createPNGStream().pipe(res);
 });
 
 app.get('/api/spark', (req, res) => {
-  const dataSeries = JSON.parse(req.query.series);
+  const dataSeries = JSON.parse(`${req.query.series}`);
   const colorOpts = req.query.colorOpts || {};
   if (!_.isArray(dataSeries) || !_.every(dataSeries, (num) => typeof num === 'number')) {
     // invalid format
@@ -64,7 +64,7 @@ app.get('/api/spark', (req, res) => {
   spark(ctx, dataSeries, colorOpts);
   res.set('Cache-Control', 'public, max-age=60, s-maxage=31536000');
   res.writeHead(200, {'Content-Type': 'image/png'});
-  canvas.pngStream().pipe(res);
+  canvas.createPNGStream().pipe(res);
 });
 
 exports.app = functions.https.onRequest(app);

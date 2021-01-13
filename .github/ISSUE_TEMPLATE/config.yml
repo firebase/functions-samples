@@ -1,0 +1,10 @@
+# https://docs.github.com/en/free-pro-team@latest/github/building-a-strong-community/configuring-issue-templates-for-your-repository#configuring-the-template-chooser
+
+blank_issues_enabled: false
+contact_links:
+  - name: Propose a new sample, or get help setting up a sample
+    url: https://github.com/firebase/functions-samples/discussions
+    about: Informal help and discussion about the samples in this repository.
+  - name: Issues with the Firebase platform
+    url: https://firebase.google.com/support
+    about: Report issues with Firebase services to Firebase support.

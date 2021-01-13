@@ -1,0 +1,33 @@
+name: CI Tests
+
+on:
+  - pull_request
+  - push
+
+env:
+  CI: true
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 12.x
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache npm
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
+
+      - run: npm install
+      - run: npm run bootstrap
+      - run: npm run lint
+      - run: npm run compile
+      - run: npm run test

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Your Cloud Functions address will be like https://us-central1-<project-id>.cloudfunctions.net -->
-    <string name="validation_server_domain">your_line_token_verification_server</string>
-</resources>

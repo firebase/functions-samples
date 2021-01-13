@@ -1,0 +1,5 @@
+service_account_private_key.json
+.runtimeconfig.json
+ui-debug.log
+public/okta-config.js
+functions/.env

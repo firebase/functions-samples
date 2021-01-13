@@ -1,8 +1,8 @@
-## All samples use the Node 8 runtime with ES2017 syntax.
-
 # Cloud Functions for Firebase Sample Library
 
 This repository contains a collection of samples showcasing some typical uses of [Cloud Functions for Firebase](https://firebase.google.com/features/functions).
+
+> All samples use the Node 12 runtime and require the Blaze pay-as-you-go billing plan to deploy. Learn more about Cloud Functions for Firebase's Node versions [here](https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version).
 
 ### What's Cloud Functions for Firebase?
 
@@ -30,9 +30,9 @@ different, commonly used JavaScript development patterns such as Typescript, Rea
 
 Here is a set of minimal samples for each Cloud Functions trigger types.
 
-### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Cloud Firestore](/quickstarts/uppercase-firestore)
+### Quickstart: Uppercaser for [Realtime Database](/quickstarts/uppercase) or [Firestore](/quickstarts/uppercase-firestore)
 
-This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Cloud Firestore events**. The function transforms message text written to Firestore to uppercase.
+This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Realtime Database or Firestore events**. The function transforms message text written to Firestore to uppercase.
 
 ### [HTTPS trigger quickstart: Time Server](/quickstarts/time-server)
 
@@ -64,31 +64,18 @@ This quickstart demonstrates how to trigger a function in response to the
 completion of a test matrix in **Firebase Test Lab**.
 
 <a name="environment"></a>
-## Development Environment Samples and Boilerplates
+## Development Boilerplates
 
-The Firebase CLI generates sample code for Cloud Functions using JavaScript
-that is natively supported in NodeJS. Most developers use more modern
-JavaScript or TypeScript which requires additional tools.
-
-### [Write Cloud Functions using TypeScript](/typescript-getting-started)
-
-This sample shows how you can write your Cloud Functions code using Typescript.
-This requires a build step, included as an npm script, which transpiles the
-source code to a supported version of JavaScript.
-Uses an **HTTPS request**.
+The Firebase CLI generates sample code for Cloud Functions using JavaScript or TypeScript.
 
 ### [Server-side generated pages w/ Handlebars templating and user sessions](/template-handlebars)
 
 This sample shows how to serve server-side generated HTML pages using the [HandlebarsJs](http://handlebarsjs.com/) templating system and serve user-specific content by always passing the Firebase ID token in a `__session` cookie.
 
-### [Isomorphic React App](/isomorphic-react-app)
-This sample demonstrates how to create an isomorphic React application with server-side data fetching. This sample uses Cloud Functions, Hosting, and the Realtime Database.
-
-
 <a name="image"></a>
 ## Image Processing
 
-Here is a few sample that shows how you can process or analyze images using Cloud Functions.
+Here are a few samples that show how you can process or analyze images using Cloud Functions.
 
 ### [Image Maker](/image-maker)
 This sample demonstrates how to create various customized images such as sparkline or sphere charts through Cloud Functions and Hosting and serve it to the client.
@@ -172,7 +159,7 @@ Only users who pass a valid Firebase ID token as a Bearer token in the `Authoriz
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 Uses an HTTP trigger.
 
-### Authorize with [LinkedIn](/linkedin-auth), [Spotify](spotify-auth), [Instagram](/instagram-auth), [LINE](/line-auth) or [Basic Auth](/username-password-auth)
+### Authorize with [Okta](/okta-auth), [LinkedIn](/linkedin-auth), [Spotify](spotify-auth), [Instagram](/instagram-auth), or [Basic Auth](/username-password-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
@@ -205,10 +192,10 @@ Uses a Realtime Database trigger.
 Integrates the Bit.ly API to shorten URLs automatically as they are added to the database.
 Uses a Realtime Database trigger.
 
-### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Cloud Firestore](/fulltext-search-firestore)
+### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Firestore](/fulltext-search-firestore)
 
-Enable full-text search on Firebase Database data or Cloud Firestore documents by using an Algolia hosted search service.
-Uses a Realtime Database or Cloud Firestore trigger.
+Enable full-text search on Firebase Database data or Firestore documents by using an Algolia hosted search service.
+Uses a Realtime Database or Firestore trigger.
 
 ### [User data cleanup](/user-data-cleanup)
 
@@ -257,9 +244,9 @@ Uses an Analytics trigger.
 This sample uses ffmpeg / fluent-ffmpeg and automatically converts audio files that are uploaded to Cloud Storage to FLAC file format with mono-channel audio @ 16000hz.
 Uses a Storage trigger.
 
-### [Presence for Cloud Firestore](/presence-firestore)
+### [Presence for Firestore](/presence-firestore)
 
-Build a simple online / offline status indicator for your users by leveraging Cloud Firestore and Realtime Database together.
+Build a simple online / offline status indicator for your users by leveraging Firestore and Realtime Database together.
 Uses a Realtime Database trigger.
 
 ### [Create Jira Issue upon new Crashlytics issue](/crashlytics-integration/jira-issue)
@@ -272,6 +259,14 @@ Uses a Crashlytics trigger.
 Automatically sends a Slack notification to a specific Slack channel when a new issue is reported in Crashlytics.
 Uses a Crashlytics trigger.
 
+### [Publish Models to Firebase ML](/publish-model)
+
+Automatically publishes models to Firebase ML for each TensorFlow Lite file that is uploaded to Firebase Storage.
+
+### [Get information about a YouTube channel](/youtube)
+
+This sample shows how to query the Youtube Data API.
+Uses an HTTPS trigger.
 
 ## Contributing
 
@@ -280,8 +275,11 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## License
 
-© Google, 2015-2017. Licensed under an [Apache-2](LICENSE) license.
+© Google, 2015-2020. Licensed under an [Apache-2](LICENSE) license.
 
 ## Build Status
 
-[![Build Status](https://travis-ci.org/firebase/functions-samples.svg?branch=master)](https://travis-ci.org/firebase/functions-samples)
+[![Actions Status][gh-actions-badge]][gh-actions]
+
+[gh-actions]: https://github.com/firebase/functions-samples/actions
+[gh-actions-badge]: https://github.com/firebase/functions-samples/workflows/CI%20Tests/badge.svg

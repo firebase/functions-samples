@@ -2,27 +2,28 @@
   "name": "paypal-functions",
   "description": "Paypal Firebase Functions",
   "dependencies": {
-    "cors": "^2.8.3",
-    "paypal-rest-sdk": "^1.7.1",
-    "firebase-admin": "~7.1.1",
-    "firebase-functions": "^2.2.1"
+    "cors": "^2.8.5",
+    "paypal-rest-sdk": "^1.8.1",
+    "firebase-admin": "^9.4.2",
+    "firebase-functions": "^3.13.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-config-google": "^0.8.0",
-    "eslint-plugin-promise": "^3.6.0",
-    "jshint": "^2.9.5"
+    "eslint": "^6.8.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "jshint": "^2.11.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
-    "serve": "firebase serve --only functions",
-    "shell": "firebase experimental:functions:shell",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "compile": "cp ../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "8"
+    "node": "12"
   },
   "private": true
 }

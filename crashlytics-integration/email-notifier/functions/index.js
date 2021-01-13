@@ -111,7 +111,7 @@ exports.sendOnVelocityAlert = functions.crashlytics.issue().onVelocityAlert(asyn
     from: functions.config().email.from_email,
     subject: `${appName} on ${appPlatform} has a velocity alert!`,
     html: `<h2>${appName} on ${appPlatform} has a velocity alert!</h2>
-        <h3>This issue is causing ${parseFloat(crashPercentage).toFixed(2)}% of all sessions to crash</h3>
+        <h3>This issue is causing ${crashPercentage.toFixed(2)}% of all sessions to crash</h3>
         <p>App Name: ${appName}</p>
         <p>App Id: ${appId}</p>
         <p>Platform: ${appPlatform}</p>

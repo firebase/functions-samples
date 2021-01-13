@@ -26,9 +26,9 @@ Create a Firebase Project on the [Firebase Console](https://console.firebase.goo
 Set up your Firebase project by running `firebase use --add`, select your Project ID and follow the instructions.
 
 
-### 3. Install the Firebase CLI and enable Functions on your Firebase CLI
+### 3. Install the Firebase CLI
 
-You need to have installed the Firebase CLI. If you haven't run:
+You need to have installed the Firebase CLI, and it always helps to be on the latest version. Run:
 
 ```bash
 npm install -g firebase-tools
@@ -38,9 +38,15 @@ npm install -g firebase-tools
 
 ## Try the sample locally
 
-Start serving your project locally using `firebase serve --only hosting,functions`
+First you need to install the `npm` dependencies of the functions:
 
-Open the app in a browser at `https://localhost:5000/`.
+```bash
+cd functions && npm install; cd ..
+```
+
+Start serving your project locally using `firebase serve`
+
+Open the app in a browser at [https://localhost:5000/](https://localhost:5000/).
 
 A page containing a repeated number of "BONG" - One for each hour of the day - will be displayed.
 

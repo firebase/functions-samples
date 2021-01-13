@@ -62,7 +62,7 @@ exports.pay = functions.https.onRequest((req, res) => {
     const links = {};
     if (error) {
       console.error(error);
-      res.status('500').end();
+      res.status(500).end();
     } else {
       // Capture HATEOAS links
       payment.links.forEach((linkObj) => {
@@ -72,14 +72,14 @@ exports.pay = functions.https.onRequest((req, res) => {
         };
       });
       // If redirect url present, redirect user
-      if (links.hasOwnProperty('approval_url')) {
+      if ( Object.prototype.hasOwnProperty.call(links, 'approval_url')) {
         // REDIRECT USER TO links['approval_url'].href
         console.info(links.approval_url.href);
         // res.json({"approval_url":links.approval_url.href});
         res.redirect(302, links.approval_url.href);
       } else {
         console.error('no redirect URI present');
-        res.status('500').end();
+        res.status(500).end();
       }
     }
   });

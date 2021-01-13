@@ -29,9 +29,12 @@ app.set('view engine', 'handlebars');
 app.use(firebaseUser.validateFirebaseIdToken);
 
 app.get('/', (req, res) => {
-  console.log('Signed-in user:', req.user);
+  // @ts-ignore
+  const user = req.user;
+
+  console.log('Signed-in user:', user);
   return res.render('user', {
-    user: req.user,
+    user: user,
   });
 });
 

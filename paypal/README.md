@@ -22,7 +22,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 ## Setting up the sample
 
  1. Create a Firebase project on the [Firebase application console](https://console.firebase.google.com).
- 1. Enable billing on your Firebase project by switching to the Blaze or Flame plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
+ 1. Enable billing on your Firebase project by switching to the Blaze plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
  1. Clone or download this repo and open the `paypal` directory.
  1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
  1. Configure the CLI locally by using `firebase use --add` and select your project in the list.

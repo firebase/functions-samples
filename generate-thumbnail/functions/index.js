@@ -16,7 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const mkdirp = require('mkdirp-promise');
+const mkdirp = require('mkdirp');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const spawn = require('child-process-promise').spawn;
@@ -82,13 +82,15 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   fs.unlinkSync(tempLocalFile);
   fs.unlinkSync(tempLocalThumbFile);
   // Get the Signed URLs for the thumbnail and original image.
-  const config = {
-    action: 'read',
-    expires: '03-01-2500',
-  };
   const results = await Promise.all([
-    thumbFile.getSignedUrl(config),
-    file.getSignedUrl(config),
+    thumbFile.getSignedUrl({
+      action: 'read',
+      expires: '03-01-2500',
+    }),
+    file.getSignedUrl({
+      action: 'read',
+      expires: '03-01-2500',
+    }),
   ]);
   console.log('Got Signed URLs.');
   const thumbResult = results[0];

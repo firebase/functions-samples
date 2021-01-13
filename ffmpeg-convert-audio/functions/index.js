@@ -16,12 +16,14 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const gcs = require('@google-cloud/storage')();
+const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpeg_static = require('ffmpeg-static');
+
+const gcs = new Storage();
 
 // Makes an ffmpeg command return a promise.
 function promisifyCommand(command) {

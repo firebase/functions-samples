@@ -8,7 +8,7 @@ Checking the ID token is done with an ExpressJs middleware that also passes the 
 
 Once authorized the function respond with 'Hello <username>'.
 
-This sample comes with a simple web-based UI which code is in [public](public) directory that lets you sign-in Firebase and initiates an authorized XHR to the Function.
+This sample comes with a simple web-based UI whose code is in [public](public) directory that lets you sign-in Firebase and initiates an authorized XHR to the Function.
 
 
 ## Setting up the sample

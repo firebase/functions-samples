@@ -25,7 +25,7 @@ admin.initializeApp();
 const firestore = admin.firestore();
 
 // Create a new function which is triggered on changes to /status/{uid}
-// Note: This is a Realtime Database trigger, *not* Cloud Firestore.
+// Note: This is a Realtime Database trigger, *not* Firestore.
 exports.onUserStatusChanged = functions.database.ref('/status/{uid}').onUpdate(
     async (change, context) => {
       // Get the data written to Realtime Database

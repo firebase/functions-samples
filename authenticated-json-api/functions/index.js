@@ -72,7 +72,9 @@ app.post('/api/messages', async (req, res) => {
     const category = categorizeScore(results[0].documentSentiment.score);
     const data = {message: message, sentiment: results[0], category: category};
 
-    await admin.database().ref(`/users/${req.user.uid}/messages`).push(data);
+    // @ts-ignore
+    const uid = req.user.uid;
+    await admin.database().ref(`/users/${uid}/messages`).push(data);
 
     res.status(201).json({message, category});
   } catch(error) {
@@ -84,8 +86,12 @@ app.post('/api/messages', async (req, res) => {
 // GET /api/messages?category={category}
 // Get all messages, optionally specifying a category to filter on
 app.get('/api/messages', async (req, res) => {
-  const category = req.query.category;
-  let query = admin.database().ref(`/users/${req.user.uid}/messages`);
+  // @ts-ignore
+  const uid = req.user.uid;
+  const category = `${req.query.category}`;
+
+  /** @type admin.database.Query */
+  let query = admin.database().ref(`/users/${uid}/messages`);
 
   if (category && ['positive', 'negative', 'neutral'].indexOf(category) > -1) {
     // Update the query with the valid category
@@ -116,7 +122,9 @@ app.get('/api/message/:messageId', async (req, res) => {
   console.log(`LOOKING UP MESSAGE "${messageId}"`);
 
   try {
-    const snapshot = await admin.database().ref(`/users/${req.user.uid}/messages/${messageId}`).once('value');
+    // @ts-ignore
+    const uid = req.user.uid;
+    const snapshot = await admin.database().ref(`/users/${uid}/messages/${messageId}`).once('value');
 
     if (!snapshot.exists()) {
       return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});
