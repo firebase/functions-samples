@@ -7,7 +7,7 @@
     "request-promise-native": "^1.0.8",
     "simple-oauth2": "^3.3.0",
     "firebase-admin": "^9.4.2",
-    "firebase-functions": "^3.13.0"
+    "firebase-functions": "^3.13.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
