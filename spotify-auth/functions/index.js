@@ -48,7 +48,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     console.log('Setting verification state:', state);
-    res.cookie('state', state.toString(), {maxAge: 3600000, secure: true, httpOnly: true});
+    res.cookie('state', state.toString(), {maxAge: 3600000, secure: true, httpOnly: true, sameSite: 'none'});
     const authorizeURL = Spotify.createAuthorizeURL(OAUTH_SCOPES, state.toString());
     res.redirect(authorizeURL);
   });
