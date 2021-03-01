@@ -23,5 +23,5 @@ This sample can be tested on your Android and iOS app. To test it out:
 
  - Set the project to your Firebase project using `firebase use --add` then select your projec tin the list.
  - Deploy your project using `firebase deploy`
- - Make your app crash (somehow).
+ - Make your app trigger the `in_app_purchase` event (somehow).
  - Within a few hours the coupon will be sent by an FCM notification.
