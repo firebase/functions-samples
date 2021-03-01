@@ -30,17 +30,8 @@ const os = require('os');
 
 // Vision API
 const vision = require('@google-cloud/vision');
-// https://cloud.google.com/vision/docs/reference/rpc/google.cloud.vision.v1#google.cloud.vision.v1.SafeSearchAnnotation
-const likelihood = {
-  UNKNOWN: 'UNKNOWN',
-  VERY_UNLIKELY: 'VERY_UNLIKELY',
-  UNLIKELY: 'UNLIKELY',
-  POSSIBLE: 'POSSIBLE',
-  LIKELY: 'LIKELY',
-  VERY_LIKELY: 'VERY_LIKELY',
-};
 
-const VERY_UNLIKELY = 'VERY_UNLIKELY';
+// Where we'll save blurred images
 const BLURRED_FOLDER = 'blurred';
 
 /**
@@ -59,17 +50,18 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
   const data = await visionClient.safeSearchDetection(
     `gs://${object.bucket}/${object.name}`
   );
-  const safeSearch = data[0].safeSearchAnnotation;
-  functions.logger.log(`SafeSearch results on image "${object.name}"`, safeSearch);
+  const safeSearchResult = data[0].safeSearchAnnotation;
+  functions.logger.log(`SafeSearch results on image "${object.name}"`, safeSearchResult);
 
   // Tune these detection likelihoods to suit your app.
   // The current settings show the most strict configuration
+  // Available likelihoods are defined in https://cloud.google.com/vision/docs/reference/rest/v1/AnnotateImageResponse#likelihood
   if (
-    safeSearch.adult !== likelihood.VERY_UNLIKELY ||
-    safeSearch.spoof !== likelihood.VERY_UNLIKELY ||
-    safeSearch.medical !== likelihood.VERY_UNLIKELY ||
-    safeSearch.violence !== likelihood.VERY_UNLIKELY ||
-    safeSearch.racy !== likelihood.VERY_UNLIKELY
+    safeSearchResult.adult !== 'VERY_UNLIKELY' ||
+    safeSearchResult.spoof !== 'VERY_UNLIKELY' ||
+    safeSearchResult.medical !== 'VERY_UNLIKELY' ||
+    safeSearchResult.violence !== 'VERY_UNLIKELY' ||
+    safeSearchResult.racy !== 'VERY_UNLIKELY'
   ) {
     functions.logger.log('Offensive image found. Blurring.');
     return blurImage(object.name, object.bucket, object.metadata);
