@@ -10,20 +10,35 @@
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for t`he specific language governing permissions and
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 'use strict';
 
+// Firebase setup
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
-const mkdirp = require('mkdirp');
-const vision = require('@google-cloud/vision');
-const spawn = require('child-process-promise').spawn;
+
+// Node.js core modules
+const fs = require('fs');
+const mkdirp = fs.promises.mkdir;
+const {promisify} = require('util');
+const exec = promisify(require('child_process').exec);
 const path = require('path');
 const os = require('os');
-const fs = require('fs');
+
+// Vision API
+const vision = require('@google-cloud/vision');
+// https://cloud.google.com/vision/docs/reference/rpc/google.cloud.vision.v1#google.cloud.vision.v1.SafeSearchAnnotation
+const likelihood = {
+  UNKNOWN: 'UNKNOWN',
+  VERY_UNLIKELY: 'VERY_UNLIKELY',
+  UNLIKELY: 'UNLIKELY',
+  POSSIBLE: 'POSSIBLE',
+  LIKELY: 'LIKELY',
+  VERY_LIKELY: 'VERY_LIKELY',
+};
 
 const VERY_UNLIKELY = 'VERY_UNLIKELY';
 const BLURRED_FOLDER = 'blurred';
@@ -35,7 +50,7 @@ const BLURRED_FOLDER = 'blurred';
 exports.blurOffensiveImages = functions.storage.object().onFinalize(async (object) => {
   // Ignore things we've already blurred
   if (object.name.startsWith(`${BLURRED_FOLDER}/`)) {
-    console.log(`Ignoring upload "${object.name}" because it was already blurred.`);
+    functions.logger.log(`Ignoring upload "${object.name}" because it was already blurred.`);
     return null;
   }
   
@@ -44,21 +59,19 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
   const data = await visionClient.safeSearchDetection(
     `gs://${object.bucket}/${object.name}`
   );
-
   const safeSearch = data[0].safeSearchAnnotation;
-  console.log('SafeSearch results on image', safeSearch);
+  functions.logger.log(`SafeSearch results on image "${object.name}"`, safeSearch);
 
   // Tune these detection likelihoods to suit your app.
   // The current settings show the most strict configuration
-  // Docs: https://cloud.google.com/vision/docs/reference/rpc/google.cloud.vision.v1#google.cloud.vision.v1.SafeSearchAnnotation
   if (
-    safeSearch.adult !== VERY_UNLIKELY ||
-    safeSearch.spoof !== VERY_UNLIKELY ||
-    safeSearch.medical !== VERY_UNLIKELY ||
-    safeSearch.violence !== VERY_UNLIKELY ||
-    safeSearch.racy !== VERY_UNLIKELY
+    safeSearch.adult !== likelihood.VERY_UNLIKELY ||
+    safeSearch.spoof !== likelihood.VERY_UNLIKELY ||
+    safeSearch.medical !== likelihood.VERY_UNLIKELY ||
+    safeSearch.violence !== likelihood.VERY_UNLIKELY ||
+    safeSearch.racy !== likelihood.VERY_UNLIKELY
   ) {
-    console.log('Offensive image found. Blurring.');
+    functions.logger.log('Offensive image found. Blurring.');
     return blurImage(object.name, object.bucket, object.metadata);
   }
 
@@ -74,25 +87,25 @@ async function blurImage(filePath, bucketName, metadata) {
   const bucket = admin.storage().bucket(bucketName);
 
   // Create the temp directory where the storage file will be downloaded.
-  await mkdirp(tempLocalDir);
-  console.log('Temporary directory has been created', tempLocalDir);
+  await mkdirp(tempLocalDir, { recursive: true });
+  functions.logger.log('Temporary directory has been created', tempLocalDir);
 
   // Download file from bucket.
-  await bucket.file(filePath).download({destination: tempLocalFile});
-  console.log('The file has been downloaded to', tempLocalFile);
+  await bucket.file(filePath).download({ destination: tempLocalFile });
+  functions.logger.log('The file has been downloaded to', tempLocalFile);
 
   // Blur the image using ImageMagick.
-  await spawn('convert', [tempLocalFile, '-channel', 'RGBA', '-blur', '0x8', tempLocalFile]);
-  console.log('Blurred image created at', tempLocalFile);
+  await exec(`convert "${tempLocalFile}" -channel RGBA -blur 0x8 "${tempLocalFile}"`);
+  functions.logger.log('Blurred image created at', tempLocalFile);
 
   // Uploading the Blurred image.
   await bucket.upload(tempLocalFile, {
     destination: `${BLURRED_FOLDER}/${filePath}`,
     metadata: {metadata: metadata}, // Keeping custom metadata.
   });
-  console.log('Blurred image uploaded to Storage at', filePath);
+  functions.logger.log('Blurred image uploaded to Storage at', filePath);
 
   // Clean up the local file
   fs.unlinkSync(tempLocalFile);
-  console.log('Deleted local file', filePath);
+  functions.logger.log('Deleted local file', filePath);
 }
