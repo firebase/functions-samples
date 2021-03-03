@@ -59,7 +59,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
 
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
-    console.log('Setting verification state:', state);
+    functions.logger.log('Setting verification state:', state);
     res.cookie('state', state.toString(), {
       maxAge: 3600000,
       secure: true,
@@ -70,7 +70,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
       scope: OAUTH_SCOPES,
       state: state,
     });
-    console.log('Redirecting to:', redirectUri);
+    functions.logger.log('Redirecting to:', redirectUri);
     res.redirect(redirectUri);
   });
 });
@@ -86,19 +86,19 @@ exports.token = functions.https.onRequest(async (req, res) => {
 
   try {
     return cookieParser()(req, res, async () => {
-      console.log('Received verification state:', req.cookies.state);
-      console.log('Received state:', req.query.state);
+      functions.logger.log('Received verification state:', req.cookies.state);
+      functions.logger.log('Received state:', req.query.state);
       if (!req.cookies.state) {
         throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
       } else if (req.cookies.state !== req.query.state) {
         throw new Error('State validation failed');
       }
-      console.log('Received auth code:', req.query.code);
+      functions.logger.log('Received auth code:', req.query.code);
       const results = await oauth2.authorizationCode.getToken({
         code: req.query.code,
         redirect_uri: OAUTH_REDIRECT_URI,
       });
-      console.log('Auth code exchange result received:', results);
+      functions.logger.log('Auth code exchange result received:', results);
 
         // We have an Instagram access token and the user identity now.
         const accessToken = results.access_token;
@@ -152,6 +152,11 @@ async function createFirebaseAccount(instagramID, displayName, photoURL, accessT
   await Promise.all([userCreationTask, databaseTask]);
   // Create a Firebase custom auth token.
   const token = await admin.auth().createCustomToken(uid);
-  console.log('Created Custom token for UID "', uid, '" Token:', token);
+  functions.logger.log(
+    'Created Custom token for UID "',
+    uid,
+    '" Token:',
+    token
+  );
   return token;
 }

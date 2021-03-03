@@ -61,7 +61,7 @@ exports.pay = functions.https.onRequest((req, res) => {
   paypal.payment.create(payReq, (error, payment) => {
     const links = {};
     if (error) {
-      console.error(error);
+      functions.logger.error(error);
       res.status(500).end();
     } else {
       // Capture HATEOAS links
@@ -74,11 +74,11 @@ exports.pay = functions.https.onRequest((req, res) => {
       // If redirect url present, redirect user
       if ( Object.prototype.hasOwnProperty.call(links, 'approval_url')) {
         // REDIRECT USER TO links['approval_url'].href
-        console.info(links.approval_url.href);
+        functions.logger.info(links.approval_url.href);
         // res.json({"approval_url":links.approval_url.href});
         res.redirect(302, links.approval_url.href);
       } else {
-        console.error('no redirect URI present');
+        functions.logger.error('no redirect URI present');
         res.status(500).end();
       }
     }
@@ -93,28 +93,31 @@ exports.process = functions.https.onRequest(async (req, res) => {
   };
   const r = await paypal.payment.execute(paymentId, payerId, (error, payment) => {
     if (error) {
-      console.error(error);
+      functions.logger.error(error);
       res.redirect(`${req.protocol}://${req.get('host')}/error`); // replace with your url page error
     } else {
       if (payment.state === 'approved') {
-        console.info('payment completed successfully, description: ', payment.transactions[0].description);
-        // console.info('req.custom: : ', payment.transactions[0].custom);
+        functions.logger.info(
+          'payment completed successfully, description: ',
+          payment.transactions[0].description
+        );
+        // functions.logger.info('req.custom: : ', payment.transactions[0].custom);
         // set paid status to True in RealTime Database
         const date = Date.now();
         const uid = payment.transactions[0].description;
         const ref = admin.database().ref('users/' + uid + '/');
         ref.push({
-          'paid': true,
+          paid: true,
           // 'description': description,
-          'date': date
-        })
+          date: date,
+        });
         res.redirect(`${req.protocol}://${req.get('host')}/success`); // replace with your url, page success
       } else {
-        console.warn('payment.state: not approved ?');
+        functions.logger.warn('payment.state: not approved ?');
         // replace debug url
         res.redirect(`https://console.firebase.google.com/project/${process.env.GCLOUD_PROJECT}/functions/logs?search=&severity=DEBUG`);
       }
     }
   });
-  console.info('promise: ', r);
+  functions.logger.info('promise: ', r);
 });

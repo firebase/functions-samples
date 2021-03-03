@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
   // @ts-ignore
   const user = req.user;
 
-  console.log('Signed-in user:', user);
+  functions.logger.log('Signed-in user:', user);
   return res.render('user', {
     user: user,
   });

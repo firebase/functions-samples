@@ -32,7 +32,7 @@ exports.accountcleanup = functions.pubsub.schedule('every day 00:00').onRun(asyn
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
   const promisePool = new PromisePool(() => deleteInactiveUser(inactiveUsers), MAX_CONCURRENT);
   await promisePool.start();
-  console.log('User cleanup finished');
+  functions.logger.log('User cleanup finished');
 });
 
 /**
@@ -44,9 +44,18 @@ function deleteInactiveUser(inactiveUsers) {
     
     // Delete the inactive user.
     return admin.auth().deleteUser(userToDelete.uid).then(() => {
-      return console.log('Deleted user account', userToDelete.uid, 'because of inactivity');
+      return functions.logger.log(
+        'Deleted user account',
+        userToDelete.uid,
+        'because of inactivity'
+      );
     }).catch((error) => {
-      return console.error('Deletion of inactive user account', userToDelete.uid, 'failed:', error);
+      return functions.logger.error(
+        'Deletion of inactive user account',
+        userToDelete.uid,
+        'failed:',
+        error
+      );
     });
   } else {
     return null;

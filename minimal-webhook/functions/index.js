@@ -36,5 +36,5 @@ exports.webhook = functions.database.ref('/hooks/{hookId}').onCreate(async (snap
   if (response.statusCode >= 400) {
     throw new Error(`HTTP Error: ${response.statusCode}`);
   }
-  console.log('SUCCESS! Posted', snap.ref);
+  functions.logger.log('SUCCESS! Posted', snap.ref);
 });

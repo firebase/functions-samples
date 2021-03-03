@@ -24,7 +24,7 @@ const cookieParser = require('cookie-parser')();
 // `Authorization: Bearer <Firebase ID Token>`.
 // When decoded successfully, the ID Token content will be added as `req.user`.
 async function validateFirebaseIdToken (req, res, next) {
-  console.log('Check if request is authorized with Firebase ID token');
+  functions.logger.log('Check if request is authorized with Firebase ID token');
 
   const idToken = await getIdTokenFromRequest(req, res);
   if (idToken) {
@@ -38,14 +38,14 @@ async function validateFirebaseIdToken (req, res, next) {
  */
 function getIdTokenFromRequest(req, res) {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-    console.log('Found "Authorization" header');
+    functions.logger.log('Found "Authorization" header');
     // Read the ID Token from the Authorization header.
     return Promise.resolve(req.headers.authorization.split('Bearer ')[1]);
   }
   return new Promise((resolve, reject) => {
     cookieParser(req, res, () => {
       if (req.cookies && req.cookies.__session) {
-        console.log('Found "__session" cookie');
+        functions.logger.log('Found "__session" cookie');
         // Read the ID Token from cookie.
         resolve(req.cookies.__session);
       } else {
@@ -62,9 +62,9 @@ async function addDecodedIdTokenToRequest(idToken, req) {
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedIdToken;
-    console.log('ID Token correctly decoded', decodedIdToken);
+    functions.logger.log('ID Token correctly decoded', decodedIdToken);
   } catch (error) {
-    console.error('Error while verifying Firebase ID token:', error);
+    functions.logger.error('Error while verifying Firebase ID token:', error);
   }
 }
 

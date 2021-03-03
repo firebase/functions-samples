@@ -32,7 +32,7 @@ exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish((message) =
   const messageBody = message.data ? Buffer.from(message.data, 'base64').toString() : null;
   // [END readBase64]
   // Print the message in the logs.
-  console.log(`Hello ${messageBody || 'World'}!`);
+  functions.logger.log(`Hello ${messageBody || 'World'}!`);
   return null;
 });
 // [END helloWorld]
@@ -48,11 +48,11 @@ exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish
   try {
     name = message.json.name;
   } catch (e) {
-    console.error('PubSub message was not JSON', e);
+    functions.logger.error('PubSub message was not JSON', e);
   }
   // [END readJson]
   // Print the message in the logs.
-  console.log(`Hello ${name || 'World'}!`);
+  functions.logger.log(`Hello ${name || 'World'}!`);
   return null;
 });
 
@@ -66,6 +66,6 @@ exports.helloPubSubAttributes = functions.pubsub.topic('yet-another-topic-name')
   const name = message.attributes.name;
   // [END readAttributes]
   // Print the message in the logs.
-  console.log(`Hello ${name || 'World'}!`);
+  functions.logger.log(`Hello ${name || 'World'}!`);
   return null;
 });

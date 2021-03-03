@@ -78,7 +78,7 @@ async function sendWelcomeEmail(email, displayName) {
   mailOptions.subject = `Welcome to ${APP_NAME}!`;
   mailOptions.text = `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
   await mailTransport.sendMail(mailOptions);
-  console.log('New welcome email sent to:', email);
+  functions.logger.log('New welcome email sent to:', email);
   return null;
 }
 
@@ -93,6 +93,6 @@ async function sendGoodbyeEmail(email, displayName) {
   mailOptions.subject = `Bye!`;
   mailOptions.text = `Hey ${displayName || ''}!, We confirm that we have deleted your ${APP_NAME} account.`;
   await mailTransport.sendMail(mailOptions);
-  console.log('Account deletion confirmation email sent to:', email);
+  functions.logger.log('Account deletion confirmation email sent to:', email);
   return null;
 }

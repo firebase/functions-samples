@@ -43,14 +43,14 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   // [START stopConditions]
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
-    return console.log('This is not an image.');
+    return functions.logger.log('This is not an image.');
   }
 
   // Get the file name.
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
-    return console.log('Already a Thumbnail.');
+    return functions.logger.log('Already a Thumbnail.');
   }
   // [END stopConditions]
 
@@ -62,10 +62,10 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
     contentType: contentType,
   };
   await bucket.file(filePath).download({destination: tempFilePath});
-  console.log('Image downloaded locally to', tempFilePath);
+  functions.logger.log('Image downloaded locally to', tempFilePath);
   // Generate a thumbnail using ImageMagick.
   await spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]);
-  console.log('Thumbnail created at', tempFilePath);
+  functions.logger.log('Thumbnail created at', tempFilePath);
   // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
   const thumbFileName = `thumb_${fileName}`;
   const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);

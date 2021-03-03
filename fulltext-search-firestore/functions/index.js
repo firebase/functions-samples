@@ -49,30 +49,30 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 async function getFirebaseUser(req, res, next) {
-  console.log('Check if request is authorized with Firebase ID token');
+  functions.logger.log('Check if request is authorized with Firebase ID token');
 
   if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
-    console.error(
+    functions.logger.error(
       'No Firebase ID token was passed as a Bearer token in the Authorization header.',
       'Make sure you authorize your request by providing the following HTTP header:',
       'Authorization: Bearer <Firebase ID Token>'
-      );
+    );
     return res.sendStatus(403);
   }
 
   let idToken;
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-    console.log('Found \'Authorization\' header');
+    functions.logger.log("Found 'Authorization' header");
     idToken = req.headers.authorization.split('Bearer ')[1];
   }
 
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    console.log('ID Token correctly decoded', decodedIdToken);
+    functions.logger.log('ID Token correctly decoded', decodedIdToken);
     req.user = decodedIdToken;
     return next();
   } catch(error) {
-    console.error('Error while verifying Firebase ID token:', error);
+    functions.logger.error('Error while verifying Firebase ID token:', error);
     return res.status(403).send('Unauthorized');
   }
 }

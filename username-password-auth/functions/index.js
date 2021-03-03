@@ -43,17 +43,20 @@ const basicAuthRequest = require('request');
  */
 exports.auth = functions.https.onRequest((req, res) => {
   const handleError = (username, error) => {
-    console.error({User: username}, error);
+    functions.logger.error({ User: username }, error);
     return res.sendStatus(500);
   };
 
   const handleResponse = (username, status, body) => {
-    console.log({User: username}, {
-      Response: {
-        Status: status,
-        Body: body,
-      },
-    });
+    functions.logger.log(
+      { User: username },
+      {
+        Response: {
+          Status: status,
+          Body: body,
+        },
+      }
+    );
     if (body) {
       return res.status(200).json(body);
     }

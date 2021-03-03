@@ -43,13 +43,13 @@ exports.imageToJPG = functions.storage.object().onFinalize(async (object) => {
 
   // Exit if this is triggered on a file that is not an image.
   if (!object.contentType.startsWith('image/')) {
-    console.log('This is not an image.');
+    functions.logger.log('This is not an image.');
     return null;
   }
 
   // Exit if the image is already a JPEG.
   if (object.contentType.startsWith('image/jpeg')) {
-    console.log('Already a JPEG.');
+    functions.logger.log('Already a JPEG.');
     return null;
   }
 
@@ -58,13 +58,13 @@ exports.imageToJPG = functions.storage.object().onFinalize(async (object) => {
   await mkdirp(tempLocalDir);
   // Download file from bucket.
   await bucket.file(filePath).download({destination: tempLocalFile});
-  console.log('The file has been downloaded to', tempLocalFile);
+  functions.logger.log('The file has been downloaded to', tempLocalFile);
   // Convert the image to JPEG using ImageMagick.
   await spawn('convert', [tempLocalFile, tempLocalJPEGFile]);
-  console.log('JPEG image created at', tempLocalJPEGFile);
+  functions.logger.log('JPEG image created at', tempLocalJPEGFile);
   // Uploading the JPEG image.
   await bucket.upload(tempLocalJPEGFile, {destination: JPEGFilePath});
-  console.log('JPEG image uploaded to Storage at', JPEGFilePath);
+  functions.logger.log('JPEG image uploaded to Storage at', JPEGFilePath);
   // Once the image has been converted delete the local files to free up disk space.
   fs.unlinkSync(tempLocalJPEGFile);
   fs.unlinkSync(tempLocalFile);
