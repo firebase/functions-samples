@@ -68,7 +68,7 @@ exports.generateMonoAudio = functions.storage.object().onFinalize(async (object)
   // Convert the audio to mono channel using FFMPEG.
 
   let command = ffmpeg(tempFilePath)
-      .setFfmpegPath(ffmpeg_static.path)
+      .setFfmpegPath(ffmpeg_static)
       .audioChannels(1)
       .audioFrequency(16000)
       .format('flac')
