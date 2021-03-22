@@ -47,7 +47,7 @@ const OAUTH_SCOPES = ['user-read-email'];
 exports.redirect = functions.https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
-    console.log('Setting verification state:', state);
+    functions.logger.log('Setting verification state:', state);
     res.cookie('state', state.toString(), {maxAge: 3600000, secure: true, httpOnly: true});
     const authorizeURL = Spotify.createAuthorizeURL(OAUTH_SCOPES, state.toString());
     res.redirect(authorizeURL);
@@ -63,26 +63,32 @@ exports.redirect = functions.https.onRequest((req, res) => {
 exports.token = functions.https.onRequest((req, res) => {
   try {
     cookieParser()(req, res, () => {
-      console.log('Received verification state:', req.cookies.state);
-      console.log('Received state:', req.query.state);
+      functions.logger.log('Received verification state:', req.cookies.state);
+      functions.logger.log('Received state:', req.query.state);
       if (!req.cookies.state) {
         throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
       } else if (req.cookies.state !== req.query.state) {
         throw new Error('State validation failed');
       }
-      console.log('Received auth code:', req.query.code);
+      functions.logger.log('Received auth code:', req.query.code);
       Spotify.authorizationCodeGrant(req.query.code, (error, data) => {
         if (error) {
           throw error;
         }
-        console.log('Received Access Token:', data.body['access_token']);
+        functions.logger.log(
+          'Received Access Token:',
+          data.body['access_token']
+        );
         Spotify.setAccessToken(data.body['access_token']);
 
         Spotify.getMe(async (error, userResults) => {
           if (error) {
             throw error;
           }
-          console.log('Auth code exchange result received:', userResults);
+          functions.logger.log(
+            'Auth code exchange result received:',
+            userResults
+          );
           // We have a Spotify access token and the user identity now.
           const accessToken = data.body['access_token'];
           const spotifyUserID = userResults.body['id'];
@@ -141,6 +147,11 @@ async function createFirebaseAccount(spotifyID, displayName, photoURL, email, ac
   await Promise.all([userCreationTask, databaseTask]);
   // Create a Firebase custom auth token.
   const token = await admin.auth().createCustomToken(uid);
-  console.log('Created Custom token for UID "', uid, '" Token:', token);
+  functions.logger.log(
+    'Created Custom token for UID "',
+    uid,
+    '" Token:',
+    token
+  );
   return token;
 }

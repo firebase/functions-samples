@@ -26,13 +26,16 @@ exports.moderator = functions.database.ref('/messages/{messageId}').onWrite((cha
 
   if (message && !message.sanitized) {
     // Retrieved the message values.
-    console.log('Retrieved message content: ', message);
+    functions.logger.log('Retrieved message content: ', message);
 
     // Run moderation checks on on the message and moderate if needed.
     const moderatedMessage = moderateMessage(message.text);
 
     // Update the Firebase DB with checked message.
-    console.log('Message has been moderated. Saving to DB: ', moderatedMessage);
+    functions.logger.log(
+      'Message has been moderated. Saving to DB: ',
+      moderatedMessage
+    );
     return change.after.ref.update({
       text: moderatedMessage,
       sanitized: true,
@@ -46,13 +49,13 @@ exports.moderator = functions.database.ref('/messages/{messageId}').onWrite((cha
 function moderateMessage(message) {
   // Re-capitalize if the user is Shouting.
   if (isShouting(message)) {
-    console.log('User is shouting. Fixing sentence case...');
+    functions.logger.log('User is shouting. Fixing sentence case...');
     message = stopShouting(message);
   }
 
   // Moderate if the user uses SwearWords.
   if (containsSwearwords(message)) {
-    console.log('User is swearing. moderating...');
+    functions.logger.log('User is swearing. moderating...');
     message = moderateSwearwords(message);
   }
 

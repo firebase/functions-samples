@@ -70,7 +70,7 @@ exports.date = functions.https.onRequest((req, res) => {
     }
     // [START sendResponse]
     const formattedDate = moment().format(`${format}`);
-    console.log('Sending Formatted date:', formattedDate);
+    functions.logger.log('Sending Formatted date:', formattedDate);
     res.status(200).send(formattedDate);
     // [END sendResponse]
   });

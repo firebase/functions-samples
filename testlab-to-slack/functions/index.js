@@ -70,5 +70,5 @@ exports.postTestResultsToSlack = functions.testLab
 
     const slackResponse = await postToSlack(title, details);
 
-    console.log(JSON.stringify(slackResponse.data));
+    functions.logger.log(JSON.stringify(slackResponse.data));
   });

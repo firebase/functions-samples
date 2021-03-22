@@ -36,7 +36,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
 
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
-    console.log('This is not an image.');
+    functions.logger.log('This is not an image.');
     return null;
   }
 
@@ -44,7 +44,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize((object) => {
   const fileName = path.basename(filePath);
   // Exit if the image is already a thumbnail.
   if (fileName.startsWith('thumb_')) {
-    console.log('Already a Thumbnail.');
+    functions.logger.log('Already a Thumbnail.');
     return null;
   }
 

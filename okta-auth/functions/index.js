@@ -49,7 +49,7 @@ const oktaAuth = async (req, res, next) => {
         req.jwt = jwt;
         return next();
     } catch (err) {
-        console.log(err.message);
+        functions.logger.log(err.message);
         res.status(401);
         return next('Unauthorized');
     }
@@ -63,7 +63,7 @@ app.get('/firebaseCustomToken', [cors, oktaAuth], async (req, res) => {
                 await firebaseApp.auth().createCustomToken(oktaUid);
         res.send(firebaseToken);
     } catch (err) {
-        console.log(err.message);
+        functions.logger.log(err.message);
         res.status(500).send('Error minting token.');
     }
 });

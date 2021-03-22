@@ -62,7 +62,7 @@ app.use(authenticate);
 app.post('/api/messages', async (req, res) => {
   const message = req.body.message;
 
-  console.log(`ANALYZING MESSAGE: "${message}"`);
+  functions.logger.log(`ANALYZING MESSAGE: "${message}"`);
 
   try {
     const results = await client.analyzeSentiment({
@@ -78,7 +78,10 @@ app.post('/api/messages', async (req, res) => {
 
     res.status(201).json({message, category});
   } catch(error) {
-    console.log('Error detecting sentiment or saving message', error.message);
+    functions.logger.log(
+      'Error detecting sentiment or saving message',
+      error.message
+    );
     res.sendStatus(500);
   }
 });
@@ -109,7 +112,7 @@ app.get('/api/messages', async (req, res) => {
 
     res.status(200).json(messages);
   } catch(error) {
-    console.log('Error getting messages', error.message);
+    functions.logger.log('Error getting messages', error.message);
     res.sendStatus(500);
   }
 });
@@ -119,7 +122,7 @@ app.get('/api/messages', async (req, res) => {
 app.get('/api/message/:messageId', async (req, res) => {
   const messageId = req.params.messageId;
 
-  console.log(`LOOKING UP MESSAGE "${messageId}"`);
+  functions.logger.log(`LOOKING UP MESSAGE "${messageId}"`);
 
   try {
     // @ts-ignore
@@ -132,7 +135,11 @@ app.get('/api/message/:messageId', async (req, res) => {
     res.set('Cache-Control', 'private, max-age=300');
     return res.status(200).json(snapshot.val());
   } catch(error) {
-    console.log('Error getting message details', messageId, error.message);
+    functions.logger.log(
+      'Error getting message details',
+      messageId,
+      error.message
+    );
     return res.sendStatus(500);
   }
 });
