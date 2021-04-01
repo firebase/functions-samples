@@ -51,16 +51,16 @@ function instagramOAuth2Client() {
 }
 
 /**
- * Redirects the User to the Instagram authentication consent screen. Also the 'state' cookie is set for later state
+ * Redirects the User to the Instagram authentication consent screen. Also the '__session' cookie is set for later state
  * verification.
  */
 exports.redirect = functions.https.onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   cookieParser()(req, res, () => {
-    const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
+    const state = req.cookies.__session || crypto.randomBytes(20).toString('hex');
     functions.logger.log('Setting verification state:', state);
-    res.cookie('state', state.toString(), {
+    res.cookie('__session', state.toString(), {
       maxAge: 3600000,
       secure: true,
       httpOnly: true,
@@ -77,7 +77,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
 
 /**
  * Exchanges a given Instagram auth code passed in the 'code' URL query parameter for a Firebase auth token.
- * The request also needs to specify a 'state' query parameter which will be checked against the 'state' cookie.
+ * The request also needs to specify a 'state' query parameter which will be checked against the '__session' cookie.
  * The Firebase custom auth token, display name, photo URL and Instagram acces token are sent back in a JSONP callback
  * function with function name defined by the 'callback' query parameter.
  */
@@ -86,11 +86,11 @@ exports.token = functions.https.onRequest(async (req, res) => {
 
   try {
     return cookieParser()(req, res, async () => {
-      functions.logger.log('Received verification state:', req.cookies.state);
+      functions.logger.log('Received verification state:', req.cookies.__session);
       functions.logger.log('Received state:', req.query.state);
-      if (!req.cookies.state) {
+      if (!req.cookies.__session) {
         throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
-      } else if (req.cookies.state !== req.query.state) {
+      } else if (req.cookies.__session !== req.query.state) {
         throw new Error('State validation failed');
       }
       functions.logger.log('Received auth code:', req.query.code);
