@@ -51,7 +51,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
 
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
-    console.log('Setting verification state:', state);
+    functions.logger.log('Setting verification state:', state);
     res.cookie('state', state.toString(), {
       maxAge: 3600000,
       secure: true,
@@ -75,21 +75,24 @@ exports.token = functions.https.onRequest((req, res) => {
       if (!req.cookies.state) {
         throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
       }
-      console.log('Received verification state:', req.cookies.state);
+      functions.logger.log('Received verification state:', req.cookies.state);
       Linkedin.auth.authorize(OAUTH_SCOPES, req.cookies.state); // Makes sure the state parameter is set
-      console.log('Received auth code:', req.query.code);
-      console.log('Received state:', req.query.state);
+      functions.logger.log('Received auth code:', req.query.code);
+      functions.logger.log('Received state:', req.query.state);
       Linkedin.auth.getAccessToken(res, req.query.code, req.query.state, (error, results) => {
         if (error) {
           throw error;
         }
-        console.log('Received Access Token:', results.access_token);
+        functions.logger.log('Received Access Token:', results.access_token);
         const linkedin = Linkedin.init(results.access_token);
         linkedin.people.me(async (error, userResults) => {
           if (error) {
             throw error;
           }
-          console.log('Auth code exchange result received:', userResults);
+          functions.logger.log(
+            'Auth code exchange result received:',
+            userResults
+          );
 
           // We have a LinkedIn access token and the user identity now.
           const accessToken = results.access_token;
@@ -150,6 +153,11 @@ async function createFirebaseAccount(linkedinID, displayName, photoURL, email, a
   await Promise.all([userCreationTask, databaseTask]);
   // Create a Firebase custom auth token.
   const token = await admin.auth().createCustomToken(uid);
-  console.log('Created Custom token for UID "', uid, '" Token:', token);
+  functions.logger.log(
+    'Created Custom token for UID "',
+    uid,
+    '" Token:',
+    token
+  );
   return token;
 }

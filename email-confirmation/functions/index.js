@@ -54,9 +54,15 @@ exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(a
   
   try {
     await mailTransport.sendMail(mailOptions);
-    console.log(`New ${subscribed ? '' : 'un'}subscription confirmation email sent to:`, val.email);
+    functions.logger.log(
+      `New ${subscribed ? '' : 'un'}subscription confirmation email sent to:`,
+      val.email
+    );
   } catch(error) {
-    console.error('There was an error while sending the email:', error);
+    functions.logger.error(
+      'There was an error while sending the email:',
+      error
+    );
   }
   return null;
 });

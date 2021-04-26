@@ -99,7 +99,7 @@ function appendPromise(requestWithoutAuth) {
       request.auth = client;
       return sheets.spreadsheets.values.append(request, (err, response) => {
         if (err) {
-          console.log(`The API returned an error: ${err}`);
+          functions.logger.log(`The API returned an error: ${err}`);
           return reject(err);
         }
         return resolve(response.data);

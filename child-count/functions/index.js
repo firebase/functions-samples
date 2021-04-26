@@ -39,7 +39,7 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
       await countRef.transaction((current) => {
         return (current || 0) + increment;
       });
-      console.log('Counter updated.');
+      functions.logger.log('Counter updated.');
       return null;
     });
 

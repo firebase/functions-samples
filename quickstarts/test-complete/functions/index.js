@@ -5,8 +5,9 @@ exports.logTestComplete = functions.testLab
   .onComplete(testMatrix => {
     const { testMatrixId, createTime, state, outcomeSummary } = testMatrix;
 
-    console.log(
-      `TEST ${testMatrixId} (created at ${createTime}): ${state}. ${outcomeSummary ||
-        ''}`
+    functions.logger.log(
+      `TEST ${testMatrixId} (created at ${createTime}): ${state}. ${
+        outcomeSummary || ''
+      }`
     );
   });

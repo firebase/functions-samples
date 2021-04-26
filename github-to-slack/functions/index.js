@@ -36,7 +36,12 @@ exports.githubWebhook = functions.https.onRequest(async (req, res) => {
 
   // Check that the body of the request has been signed with the GitHub Secret.
   if (!secureCompare(signature, expectedSignature)) {
-    console.error('x-hub-signature', signature, 'did not match', expectedSignature);
+    functions.logger.error(
+      'x-hub-signature',
+      signature,
+      'did not match',
+      expectedSignature
+    );
     res.status(403).send('Your x-hub-signature\'s bad and you should feel bad!');
     return;
   }
@@ -45,7 +50,7 @@ exports.githubWebhook = functions.https.onRequest(async (req, res) => {
     await postToSlack(req.body.compare, req.body.commits.length, req.body.repository);
     res.end();
   } catch(error) {
-    console.error(error);
+    functions.logger.error(error);
     res.status(500).send('Something went wrong while posting the message to Slack.');
   }
 });

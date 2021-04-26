@@ -27,8 +27,8 @@ Please wait...
 <!-- Import and configure the Firebase SDK -->
 <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
 <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-<script src="/__/firebase/8.2.6/firebase-app.js"></script>
-<script src="/__/firebase/8.2.6/firebase-auth.js"></script>
+<script src="/__/firebase/8.4.2/firebase-app.js"></script>
+<script src="/__/firebase/8.4.2/firebase-auth.js"></script>
 <script src="/__/firebase/init.js"></script>
 
 <script>
@@ -68,14 +68,14 @@ Please wait...
     document.body.innerText = 'Error back from the LinkedIn auth page: ' + error;
   } else if(!code) {
     // Start the auth flow.
-    window.location.href  = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/redirect';
+    window.location.href  = '/redirect';
   } else {
     // Use JSONP to load the 'token' Firebase Function to exchange the auth code against a Firebase custom token.
     const script = document.createElement('script');
     script.type = 'text/javascript';
     // This is the URL to the HTTP triggered 'token' Firebase Function.
     // See https://firebase.google.com/docs/functions.
-    var tokenFunctionURL = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/token';
+    var tokenFunctionURL = '/token';
     script.src = tokenFunctionURL +
         '?code=' + encodeURIComponent(code) +
         '&state=' + encodeURIComponent(state) +

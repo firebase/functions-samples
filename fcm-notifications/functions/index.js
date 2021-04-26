@@ -31,9 +31,19 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       const followedUid = context.params.followedUid;
       // If un-follow we exit the function.
       if (!change.after.val()) {
-        return console.log('User ', followerUid, 'un-followed user', followedUid);
+        return functions.logger.log(
+          'User ',
+          followerUid,
+          'un-followed user',
+          followedUid
+        );
       }
-      console.log('We have a new follower UID:', followerUid, 'for user:', followedUid);
+      functions.logger.log(
+        'We have a new follower UID:',
+        followerUid,
+        'for user:',
+        followedUid
+      );
 
       // Get the list of device notification tokens.
       const getDeviceTokensPromise = admin.database()
@@ -54,10 +64,16 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
 
       // Check if there are any device tokens.
       if (!tokensSnapshot.hasChildren()) {
-        return console.log('There are no notification tokens to send to.');
+        return functions.logger.log(
+          'There are no notification tokens to send to.'
+        );
       }
-      console.log('There are', tokensSnapshot.numChildren(), 'tokens to send notifications to.');
-      console.log('Fetched follower profile', follower);
+      functions.logger.log(
+        'There are',
+        tokensSnapshot.numChildren(),
+        'tokens to send notifications to.'
+      );
+      functions.logger.log('Fetched follower profile', follower);
 
       // Notification details.
       const payload = {
@@ -77,7 +93,11 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       response.results.forEach((result, index) => {
         const error = result.error;
         if (error) {
-          console.error('Failure sending notification to', tokens[index], error);
+          functions.logger.error(
+            'Failure sending notification to',
+            tokens[index],
+            error
+          );
           // Cleanup the tokens who are not registered anymore.
           if (error.code === 'messaging/invalid-registration-token' ||
               error.code === 'messaging/registration-token-not-registered') {

@@ -43,7 +43,7 @@ exports.generateMonoAudio = functions.storage.object().onFinalize(async (object)
 
   // Exit if this is triggered on a file that is not an audio.
   if (!contentType.startsWith('audio/')) {
-    console.log('This is not an audio.');
+    functions.logger.log('This is not an audio.');
     return null;
   }
 
@@ -51,7 +51,7 @@ exports.generateMonoAudio = functions.storage.object().onFinalize(async (object)
   const fileName = path.basename(filePath);
   // Exit if the audio is already converted.
   if (fileName.endsWith('_output.flac')) {
-    console.log('Already a converted audio.');
+    functions.logger.log('Already a converted audio.');
     return null;
   }
 
@@ -64,25 +64,25 @@ exports.generateMonoAudio = functions.storage.object().onFinalize(async (object)
   const targetStorageFilePath = path.join(path.dirname(filePath), targetTempFileName);
 
   await bucket.file(filePath).download({destination: tempFilePath});
-  console.log('Audio downloaded locally to', tempFilePath);
+  functions.logger.log('Audio downloaded locally to', tempFilePath);
   // Convert the audio to mono channel using FFMPEG.
 
   let command = ffmpeg(tempFilePath)
-      .setFfmpegPath(ffmpeg_static.path)
+      .setFfmpegPath(ffmpeg_static)
       .audioChannels(1)
       .audioFrequency(16000)
       .format('flac')
       .output(targetTempFilePath);
 
   await promisifyCommand(command);
-  console.log('Output audio created at', targetTempFilePath);
+  functions.logger.log('Output audio created at', targetTempFilePath);
   // Uploading the audio.
   await bucket.upload(targetTempFilePath, {destination: targetStorageFilePath});
-  console.log('Output audio uploaded to', targetStorageFilePath);
+  functions.logger.log('Output audio uploaded to', targetStorageFilePath);
 
   // Once the audio has been uploaded delete the local file to free up disk space.
   fs.unlinkSync(tempFilePath);
   fs.unlinkSync(targetTempFilePath);
 
-  return console.log('Temporary files removed.', targetTempFilePath);
+  return functions.logger.log('Temporary files removed.', targetTempFilePath);
 });

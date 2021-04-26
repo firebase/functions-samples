@@ -25,11 +25,11 @@ exports.showConfigDiff = functions.remoteConfig.onUpdate(versionMetadata => {
 
       const diff = jsonDiff.diffString(previousTemplate, currentTemplate);
 
-      console.log(diff);
+      functions.logger.log(diff);
 
       return null;
     }).catch(error => {
-      console.error(error);
+      functions.logger.error(error);
       return null;
     });
 });
@@ -49,7 +49,7 @@ function getTemplate(version, accessToken) {
   return rp(options).then(resp => {
     return Promise.resolve(resp);
   }).catch(err => {
-    console.error(err);
+    functions.logger.error(err);
     return Promise.resolve(null);
   });
 }

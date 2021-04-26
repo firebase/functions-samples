@@ -111,7 +111,7 @@ exports.createStripePayment = functions.firestore
     } catch (error) {
       // We want to capture errors and render them in a user-friendly way, while
       // still logging an exception with StackDriver
-      console.log(error);
+      functions.logger.log(error);
       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
       await reportError(error, { user: context.params.userId });
     }
@@ -164,7 +164,7 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
 
 /**
  * To keep on top of errors, we should raise a verbose error report with Stackdriver rather
- * than simply relying on console.error. This will calculate users affected + send you email
+ * than simply relying on functions.logger.error. This will calculate users affected + send you email
  * alerts, if you've opted into receiving them.
  */
 

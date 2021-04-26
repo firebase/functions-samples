@@ -3,8 +3,8 @@
   "description": "Sends a survey via email to users who upgrade your app",
   "dependencies": {
     "nodemailer": "^6.4.3",
-    "firebase-admin": "^9.4.2",
-    "firebase-functions": "^3.13.1"
+    "firebase-admin": "^9.6.0",
+    "firebase-functions": "^3.13.2"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

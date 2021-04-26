@@ -65,5 +65,5 @@ async function sendSurveyEmail(email, name) {
   };
 
   await mailTransport.sendMail(mailOptions);
-  console.log('Upgrade App Survey email sent to:', email);
+  functions.logger.log('Upgrade App Survey email sent to:', email);
 }
