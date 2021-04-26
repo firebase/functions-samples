@@ -56,7 +56,6 @@ exports.redirect = functions.https.onRequest((req, res) => {
       maxAge: 3600000,
       secure: true,
       httpOnly: true,
-      sameSite: 'none',
     });
     Linkedin.auth.authorize(res, OAUTH_SCOPES, state.toString());
   });
