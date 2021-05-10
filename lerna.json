@@ -33,6 +33,7 @@
     "quickstarts/big-ben/functions",
     "quickstarts/email-users/functions",
     "quickstarts/pubsub-helloworld/functions",
+    "quickstarts/runtime-options/functions",
     "quickstarts/thumbnails/functions",
     "quickstarts/time-server/functions",
     "quickstarts/uppercase-firestore/functions",
