@@ -39,6 +39,6 @@ exports.convertLargeFile = functions
     )
     .storage.object()
     .onFinalize((object) => {
-    // Do some complicated things that take a lot of memory and time
+      // Do some complicated things that take a lot of memory and time
     });
 // [END runtimeTimeoutMemory]
