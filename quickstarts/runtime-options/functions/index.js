@@ -3,7 +3,7 @@ const functions = require("firebase-functions");
 // [START runtimeMinInstances]
 exports.getAutocompleteResponse = functions
     .runWith(
-    // Keep 50 instances hot for this latency-critical function
+    // Keep 50 instances warm for this latency-critical function
         {
           minInstances: 50,
         }
