@@ -3,9 +3,9 @@ const functions = require("firebase-functions");
 // [START runtimeMinInstances]
 exports.getAutocompleteResponse = functions
     .runWith(
-        // Keep 50 instances warm for this latency-critical function
+        // Keep 5 instances warm for this latency-critical function
         {
-          minInstances: 50,
+          minInstances: 5,
         }
     )
     .https.onCall((data, context) => {
@@ -30,8 +30,8 @@ exports.mirrorOrdersToLegacyDatabase = functions
 // [START runtimeTimeoutMemory]
 exports.convertLargeFile = functions
     .runWith(
-    // These options ensure the function has enough memory and time
-    // to process large files
+        // Ensure the function has enough memory and time
+        // to process large files
         {
           timeoutSeconds: 300,
           memory: "1GB",
