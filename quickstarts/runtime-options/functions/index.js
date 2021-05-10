@@ -3,25 +3,27 @@ const functions = require("firebase-functions");
 // [START runtimeMinInstances]
 exports.getAutocompleteResponse = functions
     .runWith(
-    // Keep 50 instances warm for this latency-critical function
+        // Keep 50 instances warm for this latency-critical function
         {
           minInstances: 50,
         }
     )
     .https.onCall((data, context) => {
-    // Autocomplete a user's search term
+      // Autocomplete a user's search term
     });
 // [END runtimeMinInstances]
 
 // [START runtimeMaxInstances]
 exports.mirrorOrdersToLegacyDatabase = functions
     .runWith(
-    // Legacy database only supports 100 simultaneous connections
-        {maxInstances: 100}
+        // Legacy database only supports 100 simultaneous connections
+        {
+          maxInstances: 100,
+        }
     )
     .firestore.document("orders/{orderId}")
     .onWrite((change, context) => {
-    // Connect to legacy database
+      // Connect to legacy database
     });
 // [END runtimeMaxInstances]
 
