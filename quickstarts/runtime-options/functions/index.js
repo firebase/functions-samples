@@ -11,6 +11,20 @@ exports.getAutocompleteResponse = functions
     });
 // [END runtimeMinInstances]
 
+// [START runtimeMinInstancesDynamic]
+// Get Firebase project id from `FIREBASE_CONFIG` environment variable
+const envProjectId = JSON.parse(process.env.FIREBASE_CONFIG).projectId;
+
+exports.renderProfilePage = functions
+    .runWith({
+      // Keep 5 instances warm for this latency-critical function
+      // in production only. Default to 0 for test projects.
+      minInstances: envProjectId === "my-production-project" ? 5 : 0,
+    })
+    .https.onRequest((req, res) => {
+      // render some html
+    });
+// [END runtimeMinInstancesDynamic]
 
 // [START runtimeMaxInstances]
 exports.mirrorOrdersToLegacyDatabase = functions
