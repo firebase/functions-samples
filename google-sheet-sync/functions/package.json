@@ -3,7 +3,7 @@
   "description": "Syncs new Firebase data to a Google Sheet",
   "dependencies": {
     "firebase-admin": "^9.8.0",
-    "firebase-functions": "^3.14.0",
+    "firebase-functions": "^3.14.1",
     "google-auth-library": "^5.10.1",
     "googleapis": "^47.0.0"
   },

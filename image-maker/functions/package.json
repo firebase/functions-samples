@@ -6,7 +6,7 @@
     "express": "4.17.1",
     "lodash": "4.17.15",
     "firebase-admin": "^9.8.0",
-    "firebase-functions": "^3.14.0"
+    "firebase-functions": "^3.14.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
