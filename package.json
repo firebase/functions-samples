@@ -5,15 +5,15 @@
   "author": "Firebase (https://firebase.google.com/)",
   "license": "Apache-2.0",
   "scripts": {
-    "bootstrap": "lerna bootstrap --no-ci",
-    "lint": "lerna run lint",
-    "test": "lerna run test",
-    "compile": "lerna run compile --concurrency=8"
+    "bootstrap": "pnpm recursive install",
+    "lint": "pnpm recursive run lint",
+    "test": "pnpm recursive run test",
+    "compile": "pnpm recursive run compile"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-plugin-promise": "^4.2.1",
-    "lerna": "^3.20.2",
+    "pnpm": "^6.4.0",
     "typescript": "^3.8.2"
   }
 }
