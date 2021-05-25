@@ -44,4 +44,4 @@ packages:
   - text-moderation/functions
   - url-shortener/functions
   - username-password-auth/functions
-  - youtube/functions"
+  - youtube/functions
