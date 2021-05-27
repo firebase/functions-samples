@@ -15,7 +15,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "firebase-admin": "^9.8.0",
+    "firebase-admin": "^9.9.0",
     "firebase-functions": "^3.14.1",
     "@google-cloud/vision": "^2.1.2"
   },
