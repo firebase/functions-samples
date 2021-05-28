@@ -1,25 +1,8 @@
-/**
- * Copyright 2015 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 'use strict';
-
 const functions = require('firebase-functions');
+const axios = require('axios');
 const nodemailer = require('nodemailer');
-// Configure the email transport using the default SMTP transport and a GMail account.
-// For other types of transports such as Sendgrid see https://nodemailer.com/transports/
-// TODO: Configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
+const Email = require('email-templates');
 const gmailEmail = functions.config().gmail.email;
 const gmailPassword = functions.config().gmail.password;
 const mailTransport = nodemailer.createTransport({
@@ -29,40 +12,154 @@ const mailTransport = nodemailer.createTransport({
     pass: gmailPassword,
   },
 });
-
-// Sends an email confirmation when a user changes his mailing list subscription.
-exports.sendEmailConfirmation = functions.database.ref('/users/{uid}').onWrite(async (change) => {
-  // Early exit if the 'subscribedToMailingList' field has not changed
-  if (change.after.child('subscribedToMailingList').val() === change.before.child('subscribedToMailingList').val()) {
-    return null;
-  }
-
-  const val = change.after.val();
-
-  const mailOptions = {
-    from: '"Spammy Corp." <noreply@firebase.com>',
-    to: val.email,
-  };
-
-  const subscribed = val.subscribedToMailingList;
-
-  // Building Email message.
-  mailOptions.subject = subscribed ? 'Thanks and Welcome!' : 'Sad to see you go :`(';
-  mailOptions.text = subscribed ?
-      'Thanks you for subscribing to our newsletter. You will receive our next weekly newsletter.' :
-      'I hereby confirm that I will stop sending you the newsletter.';
-  
-  try {
-    await mailTransport.sendMail(mailOptions);
-    functions.logger.log(
-      `New ${subscribed ? '' : 'un'}subscription confirmation email sent to:`,
-      val.email
-    );
-  } catch(error) {
-    functions.logger.error(
-      'There was an error while sending the email:',
-      error
-    );
-  }
-  return null;
+const email = new Email({
+  transport: mailTransport,
+  send: true,
+  preview: false,
 });
+
+var admin = require('firebase-admin');
+
+var serviceAccount = require('./serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://discount-bazaar-01-01-2021-default-rtdb.firebaseio.com'
+});
+
+const db=admin.firestore()
+
+//Sends a Welcome Email on user creation
+exports.sendWelcomeEmail=functions.firestore.document('users/{uid}').onCreate(async (user,context)=>{
+  const val=user.data()
+  const emailId=val.email
+  const userName=val.displayName
+
+  const mailchimpApiUrl = 'https://us6.api.mailchimp.com/3.0'
+  const listID = '02cd4746c3'
+
+  // creating the axios options parameter
+  const options = {
+		method: 'POST',
+		url: `${mailchimpApiUrl}/lists/${listID}/members/`,
+		headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+    auth: {
+      username: 'discount_bazaar',
+      password: '5f37819b63e01ec5357ec6387300ba1e-us6'
+    },
+    data: {
+      email_address: emailId,
+      status: 'subscribed',
+      merge_fields: {
+        'FNAME': userName,
+      }
+    }
+  }
+  return axios(options);
+  
+
+  // try {
+  //   email.send({
+  //     template: 'welcome',
+  //     message:{
+  //       from: '"Discount Bazaar" <noreply@discount-bazaar.com>',
+  //       to: emailId,
+  //     },
+  //     locals:{
+  //       displayName: userName
+  //     }
+  //     }).then(()=>functions.logger.info(
+  //       `Welcome email sent to ${emailId} with displayname as ${userName} with userId as ${context.params.uid}`,
+  //     ));
+    
+  // } catch (error) {
+  //   functions.logger.error(
+  //     'There was an error while sending the email:',
+  //     error
+  //   );
+  // }
+});
+
+//Sends a Order Confirmation Email to user
+exports.sendOrderPlaced=functions.firestore.document('users/{uid}/orders/{orderId}').onCreate(async (order,context)  =>{
+  const uid=context.params.uid; 
+  var userRef=await db.collection(`users`).doc(`${uid}`).get();
+  var orderRef=db.collection(`users/${uid}/orders`);
+  const emailId=userRef.data()['email'];
+  const name=userRef.data()['displayName'];
+  const token=userRef.data()['fcmToken'];
+  var imageUrl=order.data().wooProducts.images[0].src;
+  const listoforders=await orderRef.where('emailSent','==',false).get();
+  var receipt_details=[];
+  if(listoforders.empty){
+    functions.logger.info(
+      'Emails are already Sent'
+    );
+    return;
+  }else{
+    var total=0;
+    listoforders.forEach((doc)=>{
+      const data=doc.data();
+      var name=data.wooProducts['name'];
+      var quantity=data.totalQuantity;
+      var price = data.wooProducts.salesPrice;
+      receipt_details.push(
+        {
+          Description:`${name} x ${quantity}`,
+          Amount:`₹ ${price}`
+        }
+      );
+      total+=parseFloat(price)
+    })
+    var date = new Date();
+    var dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
+                    .toISOString()
+                  .split("T")[0];
+    const messgingPromise=admin.messaging().send({
+      token:token,
+      notification:{
+        imageUrl:imageUrl,
+        title:'Order placed',
+        body:`${name} your order containing ${receipt_details[0].Description} has been placed successfully`,
+
+      },
+      data:{
+        title:'Order placed',
+        body:`${name} your order #${order.data()['time']} has been placed successfully`,
+        orderId:`${order.data()['time']}`,
+        type:'order_placed',
+        total:`${total}`,
+        purchase_date:`${dateString}`,
+        route:'/order',
+        imageUrl:`${imageUrl}`,
+      },
+      android: {
+        priority: "high",
+      },
+    })
+    const emailPromise=email.send({
+      template: 'orderplaced',
+      message:{
+        from: '"Discount Bazaar" <noreply@discount-bazaar.com>',
+        to: emailId,
+      },
+      locals:{
+        name: name,
+        receipt_details: receipt_details,
+        total:`₹ ${total}`,
+        purchase_date:dateString,
+      }
+      });
+
+      await Promise.all([messgingPromise,emailPromise])
+      .then((d)=>{
+        listoforders.forEach((doc)=>{
+          orderRef.doc(doc.id).update({'emailSent':true});
+        });
+        functions.logger.info('Sent email and notifications successfully')})
+      .catch((error)=>functions.logger.error(`error occeurred: ${error.message}`));
+}
+});
+

@@ -15,5 +15,9 @@
     "eslint-plugin-promise": "^4.2.1",
     "lerna": "^3.20.2",
     "typescript": "^3.8.2"
+  },
+  "dependencies": {
+    "email-templates": "^8.0.4",
+    "pug": "^3.0.2"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "discount-bazaar-01-01-2021",
+  "private_key_id": "2ede5c5395e561ae0c4115fe8c5198b9a7a4031a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQCaUEkoI4Va20Sn\nxEOOLI3qvlfR4jwYavzlWl6N+XDvautyn4QBoyhFCDSrejy4lbYWkc8xkcoFVbYX\nRfmei5uo1L3PK45yrtkDZtWmnhRrTUMzd11bezAs3fixe9YKGTDw2iPuuThw0Z2y\nvAuE4WQVMQNP0DnpnFV2lvQalTyIu1iB6CfjUcl6S2wSKUKBzPzf1qqgJZ+Thg7j\n6iJdbkd27KTFlmvY6sY6wB8SZFJIDPllI6p/B5/QUtAYpZhJXq5Od9ROFTEPWegN\nZQg/745DBvhbWLjsyiu0jt6HKajVpVNKSSdD3KvaJBwObIh8QNqzNg2pNPRwZ9d0\nfWzyp7MHAgMBAAECgf80WVbuM0YKFliC4CWUn4jAfEg616wo6zZCSWXxsEraxkNo\nPLUVYvVtsNEZqdRSBTzAa1QZt+VaruBlybm9XhU1RM8fZR13yk826+bxUGCJQUo8\nF7hsnyK4s1mXA5MPFQaFTBjkgN19aGPcA3jROOAxFSC7t6zaHS7g+Hwlw46KhMud\nSs8vfgim26BVBGFiJCJb9+w8CJQ9XWxYVzrU7hiwg3GuJkjbtIB9UAF0T6/vmPnQ\noyOpd7t9bMVLMdutemvX2cctdSYL7AmteNj7P6fhrEvsb0U1ROugHWYIOwUAxv1Q\nIqkvhhW/e5D7X4rLgK0REUlRTR7den8IqgPowoECgYEAy5N5imUUZTWeQ3gZGeWz\nsUnPi2UPhkRK7kQt/DyX+ccovdCpjnGkcKn0QillLpFm3CwGc4fV10+b+w6+4CQx\njcdt96idk4aXVBxB7hwO93isNuh8YR88iLNqhtT1vTIUt9rENf7gpgxWhSDTY87k\nXgQ6k6ruuj43LaCdnV+dlMECgYEAwg09EYqAixI0KWb2P+sOsxiPP0jR8YDT0PuV\nfoFqIQEvNuG3OpMRWNjE9hYXqiCbt46a9/RFe05dobc9V+0VtQIKwHI1H5AI2SWZ\nuyfm36WPEC+g0QiBPYEmxBo9hK+6Wd2T/B02aBejKvyD3wXjYAWtHUBXE2KJKgSb\nMBEYUccCgYEAsfPQIrIJCg+8sK2jA4hPc4JZ8jf9QhkghvcCW6N8FdOKQaLNFL8y\nR2nJIqyczgA8MeoqGYN74iKs7uEM6VG6H31dG0hBtlvInLW2zDWqv5i0saq4Tw3H\nFJgBXqt5xFCq26xYJ/sM1Rmj5+ux3WVVKvn3Wm3pENSh1zi3joGudgECgYBooAio\nF3v8/6CeHgRxLAQt7fT2EwYW5vXNfIf6wD3/c4sIVSSccUTuGVoAsKKruI8cpcfK\nHqsDs5nqIkjxykNk56fyYOFhliAfLBW6AeaJ+NKs0HEtox9DkQncu6UlkDWyVDSA\nvyNhdjUkbSeQrLUORaEz30fTjNIVlIwzm1P4awKBgDQLpcj4DjS0ytNtiRDmDvD6\nP/W59BsMeHuKM8GNpdK2V7GUR+xLhAmoVma5W3CchypmMEeSUY8vK63ETl+i5j15\ngr9iuNyKJ1suCLNoFi1/OTLSSxKtQrjzlsIQbpWXu65NZKYV0G/QdvbpwR2Bthgg\nW6nZ/z2ifTnQuWOx+L6Q\n-----END PRIVATE KEY-----\n",
+  "client_email": "discount-bazaar-01-01-2021@appspot.gserviceaccount.com",
+  "client_id": "100068400516044789814",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/discount-bazaar-01-01-2021%40appspot.gserviceaccount.com"
+}
