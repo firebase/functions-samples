@@ -2,6 +2,7 @@
   "name": "full-text-search",
   "description": "Full text search for Firestore",
   "dependencies": {
+    "@elastic/elasticsearch": "^7.13.0",
     "algoliasearch": "^4.0.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",

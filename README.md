@@ -188,9 +188,9 @@ Uses a Realtime Database trigger.
 Integrates the Bit.ly API to shorten URLs automatically as they are added to the database.
 Uses a Realtime Database trigger.
 
-### Full-text search via Algolia for [Realtime Database](/fulltext-search) or [Firestore](/fulltext-search-firestore)
+### Full-text search for [Realtime Database](/fulltext-search) or [Firestore](/fulltext-search-firestore)
 
-Enable full-text search on Firebase Database data or Firestore documents by using an Algolia hosted search service.
+Enable full-text search on Firebase Database data or Firestore documents by using a hosted search service.
 Uses a Realtime Database or Firestore trigger.
 
 ### [User data cleanup](/user-data-cleanup)
