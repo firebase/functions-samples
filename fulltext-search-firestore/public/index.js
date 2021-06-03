@@ -26,7 +26,7 @@ function unauthenticated_search(query) {
 
   // Perform an Algolia search:
   // https://www.algolia.com/doc/api-reference/api-methods/search/
-return index
+  return index
     .search({
       query
     })
@@ -88,6 +88,17 @@ function search(query) {
         console.warn('Please enable Anonymous Authentication in your Firebase Project!');
       });
   }
+}
+
+function searchElastic(query) {
+   // [START search_elastic]
+   const searchNotes = firebase.functions().httpsCallable('searchNotes');
+   searchNotes({ query: query })
+     .then((result) => {
+       const notes = result.data.notes;
+       // ...
+     });
+   // [END search_elastic]
 }
 
 // Other code to wire up the buttons and textboxes.
