@@ -9,7 +9,7 @@
     "@types/mocha": "^8.2.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "firebase-functions-test": "0.2.3",
+    "firebase-functions-test": "0.3.0",
     "mocha": "^7.1.0",
     "sinon": "^9.0.0"
   },
