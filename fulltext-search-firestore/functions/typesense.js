@@ -20,7 +20,7 @@ const functions = require("firebase-functions");
 // https://github.com/typesense/typesense-js
 const Typesense = require("typesense");
 
-// Typesense ADmin API key is stored in functions config variables
+// Typesense Admin API key is stored in functions config variables
 const TYPESENSE_ADMIN_API_KEY = functions.config().typesense.admin_api_key;
 
 const client = new Typesense.Client({
@@ -73,11 +73,11 @@ exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(
 exports.getScopedApiKey = functions.https.onCall(async (data, context) => {
   // Ensure that the user is authenticated with Firebase Auth
   if (!(context.auth && context.auth.uid)) {
-    throw new functions.https.HttpsError('permission-denied');
+    throw new functions.https.HttpsError('permission-denied', 'Must be signed in!');
   }
 
   // First generate a search-only API key for the 'notes' collection
-  const searchOnlyApiKeyResponse = await typesense.keys().create({
+  const searchOnlyApiKeyResponse = await client.keys().create({
     'actions': ['documents:search'],
     'collections': ['notes']
   });
