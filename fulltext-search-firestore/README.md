@@ -1,6 +1,10 @@
 # Full Text search via Algolia
 
-This template shows how to enable full text search on Firestore documents by using an [Algolia](https://algolia.com) hosted search service.
+This template shows how to enable full text search on Firestore documents by using one of the followning hosted search services:
+
+  * [Algolia](https://algolia.com)
+  * [Elastic](https://elastic.co)
+  * [Typesense](https://typesense.org)
 
 ## Functions Code
 
@@ -16,17 +20,14 @@ As an example we'll be using a secure note structure:
 /notes
     /note-123456
         text: "This is my first note...",
-        author: "FIREBASE_USER_ID"
+        owner: "FIREBASE_USER_ID"
     /note-123457
         text: "This is my second note entry...",
-        author: "FIREBASE_USER_ID"
+        owner: "FIREBASE_USER_ID"
         tags: ["some_category"]
 ```
 
-Whenever a new note is created or modified a Function sends the content to be indexed to the Algolia instance.
-
-To securely search notes, a user is issued a [Secured API Key](https://www.algolia.com/doc/guides/security/api-keys/#secured-api-keys) from Algolia which
-limits which documents they can search through.
+Whenever a new note is created or modified a Function sends the content to be indexed.
 
 ## Setting up the sample
 
