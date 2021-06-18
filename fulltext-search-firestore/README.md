@@ -1,4 +1,4 @@
-# Full Text search via Algolia
+# Full Text search
 
 This template shows how to enable full text search on Firestore documents by using one of the followning hosted search services:
 
