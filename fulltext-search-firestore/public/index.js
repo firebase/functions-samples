@@ -129,7 +129,7 @@ async function searchTypesenseUnauthenticated(query) {
     .documents()
     .search(searchParameters);
   // ...
-  // [END search_typesense_authenticated]
+  // [END search_typesense_unauthenticated]
 }
 
 async function searchTypesenseAuthenticated(query) {
