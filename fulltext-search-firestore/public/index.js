@@ -19,6 +19,11 @@ const PROJECT_ID = '...'          // Required - your Firebase project ID
 const ALGOLIA_APP_ID = '...';     // Required - your Algolia app ID
 const ALGOLIA_SEARCH_KEY = '...'; // Optional - Only used for unauthenticated search
 
+// A search-only API Typesense API key. NEVER use your Admin API Key in a
+// web app. You can generate API keys using either the TypeSense Cloud console
+// or the TypeSense API.
+const TYPESENSE_SEARCH_API_KEY = '...';
+
 function searchAlgoliaUnauthenticated(query) {
 
   // [START search_index_unsecure]
@@ -102,8 +107,33 @@ function searchElastic(query) {
   // [END search_elastic]
 }
 
-async function searchTypesense(query) {
-  // [START search_typesense]
+async function searchTypesenseUnauthenticated(query) {
+  // [START search_typesense_authenticated]
+  // Create a Typesense Client using the search-only API key
+  const client = new Typesense.Client({
+    'nodes': [{
+      'host': 'xxx.a1.typesense.net', // where xxx is the ClusterID of your Typesense Cloud cluster
+      'port': '443',
+      'protocol': 'https'
+    }],
+    'apiKey': TYPESENSE_SEARCH_API_KEY,
+    'connectionTimeoutSeconds': 2
+  });
+
+  // Search for notes with matching text
+  const searchParameters = {
+    'q': query,
+    'query_by': 'text'
+  };
+  const searchResults = await client.collections('notes')
+    .documents()
+    .search(searchParameters);
+  // ...
+  // [END search_typesense_authenticated]
+}
+
+async function searchTypesenseAuthenticated(query) {
+  // [START search_typesense_authenticated]
   // Get a scoped TypeSense API key from our Callable Function
   const getScopedApiKey = firebase.functions().httpsCallable('getScopedApiKey');
   const scopedApiKeyResponse = await getScopedApiKey();
@@ -128,9 +158,8 @@ async function searchTypesense(query) {
   const searchResults = await client.collections('notes')
     .documents()
     .search(searchParameters);
-
   // ...
-  // [END search_typesense]
+  // [END search_typesense_authenticated]
 }
 
 // Other code to wire up the buttons and textboxes.

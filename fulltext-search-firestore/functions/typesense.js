@@ -20,8 +20,9 @@ const functions = require("firebase-functions");
 // https://github.com/typesense/typesense-js
 const Typesense = require("typesense");
 
-// Typesense Admin API key is stored in functions config variables
+// Typesense API keys are stored in functions config variables
 const TYPESENSE_ADMIN_API_KEY = functions.config().typesense.admin_api_key;
+const TYPESENSE_SEARCH_API_KEY = functions.config().typesense.search_api_key;
 
 const client = new Typesense.Client({
   'nodes': [{
@@ -38,12 +39,15 @@ const client = new Typesense.Client({
 async function createTypesenseCollections() {
   // Every 'collection' in Typesense needs a schema. A collection only
   // needs to be created one time before you index your first document.
+  //
+  // Alternatively, use auto schema detection:
+  // https://typesense.org/docs/0.20.0/api/collections.html#with-auto-schema-detection
   const notesCollection = {
     'name': 'notes',
     'fields': [
       {'name': 'id', 'type': 'string'},
       {'name': 'owner', 'type': 'string' },
-      {'name': 'text', 'type': 'string' },
+      {'name': 'text', 'type': 'string' }
     ]
   };
   
@@ -53,15 +57,19 @@ async function createTypesenseCollections() {
 
 // [START update_index_function_typesense]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(async (snap, context) => {
-  // Get the note document
-  const note = snap.data();
-
+exports.onNoteWritten = functions.firestore.document('notes/{noteId}').onWrite(async (snap, context) => {
   // Use the 'nodeId' path segment as the identifier for Typesense
   const id = context.params.noteId;
 
-  // Write to the Typesense index
-  await client.collections('notes').index({
+  // If the note is deleted, delete the note from the Typesense index
+  if (!snap.after.exists) {
+    await client.collections('notes').documents(id).delete();
+    return;
+  }
+
+  // Otherwise, create/update the note in the the Typesense index
+  const note = snap.data();
+  await client.collections('notes').documents().upsert({
     id,
     owner: note.owner,
     text: note.text
@@ -76,18 +84,14 @@ exports.getScopedApiKey = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('permission-denied', 'Must be signed in!');
   }
 
-  // First generate a search-only API key for the 'notes' collection
-  const searchOnlyApiKeyResponse = await client.keys().create({
-    'actions': ['documents:search'],
-    'collections': ['notes']
-  });
-  const searchOnlyApiKey = searchOnlyApiKeyResponse['value']
-
   // Generate a scoped API key which allows the user to search ONLY
   // documents which belong to them (based on the 'owner' field).
-  const scopedApiKey = client.keys().generateScopedSearchKey(searchOnlyApiKey, {
-    'filter_by': `owner:${context.auth.uid}`
-  });
+  const scopedApiKey = client.keys().generateScopedSearchKey(
+    TYPESENSE_SEARCH_API_KEY, 
+    { 
+      'filter_by': `owner:${context.auth.uid}`
+    }
+  );
 
   return {
     key: scopedApiKey
