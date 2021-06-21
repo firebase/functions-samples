@@ -108,7 +108,7 @@ function searchElastic(query) {
 }
 
 async function searchTypesenseUnauthenticated(query) {
-  // [START search_typesense_authenticated]
+  // [START search_typesense_unauthenticated]
   // Create a Typesense Client using the search-only API key
   const client = new Typesense.Client({
     'nodes': [{
