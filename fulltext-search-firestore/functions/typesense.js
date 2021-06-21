@@ -68,7 +68,7 @@ exports.onNoteWritten = functions.firestore.document('notes/{noteId}').onWrite(a
   }
 
   // Otherwise, create/update the note in the the Typesense index
-  const note = snap.data();
+  const note = snap.after.data();
   await client.collections('notes').documents().upsert({
     id,
     owner: note.owner,
