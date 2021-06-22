@@ -16,7 +16,7 @@
 const functions = require("firebase-functions");
 
 // [START init_typesense]
-// Initialize Typesense, requires installing Elastic dependencies:
+// Initialize Typesense, requires installing Typesense dependencies:
 // https://github.com/typesense/typesense-js
 const Typesense = require("typesense");
 
@@ -41,7 +41,7 @@ async function createTypesenseCollections() {
   // needs to be created one time before you index your first document.
   //
   // Alternatively, use auto schema detection:
-  // https://typesense.org/docs/0.20.0/api/collections.html#with-auto-schema-detection
+  // https://typesense.org/docs/latest/api/collections.html#with-auto-schema-detection
   const notesCollection = {
     'name': 'notes',
     'fields': [
