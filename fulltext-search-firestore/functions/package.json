@@ -7,7 +7,8 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "firebase-admin": "^9.9.0",
-    "firebase-functions": "^3.14.1"
+    "firebase-functions": "^3.14.1",
+    "typesense": "^0.13.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

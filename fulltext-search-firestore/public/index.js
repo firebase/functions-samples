@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-var PROJECT_ID = ''          // Required - your Firebase project ID
-var ALGOLIA_APP_ID = '';     // Required - your Algolia app ID
-var ALGOLIA_SEARCH_KEY = ''; // Optional - Only used for unauthenticated search
+const PROJECT_ID = '...'          // Required - your Firebase project ID
 
-function unauthenticated_search(query) {
+const ALGOLIA_APP_ID = '...';     // Required - your Algolia app ID
+const ALGOLIA_SEARCH_KEY = '...'; // Optional - Only used for unauthenticated search
+
+// A search-only API Typesense API key. NEVER use your Admin API Key in a
+// web app. You can generate API keys using either the TypeSense Cloud console
+// or the TypeSense API.
+const TYPESENSE_SEARCH_API_KEY = '...';
+
+function searchAlgoliaUnauthenticated(query) {
 
   // [START search_index_unsecure]
   var client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_SEARCH_KEY);
@@ -38,7 +44,7 @@ function unauthenticated_search(query) {
   // [END search_index_unsecure]
 }
 
-function authenticated_search(query) {
+function searchAlgoliaAuthenticated(query) {
   var client;
   var index;
   // [START search_index_secure]
@@ -76,11 +82,11 @@ function search(query) {
     console.warn('Please set ALGOLIA_APP_ID in /index.js!');
   } else if (ALGOLIA_SEARCH_KEY) {
     console.log('Performing unauthenticated search...');
-    return unauthenticated_search(query);
+    return searchAlgoliaUnauthenticated(query);
   } else {
     return firebase.auth().signInAnonymously()
       .then(function() {
-        return authenticated_search(query).catch(function(err) {
+        return searchAlgoliaAuthenticated(query).catch(function(err) {
           console.warn(err);
         });
       }).catch(function(err) {
@@ -91,21 +97,76 @@ function search(query) {
 }
 
 function searchElastic(query) {
-   // [START search_elastic]
-   const searchNotes = firebase.functions().httpsCallable('searchNotes');
-   searchNotes({ query: query })
-     .then((result) => {
-       const notes = result.data.notes;
-       // ...
-     });
-   // [END search_elastic]
+  // [START search_elastic]
+  const searchNotes = firebase.functions().httpsCallable('searchNotes');
+  searchNotes({ query: query })
+    .then((result) => {
+      const notes = result.data.notes;
+      // ...
+    });
+  // [END search_elastic]
+}
+
+async function searchTypesenseUnauthenticated(query) {
+  // [START search_typesense_unauthenticated]
+  // Create a Typesense Client using the search-only API key
+  const client = new Typesense.Client({
+    'nodes': [{
+      'host': 'xxx.a1.typesense.net', // where xxx is the ClusterID of your Typesense Cloud cluster
+      'port': '443',
+      'protocol': 'https'
+    }],
+    'apiKey': TYPESENSE_SEARCH_API_KEY,
+    'connectionTimeoutSeconds': 2
+  });
+
+  // Search for notes with matching text
+  const searchParameters = {
+    'q': query,
+    'query_by': 'text'
+  };
+  const searchResults = await client.collections('notes')
+    .documents()
+    .search(searchParameters);
+  // ...
+  // [END search_typesense_unauthenticated]
+}
+
+async function searchTypesenseAuthenticated(query) {
+  // [START search_typesense_authenticated]
+  // Get a scoped TypeSense API key from our Callable Function
+  const getScopedApiKey = firebase.functions().httpsCallable('getScopedApiKey');
+  const scopedApiKeyResponse = await getScopedApiKey();
+  const apiKey = scopedApiKeyResponse.data.key;
+
+  // Create a Typesense Client
+  const client = new Typesense.Client({
+    'nodes': [{
+      'host': 'xxx.a1.typesense.net', // where xxx is the ClusterID of your Typesense Cloud cluster
+      'port': '443',
+      'protocol': 'https'
+    }],
+    'apiKey': apiKey,
+    'connectionTimeoutSeconds': 2
+  });
+
+  // Search for notes with matching text
+  const searchParameters = {
+    'q': query,
+    'query_by': 'text'
+  };
+  const searchResults = await client.collections('notes')
+    .documents()
+    .search(searchParameters);
+  // ...
+  // [END search_typesense_authenticated]
 }
 
 // Other code to wire up the buttons and textboxes.
 
 document.querySelector('#do-add-note').addEventListener('click', function() {
   firebase.firestore().collection('notes').add({
-    author: [firebase.auth().currentUser.uid],
+    owner: [firebase.auth().currentUser.uid],
     text: document.querySelector('#note-text').value
   }).then(function() {
     document.querySelector('#note-text').value = '';

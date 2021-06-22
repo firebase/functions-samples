@@ -101,8 +101,8 @@ app.get('/', (req, res) => {
   // Create the params object as described in the Algolia documentation:
   // https://www.algolia.com/doc/guides/security/api-keys/#generating-api-keys
   const params = {
-    // This filter ensures that only documents where author == uid will be readable
-    filters: `author:${uid}`,
+    // This filter ensures that only documents where owner == uid will be readable
+    filters: `owner:${uid}`,
     // We also proxy the uid as a unique token for this key.
     userToken: uid,
   };
