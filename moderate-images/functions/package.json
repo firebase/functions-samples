@@ -3,7 +3,7 @@
   "description": "Offensive Image blurring using Firebase Function",
   "dependencies": {
     "@google-cloud/vision": "^2.3.1",
-    "firebase-admin": "^9.9.0",
+    "firebase-admin": "^9.10.0",
     "firebase-functions": "^3.14.1"
   },
   "devDependencies": {
