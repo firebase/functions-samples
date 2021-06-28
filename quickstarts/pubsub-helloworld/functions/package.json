@@ -2,7 +2,7 @@
   "name": "pubsub-hello-functions",
   "description": "Logs the data published to PubSub topics",
   "dependencies": {
-    "firebase-admin": "^9.9.0",
+    "firebase-admin": "^9.10.0",
     "firebase-functions": "^3.14.1"
   },
   "devDependencies": {
