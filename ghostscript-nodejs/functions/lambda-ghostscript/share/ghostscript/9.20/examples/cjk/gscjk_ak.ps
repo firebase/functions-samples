@@ -1,0 +1,116 @@
+%!PS-Adobe-3.0
+%%Title: euc-korea encoding
+%%Creator: Taiji Yamada <taiji@aihara.co.jp> and gs-cjk project
+%%Copyright: (C) 2001 Taiji Yamada and gs-cjk project
+%%+ This script is part of GNU Ghostscript and is distributed under
+%%+ the terms of the GNU Affero General Public License. See the file COPYING
+%%+ for more information.
+%%BoundingBox: 30 150 530 650
+%%EndComments
+%%BeginProlog
+
+/*gs-cjk (\
+------------------------------------------------------------------------\n\
+This is a script to test CJK fonts such as CID-keyed fonts.\n\
+If you have not done CID-keyed fonts installation and definitions at\n\
+/Resource/CMap and CIDFnmap or /Resource/CIDFont of ghostscript, then\n\
+this script can't work correctly.\n\
+For details, please see README at http://www.gyve.org/gs-cjk/supplement.\n\
+
+If you throw this script into a printer, it requires PostScript 3\n\
+printer and CID-keyed fonts specified in this script.\n\
+------------------------------------------------------------------------\n) def
+
+/notice*stdout 4 dict begin
+  /*open {} def /*echo-n { =only } def /*echo { = } def /*close { flush } def
+  currentdict
+end def
+
+/notice*page 5 dict begin
+  /*y 750 def
+  /*open {
+    gsave initmatrix /Courier findfont 11 scalefont setfont 50 *y moveto
+    *y 750 eq {
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+    } if
+  } def
+  /*echo-n { dup type /stringtype ne { dup length string cvs } if show } def
+  /*echo { *echo-n /*y *y 11 sub def 50 *y moveto } def
+  /*close { grestore } def
+  currentdict
+end def
+
+/greeting*gs-cjk {
+  product (Ghostscript) search not { pop } { pop pop pop QUIET not {
+    notice*stdout begin
+      *open
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+      *close
+    end
+  } if } ifelse
+} bind def
+greeting*gs-cjk
+
+/*findfont {
+  dup /Font resourcestatus { pop pop findfont } {
+    notice*page begin
+      *open
+      (Error in findfont: ) *echo-n dup *echo
+      *close
+    end
+    findfont
+  } ifelse
+} bind def
+
+/orighandleerror errordict /handleerror get def
+errordict begin
+  /handleerror {
+    notice*page begin errordict begin $error begin
+      *open
+      (Error of ) *echo-n errorname dup length string cvs *echo
+      *close
+      showpage
+    end end end
+    orighandleerror
+  } bind def
+end
+%%EndProlog
+/HYSMyeongJo-Medium--KSC-EUC-V *findfont 25 scalefont setfont
+500 625 moveto
+(ÖÄù¶ ÇÑ±¹¾î ¼¼·Î¾²±â ÀÎ¼â) show
+/HYSMyeongJo-Medium--KSC-EUC-H *findfont 25 scalefont setfont
+50 600 moveto
+(ÖÄù¶ Ghostscript) show
+50 550 moveto
+(ÇÑ±¹¾î Korean) show
+50 500 moveto
+(°¡·Î¾²±â horizontal writing) show
+50 450 moveto
+(ÀÎ¼â Print) show
+%
+/HYSMyeongJo-Medium--KSC-EUC-V *findfont [ 1 .3 0 1 0 0 ] makefont 20 scalefont setfont
+100 275 moveto 20 2 div 0 rmoveto
+(±â¿ïÀÓ²Ã) dup stringwidth neg rmoveto show
+/HYSMyeongJo-Medium--KSC-EUC-H *findfont [ 1 0 .3 1 0 0 ] makefont 20 scalefont setfont
+100 250 moveto
+(±â¿ïÀÓ²Ã Italic transformation) show
+%
+/HYSMyeongJo-Medium--KSC-EUC-H *findfont 20 scalefont setfont
+150 400 moveto
+(MyeongJo Typeface ¸íÁ¶) show
+/HYGoThic-Medium--KSC-EUC-H *findfont 20 scalefont setfont
+150 375 moveto
+(Gothic Typeface °íµñ) show
+/HYRGoThic-Medium--KSC-EUC-H *findfont 20 scalefont setfont
+150 350 moveto
+(Rounded Gothic Typeface µÕ±Ù°íµñ) show
+%
+/Times-Roman findfont 13 scalefont setfont
+50 200 moveto
+(* Korean translation of "Ghostscript" is merely associative \
+characters of these meanings.) show
+50 200 13 sub moveto
+(In Korean articles, customarily we use just "Ghostscript" as it is.) show
+showpage
+%%Trailer
+%%EOF

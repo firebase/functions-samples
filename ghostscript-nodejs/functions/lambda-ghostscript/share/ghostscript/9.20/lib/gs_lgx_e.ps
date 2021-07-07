@@ -1,0 +1,59 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Define the Adobe "extension" Latin glyph set.
+% This is not an Encoding strictly speaking, but we treat it like one.
+/currentglobal where
+ { pop currentglobal { setglobal } true setglobal }
+ { { } }
+ifelse
+/AdobeLatinExtensionGlyphEncoding mark
+
+/Abreve /Amacron /Aogonek
+/Cacute /Ccaron /Dcaron
+/Dcroat /Delta
+/Ecaron /Edotaccent /Emacron /Eogonek
+/Gbreve /Gcommaaccent
+/Idotaccent /Imacron /Iogonek
+/Kcommaaccent
+/Lacute /Lcaron /Lcommaaccent
+/Nacute /Ncaron /Ncommaaccent
+/Ohungarumlaut /Omacron
+/Racute /Rcaron /Rcommaaccent
+/Sacute /Scedilla /Scommaaccent
+/Tcaron /Tcommaaccent
+/Uhungarumlaut /Umacron /Uogonek /Uring
+/Zacute /Zdotaccent
+/abreve /amacron /aogonek
+/cacute /ccaron /commaaccent
+/dcaron /dcroat
+/ecaron /edotaccent /emacron /eogonek
+/gbreve /gcommaaccent /greaterequal
+/imacron /iogonek
+/kcommaaccent
+/lacute /lcaron /lcommaaccent /lessequal /lozenge
+/nacute /ncaron /ncommaaccent /notequal
+/ohungarumlaut /omacron
+/partialdiff
+/racute /radical /rcaron /rcommaaccent
+/sacute /scedilla /scommaaccent /summation
+/tcaron /tcommaaccent
+/uhungarumlaut /umacron /uogonek /uring
+/zacute /zdotaccent
+
+counttomark packedarray exch pop
+9 1 index .registerencoding
+.defineencoding
+exec
