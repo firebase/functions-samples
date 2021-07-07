@@ -30,3 +30,19 @@ As an example we'll be using the database structure shown below. It keeps tracks
                 user786245: true
                 ...
 ```
+
+
+## Trigger rules
+
+The function triggers on changes to `/posts/{postid}/likes/{likeid}`.
+
+
+## Setting up the sample
+
+ 1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
+ 1. Enable the **Google** Provider in the **Auth** section.
+ 1. Clone or download this repo and open the `child-count` directory.
+ 1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
+ 1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
+ 1. Install dependencies locally by running: `cd functions; npm install; cd -`.
+ 1. Good to go now.
