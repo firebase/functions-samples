@@ -3,6 +3,16 @@
     "rules": "database.rules.json"
   },
   "hosting": {
-    "public": "public"
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "/redirect",
+        "function": "redirect"
+      },
+      {
+        "source": "/token",
+        "function": "token"
+      }
+    ]
   }
 }
