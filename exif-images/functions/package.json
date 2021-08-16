@@ -5,7 +5,7 @@
     "@google-cloud/storage": "^4.3.1",
     "child-process-promise": "^2.2.1",
     "firebase-admin": "^9.11.0",
-    "firebase-functions": "^3.14.1"
+    "firebase-functions": "^3.15.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
