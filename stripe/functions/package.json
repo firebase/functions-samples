@@ -4,7 +4,7 @@
   "dependencies": {
     "@google-cloud/logging": "^7.2.3",
     "firebase-admin": "^9.11.0",
-    "firebase-functions": "^3.14.1",
+    "firebase-functions": "^3.15.4",
     "stripe": "^8.56.0"
   },
   "devDependencies": {
