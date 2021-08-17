@@ -50,13 +50,14 @@ exports.date = functions.https.onRequest((req, res) => {
   // [START sendError]
   // Forbidding PUT requests.
   if (req.method === 'PUT') {
-    return res.status(403).send('Forbidden!');
+    res.status(403).send('Forbidden!');
+    return;
   }
   // [END sendError]
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
-  return cors(req, res, () => {
+  cors(req, res, () => {
     // [END usingMiddleware]
     // Reading date format from URL query parameter.
     // [START readQueryParam]

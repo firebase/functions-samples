@@ -44,7 +44,8 @@ const basicAuthRequest = require('request');
 exports.auth = functions.https.onRequest((req, res) => {
   const handleError = (username, error) => {
     functions.logger.error({ User: username }, error);
-    return res.sendStatus(500);
+    res.sendStatus(500);
+    return;
   };
 
   const handleResponse = (username, status, body) => {
