@@ -1,4 +1,4 @@
-# Shortens URLs automatically using the Google URL Shortener API.
+# Shortens URLs automatically using the Bit.ly Shortener API.
 
 This template shows how to shorten URLs automatically as they are added.
 
