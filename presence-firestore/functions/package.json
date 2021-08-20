@@ -2,7 +2,7 @@
   "name": "presence-firestore",
   "description": "Presence for Firestore",
   "dependencies": {
-    "firebase-admin": "^9.11.0",
+    "firebase-admin": "^9.11.1",
     "firebase-functions": "^3.15.4"
   },
   "devDependencies": {

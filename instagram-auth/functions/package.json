@@ -6,7 +6,7 @@
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
     "simple-oauth2": "^3.3.0",
-    "firebase-admin": "^9.11.0",
+    "firebase-admin": "^9.11.1",
     "firebase-functions": "^3.15.4"
   },
   "devDependencies": {
