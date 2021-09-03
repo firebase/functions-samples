@@ -3,7 +3,7 @@
   "description": "Uppercaser Firebase Functions Quickstart sample for Firestore",
   "dependencies": {
     "firebase-admin": "^9.11.1",
-    "firebase-functions": "^3.15.4"
+    "firebase-functions": "^3.15.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",

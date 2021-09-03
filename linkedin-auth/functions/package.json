@@ -5,7 +5,7 @@
     "cookie-parser": "^1.4.4",
     "node-linkedin": "^0.5.6",
     "firebase-admin": "^9.11.1",
-    "firebase-functions": "^3.15.4"
+    "firebase-functions": "^3.15.5"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

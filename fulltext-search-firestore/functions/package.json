@@ -7,7 +7,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "firebase-admin": "^9.11.1",
-    "firebase-functions": "^3.15.4",
+    "firebase-functions": "^3.15.5",
     "typesense": "^0.13.0"
   },
   "devDependencies": {
