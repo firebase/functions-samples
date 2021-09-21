@@ -4,8 +4,8 @@
   "dependencies": {
     "@google-cloud/language": "^3.7.2",
     "express": "^4.17.1",
-    "firebase-admin": "^9.11.0",
-    "firebase-functions": "^3.15.4"
+    "firebase-admin": "^9.11.1",
+    "firebase-functions": "^3.15.7"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

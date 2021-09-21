@@ -6,8 +6,8 @@
     "algoliasearch": "^4.0.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "firebase-admin": "^9.11.0",
-    "firebase-functions": "^3.15.4",
+    "firebase-admin": "^9.11.1",
+    "firebase-functions": "^3.15.7",
     "typesense": "^0.13.0"
   },
   "devDependencies": {
