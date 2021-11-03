@@ -5,7 +5,7 @@
     "cors": "^2.8.5",
     "paypal-rest-sdk": "^1.8.1",
     "firebase-admin": "^10.0.0",
-    "firebase-functions": "^3.15.7"
+    "firebase-functions": "^3.16.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
