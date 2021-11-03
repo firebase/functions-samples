@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "firebase-admin": "^10.0.0",
-    "firebase-functions": "^3.15.7",
+    "firebase-functions": "^3.16.0",
     "json-diff": "^0.5.4",
     "request": "^2.88.2",
     "request-promise": "^4.2.5"
