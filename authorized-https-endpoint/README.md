@@ -6,7 +6,7 @@ Only users who pass a valid Firebase ID token as a Bearer token in the `Authoriz
 
 Checking the ID token is done with an ExpressJs middleware that also passes the decoded ID token in the Express request object.
 
-Once authorized the function respond with 'Hello <username>'.
+Once authorized the function respond with `Hello <username>`.
 
 This sample comes with a simple web-based UI whose code is in [public](public) directory that lets you sign-in Firebase and initiates an authorized XHR to the Function.
 
