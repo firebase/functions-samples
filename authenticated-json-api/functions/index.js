@@ -91,7 +91,7 @@ app.post('/api/messages', async (req, res) => {
 app.get('/api/messages', async (req, res) => {
   // @ts-ignore
   const uid = req.user.uid;
-  const category = `${req.query.category}`;
+  const category = `${req.query?.category ?? ''}`;
 
   /** @type admin.database.Query */
   let query = admin.database().ref(`/users/${uid}/messages`);
