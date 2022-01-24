@@ -69,7 +69,7 @@ async function getInactiveUsers(users = [], nextPageToken) {
   const result = await admin.auth().listUsers(1000, nextPageToken);
   // Find users that have not signed in in the last 30 days.
   const inactiveUsers = result.users.filter(
-      user => Date.parse(user.metadata.lastRefreshTime ?? user.metadata.lastSignInTime) < (Date.now() - 30 * 24 * 60 * 60 * 1000));
+      user => Date.parse(user.metadata.lastRefreshTime || user.metadata.lastSignInTime) < (Date.now() - 30 * 24 * 60 * 60 * 1000));
   
   // Concat with list of previously found inactive users if there was more than 1000 users.
   users = users.concat(inactiveUsers);
