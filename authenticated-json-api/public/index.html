@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <!--
   Copyright 2017 Google Inc. All rights reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,115 @@
     <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.light_blue-pink.min.css">
 
     <link rel="stylesheet" href="main.css">
-  </head>
+  </head>FirebaseApp.configure()
+  <body>
+    <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+      <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+        <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+          <h3>Authenticated JSON API Demo</h3>
+        </div>
+      </div>
+    </header>
+
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--2-offset--desktop mdl-cell--4-col mdl-shadow--2dp">
+        <div id="demo-sign-in-card" class="mdl-card">
+          <div class="mdl-card__title mdl-color--light-blue-100">
+            <h2 class="mdl-card__title-text">Sign in with Google</h2>
+          </div>
+          <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+            This web application demonstrates how to expose an authenticated JSON API via Firebase Hosting and
+            Cloud Functions for Firebase.
+          </div>
+          <div class="mdl-card__actions mdl-card--border">
+            <button id="demo-sign-in-button" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect">
+              <i class="material-icons">account_circle</i>
+              Sign in with Google
+            </button>
+            <button id="demo-sign-out-button" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect">
+              Sign out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mdl-grid">
+      <div class="mdl-cell">
+        <h4>Explore the API <small>Requires Sign In</small></h4>
+      </div>
+    </div>
+
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--8-col mdl-shadow--2dp demo-create-message">
+        <h5>New Message</h5>
+        <div class="mdl-textfield mdl-js-textfield">
+          <textarea class="mdl-textfield__input" type="text" rows="1" id="demo-message" ></textarea>
+          <label class="mdl-textfield__label" for="demo-message">Type a message to analyze...</label>
+        </div>
+        <a id="demo-create-message" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect">
+          Save and Analyze
+        </a>
+        <span id="demo-create-message-result"></span>
+      </div>
+    </div>
+
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--4-col mdl-shadow--2dp">
+        <div class="demo-message-list">
+          <h5>List Messages</h5>
+          <button id="message-list-button-all" class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect message-list-button">All</button>
+          <button class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect message-list-button">Positive</button>
+          <button class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect message-list-button">Negative</button>
+          <button class="mdl-button mdl-button--raised mdl-js-button mdl-js-ripple-effect message-list-button">Neutral</button>
+
+          <ul id="demo-message-list" class="mdl-list"></ul>
+        </div>
+      </div>
+
+      <div class="mdl-cell mdl-cell--4-col mdl-shadow--2dp">
+        <div class="demo-message-details">
+          <h5>Message Details</h5>
+          <pre id="demo-message-details"></pre>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+    <script src="/__/firebase/9.6.5/firebase-app-compat.js"></script>
+    <script src="/__/firebase/9.6.5/firebase-auth-compat.js"></script>
+    <script src="/__/firebase/9.6.5/firebase-database-compat.js"></script>
+    <script src="/__/firebase/init.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
+
+<!--
+  Copyright 2017 Google Inc. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      https://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Authenticated JSON API</title>
+
+    <!-- Material Design Lite -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.light_blue-pink.min.css">
+
+    <link rel="stylesheet" href="main.css">
+  </head>FirebaseApp.configure()
   <body>
     <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
       <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
