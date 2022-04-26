@@ -16,7 +16,8 @@
 'use strict';
 
 // [START functionsimport]
-const functions = require('firebase-functions/v2');
+const { onRequest } = require('firebase-functions/v2/https');
+const logger = require('firebase-functions/logger');
 // [END functionsimport]
 // [START additionalimports]
 // Moments library to format dates.
