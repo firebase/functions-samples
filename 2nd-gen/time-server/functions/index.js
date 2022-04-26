@@ -15,16 +15,17 @@
  */
 'use strict';
 
-// [START functionsimport]
+// [START v2httpImport]
 const { onRequest } = require('firebase-functions/v2/https');
+// [END v2httpImport]
+
+// [START v2httpAdditionalImports]
 const logger = require('firebase-functions/logger');
-// [END functionsimport]
-// [START additionalimports]
 // Moments library to format dates.
 const moment = require('moment');
-// [END additionalimports]
+// [END v2httpAdditionalImports]
 
-// [START all]
+// [START v2httpAll]
 /**
  * Returns the server's date. Options `timeoutSeconds` and `region` are optional.
  *
@@ -41,33 +42,34 @@ const moment = require('moment');
  *        -d '{"format": "MMMM Do YYYY, h:mm:ss a"}' /
  *        https://us-central1-<project-id>.cloudfunctions.net/date
  */
-// [START trigger]
-exports.date = functions.https.onRequest({ timeoutSeconds: 1200, region: ["us-west1", "europe-north1"] }, (req, res) => {
-  // [END trigger]
-  // [START sendError]
+// [START v2httpTrigger]
+exports.date = onRequest({ timeoutSeconds: 1200, region: ["us-west1", "us-central3"] }, (req, res) => {
+  // [END v2httpTrigger]
+
+  // [START v2httpSendError]
   // Forbidding PUT requests.
   if (req.method === 'PUT') {
     res.status(403).send('Forbidden!');
     return;
   }
-  // [END sendError]
+  // [END v2httpSendError]
  
   // Reading date format from URL query parameter.
-  // [START readQueryParam]
+  // [START v2httpReadQueryParam]
   let format = req.query.format;
-  // [END readQueryParam]
+  // [END v2httpReadQueryParam]
 
   // Reading date format from request body query parameter
   if (!format) {
-    // [START readBodyParam]
+    // [START v2httpReadBodyParam]
     format = req.body.format;
-    // [END readBodyParam]
+    // [END v2httpReadBodyParam]
   }
 
-  // [START sendResponse]
+  // [START v2httpSendResponse]
   const formattedDate = moment().format(`${format}`);
-  functions.logger.log('Sending formatted date:', formattedDate);
+  logger.log('Sending formatted date:', formattedDate);
   res.status(200).send(formattedDate);
-  // [END sendResponse]
+  // [END v2httpSendResponse]
 });
-// [END all]
+// [END v2httpAll]
