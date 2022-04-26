@@ -100,4 +100,4 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## License
 
-TODOJ
+© Google, 2022. Licensed under an [Apache-2](../../../LICENSE) license.
