@@ -3,6 +3,7 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "lint": "eslint .",
+    "lintfix": "eslint . --fix",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
@@ -14,6 +15,8 @@
   },
   "main": "index.js",
   "dependencies": {
+    "bad-words": "^3.0.4",
+    "capitalize-sentence": "^0.1.5",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.18.0"
   },
