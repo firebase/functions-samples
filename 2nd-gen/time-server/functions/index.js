@@ -42,7 +42,7 @@ const moment = require('moment');
  *        https://us-central1-<project-id>.cloudfunctions.net/date
  */
 // [START trigger]
-exports.date = functions.https.onRequest({ timeoutSeconds: 1200, region: ["us-west1", "us-central3"] }, (req, res) => {
+exports.date = functions.https.onRequest({ timeoutSeconds: 1200, region: ["us-west1", "europe-north1"] }, (req, res) => {
   // [END trigger]
   // [START sendError]
   // Forbidding PUT requests.
