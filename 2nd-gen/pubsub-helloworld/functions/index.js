@@ -32,11 +32,46 @@ exports.hellopubsub = onMessagePublished("topic-name", (event) => {
   // Decode the PubSub Message body.
   const message = event.data.message;
   const messageBody = message.data ?
-    Buffer.from(message.data, "base64").toString() :
-    null;
-  // [END readBase64]
-  // Print the message in the logs.
-  logger.log(`Hello ${messageBody || "World" }!`);
+        Buffer.from(message.data, "base64").toString() :
+        null;
+    // [END readBase64]
+    // Print the message in the logs.
+  logger.log(`Hello ${messageBody || "World"}!`);
   return null;
 });
 // [END helloWorld]
+
+
+/**
+ * Cloud Function to be triggered by Pub/Sub that logs a message using the
+ *  data published to the topic as JSON.
+ */
+exports.hellopubsubjson = onMessagePublished("another-topic-name", (event) => {
+  // [START readJson]
+  // Get the `name` attribute of the PubSub message JSON body.
+  let name = null;
+  try {
+    name = event.data.message.json.name;
+  } catch (e) {
+    logger.error("PubSub message was not JSON", e);
+  }
+  // [END readJson]
+  // Print the message in the logs.
+  logger.log(`Hello ${name || "World"}!`);
+  return null;
+});
+
+/**
+ * Cloud Function to be triggered by Pub/Sub that logs a message using the
+ *  data attributes published to the topic.
+ */
+exports.hellopubsubattributes = onMessagePublished("yet-another-topic-name",
+    (event) => {
+      // [START readAttributes]
+      // Get the `name` attribute of the message.
+      const name = event.data.message.attributes.name;
+      // [END readAttributes]
+      // Print the message in the logs.
+      logger.log(`Hello ${name || "World"}!`);
+      return null;
+    });
