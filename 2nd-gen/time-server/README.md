@@ -81,7 +81,7 @@ Formatted dates should be displayed.
 We are responding with a 403 error in case of PUT requests:
 
 ```bash
-curl -X PUT -d '{"format": "MMMM Do YYYY, h:mm:ss a"}' https://us-central3-<project-id>.cloudfunctions.net/date
+curl -X PUT -d '{"format": "MMMM Do YYYY, h:mm:ss a"}' <function-url>/date
 ```
 
 
