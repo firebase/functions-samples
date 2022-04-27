@@ -34,8 +34,8 @@ exports.hellopubsub = onMessagePublished("topic-name", (event) => {
   const messageBody = message.data ?
         Buffer.from(message.data, "base64").toString() :
         null;
-    // [END v2readBase64]
-    // Print the message in the logs.
+  // [END v2readBase64]
+  // Print the message in the logs.
   logger.log(`Hello ${messageBody || "World"}!`);
   return null;
 });

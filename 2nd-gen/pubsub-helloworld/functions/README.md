@@ -63,7 +63,7 @@ This deploys and activate the PubSub hello World Functions.
 Once deployed, to try the sample use the `gcloud` CLI to publish a message to the `topic-name` topic:
 
 ```
-gcloud alpha pubsub topics publish topic-name --message='YourName'
+gcloud pubsub topics publish topic-name --message='YourName'
 ```
 
 Open the Functions logs in the Firebase Console, you should see a messages that reads "Hello YourName".
@@ -71,7 +71,7 @@ Open the Functions logs in the Firebase Console, you should see a messages that 
 Then you can also publish a message to the `another-topic-name` topic using JSON data:
 
 ```
-gcloud alpha pubsub topics publish another-topic-name --message='{"name":"YourName"}'
+gcloud pubsub topics publish another-topic-name --message='{"name":"YourName"}'
 ```
 
 Open the Functions logs in the Firebase Console, you should see a messages that reads "Hello YourName".
@@ -79,7 +79,7 @@ Open the Functions logs in the Firebase Console, you should see a messages that 
 Last you can also publish a message to the `yet-another-topic-name` topic using JSON data:
 
 ```
-gcloud alpha pubsub topics publish yet-another-topic-name --attribute name=YourName
+gcloud pubsub topics publish yet-another-topic-name --attribute name=YourName
 ```
 
 Open the Functions logs in the Firebase Console, you should see a messages that reads "Hello YourName".
@@ -92,4 +92,4 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## License
 
-© Google, 2016. Licensed under an [Apache-2](../../../LICENSE) license.
+© Google, 2022. Licensed under an [Apache-2](../../../LICENSE) license.
