@@ -19,19 +19,19 @@ const {getDatabase} = require("firebase-admin/database");
 const {logger} = require("firebase-functions/v2");
 const sanitizer = require("./sanitizer");
 
-// [START allAdd]
-// [START addFunctionTrigger]
+// [START v2allAdd]
+// [START v2addFunctionTrigger]
 // Adds two numbers to each other.
 exports.addnumbers = onCall((data) => {
-  // [END addFunctionTrigger]
-  // [START readAddData]
+  // [END v2addFunctionTrigger]
+  // [START v2readAddData]
   // Numbers passed from the client.
   const firstNumber = data.firstNumber;
   const secondNumber = data.secondNumber;
-  // [END readAddData]
+  // [END v2readAddData]
 
 
-  // [START addHttpsError]
+  // [START v2addHttpsError]
   // Checking that attributes are present and are numbers.
   if (!Number.isFinite(firstNumber) || !Number.isFinite(secondNumber)) {
     // Throwing an HttpsError so that the client gets the error details.
@@ -39,9 +39,9 @@ exports.addnumbers = onCall((data) => {
             "with two arguments \"firstNumber\" and \"secondNumber\" which " +
             "must both be numbers.");
   }
-  // [END addHttpsError]
+  // [END v2addHttpsError]
 
-  // [START returnAddData]
+  // [START v2returnAddData]
   // returning result.
   return {
     firstNumber: firstNumber,
@@ -49,20 +49,20 @@ exports.addnumbers = onCall((data) => {
     operator: "+",
     operationResult: firstNumber + secondNumber,
   };
-  // [END returnAddData]
+  // [END v2returnAddData]
 });
-// [END allAdd]
+// [END v2allAdd]
 
-// [START messageFunctionTrigger]
+// [START v2messageFunctionTrigger]
 // Saves a message to the Firebase Realtime Database but sanitizes the
 // text by removing swearwords.
 exports.addmessage = onCall((data, context) => {
   // [START_EXCLUDE]
-  // [START readMessageData]
+  // [START v2readMessageData]
   // Message text passed from the client.
   const text = data.text;
-  // [END readMessageData]
-  // [START messageHttpsErrors]
+  // [END v2readMessageData]
+  // [START v2messageHttpsErrors]
   // Checking attribute.
   if (!(typeof text === "string") || text.length === 0) {
     // Throwing an HttpsError so that the client gets the error details.
@@ -75,17 +75,17 @@ exports.addmessage = onCall((data, context) => {
     throw new HttpsError("failed-precondition", "The function must be " +
             "called while authenticated.");
   }
-  // [END messageHttpsErrors]
+  // [END v2messageHttpsErrors]
 
-  // [START authIntegration]
+  // [START v2authIntegration]
   // Authentication / user information is automatically added to the request.
   const uid = context.auth.uid;
   const name = context.auth.token.name || null;
   const picture = context.auth.token.picture || null;
   const email = context.auth.token.email || null;
-  // [END authIntegration]
+  // [END v2authIntegration]
 
-  // [START returnMessageAsync]
+  // [START v2returnMessageAsync]
   // Saving the new message to the Realtime Database.
   const sanitizedMessage = sanitizer.sanitizeText(text); // Sanitize message.
 
@@ -97,7 +97,7 @@ exports.addmessage = onCall((data, context) => {
     // Returning the sanitized message to the client.
     return {text: sanitizedMessage};
   })
-  // [END returnMessageAsync]
+  // [END v2returnMessageAsync]
       .catch((error) => {
         // Re-throwing the error as an HttpsError so that the client gets
         // the error details.
@@ -105,4 +105,4 @@ exports.addmessage = onCall((data, context) => {
       });
   // [END_EXCLUDE]
 });
-// [END messageFunctionTrigger]
+// [END v2messageFunctionTrigger]
