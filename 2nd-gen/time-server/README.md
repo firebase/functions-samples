@@ -74,7 +74,7 @@ You can also send the format in the request body. For instance using cURL in the
 ```bash
 curl -H 'Content-Type: application/json' /
      -d '{"format": "MMMM Do YYYY, h:mm:ss a"}' /
-     https://us-central3-<project-id>.cloudfunctions.net/date
+     <function url>/date
 ```
 Formatted dates should be displayed.
 
