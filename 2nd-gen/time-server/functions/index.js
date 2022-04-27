@@ -43,7 +43,7 @@ const moment = require('moment');
  *        https://us-central1-<project-id>.cloudfunctions.net/date
  */
 // [START v2httpTrigger]
-exports.date = onRequest({ timeoutSeconds: 1200, region: ["us-west1", "us-central3"] }, (req, res) => {
+exports.date = onRequest({ timeoutSeconds: 1200, region: ["us-west1", "us-east1"] }, (req, res) => {
   // [END v2httpTrigger]
 
   // [START v2httpSendError]
