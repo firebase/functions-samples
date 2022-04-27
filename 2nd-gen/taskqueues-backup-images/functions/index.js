@@ -130,7 +130,7 @@ exports.enqueuebackuptasks = onRequest(
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {
         const iteration = Math.floor(i / HOURLY_BATCH_SIZE);
         // TODO: Delay each BATCH an hour.
-        const scheduleDelaySeconds = iteration * (60 * 5);
+        const scheduleDelaySeconds = iteration * (60 * 60);
 
         const backupDate = new Date(BACKUP_START_DATE);
         backupDate.setDate(BACKUP_START_DATE.getDate() + i);
