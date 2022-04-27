@@ -13,7 +13,6 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-// [START import]
 "use strict";
 const path = require("path");
 const fetch = require("node-fetch");
@@ -24,19 +23,18 @@ const {getStorage} = require("firebase-admin/storage");
 const logger = functions.logger;
 const HttpsError = functions.https.HttpsError;
 initializeApp();
-// [END import]
 
+const BACKUP_START_DATE = new Date("1995-06-17");
+const BACKUP_COUNT = process.env.BACKUP_COUNT || 100;
+const HOURLY_BATCH_SIZE = process.env.HOURLY_BATCH_SIZE || 500;
+const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
 
-// [START backupImages]
 /**
  * Grabs Astronomy Photo of the Day (APOD) using NASA's API.
  *
  */
 exports.backupApod = functions
-    // [START securelyStoreAPIKey]
     .runWith( {secrets: ["NASA_API_KEY"]})
-    // [END securelyStoreAPIKey]
-    // [START taskQueueConfig]
     .tasks.taskQueue({
       retryConfig: {
         maxAttempts: 1, // TODO
@@ -45,7 +43,6 @@ exports.backupApod = functions
       rateLimits: {
         maxConcurrentDispatches: 6,
       },
-    // [END taskQueueConfig]
     }).onDispatch(async (data) => {
       const date = data.date;
       if (!date) {
@@ -57,7 +54,6 @@ exports.backupApod = functions
       }
 
       logger.info(`Requesting data from apod api for date ${date}`);
-      // [START callAPI]
       let url = "https://api.nasa.gov/planetary/apod";
       url += `?date=${date}`;
       url += `&api_key=${process.env.NASA_API_KEY}`;
@@ -81,12 +77,10 @@ exports.backupApod = functions
       const apod = await apiResp.json();
       const picUrl = apod.hdurl;
       logger.info(`Fetched ${picUrl} from NASA API for date ${date}.`);
-      // [END callAPI]
 
-      // [START uploadImage]
       const picResp = await fetch(picUrl);
       const dest = getStorage()
-          .bucket()
+          .bucket(BACKUP_BUCKET)
           .file(`apod/${date}${path.extname(picUrl)}`);
       try {
         await new Promise((resolve, reject) => {
@@ -99,39 +93,26 @@ exports.backupApod = functions
         logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
         throw new HttpsError("internal", "Uh-oh. Something broke.");
       }
-      // [END uploadImage]
       return;
     });
 
-// [START backupSetup]
-const BACKUP_START_DATE = new Date("1995-06-17");
-const BACKUP_COUNT = 50; // TODO: Update this to 9000
-const HOURLY_BATCH_SIZE = 10; // TODO: Update this to 500
-// [START backupSetup]
-
 exports.enqueueBackupTasks = functions.https.onRequest(
     async (_request, response) => {
-      // [START connectToTaskQueue]
       const queue = getFunctions().taskQueue("backupApod");
-      // [END connectToTaskQueue]
 
       const enqueues = [];
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {
-        // [START calculateDelay]
         const iteration = Math.floor(i / HOURLY_BATCH_SIZE);
         // TODO: Delay each BATCH an hour.
         const scheduleDelaySeconds = iteration * (60 * 5);
-        // [END calculateDelay]
 
         const backupDate = new Date(BACKUP_START_DATE);
         backupDate.setDate(BACKUP_START_DATE.getDate() + i);
         // Extract just the date portion (YYYY-MM-DD) as string.
         const date = backupDate.toISOString().substring(0, 10);
-        // [START enqueueBackupTask]
         enqueues.push(
             queue.enqueue({date}, {scheduleDelaySeconds}),
         );
-        // [END enqueueBackupTask]
       }
       await Promise.all(enqueues);
       response.sendStatus(200);
