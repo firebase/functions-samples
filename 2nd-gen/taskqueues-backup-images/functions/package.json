@@ -1,0 +1,28 @@
+{
+  "name": "functions-taskqueues-backup-images",
+  "description": "Back up images from NASA's Astronomy Picture of the Day using Cloud Tasks.",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "file:firebase-admin-10.0.0-taskq.tgz",
+    "firebase-functions": "^3.20.1",
+    "google-auth-library": "^8.0.1",
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "private": true
+}
