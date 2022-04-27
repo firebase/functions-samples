@@ -65,17 +65,9 @@ Alteratively, you can call `firebase emulators:start` to test the functions on t
 
 ## Try the sample
 
-After deploying the function you can open the following URLs in your browser (a separate instance is created for each region):
+After deploying the function, check the CLI's output to see the URL for your function.
 
-```
-https://us-central3-<project-id>.cloudfunctions.net/date
-
-https://us-central3-<project-id>.cloudfunctions.net/date?format=MMMM%20Do%20YYYY%2C%20h%3Amm%3Ass%20a
-
-https://us-west1-<project-id>.cloudfunctions.net/date
-
-https://us-west1-<project-id>.cloudfunctions.net/date?format=MMMM%20Do%20YYYY%2C%20h%3Amm%3Ass%20a
-```
+It will look something like: `https://<function-name>-<random-hash>-<region>.a.run.app`
 
 You can also send the format in the request body. For instance using cURL in the command line:
 
