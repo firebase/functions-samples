@@ -15,31 +15,31 @@
  */
 "use strict";
 
-// [START import]
+// [START v2import]
 const {onMessagePublished} = require("firebase-functions/v2/pubsub");
 const logger = require("firebase-functions/logger");
-// [END import]
+// [END v2import]
 
-// [START helloWorld]
+// [START v2helloWorld]
 /**
  * Cloud Function to be triggered by Pub/Sub that logs a message using the
  *  data published to the topic.
  */
-// [START trigger]
+// [START v2trigger]
 exports.hellopubsub = onMessagePublished("topic-name", (event) => {
-  // [END trigger]
-  // [START readBase64]
+  // [END v2trigger]
+  // [START v2readBase64]
   // Decode the PubSub Message body.
   const message = event.data.message;
   const messageBody = message.data ?
         Buffer.from(message.data, "base64").toString() :
         null;
-    // [END readBase64]
+    // [END v2readBase64]
     // Print the message in the logs.
   logger.log(`Hello ${messageBody || "World"}!`);
   return null;
 });
-// [END helloWorld]
+// [END v2helloWorld]
 
 
 /**
@@ -47,7 +47,7 @@ exports.hellopubsub = onMessagePublished("topic-name", (event) => {
  *  data published to the topic as JSON.
  */
 exports.hellopubsubjson = onMessagePublished("another-topic-name", (event) => {
-  // [START readJson]
+  // [START v2readJson]
   // Get the `name` attribute of the PubSub message JSON body.
   let name = null;
   try {
@@ -55,7 +55,7 @@ exports.hellopubsubjson = onMessagePublished("another-topic-name", (event) => {
   } catch (e) {
     logger.error("PubSub message was not JSON", e);
   }
-  // [END readJson]
+  // [END v2readJson]
   // Print the message in the logs.
   logger.log(`Hello ${name || "World"}!`);
   return null;
@@ -67,10 +67,10 @@ exports.hellopubsubjson = onMessagePublished("another-topic-name", (event) => {
  */
 exports.hellopubsubattributes = onMessagePublished("yet-another-topic-name",
     (event) => {
-      // [START readAttributes]
+      // [START v2readAttributes]
       // Get the `name` attribute of the message.
       const name = event.data.message.attributes.name;
-      // [END readAttributes]
+      // [END v2readAttributes]
       // Print the message in the logs.
       logger.log(`Hello ${name || "World"}!`);
       return null;
