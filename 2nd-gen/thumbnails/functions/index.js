@@ -17,7 +17,7 @@
 
 // [START v2storageImports]
 // [START v2storageSDKImport]
-const { onFinalize } = require('firebase-functions/v2/storage');
+const { onFinalize} = require('firebase-functions/v2/storage');
 // [END v2storageSDKImport]
 
 // [START v2storageAdditionalImports]
@@ -38,7 +38,7 @@ initializeApp()
  * ImageMagick.
  */
 // [START v2storageGenerateThumbnailTrigger]
-exports.generateThumbnail = onFinalize(async (object) => {
+exports.generateThumbnail = onFinalize({ cpu: 2 }, async (object) => {
 // [END v2storageGenerateThumbnailTrigger]
 
   // [START v2storageEventAttributes]
