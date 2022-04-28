@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+// [START v2import]
 const { onNewFatalIssuePublished } = require("firebase-functions/v2/alerts");
 const logger = require("firebase-functions/logger");
+// [END v2import]
 
 const fetch = require("node-fetch");
 
@@ -44,7 +46,16 @@ async function postMessageToDiscord(botName, messageBody) {
   });
 }
 
-export const func1 = onNewFatalIssuePublished(async (event) => {
+// [START v2Alerts]
+/**
+ * function triggered by Crashlytics that publishes a message
+ * to Discord whenever a new fatal issue occurs.
+ */
+// [START v2CrashlyticsAlertTrigger]
+export const func1 = onNewFatalIssuePublished({}, async (event) => {
+// [END v2CrashlyticsAlertTrigger]
+
+  // [START v2CrashlyticsEventPayload]
   // construct a helpful message to send to Discord
   const { id, title, subtitle, appVersion } = event.payload;
   const message = `
@@ -56,6 +67,7 @@ ${subtitle}
 
 id: \`${id}\`
 `;
+  // [END v2CrashlyticsEventPayload]
 
   try {
     const response = await postMessageToDiscord("Crashlytics Bot", message);
@@ -65,9 +77,10 @@ id: \`${id}\`
         event.payload
       );
     } else {
-      logger.error(response.error);
+      throw new Error(response.error);
     }
   } catch (error) {
-    logger.error(error);
+    logger.error(`Unable to post fatal Crashlytics alert ${id} to Discord`, error);
   }
 });
+// [END v2Alerts]
