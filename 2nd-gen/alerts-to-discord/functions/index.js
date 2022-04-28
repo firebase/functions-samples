@@ -13,35 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 // [START v2import]
-const { onNewFatalIssuePublished } = require("firebase-functions/v2/alerts");
+const {
+  onNewFatalIssuePublished,
+} = require("firebase-functions/v2/alerts/crashlytics");
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
-const fetch = require("node-fetch");
-
 /**
  * Posts a message to Discord with Discord's Webhook API
+ *
+ * @param {string} botName - The bot username to display
+ * @param {string} messageBody - The message to post (Discord MarkDown)
  */
 async function postMessageToDiscord(botName, messageBody) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  if (!url) {
+  if (!webhookUrl) {
     throw new Error(
-      "No webhook URL found. Set the Discord Webhook URL before deploying. Learn more about Discord webhooks here: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks"
+        "No webhook URL found. Set the Discord Webhook URL before deploying. Learn more about Discord webhooks here: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
     );
   }
 
+  // node-fetch needs a special import: https://github.com/node-fetch/node-fetch#commonjs
+  const fetch = await import("node-fetch");
+
   return fetch(webhookUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify(
-      // Here's what the Discord API supports in the payload:
-      // https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params
-      {
-        content: messageBody,
-        username: botName,
-      }
+        // Here's what the Discord API supports in the payload:
+        // https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params
+        {
+          content: messageBody,
+          username: botName,
+        },
     ),
   });
 }
@@ -52,12 +57,12 @@ async function postMessageToDiscord(botName, messageBody) {
  * to Discord whenever a new fatal issue occurs.
  */
 // [START v2CrashlyticsAlertTrigger]
-export const func1 = onNewFatalIssuePublished({}, async (event) => {
+exports.postmessagetodiscord = onNewFatalIssuePublished({}, async (event) => {
 // [END v2CrashlyticsAlertTrigger]
 
   // [START v2CrashlyticsEventPayload]
   // construct a helpful message to send to Discord
-  const { id, title, subtitle, appVersion } = event.payload;
+  const {id, title, subtitle, appVersion} = event.payload;
   const message = `
 🚨 New fatal issue in version ${appVersion} 🚨
 
@@ -73,14 +78,17 @@ id: \`${id}\`
     const response = await postMessageToDiscord("Crashlytics Bot", message);
     if (response.ok) {
       logger.info(
-        `Posted fatal Crashlytics alert ${id} to Discord`,
-        event.payload
+          `Posted fatal Crashlytics alert ${id} to Discord`,
+          event.payload,
       );
     } else {
       throw new Error(response.error);
     }
   } catch (error) {
-    logger.error(`Unable to post fatal Crashlytics alert ${id} to Discord`, error);
+    logger.error(
+        `Unable to post fatal Crashlytics alert ${id} to Discord`,
+        error,
+    );
   }
 });
 // [END v2Alerts]
