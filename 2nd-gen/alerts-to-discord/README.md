@@ -2,8 +2,7 @@
 
 This quickstart demonstrates how to trigger a function based on a Firebase Alert, and send information about the alert to a channel in a Discord server.
 
-## Functions
-The sample code consists of 2 functions:
+<img width="639" alt="Screen Shot 2022-04-29 at 11 12 12 AM" src="https://user-images.githubusercontent.com/3759507/165973290-2f6e6937-7c07-4006-b52d-813aa195e7cf.png">
 
 ## Set up and Deploy
 
