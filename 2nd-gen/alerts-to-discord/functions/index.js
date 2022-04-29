@@ -20,6 +20,8 @@ const {
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
+const fetch = require("node-fetch");
+
 /**
  * Posts a message to Discord with Discord's Webhook API
  *
@@ -33,9 +35,6 @@ async function postMessageToDiscord(botName, messageBody) {
         "No webhook URL found. Set the Discord Webhook URL before deploying. Learn more about Discord webhooks here: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
     );
   }
-
-  // node-fetch needs a special import: https://github.com/node-fetch/node-fetch#commonjs
-  const fetch = await import("node-fetch");
 
   return fetch(webhookUrl, {
     method: "POST",
