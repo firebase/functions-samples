@@ -56,12 +56,11 @@ async function postMessageToDiscord(botName, messageBody) {
  * to Discord whenever a new fatal issue occurs.
  */
 // [START v2CrashlyticsAlertTrigger]
-exports.postmessagetodiscord = onNewFatalIssuePublished({}, async (event) => {
+exports.postmessagetodiscord = onNewFatalIssuePublished(async (event) => {
 // [END v2CrashlyticsAlertTrigger]
-
   // [START v2CrashlyticsEventPayload]
   // construct a helpful message to send to Discord
-  const {id, title, subtitle, appVersion} = event.payload;
+  const {id, title, subtitle, appVersion} = event.data.payload.issue;
   const message = `
 🚨 New fatal issue in version ${appVersion} 🚨
 
