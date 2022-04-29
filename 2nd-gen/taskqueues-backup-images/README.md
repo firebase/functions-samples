@@ -13,14 +13,14 @@ Task queue functions are powered by [Google Cloud Tasks](https://cloud.google.co
 The sample code consists of 2 functions:
 
 ### 1. `backupapod`
-A task queue function responsible for processing the logic to backing up the Astronomy Picture of the Day ("apod") for the given date. This function will be triggered for every tasks enqueued on the corresponding queue created in Cloud Tasks.
+A task queue function responsible for processing the logic for backing up the Astronomy Picture of the Day ("apod") for the given date. This function will be triggered for every task enqueued on the corresponding queue created in Cloud Tasks.
 
 You can configure this function with following [environment variables](https://firebase.google.com/docs/functions/config-env):
 
 * `BACKUP_BUCKET`: Name of the bucket to back up "apod" images. Defaults to default Cloud Storage bucket.
 
 ### 2. `enqueuebackuptasks`
-A HTTPS function responsible for enqueuing tasks to our task queue. The function uses the Firebase Admin SDK to create and enqueue a task for each day we want to backup an "apod" image.
+An HTTP function responsible for enqueuing tasks to our task queue. The function uses the Firebase Admin SDK to create and enqueue a task for each day we want to backup an "apod" image.
 
 You can configure this function with following [environment variables](https://firebase.google.com/docs/functions/config-env):
 
