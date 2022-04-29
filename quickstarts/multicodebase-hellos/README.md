@@ -1,6 +1,6 @@
 # Firebase SDK for Cloud Functions Quickstart - Multi-codebases
 
-This quickstart demonstrates how to setup a multi-codebase repository that allows you to setup multiple source directories to manage your function definitions. 
+This quickstart demonstrates how to set up a multi-codebase repository that allows you to setup multiple source directories to manage your function definitions. 
 
 
 ## Setup
@@ -41,7 +41,7 @@ Deploy the sample functions using the Firebase CLI deploy command:
 firebase deploy --only functions
 ```
 
-You can also deploy functions from specific codebase:
+You can also deploy a specific codebase:
 
 ```bash
 firebase deploy --only functions:javascript
