@@ -39,7 +39,7 @@ const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
 exports.backupapod = onTaskDispatched(
     {
       retryConfig: {
-        maxAttempts: 1,
+        maxAttempts: 5,
         minBackoffSeconds: 60,
       },
       rateLimits: {
@@ -94,7 +94,6 @@ exports.backupapod = onTaskDispatched(
         logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
         throw new HttpsError("internal", "Uh-oh. Something broke.");
       }
-      return;
     });
 
 
@@ -129,8 +128,7 @@ exports.enqueuebackuptasks = onRequest(
       const enqueues = [];
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {
         const iteration = Math.floor(i / HOURLY_BATCH_SIZE);
-        // TODO: Delay each BATCH an hour.
-        const scheduleDelaySeconds = iteration * (60 * 60);
+        const scheduleDelaySeconds = iteration * (60 * 60); // Delay each batch by N * hour
 
         const backupDate = new Date(BACKUP_START_DATE);
         backupDate.setDate(BACKUP_START_DATE.getDate() + i);

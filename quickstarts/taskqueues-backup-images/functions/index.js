@@ -31,13 +31,12 @@ const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
 
 /**
  * Grabs Astronomy Photo of the Day (APOD) using NASA's API.
- *
  */
 exports.backupApod = functions
     .runWith( {secrets: ["NASA_API_KEY"]})
     .tasks.taskQueue({
       retryConfig: {
-        maxAttempts: 1, // TODO
+        maxAttempts: 5,
         minBackoffSeconds: 60,
       },
       rateLimits: {
@@ -93,7 +92,6 @@ exports.backupApod = functions
         logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
         throw new HttpsError("internal", "Uh-oh. Something broke.");
       }
-      return;
     });
 
 exports.enqueueBackupTasks = functions.https.onRequest(
@@ -103,8 +101,7 @@ exports.enqueueBackupTasks = functions.https.onRequest(
       const enqueues = [];
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {
         const iteration = Math.floor(i / HOURLY_BATCH_SIZE);
-        // TODO: Delay each BATCH an hour.
-        const scheduleDelaySeconds = iteration * (60 * 60);
+        const scheduleDelaySeconds = iteration * (60 * 60); // Delay each batch by N * hour
 
         const backupDate = new Date(BACKUP_START_DATE);
         backupDate.setDate(BACKUP_START_DATE.getDate() + i);
