@@ -19,9 +19,9 @@ Task queue functions come with a powerful set of configuration to precisely cont
 
 Our sample make use of following configurations:
 
-1) `retryConfig.maxAttempts=5` - Each task in our task queue will be automatically retried (upto 5 times) to overcome transient errors.
-2) `retryConfig.minBackoffSeconds=60` - Each task will be retried at least 60 seconds apart from each attempt.
-3) `rateLimits.maxConcurrentDispatch` - At most 6 tasks will be dispatched at a given time. This help ensures a steady stream of request to the underlying function and help reduce number of active instances and cold starts.
+1) `retryConfig.maxAttempts=5` - Each task in our task queue will be automatically retried upto 5 times. This helps us mitigate transient errors like network errors or temporary service disruption of a dependent, external service.
+2) `retryConfig.minBackoffSeconds=60` - Each task will be retried at least 60 seconds apart from each attempt. This gives us a large buffer between each attempt so we don't rush to exhaust our 5 retry attempts too quickly.
+3) `rateLimits.maxConcurrentDispatch` - At most 6 tasks will be dispatched at a given time. At most 6 tasks will be dispatched at a given time. This helps ensure a steady stream of requests to the underlying function and helps reduce the number of active instances and cold starts.
 
 You can further configure this function with following [environment variables](https://firebase.google.com/docs/functions/config-env):
 
