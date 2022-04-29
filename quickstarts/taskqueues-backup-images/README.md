@@ -15,7 +15,15 @@ The sample code consists of 2 functions:
 ### 1. `backupApod`
 A task queue function responsible for processing the logic for backing up the Astronomy Picture of the Day ("apod") for the given date. This function will be triggered for every task enqueued on the corresponding queue created in Cloud Tasks.
 
-You can configure this function with following [environment variables](https://firebase.google.com/docs/functions/config-env):
+Task queue functions comes with powerful set of configuration to precisely control rate limits and retry behavior of a task queue. Learn more about configuring task queue functions at TODO.
+
+Our sample make use of following configurations:
+
+1) `retryConfig.maxAttempts=5` - Each task in our task queue will be automatically retried (upto 5 times) to overcome transient errors.
+2) `retryConfig.minBackoffSeconds=60` - Each task will be retried at least 60 seconds apart from each attempt.
+3) `rateLimits.maxConcurrentDispatch` - At most 6 tasks will be dispatched at a given time. This help ensures a steady stream of request to the underlying function and help reduce number of active instances and cold starts.
+ 
+You can further configure this function with following [environment variables](https://firebase.google.com/docs/functions/config-env):
 
 * `BACKUP_BUCKET`: Name of the bucket to back up "apod" images. Defaults to default Cloud Storage bucket.
 
