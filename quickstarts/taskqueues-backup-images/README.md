@@ -15,7 +15,7 @@ The sample code consists of 2 functions:
 ### 1. `backupApod`
 A task queue function responsible for processing the logic for backing up the Astronomy Picture of the Day ("apod") for the given date. This function will be triggered for every task enqueued on the corresponding queue created in Cloud Tasks.
 
-Task queue functions come with a powerful set of configuration to precisely control rate limits and retry behavior of a task queue. Learn more about configuring task queue functions at TODO.
+Task queue functions come with a powerful set of configuration to precisely control rate limits and retry behavior of a task queue. [See the documentation](https://cloud.google.com/tasks/docs/creating-queues) to learn more about configuring task queue functions.
 
 Our sample make use of following configurations:
 
