@@ -32,6 +32,7 @@ const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
 /**
  * Grabs Astronomy Photo of the Day (APOD) using NASA's API.
  */
+// [START taskFunctionSetup]
 exports.backupApod = functions
     .runWith( {secrets: ["NASA_API_KEY"]})
     .tasks.taskQueue({
@@ -43,6 +44,7 @@ exports.backupApod = functions
         maxConcurrentDispatches: 6,
       },
     }).onDispatch(async (data) => {
+// [END taskFunctionSetup]
       const date = data.date;
       if (!date) {
         logger.warn("Invalid payload. Must include date.");
@@ -94,6 +96,7 @@ exports.backupApod = functions
       }
     });
 
+// [START enqueueTasks]
 exports.enqueueBackupTasks = functions.https.onRequest(
     async (_request, response) => {
       const queue = getFunctions().taskQueue("backupApod");
@@ -107,10 +110,14 @@ exports.enqueueBackupTasks = functions.https.onRequest(
         backupDate.setDate(BACKUP_START_DATE.getDate() + i);
         // Extract just the date portion (YYYY-MM-DD) as string.
         const date = backupDate.toISOString().substring(0, 10);
-        enqueues.push(
-            queue.enqueue({date}, {scheduleDelaySeconds}),
-        );
+          enqueues.push(
+              queue.enqueue({date}, {
+                  scheduleDelaySeconds,
+                  dispatchDeadlineSeconds: 60 * 5 // 5 minutes
+              }),
+          );
       }
       await Promise.all(enqueues);
       response.sendStatus(200);
     });
+// [END enqueueTasks]

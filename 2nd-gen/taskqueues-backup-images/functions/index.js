@@ -36,6 +36,7 @@ const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
  * Grabs Astronomy Photo of the Day (APOD) using NASA's API.
  *
  */
+// [START v2TaskFunctionSetup]
 exports.backupapod = onTaskDispatched(
     {
       retryConfig: {
@@ -46,6 +47,7 @@ exports.backupapod = onTaskDispatched(
         maxConcurrentDispatches: 6,
       },
     }, async (req) => {
+// [END v2TaskFunctionSetup]
       const date = req.data.date;
       if (!date) {
         logger.warn("Invalid payload. Must include date.");
@@ -101,6 +103,7 @@ let auth;
 /**
  * Returns URL of the given v2 google cloud function.
  */
+// [START v2GetFunctionUri]
 async function getFunctionUrl(name, location="us-central1") {
   if (!auth) {
     auth = new GoogleAuth({
@@ -119,7 +122,9 @@ async function getFunctionUrl(name, location="us-central1") {
   }
   return uri;
 }
+// [END v2GetFunctionUri]
 
+// [START v2EnqueueTasks]
 exports.enqueuebackuptasks = onRequest(
     async (_request, response) => {
       const queue = getFunctions().taskQueue("backupapod");
@@ -135,9 +140,14 @@ exports.enqueuebackuptasks = onRequest(
         // Extract just the date portion (YYYY-MM-DD) as string.
         const date = backupDate.toISOString().substring(0, 10);
         enqueues.push(
-            queue.enqueue({date}, {scheduleDelaySeconds, uri: targetUri}),
+            queue.enqueue({date}, {
+              scheduleDelaySeconds,
+              dispatchDeadlineSeconds: 60 * 5, // 5 minutes
+              uri: targetUri,
+            }),
         );
       }
       await Promise.all(enqueues);
       response.sendStatus(200);
     });
+// [END v2EnqueueTasks]
