@@ -7,7 +7,7 @@ Task queue functions make it easy to manage the execution, dispatch, and deliver
 
 We leverage its power here to set up a service that backs up all images from NASA's [Astronomy Picture of the Day](https://apod.nasa.gov/apod/astropix.html).
 
-Task queue functions are powered by [Google Cloud Tasks](https://cloud.google.com/tasks). Learn more about the task queue functions at TODO.
+Task queue functions are powered by [Google Cloud Tasks](https://cloud.google.com/tasks). Learn more about [task queue functions](https://firebase.google.com/docs/functions/beta/task-functions).
 
 ## Functions
 The sample code consists of 2 functions:
