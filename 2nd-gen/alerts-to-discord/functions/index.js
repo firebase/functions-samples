@@ -73,6 +73,7 @@ id: \`${id}\`
   // [END v2CrashlyticsEventPayload]
 
   try {
+    // [START v2SendToDiscord]
     const response = await postMessageToDiscord("Crashlytics Bot", message);
     if (response.ok) {
       logger.info(
@@ -82,6 +83,7 @@ id: \`${id}\`
     } else {
       throw new Error(response.error);
     }
+    // [END v2SendToDiscord]
   } catch (error) {
     logger.error(
         `Unable to post fatal Crashlytics alert ${id} to Discord`,
