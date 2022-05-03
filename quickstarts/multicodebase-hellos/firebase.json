@@ -1,0 +1,24 @@
+{
+  "functions": [
+    {
+      "source": "ts",
+      "codebase": "typescript",
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "source": "js",
+      "codebase": "javascript"
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "ui": {
+      "enabled": true
+    }
+  }
+}
