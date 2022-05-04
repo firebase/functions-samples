@@ -1,10 +1,12 @@
-import {log} from "firebase-functions/lib/logger/index";
+import {logger} from "firebase-functions";
 import {expect, jest, test} from "@jest/globals";
-import {wrap} from "firebase-functions-test/lib/main";
+import * as firebaseFunctionsTest from "firebase-functions-test";
 import {logstore} from "../index";
 
+const {wrap} = firebaseFunctionsTest();
+
 test("logstore", () => {
-  const mockLog = jest.fn(log);
+  const mockLog = jest.fn(logger.log);
   const wrappedLogStore = wrap(logstore);
 
   /**
