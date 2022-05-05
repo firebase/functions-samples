@@ -17,11 +17,12 @@
 
 // [START v2storageImports]
 // [START v2storageSDKImport]
-const { onFinalize} = require('firebase-functions/v2/storage');
+const {onFinalize} = require('firebase-functions/v2/storage');
 // [END v2storageSDKImport]
 
 // [START v2storageAdditionalImports]
-const { initializeApp, storage} = require ('firebase-admin/app');
+const {initializeApp} = require('firebase-admin/app');
+const {getStorage} = require('firebase-admin/storage');
 const logger = require('firebase-functions/logger');
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
