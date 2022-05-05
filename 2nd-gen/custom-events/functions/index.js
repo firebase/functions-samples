@@ -17,8 +17,8 @@
 // [START import]
 const {onCustomEventPublished} = require("firebase-functions/v2/eventarc");
 const logger = require("firebase-functions/logger");
-const { initializeApp } = require('firebase-admin/app');
-const { getStorage } = require('firebase-admin/storage');
+const {initializeApp} = require("firebase-admin/app");
+const {getFirestore} = require("firebase-admin/firestore");
 // [END import]
 
 initializeApp();
@@ -28,10 +28,10 @@ exports.onimageresized = onCustomEventPublished(
     "firebase.extensions.storage-resize-images.v1.complete",
     (event) => {
       logger.info("Received image resize completed event", event);
-      // For example, delete the original.
-      return getStorage()
-          .bucket("my-project.appspot.com")
-          .file(event.subject)
-          .delete();
+      // For example, write resized image details into Firestore.
+      return getFirestore()
+          .collection("images")
+          .doc(event.subject)
+          .set(event.data);
     });
 // [END imageresizedEvent]
