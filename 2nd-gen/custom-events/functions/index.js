@@ -31,7 +31,7 @@ exports.onimageresized = onCustomEventPublished(
       // For example, write resized image details into Firestore.
       return getFirestore()
           .collection("images")
-          .doc(event.subject)
-          .set(event.data);
+          .doc(event.subject) // original file name
+          .set(event.data);   // resized images paths and sizes
     });
 // [END imageresizedEvent]
