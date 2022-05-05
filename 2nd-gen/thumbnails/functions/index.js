@@ -62,7 +62,7 @@ exports.generateThumbnail = onFinalize({ cpu: 2 }, async (object) => {
 
   // [START v2storageThumbnailGeneration]
   // Download file from bucket.
-  const bucket = storage().bucket(fileBucket);
+  const bucket = getStorage().bucket(fileBucket);
   const tempFilePath = path.join(os.tmpdir(), fileName);
   const metadata = { contentType: contentType };
 
