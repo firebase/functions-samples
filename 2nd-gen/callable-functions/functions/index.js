@@ -22,12 +22,12 @@ const sanitizer = require("./sanitizer");
 // [START v2allAdd]
 // [START v2addFunctionTrigger]
 // Adds two numbers to each other.
-exports.addnumbers = onCall((data) => {
+exports.addnumbers = onCall((request) => {
   // [END v2addFunctionTrigger]
   // [START v2readAddData]
   // Numbers passed from the client.
-  const firstNumber = data.firstNumber;
-  const secondNumber = data.secondNumber;
+  const firstNumber = request.data.firstNumber;
+  const secondNumber = request.data.secondNumber;
   // [END v2readAddData]
 
 
@@ -89,7 +89,7 @@ exports.addmessage = onCall((data, context) => {
   // Saving the new message to the Realtime Database.
   const sanitizedMessage = sanitizer.sanitizeText(text); // Sanitize message.
 
-  return getDatabase.ref("/messages").push({
+  return getDatabase().ref("/messages").push({
     text: sanitizedMessage,
     author: {uid, name, picture, email},
   }).then(() => {

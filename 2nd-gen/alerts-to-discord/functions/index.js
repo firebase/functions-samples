@@ -78,7 +78,7 @@ id: \`${id}\`
     if (response.ok) {
       logger.info(
           `Posted fatal Crashlytics alert ${id} to Discord`,
-          event.payload,
+          event.data.payload,
       );
     } else {
       throw new Error(response.error);

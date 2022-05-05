@@ -17,8 +17,8 @@
 // [START import]
 const {onCustomEventPublished} = require("firebase-functions/v2/eventarc");
 const logger = require("firebase-functions/logger");
-const { initializeApp } = require('firebase-admin/app');
-const { getStorage } = require('firebase-admin/storage');
+const {initializeApp} = require("firebase-admin/app");
+const {getStorage} = require("firebase-admin/storage");
 // [END import]
 
 initializeApp();
@@ -33,5 +33,6 @@ exports.onimageresized = onCustomEventPublished(
           .bucket("my-project.appspot.com")
           .file(event.subject)
           .delete();
-    });
+    }
+);
 // [END imageresizedEvent]

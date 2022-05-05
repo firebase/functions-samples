@@ -39,7 +39,7 @@ exports.sanitizeText = (text) => {
 /**
  * Returns true if the string contains swearwords.
  * @param {string} message
- * @return {string}
+ * @return {boolean}
  */
 function containsSwearwords(message) {
   return message !== badWordsFilter.clean(message);
@@ -58,7 +58,7 @@ function replaceSwearwords(message) {
  * Detect if the current message is shouting. i.e. there are too many Uppercase
  * characters or exclamation points.
  * @param {string} message message to be analyzed
- * @return {string}
+ * @return {boolean}
  */
 function isShouting(message) {
   return message.replace(/[^A-Z]/g, "").length > message.length / 2 ||
