@@ -39,6 +39,7 @@ packages:
   - quickstarts/email-users/functions
   - quickstarts/pubsub-helloworld/functions
   - quickstarts/runtime-options/functions
+  - quickstarts/taskqueues-backup-images/functions
   - quickstarts/thumbnails/functions
   - quickstarts/time-server/functions
   - quickstarts/uppercase-firestore/functions
