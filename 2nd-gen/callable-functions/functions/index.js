@@ -30,7 +30,6 @@ exports.addnumbers = onCall((request) => {
   const secondNumber = request.data.secondNumber;
   // [END v2readAddData]
 
-
   // [START v2addHttpsError]
   // Checking that attributes are present and are numbers.
   if (!Number.isFinite(firstNumber) || !Number.isFinite(secondNumber)) {
@@ -43,12 +42,7 @@ exports.addnumbers = onCall((request) => {
 
   // [START v2returnAddData]
   // returning result.
-  return {
-    firstNumber: firstNumber,
-    secondNumber: secondNumber,
-    operator: "+",
-    operationResult: firstNumber + secondNumber,
-  };
+  return firstNumber + secondNumber;
   // [END v2returnAddData]
 });
 // [END v2allAdd]
