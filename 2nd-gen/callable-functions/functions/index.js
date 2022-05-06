@@ -56,11 +56,11 @@ exports.addnumbers = onCall((request) => {
 // [START v2messageFunctionTrigger]
 // Saves a message to the Firebase Realtime Database but sanitizes the
 // text by removing swearwords.
-exports.addmessage = onCall((data, context) => {
+exports.addmessage = onCall((request) => {
   // [START_EXCLUDE]
   // [START v2readMessageData]
   // Message text passed from the client.
-  const text = data.text;
+  const text = request.data.text;
   // [END v2readMessageData]
   // [START v2messageHttpsErrors]
   // Checking attribute.
@@ -70,7 +70,7 @@ exports.addmessage = onCall((data, context) => {
             "with one arguments \"text\" containing the message text to add.");
   }
   // Checking that the user is authenticated.
-  if (!context.auth) {
+  if (!request.auth) {
     // Throwing an HttpsError so that the client gets the error details.
     throw new HttpsError("failed-precondition", "The function must be " +
             "called while authenticated.");
@@ -79,10 +79,10 @@ exports.addmessage = onCall((data, context) => {
 
   // [START v2authIntegration]
   // Authentication / user information is automatically added to the request.
-  const uid = context.auth.uid;
-  const name = context.auth.token.name || null;
-  const picture = context.auth.token.picture || null;
-  const email = context.auth.token.email || null;
+  const uid = request.auth.uid;
+  const name = request.auth.token.name || null;
+  const picture = request.auth.token.picture || null;
+  const email = request.auth.token.email || null;
   // [END v2authIntegration]
 
   // [START v2returnMessageAsync]
