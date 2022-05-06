@@ -14,7 +14,7 @@
   "engines": {
     "node": "16"
   },
-  "main": "lib/index.js",
+  "main": "index.js",
   "dependencies": {
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^3.18.0"
