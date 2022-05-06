@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   env: {
-    es2022: true,
+    es2017: true,
     node: true,
   },
   extends: [
