@@ -9,7 +9,7 @@ const {wrap} = test();
 describe("firebase-functions-test", () => {
   describe("#logstore", () => {
     it("will log when the v2 cloud function is invoked", () => {
-      const logSpy = spy(logger, 'log');
+      const logSpy = spy(logger, "log");
 
       const wrappedFunction = wrap(logstore);
       wrappedFunction();
