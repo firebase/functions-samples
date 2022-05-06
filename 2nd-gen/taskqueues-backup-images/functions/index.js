@@ -28,8 +28,8 @@ const HttpsError = functions.https.HttpsError;
 initializeApp();
 
 const BACKUP_START_DATE = new Date("1995-06-17");
-const BACKUP_COUNT = process.env.BACKUP_COUNT || 100;
-const HOURLY_BATCH_SIZE = process.env.HOURLY_BATCH_SIZE || 500;
+const BACKUP_COUNT = parseInt(process.env.BACKUP_COUNT) || 100;
+const HOURLY_BATCH_SIZE = parseInt(process.env.HOURLY_BATCH_SIZE) || 500;
 const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
 
 /**
@@ -47,7 +47,7 @@ exports.backupapod = onTaskDispatched(
         maxConcurrentDispatches: 6,
       },
     }, async (req) => {
-// [END v2TaskFunctionSetup]
+      // [END v2TaskFunctionSetup]
       const date = req.data.date;
       if (!date) {
         logger.warn("Invalid payload. Must include date.");
@@ -100,10 +100,15 @@ exports.backupapod = onTaskDispatched(
 
 
 let auth;
-/**
- * Returns URL of the given v2 google cloud function.
- */
+
 // [START v2GetFunctionUri]
+/**
+ * Get the URL of a given v2 cloud function.
+ *
+ * @param {string} name the function's name
+ * @param {string} location the function's location
+ * @return {Promise<string>} The URL of the function
+ */
 async function getFunctionUrl(name, location="us-central1") {
   if (!auth) {
     auth = new GoogleAuth({
@@ -133,7 +138,8 @@ exports.enqueuebackuptasks = onRequest(
       const enqueues = [];
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {
         const iteration = Math.floor(i / HOURLY_BATCH_SIZE);
-        const scheduleDelaySeconds = iteration * (60 * 60); // Delay each batch by N * hour
+        // Delay each batch by N * hour
+        const scheduleDelaySeconds = iteration * (60 * 60);
 
         const backupDate = new Date(BACKUP_START_DATE);
         backupDate.setDate(BACKUP_START_DATE.getDate() + i);

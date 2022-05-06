@@ -25,8 +25,8 @@ const HttpsError = functions.https.HttpsError;
 initializeApp();
 
 const BACKUP_START_DATE = new Date("1995-06-17");
-const BACKUP_COUNT = process.env.BACKUP_COUNT || 100;
-const HOURLY_BATCH_SIZE = process.env.HOURLY_BATCH_SIZE || 500;
+const BACKUP_COUNT = parseInt(process.env.BACKUP_COUNT) || 100;
+const HOURLY_BATCH_SIZE = parseInt(process.env.HOURLY_BATCH_SIZE) || 500;
 const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
 
 /**

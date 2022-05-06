@@ -19,6 +19,7 @@ const {onCustomEventPublished} = require("firebase-functions/v2/eventarc");
 const logger = require("firebase-functions/logger");
 const {initializeApp} = require("firebase-admin/app");
 const {getFirestore} = require("firebase-admin/firestore");
+
 // [END import]
 
 initializeApp();

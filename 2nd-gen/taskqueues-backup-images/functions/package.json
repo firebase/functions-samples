@@ -8,14 +8,15 @@
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
     "node": "16"
   },
   "main": "index.js",
   "dependencies": {
-    "firebase-admin": "file:firebase-admin-10.0.0-taskq.tgz",
+    "firebase-admin": "^10.2.0",
     "firebase-functions": "^3.20.1",
     "google-auth-library": "^8.0.1",
     "node-fetch": "^2.6.7"

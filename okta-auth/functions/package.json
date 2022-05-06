@@ -10,7 +10,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "10"
+    "node": "16"
   },
   "dependencies": {
     "@okta/jwt-verifier": "^1.0.0",

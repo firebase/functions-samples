@@ -1,6 +1,6 @@
 const {logger} = require("firebase-functions");
-const {storage} = require("firebase-functions/v2");
+const {onObjectFinalized} = require("firebase-functions/v2/storage");
 
-exports.logstore = storage.onObjectFinalized("my-bucket", (cloudEvent) => {
+exports.logstore = onObjectFinalized("my-bucket", (cloudEvent) => {
   logger.log(cloudEvent);
 });

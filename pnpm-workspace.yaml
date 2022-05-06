@@ -1,4 +1,12 @@
 packages:
+  - 2nd-gen/alerts-to-discord/functions
+  - 2nd-gen/callable-functions/functions
+  - 2nd-gen/custom-events/functions
+  - 2nd-gen/pubsub-helloworld/functions
+  - 2nd-gen/taskqueues-backup-images/functions
+  - 2nd-gen/test-functions/functions
+  - 2nd-gen/thumbnails/functions
+  - 2nd-gen/time-server/functions
   - assistant-say-number/functions
   - authenticated-json-api/functions
   - authorized-https-endpoint/functions
@@ -33,6 +41,7 @@ packages:
   - quickstarts/email-users/functions
   - quickstarts/pubsub-helloworld/functions
   - quickstarts/runtime-options/functions
+  - quickstarts/taskqueues-backup-images/functions
   - quickstarts/thumbnails/functions
   - quickstarts/time-server/functions
   - quickstarts/uppercase-firestore/functions

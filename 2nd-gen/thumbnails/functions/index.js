@@ -13,33 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
 // [START v2storageImports]
 // [START v2storageSDKImport]
-const {onFinalize} = require('firebase-functions/v2/storage');
+const {onObjectFinalized} = require("firebase-functions/v2/storage");
 // [END v2storageSDKImport]
 
 // [START v2storageAdditionalImports]
-const {initializeApp} = require('firebase-admin/app');
-const {getStorage} = require('firebase-admin/storage');
-const logger = require('firebase-functions/logger');
-const spawn = require('child-process-promise').spawn;
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
+const {initializeApp} = require("firebase-admin/app");
+const {getStorage} = require("firebase-admin/storage");
+const logger = require("firebase-functions/logger");
+const spawn = require("child-process-promise").spawn;
+const path = require("path");
+const os = require("os");
+const fs = require("fs");
 
-initializeApp()
+initializeApp();
 // [END v2storageAdditionalImports]
 // [END v2storageImports]
 
 // [START v2storageGenerateThumbnail]
 /**
- * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
- * ImageMagick.
+ * When an image is uploaded in the Storage bucket,
+ * generate a thumbnail automatically using ImageMagick.
  */
 // [START v2storageGenerateThumbnailTrigger]
-exports.generateThumbnail = onFinalize({ cpu: 2 }, async (event) => {
+exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
 // [END v2storageGenerateThumbnailTrigger]
 
   // [START v2storageEventAttributes]
@@ -50,13 +50,13 @@ exports.generateThumbnail = onFinalize({ cpu: 2 }, async (event) => {
 
   // [START v2storageStopConditions]
   // Exit if this is triggered on a file that is not an image.
-  if (!contentType.startsWith('image/')) {
-    return logger.log('This is not an image.');
+  if (!contentType.startsWith("image/")) {
+    return logger.log("This is not an image.");
   }
   // Exit if the image is already a thumbnail.
   const fileName = path.basename(filePath);
-  if (fileName.startsWith('thumb_')) {
-    return logger.log('Already a Thumbnail.');
+  if (fileName.startsWith("thumb_")) {
+    return logger.log("Already a Thumbnail.");
   }
   // [END v2storageStopConditions]
 
@@ -65,24 +65,25 @@ exports.generateThumbnail = onFinalize({ cpu: 2 }, async (event) => {
   const bucket = getStorage().bucket(fileBucket);
   const tempPath = path.join(os.tmpdir(), fileName);
   await bucket.file(filePath).download({destination: tempPath});
-  logger.log('Image downloaded locally to', tempPath);
+  logger.log("Image downloaded locally to", tempPath);
 
   // Generate a thumbnail using ImageMagick.
-  await spawn('convert', [tempPath, '-thumbnail', '200x200>', tempPath]);
-  logger.log('Thumbnail created at', tempPath);
+  await spawn("convert", [tempPath, "-thumbnail", "200x200>", tempPath]);
+  logger.log("Thumbnail created at", tempPath);
 
   // Prefix 'thumb_' to file name.
   const thumbFileName = `thumb_${fileName}`;
   const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-  
+
   // Uploading the thumbnail.
-  const metadata = { contentType: contentType };
+  const metadata = {contentType: contentType};
   await bucket.upload(tempPath, {
     destination: thumbFilePath,
     metadata: metadata,
   });
-  
-  // Once the thumbnail has been uploaded delete the local file to free up disk space.
+
+  // Once the thumbnail has been uploaded,
+  // delete the local file to free up disk space.
   return fs.unlinkSync(tempPath);
   // [END v2storageThumbnailGeneration]
 });
