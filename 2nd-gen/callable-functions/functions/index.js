@@ -42,7 +42,12 @@ exports.addnumbers = onCall((request) => {
 
   // [START v2returnAddData]
   // returning result.
-  return firstNumber + secondNumber;
+  return {
+    firstNumber: firstNumber,
+    secondNumber: secondNumber,
+    operator: "+",
+    operationResult: firstNumber + secondNumber,
+  };
   // [END v2returnAddData]
 });
 // [END v2allAdd]
