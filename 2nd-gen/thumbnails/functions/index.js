@@ -17,7 +17,7 @@
 
 // [START v2storageImports]
 // [START v2storageSDKImport]
-const { onFinalize } = require('firebase-functions/v2/storage');
+const {onFinalize} = require('firebase-functions/v2/storage');
 // [END v2storageSDKImport]
 
 // [START v2storageAdditionalImports]
