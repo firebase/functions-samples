@@ -118,6 +118,7 @@ importers:
 
   2nd-gen/test-functions-mocha/functions:
     specifiers:
+      '@types/mocha': ^9.1.1
       chai: ^4.3.6
       eslint: ^8.9.0
       eslint-config-google: ^0.14.0
@@ -131,6 +132,7 @@ importers:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
     devDependencies:
+      '@types/mocha': 9.1.1
       chai: 4.3.6
       eslint: 8.14.0
       eslint-config-google: 0.14.0_eslint@8.14.0
@@ -2363,6 +2365,10 @@ packages:
 
   /@types/mocha/8.2.3:
     resolution: {integrity: sha512-ekGvFhFgrc2zYQoX4JeZPmVzZxw6Dtllga7iGHzfbYIYkAMUx/sAFP2GdFpLff+vdHXu5fl7WX9AT+TtqYcsyw==}
+    dev: true
+
+  /@types/mocha/9.1.1:
+    resolution: {integrity: sha512-Z61JK7DKDtdKTWwLeElSEBcWGRLY8g95ic5FoQqI9CMx0ns/Ghep3B4DfcEimiKMvtamNVULVNKEsiwV3aQmXw==}
     dev: true
 
   /@types/node/10.17.60:

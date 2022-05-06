@@ -20,6 +20,7 @@
     "firebase-functions": "^3.18.0"
   },
   "devDependencies": {
+    "@types/mocha": "^9.1.1",
     "chai": "^4.3.6",
     "eslint": "^8.9.0",
     "eslint-config-google": "^0.14.0",
