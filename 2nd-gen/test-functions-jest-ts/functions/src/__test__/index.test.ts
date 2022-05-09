@@ -1,6 +1,6 @@
 import {logger} from "firebase-functions";
 import {expect, jest, test} from "@jest/globals";
-import * as firebaseFunctionsTest from "firebase-functions-test";
+import firebaseFunctionsTest from "firebase-functions-test";
 import {logstore} from "../index";
 
 const {wrap} = firebaseFunctionsTest();
