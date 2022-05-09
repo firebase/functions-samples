@@ -1,14 +1,15 @@
 {
-  "name": "functions",
+  "name": "test-functions",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "build": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
+    "test": "jest",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "jest"
+    "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
     "node": "16"

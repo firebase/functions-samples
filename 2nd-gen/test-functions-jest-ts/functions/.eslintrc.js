@@ -18,6 +18,7 @@ module.exports = {
     sourceType: "module",
   },
   ignorePatterns: [
+    "jest.config.js",
     "/lib/**/*", // Ignore built files.
   ],
   plugins: [
