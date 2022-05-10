@@ -207,8 +207,8 @@ importers:
       actions-on-google: ^2.12.0
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       actions-on-google: 2.14.0
       firebase-admin: 10.2.0
@@ -223,8 +223,8 @@ importers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
       express: ^4.17.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       '@google-cloud/language': 3.8.0
       express: 4.18.1
@@ -241,8 +241,8 @@ importers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
       express: ^4.17.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       cookie-parser: 1.4.6
       cors: 2.8.5
@@ -258,8 +258,8 @@ importers:
       '@google-cloud/bigquery': ^4.7.0
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       '@google-cloud/bigquery': 4.7.0
       firebase-admin: 10.2.0
@@ -272,8 +272,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -286,8 +286,8 @@ importers:
       child-process-promise: ^2.2.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       mkdirp: ^1.0.3
       mkdirp-promise: ^5.0.1
     dependencies:
@@ -304,8 +304,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -318,8 +318,8 @@ importers:
       es6-promise-pool: ^2.5.0
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       es6-promise-pool: 2.5.0
       firebase-admin: 10.2.0
@@ -332,8 +332,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -345,8 +345,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       nodemailer: ^6.4.3
     dependencies:
       firebase-admin: 10.2.0
@@ -362,8 +362,8 @@ importers:
       child-process-promise: ^2.2.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       '@google-cloud/storage': 4.7.2
       child-process-promise: 2.2.1
@@ -377,8 +377,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -392,8 +392,8 @@ importers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
       ffmpeg-static: ^4.0.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       fluent-ffmpeg: ^2.1.2
     dependencies:
       '@google-cloud/storage': 4.7.2
@@ -414,8 +414,8 @@ importers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
       express: ^4.17.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       typesense: ^0.13.0
     dependencies:
       '@babel/runtime': 7.17.9
@@ -435,8 +435,8 @@ importers:
       algoliasearch: ^4.0.3
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       algoliasearch: 4.13.0
       firebase-admin: 10.2.0
@@ -450,8 +450,8 @@ importers:
       child-process-promise: ^2.2.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       mkdirp: ^1.0.3
     dependencies:
       child-process-promise: 2.2.1
@@ -466,8 +466,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       request: ^2.88.2
       request-promise: ^4.2.5
       secure-compare: ^3.0.1
@@ -485,8 +485,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       google-auth-library: ^5.10.1
       googleapis: ^47.0.0
     dependencies:
@@ -504,8 +504,8 @@ importers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
       express: 4.17.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       lodash: 4.17.15
     dependencies:
       canvas: 2.9.1
@@ -522,8 +522,8 @@ importers:
       '@google-cloud/storage': ^4.3.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       sharp: 0.30.4
     dependencies:
       '@google-cloud/storage': 4.7.2
@@ -539,8 +539,8 @@ importers:
       cookie-parser: ^1.4.4
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       request: ^2.88.2
       request-promise-native: ^1.0.8
       simple-oauth2: ^3.3.0
@@ -559,8 +559,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -572,8 +572,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -586,8 +586,8 @@ importers:
       cookie-parser: ^1.4.4
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       node-linkedin: ^0.5.6
     dependencies:
       cookie-parser: 1.4.6
@@ -603,8 +603,8 @@ importers:
       '@google-cloud/translate': ^5.2.0
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       '@google-cloud/translate': 5.3.0
       firebase-admin: 10.2.0
@@ -617,8 +617,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       node-fetch: ^2.6.7
     dependencies:
       firebase-admin: 10.2.0
@@ -633,8 +633,8 @@ importers:
       '@google-cloud/vision': ^2.3.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       '@google-cloud/vision': 2.4.2
       firebase-admin: 10.2.0
@@ -649,8 +649,8 @@ importers:
       eslint: ^6.8.0
       eslint-config-google: ^0.14.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       jshint: ^2.11.0
       paypal-rest-sdk: ^1.8.1
     dependencies:
@@ -668,8 +668,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -683,8 +683,8 @@ importers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
       express: ^4.17.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       cors: 2.8.5
       express: 4.18.1
@@ -698,8 +698,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       nodemailer: ^6.4.3
     dependencies:
       firebase-admin: 10.2.0
@@ -713,8 +713,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
@@ -726,16 +726,16 @@ importers:
     specifiers:
       eslint: ^7.6.0
       eslint-config-google: ^0.14.0
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
-      firebase-functions-test: ^0.3.3
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
+      firebase-functions-test: ^2.0.0
     dependencies:
       firebase-admin: 10.2.0
       firebase-functions: 3.21.0_firebase-admin@10.2.0
     devDependencies:
       eslint: 7.32.0
       eslint-config-google: 0.14.0_eslint@7.32.0
-      firebase-functions-test: 0.3.3_gwupw6yxcmtf7d7mcigmxvpyya
+      firebase-functions-test: 2.0.1_gwupw6yxcmtf7d7mcigmxvpyya
 
   quickstarts/taskqueues-backup-images/functions:
     specifiers:
@@ -757,8 +757,8 @@ importers:
       child-process-promise: ^2.2.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       child-process-promise: 2.2.1
       firebase-admin: 10.2.0
@@ -772,8 +772,8 @@ importers:
       cors: ^2.8.5
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       moment: ^2.24.0
     dependencies:
       cors: 2.8.5
@@ -790,8 +790,8 @@ importers:
       chai-as-promised: ^7.1.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       mocha: ^7.1.0
       sinon: ^9.0.0
     dependencies:
@@ -810,9 +810,9 @@ importers:
       '@types/mocha': ^8.2.0
       chai: ^4.2.0
       chai-as-promised: ^7.1.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
-      firebase-functions-test: 0.3.3
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
+      firebase-functions-test: 2.0.0
       mocha: ^7.1.0
       sinon: ^9.0.0
     dependencies:
@@ -822,7 +822,7 @@ importers:
       '@types/mocha': 8.2.3
       chai: 4.3.6
       chai-as-promised: 7.1.1_chai@4.3.6
-      firebase-functions-test: 0.3.3_gwupw6yxcmtf7d7mcigmxvpyya
+      firebase-functions-test: 2.0.0_gwupw6yxcmtf7d7mcigmxvpyya
       mocha: 7.2.0
       sinon: 9.2.4
 
@@ -832,8 +832,8 @@ importers:
       crypto: 1.0.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       spotify-web-api-node: ^4.0.0
     dependencies:
       cookie-parser: 1.4.6
@@ -850,8 +850,8 @@ importers:
       '@google-cloud/logging': ^7.2.3
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       stripe: ^8.56.0
     dependencies:
       '@google-cloud/logging': 7.3.0
@@ -866,8 +866,8 @@ importers:
     specifiers:
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       nodemailer: ^6.4.3
     dependencies:
       firebase-admin: 10.2.0
@@ -885,8 +885,8 @@ importers:
       eslint-plugin-promise: ^4.2.1
       express: ^4.17.1
       express-handlebars: ^3.1.0
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       handlebars: ^4.7.3
     dependencies:
       cookie-parser: 1.4.6
@@ -906,8 +906,8 @@ importers:
       capitalize-sentence: ^0.1.5
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       bad-words: 3.0.4
       capitalize-sentence: 0.1.5
@@ -922,8 +922,8 @@ importers:
       bitly: ^6.1.0
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
     dependencies:
       bitly: 6.1.0
       firebase-admin: 10.2.0
@@ -937,8 +937,8 @@ importers:
       cors: ^2.8.5
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
       request: ^2.88.2
     dependencies:
       cors: 2.8.5
@@ -953,9 +953,9 @@ importers:
     specifiers:
       eslint: ^5.12.0
       eslint-plugin-promise: ^4.0.1
-      firebase-admin: ^10.0.0
-      firebase-functions: ^3.16.0
-      firebase-functions-test: ^0.3.3
+      firebase-admin: ^10.2.0
+      firebase-functions: ^3.21.0
+      firebase-functions-test: ^2.0.0
       googleapis: ^66.0.0
     dependencies:
       firebase-admin: 10.2.0
@@ -964,7 +964,7 @@ importers:
     devDependencies:
       eslint: 5.16.0
       eslint-plugin-promise: 4.3.1
-      firebase-functions-test: 0.3.3_gwupw6yxcmtf7d7mcigmxvpyya
+      firebase-functions-test: 2.0.1_gwupw6yxcmtf7d7mcigmxvpyya
 
 packages:
 
@@ -4759,19 +4759,6 @@ packages:
 
   /firebase-functions-test/0.2.3_gwupw6yxcmtf7d7mcigmxvpyya:
     resolution: {integrity: sha512-zYX0QTm53wCazuej7O0xqbHl90r/v1PTXt/hwa0jo1YF8nDM+iBKnLDlkIoW66MDd0R6aGg4BvKzTTdJpvigUA==}
-    engines: {node: '>=8.0.0'}
-    peerDependencies:
-      firebase-admin: '>=6.0.0'
-      firebase-functions: '>=2.0.0'
-    dependencies:
-      '@types/lodash': 4.14.182
-      firebase-admin: 10.2.0
-      firebase-functions: 3.21.0_firebase-admin@10.2.0
-      lodash: 4.17.21
-    dev: true
-
-  /firebase-functions-test/0.3.3_gwupw6yxcmtf7d7mcigmxvpyya:
-    resolution: {integrity: sha512-dCppF/2Ztv87IyyBaUQlT1Z05ial5v/3LB0huS2ktXz05yNiID5FVIKtO0/+w9Q7/SThJ8qIDG0hoGDPt4Xcug==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       firebase-admin: '>=6.0.0'
