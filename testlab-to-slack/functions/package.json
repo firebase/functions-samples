@@ -10,7 +10,7 @@
     "compile": "cp ../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "14"
+    "node": "16"
   },
   "dependencies": {
     "axios": "^0.19.2",
