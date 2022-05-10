@@ -5,6 +5,7 @@ packages:
   - 2nd-gen/pubsub-helloworld/functions
   - 2nd-gen/taskqueues-backup-images/functions
   - 2nd-gen/test-functions-jest/functions
+  - 2nd-gen/test-functions-jest-ts/functions
   - 2nd-gen/test-functions-mocha/functions
   - 2nd-gen/thumbnails/functions
   - 2nd-gen/time-server/functions
