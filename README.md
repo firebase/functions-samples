@@ -20,7 +20,7 @@ This repository contains a few categories of samples:
  1. [**Quickstarts**](#quickstarts) are minimal examples for each types of triggers.
  1. [**Cloud Functions v2 public preview**](#v2) samples show how to use the public preview of [Cloud Functions for Firebase v2](https://firebase.google.com/docs/functions/beta).
  1. [**Development Environment Samples and Boilerplates**](#environment) illustrates how to get started with
-different, commonly used JavaScript development patterns such as Typescript, React SSR, ES2017 etc...
+different, commonly used JavaScript development patterns such as Typescript, React SSR, and ES2017.
  1. [**Image Processing**](#image) shows a few ways you can process and transform images using Cloud Functions such as generating thumbnails, converting images extracting metadata...
  1. [**Firebase Realtime Database Data Consistency**](#rtdb) shows how to implement automatic data consistency such as keeping a count of children, having a max amount of node childs, cleaning up old data etc... for your Realtime Database.
  1. [**Other common usecases**](#other) a set of other common usecases for Cloud Functions.
