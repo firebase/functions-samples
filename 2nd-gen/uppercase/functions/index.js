@@ -32,7 +32,7 @@ exports.makeuppercase2 = onRefWritten('messages/{pushId}/original', (event) => {
   }
   // Grab the current value of what was written to the Realtime Database.
   const original = event.data.after.val();
-  console.log('Uppercasing', context.params.pushId, original);
+  console.log('Uppercasing', event.params.pushId, original);
   const uppercase = original.toUpperCase();
   // You must return a Promise when performing asynchronous tasks inside a Functions such as
   // writing to the Firebase Realtime Database.
