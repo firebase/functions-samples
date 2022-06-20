@@ -27,7 +27,7 @@ exports.makeuppercase2 = onRefWritten('messages/{pushId}/original', (event) => {
     return null;
   }
   // Exit when the data is deleted.
-  if (!event.data.before.exists()) {
+  if (!event.data.after.exists()) {
     return null;
   }
   // Grab the current value of what was written to the Realtime Database.
