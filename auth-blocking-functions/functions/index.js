@@ -14,53 +14,53 @@
  * limitations under the License.
  */
 
-const {beforeUserCreated, beforeUserSignedIn, HttpsError} = require("firebase-functions/v2/identity");
+const {functions} = require("firebase-functions");
 const {admin} = require("firebase-admin");
 
 admin.initializeApp();
 const store = admin.firestore();
 
-// [START v2BlockCreate]
-// [START v2beforeCreateFunctionTrigger]
+// [START v1BlockCreate]
+// [START v1beforeCreateFunctionTrigger]
 // Block account creation with any non-gmail email address.
-exports.blockcreate = beforeUserCreated((event) => {
-  // [END v2beforeCreateFunctionTrigger]
-  // [START v2readEmailData]
-  // Email passed from the CloudEvent.
-  const email = event.data.email || "";
-  // [END v2readEmailData]
+exports.blockCreate = functions.auth.user().beforeCreate((user, context) => {
+  // [END v1beforeCreateFunctionTrigger]
+  // [START v1readEmailData]
+  // Email passed from the User object.
+  const email = user.email || "";
+  // [END v1readEmailData]
 
-  // [START v2domainHttpsError]
+  // [START v1domainHttpsError]
   // Checking that the email is a 'gmail' domain.
   if (!email?.includes("gmail.com")) {
     // Throwing an HttpsError so that the Auth service rejects the account creation.
     throw new HttpsError('invalid-argument', `Unauthorized email ${email}. Only 'gmail' accounts are valid for registration.`);
   }
-  // [END v2domainHttpsError]
+  // [END v1domainHttpsError]
 });
-// [END v2BlockCreate]
+// [END v1BlockCreate]
 
-// [START v2BlockSignIn]
-// [START v2beforeSignInFunctionTrigger]
+// [START v1BlockSignIn]
+// [START v1beforeSignInFunctionTrigger]
 // Block account sign in with any banned account.
-exports.blocksignin = beforeUserSignedIn(async (event) => {
-  // [END v2beforeSignInFunctionTrigger]
-  // [START v2readEmailData]
-  // Email passed from the CloudEvent.
-  const email = event.data.email || "";
-  // [END v2readEmailData]
+exports.blockSignIn = functions.auth.user().beforeSignIn(async (user, context) => {
+  // [END v1beforeSignInFunctionTrigger]
+  // [START v1readEmailData]
+  // Email passed from the User object.
+  const email = user.email || "";
+  // [END v1readEmailData]
 
-  // [START v2documentGet]
+  // [START v1documentGet]
   // Obtain a document in Firestore of the banned email address.
   const doc = await store.collection("banned").doc(email).get();
-  // [END v2documentGet]
+  // [END v1documentGet]
 
-  // [START v2bannedHttpsError]
+  // [START v1bannedHttpsError]
   // Checking that the document exists for the email address.
   if (doc.exists) {
     // Throwing an HttpsError so that the Auth service rejects the account sign in.
     throw new HttpsError('invalid-argument', `Unauthorized email ${email}. Email has been banned and is no longer authorized for sign-in.`);
   }
-  // [END v2bannedHttpsError]
+  // [END v1bannedHttpsError]
 });
-// [START v2BlockSignIn]
+// [START v1BlockSignIn]

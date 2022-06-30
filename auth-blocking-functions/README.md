@@ -1,4 +1,4 @@
-# Firebase SDK for Cloud Functions 2nd Gen Quickstart - Auth Blocking Functions
+# Firebase SDK for Cloud Functions Quickstart - Auth Blocking Functions
 ================================================
 
 The Auth Blocking functions Quickstart demonstrates how to block account sign in and creation when using Firebase Auth or Google Cloud Identity Platform in a Firebase App.
