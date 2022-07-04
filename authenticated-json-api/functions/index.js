@@ -80,6 +80,7 @@ app.post('/api/messages', async (req, res) => {
   } catch(error) {
     functions.logger.log(
       'Error detecting sentiment or saving message',
+      // @ts-ignore
       error.message
     );
     res.sendStatus(500);
@@ -112,6 +113,7 @@ app.get('/api/messages', async (req, res) => {
 
     res.status(200).json(messages);
   } catch(error) {
+    // @ts-ignore
     functions.logger.log('Error getting messages', error.message);
     res.sendStatus(500);
   }
@@ -138,6 +140,7 @@ app.get('/api/message/:messageId', async (req, res) => {
     functions.logger.log(
       'Error getting message details',
       messageId,
+      // @ts-ignore
       error.message
     );
     return res.sendStatus(500);

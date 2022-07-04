@@ -2,7 +2,7 @@
 
 This repository contains a collection of samples showcasing some typical uses of [Cloud Functions for Firebase](https://firebase.google.com/features/functions).
 
-> All samples use the Node 14 runtime and require the Blaze pay-as-you-go billing plan to deploy. Learn more about Cloud Functions for Firebase's Node versions [here](https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version).
+> All samples use the Node 16 runtime and require the Blaze pay-as-you-go billing plan to deploy. Learn more about Cloud Functions for Firebase's Node versions [here](https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version).
 
 ### What's Cloud Functions for Firebase?
 
@@ -18,9 +18,10 @@ To learn how to get started with Cloud Functions for Firebase by having a look a
 This repository contains a few categories of samples:
 
  1. [**Quickstarts**](#quickstarts) are minimal examples for each types of triggers.
+ 1. [**Cloud Functions v2 public preview**](#v2) samples show how to use the public preview of [Cloud Functions for Firebase v2](https://firebase.google.com/docs/functions/beta).
  1. [**Development Environment Samples and Boilerplates**](#environment) illustrates how to get started with
-different, commonly used JavaScript development patterns such as Typescript, React SSR, ES2017 etc...
- 1. [**Image Processing**](#image) shows a few ways where you can process and transform images using Cloud Functions such as generating thumbnails, converting images extracting metadata...
+different, commonly used JavaScript development patterns such as Typescript, React SSR, and ES2017.
+ 1. [**Image Processing**](#image) shows a few ways you can process and transform images using Cloud Functions such as generating thumbnails, converting images extracting metadata...
  1. [**Firebase Realtime Database Data Consistency**](#rtdb) shows how to implement automatic data consistency such as keeping a count of children, having a max amount of node childs, cleaning up old data etc... for your Realtime Database.
  1. [**Other common usecases**](#other) a set of other common usecases for Cloud Functions.
 
@@ -58,6 +59,47 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Pub
 
 This quickstart demonstrates how to trigger a function in response to the
 completion of a test matrix in **Firebase Test Lab**.
+
+<a name="v2"></a>
+## Cloud Functions v2 public preview
+
+> Note: Cloud Functions for Firebase v2 is a public preview. This means that the functionality might change in backward-incompatible ways. A preview release is not subject to any SLA or deprecation policy and may receive limited or no support.
+
+See [the Firebase docs](https://firebase.google.com/docs/functions/beta) for more information about the v2 public preview.
+
+### [HTTPS: Time Server](/2nd-gen/time-server/)
+
+A minimal HTTPS example.
+
+### [Task Queues: Back-up images from an API](/2nd-gen/taskqueues-backup-images/)
+
+See how to use Task Queues to meter traffic to a rate-limited API.
+
+### [Firebase Alerts: Send crash reports to Discord](/2nd-gen/alerts-to-discord/)
+
+Trigger a function based on a Firebase Alert, and send information about the alert to a channel in a Discord server.
+
+### [Custom Events: Save image metadata](/2nd-gen/custom-events/)
+
+Learn how to trigger a function based on an event sent by an extension
+
+### [Callables: Add numbers and sanitize text](/2nd-gen/callable-functions/)
+
+See how to write a v2 function that can easily be triggered from an app.
+
+### [PubSub: Hello world](/2nd-gen/pubsub-helloworld/)
+
+A minimal PubSub example.
+
+### [Storage: Generate image thumbnails](/2nd-gen/thumbnails/)
+
+Resize images after they're added to a Storage bucket.
+
+### Unit testing
+
+- [Test with Jest](/2nd-gen/test-functions-jest/)
+    - [Test with Jest and TypeScript](/2nd-gen/test-functions-jest-ts/)
+- [Test with Mocha](/2nd-gen/test-functions-mocha/)
 
 <a name="environment"></a>
 ## Development Boilerplates
@@ -131,7 +173,7 @@ Uses a Realtime Database trigger.
 
 
 <a name="other"></a>
-## Other common usecases
+## Solve other common use cases
 
 ### [Send FCM notifications](fcm-notifications)
 
