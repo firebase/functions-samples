@@ -31,8 +31,8 @@ exports.blockcreate = beforeUserCreated((event) => {
   // [END v2readEmailData]
 
   // [START v2domainHttpsError]
-  // Checking that the email is a 'gmail' domain.
-  if (!email?.includes("gmail.com")) {
+  // Only users of a specific domain can sign up.
+  if (!email?.includes("@acme.com")) {
     // Throwing an HttpsError so that the Auth service rejects the account creation.
     throw new HttpsError('invalid-argument', `Unauthorized email ${email}. Only 'gmail' accounts are valid for registration.`);
   }
