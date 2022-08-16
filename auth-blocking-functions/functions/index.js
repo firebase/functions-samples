@@ -18,12 +18,12 @@ const {functions} = require("firebase-functions");
 const {admin} = require("firebase-admin");
 
 admin.initializeApp();
-const store = admin.firestore();
+const db = admin.firestore();
 
-// [START v1BlockCreate]
+// [START v1ValidateNewUser]
 // [START v1beforeCreateFunctionTrigger]
-// Block account creation with any non-gmail email address.
-exports.blockCreate = functions.auth.user().beforeCreate((user, context) => {
+// Block account creation with any non-acme email address.
+exports.validateNewUser = functions.auth.user().beforeCreate((user, context) => {
   // [END v1beforeCreateFunctionTrigger]
   // [START v1readEmailData]
   // Email passed from the User object.
@@ -31,19 +31,19 @@ exports.blockCreate = functions.auth.user().beforeCreate((user, context) => {
   // [END v1readEmailData]
 
   // [START v1domainHttpsError]
-  // Checking that the email is a 'gmail' domain.
-  if (!email?.includes("gmail.com")) {
+  // Only users of a specific domain can sign up.
+  if (!email.includes("acme.com")) {
     // Throwing an HttpsError so that the Auth service rejects the account creation.
-    throw new HttpsError('invalid-argument', `Unauthorized email ${email}. Only 'gmail' accounts are valid for registration.`);
+    throw new HttpsError('invalid-argument', "Unauthorized email");
   }
   // [END v1domainHttpsError]
 });
-// [END v1BlockCreate]
+// [END v1ValidateNewUser]
 
-// [START v1BlockSignIn]
+// [START v1CheckForBan]
 // [START v1beforeSignInFunctionTrigger]
 // Block account sign in with any banned account.
-exports.blockSignIn = functions.auth.user().beforeSignIn(async (user, context) => {
+exports.checkForBan = functions.auth.user().beforeSignIn(async (user, context) => {
   // [END v1beforeSignInFunctionTrigger]
   // [START v1readEmailData]
   // Email passed from the User object.
@@ -52,15 +52,15 @@ exports.blockSignIn = functions.auth.user().beforeSignIn(async (user, context) =
 
   // [START v1documentGet]
   // Obtain a document in Firestore of the banned email address.
-  const doc = await store.collection("banned").doc(email).get();
+  const doc = await db.collection("banned").doc(email).get();
   // [END v1documentGet]
 
   // [START v1bannedHttpsError]
   // Checking that the document exists for the email address.
   if (doc.exists) {
     // Throwing an HttpsError so that the Auth service rejects the account sign in.
-    throw new HttpsError('invalid-argument', `Unauthorized email ${email}. Email has been banned and is no longer authorized for sign-in.`);
+    throw new HttpsError('invalid-argument', "Unauthorized email");
   }
   // [END v1bannedHttpsError]
 });
-// [START v1BlockSignIn]
+// [START v1CheckForBan]
