@@ -19,7 +19,7 @@
 // [START import]
 // The Cloud Functions for Firebase SDK to create v2 Cloud Functions and setup triggers.
 const { onRequest } = require('firebase-functions/v2/https');
-const { onRefCreated } = require('firebase-functions/v2/database');
+const { onValueCreated } = require('firebase-functions/v2/database');
 const { logger } = require('firebase-functions');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
@@ -27,11 +27,11 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 // [END import]
 
-// [START addMessage]
+// [START addmessage]
 // Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 // [START addMessageTrigger]
-exports.addMessage = onRequest(async (req, resp) => {
+exports.addmessage = onRequest(async (req, resp) => {
 // [END addMessageTrigger]
   // Grab the text parameter.
   const original = req.query.text;
@@ -42,13 +42,13 @@ exports.addMessage = onRequest(async (req, resp) => {
   res.redirect(303, snapshot.ref.toString());
   // [END adminSdkPush]
 });
-// [END addMessage]
+// [END addmessage]
 
-// [START makeUppercase]
+// [START makeuppercase]
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
 // for all databases in 'us-central1'
-exports.makeUppercase = onRefCreated('/messages/{pushId}/original', (event) => {
+exports.makeuppercase = onValueCreated('/messages/{pushId}/original', (event) => {
       // Grab the current value of what was written to the Realtime Database.
       const original = event.data.val();
       logger.log('Uppercasing', event.params.pushId, original);
@@ -58,5 +58,5 @@ exports.makeUppercase = onRefCreated('/messages/{pushId}/original', (event) => {
       // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
       return event.data.ref.parent.child('uppercase').set(uppercase);
     });
-// [END makeUppercase]
+// [END makeuppercase]
 // [END all]
