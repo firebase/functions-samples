@@ -38,7 +38,7 @@ To deploy the sample to your Firebase app,
 1. Run `npm install` to install dependencies for the server-side [functions](functions/) as detailed above.
 2. From this top-level sample directory, deploy the `Realtime Database` trigger defined in [functions](functions/) to `Firebase Functions` and the [public](public/) directory app to `Firebase Hosting`.
 
-Assumimg you've created a Firebase application called `firebase-example-123` (make sure it's upgraded to the Spark plan and that `Anonymous Authentication` are enabled).
+Assumimg you've created a Firebase application called `firebase-example-123` (make sure it's upgraded to the Blaze plan and that `Anonymous Authentication` are enabled).
 
 ```sh
 firebase use --add firebase-example-123
