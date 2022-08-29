@@ -135,7 +135,6 @@ function fs_listen_online() {
     firebase.firestore().collection('status')
         .onSnapshot(function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
-                console.log(change);
                 if (change.type === 'added') {
                     var msg = 'User ' + change.doc.id + ' is online.';
                     console.log(msg);
@@ -154,8 +153,6 @@ function fs_listen_online() {
         });
     // [END fs_onsnapshot_online]
 }
-firebase.database().useEmulator("localhost", 9000);
-firebase.firestore().useEmulator("localhost", 8080);
 
 firebase.auth().signInAnonymously().then(function() {
     rtdb_and_local_fs_presence();
