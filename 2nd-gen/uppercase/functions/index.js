@@ -53,7 +53,7 @@ exports.makeuppercase = onValueCreated('/messages/{pushId}/original', (event) =>
       const original = event.data.val();
       logger.log('Uppercasing', event.params.pushId, original);
       const uppercase = original.toUpperCase();
-      // You must return a Promise when performing asynchronous tasks inside a Functions such as
+      // You must return a Promise when performing asynchronous tasks inside a function, such as
       // writing to the Firebase Realtime Database.
       // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
       return event.data.ref.parent.child('uppercase').set(uppercase);
