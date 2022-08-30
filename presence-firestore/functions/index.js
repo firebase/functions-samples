@@ -37,7 +37,7 @@ exports.onUserStatusChanged = functions.database.ref('/status/{uid}/devices/{dev
       // corresponding Firestore document.
       const userFirestoreRef = firestore.doc(`status/${context.params.uid}`);
       const userDeviceCollectionRef = userFirestoreRef.collection(`devices`);
-      const userStatusFirestoreRef = userDeviceCollectionRef.doc(deviceKey);
+      const userDeviceStatusFirestoreRef = userDeviceCollectionRef.doc(deviceKey);
 
       // It is likely that the Realtime Database change that triggered
       // this event has already been overwritten by a fast change in
@@ -56,14 +56,14 @@ exports.onUserStatusChanged = functions.database.ref('/status/{uid}/devices/{dev
 
       if(status.state === 'offline') {
         // ... and write it to Firestore.
-        await userStatusFirestoreRef.delete();
+        await userDeviceStatusFirestoreRef.delete();
 
         if ((await userDeviceCollectionRef.get()).empty) {
           return userFirestoreRef.delete();
         }
       } else {
         await userFirestoreRef.set({ uid: context.params.uid });
-        return userStatusFirestoreRef.set(status.devices[deviceKey]);
+        return userDeviceStatusFirestoreRef.set(status.devices[deviceKey]);
       }
       return null;
     });
