@@ -15,42 +15,50 @@
  */
 'use strict';
 
-const functions = require('firebase-functions/v2');
+// [START all]
+// [START import]
+// The Cloud Functions for Firebase SDK to create v2 Cloud Functions and setup triggers.
+const { onSchedule } = require('firebase-functions/v2/scheduler');
+const { logger } = require('firebase-functions');
+
+// The Firebase Admin SDK to delete inactive users.
 const admin = require('firebase-admin');
 admin.initializeApp();
+
+// The es6-promise-pool to limit the concurrency of Promise's.
 const PromisePool = require('es6-promise-pool').default;
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
+// [END import]
 
-/**
- * Run once a day at midnight, to cleanup the users
- * Manually run the task here https://console.cloud.google.com/cloudscheduler
- */
-exports.accountcleanup = functions.scheduler.onSchedule('every day 00:00', async (event) => {
+// [START accountcleanup]
+// Run once a day at midnight, to cleanup the users
+// Manually run the task here https://console.cloud.google.com/cloudscheduler
+exports.accountcleanup = onSchedule('every day 00:00', async (event) => {
   // Fetch all user details.
   const inactiveUsers = await getInactiveUsers();
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
   const promisePool = new PromisePool(() => deleteInactiveUser(inactiveUsers), MAX_CONCURRENT);
   await promisePool.start();
-  functions.logger.log('User cleanup finished');
+  logger.log('User cleanup finished');
 });
+// [END accountcleanup]
 
-/**
- * Deletes one inactive user from the list.
- */
+// [START deleteInactiveUser]
+// Deletes one inactive user from the list.
 function deleteInactiveUser(inactiveUsers) {
   if (inactiveUsers.length > 0) {
     const userToDelete = inactiveUsers.pop();
     
     // Delete the inactive user.
     return admin.auth().deleteUser(userToDelete.uid).then(() => {
-      return functions.logger.log(
+      return logger.log(
         'Deleted user account',
         userToDelete.uid,
         'because of inactivity'
       );
     }).catch((error) => {
-      return functions.logger.error(
+      return logger.error(
         'Deletion of inactive user account',
         userToDelete.uid,
         'failed:',
@@ -61,10 +69,10 @@ function deleteInactiveUser(inactiveUsers) {
     return null;
   }
 }
+// [END deleteInactiveUser]
 
-/**
- * Returns the list of all inactive users.
- */
+// [START getInactiveUsers]
+// Returns the list of all inactive users.
 async function getInactiveUsers(users = [], nextPageToken) {
   const result = await admin.auth().listUsers(1000, nextPageToken);
   // Find users that have not signed in in the last 30 days.
@@ -81,3 +89,5 @@ async function getInactiveUsers(users = [], nextPageToken) {
   
   return users;
 }
+// [END getInactiveUsers]
+// [END all]
