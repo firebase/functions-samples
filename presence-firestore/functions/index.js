@@ -24,20 +24,20 @@ admin.initializeApp();
 // detects authentication from the environment.
 const firestore = admin.firestore();
 
-// Create a new function which is triggered on changes to /status/{uid}
+// Create a new function which is triggered on changes to /status/{uid}/sessions/{sessionId}
 // Note: This is a Realtime Database trigger, *not* Firestore.
-exports.onUserStatusChanged = functions.database.ref('/status/{uid}/devices/{deviceId}').onUpdate(
+exports.onUserStatusChanged = functions.database.ref('/status/{uid}/sessions/{sessionId}').onUpdate(
     async (change, context) => {
       // Get the data written to Realtime Database
       const eventStatus = change.after.val();
 
-      const deviceKey = context.params.deviceId;
+      const sessionId = context.params.sessionId;
 
       // Then use other event data to create a reference to the
       // corresponding Firestore document.
       const userFirestoreRef = firestore.doc(`status/${context.params.uid}`);
-      const userDeviceCollectionRef = userFirestoreRef.collection(`devices`);
-      const userDeviceStatusFirestoreRef = userDeviceCollectionRef.doc(deviceKey);
+      const userSessionCollectionRef = userFirestoreRef.collection('sessions');
+      const sessionStatusFirestoreRef = userSessionCollectionRef.doc(sessionId);
 
       // It is likely that the Realtime Database change that triggered
       // this event has already been overwritten by a fast change in
@@ -56,14 +56,14 @@ exports.onUserStatusChanged = functions.database.ref('/status/{uid}/devices/{dev
 
       if(status.state === 'offline') {
         // ... and write it to Firestore.
-        await userDeviceStatusFirestoreRef.delete();
+        await sessionStatusFirestoreRef.delete();
 
-        if ((await userDeviceCollectionRef.get()).empty) {
+        if ((await userSessionCollectionRef.get()).empty) {
           return userFirestoreRef.delete();
         }
       } else {
         await userFirestoreRef.set({ uid: context.params.uid });
-        return userDeviceStatusFirestoreRef.set(status.devices[deviceKey]);
+        return sessionStatusFirestoreRef.set(status.sessions[sessionId]);
       }
       return null;
     });

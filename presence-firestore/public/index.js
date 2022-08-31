@@ -21,11 +21,11 @@ function rtdb_presence() {
 
     // Create a reference to this user's specific status node.
     // This is where we will store data about being online/offline.
-    // `push()` will add a new key to the user's path, acting as a deviceId
-    var deviceStatusDatabaseRef = firebase.database().ref('/status/' + uid + '/devices').push();
+    // `push()` will add a new key to the user's path, acting as a sessionId
+    var sessionStatusDatabaseRef = firebase.database().ref('/status/' + uid + '/sessions').push();
 
     // We'll create two constants which we will write to 
-    // the Realtime database when this device is offline
+    // the Realtime database when this session is offline
     // or online.
     var isOfflineForDatabase = {
         state: 'offline',
@@ -50,7 +50,7 @@ function rtdb_presence() {
         // method to add a set which will only trigger once this 
         // client has disconnected by closing the app, 
         // losing internet, or any other means.
-        deviceStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
+        sessionStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
             // The promise returned from .onDisconnect().set() will
             // resolve as soon as the server acknowledges the onDisconnect() 
             // request, NOT once we've actually disconnected:
@@ -58,7 +58,7 @@ function rtdb_presence() {
 
             // We can now safely set ourselves as 'online' knowing that the
             // server will mark us as offline once we lose connection.
-            deviceStatusDatabaseRef.set(isOnlineForDatabase);
+            sessionStatusDatabaseRef.set(isOnlineForDatabase);
         });
     });
     // [END rtdb_presence]
@@ -68,8 +68,8 @@ async function rtdb_and_local_fs_presence() {
     // [START rtdb_and_local_fs_presence]
     // [START_EXCLUDE]
     var uid = firebase.auth().currentUser.uid;
-    var deviceStatusDatabaseRef = await firebase.database().ref('/status/' + uid + '/devices').push();
-    var deviceId = deviceStatusDatabaseRef.key;
+    var sessionStatusDatabaseRef = await firebase.database().ref('/status/' + uid + '/sessions').push();
+    var sessionId = sessionStatusDatabaseRef.key;
 
     var isOfflineForDatabase = {
         state: 'offline',
@@ -85,8 +85,8 @@ async function rtdb_and_local_fs_presence() {
     var userFirestoreRef = firebase.firestore().collection('status').doc(uid);
     await userFirestoreRef.set({ uid }); // In case the user's id document doesn't already exist.
     
-    var devicesCollectionRef = userFirestoreRef.collection('devices');
-    var deviceStatusFirestoreRef = devicesCollectionRef.doc(deviceId);
+    var sessionsCollectionRef = userFirestoreRef.collection('sessions');
+    var sessionStatusFirestoreRef = sessionsCollectionRef.doc(sessionId);
 
 
     // Firestore uses a different server timestamp value, so we'll 
@@ -98,23 +98,23 @@ async function rtdb_and_local_fs_presence() {
 
     firebase.database().ref('.info/connected').on('value', async function(snapshot) {
         if (snapshot.val() === false) {
-            // Instead of simply returning, we'll also remove the device id from the user, 
-            // and if no devices are left, we should delete the user as well.
-            // This ensures that our Firestore cache is aware that the device and/or user has been deleted
-            deviceStatusFirestoreRef.delete();
-            const deviceCollection = await devicesCollectionRef.get();
-            if(deviceCollection.empty) {
+            // Instead of simply returning, we'll also remove the session id from the user, 
+            // and if no sessions are left, we should delete the user as well.
+            // This ensures that our Firestore cache is aware that the session and/or user has been deleted
+            sessionStatusFirestoreRef.delete();
+            const sessionCollection = await sessionsCollectionRef.get();
+            if(sessionCollection.empty) {
                 userFirestoreRef.delete();
             }
             return;
         };
 
-        deviceStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
-            deviceStatusDatabaseRef.set(isOnlineForDatabase);
+        sessionStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
+            sessionStatusDatabaseRef.set(isOnlineForDatabase);
 
             // We'll also add Firestore set here for when we come online.
             userFirestoreRef.set({ uid });
-            deviceStatusFirestoreRef.set(isOnlineForFirestore);
+            sessionStatusFirestoreRef.set(isOnlineForFirestore);
         });
     });
     // [END rtdb_and_local_fs_presence]
