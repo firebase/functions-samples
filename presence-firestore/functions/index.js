@@ -61,9 +61,9 @@ exports.onUserStatusChanged = functions.database.ref('/status/{uid}/sessions/{se
         if ((await userSessionCollectionRef.get()).empty) {
           return userFirestoreRef.delete();
         }
-      } else {
+      } else { // TODO(mtewani): Do we really need to handle this?
         await userFirestoreRef.set({ uid: context.params.uid });
-        return sessionStatusFirestoreRef.set(status.sessions[sessionId]);
+        return sessionStatusFirestoreRef.set(status);
       }
       return null;
     });

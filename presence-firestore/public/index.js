@@ -70,6 +70,7 @@ async function rtdb_and_local_fs_presence() {
     var uid = firebase.auth().currentUser.uid;
     var sessionStatusDatabaseRef = await firebase.database().ref('/status/' + uid + '/sessions').push();
     var sessionId = sessionStatusDatabaseRef.key;
+    console.log('my ID', sessionId);
 
     var isOfflineForDatabase = {
         state: 'offline',
@@ -96,18 +97,24 @@ async function rtdb_and_local_fs_presence() {
         last_changed: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
+    // When a user goes offline, it reads from the cache to know how many sessions are left.
+    // This listener is to ensure that the full session cache is populated and can be read from when offline.
+    sessionsCollectionRef.onSnapshot(() => {});
+
     firebase.database().ref('.info/connected').on('value', async function(snapshot) {
         if (snapshot.val() === false) {
             // Instead of simply returning, we'll also remove the session id from the user, 
             // and if no sessions are left, we should delete the user as well.
             // This ensures that our Firestore cache is aware that the session and/or user has been deleted
-            sessionStatusFirestoreRef.delete();
+            sessionStatusFirestoreRef.delete().then(() => console.log('session deletion completed'));
             const sessionCollection = await sessionsCollectionRef.get();
             if(sessionCollection.empty) {
-                userFirestoreRef.delete();
+                userFirestoreRef.delete().then(() => console.log('user deletion completed'));
             }
             return;
         };
+        const sessionCollection = await sessionsCollectionRef.get();
+        console.log(sessionCollection);
 
         sessionStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
             sessionStatusDatabaseRef.set(isOnlineForDatabase);
@@ -153,6 +160,11 @@ function fs_listen_online() {
         });
     // [END fs_onsnapshot_online]
 }
+const db = firebase.database();
+const firestore = firebase.firestore();
+db.useEmulator("localhost", 9000);
+firestore.useEmulator("localhost", 8080);
+
 
 firebase.auth().signInAnonymously().then(function() {
     rtdb_and_local_fs_presence();
