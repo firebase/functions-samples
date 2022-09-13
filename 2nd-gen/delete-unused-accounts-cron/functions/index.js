@@ -17,7 +17,7 @@
 
 // [START all]
 // [START import]
-// The Cloud Functions for Firebase SDK to create v2 Cloud Functions and setup triggers.
+// The Cloud Functions for Firebase SDK to create v2 Cloud Functions and set up triggers.
 const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { logger } = require('firebase-functions');
 
@@ -25,14 +25,14 @@ const { logger } = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-// The es6-promise-pool to limit the concurrency of Promise's.
+// The es6-promise-pool to limit the concurrency of promises.
 const PromisePool = require('es6-promise-pool').default;
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 // [END import]
 
 // [START accountcleanup]
-// Run once a day at midnight, to cleanup the users
+// Run once a day at midnight, to clean up the users
 // Manually run the task here https://console.cloud.google.com/cloudscheduler
 exports.accountcleanup = onSchedule('every day 00:00', async (event) => {
   // Fetch all user details.
