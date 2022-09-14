@@ -15,8 +15,8 @@
  */
 // [START v2import]
 const {
-  onNewFatalIssuePublished,
-} = require("firebase-functions/v2/alerts/crashlytics");
+  onNewTesterIosDevicePublished,
+} = require("firebase-functions/v2/alerts/appDistribution");
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
@@ -52,33 +52,33 @@ async function postMessageToDiscord(botName, messageBody) {
 
 // [START v2Alerts]
 /**
- * function triggered by Crashlytics that publishes a message
- * to Discord whenever a new fatal issue occurs.
+ * function triggered by AppDistribution that publishes a message
+ * to Discord whenever a new iOS tester device is registered.
  */
-// [START v2CrashlyticsAlertTrigger]
-exports.postmessagetodiscord = onNewFatalIssuePublished(async (event) => {
-// [END v2CrashlyticsAlertTrigger]
-  // [START v2CrashlyticsEventPayload]
+// [START v2AppDistributionAlertTrigger]
+exports.postmessagetodiscord = onNewTesterIosDevicePublished(async (event) => {
+// [END v2AppDistributionAlertTrigger]
+  // [START v2AppDistributionEventPayload]
   // construct a helpful message to send to Discord
-  const {id, title, subtitle, appVersion} = event.data.payload.issue;
+  const {
+    testerDeviceIdentifier,
+    testerDeviceModelName,
+    testerEmail,
+    testerName,
+  } = event.data.payload;
   const message = `
-🚨 New fatal issue in version ${appVersion} 🚨
+🚨 New iOS device registered by ${testerName} <${testerEmail}> 🚨
 
-**${title}**
-
-${subtitle}
-
-id: \`${id}\`
+UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
 `;
-  // [END v2CrashlyticsEventPayload]
+  // [END v2AppDistributionEventPayload]
 
   try {
     // [START v2SendToDiscord]
-    const response = await postMessageToDiscord("Crashlytics Bot", message);
+    const response = await postMessageToDiscord("AppDistribution Bot", message);
     if (response.ok) {
       logger.info(
-          `Posted fatal Crashlytics alert ${id} to Discord`,
-          event.data.payload,
+          `Posted iOS device registration alert for ${testerEmail} to Discord`,
       );
     } else {
       throw new Error(response.error);
@@ -86,7 +86,7 @@ id: \`${id}\`
     // [END v2SendToDiscord]
   } catch (error) {
     logger.error(
-        `Unable to post fatal Crashlytics alert ${id} to Discord`,
+        `Unable to post iOS device registration for ${testerEmail} to Discord`,
         error,
     );
   }
