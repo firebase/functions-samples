@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 // [START v2import]
+
+const {
+  onNewFatalIssuePublished,
+} = require("firebase-functions/v2/alerts/crashlytics");
 const {
   onNewTesterIosDevicePublished,
 } = require("firebase-functions/v2/alerts/appDistribution");
@@ -52,6 +56,47 @@ async function postMessageToDiscord(botName, messageBody) {
 
 // [START v2Alerts]
 /**
+ * function triggered by Crashlytics that publishes a message
+ * to Discord whenever a new fatal issue occurs.
+ */
+// [START v2CrashlyticsAlertTrigger]
+exports.postFatalIssueToDiscord = onNewFatalIssuePublished(async (event) => {
+// [END v2CrashlyticsAlertTrigger]
+  // [START v2CrashlyticsEventPayload]
+  // construct a helpful message to send to Discord
+  const {id, title, subtitle, appVersion} = event.data.payload.issue;
+  const message = `
+🚨 New fatal issue in version ${appVersion} 🚨
+
+**${title}**
+
+${subtitle}
+
+id: \`${id}\`
+`;
+  // [END v2CrashlyticsEventPayload]
+
+  try {
+    // [START v2SendToDiscord]
+    const response = await postMessageToDiscord("Crashlytics Bot", message);
+    if (response.ok) {
+      logger.info(
+          `Posted fatal Crashlytics alert ${id} to Discord`,
+          event.data.payload,
+      );
+    } else {
+      throw new Error(response.error);
+    }
+    // [END v2SendToDiscord]
+  } catch (error) {
+    logger.error(
+        `Unable to post fatal Crashlytics alert ${id} to Discord`,
+        error,
+    );
+  }
+});
+
+/**
  * function triggered by AppDistribution that publishes a message
  * to Discord whenever a new iOS tester device is registered.
  */
@@ -67,14 +112,14 @@ exports.postmessagetodiscord = onNewTesterIosDevicePublished(async (event) => {
     testerName,
   } = event.data.payload;
   const message = `
-🚨 New iOS device registered by ${testerName} <${testerEmail}> 🚨
+📱 New iOS device registered by ${testerName} <${testerEmail}>
 
 UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
 `;
   // [END v2AppDistributionEventPayload]
 
   try {
-    // [START v2SendToDiscord]
+    // [START v2SendNewTesterIosDeviceToDiscord]
     const response = await postMessageToDiscord("AppDistribution Bot", message);
     if (response.ok) {
       logger.info(
@@ -83,7 +128,7 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
     } else {
       throw new Error(response.error);
     }
-    // [END v2SendToDiscord]
+    // [END v2SendNewTesterIosDeviceToDiscord]
   } catch (error) {
     logger.error(
         `Unable to post iOS device registration for ${testerEmail} to Discord`,
