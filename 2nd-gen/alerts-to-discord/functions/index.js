@@ -60,7 +60,7 @@ async function postMessageToDiscord(botName, messageBody) {
  * to Discord whenever a new fatal issue occurs.
  */
 // [START v2CrashlyticsAlertTrigger]
-exports.postFatalIssueToDiscord = onNewFatalIssuePublished(async (event) => {
+exports.postfatalissuetodiscord = onNewFatalIssuePublished(async (event) => {
 // [END v2CrashlyticsAlertTrigger]
   // [START v2CrashlyticsEventPayload]
   // construct a helpful message to send to Discord
@@ -101,7 +101,7 @@ id: \`${id}\`
  * to Discord whenever a new iOS tester device is registered.
  */
 // [START v2AppDistributionAlertTrigger]
-exports.postmessagetodiscord = onNewTesterIosDevicePublished(async (event) => {
+exports.postnewduuidtodiscord = onNewTesterIosDevicePublished(async (event) => {
 // [END v2AppDistributionAlertTrigger]
   // [START v2AppDistributionEventPayload]
   // construct a helpful message to send to Discord
