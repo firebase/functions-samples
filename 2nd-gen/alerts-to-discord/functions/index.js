@@ -64,9 +64,10 @@ exports.postfatalissuetodiscord = onNewFatalIssuePublished(async (event) => {
 // [END v2CrashlyticsAlertTrigger]
   // [START v2CrashlyticsEventPayload]
   // construct a helpful message to send to Discord
+  const appId = event.data.appId;
   const {id, title, subtitle, appVersion} = event.data.payload.issue;
   const message = `
-🚨 New fatal issue in version ${appVersion} 🚨
+🚨 New fatal issue for ${appId} in version ${appVersion} 🚨
 
 **${title}**
 
@@ -105,6 +106,7 @@ exports.postnewduuidtodiscord = onNewTesterIosDevicePublished(async (event) => {
 // [END v2AppDistributionAlertTrigger]
   // [START v2AppDistributionEventPayload]
   // construct a helpful message to send to Discord
+  const appId = event.data.appId;
   const {
     testerDeviceIdentifier,
     testerDeviceModelName,
@@ -112,7 +114,7 @@ exports.postnewduuidtodiscord = onNewTesterIosDevicePublished(async (event) => {
     testerName,
   } = event.data.payload;
   const message = `
-📱 New iOS device registered by ${testerName} <${testerEmail}>
+📱 New iOS device registered by ${testerName} <${testerEmail}> for ${appId}
 
 UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
 `;
