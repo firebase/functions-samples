@@ -21,6 +21,9 @@ const {
 const {
   onNewTesterIosDevicePublished,
 } = require("firebase-functions/v2/alerts/appDistribution");
+const {
+  onThresholdAlertPublished,
+} = require("firebase-functions/v2/alerts/performance");
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
@@ -138,4 +141,65 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
     );
   }
 });
+// [END v2Alerts]
+
+/**
+ * Function triggered by Firebase Performance that publishes
+ * a message to Discord whenever a performance threshold alert is fired.
+ */
+// [START v2PerformanceAlertTrigger]
+exports.postperformancealerttodiscord = onThresholdAlertPublished(
+    async (event) => {
+      // [END v2PerformanceAlertTrigger]
+      // [START v2PerformanceEventPayload]
+      // construct a helpful message to send to Discord
+      const appId = event.appId;
+      const {
+        eventName,
+        metricType,
+        eventType,
+        numSamples,
+        thresholdValue,
+        thresholdUnit,
+        conditionPercentile,
+        appVersion,
+        violationValue,
+        violationUnit,
+        investigateUri
+      } = event.data.payload;
+      const message = `
+    ⚠️ Performance Alert for ${metricType} of ${eventType}: **${eventName}** ⚠️
+    
+    App id: ${appId}
+    Alert condition: ${thresholdValue} ${thresholdUnit}
+    Percentile (if applicable): ${conditionPercentile}
+    App version (if applicable): ${appVersion}
+    
+    Violation: ${violationValue} ${violationUnit}
+    Number of samples checked: ${numSamples}
+    
+    **Investigate more:** ${investigateUri}
+    `;
+      // [END v2PerformanceEventPayload]
+
+      try {
+        // [START v2SendToDiscord]
+        const response = await postMessageToDiscord(
+            "Firebase Performance Bot", message);
+        if (response.ok) {
+          logger.info(
+              `Posted Firebase Performance alert ${eventName} to Discord`,
+              event.data.payload,
+          );
+        } else {
+          throw new Error(response.error);
+        }
+        // [END v2SendToDiscord]
+      } catch (error) {
+        logger.error(
+            `Unable to post Firebase Performance alert ${eventName} to Discord`,
+            error,
+        );
+      }
+    });
 // [END v2Alerts]
