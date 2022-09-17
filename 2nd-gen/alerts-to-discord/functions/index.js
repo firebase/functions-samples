@@ -165,7 +165,7 @@ exports.postperformancealerttodiscord = onThresholdAlertPublished(
         appVersion,
         violationValue,
         violationUnit,
-        investigateUri
+        investigateUri,
       } = event.data.payload;
       const message = `
     ⚠️ Performance Alert for ${metricType} of ${eventType}: **${eventName}** ⚠️
