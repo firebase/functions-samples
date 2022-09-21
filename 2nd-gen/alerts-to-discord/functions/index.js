@@ -183,7 +183,7 @@ exports.postperformancealerttodiscord = onThresholdAlertPublished(
       // [END v2PerformanceEventPayload]
 
       try {
-        // [START v2SendToDiscord]
+        // [START v2SendPerformanceAlertToDiscord]
         const response = await postMessageToDiscord(
             "Firebase Performance Bot", message);
         if (response.ok) {
@@ -194,7 +194,7 @@ exports.postperformancealerttodiscord = onThresholdAlertPublished(
         } else {
           throw new Error(response.error);
         }
-        // [END v2SendToDiscord]
+        // [END v2SendPerformanceAlertToDiscord]
       } catch (error) {
         logger.error(
             `Unable to post Firebase Performance alert ${eventName} to Discord`,
