@@ -122,7 +122,7 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
 
   try {
     // [START v2SendNewTesterIosDeviceToDiscord]
-    const response = await postMessageToDiscord("App Distribution Bot", message);
+    const response = await postMessageToDiscord("AppDistribution Bot", message);
     if (response.ok) {
       logger.info(
           `Posted iOS device registration alert for ${testerEmail} to Discord`,
