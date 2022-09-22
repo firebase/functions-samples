@@ -1,6 +1,6 @@
 {
   "name": "remote-config-diff",
-  "description": "Get the difference between the previous and current Remote Config",
+  "description": "Get the difference between the previous and current Remote Config template",
   "scripts": {
     "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
