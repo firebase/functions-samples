@@ -6,4 +6,4 @@ This sample demonstrates how to use the Remote Config Cloud Function trigger to 
 
 * See [eBay's real world implementation](https://github.com/eBay/firebase-remote-config-monitor).
 
-See the [docs](https://firebase.google.com/docs/functions/rc-events) for more on Remote Config Triggers.
+* See the [docs](https://firebase.google.com/docs/functions/rc-events) for more on Remote Config Triggers.
