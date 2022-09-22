@@ -2,7 +2,7 @@
 
 Use the Firebase Remote Config Cloud Function trigger to take action when your template is updated.
 
-In this sample, the difference between the previous and current templates is logged.
+This sample demonstrates how to use the Remote Config Cloud Function trigger to log the difference between the previous and current Remote Config templates.
 
 See [eBay's](https://github.com/eBay/firebase-remote-config-monitor) real world implementation.
 
