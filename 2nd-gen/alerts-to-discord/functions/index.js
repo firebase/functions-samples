@@ -98,7 +98,7 @@ id: \`${id}\`
 });
 
 /**
- * function triggered by AppDistribution that publishes a message
+ * function triggered by App Distribution that publishes a message
  * to Discord whenever a new iOS tester device is registered.
  */
 // [START v2AppDistributionAlertTrigger]
@@ -122,7 +122,7 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
 
   try {
     // [START v2SendNewTesterIosDeviceToDiscord]
-    const response = await postMessageToDiscord("AppDistribution Bot", message);
+    const response = await postMessageToDiscord("App Distribution Bot", message);
     if (response.ok) {
       logger.info(
           `Posted iOS device registration alert for ${testerEmail} to Discord`,
