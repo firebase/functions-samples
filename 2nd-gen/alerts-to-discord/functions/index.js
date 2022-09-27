@@ -144,7 +144,7 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
 // [END v2Alerts]
 
 /**
- * Function triggered by Firebase Performance that publishes
+ * Function triggered by Firebase Performance Monitoring that publishes
  * a message to Discord whenever a performance threshold alert is fired.
  */
 // [START v2PerformanceAlertTrigger]
