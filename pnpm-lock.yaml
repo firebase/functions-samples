@@ -20,18 +20,18 @@ importers:
       eslint: ^8.9.0
       eslint-config-google: ^0.14.0
       firebase-admin: ^10.1.0
-      firebase-functions: ^3.21.1
+      firebase-functions: ^3.24.0
       firebase-functions-test: ^0.2.0
       node-fetch: ^2.6.7
     dependencies:
       firebase-admin: 10.3.0
-      firebase-functions: 3.23.0_firebase-admin@10.3.0
+      firebase-functions: 3.24.0_firebase-admin@10.3.0
       node-fetch: 2.6.7
     devDependencies:
       '@types/node': 17.0.45
       eslint: 8.23.1
       eslint-config-google: 0.14.0_eslint@8.23.1
-      firebase-functions-test: 0.2.3_7jorijlml7aifkahc7chq2bnnm
+      firebase-functions-test: 0.2.3_4jadqgqma2devod5voc3vdkd3y
 
   2nd-gen/callable-functions/functions:
     specifiers:
@@ -4850,6 +4850,19 @@ packages:
       - encoding
       - supports-color
 
+  /firebase-functions-test/0.2.3_4jadqgqma2devod5voc3vdkd3y:
+    resolution: {integrity: sha512-zYX0QTm53wCazuej7O0xqbHl90r/v1PTXt/hwa0jo1YF8nDM+iBKnLDlkIoW66MDd0R6aGg4BvKzTTdJpvigUA==}
+    engines: {node: '>=8.0.0'}
+    peerDependencies:
+      firebase-admin: '>=6.0.0'
+      firebase-functions: '>=2.0.0'
+    dependencies:
+      '@types/lodash': 4.14.185
+      firebase-admin: 10.3.0
+      firebase-functions: 3.24.0_firebase-admin@10.3.0
+      lodash: 4.17.21
+    dev: true
+
   /firebase-functions-test/0.2.3_7jorijlml7aifkahc7chq2bnnm:
     resolution: {integrity: sha512-zYX0QTm53wCazuej7O0xqbHl90r/v1PTXt/hwa0jo1YF8nDM+iBKnLDlkIoW66MDd0R6aGg4BvKzTTdJpvigUA==}
     engines: {node: '>=8.0.0'}
@@ -4910,6 +4923,24 @@ packages:
 
   /firebase-functions/3.23.0_firebase-admin@10.3.0:
     resolution: {integrity: sha512-/jujnNChTWIuoXK3IPNGYu1zjXF1fYRy88uYbkrJhs3dhK6EdXZi0rX6JUEOCB7h6IkRQvbio+bvtaoI7h+4Lg==}
+    engines: {node: ^8.13.0 || >=10.10.0}
+    hasBin: true
+    peerDependencies:
+      firebase-admin: ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0
+    dependencies:
+      '@types/cors': 2.8.12
+      '@types/express': 4.17.3
+      cors: 2.8.5
+      express: 4.18.1
+      firebase-admin: 10.3.0
+      lodash: 4.17.21
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+
+  /firebase-functions/3.24.0_firebase-admin@10.3.0:
+    resolution: {integrity: sha512-YKZm/AxjnWTP9VbxAyjs7ImWfMydleQAiHB2T6li3imRCcwC4+h6BXU/Jf2uELz9AkCb+UabWbdVrklk3b+70Q==}
     engines: {node: ^8.13.0 || >=10.10.0}
     hasBin: true
     peerDependencies:
@@ -5673,7 +5704,7 @@ packages:
       source-map: 0.6.1
       wordwrap: 1.0.0
     optionalDependencies:
-      uglify-js: 3.17.0
+      uglify-js: 3.17.1
     dev: false
 
   /har-schema/2.0.0:
@@ -9003,8 +9034,8 @@ packages:
       - debug
     dev: false
 
-  /uglify-js/3.17.0:
-    resolution: {integrity: sha512-aTeNPVmgIMPpm1cxXr2Q/nEbvkmV8yq66F3om7X3P/cvOXQ0TMQ64Wk63iyT1gPlmdmGzjGpyLh1f3y8MZWXGg==}
+  /uglify-js/3.17.1:
+    resolution: {integrity: sha512-+juFBsLLw7AqMaqJ0GFvlsGZwdQfI2ooKQB39PSBgMnMakcFosi9O8jCwE+2/2nMNcc0z63r9mwjoDG8zr+q0Q==}
     engines: {node: '>=0.8.0'}
     hasBin: true
     requiresBuild: true
