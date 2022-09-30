@@ -19,7 +19,7 @@
 // [START import]
 // The Cloud Functions for Firebase SDK to create v2 Cloud Functions and set up triggers.
 const { onTestMatrixCompleted } = require('firebase-functions/v2/testLab');
-const { logger, config } = require('firebase-functions');
+const { logger } = require('firebase-functions');
 // The Axios client to send web requests to Slack.
 const axios = require('axios');
 // [END import]
@@ -27,7 +27,7 @@ const axios = require('axios');
 // [START postToSlack]
 function postToSlack(title, details) {
   return axios.post(
-    config().slack.webhook_url,
+    process.env.SLACK_WEBHOOK_URL,
     {
       blocks: [
         {
@@ -81,26 +81,28 @@ function getSlackmoji(term) {
 // [END getSlackmoji]
 
 // [START posttestresultstoslack]
-exports.posttestresultstoslack = onTestMatrixCompleted(async (event) => {
-  // Obtain Test Matrix properties from the CloudEvent
-  const { testMatrixId, state, outcomeSummary } = event.data;
+exports.posttestresultstoslack = onTestMatrixCompleted(
+  { secrets: ["SLACK_WEBHOOK_URL"] },
+  async (event) => {
+    // Obtain Test Matrix properties from the CloudEvent
+    const { testMatrixId, state, outcomeSummary } = event.data;
 
-  // Create the title of the message
-  const title = `${getSlackmoji(state)} ${getSlackmoji(
-    outcomeSummary
-  )} ${testMatrixId}`;
-  
-  // Create the details of the message
-  const details = `Status: *${state}* ${getSlackmoji(
-    state
-  )}\nOutcome: *${outcomeSummary}* ${getSlackmoji(outcomeSummary)}
-  `;
+    // Create the title of the message
+    const title = `${getSlackmoji(state)} ${getSlackmoji(
+      outcomeSummary
+    )} ${testMatrixId}`;
+    
+    // Create the details of the message
+    const details = `Status: *${state}* ${getSlackmoji(
+      state
+    )}\nOutcome: *${outcomeSummary}* ${getSlackmoji(outcomeSummary)}
+    `;
 
-  // Post the message to slack
-  const slackResponse = await postToSlack(title, details);
-  
-  // Log the response
-  logger.log(JSON.stringify(slackResponse.data));
-});
+    // Post the message to slack
+    const slackResponse = await postToSlack(title, details);
+    
+    // Log the response
+    logger.log(JSON.stringify(slackResponse.data));
+  });
 // [END posttestresultstoslack]
 // [END all]

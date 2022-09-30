@@ -26,8 +26,10 @@ this:
     authenticate with Slack and post to the correct room:
 
     ```bash
-    firebase functions:config:set slack.webhook_url="YOUR_SLACK_WEBHOOK_URL"
+    firebase functions:secrets:set SLACK_WEBHOOK_URL
     ```
+    
+    Enter the value of your Slack url to save it into Secret Manager.
 
 ## Deploy and test
 
