@@ -1,0 +1,29 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "16"
+  },
+  "dependencies": {
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^1.1.0",
+    "@google-cloud/opentelemetry-cloud-trace-propagator": "^0.14.0",
+    "@opentelemetry/api": "^1.2.0",
+    "@opentelemetry/instrumentation": "^0.33.0",
+    "@opentelemetry/instrumentation-grpc": "^0.33.0",
+    "@opentelemetry/instrumentation-http": "^0.33.0",
+    "@opentelemetry/resource-detector-gcp": "^0.27.2",
+    "@opentelemetry/sdk-node": "^0.33.0",
+    "firebase-admin": "^10.2.0",
+    "firebase-functions": "^4.0.0",
+    "opentelemetry-instrumentation-express": "^0.29.0"
+  },
+  "private": true
+}
