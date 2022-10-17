@@ -41,7 +41,7 @@ async function calculateDiscount(productIds) {
                 discountUsd += discount.data().usd || 0;
             }
         });
-    await processConcurrently;
+    await Promise.all(processConcurrently);
     logger.info("calculateDiscount", {calcDiscountMs: timer.measureMs()});
     return discountUsd;
 }
