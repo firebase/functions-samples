@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 // [START v2import]
+
 const {
   onNewFatalIssuePublished,
 } = require("firebase-functions/v2/alerts/crashlytics");
+const {
+  onNewTesterIosDevicePublished,
+} = require("firebase-functions/v2/alerts/appDistribution");
+const {
+  onThresholdAlertPublished,
+} = require("firebase-functions/v2/alerts/performance");
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
@@ -56,13 +63,14 @@ async function postMessageToDiscord(botName, messageBody) {
  * to Discord whenever a new fatal issue occurs.
  */
 // [START v2CrashlyticsAlertTrigger]
-exports.postmessagetodiscord = onNewFatalIssuePublished(async (event) => {
+exports.postfatalissuetodiscord = onNewFatalIssuePublished(async (event) => {
 // [END v2CrashlyticsAlertTrigger]
   // [START v2CrashlyticsEventPayload]
   // construct a helpful message to send to Discord
+  const appId = event.appId;
   const {id, title, subtitle, appVersion} = event.data.payload.issue;
   const message = `
-🚨 New fatal issue in version ${appVersion} 🚨
+🚨 New fatal issue for ${appId} in version ${appVersion} 🚨
 
 **${title}**
 
@@ -77,7 +85,7 @@ id: \`${id}\`
     const response = await postMessageToDiscord("Crashlytics Bot", message);
     if (response.ok) {
       logger.info(
-          `Posted fatal Crashlytics alert ${id} to Discord`,
+          `Posted fatal Crashlytics alert ${id} for ${appId} to Discord`,
           event.data.payload,
       );
     } else {
@@ -86,9 +94,112 @@ id: \`${id}\`
     // [END v2SendToDiscord]
   } catch (error) {
     logger.error(
-        `Unable to post fatal Crashlytics alert ${id} to Discord`,
+        `Unable to post fatal Crashlytics alert ${id} for ${appId} to Discord`,
         error,
     );
   }
 });
+
+/**
+ * function triggered by App Distribution that publishes a message
+ * to Discord whenever a new iOS tester device is registered.
+ */
+// [START v2AppDistributionAlertTrigger]
+exports.postnewduuidtodiscord = onNewTesterIosDevicePublished(async (event) => {
+// [END v2AppDistributionAlertTrigger]
+  // [START v2AppDistributionEventPayload]
+  // construct a helpful message to send to Discord
+  const appId = event.appId;
+  const {
+    testerDeviceIdentifier,
+    testerDeviceModelName,
+    testerEmail,
+    testerName,
+  } = event.data.payload;
+  const message = `
+📱 New iOS device registered by ${testerName} <${testerEmail}> for ${appId}
+
+UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
+`;
+  // [END v2AppDistributionEventPayload]
+
+  try {
+    // [START v2SendNewTesterIosDeviceToDiscord]
+    const response = await postMessageToDiscord("AppDistribution Bot", message);
+    if (response.ok) {
+      logger.info(
+          `Posted iOS device registration alert for ${testerEmail} to Discord`,
+      );
+    } else {
+      throw new Error(response.error);
+    }
+    // [END v2SendNewTesterIosDeviceToDiscord]
+  } catch (error) {
+    logger.error(
+        `Unable to post iOS device registration for ${testerEmail} to Discord`,
+        error,
+    );
+  }
+});
+// [END v2Alerts]
+
+/**
+ * Function triggered by Firebase Performance Monitoring that publishes
+ * a message to Discord whenever a performance threshold alert is fired.
+ */
+// [START v2PerformanceAlertTrigger]
+exports.postperformancealerttodiscord = onThresholdAlertPublished(
+    async (event) => {
+      // [END v2PerformanceAlertTrigger]
+      // [START v2PerformanceEventPayload]
+      // construct a helpful message to send to Discord
+      const appId = event.appId;
+      const {
+        eventName,
+        metricType,
+        eventType,
+        numSamples,
+        thresholdValue,
+        thresholdUnit,
+        conditionPercentile,
+        appVersion,
+        violationValue,
+        violationUnit,
+        investigateUri,
+      } = event.data.payload;
+      const message = `
+    ⚠️ Performance Alert for ${metricType} of ${eventType}: **${eventName}** ⚠️
+    
+    App id: ${appId}
+    Alert condition: ${thresholdValue} ${thresholdUnit}
+    Percentile (if applicable): ${conditionPercentile}
+    App version (if applicable): ${appVersion}
+    
+    Violation: ${violationValue} ${violationUnit}
+    Number of samples checked: ${numSamples}
+    
+    **Investigate more:** ${investigateUri}
+    `;
+      // [END v2PerformanceEventPayload]
+
+      try {
+        // [START v2SendPerformanceAlertToDiscord]
+        const response = await postMessageToDiscord(
+            "Firebase Performance Bot", message);
+        if (response.ok) {
+          logger.info(
+              `Posted Firebase Performance alert ${eventName} to Discord`,
+              event.data.payload,
+          );
+        } else {
+          throw new Error(response.error);
+        }
+        // [END v2SendPerformanceAlertToDiscord]
+      } catch (error) {
+        logger.error(
+            `Unable to post Firebase Performance alert ${eventName} to Discord`,
+            error,
+        );
+      }
+    });
 // [END v2Alerts]
