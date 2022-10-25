@@ -35,7 +35,7 @@ async function calculateDiscount(productIds) {
     const processConcurrently = sliceIntoChunks(productIds, 10)
         .map(async (productIds) => {
             const discounts = await db.collection("discounts")
-                .where("products", "array-contains", productIds)
+                .where("products", "array-contains-any", productIds)
                 .get();
             for (const discount of discounts.docs) {
                 discountUsd += discount.data().usd || 0;
