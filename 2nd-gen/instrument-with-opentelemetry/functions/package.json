@@ -25,5 +25,9 @@
     "firebase-functions": "^4.0.2",
     "opentelemetry-instrumentation-express": "^0.29.0"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-google": "^0.14.0"
+  }
 }

@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-const {beforeUserCreated, beforeUserSignedIn, HttpsError} = require("firebase-functions/v2/identity");
+const {
+  beforeUserCreated,
+  beforeUserSignedIn,
+  HttpsError,
+} = require("firebase-functions/v2/identity");
 const {admin} = require("firebase-admin");
 
 admin.initializeApp();
@@ -32,9 +36,9 @@ exports.validatenewuser = beforeUserCreated((event) => {
 
   // [START v2domainHttpsError]
   // Only users of a specific domain can sign up.
-  if (!user?.email?.includes('@acme.com')) {
-    // Throwing an HttpsError so that the Auth service rejects the account creation.
-    throw new HttpsError('invalid-argument', "Unauthorized email");
+  if (!user?.email?.includes("@acme.com")) {
+    // Throw an HttpsError so that Firebase Auth rejects the account creation.
+    throw new HttpsError("invalid-argument", "Unauthorized email");
   }
   // [END v2domainHttpsError]
 });
@@ -58,8 +62,8 @@ exports.checkforban = beforeUserSignedIn(async (event) => {
   // [START v2bannedHttpsError]
   // Checking that the document exists for the email address.
   if (doc.exists) {
-    // Throwing an HttpsError so that the Auth service rejects the account sign in.
-    throw new HttpsError('invalid-argument', "Unauthorized email");
+    // Throw an HttpsError so that Firebase Auth rejects the account sign in.
+    throw new HttpsError("invalid-argument", "Unauthorized email");
   }
   // [END v2bannedHttpsError]
 });
