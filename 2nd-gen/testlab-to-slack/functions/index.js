@@ -55,7 +55,7 @@ async function postToSlack(title, details) {
         },
       ],
     }),
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type": "application/json"},
   });
   return response.json();
 }
