@@ -1,14 +1,21 @@
 packages:
   - 2nd-gen/alerts-to-discord/functions
+  - 2nd-gen/auth-blocking-functions/functions
   - 2nd-gen/callable-functions/functions
   - 2nd-gen/custom-events/functions
+  - 2nd-gen/delete-unused-accounts-cron/functions
+  - 2nd-gen/instrument-with-opentelemetry/functions
   - 2nd-gen/pubsub-helloworld/functions
+  - 2nd-gen/remote-config-diff/functions
   - 2nd-gen/taskqueues-backup-images/functions
+  - 2nd-gen/test-complete/functions
   - 2nd-gen/test-functions-jest/functions
   - 2nd-gen/test-functions-jest-ts/functions
   - 2nd-gen/test-functions-mocha/functions
+  - 2nd-gen/testlab-to-slack/functions
   - 2nd-gen/thumbnails/functions
   - 2nd-gen/time-server/functions
+  - 2nd-gen/uppercase/functions
   - assistant-say-number/functions
   - authenticated-json-api/functions
   - authorized-https-endpoint/functions
