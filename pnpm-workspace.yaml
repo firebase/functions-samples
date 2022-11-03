@@ -59,6 +59,7 @@ packages:
   - stripe/functions
   - survey-app-update/functions
   - template-handlebars/functions
+  - testlab-to-slack/functions
   - text-moderation/functions
   - url-shortener/functions
   - username-password-auth/functions
