@@ -20,8 +20,8 @@
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "@types/node": "^17.0.31",
-    "eslint": "^8.9.0",
+    "@types/node": "^17.0.45",
+    "eslint": "^8.26.0",
     "eslint-config-google": "^0.14.0",
     "firebase-functions-test": "^3.0.0"
   },

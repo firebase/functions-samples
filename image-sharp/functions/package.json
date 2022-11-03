@@ -2,14 +2,14 @@
   "name": "generate-thumbnail-sharp-functions",
   "description": "Generate Thumbnail with Sharp Firebase Functions sample",
   "dependencies": {
-    "@google-cloud/storage": "^4.3.1",
+    "@google-cloud/storage": "^4.7.2",
     "firebase-admin": "^11.2.0",
     "firebase-functions": "^4.0.2",
     "sharp": "0.30.4"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-promise": "^4.3.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

@@ -10,8 +10,8 @@
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "jshint": "^2.11.0"
+    "eslint-plugin-promise": "^4.3.1",
+    "jshint": "^2.13.5"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

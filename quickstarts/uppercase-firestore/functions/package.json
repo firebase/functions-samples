@@ -6,12 +6,12 @@
     "firebase-functions": "^4.0.2"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "mocha": "^7.1.0",
-    "sinon": "^9.0.0"
+    "eslint-plugin-promise": "^4.3.1",
+    "mocha": "^7.2.0",
+    "sinon": "^9.2.4"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

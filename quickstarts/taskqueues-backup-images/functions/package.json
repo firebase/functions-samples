@@ -21,7 +21,7 @@
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "eslint": "^8.9.0",
+    "eslint": "^8.26.0",
     "eslint-config-google": "^0.14.0"
   },
   "private": true

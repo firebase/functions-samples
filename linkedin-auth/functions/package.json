@@ -2,14 +2,14 @@
   "name": "linkedin-auth-functions",
   "description": "Authenticate with LinkedIn Firebase Functions sample",
   "dependencies": {
-    "cookie-parser": "^1.4.4",
+    "cookie-parser": "^1.4.6",
     "firebase-admin": "^11.2.0",
     "firebase-functions": "^4.0.2",
     "node-linkedin": "^0.5.6"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-promise": "^4.3.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
