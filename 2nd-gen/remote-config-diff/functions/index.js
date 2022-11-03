@@ -23,7 +23,7 @@ const logger = require('firebase-functions/logger');
 // The Firebase Admin SDK to obtain access tokens.
 const admin = require('firebase-admin');
 admin.initializeApp();
-const rp = require('request-promise');
+const fetch = require('node-fetch');
 const jsonDiff = require('json-diff');
 // [END import]
 
@@ -60,25 +60,18 @@ exports.showconfigdiff = onConfigUpdated((event) => {
 // [END showconfigdiff]
 
 // [START getTemplate]
-function getTemplate(version, accessToken) {
-  const options = {
-    uri: 'https://firebaseremoteconfig.googleapis.com/v1/projects/remote-config-function/remoteConfig',
-    qs: {
-      versionNumber: version
-    },
-    headers: {
-        Authorization: 'Bearer ' + accessToken
-    },
-    json: true // Automatically parses the JSON string in the response
-  };
-  
-  // Obtain the template from the rest API
-  return rp(options).then(resp => {
-    return Promise.resolve(resp);
-  }).catch(err => {
-    logger.error(err);
-    return Promise.resolve(null);
-  });
+async function getTemplate(version, accessToken) {
+  const params = new URLSearchParams();
+  params.append("versionNumber", version);
+  const response = await fetch(
+    "https://firebaseremoteconfig.googleapis.com/v1/projects/remote-config-function/remoteConfig",
+    {
+      method: "POST",
+      body: params,
+      headers: { Authorization: "Bearer " + accessToken },
+    }
+  );
+  return response.json();
 }
-// [START getTemplate]
+// [END getTemplate]
 // [END all]

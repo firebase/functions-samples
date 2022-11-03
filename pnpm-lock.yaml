@@ -143,14 +143,12 @@ importers:
       firebase-admin: ^10.2.0
       firebase-functions: ^4.0.0
       json-diff: ^0.5.4
-      request: ^2.88.2
-      request-promise: ^4.2.5
+      node-fetch: ^2.0.0
     dependencies:
       firebase-admin: 10.3.0
       firebase-functions: 4.0.2_firebase-admin@10.3.0
       json-diff: 0.5.5
-      request: 2.88.2
-      request-promise: 4.2.6_request@2.88.2
+      node-fetch: 2.6.7
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -411,13 +409,11 @@ importers:
       firebase-admin: ^11.2.0
       firebase-functions: ^4.0.2
       mkdirp: ^1.0.3
-      mkdirp-promise: ^5.0.1
     dependencies:
       child-process-promise: 2.2.1
       firebase-admin: 11.2.0
       firebase-functions: 4.0.2_firebase-admin@11.2.0
       mkdirp: 1.0.4
-      mkdirp-promise: 5.0.1
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -590,14 +586,12 @@ importers:
       eslint-plugin-promise: ^4.2.1
       firebase-admin: ^11.2.0
       firebase-functions: ^4.0.2
-      request: ^2.88.2
-      request-promise: ^4.2.5
+      node-fetch: ^2.6.7
       secure-compare: ^3.0.1
     dependencies:
       firebase-admin: 11.2.0
       firebase-functions: 4.0.2_firebase-admin@11.2.0
-      request: 2.88.2
-      request-promise: 4.2.6_request@2.88.2
+      node-fetch: 2.6.7
       secure-compare: 3.0.1
     devDependencies:
       eslint: 6.8.0
@@ -663,15 +657,11 @@ importers:
       eslint-plugin-promise: ^4.2.1
       firebase-admin: ^11.2.0
       firebase-functions: ^4.0.2
-      request: ^2.88.2
-      request-promise-native: ^1.0.8
       simple-oauth2: ^3.3.0
     dependencies:
       cookie-parser: 1.4.6
       firebase-admin: 11.2.0
       firebase-functions: 4.0.2_firebase-admin@11.2.0
-      request: 2.88.2
-      request-promise-native: 1.0.9_request@2.88.2
       simple-oauth2: 3.4.0
     devDependencies:
       eslint: 6.8.0
@@ -951,7 +941,6 @@ importers:
   spotify-auth/functions:
     specifiers:
       cookie-parser: ^1.4.4
-      crypto: 1.0.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.2.1
       firebase-admin: ^11.2.0
@@ -959,7 +948,6 @@ importers:
       spotify-web-api-node: ^4.0.0
     dependencies:
       cookie-parser: 1.4.6
-      crypto: 1.0.1
       firebase-admin: 11.2.0
       firebase-functions: 4.0.2_firebase-admin@11.2.0
       spotify-web-api-node: 4.0.0
@@ -1074,12 +1062,12 @@ importers:
       eslint-plugin-promise: ^4.2.1
       firebase-admin: ^11.2.0
       firebase-functions: ^4.0.2
-      request: ^2.88.2
+      node-fetch: ^2.6.7
     dependencies:
       cors: 2.8.5
       firebase-admin: 11.2.0
       firebase-functions: 4.0.2_firebase-admin@11.2.0
-      request: 2.88.2
+      node-fetch: 2.6.7
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -4075,11 +4063,6 @@ packages:
   /crypto-random-string/2.0.0:
     resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
     engines: {node: '>=8'}
-
-  /crypto/1.0.1:
-    resolution: {integrity: sha512-VxBKmeNcqQdiUQUW2Tzq0t377b54N2bMtXO/qiLa+6eRRmmC4qT3D4OnTGoT/U6O9aklQ/jTwbOtRMTTY8G0Ig==}
-    deprecated: This package is no longer supported. It's now a built-in Node module. If you've depended on crypto, you should switch to the one that's built-in.
-    dev: false
 
   /d64/1.0.0:
     resolution: {integrity: sha512-5eNy3WZziVYnrogqgXhcdEmqcDB2IHurTqLcrgssJsfkMVCUoUaZpK6cJjxxvLV2dUm5SuJMNcYfVGoin9UIRw==}
@@ -7865,14 +7848,6 @@ packages:
     resolution: {integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==}
     dev: false
 
-  /mkdirp-promise/5.0.1:
-    resolution: {integrity: sha512-Hepn5kb1lJPtVW84RFT40YG1OddBNTOVUZR2bzQUHc+Z03en8/3uX0+060JDhcEzyO08HmipsN9DcnFMxhIL9w==}
-    engines: {node: '>=4'}
-    deprecated: This package is broken and no longer maintained. 'mkdirp' itself supports promises now, please switch to that.
-    dependencies:
-      mkdirp: 1.0.4
-    dev: false
-
   /mkdirp/0.5.5:
     resolution: {integrity: sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==}
     hasBin: true
@@ -8734,19 +8709,6 @@ packages:
     dependencies:
       lodash: 4.17.21
       request: 2.88.2
-    dev: false
-
-  /request-promise-native/1.0.9_request@2.88.2:
-    resolution: {integrity: sha512-wcW+sIUiWnKgNY0dqCpOZkUbF/I+YPi+f09JZIDa39Ec+q82CpSYniDp+ISgTTbKmnpJWASeJBPZmoxH84wt3g==}
-    engines: {node: '>=0.12.0'}
-    deprecated: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
-    peerDependencies:
-      request: ^2.34
-    dependencies:
-      request: 2.88.2
-      request-promise-core: 1.1.4_request@2.88.2
-      stealthy-require: 1.1.1
-      tough-cookie: 2.5.0
     dev: false
 
   /request-promise/4.2.6_request@2.88.2:

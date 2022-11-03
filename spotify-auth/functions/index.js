@@ -17,7 +17,7 @@
 
 const functions = require('firebase-functions');
 const cookieParser = require('cookie-parser');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 // Firebase Setup
 const admin = require('firebase-admin');

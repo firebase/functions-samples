@@ -4,8 +4,7 @@
   "dependencies": {
     "firebase-admin": "^11.2.0",
     "firebase-functions": "^4.0.2",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.5",
+    "node-fetch": "^2.6.7",
     "secure-compare": "^3.0.1"
   },
   "devDependencies": {

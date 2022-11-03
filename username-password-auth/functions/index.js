@@ -29,8 +29,7 @@ admin.initializeApp({
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
-// We use Request to make the basic authentication request in our example.
-const basicAuthRequest = require('request');
+const fetch = require('node-fetch');
 
 
 /**
@@ -100,29 +99,21 @@ exports.auth = functions.https.onRequest((req, res) => {
  * TODO(DEVELOPER): In production you'll need to update this function so that it authenticates with your own credentials system.
  * @returns {Promise<boolean>} success or failure.
  */
-function authenticate(username, password) {
+async function authenticate(username, password) {
   // For the purpose of this example use httpbin (https://httpbin.org) and send a basic authentication request.
   // (Only a password of `Testing123` will succeed)
   const authEndpoint = `https://httpbin.org/basic-auth/${username}/Testing123`;
-  const creds = {
-    auth: {
-      user: username,
-      pass: password,
-    },
-  };
-  return new Promise((resolve, reject) => {
-    basicAuthRequest(authEndpoint, creds, (error, response, body) => {
-      if (error) {
-        return reject(error);
-      }
-      const statusCode = response ? response.statusCode : 0;
-      if (statusCode === 401) { // Invalid username/password
-        return resolve(false);
-      }
-      if (statusCode !== 200) {
-        return reject(new Error(`invalid response returned from ${authEndpoint} status code ${statusCode}`));
-      }
-      return resolve(true);
-    });
+  const response = await fetch(authEndpoint, {
+    headers: {
+      Authorization: 'Basic ' + Buffer.from(username + ":" + password).toString('base64')
+    }
   });
+
+  if (response.status === 200) {
+    return true;
+  } else if (response.status === 401) {
+    return false
+  } else {
+    throw new Error(`invalid response returned from ${authEndpoint} status code ${response.status}`)
+  }
 }
