@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 
-const axios = require('axios');
+const axios = require('axios').default;
 
 function postToSlack(title, details) {
   return axios.post(

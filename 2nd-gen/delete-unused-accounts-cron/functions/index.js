@@ -39,7 +39,6 @@ exports.accountcleanup = onSchedule('every day 00:00', async (event) => {
   const inactiveUsers = await getInactiveUsers();
 
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
-  // @ts-expect-error https://github.com/timdp/es6-promise-pool/issues/74
   const promisePool = new PromisePool(() => deleteInactiveUser(inactiveUsers), MAX_CONCURRENT);
   await promisePool.start();
 

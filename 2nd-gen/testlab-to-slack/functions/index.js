@@ -21,7 +21,7 @@
 const { onTestMatrixCompleted } = require('firebase-functions/v2/testLab');
 const { logger } = require('firebase-functions');
 // The Axios client to send web requests to Slack.
-const axios = require('axios');
+const axios = require('axios').default;
 // [END import]
 
 // [START postToSlack]

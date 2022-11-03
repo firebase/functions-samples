@@ -19,6 +19,7 @@
 // [START import]
 // The Cloud Functions for Firebase SDK to create v2 Cloud Functions and set up triggers.
 const { onConfigUpdated } = require('firebase-functions/v2/remoteConfig');
+const logger = require('firebase-functions/logger');
 // The Firebase Admin SDK to obtain access tokens.
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -48,11 +49,11 @@ exports.showconfigdiff = onConfigUpdated((event) => {
       // Figure out the differences of the templates
       const diff = jsonDiff.diffString(previousTemplate, currentTemplate);
       // Log the difference
-      functions.logger.log(diff);
+      logger.log(diff);
 
       return null;
     }).catch(error => {
-      functions.logger.error(error);
+      logger.error(error);
       return null;
     });
 });
@@ -75,7 +76,7 @@ function getTemplate(version, accessToken) {
   return rp(options).then(resp => {
     return Promise.resolve(resp);
   }).catch(err => {
-    functions.logger.error(err);
+    logger.error(err);
     return Promise.resolve(null);
   });
 }
