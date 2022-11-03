@@ -3,11 +3,11 @@
   "description": "Authenticate with Instagram Firebase Functions sample",
   "dependencies": {
     "cookie-parser": "^1.4.4",
+    "firebase-admin": "^11.2.0",
+    "firebase-functions": "^4.0.2",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
-    "simple-oauth2": "^3.3.0",
-    "firebase-admin": "^10.2.0",
-    "firebase-functions": "^3.21.0"
+    "simple-oauth2": "^3.3.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

@@ -3,9 +3,9 @@
   "description": "Generate Thumbnail Firebase Functions sample",
   "dependencies": {
     "child-process-promise": "^2.2.1",
-    "mkdirp": "^1.0.3",
-    "firebase-admin": "^10.2.0",
-    "firebase-functions": "^3.21.0"
+    "firebase-admin": "^11.2.0",
+    "firebase-functions": "^4.0.2",
+    "mkdirp": "^1.0.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

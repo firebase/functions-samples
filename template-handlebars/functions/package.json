@@ -6,9 +6,9 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
-    "handlebars": "^4.7.3",
-    "firebase-admin": "^10.2.0",
-    "firebase-functions": "^3.21.0"
+    "firebase-admin": "^11.2.0",
+    "firebase-functions": "^4.0.2",
+    "handlebars": "^4.7.3"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
