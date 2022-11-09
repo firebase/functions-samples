@@ -13,96 +13,109 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
 // [START all]
 // [START import]
-// The Cloud Functions for Firebase SDK to create v2 Cloud Functions and set up triggers.
-const { onTestMatrixCompleted } = require('firebase-functions/v2/testLab');
-const { logger } = require('firebase-functions');
-// The Axios client to send web requests to Slack.
-const axios = require('axios');
+// The Cloud Functions for Firebase SDK to set up triggers and logging.
+const {onTestMatrixCompleted} = require("firebase-functions/v2/testLab");
+const {logger} = require("firebase-functions");
+// The node-fetch library to send web requests to Slack.
+const fetch = require("node-fetch");
 // [END import]
 
 // [START postToSlack]
-function postToSlack(title, details) {
-  return axios.post(
-    process.env.SLACK_WEBHOOK_URL,
-    {
+/**
+ * Posts a message to Slack via a Webhook
+ * @param {string} title
+ * @param {string} details
+ * @return {Promise<string>}
+ */
+async function postToSlack(title, details) {
+  const response = await fetch(process.env.SLACK_WEBHOOK_URL, {
+    method: "post",
+    body: JSON.stringify({
       blocks: [
         {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
-            text: title
-          }
+            type: "mrkdwn",
+            text: title,
+          },
         },
         {
-          type: 'divider'
+          type: "divider",
         },
         {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
-            text: details
-          }
-        }
-      ]
-    }
-  );
+            type: "mrkdwn",
+            text: details,
+          },
+        },
+      ],
+    }),
+    headers: {"Content-Type": "application/json"},
+  });
+  return response.json();
 }
 // [END postToSlack]
 
 // [START getSlackmoji]
+/**
+ * Convert a test result status into a Slackmoji
+ * @param {string} term
+ * @return {string}
+ */
 function getSlackmoji(term) {
   switch (term) {
-    case 'SUCCESS':
-      return ':tada:';
-    case 'FAILURE':
-      return ':broken_heart:';
-    case 'INCONCLUSIVE':
-      return ':question:';
-    case 'SKIPPED':
-      return ':arrow_heading_down:';
-    case 'VALIDATING':
-      return ':thought_balloon:';
-    case 'PENDING':
-      return ':soon:';
-    case 'FINISHED':
-      return ':white_check_mark:';
-    case 'ERROR':
-      return ':red_circle:';
-    case 'INVALID':
-      return ':large_orange_diamond:';
+    case "SUCCESS":
+      return ":tada:";
+    case "FAILURE":
+      return ":broken_heart:";
+    case "INCONCLUSIVE":
+      return ":question:";
+    case "SKIPPED":
+      return ":arrow_heading_down:";
+    case "VALIDATING":
+      return ":thought_balloon:";
+    case "PENDING":
+      return ":soon:";
+    case "FINISHED":
+      return ":white_check_mark:";
+    case "ERROR":
+      return ":red_circle:";
+    case "INVALID":
+      return ":large_orange_diamond:";
     default:
-      return '';
+      return "";
   }
 }
 // [END getSlackmoji]
 
 // [START posttestresultstoslack]
 exports.posttestresultstoslack = onTestMatrixCompleted(
-  { secrets: ["SLACK_WEBHOOK_URL"] },
-  async (event) => {
+    {secrets: ["SLACK_WEBHOOK_URL"]},
+    async (event) => {
     // Obtain Test Matrix properties from the CloudEvent
-    const { testMatrixId, state, outcomeSummary } = event.data;
+      const {testMatrixId, state, outcomeSummary} = event.data;
 
-    // Create the title of the message
-    const title = `${getSlackmoji(state)} ${getSlackmoji(
-      outcomeSummary
-    )} ${testMatrixId}`;
-    
-    // Create the details of the message
-    const details = `Status: *${state}* ${getSlackmoji(
-      state
-    )}\nOutcome: *${outcomeSummary}* ${getSlackmoji(outcomeSummary)}
+      // Create the title of the message
+      const title = `${getSlackmoji(state)} ${getSlackmoji(
+          outcomeSummary,
+      )} ${testMatrixId}`;
+
+      // Create the details of the message
+      const details = `Status: *${state}* ${getSlackmoji(
+          state,
+      )}\nOutcome: *${outcomeSummary}* ${getSlackmoji(outcomeSummary)}
     `;
 
-    // Post the message to slack
-    const slackResponse = await postToSlack(title, details);
-    
-    // Log the response
-    logger.log(JSON.stringify(slackResponse.data));
-  });
+      // Post the message to slack
+      const slackResponse = await postToSlack(title, details);
+
+      // Log the response
+      logger.log(slackResponse);
+    });
 // [END posttestresultstoslack]
 // [END all]

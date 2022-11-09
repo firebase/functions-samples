@@ -74,6 +74,6 @@ exports.date = onRequest(
       logger.log("Sending formatted date:", formattedDate);
       res.status(200).send(formattedDate);
     // [END v2httpSendResponse]
-    }
+    },
 );
 // [END v2httpAll]

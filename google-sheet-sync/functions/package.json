@@ -2,14 +2,14 @@
   "name": "google-sheet-sync",
   "description": "Syncs new Firebase data to a Google Sheet",
   "dependencies": {
-    "firebase-admin": "^10.2.0",
-    "firebase-functions": "^3.21.0",
+    "firebase-admin": "^11.2.0",
+    "firebase-functions": "^4.0.2",
     "google-auth-library": "^5.10.1",
     "googleapis": "^47.0.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-promise": "^4.3.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

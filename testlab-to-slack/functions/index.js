@@ -1,32 +1,41 @@
 const functions = require('firebase-functions');
 
-const axios = require('axios');
+// The node-fetch library to send web requests to Slack.
+const fetch = require("node-fetch");
 
-function postToSlack(title, details) {
-  return axios.post(
-    functions.config().slack.webhook_url,
-    {
+/**
+ * Posts a message to Slack via a Webhook
+ * @param {string} title
+ * @param {string} details
+ * @return {Promise<string>}
+ */
+ async function postToSlack(title, details) {
+  const response = await fetch(process.env.SLACK_WEBHOOK_URL, {
+    method: "post",
+    body: JSON.stringify({
       blocks: [
         {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
-            text: title
-          }
+            type: "mrkdwn",
+            text: title,
+          },
         },
         {
-          type: 'divider'
+          type: "divider",
         },
         {
-          type: 'section',
+          type: "section",
           text: {
-            type: 'mrkdwn',
-            text: details
-          }
-        }
-      ]
-    }
-  );
+            type: "mrkdwn",
+            text: details,
+          },
+        },
+      ],
+    }),
+    headers: {"Content-Type": "application/json"},
+  });
+  return response.json();
 }
 
 function getSlackmoji(term) {
@@ -70,5 +79,5 @@ exports.postTestResultsToSlack = functions.testLab
 
     const slackResponse = await postToSlack(title, details);
 
-    functions.logger.log(JSON.stringify(slackResponse.data));
+    functions.logger.log(slackResponse);
   });

@@ -1,10 +1,17 @@
 exports.Timer = class {
-    constructor() {
-        this.start = process.hrtime.bigint();
-    }
+  /**
+     *
+     */
+  constructor() {
+    this.start = process.hrtime.bigint();
+  }
 
-    measureMs() {
-        const duration = process.hrtime.bigint() - this.start;
-        return (duration / 1_000_000n).toString();
-    }
+  /**
+     * Get the time since this timer was constructed
+     * @return {string}
+     */
+  measureMs() {
+    const duration = process.hrtime.bigint() - this.start;
+    return (duration / 1000000).toString();
+  }
 };

@@ -13,12 +13,12 @@
     "node": "16"
   },
   "dependencies": {
-    "axios": "^0.19.2",
-    "firebase-admin": "^10.2.0",
-    "firebase-functions": "^3.21.0"
+    "node-fetch": "^2.0.0",
+    "firebase-admin": "^10.3.0",
+    "firebase-functions": "^3.24.1"
   },
   "devDependencies": {
-    "firebase-functions-test": "^2.0.0"
+    "firebase-functions-test": "^2.4.0"
   },
   "private": true
 }
