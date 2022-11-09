@@ -16,8 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions');
-const rp = require('request-promise');
-const crypto = require('crypto');
+const fetch = require('node-fetch');
+const crypto = require('node:crypto');
 const secureCompare = require('secure-compare');
 
 /**
@@ -58,14 +58,15 @@ exports.githubWebhook = functions.https.onRequest(async (req, res) => {
 /**
  * Post a message to Slack about the new GitHub commit.
  */
-function postToSlack(url, commits, repo) {
-  return rp({
-    method: 'POST',
-    // TODO: Configure the `slack.webhook_url` Google Cloud environment variables.
-    uri: functions.config().slack.webhook_url,
-    body: {
-      text: `<${url}|${commits} new commit${commits > 1 ? 's' : ''}> pushed to <${repo.url}|${repo.full_name}>.`,
-    },
-    json: true,
+async function postToSlack(url, commits, repo) {
+  const response = await fetch(functions.config().slack.webhook_url, {
+    method: "POST",
+    body: JSON.stringify({
+      text: `<${url}|${commits} new commit${
+        commits > 1 ? "s" : ""
+      }> pushed to <${repo.url}|${repo.full_name}>.`,
+    }),
+    headers: { "Content-Type": "application/json" },
   });
+  return response.json();
 }

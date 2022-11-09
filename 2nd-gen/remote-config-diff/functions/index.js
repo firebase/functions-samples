@@ -13,71 +13,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
 // [START all]
 // [START import]
-// The Cloud Functions for Firebase SDK to create v2 Cloud Functions and set up triggers.
-const { onConfigUpdated } = require('firebase-functions/v2/remoteConfig');
+// The Cloud Functions for Firebase SDK to set up triggers and logging.
+const {onConfigUpdated} = require("firebase-functions/v2/remoteConfig");
+const logger = require("firebase-functions/logger");
 // The Firebase Admin SDK to obtain access tokens.
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 admin.initializeApp();
-const rp = require('request-promise');
-const jsonDiff = require('json-diff');
+const fetch = require("node-fetch");
+const jsonDiff = require("json-diff");
 // [END import]
 
 // [START showconfigdiff]
 exports.showconfigdiff = onConfigUpdated((event) => {
   // Obtain the access token from the admin SDK
   return admin.credential.applicationDefault().getAccessToken()
-    .then(accessTokenObj => {
-      return accessTokenObj.access_token;
-    })
-    .then(accessToken => {
+      .then((accessTokenObj) => {
+        return accessTokenObj.access_token;
+      })
+      .then((accessToken) => {
       // Get the version number from the event object
-      const currentVersion = event.data.versionNumber;
-      const templatePromises = [];
-      templatePromises.push(getTemplate(currentVersion, accessToken));
-      templatePromises.push(getTemplate(currentVersion - 1, accessToken));
-      // Get the templates
-      return Promise.all(templatePromises);
-    })
-    .then(results => {
-      const currentTemplate = results[0];
-      const previousTemplate = results[1];
-      // Figure out the differences of the templates
-      const diff = jsonDiff.diffString(previousTemplate, currentTemplate);
-      // Log the difference
-      functions.logger.log(diff);
+        const currentVersion = event.data.versionNumber;
+        const templatePromises = [];
+        templatePromises.push(getTemplate(currentVersion, accessToken));
+        templatePromises.push(getTemplate(currentVersion - 1, accessToken));
+        // Get the templates
+        return Promise.all(templatePromises);
+      })
+      .then((results) => {
+        const currentTemplate = results[0];
+        const previousTemplate = results[1];
+        // Figure out the differences of the templates
+        const diff = jsonDiff.diffString(previousTemplate, currentTemplate);
+        // Log the difference
+        logger.log(diff);
 
-      return null;
-    }).catch(error => {
-      functions.logger.error(error);
-      return null;
-    });
+        return null;
+      }).catch((error) => {
+        logger.error(error);
+        return null;
+      });
 });
 // [END showconfigdiff]
 
 // [START getTemplate]
-function getTemplate(version, accessToken) {
-  const options = {
-    uri: 'https://firebaseremoteconfig.googleapis.com/v1/projects/remote-config-function/remoteConfig',
-    qs: {
-      versionNumber: version
-    },
-    headers: {
-        Authorization: 'Bearer ' + accessToken
-    },
-    json: true // Automatically parses the JSON string in the response
-  };
-  
-  // Obtain the template from the rest API
-  return rp(options).then(resp => {
-    return Promise.resolve(resp);
-  }).catch(err => {
-    functions.logger.error(err);
-    return Promise.resolve(null);
-  });
+/**
+ * Get a specific version of a Remote Config template
+ * @param {number} version
+ * @param {string} accessToken
+ * @return {Promise<string>} the template as JSON
+ */
+async function getTemplate(version, accessToken) {
+  const params = new URLSearchParams();
+  params.append("versionNumber", version + "");
+  const response = await fetch(
+      "https://firebaseremoteconfig.googleapis.com/v1/projects/remote-config-function/remoteConfig",
+      {
+        method: "POST",
+        body: params,
+        headers: {Authorization: "Bearer " + accessToken},
+      },
+  );
+  return response.json();
 }
-// [START getTemplate]
+// [END getTemplate]
 // [END all]

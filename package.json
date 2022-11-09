@@ -6,19 +6,22 @@
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "pnpm -r install",
-    "lint": "pnpm -r --workspace-concurrency=4 run lint ",
-    "test": "pnpm -r --workspace-concurrency=4 run test ",
-    "compile": "pnpm -r --workspace-concurrency=4 run compile "
+    "lint": "pnpm -r --workspace-concurrency=4 --aggregate-output run lint",
+    "test": "pnpm -r --workspace-concurrency=4 --aggregate-output run test ",
+    "compile": "pnpm -r --workspace-concurrency=4 --aggregate-output run compile "
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "pnpm": "^7.0.0",
-    "typescript": "^4.6.4"
+    "eslint-plugin-promise": "^4.3.1",
+    "pnpm": "^7.14.2",
+    "typescript": "^4.8.4"
   },
   "pnpm": {
     "peerDependencyRules": {
-      "ignoreMissing": ["@firebase/app-compat", "@firebase/app-types"]
+      "ignoreMissing": [
+        "@firebase/app-compat",
+        "@firebase/app-types"
+      ]
     }
   }
 }

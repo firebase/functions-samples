@@ -16,13 +16,13 @@
   },
   "main": "index.js",
   "dependencies": {
-    "firebase-admin": "^10.2.0",
-    "firebase-functions": "^3.20.1",
-    "google-auth-library": "^8.0.1",
+    "firebase-admin": "^11.2.0",
+    "firebase-functions": "^4.0.2",
+    "google-auth-library": "^8.6.0",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "eslint": "^8.9.0",
+    "eslint": "^8.26.0",
     "eslint-config-google": "^0.14.0"
   },
   "private": true
