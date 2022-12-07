@@ -1,17 +1,45 @@
 import {
   onInAppFeedbackPublished} from "firebase-functions/v2/alerts/appDistribution";
+import {defineInt, defineSecret, defineString} from "firebase-functions/params";
+import logger from "firebase-functions/logger";
 import fetch from "node-fetch";
 import {FormData} from "formdata-polyfill/esm.min.js";
-import logger from "firebase-functions/logger";
 
-const JIRA_URI = "https://mysite.atlassian.net";
-const PROJECT_KEY = "XY";
-const ISSUE_TYPE_ID = "10001";
-const ISSUE_LABELS = ["in-app"];
-const API_KEY_OWNER = "user@e,mail";
-const API_KEY = "am9zaHVhIHBhc3N3b3JkMTIz";
-const AUTH_HEADER = "Basic " +
-      Buffer.from(`${API_KEY_OWNER}:${API_KEY}`).toString("base64");
+// The keys are either defined in .env or they are created
+// via prompt in the CLI before deploying
+const jiraUriConfig = defineString("JIRA_URI", {
+  description: "URI of your Jira instance (e.g. 'https://mysite.atlassian.net')",
+  input: {
+    text: {
+      validationRegex: /^https:\/\/.*/,
+      validationErrorMessage: "Please enter an 'https://' URI",
+    },
+  },
+});
+const projectKeyConfig = defineString("PROJECT_KEY", {
+  description: "Project key of your Jira instance (e.g. 'XY')",
+});
+const issueTypeIdConfig = defineInt("ISSUE_TYPE_ID", {
+  description: "Issue type ID for the Jira issues being created",
+  default: 10001,
+});
+const issueLabelConfig = defineString("ISSUE_LABEL", {
+  description: "Label for the Jira issues being created",
+  default: "in-app",
+});
+const apiKeyOwnerConfig = defineString("API_KEY_OWNER", {
+  description: "Owner of the Jira API key",
+  input: {
+    text: {
+      validationRegex:
+      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+      validationErrorMessage: "Please enter a valid email address",
+    },
+  },
+});
+const apiKeyConfig = defineSecret("API_KEY", {
+  description: "Jira API key",
+});
 
 export const handleInAppFeedback = async (event) => {
   const issueUri = await createIssue(event);
@@ -21,7 +49,18 @@ export const handleInAppFeedback = async (event) => {
   return true;
 };
 
-export const feedbacktojira = onInAppFeedbackPublished(handleInAppFeedback);
+export const feedbacktojira =
+    onInAppFeedbackPublished({secrets: [apiKeyConfig]}, handleInAppFeedback);
+
+/**
+ * Creates "Authorization" header value.
+ * @return {string} Basic, base64-encoded "Authorization" header value
+ */
+function authHeader() {
+  return "Basic " + Buffer
+      .from(apiKeyOwnerConfig.value() + ":" + apiKeyConfig.value())
+      .toString("base64");
+}
 
 /**
  * Creates new issue in Jira.
@@ -31,10 +70,10 @@ async function createIssue(event) {
   const requestJson = await buildCreateIssueRequest(event);
   const requestBody = JSON.stringify(requestJson);
   const response =
-        await fetch("https://eventarc.atlassian.net/rest/api/3/issue", {
+        await fetch(`${jiraUriConfig.value()}/rest/api/3/issue`, {
           method: "POST",
           headers: {
-            "Authorization": AUTH_HEADER,
+            "Authorization": authHeader(),
             "Accept": "application/json",
             "Content-Type": "application/json",
           },
@@ -68,7 +107,7 @@ async function uploadScreenshot(issueUri, screenshotUri) {
     method: "POST",
     body: form,
     headers: {
-      "Authorization": AUTH_HEADER,
+      "Authorization": authHeader(),
       "Accept": "application/json",
       "X-Atlassian-Token": "no-check",
     },
@@ -85,10 +124,14 @@ async function uploadScreenshot(issueUri, screenshotUri) {
  */
 async function lookupReporter(testerEmail) {
   const response =
-        await fetch(`${JIRA_URI}/rest/api/3/user/search?query=${testerEmail}`, {
-          method: "GET",
-          headers: {"Authorization": AUTH_HEADER, "Accept": "application/json"},
-        });
+        await fetch(
+            `${jiraUriConfig.value()}/rest/api/3/user/search` +
+              `?query=${testerEmail}`, {
+              method: "GET",
+              headers: {
+                "Authorization": authHeader(),
+                "Accept": "application/json",
+              }});
   if (!response.ok) {
     logger.info(`Failed to find Jira user for '${testerEmail}':` +
                 `${response.status} ${response.statusText}`);
@@ -112,10 +155,10 @@ async function buildCreateIssueRequest(event) {
     "fields": {
       "summary": summary,
       "issuetype": {
-        "id": ISSUE_TYPE_ID,
+        "id": issueTypeIdConfig.value(),
       },
       "project": {
-        "key": PROJECT_KEY,
+        "key": projectKeyConfig.value(),
       },
       "description": {
         "type": "doc",
@@ -231,7 +274,7 @@ async function buildCreateIssueRequest(event) {
           },
         ],
       },
-      "labels": ISSUE_LABELS,
+      "labels": [issueLabelConfig.value()],
     },
   };
   const reporter = await lookupReporter(event.data.payload.testerEmail);
