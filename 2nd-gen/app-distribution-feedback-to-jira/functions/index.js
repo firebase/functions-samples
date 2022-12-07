@@ -47,7 +47,7 @@ export const handleInAppFeedback = async (event) => {
   if (event.data.payload.screenshotUri) {
     await uploadScreenshot(issueUri, event.data.payload.screenshotUri);
   }
-  return true;
+  return undefined; // returns 204 (no content) which is ignored
 };
 
 export const feedbacktojira =
