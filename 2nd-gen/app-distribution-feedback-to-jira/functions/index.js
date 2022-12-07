@@ -27,8 +27,8 @@ const issueLabelConfig = defineString("ISSUE_LABEL", {
   description: "Label for the Jira issues being created",
   default: "in-app",
 });
-const apiKeyOwnerConfig = defineString("API_KEY_OWNER", {
-  description: "Owner of the Jira API key",
+const apiTokenOwnerConfig = defineString("API_TOKEN_OWNER", {
+  description: "Owner of the Jira API token",
   input: {
     text: {
       validationRegex:
@@ -37,8 +37,9 @@ const apiKeyOwnerConfig = defineString("API_KEY_OWNER", {
     },
   },
 });
-const apiKeyConfig = defineSecret("API_KEY", {
-  description: "Jira API key",
+const apiTokenConfig = defineSecret("API_TOKEN", {
+  description: "Jira API token. Created using " +
+      "https://id.atlassian.com/manage-profile/security/api-tokens",
 });
 
 export const handleInAppFeedback = async (event) => {
@@ -50,7 +51,7 @@ export const handleInAppFeedback = async (event) => {
 };
 
 export const feedbacktojira =
-    onInAppFeedbackPublished({secrets: [apiKeyConfig]}, handleInAppFeedback);
+    onInAppFeedbackPublished({secrets: [apiTokenConfig]}, handleInAppFeedback);
 
 /**
  * Creates "Authorization" header value.
@@ -58,7 +59,7 @@ export const feedbacktojira =
  */
 function authHeader() {
   return "Basic " + Buffer
-      .from(apiKeyOwnerConfig.value() + ":" + apiKeyConfig.value())
+      .from(apiTokenOwnerConfig.value() + ":" + apiTokenConfig.value())
       .toString("base64");
 }
 
