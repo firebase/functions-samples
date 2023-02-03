@@ -24,7 +24,7 @@
     "@typescript-eslint/parser": "^3.8.0",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.22.0",
-    "typescript": "^3.8.0",
+    "typescript": "^4.9.0",
     "firebase-functions-test": "^2.0.0"
   },
   "private": true
