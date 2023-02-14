@@ -23,8 +23,8 @@ const {onValueCreated} = require("firebase-functions/v2/database");
 const {logger} = require("firebase-functions");
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
-const { initializeApp } = require('firebase-admin/app');
-const { getDatabase } = require('firebase-admin/database');
+const {initializeApp} = require("firebase-admin/app");
+const {getDatabase} = require("firebase-admin/database");
 
 const app = initializeApp();
 const db = getDatabase(app);
