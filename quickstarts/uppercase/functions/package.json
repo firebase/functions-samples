@@ -2,8 +2,8 @@
   "name": "uppercase-quickstart-functions",
   "description": "Uppercaser Firebase Functions Quickstart sample",
   "dependencies": {
-    "firebase-admin": "^11.2.0",
-    "firebase-functions": "^4.0.2"
+    "firebase-admin": "^11.5.0",
+    "firebase-functions": "^4.2.1"
   },
   "devDependencies": {
     "@types/mocha": "^8.2.3",
