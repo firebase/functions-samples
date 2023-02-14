@@ -23,8 +23,11 @@ const {onValueCreated} = require("firebase-functions/v2/database");
 const {logger} = require("firebase-functions");
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
-const admin = require("firebase-admin");
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
+
+const app = initializeApp();
+const db = getDatabase(app);
 // [END import]
 
 // [START addmessage]
@@ -38,8 +41,7 @@ exports.addmessage = onRequest(async (req, resp) => {
   // [START adminSdkPush]
   // Push the new message into the Realtime Database
   // using the Firebase Admin SDK.
-  const snapshot = await admin
-      .database()
+  const snapshot = await db
       .ref("/messages")
       .push({original: original});
 
