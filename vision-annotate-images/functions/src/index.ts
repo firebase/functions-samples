@@ -20,7 +20,7 @@ export const annotateImage = functions.https.onCall(async (data, context) => {
     );
   }
   try {
-    return await client.annotateImage(JSON.parse(data));
+    return await client.annotateImage(data);
   } catch (e) {
     throw new functions.https.HttpsError("internal", e.message, e.details);
   }
