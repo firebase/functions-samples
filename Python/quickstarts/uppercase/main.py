@@ -62,7 +62,7 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 # Listens for new messages added to /messages/{pushId}/original and creates an
 # uppercase version of the message to /messages/{pushId}/uppercase
 @db_fn.on_value_created(reference="/messages/{pushId}/original")
-def makeuppercase(event: db_fn.Event[db_fn.Change]) -> None:
+def makeuppercase(event: db_fn.Event[object]) -> None:
     # Grab the value that was written to the Realtime Database.
     original = event.data
     if not hasattr(original, "upper"):
