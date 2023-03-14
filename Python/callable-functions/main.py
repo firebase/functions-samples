@@ -59,9 +59,9 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
     # [END v2returnAddData]
 # [END v2allAdd]
 
-# [START v2messageFunctionTrigger]
 # Saves a message to the Firebase Realtime Database but sanitizes the
 # text by removing swearwords.
+# [START v2messageFunctionTrigger]
 @https_fn.on_call(
     cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post", "put"])
 )
@@ -76,16 +76,18 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         # Throwing an HttpsError so that the client gets the error details.
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
-            message='The function must be called with one arguments "text" containing the message text to add.',
+            message=('The function must be called with one argument, "text",'
+                     ' containing the message text to add.'),
         )
 
     # [START v2messageHttpsErrors]
     # Checking attribute.
-    if not hasattr(text, "replace") or len(text) < 1:
+    if not isinstance(text, str) or len(text) < 1:
         # Throwing an HttpsError so that the client gets the error details.
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
-            message='The function must be called with one arguments "text" containing the message text to add.',
+            message=('The function must be called with one argument, "text",'
+                     ' containing the message text to add.'),
         )
 
     # Checking that the user is authenticated.
@@ -120,7 +122,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
                 },
             }
         )
-        print("New Message written")
+        print("New message written")
 
         # Returning the sanitized message to the client.
         return {text: sanitized_message}
