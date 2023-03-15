@@ -23,9 +23,7 @@ initialize_app()
 # [START v2allAdd]
 # [START v2addFunctionTrigger]
 # Adds two numbers to each other.
-@https_fn.on_call(
-    cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post", "put"])
-)
+@https_fn.on_call()
 def addnumbers(req: https_fn.CallableRequest) -> Any:
 # [END v2addFunctionTrigger]
     # [START v2addHttpsError]
@@ -62,9 +60,7 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
 # Saves a message to the Firebase Realtime Database but sanitizes the
 # text by removing swearwords.
 # [START v2messageFunctionTrigger]
-@https_fn.on_call(
-    cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post", "put"])
-)
+@https_fn.on_call()
 def addmessage(req: https_fn.CallableRequest) -> Any:
 # [END v2messageFunctionTrigger]
     try:
