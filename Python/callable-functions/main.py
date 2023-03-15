@@ -125,7 +125,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         print("New message written")
 
         # Returning the sanitized message to the client.
-        return {text: sanitized_message}
+        return {"text": sanitized_message}
         # [END v2returnMessage]
     except Exception as e:
         # Re-throwing the error as an HttpsError so that the client gets
