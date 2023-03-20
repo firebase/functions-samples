@@ -20,6 +20,7 @@ from firebase_functions import https_fn, options
 
 initialize_app()
 
+
 # [START v2allAdd]
 # [START v2addFunctionTrigger]
 # Adds two numbers to each other.
@@ -42,8 +43,7 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
             message=(
                 'The function must be called with two arguments, "firstNumber"'
-                ' and "secondNumber", which must both be numbers.'
-            ),
+                ' and "secondNumber", which must both be numbers.'),
         )
     # [END v2addHttpsError]
 
@@ -56,6 +56,7 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
     }
     # [END v2returnAddData]
 # [END v2allAdd]
+
 
 # Saves a message to the Firebase Realtime Database but sanitizes the
 # text by removing swearwords.
@@ -107,17 +108,15 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         # [START v2returnMessage]
         # Saving the new message to the Realtime Database.
         sanitized_message = sanitize_text(text)  # Sanitize message.
-        db.reference("/messages").push(
-            {
-                "text": sanitized_message,
-                "author": {
-                    "uid": uid,
-                    "name": name,
-                    "picture": picture,
-                    "email": email,
-                },
-            }
-        )
+        db.reference("/messages").push({
+            "text": sanitized_message,
+            "author": {
+                "uid": uid,
+                "name": name,
+                "picture": picture,
+                "email": email,
+            },
+        })
         print("New message written")
 
         # Returning the sanitized message to the client.
@@ -126,9 +125,9 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
     except Exception as e:
         # Re-throwing the error as an HttpsError so that the client gets
         # the error details.
-        raise https_fn.HttpsError(
-            code=https_fn.FunctionsErrorCode.UNKNOWN, message=e, details=e
-        )
+        raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.UNKNOWN,
+                                  message=e,
+                                  details=e)
 
 
 def sanitize_text(text: str) -> str:

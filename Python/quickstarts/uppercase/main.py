@@ -25,6 +25,7 @@ from firebase_admin import initialize_app, db
 app = initialize_app()
 # [END import]
 
+
 # [START addMessage]
 # Take the text parameter passed to this HTTP endpoint and insert it into the
 # Realtime Database under the path /messages/:pushId/original
@@ -43,15 +44,14 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
     # Redirect with 303 SEE OTHER to the URL of the pushed object.
     scheme, location, path, query, fragment = urllib_parse.urlsplit(
-        app.options.get("databaseURL")
-    )
+        app.options.get("databaseURL"))
     path = f"{ref.path}.json"
     return https_fn.Response(
         status=303,
         headers={
-            "Location": urllib_parse.urlunsplit(
-                (scheme, location, path, query, fragment)
-            )
+            "Location":
+                urllib_parse.urlunsplit(
+                    (scheme, location, path, query, fragment))
         },
     )
     # [END adminSdkPush]

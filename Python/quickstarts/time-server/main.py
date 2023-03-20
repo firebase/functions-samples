@@ -39,9 +39,8 @@ from firebase_functions import https_fn, options
 # This endpoint supports CORS.
 # [START trigger]
 # [START usingMiddleware]
-@https_fn.on_request(
-    cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"])
-)
+@https_fn.on_request(cors=options.CorsOptions(cors_origins="*",
+                                              cors_methods=["get", "post"]))
 def date(req: https_fn.Request) -> https_fn.Response:
 # [END usingMiddleware]
 # [END trigger]
@@ -60,7 +59,8 @@ def date(req: https_fn.Request) -> https_fn.Response:
         # [START readBodyParam]
         body_data = req.get_json(silent=True)
         if body_data is None or "format" not in body_data:
-            return https_fn.Response(status=400, response="Format string missing")
+            return https_fn.Response(status=400,
+                                     response="Format string missing")
         format = body_data["format"]
         # [END readBodyParam]
 

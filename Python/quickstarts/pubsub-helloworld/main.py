@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import base64
 
 # [START import]
@@ -25,7 +24,8 @@ from firebase_functions import pubsub_fn
 # topic.
 # [START trigger]
 @pubsub_fn.on_message_published(topic="topic-name")
-def hellopubsub(event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
+def hellopubsub(
+        event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
 # [END trigger]
     # [START readBase64]
     # Decode the PubSub message body.
@@ -41,8 +41,7 @@ def hellopubsub(event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> 
 # topic as JSON.
 @pubsub_fn.on_message_published(topic="another-topic-name")
 def hellopubsubjson(
-    event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData],
-) -> None:
+    event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
     # [START readJson]
     # Get the `name` attribute of the PubSub message JSON body.
     try:
@@ -63,8 +62,7 @@ def hellopubsubjson(
 # published to the topic.
 @pubsub_fn.on_message_published(topic="yet-another-topic-name")
 def hellopubsubattributes(
-    event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData],
-) -> None:
+    event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
     # [START readAttributes]
     # Get the `name` attribute of the message.
     if "name" not in event.data.message.attributes:

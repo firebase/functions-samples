@@ -35,7 +35,8 @@ from firebase_functions import storage_fn
 # generate a thumbnail automatically using Pillow.
 # [START storageGenerateThumbnailTrigger]
 @storage_fn.on_object_finalized()
-def generatethumbnail(event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
+def generatethumbnail(
+        event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
 # [END storageGenerateThumbnailTrigger]
 
     # [START storageEventAttributes]
@@ -67,11 +68,9 @@ def generatethumbnail(event: storage_fn.CloudEvent[storage_fn.StorageObjectData]
     thumbnail_io = io.BytesIO()
     image.save(thumbnail_io, format="png")
     thumbnail_path = file_path.parent / pathlib.PurePath(
-        f"thumb_{file_path.stem}.png"
-    )
+        f"thumb_{file_path.stem}.png")
     thumbnail_blob = bucket.blob(str(thumbnail_path))
-    thumbnail_blob.upload_from_string(
-        thumbnail_io.getvalue(), content_type="image/png"
-    )
+    thumbnail_blob.upload_from_string(thumbnail_io.getvalue(),
+                                      content_type="image/png")
     # [END storageThumbnailGeneration]
 # [END storageGenerateThumbnail]
