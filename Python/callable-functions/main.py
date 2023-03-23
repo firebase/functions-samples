@@ -26,6 +26,7 @@ initialize_app()
 # Adds two numbers to each other.
 @https_fn.on_call()
 def addnumbers(req: https_fn.CallableRequest) -> Any:
+    # ...
 # [END v2addFunctionTrigger]
     # [START v2addHttpsError]
     # Checking that attributes are present and are numbers.
@@ -63,6 +64,7 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
 # [START v2messageFunctionTrigger]
 @https_fn.on_call()
 def addmessage(req: https_fn.CallableRequest) -> Any:
+    # ...
 # [END v2messageFunctionTrigger]
     try:
         # [START v2readMessageData]

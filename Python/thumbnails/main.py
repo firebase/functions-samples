@@ -37,6 +37,7 @@ from firebase_functions import storage_fn
 @storage_fn.on_object_finalized()
 def generatethumbnail(
         event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
+    # ...
 # [END storageGenerateThumbnailTrigger]
 
     # [START storageEventAttributes]

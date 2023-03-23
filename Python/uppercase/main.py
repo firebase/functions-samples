@@ -32,6 +32,7 @@ app = initialize_app()
 # [START addMessageTrigger]
 @https_fn.on_request()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
+    # ...
 # [END addMessageTrigger]
     # Grab the text parameter.
     original = req.args.get("text")
