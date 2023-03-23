@@ -26,6 +26,7 @@ from firebase_functions import pubsub_fn
 @pubsub_fn.on_message_published(topic="topic-name")
 def hellopubsub(
         event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
+    # ...
 # [END trigger]
     # [START readBase64]
     # Decode the PubSub message body.
@@ -49,13 +50,14 @@ def hellopubsubjson(
     except ValueError:
         print("PubSub message was not JSON")
         return
-    # [END readJson]
-
     if "name" not in data:
         print("No 'name' key")
         return
+    name = data['name']
+    # [END readJson]
+
     # Print the message in the logs.
-    print(f"Hello, {data['name']}")
+    print(f"Hello, {name}")
 
 
 # Cloud Function to be triggered by Pub/Sub that logs a message using the data attributes
