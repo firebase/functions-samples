@@ -1,3 +1,7 @@
+from firebase_admin import initialize_app, db
+from firebase_functions import db_fn
+
+
 # Copyright 2023 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,8 +75,34 @@ def makeuppercase(event: db_fn.Event[object]) -> None:
         return
 
     # Use the Admin SDK to set an "uppercase" sibling.
-    print(f"Uppercasing {event.reference}: {original}")
+    print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     db.reference(event.reference).parent.child("uppercase").set(upper)
 # [END makeUppercase]
+
+
+# [START makeUppercase2]
+# Listens for new messages added to /messages/{pushId}/original and creates an
+# uppercase version of the message to /messages/{pushId}/uppercase
+@db_fn.on_value_written(reference="/messages/{pushId}/original")
+def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
+    # Only edit data when it is first created.
+    if event.data.before is not None:
+        return
+    
+    # Exit when the data is deleted.
+    if event.data.after is None:
+        return
+
+    # Grab the value that was written to the Realtime Database.
+    original = event.data.after
+    if not hasattr(original, "upper"):
+        print(f"Not a string: {event.reference}")
+        return
+
+    # Use the Admin SDK to set an "uppercase" sibling.
+    print(f"Uppercasing {event.params['pushId']}: {original}")
+    upper = original.upper()
+    db.reference(event.reference).parent.child("uppercase").set(upper)
+# [END makeUppercase2]
 # [END all]
