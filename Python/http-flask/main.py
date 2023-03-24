@@ -13,24 +13,28 @@
 # limitations under the License.'use strict';
 
 # [START httpflaskexample]
+from firebase_admin import initialize_app, db
 from firebase_functions import https_fn
 import flask
 
-widget_db = ["one_widget", "two_widgets", "red_widget", "blue_widget"]
+initialize_app()
 app = flask.Flask(__name__)
 
 # Build multiple CRUD interfaces:
 
 @app.get("/widgets")
-@app.get("/widgets/<int:id>")
+@app.get("/widgets/<id>")
 def get_widget(id=None):
-    return widget_db if id is None else widget_db[id]
+    if id is not None:
+        return db.reference(f"/widgets/{id}").get()
+    else:
+        return db.reference("/widgets").get()
 
 @app.post("/widgets")
 def add_widget():
     new_widget = flask.request.get_data(as_text=True)
-    widget_db.append(new_widget)
-    return widget_db
+    db.reference("/widgets").push(new_widget)
+    return flask.Response(status=201, response="Added widget")
 
 # Expose Flask app as a single Cloud Function:
 
