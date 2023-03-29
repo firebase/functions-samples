@@ -16,6 +16,7 @@ packages:
   - 2nd-gen/thumbnails/functions
   - 2nd-gen/time-server/functions
   - 2nd-gen/uppercase/functions
+  - 2nd-gen/uppercase-firestore/functions
   - assistant-say-number/functions
   - authenticated-json-api/functions
   - authorized-https-endpoint/functions
