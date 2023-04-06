@@ -1,0 +1,5 @@
+firebase-functions
+firebase-admin
+google-auth
+google-cloud-tasks
+requests
