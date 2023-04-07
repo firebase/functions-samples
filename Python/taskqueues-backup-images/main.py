@@ -24,18 +24,19 @@ NASA_API_KEY = params.StringParam("NASA_API_KEY").value()
 
 # [START v2TaskFunctionSetup]
 @tasks_fn.on_task_dispatched(
-    retry_config=RetryConfig(max_attempts=1, min_backoff_seconds=10),
+    retry_config=RetryConfig(max_attempts=5, min_backoff_seconds=60),
     rate_limits=RateLimits(max_concurrent_dispatches=10),
 )
-def backupapod(req: tasks_fn.Request) -> tasks_fn.Response:
+def backupapod(req: tasks_fn.CallableRequest) -> str:
     """Grabs Astronomy Photo of the Day (APOD) using NASA's API."""
 # [END v2TaskFunctionSetup]
     try:
-        date = req.json["data"]["date"]
+        date = req.data["date"]
     except KeyError:
-        print("Invalid payload. Must include date.")
-        return tasks_fn.Response(status=400,
-                                 response="Invalid payload. Must include date.")
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+            message="Invalid payload. Must include date.",
+        )
 
     print(f"Requesting data from APOD API for date {date}")
     api_resp = requests.get(
@@ -45,20 +46,24 @@ def backupapod(req: tasks_fn.Request) -> tasks_fn.Response:
             "api_key": NASA_API_KEY
         },
     )
-
     if not api_resp.ok:
         print(
             f"Request to NASA APOD API failed with reponse {api_resp.status_code}"
         )
         match api_resp.status_code:
             case 404:  # APOD not published for the day. This is fine!
-                return tasks_fn.Response(status=200, response="No APOD today.")
+                print("No APOD today.")
+                return "No APOD today."
             case 500:
-                return tasks_fn.Response(
-                    status=503, response="APOD API temporarily not available."
+                raise https_fn.HttpsError(
+                    code=https_fn.FunctionsErrorCode.UNAVAILABLE,
+                    message="APOD API temporarily not available.",
                 )
             case _:
-                return tasks_fn.Response(status=500, response="Uh-oh. Something broke.")
+                raise https_fn.HttpsError(
+                    code=https_fn.FunctionsErrorCode.INTERNAL,
+                    message="Uh-oh. Something broke.",
+                )
     apod = api_resp.json()
     pic_url = apod["hdurl"]
 
@@ -73,9 +78,11 @@ def backupapod(req: tasks_fn.Request) -> tasks_fn.Response:
     try:
         pic_blob.upload_from_string(pic_resp.content, content_type=pic_type)
     except:
-        return tasks_fn.Response(status=500, response="Uh-oh. Something broke.")
+        raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.INTERNAL,
+                                  message="Uh-oh. Something broke.")
 
-    return tasks_fn.Response(status=200, response="OK")
+    print(f"Saved {pic_url}")
+    return f"Saved {pic_url}"
 
 
 # [START v2EnqueueTasks]
