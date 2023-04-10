@@ -18,7 +18,7 @@ This sample shows you how to create Stripe customers when your users sign up, se
 
 ## Demo
 
-- https://cloud-functions-stripe-sample.web.app/
+- https://stripe-subs-ext.web.app/
 
 ![Firebase Stripe demo gif](./demo.gif)
 
