@@ -1,21 +1,21 @@
 packages:
-  - 2nd-gen/alerts-to-discord/functions
-  - 2nd-gen/auth-blocking-functions/functions
-  - 2nd-gen/callable-functions/functions
-  - 2nd-gen/custom-events/functions
-  - 2nd-gen/delete-unused-accounts-cron/functions
-  - 2nd-gen/instrument-with-opentelemetry/functions
-  - 2nd-gen/pubsub-helloworld/functions
-  - 2nd-gen/remote-config-diff/functions
-  - 2nd-gen/taskqueues-backup-images/functions
-  - 2nd-gen/test-complete/functions
-  - 2nd-gen/test-functions-jest/functions
-  - 2nd-gen/test-functions-jest-ts/functions
-  - 2nd-gen/test-functions-mocha/functions
-  - 2nd-gen/testlab-to-slack/functions
-  - 2nd-gen/thumbnails/functions
-  - 2nd-gen/time-server/functions
-  - 2nd-gen/uppercase/functions
+  - Node/alerts-to-discord/functions
+  - Node/auth-blocking-functions/functions
+  - Node/callable-functions/functions
+  - Node/custom-events/functions
+  - Node/delete-unused-accounts-cron/functions
+  - Node/instrument-with-opentelemetry/functions
+  - Node/pubsub-helloworld/functions
+  - Node/remote-config-diff/functions
+  - Node/taskqueues-backup-images/functions
+  - Node/test-complete/functions
+  - Node/test-functions-jest/functions
+  - Node/test-functions-jest-ts/functions
+  - Node/test-functions-mocha/functions
+  - Node/testlab-to-slack/functions
+  - Node/thumbnails/functions
+  - Node/time-server/functions
+  - Node/uppercase/functions
   - assistant-say-number/functions
   - authenticated-json-api/functions
   - authorized-https-endpoint/functions
