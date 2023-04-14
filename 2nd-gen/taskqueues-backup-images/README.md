@@ -77,12 +77,12 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 Please follow Google Cloud IAM documentation to add App Engine default service account as user of App Engine default service account.
 ```
 
-* Identity used to trigger the Task Queue function needs `cloudfunctions.functions.invoke` permission.
+* Identity used to trigger the Task Queue function needs `run.routes.invoke` permission.
   * In our sample, this is the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts).
 
 ```
 gcloud functions add-iam-policy-binding backupapod \
   --region=us-central1 \
   --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
-  --role=roles/cloudfunctions.invoker
+  --role=roles/run.invoker
 ```
