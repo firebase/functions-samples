@@ -8,9 +8,8 @@
     "paypal-rest-sdk": "^1.8.1"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
+    "eslint": "^8.38.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-promise": "^4.3.1",
     "jshint": "^2.13.5"
   },
   "scripts": {

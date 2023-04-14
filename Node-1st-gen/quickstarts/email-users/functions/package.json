@@ -7,8 +7,7 @@
     "nodemailer": "^6.8.0"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "eslint-plugin-promise": "^4.3.1"
+    "eslint": "^8.38.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
