@@ -1,0 +1,4 @@
+firebase-functions
+firebase-admin
+deepdiff
+requests
