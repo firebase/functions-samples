@@ -1,0 +1,8 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /messages/{message} {
+      // Allow authenticated users to read/write the messages collection
+      allow read, write: if request.auth != null;
+    }
+  }
+}
