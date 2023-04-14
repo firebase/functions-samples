@@ -15,7 +15,7 @@
   "dependencies": {
     "@okta/jwt-verifier": "^1.0.0",
     "@okta/oidc-middleware": "^4.0.1",
-    "compile": "cp ../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json",
+    "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

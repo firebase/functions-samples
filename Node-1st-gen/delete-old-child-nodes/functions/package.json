@@ -9,7 +9,7 @@
     "node": "16"
   },
   "scripts": {
-    "compile": "cp ../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
+    "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "private": true
 }

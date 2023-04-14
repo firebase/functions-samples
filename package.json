@@ -6,14 +6,14 @@
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "pnpm -r install",
-    "lint": "pnpm -r --workspace-concurrency=4 --aggregate-output run lint --fix",
+    "lint": "pnpm -r --workspace-concurrency=4 --aggregate-output run lint",
     "test": "pnpm -r --workspace-concurrency=4 --aggregate-output run test ",
     "compile": "pnpm -r --workspace-concurrency=4 --aggregate-output run compile "
   },
   "devDependencies": {
     "eslint": "^8.38.0",
-    "pnpm": "^7.14.2",
-    "typescript": "^4.8.4"
+    "pnpm": "^8.2.0",
+    "typescript": "^5.0.4"
   },
   "pnpm": {
     "peerDependencyRules": {
