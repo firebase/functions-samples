@@ -22,6 +22,7 @@ from firebase_functions import scheduler_fn
 # The Firebase Admin SDK to delete users.
 import firebase_admin
 from firebase_admin import auth
+
 firebase_admin.initialize_app()
 # [END import]
 
@@ -34,7 +35,11 @@ def accountcleanup(event: scheduler_fn.ScheduledEvent) -> None:
     """Delete users who've been inactive for 30 days or more."""
     user_page: auth.ListUsersPage = auth.list_users()
     while user_page is not None:
-        inactive_uids = [user.uid for user in user_page.users if is_inactive(user, timedelta(days=30))]
+        inactive_uids = [
+            user.uid
+            for user in user_page.users
+            if is_inactive(user, timedelta(days=30))
+        ]
         auth.delete_users(inactive_uids)
         user_page = user_page.get_next_page()
 # [END accountcleanup]
