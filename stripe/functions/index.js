@@ -145,11 +145,11 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   await stripe.customers.del(customer.customer_id);
   // Delete the customers payments & payment methods in firestore.
   const batch = admin.firestore().batch();
-  const paymetsMethodsSnapshot = await dbRef
+  const paymentsMethodsSnapshot = await dbRef
     .doc(user.uid)
     .collection('payment_methods')
     .get();
-  paymetsMethodsSnapshot.forEach((snap) => batch.delete(snap.ref));
+  paymentsMethodsSnapshot.forEach((snap) => batch.delete(snap.ref));
   const paymentsSnapshot = await dbRef
     .doc(user.uid)
     .collection('payments')
@@ -168,7 +168,7 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
  * alerts, if you've opted into receiving them.
  */
 
-// [START reporterror]
+// [START reportError]
 
 function reportError(err, context = {}) {
   // This is the name of the log stream that will receive the log
@@ -206,7 +206,7 @@ function reportError(err, context = {}) {
   });
 }
 
-// [END reporterror]
+// [END reportError]
 
 /**
  * Sanitize the error message for the user.
