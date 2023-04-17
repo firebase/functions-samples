@@ -17,7 +17,7 @@
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 from firebase_functions import firestore_fn, https_fn
 
-# The Firebase Admin SDK to access the Firebase Realtime Database.
+# The Firebase Admin SDK to access Cloud Firestore.
 from firebase_admin import initialize_app, firestore
 import google.cloud.firestore
 
@@ -26,8 +26,8 @@ app = initialize_app()
 
 
 # [START addMessage]
-# Take the text parameter passed to this HTTP endpoint and insert it into the
-# Realtime Database under the path /messages/{pushId}/original
+# Take the text parameter passed to this HTTP endpoint and insert it into
+# a new document in the messages collection.
 # [START addMessageTrigger]
 @https_fn.on_request()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
