@@ -64,7 +64,7 @@ def makeuppercase(
         # No "original" field, so do nothing.
         return
 
-    # Use the Admin SDK to set an "uppercase" sibling.
+    # Set the "uppercase" field.
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     event.data.reference.update({"uppercase": upper})
@@ -95,7 +95,7 @@ def makeuppercase2(
         # No "original" field, so do nothing.
         return
 
-    # Use the Admin SDK to set an "uppercase" sibling.
+    # Set the "uppercase" field.
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     event.data.after.reference.update({"uppercase": upper})
