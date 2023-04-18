@@ -53,7 +53,6 @@ def is_inactive(user: auth.UserRecord, inactive_limit: timedelta) -> bool:
     elif user.user_metadata.creation_timestamp is not None:
         last_seen_timestamp = user.user_metadata.creation_timestamp / 1000
     else:
-        # Impossible?
         raise ValueError
     last_seen = datetime.fromtimestamp(last_seen_timestamp)
     inactive_time = datetime.now() - last_seen
