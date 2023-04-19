@@ -1,3 +1,2 @@
 firebase-functions
-firebase-admin
 requests
