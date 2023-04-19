@@ -13,11 +13,9 @@
 # limitations under the License.
 
 # [START all]
-import os
-
 # [START import]
 # The Cloud Functions for Firebase SDK to set up triggers and logging.
-from firebase_functions import test_lab_fn
+from firebase_functions import test_lab_fn, params
 
 # The requests library to send web requests to Slack.
 import requests
@@ -25,10 +23,11 @@ import requests
 
 
 # [START postToSlack]
-def post_to_slack(title: str, details: str) -> any:
+def post_to_slack(title: str, details: str,
+                  slack_webhook_url: params.SecretParam) -> requests.Response:
     """Posts a message to Slack via a Webhook."""
-    response = requests.post(
-        url=os.environ["SLACK_WEBHOOK_URL"],
+    return requests.post(
+        slack_webhook_url.value(),
         json={
             "blocks": [
                 {
@@ -51,23 +50,32 @@ def post_to_slack(title: str, details: str) -> any:
             ],
         },
     )
-    return response.json()
 # [END postToSlack]
 
 
 # [START getSlackmoji]
-def slackmoji(status: str) -> str:
+def slackmoji(
+        status: test_lab_fn.TestState | test_lab_fn.OutcomeSummary) -> str:
     """Convert a test result status into a Slackmoji."""
-    status_slackmoji: dict[str, str] = {
-        "SUCCESS": ":tada:",
-        "FAILURE": ":broken_heart:",
-        "INCONCLUSIVE": ":question:",
-        "SKIPPED": ":arrow_heading_down:",
-        "VALIDATING": ":thought_balloon:",
-        "PENDING": ":soon:",
-        "FINISHED": ":white_check_mark:",
-        "ERROR": ":red_circle:",
-        "INVALID": ":large_orange_diamond:",
+    status_slackmoji: dict[test_lab_fn.TestState | test_lab_fn.OutcomeSummary, str] = {
+        test_lab_fn.OutcomeSummary.SUCCESS:
+            ":tada:",
+        test_lab_fn.OutcomeSummary.FAILURE:
+            ":broken_heart:",
+        test_lab_fn.OutcomeSummary.INCONCLUSIVE:
+            ":question:",
+        test_lab_fn.OutcomeSummary.SKIPPED:
+            ":arrow_heading_down:",
+        test_lab_fn.TestState.VALIDATING:
+            ":thought_balloon:",
+        test_lab_fn.TestState.PENDING:
+            ":soon:",
+        test_lab_fn.TestState.FINISHED:
+            ":white_check_mark:",
+        test_lab_fn.TestState.ERROR:
+            ":red_circle:",
+        test_lab_fn.TestState.INVALID:
+            ":large_orange_diamond:",
     }
     return status_slackmoji[status] if status in status_slackmoji else ""
 # [END getSlackmoji]
@@ -90,10 +98,11 @@ def posttestresultstoslack(
     details = (f"Status: *{state}* {slackmoji(state)}\n"
                f"Outcome: *{outcome_summary}* {slackmoji(outcome_summary)}")
 
-    # Post the message to slack
-    response = post_to_slack(title, details)
+    # Post the message to Slack
+    slack_webhook_url = params.SecretParam("SLACK_WEBHOOK_URL")
+    response = post_to_slack(title, details, slack_webhook_url)
 
     # Log the response
-    print(response)
+    print(response.status_code, response.text)
 # [END posttestresultstoslack]
 # [END all]
