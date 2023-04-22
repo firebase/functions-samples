@@ -36,7 +36,7 @@ def validatenewuser(
     # [START v2domainHttpsError]
     # Only users of a specific domain can sign up.
     if user.email is None or "@acme.com" not in user.email:
-        # Return None so that Firebase Auth rejects the account creation.
+        # Raise HttpsError so that Firebase Auth rejects the account creation.
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
             message="Unauthorized email",
@@ -67,7 +67,7 @@ def checkforban(
     # [START v2bannedHttpsError]
     # Checking that the document exists for the email address.
     if doc.exists:
-        # Throw an HttpsError so that Firebase Auth rejects the account sign in.
+        # Raise an HttpsError so that Firebase Auth rejects the account sign in.
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
             message="Unauthorized email",
