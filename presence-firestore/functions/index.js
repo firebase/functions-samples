@@ -24,16 +24,20 @@ admin.initializeApp();
 // detects authentication from the environment.
 const firestore = admin.firestore();
 
-// Create a new function which is triggered on changes to /status/{uid}
+// Create a new function which is triggered on changes to /status/{uid}/sessions/{sessionId}
 // Note: This is a Realtime Database trigger, *not* Firestore.
-exports.onUserStatusChanged = functions.database.ref('/status/{uid}').onUpdate(
+exports.onUserStatusChanged = functions.database.ref('/status/{uid}/sessions/{sessionId}').onUpdate(
     async (change, context) => {
       // Get the data written to Realtime Database
       const eventStatus = change.after.val();
 
+      const sessionId = context.params.sessionId;
+
       // Then use other event data to create a reference to the
       // corresponding Firestore document.
-      const userStatusFirestoreRef = firestore.doc(`status/${context.params.uid}`);
+      const userFirestoreRef = firestore.doc(`status/${context.params.uid}`);
+      const userSessionCollectionRef = userFirestoreRef.collection('sessions');
+      const sessionStatusFirestoreRef = userSessionCollectionRef.doc(sessionId);
 
       // It is likely that the Realtime Database change that triggered
       // this event has already been overwritten by a fast change in
@@ -47,11 +51,20 @@ exports.onUserStatusChanged = functions.database.ref('/status/{uid}').onUpdate(
       if (status.last_changed > eventStatus.last_changed) {
         return null;
       }
-
       // Otherwise, we convert the last_changed field to a Date
       eventStatus.last_changed = new Date(eventStatus.last_changed);
 
-      // ... and write it to Firestore.
-      return userStatusFirestoreRef.set(eventStatus);
+      if(status.state === 'offline') {
+        // ... and write it to Firestore.
+        await sessionStatusFirestoreRef.delete();
+
+        if ((await userSessionCollectionRef.get()).empty) {
+          return userFirestoreRef.delete();
+        }
+      } else { // TODO(mtewani): Do we really need to handle this?
+        await userFirestoreRef.set({ uid: context.params.uid });
+        return sessionStatusFirestoreRef.set(status);
+      }
+      return null;
     });
 // [END presence_sync_function]
