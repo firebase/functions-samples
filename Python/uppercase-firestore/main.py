@@ -26,11 +26,11 @@ app = initialize_app()
 
 
 # [START addMessage]
-# Take the text parameter passed to this HTTP endpoint and insert it into
-# a new document in the messages collection.
 # [START addMessageTrigger]
 @https_fn.on_request()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
+    """Take the text parameter passed to this HTTP endpoint and insert it into
+    a new document in the messages collection."""
 # [END addMessageTrigger]
     # Grab the text parameter.
     original = req.args.get("text")
@@ -51,12 +51,13 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
 
 # [START makeUppercase]
-# Listens for new documents to be added to /messages. If the document has an
-# "original" field, creates an "uppercase" field containg the contents of
-# "original" in upper case.
 @firestore_fn.on_document_created(document="messages/{pushId}")
 def makeuppercase(
         event: firestore_fn.Event[firestore_fn.DocumentSnapshot]) -> None:
+    """Listens for new documents to be added to /messages. If the document has
+    an "original" field, creates an "uppercase" field containg the contents of
+    "original" in upper case."""
+
     # Get the value of "original" if it exists.
     try:
         original = event.data.get("original")
@@ -72,14 +73,15 @@ def makeuppercase(
 
 
 # [START makeUppercase2]
-# Listens for new documents to be added to /messages. If the document has an
-# "original" field, creates an "uppercase" field containg the contents of
-# "original" in upper case.
 @firestore_fn.on_document_written(document="messages/{pushId}")
 def makeuppercase2(
     event: firestore_fn.Event[
         firestore_fn.Change[firestore_fn.DocumentSnapshot | None]]
 ) -> None:
+    """Listens for new documents to be added to /messages. If the document has
+    an "original" field, creates an "uppercase" field containg the contents of
+    "original" in upper case."""
+
     # Only edit data when it is first created.
     if event.data.before is not None:
         return

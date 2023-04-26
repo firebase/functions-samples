@@ -27,12 +27,11 @@ app = initialize_app()
 
 
 # [START addMessage]
-# Take the text parameter passed to this HTTP endpoint and insert it into the
-# Realtime Database under the path /messages/:pushId/original
 # [START addMessageTrigger]
 @https_fn.on_request()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
-    # ...
+    """Take the text parameter passed to this HTTP endpoint and insert it into
+    the Realtime Database under the path /messages/{pushId}/original"""
 # [END addMessageTrigger]
     # Grab the text parameter.
     original = req.args.get("text")
@@ -60,10 +59,11 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
 
 # [START makeUppercase]
-# Listens for new messages added to /messages/{pushId}/original and creates an
-# uppercase version of the message to /messages/{pushId}/uppercase
 @db_fn.on_value_created(reference="/messages/{pushId}/original")
 def makeuppercase(event: db_fn.Event[object]) -> None:
+    """Listens for new messages added to /messages/{pushId}/original and
+    creates an uppercase version of the message to /messages/{pushId}/uppercase"""
+
     # Grab the value that was written to the Realtime Database.
     original = event.data
     if not hasattr(original, "upper"):
@@ -78,10 +78,11 @@ def makeuppercase(event: db_fn.Event[object]) -> None:
 
 
 # [START makeUppercase2]
-# Listens for new messages added to /messages/{pushId}/original and creates an
-# uppercase version of the message to /messages/{pushId}/uppercase
 @db_fn.on_value_written(reference="/messages/{pushId}/original")
 def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
+    """Listens for new messages added to /messages/{pushId}/original and
+    creates an uppercase version of the message to /messages/{pushId}/uppercase"""
+
     # Only edit data when it is first created.
     if event.data.before is not None:
         return

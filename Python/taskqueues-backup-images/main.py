@@ -102,6 +102,7 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
 # [START v2EnqueueTasks]
 @https_fn.on_request()
 def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
+    """Adds backup tasks to a Cloud Tasks queue."""
     tasks_client = tasks_v2.CloudTasksClient()
     task_queue = tasks_client.queue_path(params.PROJECT_ID.value(),
                                          SupportedRegion.US_CENTRAL1,

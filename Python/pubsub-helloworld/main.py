@@ -20,13 +20,11 @@ from firebase_functions import pubsub_fn
 
 
 # [START helloWorld]
-# Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
-# topic.
 # [START trigger]
 @pubsub_fn.on_message_published(topic="topic-name")
 def hellopubsub(
         event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
-    # ...
+    """Log a message using data published to a Pub/Sub topic."""
 # [END trigger]
     # [START readBase64]
     # Decode the PubSub message body.
@@ -38,11 +36,10 @@ def hellopubsub(
 # [END helloWorld]
 
 
-# Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
-# topic as JSON.
 @pubsub_fn.on_message_published(topic="another-topic-name")
 def hellopubsubjson(
     event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
+    """Log a message using data published as JSON to a Pub/Sub topic."""
     # [START readJson]
     # Get the `name` attribute of the PubSub message JSON body.
     try:
@@ -60,11 +57,10 @@ def hellopubsubjson(
     print(f"Hello, {name}")
 
 
-# Cloud Function to be triggered by Pub/Sub that logs a message using the data attributes
-# published to the topic.
 @pubsub_fn.on_message_published(topic="yet-another-topic-name")
 def hellopubsubattributes(
     event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
+    """Log a message using data published to a Pub/Sub topic as an attribute."""
     # [START readAttributes]
     # Get the `name` attribute of the message.
     if "name" not in event.data.message.attributes:

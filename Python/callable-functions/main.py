@@ -23,10 +23,9 @@ initialize_app()
 
 # [START v2allAdd]
 # [START v2addFunctionTrigger]
-# Adds two numbers to each other.
 @https_fn.on_call()
 def addnumbers(req: https_fn.CallableRequest) -> Any:
-    # ...
+    """Adds two numbers to each other."""
 # [END v2addFunctionTrigger]
     # [START v2addHttpsError]
     # Checking that attributes are present and are numbers.
@@ -59,12 +58,11 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
 # [END v2allAdd]
 
 
-# Saves a message to the Firebase Realtime Database but sanitizes the
-# text by removing swearwords.
 # [START v2messageFunctionTrigger]
 @https_fn.on_call()
 def addmessage(req: https_fn.CallableRequest) -> Any:
-    # ...
+    """Saves a message to the Firebase Realtime Database but sanitizes the text
+    by removing swear words."""
 # [END v2messageFunctionTrigger]
     try:
         # [START v2readMessageData]

@@ -42,7 +42,7 @@ from firebase_functions import https_fn, options
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*",
                                               cors_methods=["get", "post"]))
 def date(req: https_fn.Request) -> https_fn.Response:
-    # ...
+    """Get the server's local date and time."""
 # [END usingMiddleware]
 # [END trigger]
     # [START sendError]

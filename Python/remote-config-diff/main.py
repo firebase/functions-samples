@@ -30,6 +30,8 @@ import requests
 @remote_config_fn.on_config_updated()
 def showconfigdiff(
         event: remote_config_fn.CloudEvent[remote_config_fn.ConfigUpdateData]) -> None:
+    """Log the diff of the most recent Remote Config template change."""
+
     # Obtain an access token from the Admin SDK
     access_token = app.credential.get_access_token().access_token
 

@@ -31,13 +31,12 @@ from firebase_functions import storage_fn
 
 
 # [START storageGenerateThumbnail]
-# When an image is uploaded in the Storage bucket,
-# generate a thumbnail automatically using Pillow.
 # [START storageGenerateThumbnailTrigger]
 @storage_fn.on_object_finalized()
 def generatethumbnail(
         event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
-    # ...
+    """When an image is uploaded in the Storage bucket, generate a thumbnail
+    automatically using Pillow."""
 # [END storageGenerateThumbnailTrigger]
 
     # [START storageEventAttributes]

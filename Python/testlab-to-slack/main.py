@@ -86,6 +86,8 @@ def slackmoji(
 def posttestresultstoslack(
     event: test_lab_fn.CloudEvent[test_lab_fn.TestMatrixCompletedData],
 ) -> None:
+    """Posts a test matrix result to Slack."""
+
     # Obtain Test Matrix properties from the CloudEvent
     test_matrix_id = event.data.test_matrix_id
     state = event.data.state
