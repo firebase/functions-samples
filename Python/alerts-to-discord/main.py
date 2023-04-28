@@ -72,7 +72,7 @@ def postfatalissuetodiscord(
 {subtitle}
 
 id: `{id}`
-"""
+""".strip()
     # [END v2CrashlyticsEventPayload]
 
     try:
@@ -105,7 +105,7 @@ def postnewudidtodiscord(
 📱 New iOS device registered by {tester_name} <{tester_email}> for {app_id}
 
 UDID **{device_id}** for {device_model}
-"""
+""".strip()
     # [END v2AppDistributionEventPayload]
 
     try:
@@ -159,7 +159,7 @@ Violation: {violation_value} {violation_unit}
 Number of samples checked: {num_samples}
 
 **Investigate more:** {investigate_uri}
-"""
+""".strip()
     # [END v2PerformanceEventPayload]
 
     try:
