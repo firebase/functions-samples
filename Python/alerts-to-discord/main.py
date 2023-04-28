@@ -32,7 +32,7 @@ def post_message_to_discord(bot_name: str,
 
     Params:
         bot_name: The bot username to display
-        message_body:The message to post (Discord Markdown)
+        message_body: The message to post (Discord Markdown)
     """
     webhook_url = params.SecretParam("DISCORD_WEBHOOK_URL").value()
     if webhook_url == "":
@@ -57,11 +57,11 @@ def post_message_to_discord(bot_name: str,
 # [START v2CrashlyticsAlertTrigger]
 @crashlytics_fn.on_new_fatal_issue_published()
 def postfatalissuetodiscord(
-    event: crashlytics_fn.CrashlyticsNewFatalIssueEvent,) -> None:
+    event: crashlytics_fn.CrashlyticsNewFatalIssueEvent) -> None:
     """Publishes a message to Discord whenever a new Crashlytics fatal issue occurs."""
 # [END v2CrashlyticsAlertTrigger]
     # [START v2CrashlyticsEventPayload]
-    # Construct a helpful message to send to Discord
+    # Construct a helpful message to send to Discord.
     app_id = event.app_id
     id, title, subtitle, app_version = event.data.payload.issue
     message = f"""
@@ -79,7 +79,7 @@ id: `{id}`
         # [START v2SendToDiscord]
         response = post_message_to_discord("Crashlytics Bot", message)
         if response.ok:
-            print(f"Posted fatal Crashlytics alert {id} for {app_id} to Discord")
+            print(f"Posted fatal Crashlytics alert {id} for {app_id} to Discord.")
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
@@ -128,7 +128,7 @@ UDID **{device_id}** for {device_model}
 # [START v2PerformanceAlertTrigger]
 @performance_fn.on_threshold_alert_published()
 def postperformancealerttodiscord(
-    event: performance_fn.PerformanceThresholdAlertEvent,) -> None:
+    event: performance_fn.PerformanceThresholdAlertEvent) -> None:
     """Publishes a message to Discord whenever a performance threshold alert is fired."""
 # [END v2PerformanceAlertTrigger]
     # [START v2PerformanceEventPayload]
@@ -155,10 +155,10 @@ Alert condition: {threshold_value} {threshold_unit}
 Percentile (if applicable): {condition_percentile}
 App version (if applicable): {app_version}
 
-Violation: {violation_value} ${violation_unit}
-Number of samples checked: ${num_samples}
+Violation: {violation_value} {violation_unit}
+Number of samples checked: {num_samples}
 
-**Investigate more:** ${investigate_uri}
+**Investigate more:** {investigate_uri}
 """
     # [END v2PerformanceEventPayload]
 
