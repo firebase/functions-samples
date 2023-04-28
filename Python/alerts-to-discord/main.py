@@ -26,15 +26,16 @@ from firebase_functions.alerts import (
 import requests
 
 
-def post_message_to_discord(bot_name: str,
-                            message_body: str) -> requests.Response:
+def post_message_to_discord(
+        bot_name: str, message_body: str,
+        webhook_url_secret: params.SecretParam) -> requests.Response:
     """Posts a message to Discord with Discord's Webhook API.
 
     Params:
         bot_name: The bot username to display
         message_body: The message to post (Discord Markdown)
     """
-    webhook_url = params.SecretParam("DISCORD_WEBHOOK_URL").value()
+    webhook_url = webhook_url_secret.value()
     if webhook_url == "":
         raise EnvironmentError(
             "No webhook URL found. Set the Discord Webhook URL before deploying. "
@@ -55,9 +56,9 @@ def post_message_to_discord(bot_name: str,
 
 # [START v2Alerts]
 # [START v2CrashlyticsAlertTrigger]
-@crashlytics_fn.on_new_fatal_issue_published()
+@crashlytics_fn.on_new_fatal_issue_published(secrets=["DISCORD_WEBHOOK_URL"])
 def postfatalissuetodiscord(
-    event: crashlytics_fn.CrashlyticsNewFatalIssueEvent) -> None:
+        event: crashlytics_fn.CrashlyticsNewFatalIssueEvent) -> None:
     """Publishes a message to Discord whenever a new Crashlytics fatal issue occurs."""
 # [END v2CrashlyticsAlertTrigger]
     # [START v2CrashlyticsEventPayload]
@@ -77,7 +78,8 @@ id: `{id}`
 
     try:
         # [START v2SendToDiscord]
-        response = post_message_to_discord("Crashlytics Bot", message)
+        response = post_message_to_discord("Crashlytics Bot", message,
+                                           params.SecretParam("DISCORD_WEBHOOK_URL"))
         if response.ok:
             print(f"Posted fatal Crashlytics alert {id} for {app_id} to Discord.")
             pprint.pp(event.data.payload)
@@ -92,7 +94,7 @@ id: `{id}`
 
 
 # [START v2AppDistributionAlertTrigger]
-@app_distribution_fn.on_new_tester_ios_device_published()
+@app_distribution_fn.on_new_tester_ios_device_published(secrets=["DISCORD_WEBHOOK_URL"])
 def postnewudidtodiscord(
         event: app_distribution_fn.NewTesterDeviceEvent) -> None:
     """Publishes a message to Discord whenever someone registers a new iOS test device."""
@@ -110,7 +112,8 @@ UDID **{device_id}** for {device_model}
 
     try:
         # [START v2SendNewTesterIosDeviceToDiscord]
-        response = post_message_to_discord("App Distro Bot", message)
+        response = post_message_to_discord("App Distro Bot", message,
+                                           params.SecretParam("DISCORD_WEBHOOK_URL"))
         if response.ok:
             print(f"Posted iOS device registration alert for {tester_email} to Discord.")
             pprint.pp(event.data.payload)
@@ -122,13 +125,12 @@ UDID **{device_id}** for {device_model}
             f"Unable to post iOS device registration alert for {tester_email} to Discord.",
             error,
         )
-# [END v2Alerts]
 
 
 # [START v2PerformanceAlertTrigger]
-@performance_fn.on_threshold_alert_published()
+@performance_fn.on_threshold_alert_published(secrets=["DISCORD_WEBHOOK_URL"])
 def postperformancealerttodiscord(
-    event: performance_fn.PerformanceThresholdAlertEvent) -> None:
+        event: performance_fn.PerformanceThresholdAlertEvent) -> None:
     """Publishes a message to Discord whenever a performance threshold alert is fired."""
 # [END v2PerformanceAlertTrigger]
     # [START v2PerformanceEventPayload]
@@ -164,7 +166,8 @@ Number of samples checked: {num_samples}
 
     try:
         # [START v2SendPerformanceAlertToDiscord]
-        response = post_message_to_discord("App Performance Bot", message)
+        response = post_message_to_discord("App Performance Bot", message,
+                                           params.SecretParam("DISCORD_WEBHOOK_URL"))
         if response.ok:
             print(f"Posted Firebase Performance alert {event_name} to Discord.")
             pprint.pp(event.data.payload)
@@ -176,3 +179,4 @@ Number of samples checked: {num_samples}
             f"Unable to post Firebase Performance alert {event_name} to Discord.",
             error,
         )
+# [END v2Alerts]
