@@ -23,11 +23,12 @@ import requests
 
 
 # [START postToSlack]
-def post_to_slack(title: str, details: str,
-                  slack_webhook_url: params.SecretParam) -> requests.Response:
+SLACK_WEBHOOK_URL = params.SecretParam("SLACK_WEBHOOK_URL")
+
+def post_to_slack(title: str, details: str) -> requests.Response:
     """Posts a message to Slack via a Webhook."""
     return requests.post(
-        slack_webhook_url.value(),
+        SLACK_WEBHOOK_URL.value(),
         json={
             "blocks": [
                 {
@@ -101,8 +102,7 @@ def posttestresultstoslack(
                f"Outcome: *{outcome_summary}* {slackmoji(outcome_summary)}")
 
     # Post the message to Slack
-    slack_webhook_url = params.SecretParam("SLACK_WEBHOOK_URL")
-    response = post_to_slack(title, details, slack_webhook_url)
+    response = post_to_slack(title, details)
 
     # Log the response
     print(response.status_code, response.text)
