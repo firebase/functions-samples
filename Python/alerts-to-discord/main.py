@@ -25,17 +25,18 @@ from firebase_functions.alerts import (
 
 import requests
 
+DISCORD_WEBHOOK_URL = params.SecretParam("DISCORD_WEBHOOK_URL")
 
-def post_message_to_discord(
-        bot_name: str, message_body: str,
-        webhook_url_secret: params.SecretParam) -> requests.Response:
+
+def post_message_to_discord(bot_name: str,
+                            message_body: str) -> requests.Response:
     """Posts a message to Discord with Discord's Webhook API.
 
     Params:
         bot_name: The bot username to display
         message_body: The message to post (Discord Markdown)
     """
-    webhook_url = webhook_url_secret.value()
+    webhook_url = DISCORD_WEBHOOK_URL.value()
     if webhook_url == "":
         raise EnvironmentError(
             "No webhook URL found. Set the Discord Webhook URL before deploying. "
@@ -78,10 +79,11 @@ ID: `{issue.id}`
 
     try:
         # [START v2SendToDiscord]
-        response = post_message_to_discord("Crashlytics Bot", message,
-                                           params.SecretParam("DISCORD_WEBHOOK_URL"))
+        response = post_message_to_discord("Crashlytics Bot", message)
         if response.ok:
-            print(f"Posted fatal Crashlytics alert {issue.id} for {app_id} to Discord.")
+            print(
+                f"Posted fatal Crashlytics alert {issue.id} for {app_id} to Discord."
+            )
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
@@ -94,7 +96,8 @@ ID: `{issue.id}`
 
 
 # [START v2AppDistributionAlertTrigger]
-@app_distribution_fn.on_new_tester_ios_device_published(secrets=["DISCORD_WEBHOOK_URL"])
+@app_distribution_fn.on_new_tester_ios_device_published(
+    secrets=["DISCORD_WEBHOOK_URL"])
 def postnewudidtodiscord(
         event: app_distribution_fn.NewTesterDeviceEvent) -> None:
     """Publishes a message to Discord whenever someone registers a new iOS test device."""
@@ -112,10 +115,11 @@ UDID **{app_dist.device_id}** for {app_dist.device_model}
 
     try:
         # [START v2SendNewTesterIosDeviceToDiscord]
-        response = post_message_to_discord("App Distro Bot", message,
-                                           params.SecretParam("DISCORD_WEBHOOK_URL"))
+        response = post_message_to_discord("App Distro Bot", message)
         if response.ok:
-            print(f"Posted iOS device registration alert for {app_dist.tester_email} to Discord.")
+            print(
+                f"Posted iOS device registration alert for {app_dist.tester_email} to Discord."
+            )
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
@@ -154,10 +158,11 @@ Number of samples checked: {perf.num_samples}
 
     try:
         # [START v2SendPerformanceAlertToDiscord]
-        response = post_message_to_discord("App Performance Bot", message,
-                                           params.SecretParam("DISCORD_WEBHOOK_URL"))
+        response = post_message_to_discord("App Performance Bot", message)
         if response.ok:
-            print(f"Posted Firebase Performance alert {perf.event_name} to Discord.")
+            print(
+                f"Posted Firebase Performance alert {perf.event_name} to Discord."
+            )
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
