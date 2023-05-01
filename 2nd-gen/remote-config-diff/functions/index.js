@@ -67,7 +67,6 @@ exports.showconfigdiff = onConfigUpdated(async (event) => {
     logger.log(diff);
   } catch (error) {
     logger.error(error);
-    return null;
   }
 });
 // [END showconfigdiff]
