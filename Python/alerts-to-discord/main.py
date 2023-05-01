@@ -56,8 +56,8 @@ def post_message_to_discord(bot_name: str, message_body: str,
 
 # [START v2Alerts]
 # [START v2CrashlyticsAlertTrigger]
-@crashlytics_fn.on_new_fatal_issue_published(secrets=[DISCORD_WEBHOOK_URL])
-def postfatalissuetodiscord(
+@crashlytics_fn.on_new_fatal_issue_published(secrets=["DISCORD_WEBHOOK_URL"])
+def post_fatal_issue_to_discord(
         event: crashlytics_fn.CrashlyticsNewFatalIssueEvent) -> None:
     """Publishes a message to Discord whenever a new Crashlytics fatal issue occurs."""
 # [END v2CrashlyticsAlertTrigger]
@@ -97,8 +97,8 @@ ID: `{issue.id}`
 
 # [START v2AppDistributionAlertTrigger]
 @app_distribution_fn.on_new_tester_ios_device_published(
-    secrets=[DISCORD_WEBHOOK_URL])
-def postnewudidtodiscord(
+    secrets=["DISCORD_WEBHOOK_URL"])
+def post_new_udid_to_discord(
         event: app_distribution_fn.NewTesterDeviceEvent) -> None:
     """Publishes a message to Discord whenever someone registers a new iOS test device."""
 # [END v2AppDistributionAlertTrigger]
@@ -133,8 +133,8 @@ UDID **{app_dist.device_id}** for {app_dist.device_model}
 
 
 # [START v2PerformanceAlertTrigger]
-@performance_fn.on_threshold_alert_published(secrets=[DISCORD_WEBHOOK_URL])
-def postperformancealerttodiscord(
+@performance_fn.on_threshold_alert_published(secrets=["DISCORD_WEBHOOK_URL"])
+def post_performance_alert_to_discord(
         event: performance_fn.PerformanceThresholdAlertEvent) -> None:
     """Publishes a message to Discord whenever a performance threshold alert is fired."""
 # [END v2PerformanceAlertTrigger]
