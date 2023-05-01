@@ -39,22 +39,19 @@ def showconfigdiff(
     current_version = int(event.data.version_number)
 
     # Figure out the differences between templates
-    current_template = get_template(current_version, app.project_id, access_token)
-    previous_template = get_template(current_version - 1, app.project_id, access_token)
+    remote_config_api = ("https://firebaseremoteconfig.googleapis.com/v1/"
+                         f"projects/{app.project_id}/remoteConfig")
+    current_template = requests.get(
+        remote_config_api,
+        params={"versionNumber": current_version},
+        headers={"Authorization": f"Bearer {access_token}"})
+    previous_template = requests.get(
+        remote_config_api,
+        params={"versionNumber": current_version - 1},
+        headers={"Authorization": f"Bearer {access_token}"})
     diff = deepdiff.DeepDiff(previous_template, current_template)
 
     # Log the difference
     print(diff.pretty())
 # [END showconfigdiff]
-
-
-# [START getTemplate]
-def get_template(version: int, project_id: str, access_token: str) -> any:
-    """Get a specific version of a Remote Config template."""
-    response = requests.get(
-        f"https://firebaseremoteconfig.googleapis.com/v1/projects/{project_id}/remoteConfig",
-        params={"versionNumber": f"{version}"},
-        headers={"Authorization": f"Bearer {access_token}"})
-    return response.json()
-# [END getTemplate]
 # [END all]
