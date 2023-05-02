@@ -70,8 +70,10 @@ def setdefaultname(
 ) -> identity_fn.BeforeCreateResponse | None:
     return identity_fn.BeforeCreateResponse(
         # If no display name is provided, set it to "Guest".
-        display_name=(event.data.display_name if event.data.
-                      display_name is not None else "Guest"))
+        display_name=event.data.display_name
+        if event.data.display_name is not None
+        else "Guest"
+    )
 # [END setdefaultname]
 
 
@@ -152,7 +154,7 @@ def setemployeeid(
     if (event.credential is not None and
             event.credential.provider_id == "saml.my-provider-id"):
         return identity_fn.BeforeCreateResponse(
-            custom_claims={"eid": event.credential.claims["employeeid"]},)
+            custom_claims={"eid": event.credential.claims["employeeid"]})
 
 
 @identity_fn.before_user_signed_in()
@@ -165,7 +167,8 @@ def copyclaimstosession(
             session_claims={
                 "role": event.credential.claims["role"],
                 "groups": event.credential.claims["groups"],
-            })
+            }
+        )
 # [END customclaims]
 
 
@@ -175,7 +178,8 @@ def logip(
     event: identity_fn.AuthBlockingEvent,
 ) -> identity_fn.BeforeSignInResponse | None:
     return identity_fn.BeforeSignInResponse(
-        session_claims={"signInIpAddress": event.ip_address})
+        session_claims={"signInIpAddress": event.ip_address}
+    )
 # [END logip]
 
 
@@ -197,7 +201,6 @@ def sanitizeprofilephoto(
         if score > THRESHOLD:
             return identity_fn.BeforeCreateResponse(photo_url=PLACEHOLDER_URL)
 # [END sanitizeprofilephoto]
-
 
 
 # [START v2CheckForBan]
