@@ -94,8 +94,8 @@ exports.getInspirationalQuote = onRequest(async (request, response) => {
 // [END logsKitchenSink]
 
 // [START customLogWrite]
-exports.appHasARegression = onRegressionAlertPublished(async (event) => {
-  await write({
+exports.appHasARegression = onRegressionAlertPublished((event) => {
+  write({
     // write() lets you set additional severity levels
     // beyond the built-in logger functions
     severity: "EMERGENCY",
