@@ -70,6 +70,7 @@ def makeuppercase(
     upper = original.upper()
     event.data.reference.update({"uppercase": upper})
 # [END makeUppercase]
+# [END all]
 
 
 # [START makeUppercase2]
@@ -102,4 +103,3 @@ def makeuppercase2(
     upper = original.upper()
     event.data.after.reference.update({"uppercase": upper})
 # [END makeUppercase2]
-# [END all]
