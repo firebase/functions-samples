@@ -33,7 +33,6 @@ packages:
   - ffmpeg-convert-audio/functions
   - fulltext-search-firestore/functions
   - fulltext-search/functions
-  - generate-thumbnail/functions
   - github-to-slack/functions
   - google-sheet-sync/functions
   - image-maker/functions
