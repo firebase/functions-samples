@@ -31,7 +31,7 @@ const sharp = require('sharp');
  * generate a thumbnail automatically using sharp.
  */
 // [START generateThumbnailTrigger]
-exports.generateThumbnail = functions.storage.object().onFinalize(async (object) => {
+exports.firstGenGenerateThumbnail = functions.storage.object().onFinalize(async (object) => {
 // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
@@ -77,7 +77,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   await bucket.file(thumbFilePath).save(thumbnailBuffer, {
     metadata: metadata,
   });
-  functions.logger.log("Thumbnail uploaded!");
+  return functions.logger.log("Thumbnail uploaded!");
   // [END thumbnailGeneration]
 });
 // [END generateThumbnail]

@@ -84,7 +84,7 @@ exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
   await bucket.file(thumbFilePath).save(thumbnailBuffer, {
     metadata: metadata,
   });
-  logger.log("Thumbnail uploaded!");
+  return logger.log("Thumbnail uploaded!");
   // [END v2storageThumbnailGeneration]
 });
 // [END v2storageGenerateThumbnail]
