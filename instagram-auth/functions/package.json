@@ -3,8 +3,8 @@
   "description": "Authenticate with Instagram Firebase Functions sample",
   "dependencies": {
     "cookie-parser": "^1.4.6",
-    "firebase-admin": "^11.5.0",
-    "firebase-functions": "^4.2.1",
+    "firebase-admin": "^11.7.0",
+    "firebase-functions": "^4.3.1",
     "simple-oauth2": "^3.4.0"
   },
   "devDependencies": {
