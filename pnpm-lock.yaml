@@ -591,23 +591,6 @@ importers:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
 
-  generate-thumbnail/functions:
-    specifiers:
-      child-process-promise: ^2.2.1
-      eslint: ^6.8.0
-      eslint-plugin-promise: ^4.3.1
-      firebase-admin: ^11.7.0
-      firebase-functions: ^4.3.1
-      mkdirp: ^1.0.4
-    dependencies:
-      child-process-promise: 2.2.1
-      firebase-admin: 11.8.0
-      firebase-functions: 4.3.1_firebase-admin@11.8.0
-      mkdirp: 1.0.4
-    devDependencies:
-      eslint: 6.8.0
-      eslint-plugin-promise: 4.3.1
-
   github-to-slack/functions:
     specifiers:
       eslint: ^6.8.0
@@ -894,15 +877,15 @@ importers:
 
   quickstarts/thumbnails/functions:
     specifiers:
-      child-process-promise: ^2.2.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.3.1
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
+      sharp: ^0.32.1
     dependencies:
-      child-process-promise: 2.2.1
       firebase-admin: 11.8.0
       firebase-functions: 4.3.1_firebase-admin@11.8.0
+      sharp: 0.32.1
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
