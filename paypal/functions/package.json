@@ -3,8 +3,8 @@
   "description": "Paypal Firebase Functions",
   "dependencies": {
     "cors": "^2.8.5",
-    "firebase-admin": "^11.5.0",
-    "firebase-functions": "^4.2.1",
+    "firebase-admin": "^11.7.0",
+    "firebase-functions": "^4.3.1",
     "paypal-rest-sdk": "^1.8.1"
   },
   "devDependencies": {
