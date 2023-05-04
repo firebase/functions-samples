@@ -24,14 +24,14 @@ importers:
       firebase-functions-test: ^3.1.0
       node-fetch: ^2.6.7
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-fetch: 2.6.7
     devDependencies:
       '@types/node': 17.0.45
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   2nd-gen/auth-blocking-functions/functions:
     specifiers:
@@ -41,12 +41,12 @@ importers:
       firebase-functions: ^4.3.1
       firebase-functions-test: ^3.1.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   2nd-gen/callable-functions/functions:
     specifiers:
@@ -60,12 +60,12 @@ importers:
     dependencies:
       bad-words: 3.0.4
       capitalize-sentence: 0.1.5
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   2nd-gen/custom-events/functions:
     specifiers:
@@ -74,8 +74,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
@@ -89,8 +89,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       es6-promise-pool: 2.5.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -119,8 +119,8 @@ importers:
       '@opentelemetry/instrumentation-http': 0.33.0_@opentelemetry+api@1.2.0
       '@opentelemetry/resource-detector-gcp': 0.27.3_@opentelemetry+api@1.2.0
       '@opentelemetry/sdk-node': 0.33.0_@opentelemetry+api@1.2.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       opentelemetry-instrumentation-express: 0.29.0_@opentelemetry+api@1.2.0
     devDependencies:
       eslint: 8.26.0
@@ -134,12 +134,12 @@ importers:
       firebase-functions: ^4.3.1
       firebase-functions-test: ^3.1.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   2nd-gen/remote-config-diff/functions:
     specifiers:
@@ -150,8 +150,8 @@ importers:
       json-diff: ^0.5.5
       node-fetch: ^2.6.7
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       json-diff: 0.5.5
       node-fetch: 2.6.7
     devDependencies:
@@ -167,8 +167,8 @@ importers:
       google-auth-library: ^8.6.0
       node-fetch: ^2.6.7
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       google-auth-library: 8.6.0
       node-fetch: 2.6.7
     devDependencies:
@@ -183,12 +183,12 @@ importers:
       firebase-functions: ^4.3.1
       firebase-functions-test: ^3.1.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   2nd-gen/test-functions-jest-ts/functions:
     specifiers:
@@ -206,8 +206,8 @@ importers:
       ts-jest: ^28.0.8
       typescript: ^4.8.4
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.0.2_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.0.2_firebase-admin@11.8.0
     devDependencies:
       '@jest/globals': 28.1.3
       '@types/jest': 27.5.2
@@ -216,7 +216,7 @@ importers:
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
       eslint-plugin-import: 2.26.0_5aea5dp4n23mfv4y2mmjxole3e
-      firebase-functions-test: 3.1.0_ligs5vcgqictrqqc2hovhdzfva
+      firebase-functions-test: 3.1.0_g4di2bgq2iqea5drehijsygqky
       jest: 28.1.3
       ts-jest: 28.0.8_fztrhi54teek7om3xmnfwid3mq
       typescript: 4.8.4
@@ -231,13 +231,13 @@ importers:
       firebase-functions-test: ^3.1.0
       jest: ^28.1.3
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       '@types/jest': 27.5.2
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
-      firebase-functions-test: 3.1.0_bvllfaqt5fof4nnpdsqbp3apvm
+      firebase-functions-test: 3.1.0_fkerbtra2pkdnos26ytjuv2q3e
       jest: 28.1.3
 
   2nd-gen/test-functions-mocha/functions:
@@ -253,15 +253,15 @@ importers:
       mocha: ^10.1.0
       sinon: ^13.0.2
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       '@types/mocha': 9.1.1
       chai: 4.3.6
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
       eslint-plugin-import: 2.26.0_eslint@8.26.0
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
       mocha: 10.1.0
       sinon: 13.0.2
 
@@ -274,27 +274,29 @@ importers:
       firebase-functions-test: ^3.1.0
       node-fetch: ^2.0.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-fetch: 2.6.7
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   2nd-gen/thumbnails/functions:
     specifiers:
-      child-process-promise: ^2.2.1
       eslint: ^6.8.0
+      eslint-config-google: ^0.14.0
       eslint-plugin-promise: ^4.3.1
-      firebase-admin: ^11.7.0
+      firebase-admin: ^11.8.0
       firebase-functions: ^4.3.1
+      sharp: ^0.32.1
     dependencies:
-      child-process-promise: 2.2.1
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
+      sharp: 0.32.1
     devDependencies:
       eslint: 6.8.0
+      eslint-config-google: 0.14.0_eslint@6.8.0
       eslint-plugin-promise: 4.3.1
 
   2nd-gen/time-server/functions:
@@ -305,8 +307,8 @@ importers:
       firebase-functions: ^4.3.1
       moment: ^2.29.4
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       moment: 2.29.4
     devDependencies:
       eslint: 6.8.0
@@ -323,8 +325,8 @@ importers:
       mocha: ^7.2.0
       sinon: ^9.2.4
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       chai: 4.3.6
       chai-as-promised: 7.1.1_chai@4.3.6
@@ -341,12 +343,12 @@ importers:
       firebase-functions: ^4.3.1
       firebase-functions-test: ^3.1.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 8.26.0
       eslint-config-google: 0.14.0_eslint@8.26.0
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   assistant-say-number/functions:
     specifiers:
@@ -357,8 +359,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       actions-on-google: 2.14.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -374,8 +376,8 @@ importers:
     dependencies:
       '@google-cloud/language': 3.8.0
       express: 4.18.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -393,8 +395,8 @@ importers:
       cookie-parser: 1.4.6
       cors: 2.8.5
       express: 4.18.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -408,8 +410,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       '@google-cloud/bigquery': 4.7.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -421,8 +423,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -437,8 +439,8 @@ importers:
       mkdirp: ^1.0.4
     dependencies:
       child-process-promise: 2.2.1
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       mkdirp: 1.0.4
     devDependencies:
       eslint: 6.8.0
@@ -451,8 +453,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -466,8 +468,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       es6-promise-pool: 2.5.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -479,8 +481,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -493,8 +495,8 @@ importers:
       firebase-functions: ^4.3.1
       nodemailer: ^6.8.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       nodemailer: 6.8.0
     devDependencies:
       eslint: 6.8.0
@@ -511,8 +513,8 @@ importers:
     dependencies:
       '@google-cloud/storage': 4.7.2
       child-process-promise: 2.2.1
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -524,8 +526,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -542,8 +544,8 @@ importers:
     dependencies:
       '@google-cloud/storage': 4.7.2
       ffmpeg-static: 4.4.1
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       fluent-ffmpeg: 2.1.2
     devDependencies:
       eslint: 6.8.0
@@ -567,8 +569,8 @@ importers:
       algoliasearch: 4.14.2
       cors: 2.8.5
       express: 4.18.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       typesense: 0.13.0_@babel+runtime@7.20.1
     devDependencies:
       eslint: 6.8.0
@@ -583,25 +585,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       algoliasearch: 4.14.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
-    devDependencies:
-      eslint: 6.8.0
-      eslint-plugin-promise: 4.3.1
-
-  generate-thumbnail/functions:
-    specifiers:
-      child-process-promise: ^2.2.1
-      eslint: ^6.8.0
-      eslint-plugin-promise: ^4.3.1
-      firebase-admin: ^11.7.0
-      firebase-functions: ^4.3.1
-      mkdirp: ^1.0.4
-    dependencies:
-      child-process-promise: 2.2.1
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
-      mkdirp: 1.0.4
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -615,8 +600,8 @@ importers:
       node-fetch: ^2.6.7
       secure-compare: ^3.0.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-fetch: 2.6.7
       secure-compare: 3.0.1
     devDependencies:
@@ -632,8 +617,8 @@ importers:
       google-auth-library: ^5.10.1
       googleapis: ^47.0.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       google-auth-library: 5.10.1
       googleapis: 47.0.0
     devDependencies:
@@ -652,8 +637,8 @@ importers:
     dependencies:
       canvas: 2.10.2
       express: 4.18.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       lodash: 4.17.21
     devDependencies:
       eslint: 6.8.0
@@ -669,8 +654,8 @@ importers:
       sharp: 0.30.4
     dependencies:
       '@google-cloud/storage': 4.7.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       sharp: 0.30.4
     devDependencies:
       eslint: 6.8.0
@@ -686,8 +671,8 @@ importers:
       simple-oauth2: ^3.4.0
     dependencies:
       cookie-parser: 1.4.6
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       simple-oauth2: 3.4.0
     devDependencies:
       eslint: 6.8.0
@@ -700,8 +685,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -713,8 +698,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -729,8 +714,8 @@ importers:
       node-linkedin: ^0.5.6
     dependencies:
       cookie-parser: 1.4.6
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-linkedin: 0.5.6
     devDependencies:
       eslint: 6.8.0
@@ -745,8 +730,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       '@google-cloud/translate': 5.3.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -759,8 +744,8 @@ importers:
       firebase-functions: ^4.3.1
       node-fetch: ^2.6.7
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-fetch: 2.6.7
     devDependencies:
       eslint: 6.8.0
@@ -775,8 +760,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       '@google-cloud/vision': 2.4.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -793,8 +778,8 @@ importers:
       paypal-rest-sdk: ^1.8.1
     dependencies:
       cors: 2.8.5
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       paypal-rest-sdk: 1.8.1
     devDependencies:
       eslint: 6.8.0
@@ -809,8 +794,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -826,8 +811,8 @@ importers:
     dependencies:
       cors: 2.8.5
       express: 4.18.2
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -840,8 +825,8 @@ importers:
       firebase-functions: ^4.3.1
       nodemailer: ^6.8.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       nodemailer: 6.8.0
     devDependencies:
       eslint: 6.8.0
@@ -854,8 +839,8 @@ importers:
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -868,12 +853,12 @@ importers:
       firebase-functions: ^4.3.1
       firebase-functions-test: ^3.1.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 7.32.0
       eslint-config-google: 0.14.0_eslint@7.32.0
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   quickstarts/taskqueues-backup-images/functions:
     specifiers:
@@ -883,8 +868,8 @@ importers:
       firebase-functions: ^4.3.1
       node-fetch: ^2.6.7
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-fetch: 2.6.7
     devDependencies:
       eslint: 8.26.0
@@ -892,15 +877,15 @@ importers:
 
   quickstarts/thumbnails/functions:
     specifiers:
-      child-process-promise: ^2.2.1
       eslint: ^6.8.0
       eslint-plugin-promise: ^4.3.1
       firebase-admin: ^11.7.0
       firebase-functions: ^4.3.1
+      sharp: ^0.32.1
     dependencies:
-      child-process-promise: 2.2.1
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
+      sharp: 0.32.1
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -915,8 +900,8 @@ importers:
       moment: ^2.29.4
     dependencies:
       cors: 2.8.5
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       moment: 2.29.4
     devDependencies:
       eslint: 6.8.0
@@ -933,8 +918,8 @@ importers:
       mocha: ^7.2.0
       sinon: ^9.2.4
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       chai: 4.3.6
       chai-as-promised: 7.1.1_chai@4.3.6
@@ -954,13 +939,13 @@ importers:
       mocha: ^7.2.0
       sinon: ^9.2.4
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       '@types/mocha': 8.2.3
       chai: 4.3.6
       chai-as-promised: 7.1.1_chai@4.3.6
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
       mocha: 7.2.0
       sinon: 9.2.4
 
@@ -974,8 +959,8 @@ importers:
       spotify-web-api-node: ^4.0.0
     dependencies:
       cookie-parser: 1.4.6
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       spotify-web-api-node: 4.0.0
     devDependencies:
       eslint: 6.8.0
@@ -991,8 +976,8 @@ importers:
       stripe: ^8.222.0
     dependencies:
       '@google-cloud/logging': 7.3.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       stripe: 8.222.0
     devDependencies:
       eslint: 6.8.0
@@ -1006,8 +991,8 @@ importers:
       firebase-functions: ^4.3.1
       nodemailer: ^6.8.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       nodemailer: 6.8.0
     devDependencies:
       eslint: 6.8.0
@@ -1029,8 +1014,8 @@ importers:
       cors: 2.8.5
       express: 4.18.2
       express-handlebars: 3.1.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       handlebars: 4.7.7
     devDependencies:
       eslint: 6.8.0
@@ -1043,11 +1028,11 @@ importers:
       firebase-functions-test: ^3.1.0
       node-fetch: ^2.0.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-fetch: 2.6.7
     devDependencies:
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
   text-moderation/functions:
     specifiers:
@@ -1060,8 +1045,8 @@ importers:
     dependencies:
       bad-words: 3.0.4
       capitalize-sentence: 0.1.5
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -1075,8 +1060,8 @@ importers:
       firebase-functions: ^4.3.1
     dependencies:
       bitly: 6.1.0
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
     devDependencies:
       eslint: 6.8.0
       eslint-plugin-promise: 4.3.1
@@ -1091,8 +1076,8 @@ importers:
       node-fetch: ^2.6.7
     dependencies:
       cors: 2.8.5
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       node-fetch: 2.6.7
     devDependencies:
       eslint: 6.8.0
@@ -1107,13 +1092,13 @@ importers:
       firebase-functions-test: ^3.1.0
       googleapis: ^66.0.0
     dependencies:
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       googleapis: 66.0.0
     devDependencies:
       eslint: 5.16.0
       eslint-plugin-promise: 4.3.1
-      firebase-functions-test: 3.1.0_qlofq75uiwnoyobxuyok6jcic4
+      firebase-functions-test: 3.1.0_wkesvh6ayjkl3its6n7aut5are
 
 packages:
 
@@ -1917,7 +1902,7 @@ packages:
     resolution: {integrity: sha512-4qJqqn+CU/nBydz9ePJP+oa8dz0U42Ut/GejlbyaQ1xTkynCc+ndNHHnISlNeHawDsv4MOAyP3mV/EnDNUw2zA==}
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     dev: false
 
   /@grpc/grpc-js/1.6.12:
@@ -1925,7 +1910,7 @@ packages:
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
       '@grpc/proto-loader': 0.7.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     dev: false
 
   /@grpc/grpc-js/1.7.3:
@@ -1933,7 +1918,7 @@ packages:
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
       '@grpc/proto-loader': 0.7.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     dev: false
 
   /@grpc/grpc-js/1.8.14:
@@ -1941,7 +1926,7 @@ packages:
     engines: {node: ^8.13.0 || >=10.10.0}
     dependencies:
       '@grpc/proto-loader': 0.7.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     optional: true
 
   /@grpc/proto-loader/0.5.6:
@@ -2086,7 +2071,7 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       chalk: 4.1.2
       jest-message-util: 28.1.3
       jest-util: 28.1.3
@@ -2107,14 +2092,14 @@ packages:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.5.0
       exit: 0.1.2
       graceful-fs: 4.2.10
       jest-changed-files: 28.1.3
-      jest-config: 28.1.3_@types+node@17.0.45
+      jest-config: 28.1.3_@types+node@18.11.9
       jest-haste-map: 28.1.3
       jest-message-util: 28.1.3
       jest-regex-util: 28.0.2
@@ -2142,7 +2127,7 @@ packages:
     dependencies:
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       jest-mock: 28.1.3
     dev: true
 
@@ -2169,7 +2154,7 @@ packages:
     dependencies:
       '@jest/types': 28.1.3
       '@sinonjs/fake-timers': 9.1.2
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       jest-message-util: 28.1.3
       jest-mock: 28.1.3
       jest-util: 28.1.3
@@ -2201,7 +2186,7 @@ packages:
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
       '@jridgewell/trace-mapping': 0.3.17
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       chalk: 4.1.2
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
@@ -2290,7 +2275,7 @@ packages:
       '@jest/schemas': 28.1.3
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       '@types/yargs': 17.0.13
       chalk: 4.1.2
     dev: true
@@ -2351,7 +2336,7 @@ packages:
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.3.8
+      semver: 7.5.0
       tar: 6.1.12
     transitivePeerDependencies:
       - encoding
@@ -2475,7 +2460,7 @@ packages:
       '@opentelemetry/api': 1.2.0
       '@opentelemetry/api-metrics': 0.29.2
       require-in-the-middle: 5.2.0
-      semver: 7.3.8
+      semver: 7.5.0
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -2599,7 +2584,7 @@ packages:
       '@opentelemetry/propagator-b3': 1.7.0_@opentelemetry+api@1.2.0
       '@opentelemetry/propagator-jaeger': 1.7.0_@opentelemetry+api@1.2.0
       '@opentelemetry/sdk-trace-base': 1.7.0_@opentelemetry+api@1.2.0
-      semver: 7.3.8
+      semver: 7.5.0
     dev: false
 
   /@opentelemetry/semantic-conventions/1.7.0:
@@ -2729,12 +2714,12 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
 
   /@types/connect/3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
 
   /@types/cors/2.8.12:
     resolution: {integrity: sha512-vt+kDhq/M2ayberEtJcIN/hxXy1Pk+59g2FV/ZQceeaTyCtCucjL2Q7FXlFjtWn4n15KCr1NE2lNNFhp0lEThw==}
@@ -2746,7 +2731,7 @@ packages:
   /@types/express-serve-static-core/4.17.31:
     resolution: {integrity: sha512-DxMhY+NAsTwMMFHBTtJFNp5qiHKJ7TeqOo23zVEM9alT1Ml27Q3xcTH0xwxn7Q0BbMcVEJOs/7aQtUWupUQN3Q==}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
 
@@ -2768,20 +2753,20 @@ packages:
   /@types/fs-extra/8.1.2:
     resolution: {integrity: sha512-SvSrYXfWSc7R4eqnOzbQF4TZmfpNSM9FrSWLU3EUnWBuyZqNBOrv1B1JA3byUDPUl9z4Ab3jeZG2eDdySlgNMg==}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     dev: false
 
   /@types/glob/8.1.0:
     resolution: {integrity: sha512-IO+MJPVhoqz+28h1qLAcBEH2+xHMK6MTyHJc7MTnnYb6wsoLR29POVGJ7LycmVXIqyy/4/2ShP5sUwTXuOwb/w==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     optional: true
 
   /@types/graceful-fs/4.1.5:
     resolution: {integrity: sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     dev: true
 
   /@types/istanbul-lib-coverage/2.0.4:
@@ -2818,7 +2803,7 @@ packages:
   /@types/jsonwebtoken/9.0.1:
     resolution: {integrity: sha512-c5ltxazpWabia/4UzhIoaDcIza4KViOQhdbjRlfcIGVnsE3c3brkz9Z+F/EeJIECOQP7W7US2hNE930cWWkPiw==}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
 
   /@types/linkify-it/3.0.2:
     resolution: {integrity: sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==}
@@ -2863,10 +2848,10 @@ packages:
 
   /@types/node/17.0.45:
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
+    dev: true
 
   /@types/node/18.11.9:
     resolution: {integrity: sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==}
-    dev: false
 
   /@types/prettier/2.7.1:
     resolution: {integrity: sha512-ri0UmynRRvZiiUJdiz38MmIblKK+oH30MztdBVR95dv/Ubw6neWSb8u1XpRb72L4qsZOhz+L+z9JD40SJmfWow==}
@@ -2882,7 +2867,7 @@ packages:
     resolution: {integrity: sha512-F3OznnSLAUxFrCEu/L5PY8+ny8DtcFRjx7fZZ9bycvXRi3KPTRS9HOitGZwvPg0juRhXFWIeKX58cnX5YqLohQ==}
     dependencies:
       '@types/glob': 8.1.0
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     optional: true
 
   /@types/semver/7.3.13:
@@ -2893,7 +2878,7 @@ packages:
     resolution: {integrity: sha512-z5xyF6uh8CbjAu9760KDKsH2FcDxZ2tFCsA4HIMWE6IkiYMXfVoa+4f9KX+FN0ZLsaMw1WNG2ETLA6N+/YA+cg==}
     dependencies:
       '@types/mime': 3.0.1
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
 
   /@types/stack-utils/2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
@@ -3003,7 +2988,7 @@ packages:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.3.8
+      semver: 7.5.0
       tsutils: 3.21.0_typescript@4.8.4
       typescript: 4.8.4
     transitivePeerDependencies:
@@ -3024,7 +3009,7 @@ packages:
       eslint: 8.26.0
       eslint-scope: 5.1.1
       eslint-utils: 3.0.0_eslint@8.26.0
-      semver: 7.3.8
+      semver: 7.5.0
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -5187,14 +5172,14 @@ packages:
       path-exists: 4.0.0
     dev: true
 
-  /firebase-admin/11.7.0:
-    resolution: {integrity: sha512-58y9dor/nrK4Dc/hwpmm7uGCy+oqld+k189mclWwhKu8IZJcZbXxPFHsNzW/yG7aVTH5sTD4rHnRXj8+t5AhPQ==}
+  /firebase-admin/11.8.0:
+    resolution: {integrity: sha512-RxO0wWDnuqVikXExhVjnhVaaXpziKCad4D1rOX5c1WJdk1jAu9hfE4rbrFKZQZgF1okZS04kgCBIFJro7xn8NQ==}
     engines: {node: '>=14'}
     dependencies:
       '@fastify/busboy': 1.2.1
       '@firebase/database-compat': 0.3.4
       '@firebase/database-types': 0.10.4
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       jsonwebtoken: 9.0.0
       jwks-rsa: 3.0.1
       node-forge: 1.3.1
@@ -5206,7 +5191,7 @@ packages:
       - encoding
       - supports-color
 
-  /firebase-functions-test/3.1.0_bvllfaqt5fof4nnpdsqbp3apvm:
+  /firebase-functions-test/3.1.0_fkerbtra2pkdnos26ytjuv2q3e:
     resolution: {integrity: sha512-yfm9ToguShxmRXb7TINN88zE2bM9gsBbs7vMWVKJAxGcl/n1f/U0sT5k2yho676QIcSqXVSjCONU8W4cUEL+Sw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -5215,14 +5200,14 @@ packages:
       jest: '>=28.0.0'
     dependencies:
       '@types/lodash': 4.14.187
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       jest: 28.1.3
       lodash: 4.17.21
       ts-deepmerge: 2.0.7
     dev: true
 
-  /firebase-functions-test/3.1.0_ligs5vcgqictrqqc2hovhdzfva:
+  /firebase-functions-test/3.1.0_g4di2bgq2iqea5drehijsygqky:
     resolution: {integrity: sha512-yfm9ToguShxmRXb7TINN88zE2bM9gsBbs7vMWVKJAxGcl/n1f/U0sT5k2yho676QIcSqXVSjCONU8W4cUEL+Sw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -5231,14 +5216,14 @@ packages:
       jest: '>=28.0.0'
     dependencies:
       '@types/lodash': 4.14.187
-      firebase-admin: 11.7.0
-      firebase-functions: 4.0.2_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.0.2_firebase-admin@11.8.0
       jest: 28.1.3
       lodash: 4.17.21
       ts-deepmerge: 2.0.7
     dev: true
 
-  /firebase-functions-test/3.1.0_qlofq75uiwnoyobxuyok6jcic4:
+  /firebase-functions-test/3.1.0_wkesvh6ayjkl3its6n7aut5are:
     resolution: {integrity: sha512-yfm9ToguShxmRXb7TINN88zE2bM9gsBbs7vMWVKJAxGcl/n1f/U0sT5k2yho676QIcSqXVSjCONU8W4cUEL+Sw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -5247,13 +5232,13 @@ packages:
       jest: '>=28.0.0'
     dependencies:
       '@types/lodash': 4.14.187
-      firebase-admin: 11.7.0
-      firebase-functions: 4.3.1_firebase-admin@11.7.0
+      firebase-admin: 11.8.0
+      firebase-functions: 4.3.1_firebase-admin@11.8.0
       lodash: 4.17.21
       ts-deepmerge: 2.0.7
     dev: true
 
-  /firebase-functions/4.0.2_firebase-admin@11.7.0:
+  /firebase-functions/4.0.2_firebase-admin@11.8.0:
     resolution: {integrity: sha512-y2JEMVRQfKQyib/wRMn6qSEg1kfJhl0nBOPHbcvrWN3cFakOssTVfq78GEQe3m9PPE8toF9ysabsetTUi4vkSg==}
     engines: {node: '>=14.10.0'}
     hasBin: true
@@ -5264,13 +5249,13 @@ packages:
       '@types/express': 4.17.3
       cors: 2.8.5
       express: 4.18.2
-      firebase-admin: 11.7.0
+      firebase-admin: 11.8.0
       node-fetch: 2.6.7
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  /firebase-functions/4.3.1_firebase-admin@11.7.0:
+  /firebase-functions/4.3.1_firebase-admin@11.8.0:
     resolution: {integrity: sha512-sbitfzHcuWsLD03/EgeIRIfkVGeyGjNo3IEA2z+mDIkK1++LhKLCWwVQXrMqeeATOG04CAp30guAagsNElVlng==}
     engines: {node: '>=14.10.0'}
     hasBin: true
@@ -5281,7 +5266,7 @@ packages:
       '@types/express': 4.17.3
       cors: 2.8.5
       express: 4.18.2
-      firebase-admin: 11.7.0
+      firebase-admin: 11.8.0
       node-fetch: 2.6.7
       protobufjs: 7.2.3
     transitivePeerDependencies:
@@ -6613,7 +6598,7 @@ packages:
       '@jest/expect': 28.1.3
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
@@ -6698,7 +6683,7 @@ packages:
       - supports-color
     dev: true
 
-  /jest-config/28.1.3_@types+node@17.0.45:
+  /jest-config/28.1.3_@types+node@18.11.9:
     resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
@@ -6713,7 +6698,7 @@ packages:
       '@babel/core': 7.19.6
       '@jest/test-sequencer': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       babel-jest: 28.1.3_@babel+core@7.19.6
       chalk: 4.1.2
       ci-info: 3.5.0
@@ -6782,7 +6767,7 @@ packages:
       '@jest/environment': 28.1.3
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       jest-mock: 28.1.3
       jest-util: 28.1.3
     dev: true
@@ -6803,7 +6788,7 @@ packages:
     dependencies:
       '@jest/types': 28.1.3
       '@types/graceful-fs': 4.1.5
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       anymatch: 3.1.2
       fb-watchman: 2.0.2
       graceful-fs: 4.2.10
@@ -6864,7 +6849,7 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
     dev: true
 
   /jest-pnp-resolver/1.2.2_jest-resolve@28.1.3:
@@ -6918,7 +6903,7 @@ packages:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       chalk: 4.1.2
       emittery: 0.10.2
       graceful-fs: 4.2.10
@@ -6994,7 +6979,7 @@ packages:
       jest-util: 28.1.3
       natural-compare: 1.4.0
       pretty-format: 28.1.3
-      semver: 7.3.8
+      semver: 7.5.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7004,7 +6989,7 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       chalk: 4.1.2
       ci-info: 3.5.0
       graceful-fs: 4.2.10
@@ -7029,7 +7014,7 @@ packages:
     dependencies:
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.10.2
@@ -7041,7 +7026,7 @@ packages:
     resolution: {integrity: sha512-CqRA220YV/6jCo8VWvAt1KKx6eek1VIHMPeLEbpcfSfkEeWyBNppynM/o6q+Wmw+sOhos2ml34wZbSX3G13//g==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       merge-stream: 2.0.0
       supports-color: 8.1.1
     dev: true
@@ -7214,7 +7199,7 @@ packages:
       jws: 3.2.2
       lodash: 4.17.21
       ms: 2.1.3
-      semver: 7.3.8
+      semver: 7.5.0
 
   /jsprim/1.4.2:
     resolution: {integrity: sha512-P2bSOMAc/ciLz6DzgjVlGJP9+BrJWu5UDGK70C2iweC5QBIeFf0ZXRvGjEj2uYgrY2MkAAhsSWHDWlFtEroZWw==}
@@ -7783,11 +7768,15 @@ packages:
     resolution: {integrity: sha512-fRlDb4I0eLcQeUvGq7IY3xHrSb0c9ummdvDSYWfT9+LKP+3jCKw/tKoqaM7r1BAoiAC6GtwyjaGnOz6B3OtF+A==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.3.8
+      semver: 7.5.0
     dev: false
 
   /node-addon-api/4.3.0:
     resolution: {integrity: sha512-73sE9+3UaLYYFmDsFZnqCInzPyh3MqIwZO9cw58yIqAZhONrrabrYyYe3TuIqtIiOuTXVhsGau8hcrhhwSsDIQ==}
+    dev: false
+
+  /node-addon-api/6.1.0:
+    resolution: {integrity: sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==}
     dev: false
 
   /node-environment-flags/1.0.6:
@@ -8256,7 +8245,7 @@ packages:
       jsdoc: 4.0.2
       minimist: 1.2.7
       protobufjs: 7.2.3
-      semver: 7.3.8
+      semver: 7.5.0
       tmp: 0.2.1
       uglify-js: 3.17.4
     optional: true
@@ -8277,7 +8266,7 @@ packages:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       long: 4.0.0
     dev: false
 
@@ -8296,7 +8285,7 @@ packages:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 17.0.45
+      '@types/node': 18.11.9
       long: 5.2.1
 
   /proxy-addr/2.0.7:
@@ -8695,6 +8684,13 @@ packages:
     dependencies:
       lru-cache: 6.0.0
 
+  /semver/7.5.0:
+    resolution: {integrity: sha512-+XC0AD/R7Q2mPSRuy2Id0+CGTZ98+8f+KvwirxOKIEyid+XSx6HbC63p+O4IndTHuX5Z+JxQ0TghCkO5Cg/2HA==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+
   /send/0.18.0:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
     engines: {node: '>= 0.8.0'}
@@ -8748,6 +8744,21 @@ packages:
       node-addon-api: 4.3.0
       prebuild-install: 7.1.1
       semver: 7.3.8
+      simple-get: 4.0.1
+      tar-fs: 2.1.1
+      tunnel-agent: 0.6.0
+    dev: false
+
+  /sharp/0.32.1:
+    resolution: {integrity: sha512-kQTFtj7ldpUqSe8kDxoGLZc1rnMFU0AO2pqbX6pLy3b7Oj8ivJIdoKNwxHVQG2HN6XpHPJqCSM2nsma2gOXvOg==}
+    engines: {node: '>=14.15.0'}
+    requiresBuild: true
+    dependencies:
+      color: 4.2.3
+      detect-libc: 2.0.1
+      node-addon-api: 6.1.0
+      prebuild-install: 7.1.1
+      semver: 7.5.0
       simple-get: 4.0.1
       tar-fs: 2.1.1
       tunnel-agent: 0.6.0
