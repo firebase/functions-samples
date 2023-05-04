@@ -73,7 +73,7 @@ def makeuppercase(event: db_fn.Event[object]) -> None:
     # Use the Admin SDK to set an "uppercase" sibling.
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
-    db.reference(event.reference).parent.child("uppercase").set(upper)
+    event.reference.parent.child("uppercase").set(upper)
 # [END makeUppercase]
 
 
@@ -86,7 +86,7 @@ def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
     # Only edit data when it is first created.
     if event.data.before is not None:
         return
-    
+
     # Exit when the data is deleted.
     if event.data.after is None:
         return
@@ -101,5 +101,6 @@ def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     db.reference(event.reference).parent.child("uppercase").set(upper)
+    event.reference.parent.child("uppercase").set(upper)
 # [END makeUppercase2]
 # [END all]
