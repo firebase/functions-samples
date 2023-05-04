@@ -71,9 +71,7 @@ exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
   const thumbnailBuffer = await sharp(imageBuffer).resize({
     width: 200,
     height: 200,
-    options: {
-      withoutEnlargement: true,
-    },
+    withoutEnlargement: true,
   }).toBuffer();
   logger.log("Thumbnail created");
 
