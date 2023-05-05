@@ -5,6 +5,7 @@ packages:
   - 2nd-gen/custom-events/functions
   - 2nd-gen/delete-unused-accounts-cron/functions
   - 2nd-gen/instrument-with-opentelemetry/functions
+  - 2nd-gen/monitor-cloud-logging/functions
   - 2nd-gen/pubsub-helloworld/functions
   - 2nd-gen/remote-config-diff/functions
   - 2nd-gen/taskqueues-backup-images/functions
