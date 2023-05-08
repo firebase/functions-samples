@@ -51,9 +51,9 @@ exports.getInspirationalQuote = onRequest(async (request, response) => {
   const today = new Date();
   const quoteOfTheMonthRef = db
       .collection("quotes")
-      .doc(today.getFullYear())
+      .doc(`${today.getFullYear()}`)
       .collection("months")
-      .doc(today.getMonth());
+      .doc(`${today.getMonth()}`);
 
   const DEFAULT_QUOTE =
       "You miss 100% of the shots you don't take. -Wayne Gretzky";
@@ -79,10 +79,12 @@ exports.getInspirationalQuote = onRequest(async (request, response) => {
 
       quote = DEFAULT_QUOTE;
     }
-  } catch (e) {
-    // Attach stack trace to errors
+    // [START logError]
+  } catch (err) {
+    // Attach an error object as the second argument
     error("Unable to read quote from Firestore, sending default instead",
-        {message: e.stack});
+        err);
+    // [END logError]
 
     quote = DEFAULT_QUOTE;
   }
