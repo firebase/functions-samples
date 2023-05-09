@@ -8,7 +8,8 @@
     "bootstrap": "pnpm -r install",
     "lint": "pnpm -r --workspace-concurrency=4 --aggregate-output run lint",
     "test": "pnpm -r --workspace-concurrency=4 --aggregate-output run test ",
-    "compile": "pnpm -r --workspace-concurrency=4 --aggregate-output run compile "
+    "compile": "pnpm -r --workspace-concurrency=4 --aggregate-output run compile ",
+    "postinstall": "pnpm -r install"
   },
   "devDependencies": {
     "eslint": "^8.38.0",
