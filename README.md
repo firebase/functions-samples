@@ -2,7 +2,7 @@
 
 This repository contains a collection of samples showcasing some typical uses of [Cloud Functions for Firebase](https://firebase.google.com/features/functions).
 
-> All samples use the Node 16 runtime and require the Blaze pay-as-you-go billing plan to deploy. Learn more about Cloud Functions for Firebase's Node versions [here](https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version).
+> All samples use the Node 18 runtime and require the Blaze pay-as-you-go billing plan to deploy. Learn more about Cloud Functions for Firebase's Node versions [here](https://firebase.google.com/docs/functions/manage-functions#set_nodejs_version).
 
 ### What's Cloud Functions for Firebase?
 
