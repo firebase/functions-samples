@@ -20,7 +20,7 @@
     "eslint": "^8.38.0"
   },
   "engines": {
-    "node": "16"
+    "node": "18"
   },
   "private": true
 }

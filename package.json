@@ -15,6 +15,9 @@
     "pnpm": "^8.2.0",
     "typescript": "^5.0.4"
   },
+  "engines": {
+    "node": "18"
+  },
   "pnpm": {
     "peerDependencyRules": {
       "ignoreMissing": [

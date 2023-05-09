@@ -10,7 +10,7 @@
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "16"
+    "node": "18"
   },
   "dependencies": {
     "node-fetch": "^2.0.0",
