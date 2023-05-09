@@ -4,6 +4,8 @@ This repository contains a collection of samples showcasing some typical uses of
 
 Samples are available for the **Node** (2nd gen), **Python** (2nd gen), and Node (1st gen). 
 
+> Note: Python support in Cloud Functions for Firebase is a public preview. This means that the functionality might change in backward-incompatible ways. A preview release is not subject to any SLA or deprecation policy and may receive limited or no support.
+
 ### What's Cloud Functions for Firebase?
 
 Cloud Functions is a hosted, private, and scalable Node.js environment where you can run JavaScript or Python code. [Cloud Functions for Firebase](https://firebase.google.com/features/functions) integrates the Firebase platform by letting you write code that responds to events and invokes functionality exposed by other Firebase features.
