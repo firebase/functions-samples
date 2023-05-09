@@ -1,8 +1,24 @@
 name: CI Tests
 
 on:
-  - pull_request
-  - push
+  pull_request:
+    paths:
+      - 'Node/**'
+      - 'Node-1st-gen/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig.template.json'
+  push:
+    paths:
+      - 'Node/**'
+      - 'Node-1st-gen/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'pnpm-workspace.yaml'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig.template.json'
 
 env:
   CI: true
@@ -15,13 +31,13 @@ jobs:
         node-version:
           - 16.x
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache npm
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
