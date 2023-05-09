@@ -1,0 +1,25 @@
+{
+  "name": "survey-app-update-function",
+  "description": "Sends a survey via email to users who upgrade your app",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.4.0",
+    "nodemailer": "^6.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.40.0"
+  },
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "private": true
+}

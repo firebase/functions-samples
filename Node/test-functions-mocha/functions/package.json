@@ -1,0 +1,33 @@
+{
+  "name": "functions",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts .",
+    "build": "",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "test": "mocha *.test.js",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^9.1.1",
+    "chai": "^4.3.6",
+    "eslint": "^8.40.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.26.0",
+    "firebase-functions-test": "^3.1.0",
+    "mocha": "^10.1.0",
+    "sinon": "^13.0.2"
+  },
+  "private": true
+}

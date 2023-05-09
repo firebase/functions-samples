@@ -1,0 +1,27 @@
+{
+  "name": "functions",
+  "description": "File new issue in Jira when receiving in-app feedback facilitated by Firebase App Distribution",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "firebase-functions": "^4.4.0",
+    "formdata-polyfill": "^4.0.10",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.40.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "private": true
+}
