@@ -1,5 +1,3 @@
 packages:
   - 'Node/**'
   - 'Node-1st-gen/**'
-  # Canvas package does not build on M1 Macs: https://github.com/Automattic/node-canvas/issues/2186
-  - '!Node-1st-gen/image-maker/**'

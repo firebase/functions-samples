@@ -24,10 +24,10 @@ const {onObjectFinalized} = require("firebase-functions/v2/storage");
 const {initializeApp} = require("firebase-admin/app");
 const {getStorage} = require("firebase-admin/storage");
 const logger = require("firebase-functions/logger");
-const spawn = require("child-process-promise").spawn;
 const path = require("path");
-const os = require("os");
-const fs = require("fs");
+
+// library for image resizing
+const sharp = require("sharp");
 
 initializeApp();
 // [END v2storageAdditionalImports]
@@ -36,7 +36,7 @@ initializeApp();
 // [START v2storageGenerateThumbnail]
 /**
  * When an image is uploaded in the Storage bucket,
- * generate a thumbnail automatically using ImageMagick.
+ * generate a thumbnail automatically using sharp.
  */
 // [START v2storageGenerateThumbnailTrigger]
 exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
@@ -61,30 +61,30 @@ exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
   // [END v2storageStopConditions]
 
   // [START v2storageThumbnailGeneration]
-  // Download file from bucket.
+  // Download file into memory from bucket.
   const bucket = getStorage().bucket(fileBucket);
-  const tempPath = path.join(os.tmpdir(), fileName);
-  await bucket.file(filePath).download({destination: tempPath});
-  logger.log("Image downloaded locally to", tempPath);
+  const downloadResponse = await bucket.file(filePath).download();
+  const imageBuffer = downloadResponse[0];
+  logger.log("Image downloaded!");
 
-  // Generate a thumbnail using ImageMagick.
-  await spawn("convert", [tempPath, "-thumbnail", "200x200>", tempPath]);
-  logger.log("Thumbnail created at", tempPath);
+  // Generate a thumbnail using sharp.
+  const thumbnailBuffer = await sharp(imageBuffer).resize({
+    width: 200,
+    height: 200,
+    withoutEnlargement: true,
+  }).toBuffer();
+  logger.log("Thumbnail created");
 
   // Prefix 'thumb_' to file name.
   const thumbFileName = `thumb_${fileName}`;
   const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
 
-  // Uploading the thumbnail.
+  // Upload the thumbnail.
   const metadata = {contentType: contentType};
-  await bucket.upload(tempPath, {
-    destination: thumbFilePath,
+  await bucket.file(thumbFilePath).save(thumbnailBuffer, {
     metadata: metadata,
   });
-
-  // Once the thumbnail has been uploaded,
-  // delete the local file to free up disk space.
-  return fs.unlinkSync(tempPath);
+  return logger.log("Thumbnail uploaded!");
   // [END v2storageThumbnailGeneration]
 });
 // [END v2storageGenerateThumbnail]

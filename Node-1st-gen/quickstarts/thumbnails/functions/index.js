@@ -19,25 +19,24 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp()
-const spawn = require('child-process-promise').spawn;
 const path = require('path');
-const os = require('os');
-const fs = require('fs');
+
+//library for resizing images
+const sharp = require('sharp');
 // [END import]
 
 // [START generateThumbnail]
 /**
- * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
- * ImageMagick.
+ * When an image is uploaded in the Storage bucket,
+ * generate a thumbnail automatically using sharp.
  */
 // [START generateThumbnailTrigger]
-exports.generateThumbnail = functions.storage.object().onFinalize(async (object) => {
+exports.firstGenGenerateThumbnail = functions.storage.object().onFinalize(async (object) => {
 // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
   const filePath = object.name; // File path in the bucket.
   const contentType = object.contentType; // File content type.
-  const metageneration = object.metageneration; // Number of times metadata has been generated. New objects have a value of 1.
   // [END eventAttributes]
 
   // [START stopConditions]
@@ -57,25 +56,28 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   // [START thumbnailGeneration]
   // Download file from bucket.
   const bucket = admin.storage().bucket(fileBucket);
-  const tempFilePath = path.join(os.tmpdir(), fileName);
   const metadata = {
     contentType: contentType,
   };
-  await bucket.file(filePath).download({destination: tempFilePath});
-  functions.logger.log('Image downloaded locally to', tempFilePath);
-  // Generate a thumbnail using ImageMagick.
-  await spawn('convert', [tempFilePath, '-thumbnail', '200x200>', tempFilePath]);
-  functions.logger.log('Thumbnail created at', tempFilePath);
-  // We add a 'thumb_' prefix to thumbnails file name. That's where we'll upload the thumbnail.
+  const downloadResponse = await bucket.file(filePath).download();
+  const imageBuffer = downloadResponse[0];
+  functions.logger.log("Image downloaded!");
+
+  // Generate a thumbnail using sharp.
+  const thumbnailBuffer = await sharp(imageBuffer).resize({
+    width: 200,
+    height: 200,
+    withoutEnlargement: true,
+  }).toBuffer();
+  functions.logger.log("Thumbnail created");
+
+  // Upload the thumbnail with a 'thumb_' prefix.
   const thumbFileName = `thumb_${fileName}`;
   const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
-  // Uploading the thumbnail.
-  await bucket.upload(tempFilePath, {
-    destination: thumbFilePath,
+  await bucket.file(thumbFilePath).save(thumbnailBuffer, {
     metadata: metadata,
   });
-  // Once the thumbnail has been uploaded delete the local file to free up disk space.
-  return fs.unlinkSync(tempFilePath);
+  return functions.logger.log("Thumbnail uploaded!");
   // [END thumbnailGeneration]
 });
 // [END generateThumbnail]

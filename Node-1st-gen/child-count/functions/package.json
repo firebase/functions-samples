@@ -2,8 +2,8 @@
   "name": "child-count-functions",
   "description": "Count Child nodes Firebase Functions sample",
   "dependencies": {
-    "firebase-admin": "^11.5.0",
-    "firebase-functions": "^4.2.1"
+    "firebase-admin": "^11.7.0",
+    "firebase-functions": "^4.3.1"
   },
   "devDependencies": {
     "eslint": "^8.38.0"

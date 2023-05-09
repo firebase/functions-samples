@@ -14,13 +14,13 @@
   },
   "main": "index.js",
   "dependencies": {
-    "firebase-admin": "^11.5.0",
-    "firebase-functions": "^4.2.1"
+    "firebase-admin": "^11.7.0",
+    "firebase-functions": "^4.3.1"
   },
   "devDependencies": {
     "eslint": "^8.38.0",
     "eslint-config-google": "^0.14.0",
-    "firebase-functions-test": "^3.0.0"
+    "firebase-functions-test": "^3.1.0"
   },
   "private": true
 }
