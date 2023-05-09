@@ -2,12 +2,12 @@
   "name": "generate-thumbnail-functions-quickstart",
   "description": "Generate Thumbnail Firebase Functions sample",
   "dependencies": {
-    "sharp": "^0.32.1",
-    "firebase-admin": "^11.7.0",
-    "firebase-functions": "^4.3.1"
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.4.0",
+    "sharp": "^0.32.1"
   },
   "devDependencies": {
-    "eslint": "^8.38.0"
+    "eslint": "^8.40.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

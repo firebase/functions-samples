@@ -2,12 +2,12 @@
   "name": "minimal-webhook-functions",
   "description": "Queries a Webhook Firebase Functions sample",
   "dependencies": {
-    "firebase-admin": "^11.7.0",
-    "firebase-functions": "^4.3.1",
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.4.0",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "eslint": "^8.38.0"
+    "eslint": "^8.40.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

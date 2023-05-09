@@ -11,7 +11,7 @@
     "compile": "pnpm -r --workspace-concurrency=4 --aggregate-output run compile "
   },
   "devDependencies": {
-    "eslint": "^8.38.0",
+    "eslint": "^8.40.0",
     "pnpm": "^8.2.0",
     "typescript": "^5.0.4"
   },
