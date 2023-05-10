@@ -26,6 +26,8 @@ def created_noop(
     event: identity_fn.AuthBlockingEvent,
 ) -> identity_fn.BeforeCreateResponse | None:
     return
+
+
 # [END created_noop]
 
 
@@ -35,6 +37,8 @@ def signedin_noop(
     event: identity_fn.AuthBlockingEvent,
 ) -> identity_fn.BeforeSignInResponse | None:
     return
+
+
 # [END signedin_noop]
 
 
@@ -45,7 +49,7 @@ def signedin_noop(
 def validatenewuser(
     event: identity_fn.AuthBlockingEvent,
 ) -> identity_fn.BeforeCreateResponse | None:
-# [END v2beforeCreateFunctionTrigger]
+    # [END v2beforeCreateFunctionTrigger]
     # [START v2readUserData]
     # User data passed in from the CloudEvent.
     user = event.data
@@ -60,6 +64,8 @@ def validatenewuser(
             message="Unauthorized email",
         )
     # [END v2domainHttpsError]
+
+
 # [END v2ValidateNewUser]
 
 
@@ -74,6 +80,8 @@ def setdefaultname(
         if event.data.display_name is not None
         else "Guest"
     )
+
+
 # [END setdefaultname]
 
 
@@ -87,6 +95,8 @@ def requireverified(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
             message="You must register using a trusted provider.",
         )
+
+
 # [END requireverified]
 
 
@@ -103,6 +113,8 @@ def sendverification(
     if event.data.email is not None and not event.data.email_verified:
         link = auth.generate_email_verification_link()
         send_verification_email_using_your_smtp_server(event.data.email, link)
+
+
 # [END sendverification]
 
 
@@ -116,6 +128,8 @@ def requireverifiedsignin(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
             message="You must verify your email address before signing in.",
         )
+
+
 # [END requireverifiedsignin]
 
 
@@ -126,6 +140,8 @@ def markverified(
 ) -> identity_fn.BeforeCreateResponse | None:
     if event.data.email is not None and "@facebook.com" in event.data.email:
         return identity_fn.BeforeSignInResponse(email_verified=True)
+
+
 # [END trustfacebook]
 
 
@@ -143,6 +159,8 @@ def ipban(
             code=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
             message="IP banned.",
         )
+
+
 # [END ipban]
 
 
@@ -151,24 +169,31 @@ def ipban(
 def setemployeeid(
     event: identity_fn.AuthBlockingEvent,
 ) -> identity_fn.BeforeCreateResponse | None:
-    if (event.credential is not None and
-            event.credential.provider_id == "saml.my-provider-id"):
+    if (
+        event.credential is not None
+        and event.credential.provider_id == "saml.my-provider-id"
+    ):
         return identity_fn.BeforeCreateResponse(
-            custom_claims={"eid": event.credential.claims["employeeid"]})
+            custom_claims={"eid": event.credential.claims["employeeid"]}
+        )
 
 
 @identity_fn.before_user_signed_in()
 def copyclaimstosession(
     event: identity_fn.AuthBlockingEvent,
 ) -> identity_fn.BeforeSignInResponse | None:
-    if (event.credential is not None and
-            event.credential.provider_id == "saml.my-provider-id"):
+    if (
+        event.credential is not None
+        and event.credential.provider_id == "saml.my-provider-id"
+    ):
         return identity_fn.BeforeSignInResponse(
             session_claims={
                 "role": event.credential.claims["role"],
                 "groups": event.credential.claims["groups"],
             }
         )
+
+
 # [END customclaims]
 
 
@@ -180,6 +205,8 @@ def logip(
     return identity_fn.BeforeSignInResponse(
         session_claims={"signInIpAddress": event.ip_address}
     )
+
+
 # [END logip]
 
 
@@ -200,6 +227,8 @@ def sanitizeprofilephoto(
         score = analyze_photo_with_ml(event.data.photo_url)
         if score > THRESHOLD:
             return identity_fn.BeforeCreateResponse(photo_url=PLACEHOLDER_URL)
+
+
 # [END sanitizeprofilephoto]
 
 
@@ -231,4 +260,6 @@ def checkforban(
             message="Unauthorized email",
         )
     # [END v2bannedHttpsError]
+
+
 # [END v2CheckForBan]

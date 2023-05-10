@@ -43,10 +43,12 @@ def savegoogletoken(
     """
     if event.credential is not None and event.credential.provider_id == "google.com":
         print(f"Signed in with {event.credential.provider_id}. Saving access token.")
-    
+
         firestore_client: google.cloud.firestore.Client = firestore.client()
         doc_ref = firestore_client.collection("user_info").document(event.data.uid)
-        doc_ref.set({"calendar_access_token": event.credential.access_token}, merge=True)
+        doc_ref.set(
+            {"calendar_access_token": event.credential.access_token}, merge=True
+        )
 
         tasks_client = google.cloud.tasks_v2.CloudTasksClient()
         task_queue = tasks_client.queue_path(
@@ -65,6 +67,8 @@ def savegoogletoken(
             schedule_time=datetime.now() + timedelta(minutes=1),
         )
         tasks_client.create_task(parent=task_queue, task=calendar_task)
+
+
 # [END savegoogletoken]
 
 
@@ -72,7 +76,7 @@ def savegoogletoken(
 @tasks_fn.on_task_dispatched()
 def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
     """Add an onboarding event to a user's Google Calendar.
-    
+
     Retrieves and deletes the access token that was saved to Cloud Firestore.
     """
 
@@ -98,11 +102,13 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
             response="No Google OAuth token found.",
         )
     calendar_access_token = user_info["calendar_access_token"]
-    firestore_client.collection("user_info").document(uid).update({
-        "calendar_access_token": google.cloud.firestore.DELETE_FIELD
-    })
+    firestore_client.collection("user_info").document(uid).update(
+        {"calendar_access_token": google.cloud.firestore.DELETE_FIELD}
+    )
 
-    google_credentials = google.oauth2.credentials.Credentials(token=calendar_access_token)
+    google_credentials = google.oauth2.credentials.Credentials(
+        token=calendar_access_token
+    )
 
     calendar_client = googleapiclient.discovery.build(
         "calendar", "v3", credentials=google_credentials
@@ -125,6 +131,8 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
         ],
     }
     calendar_client.events().insert(calendarId="primary", body=calendar_event).execute()
+
+
 # [END scheduleonboarding]
 
 

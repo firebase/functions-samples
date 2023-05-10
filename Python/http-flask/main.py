@@ -22,6 +22,7 @@ app = flask.Flask(__name__)
 
 # Build multiple CRUD interfaces:
 
+
 @app.get("/widgets")
 @app.get("/widgets/<id>")
 def get_widget(id=None):
@@ -30,16 +31,21 @@ def get_widget(id=None):
     else:
         return db.reference("/widgets").get()
 
+
 @app.post("/widgets")
 def add_widget():
     new_widget = flask.request.get_data(as_text=True)
     db.reference("/widgets").push(new_widget)
     return flask.Response(status=201, response="Added widget")
 
+
 # Expose Flask app as a single Cloud Function:
+
 
 @https_fn.on_request()
 def httpsflaskexample(req: https_fn.Request) -> https_fn.Response:
     with app.request_context(req.environ):
         return app.full_dispatch_request()
+
+
 # [END httpflaskexample]
