@@ -15,12 +15,7 @@
 [project]
 name = "functions_samples"
 version = "1.0.0"
-[tool.yapf]
-based_on_style = "google"
-indent_width = 4
-[tool.yapfignore]
-ignore_patterns = [
-  "venv/**/*.py",
-]
+[tool.black]
+line-length = 80
 [tool.mypy]
 python_version = "3.10"

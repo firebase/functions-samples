@@ -59,9 +59,13 @@ def post_to_slack(title: str, details: str) -> requests.Response:
 
 
 # [START getSlackmoji]
-def slackmoji(status: test_lab_fn.TestState | test_lab_fn.OutcomeSummary) -> str:
+def slackmoji(
+    status: test_lab_fn.TestState | test_lab_fn.OutcomeSummary,
+) -> str:
     """Convert a test result status into a Slackmoji."""
-    status_slackmoji: dict[test_lab_fn.TestState | test_lab_fn.OutcomeSummary, str] = {
+    status_slackmoji: dict[
+        test_lab_fn.TestState | test_lab_fn.OutcomeSummary, str
+    ] = {
         test_lab_fn.OutcomeSummary.SUCCESS: ":tada:",
         test_lab_fn.OutcomeSummary.FAILURE: ":broken_heart:",
         test_lab_fn.OutcomeSummary.INCONCLUSIVE: ":question:",

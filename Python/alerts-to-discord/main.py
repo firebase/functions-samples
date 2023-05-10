@@ -85,7 +85,9 @@ ID: `{issue.id}`
             "Crashlytics Bot", message, DISCORD_WEBHOOK_URL.value()
         )
         if response.ok:
-            print(f"Posted fatal Crashlytics alert {issue.id} for {app_id} to Discord.")
+            print(
+                f"Posted fatal Crashlytics alert {issue.id} for {app_id} to Discord."
+            )
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
@@ -98,8 +100,12 @@ ID: `{issue.id}`
 
 
 # [START v2AppDistributionAlertTrigger]
-@app_distribution_fn.on_new_tester_ios_device_published(secrets=["DISCORD_WEBHOOK_URL"])
-def post_new_udid_to_discord(event: app_distribution_fn.NewTesterDeviceEvent) -> None:
+@app_distribution_fn.on_new_tester_ios_device_published(
+    secrets=["DISCORD_WEBHOOK_URL"]
+)
+def post_new_udid_to_discord(
+    event: app_distribution_fn.NewTesterDeviceEvent,
+) -> None:
     """Publishes a message to Discord whenever someone registers a new iOS test device."""
     # [END v2AppDistributionAlertTrigger]
     # [START v2AppDistributionEventPayload]
@@ -165,7 +171,9 @@ Number of samples checked: {perf.num_samples}
             "App Performance Bot", message, DISCORD_WEBHOOK_URL.value()
         )
         if response.ok:
-            print(f"Posted Firebase Performance alert {perf.event_name} to Discord.")
+            print(
+                f"Posted Firebase Performance alert {perf.event_name} to Discord."
+            )
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()

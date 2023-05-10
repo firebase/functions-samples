@@ -63,7 +63,9 @@ def date(req: https_fn.Request) -> https_fn.Response:
         # [START readBodyParam]
         body_data = req.get_json(silent=True)
         if body_data is None or "format" not in body_data:
-            return https_fn.Response(status=400, response="Format string missing")
+            return https_fn.Response(
+                status=400, response="Format string missing"
+            )
         format = body_data["format"]
         # [END readBodyParam]
 

@@ -23,7 +23,9 @@ from firebase_functions import pubsub_fn
 # [START helloWorld]
 # [START trigger]
 @pubsub_fn.on_message_published(topic="topic-name")
-def hellopubsub(event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
+def hellopubsub(
+    event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData],
+) -> None:
     """Log a message using data published to a Pub/Sub topic."""
     # [END trigger]
     # [START readBase64]

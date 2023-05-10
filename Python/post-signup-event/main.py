@@ -41,11 +41,18 @@ def savegoogletoken(
 
     https://console.firebase.google.com/project/_/authentication/settings
     """
-    if event.credential is not None and event.credential.provider_id == "google.com":
-        print(f"Signed in with {event.credential.provider_id}. Saving access token.")
+    if (
+        event.credential is not None
+        and event.credential.provider_id == "google.com"
+    ):
+        print(
+            f"Signed in with {event.credential.provider_id}. Saving access token."
+        )
 
         firestore_client: google.cloud.firestore.Client = firestore.client()
-        doc_ref = firestore_client.collection("user_info").document(event.data.uid)
+        doc_ref = firestore_client.collection("user_info").document(
+            event.data.uid
+        )
         doc_ref.set(
             {"calendar_access_token": event.credential.access_token}, merge=True
         )
@@ -95,7 +102,9 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
         )
 
     firestore_client: google.cloud.firestore.Client = firestore.client()
-    user_info = firestore_client.collection("user_info").document(uid).get().to_dict()
+    user_info = (
+        firestore_client.collection("user_info").document(uid).get().to_dict()
+    )
     if "calendar_access_token" not in user_info:
         return https_fn.Response(
             status=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
@@ -122,7 +131,9 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
             "timeZone": "America/Los_Angeles",
         },
         "end": {
-            "dateTime": (datetime.now() + timedelta(days=3, hours=1)).isoformat(),
+            "dateTime": (
+                datetime.now() + timedelta(days=3, hours=1)
+            ).isoformat(),
             "timeZone": "America/Los_Angeles",
         },
         "attendees": [
@@ -130,7 +141,9 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
             {"email": "onboarding@example.com"},
         ],
     }
-    calendar_client.events().insert(calendarId="primary", body=calendar_event).execute()
+    calendar_client.events().insert(
+        calendarId="primary", body=calendar_event
+    ).execute()
 
 
 # [END scheduleonboarding]
@@ -151,7 +164,9 @@ def get_function_url(
     credentials, project_id = google.auth.default(
         scopes=["https://www.googleapis.com/auth/cloud-platform"]
     )
-    authed_session = google.auth.transport.requests.AuthorizedSession(credentials)
+    authed_session = google.auth.transport.requests.AuthorizedSession(
+        credentials
+    )
     url = (
         "https://cloudfunctions.googleapis.com/v2beta/"
         + f"projects/{project_id}/locations/{location}/functions/{name}"

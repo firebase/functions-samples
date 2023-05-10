@@ -41,7 +41,9 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
     firestore_client: google.cloud.firestore.Client = firestore.client()
 
     # Push the new message into Cloud Firestore using the Firebase Admin SDK.
-    _, doc_ref = firestore_client.collection("messages").add({"original": original})
+    _, doc_ref = firestore_client.collection("messages").add(
+        {"original": original}
+    )
 
     # Send back a message that we've successfully written the message
     return https_fn.Response(f"Message with ID {doc_ref.id} added.")
@@ -53,7 +55,9 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
 # [START makeUppercase]
 @firestore_fn.on_document_created(document="messages/{pushId}")
-def makeuppercase(event: firestore_fn.Event[firestore_fn.DocumentSnapshot]) -> None:
+def makeuppercase(
+    event: firestore_fn.Event[firestore_fn.DocumentSnapshot],
+) -> None:
     """Listens for new documents to be added to /messages. If the document has
     an "original" field, creates an "uppercase" field containg the contents of
     "original" in upper case."""

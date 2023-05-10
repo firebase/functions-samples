@@ -65,7 +65,8 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 @db_fn.on_value_created(reference="/messages/{pushId}/original")
 def makeuppercase(event: db_fn.Event[object]) -> None:
     """Listens for new messages added to /messages/{pushId}/original and
-    creates an uppercase version of the message to /messages/{pushId}/uppercase"""
+    creates an uppercase version of the message to /messages/{pushId}/uppercase
+    """
 
     # Grab the value that was written to the Realtime Database.
     original = event.data
@@ -86,7 +87,8 @@ def makeuppercase(event: db_fn.Event[object]) -> None:
 @db_fn.on_value_written(reference="/messages/{pushId}/original")
 def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
     """Listens for new messages added to /messages/{pushId}/original and
-    creates an uppercase version of the message to /messages/{pushId}/uppercase"""
+    creates an uppercase version of the message to /messages/{pushId}/uppercase
+    """
 
     # Only edit data when it is first created.
     if event.data.before is not None:

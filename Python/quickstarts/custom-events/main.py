@@ -33,7 +33,9 @@ def onimageresized(event: eventarc_fn.CloudEvent) -> None:
     # For example, write resized image details into Firestore.
     firestore_client: google.cloud.firestore.Client = firestore.client()
     collection = firestore_client.collection("images")
-    doc = collection.document(event.subject.replace("/", "_"))  # original file path
+    doc = collection.document(
+        event.subject.replace("/", "_")
+    )  # original file path
     doc.set(event.data)  # resized images paths and sizes
 
 
@@ -52,7 +54,9 @@ def onimageresizedwest(event: eventarc_fn.CloudEvent) -> None:
     # For example, write resized image details into Firestore.
     firestore_client: google.cloud.firestore.Client = firestore.client()
     collection = firestore_client.collection("images")
-    doc = collection.document(event.subject.replace("/", "_"))  # original file path
+    doc = collection.document(
+        event.subject.replace("/", "_")
+    )  # original file path
     doc.set(event.data)  # resized images paths and sizes
     # [END_EXCLUDE]
 

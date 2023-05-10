@@ -31,7 +31,9 @@ app = initialize_app()
 BACKUP_START_DATE = datetime(1995, 6, 17)
 BACKUP_COUNT = params.IntParam("BACKUP_COUNT", default=100).value()
 HOURLY_BATCH_SIZE = params.IntParam("HOURLY_BATCH_SIZE", default=600).value()
-BACKUP_BUCKET = params.StringParam("BACKUP_BUCKET", input=params.ResourceInput).value()
+BACKUP_BUCKET = params.StringParam(
+    "BACKUP_BUCKET", input=params.ResourceInput
+).value()
 NASA_API_KEY = params.StringParam("NASA_API_KEY").value()
 
 
@@ -57,7 +59,9 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
         params={"date": date, "api_key": NASA_API_KEY},
     )
     if not api_resp.ok:
-        print(f"Request to NASA APOD API failed with reponse {api_resp.status_code}")
+        print(
+            f"Request to NASA APOD API failed with reponse {api_resp.status_code}"
+        )
         match api_resp.status_code:
             case 404:  # APOD not published for the day. This is fine!
                 print("No APOD today.")
@@ -87,7 +91,8 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
         pic_blob.upload_from_string(pic_resp.content, content_type=pic_type)
     except:
         raise https_fn.HttpsError(
-            code=https_fn.FunctionsErrorCode.INTERNAL, message="Uh-oh. Something broke."
+            code=https_fn.FunctionsErrorCode.INTERNAL,
+            message="Uh-oh. Something broke.",
         )
 
     print(f"Saved {pic_url}")
@@ -124,14 +129,18 @@ def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
         )
         tasks_client.create_task(parent=task_queue, task=task)
 
-    return https_fn.Response(status=200, response=f"Enqueued {BACKUP_COUNT} tasks")
+    return https_fn.Response(
+        status=200, response=f"Enqueued {BACKUP_COUNT} tasks"
+    )
 
 
 # [END v2EnqueueTasks]
 
 
 # [START v2GetFunctionUri]
-def get_function_url(name: str, location: str = SupportedRegion.US_CENTRAL1) -> str:
+def get_function_url(
+    name: str, location: str = SupportedRegion.US_CENTRAL1
+) -> str:
     """Get the URL of a given v2 cloud function.
 
     Params:
