@@ -31,8 +31,9 @@ app = initialize_app()
 BACKUP_START_DATE = datetime(1995, 6, 17)
 BACKUP_COUNT = params.IntParam("BACKUP_COUNT", default=100).value()
 HOURLY_BATCH_SIZE = params.IntParam("HOURLY_BATCH_SIZE", default=600).value()
-BACKUP_BUCKET = params.StringParam("BACKUP_BUCKET",
-                                   input=params.ResourceInput).value()
+BACKUP_BUCKET = params.StringParam(
+    "BACKUP_BUCKET", input=params.ResourceInput
+).value()
 NASA_API_KEY = params.StringParam("NASA_API_KEY").value()
 
 
@@ -43,7 +44,7 @@ NASA_API_KEY = params.StringParam("NASA_API_KEY").value()
 )
 def backupapod(req: tasks_fn.CallableRequest) -> str:
     """Grabs Astronomy Photo of the Day (APOD) using NASA's API."""
-# [END v2TaskFunctionSetup]
+    # [END v2TaskFunctionSetup]
     try:
         date = req.data["date"]
     except KeyError:
@@ -55,10 +56,7 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
     print(f"Requesting data from APOD API for date {date}")
     api_resp = requests.get(
         url="https://api.nasa.gov/planetary/apod",
-        params={
-            "date": date,
-            "api_key": NASA_API_KEY
-        },
+        params={"date": date, "api_key": NASA_API_KEY},
     )
     if not api_resp.ok:
         print(
@@ -92,8 +90,10 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
     try:
         pic_blob.upload_from_string(pic_resp.content, content_type=pic_type)
     except:
-        raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.INTERNAL,
-                                  message="Uh-oh. Something broke.")
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INTERNAL,
+            message="Uh-oh. Something broke.",
+        )
 
     print(f"Saved {pic_url}")
     return f"Saved {pic_url}"
@@ -104,9 +104,9 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
 def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
     """Adds backup tasks to a Cloud Tasks queue."""
     tasks_client = tasks_v2.CloudTasksClient()
-    task_queue = tasks_client.queue_path(params.PROJECT_ID.value(),
-                                         SupportedRegion.US_CENTRAL1,
-                                         "backupapod")
+    task_queue = tasks_client.queue_path(
+        params.PROJECT_ID.value(), SupportedRegion.US_CENTRAL1, "backupapod"
+    )
     target_uri = get_function_url("backupapod")
 
     for i in range(BACKUP_COUNT):
@@ -122,23 +122,25 @@ def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
             http_request={
                 "http_method": tasks_v2.HttpMethod.POST,
                 "url": target_uri,
-                "headers": {
-                    "Content-type": "application/json"
-                },
+                "headers": {"Content-type": "application/json"},
                 "body": json.dumps(body).encode(),
             },
             schedule_time=schedule_time,
         )
         tasks_client.create_task(parent=task_queue, task=task)
 
-    return https_fn.Response(status=200,
-                             response=f"Enqueued {BACKUP_COUNT} tasks")
+    return https_fn.Response(
+        status=200, response=f"Enqueued {BACKUP_COUNT} tasks"
+    )
+
+
 # [END v2EnqueueTasks]
 
 
 # [START v2GetFunctionUri]
-def get_function_url(name: str,
-                     location: str = SupportedRegion.US_CENTRAL1) -> str:
+def get_function_url(
+    name: str, location: str = SupportedRegion.US_CENTRAL1
+) -> str:
     """Get the URL of a given v2 cloud function.
 
     Params:
@@ -148,12 +150,17 @@ def get_function_url(name: str,
     Returns: The URL of the function
     """
     credentials, project_id = google.auth.default(
-        scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        scopes=["https://www.googleapis.com/auth/cloud-platform"]
+    )
     authed_session = AuthorizedSession(credentials)
-    url = ("https://cloudfunctions.googleapis.com/v2beta/" +
-           f"projects/{project_id}/locations/{location}/functions/{name}")
+    url = (
+        "https://cloudfunctions.googleapis.com/v2beta/"
+        + f"projects/{project_id}/locations/{location}/functions/{name}"
+    )
     response = authed_session.get(url)
     data = response.json()
     function_url = data["serviceConfig"]["uri"]
     return function_url
+
+
 # [END v2GetFunctionUri]

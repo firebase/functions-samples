@@ -26,7 +26,7 @@ initialize_app()
 @https_fn.on_call()
 def addnumbers(req: https_fn.CallableRequest) -> Any:
     """Adds two numbers to each other."""
-# [END v2addFunctionTrigger]
+    # [END v2addFunctionTrigger]
     # [START v2addHttpsError]
     # Checking that attributes are present and are numbers.
     try:
@@ -43,7 +43,8 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
             message=(
                 'The function must be called with two arguments, "firstNumber"'
-                ' and "secondNumber", which must both be numbers.'),
+                ' and "secondNumber", which must both be numbers.'
+            ),
         )
     # [END v2addHttpsError]
 
@@ -55,6 +56,8 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
         "operationResult": first_number + second_number,
     }
     # [END v2returnAddData]
+
+
 # [END v2allAdd]
 
 
@@ -63,7 +66,7 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
 def addmessage(req: https_fn.CallableRequest) -> Any:
     """Saves a message to the Firebase Realtime Database but sanitizes the text
     by removing swear words."""
-# [END v2messageFunctionTrigger]
+    # [END v2messageFunctionTrigger]
     try:
         # [START v2readMessageData]
         # Message text passed from the client.
@@ -73,8 +76,10 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         # Throwing an HttpsError so that the client gets the error details.
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
-            message=('The function must be called with one argument, "text",'
-                     ' containing the message text to add.'),
+            message=(
+                'The function must be called with one argument, "text",'
+                " containing the message text to add."
+            ),
         )
 
     # [START v2messageHttpsErrors]
@@ -83,8 +88,10 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         # Throwing an HttpsError so that the client gets the error details.
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
-            message=('The function must be called with one argument, "text",'
-                     ' containing the message text to add.'),
+            message=(
+                'The function must be called with one argument, "text",'
+                " containing the message text to add."
+            ),
         )
 
     # Checking that the user is authenticated.
@@ -108,15 +115,17 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         # [START v2returnMessage]
         # Saving the new message to the Realtime Database.
         sanitized_message = sanitize_text(text)  # Sanitize message.
-        db.reference("/messages").push({
-            "text": sanitized_message,
-            "author": {
-                "uid": uid,
-                "name": name,
-                "picture": picture,
-                "email": email,
-            },
-        })
+        db.reference("/messages").push(
+            {
+                "text": sanitized_message,
+                "author": {
+                    "uid": uid,
+                    "name": name,
+                    "picture": picture,
+                    "email": email,
+                },
+            }
+        )
         print("New message written")
 
         # Returning the sanitized message to the client.
@@ -125,9 +134,9 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
     except Exception as e:
         # Re-throwing the error as an HttpsError so that the client gets
         # the error details.
-        raise https_fn.HttpsError(code=https_fn.FunctionsErrorCode.UNKNOWN,
-                                  message=e,
-                                  details=e)
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.UNKNOWN, message=e, details=e
+        )
 
 
 def sanitize_text(text: str) -> str:

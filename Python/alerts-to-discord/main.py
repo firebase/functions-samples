@@ -21,6 +21,7 @@ from firebase_functions.alerts import (
     crashlytics_fn,
     performance_fn,
 )
+
 # [END v2import]
 
 import requests
@@ -28,8 +29,9 @@ import requests
 DISCORD_WEBHOOK_URL = params.SecretParam("DISCORD_WEBHOOK_URL")
 
 
-def post_message_to_discord(bot_name: str, message_body: str,
-                            webhook_url: str) -> requests.Response:
+def post_message_to_discord(
+    bot_name: str, message_body: str, webhook_url: str
+) -> requests.Response:
     """Posts a message to Discord with Discord's Webhook API.
 
     Params:
@@ -58,9 +60,10 @@ def post_message_to_discord(bot_name: str, message_body: str,
 # [START v2CrashlyticsAlertTrigger]
 @crashlytics_fn.on_new_fatal_issue_published(secrets=["DISCORD_WEBHOOK_URL"])
 def post_fatal_issue_to_discord(
-        event: crashlytics_fn.CrashlyticsNewFatalIssueEvent) -> None:
+    event: crashlytics_fn.CrashlyticsNewFatalIssueEvent,
+) -> None:
     """Publishes a message to Discord whenever a new Crashlytics fatal issue occurs."""
-# [END v2CrashlyticsAlertTrigger]
+    # [END v2CrashlyticsAlertTrigger]
     # [START v2CrashlyticsEventPayload]
     # Construct a helpful message to send to Discord.
     app_id = event.app_id
@@ -78,8 +81,9 @@ ID: `{issue.id}`
 
     try:
         # [START v2SendToDiscord]
-        response = post_message_to_discord("Crashlytics Bot", message,
-                                           DISCORD_WEBHOOK_URL.value())
+        response = post_message_to_discord(
+            "Crashlytics Bot", message, DISCORD_WEBHOOK_URL.value()
+        )
         if response.ok:
             print(
                 f"Posted fatal Crashlytics alert {issue.id} for {app_id} to Discord."
@@ -97,11 +101,13 @@ ID: `{issue.id}`
 
 # [START v2AppDistributionAlertTrigger]
 @app_distribution_fn.on_new_tester_ios_device_published(
-    secrets=["DISCORD_WEBHOOK_URL"])
+    secrets=["DISCORD_WEBHOOK_URL"]
+)
 def post_new_udid_to_discord(
-        event: app_distribution_fn.NewTesterDeviceEvent) -> None:
+    event: app_distribution_fn.NewTesterDeviceEvent,
+) -> None:
     """Publishes a message to Discord whenever someone registers a new iOS test device."""
-# [END v2AppDistributionAlertTrigger]
+    # [END v2AppDistributionAlertTrigger]
     # [START v2AppDistributionEventPayload]
     # Construct a helpful message to send to Discord.
     app_id = event.app_id
@@ -115,8 +121,9 @@ UDID **{app_dist.device_id}** for {app_dist.device_model}
 
     try:
         # [START v2SendNewTesterIosDeviceToDiscord]
-        response = post_message_to_discord("App Distro Bot", message,
-                                           DISCORD_WEBHOOK_URL.value())
+        response = post_message_to_discord(
+            "App Distro Bot", message, DISCORD_WEBHOOK_URL.value()
+        )
         if response.ok:
             print(
                 f"Posted iOS device registration alert for {app_dist.tester_email} to Discord."
@@ -135,9 +142,10 @@ UDID **{app_dist.device_id}** for {app_dist.device_model}
 # [START v2PerformanceAlertTrigger]
 @performance_fn.on_threshold_alert_published(secrets=["DISCORD_WEBHOOK_URL"])
 def post_performance_alert_to_discord(
-        event: performance_fn.PerformanceThresholdAlertEvent) -> None:
+    event: performance_fn.PerformanceThresholdAlertEvent,
+) -> None:
     """Publishes a message to Discord whenever a performance threshold alert is fired."""
-# [END v2PerformanceAlertTrigger]
+    # [END v2PerformanceAlertTrigger]
     # [START v2PerformanceEventPayload]
     # Construct a helpful message to send to Discord.
     app_id = event.app_id
@@ -159,8 +167,9 @@ Number of samples checked: {perf.num_samples}
 
     try:
         # [START v2SendPerformanceAlertToDiscord]
-        response = post_message_to_discord("App Performance Bot", message,
-                                           DISCORD_WEBHOOK_URL.value())
+        response = post_message_to_discord(
+            "App Performance Bot", message, DISCORD_WEBHOOK_URL.value()
+        )
         if response.ok:
             print(
                 f"Posted Firebase Performance alert {perf.event_name} to Discord."
@@ -174,4 +183,6 @@ Number of samples checked: {perf.num_samples}
             f"Unable to post Firebase Performance alert {perf.event_name} to Discord.",
             error,
         )
+
+
 # [END v2Alerts]

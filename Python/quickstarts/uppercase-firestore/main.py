@@ -31,7 +31,7 @@ app = initialize_app()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
     """Take the text parameter passed to this HTTP endpoint and insert it into
     a new document in the messages collection."""
-# [END addMessageTrigger]
+    # [END addMessageTrigger]
     # Grab the text parameter.
     original = req.args.get("text")
     if original is None:
@@ -42,18 +42,22 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
     # Push the new message into Cloud Firestore using the Firebase Admin SDK.
     _, doc_ref = firestore_client.collection("messages").add(
-        {"original": original})
+        {"original": original}
+    )
 
     # Send back a message that we've successfully written the message
     return https_fn.Response(f"Message with ID {doc_ref.id} added.")
     # [END adminSdkPush]
+
+
 # [END addMessage]
 
 
 # [START makeUppercase]
 @firestore_fn.on_document_created(document="messages/{pushId}")
 def makeuppercase(
-        event: firestore_fn.Event[firestore_fn.DocumentSnapshot]) -> None:
+    event: firestore_fn.Event[firestore_fn.DocumentSnapshot],
+) -> None:
     """Listens for new documents to be added to /messages. If the document has
     an "original" field, creates an "uppercase" field containg the contents of
     "original" in upper case."""
@@ -69,6 +73,8 @@ def makeuppercase(
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     event.data.reference.update({"uppercase": upper})
+
+
 # [END makeUppercase]
 # [END all]
 
@@ -77,7 +83,8 @@ def makeuppercase(
 @firestore_fn.on_document_written(document="messages/{pushId}")
 def makeuppercase2(
     event: firestore_fn.Event[
-        firestore_fn.Change[firestore_fn.DocumentSnapshot | None]]
+        firestore_fn.Change[firestore_fn.DocumentSnapshot | None]
+    ],
 ) -> None:
     """Listens for new documents to be added to /messages. If the document has
     an "original" field, creates an "uppercase" field containg the contents of
@@ -102,4 +109,6 @@ def makeuppercase2(
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     event.data.after.reference.update({"uppercase": upper})
+
+
 # [END makeUppercase2]

@@ -32,7 +32,7 @@ app = initialize_app()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
     """Take the text parameter passed to this HTTP endpoint and insert it into
     the Realtime Database under the path /messages/{pushId}/original"""
-# [END addMessageTrigger]
+    # [END addMessageTrigger]
     # Grab the text parameter.
     original = req.args.get("text")
     if original is None:
@@ -44,17 +44,20 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
     # Redirect with 303 SEE OTHER to the URL of the pushed object.
     scheme, location, path, query, fragment = urllib_parse.urlsplit(
-        app.options.get("databaseURL"))
+        app.options.get("databaseURL")
+    )
     path = f"{ref.path}.json"
     return https_fn.Response(
         status=303,
         headers={
-            "Location":
-                urllib_parse.urlunsplit(
-                    (scheme, location, path, query, fragment))
+            "Location": urllib_parse.urlunsplit(
+                (scheme, location, path, query, fragment)
+            )
         },
     )
     # [END adminSdkPush]
+
+
 # [END addMessage]
 
 
@@ -62,7 +65,8 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 @db_fn.on_value_created(reference="/messages/{pushId}/original")
 def makeuppercase(event: db_fn.Event[object]) -> None:
     """Listens for new messages added to /messages/{pushId}/original and
-    creates an uppercase version of the message to /messages/{pushId}/uppercase"""
+    creates an uppercase version of the message to /messages/{pushId}/uppercase
+    """
 
     # Grab the value that was written to the Realtime Database.
     original = event.data
@@ -74,6 +78,8 @@ def makeuppercase(event: db_fn.Event[object]) -> None:
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     db.reference(event.reference).parent.child("uppercase").set(upper)
+
+
 # [END makeUppercase]
 
 
@@ -81,12 +87,13 @@ def makeuppercase(event: db_fn.Event[object]) -> None:
 @db_fn.on_value_written(reference="/messages/{pushId}/original")
 def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
     """Listens for new messages added to /messages/{pushId}/original and
-    creates an uppercase version of the message to /messages/{pushId}/uppercase"""
+    creates an uppercase version of the message to /messages/{pushId}/uppercase
+    """
 
     # Only edit data when it is first created.
     if event.data.before is not None:
         return
-    
+
     # Exit when the data is deleted.
     if event.data.after is None:
         return
@@ -101,5 +108,7 @@ def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     db.reference(event.reference).parent.child("uppercase").set(upper)
+
+
 # [END makeUppercase2]
 # [END all]
