@@ -44,4 +44,4 @@ jobs:
         run: pip install -r requirements.txt
       - name: Lint
         working-directory: ./Python
-        run: black . --exclude=venv --check 
+        run: black . --exclude=venv --check --diff
