@@ -29,12 +29,13 @@ import requests
 app = initialize_app()
 
 BACKUP_START_DATE = datetime(1995, 6, 17)
-BACKUP_COUNT = params.IntParam("BACKUP_COUNT", default=100).value()
-HOURLY_BATCH_SIZE = params.IntParam("HOURLY_BATCH_SIZE", default=600).value()
+BACKUP_COUNT = params.IntParam("BACKUP_COUNT", default=100).value
+HOURLY_BATCH_SIZE = params.IntParam("HOURLY_BATCH_SIZE", default=600).value
 BACKUP_BUCKET = params.StringParam(
-    "BACKUP_BUCKET", input=params.ResourceInput
-).value()
-NASA_API_KEY = params.StringParam("NASA_API_KEY").value()
+    "BACKUP_BUCKET",
+    input=params.ResourceInput(type=params.ResourceType.STORAGE_BUCKET),
+).value
+NASA_API_KEY = params.StringParam("NASA_API_KEY").value
 
 
 # [START v2TaskFunctionSetup]
@@ -82,6 +83,8 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
     print(f"Got URL {pic_url} from NASA API for date {date}. Fetching...")
     pic_resp = requests.get(pic_url)
     pic_type = pic_resp.headers.get("Content-Type")
+    if pic_type is None:
+        pic_type = "image/jpeg"
 
     print("Uploading to Cloud Storage")
     bucket = storage.bucket(BACKUP_BUCKET)
@@ -105,7 +108,7 @@ def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
     """Adds backup tasks to a Cloud Tasks queue."""
     tasks_client = tasks_v2.CloudTasksClient()
     task_queue = tasks_client.queue_path(
-        params.PROJECT_ID.value(), SupportedRegion.US_CENTRAL1, "backupapod"
+        params.PROJECT_ID.value, SupportedRegion.US_CENTRAL1, "backupapod"
     )
     target_uri = get_function_url("backupapod")
 

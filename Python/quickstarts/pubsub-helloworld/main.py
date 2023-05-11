@@ -52,6 +52,8 @@ def hellopubsubjson(
     except ValueError:
         print("PubSub message was not JSON")
         return
+    if data is None:
+        return
     if "name" not in data:
         print("No 'name' key")
         return

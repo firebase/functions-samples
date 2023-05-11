@@ -56,13 +56,15 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 # [START makeUppercase]
 @firestore_fn.on_document_created(document="messages/{pushId}")
 def makeuppercase(
-    event: firestore_fn.Event[firestore_fn.DocumentSnapshot],
+    event: firestore_fn.Event[firestore_fn.DocumentSnapshot | None],
 ) -> None:
     """Listens for new documents to be added to /messages. If the document has
     an "original" field, creates an "uppercase" field containg the contents of
     "original" in upper case."""
 
     # Get the value of "original" if it exists.
+    if event.data is None:
+        return
     try:
         original = event.data.get("original")
     except KeyError:

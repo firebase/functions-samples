@@ -30,6 +30,10 @@ initialize_app()
 def onimageresized(event: eventarc_fn.CloudEvent) -> None:
     print("Received image resize completed event: ", event.type)
 
+    if not isinstance(event.subject, str):
+        print("No 'subject' data.")
+        return
+
     # For example, write resized image details into Firestore.
     firestore_client: google.cloud.firestore.Client = firestore.client()
     collection = firestore_client.collection("images")
@@ -51,6 +55,10 @@ def onimageresized(event: eventarc_fn.CloudEvent) -> None:
 def onimageresizedwest(event: eventarc_fn.CloudEvent) -> None:
     print("Received image resize completed event: ", event.type)
     # [START_EXCLUDE]
+    if not isinstance(event.subject, str):
+        print("No 'subject' data.")
+        return
+
     # For example, write resized image details into Firestore.
     firestore_client: google.cloud.firestore.Client = firestore.client()
     collection = firestore_client.collection("images")

@@ -116,7 +116,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         # Saving the new message to the Realtime Database.
         sanitized_message = sanitize_text(text)  # Sanitize message.
         db.reference("/messages").push(
-            {
+            {  # type: ignore
                 "text": sanitized_message,
                 "author": {
                     "uid": uid,
@@ -135,7 +135,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
         # Re-throwing the error as an HttpsError so that the client gets
         # the error details.
         raise https_fn.HttpsError(
-            code=https_fn.FunctionsErrorCode.UNKNOWN, message=e, details=e
+            code=https_fn.FunctionsErrorCode.UNKNOWN, message="Error", details=e
         )
 
 

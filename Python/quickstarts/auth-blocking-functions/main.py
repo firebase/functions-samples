@@ -111,7 +111,7 @@ def sendverification(
     event: identity_fn.AuthBlockingEvent,
 ) -> identity_fn.BeforeCreateResponse | None:
     if event.data.email is not None and not event.data.email_verified:
-        link = auth.generate_email_verification_link()
+        link = auth.generate_email_verification_link(event.data.email)
         send_verification_email_using_your_smtp_server(event.data.email, link)
 
 
@@ -171,6 +171,7 @@ def setemployeeid(
 ) -> identity_fn.BeforeCreateResponse | None:
     if (
         event.credential is not None
+        and event.credential.claims is not None
         and event.credential.provider_id == "saml.my-provider-id"
     ):
         return identity_fn.BeforeCreateResponse(
@@ -184,6 +185,7 @@ def copyclaimstosession(
 ) -> identity_fn.BeforeSignInResponse | None:
     if (
         event.credential is not None
+        and event.credential.claims is not None
         and event.credential.provider_id == "saml.my-provider-id"
     ):
         return identity_fn.BeforeSignInResponse(
