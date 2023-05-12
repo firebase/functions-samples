@@ -30,7 +30,7 @@ SLACK_WEBHOOK_URL = params.SecretParam("SLACK_WEBHOOK_URL")
 def post_to_slack(title: str, details: str) -> requests.Response:
     """Posts a message to Slack via a Webhook."""
     return requests.post(
-        SLACK_WEBHOOK_URL.value(),
+        SLACK_WEBHOOK_URL.value,
         json={
             "blocks": [
                 {

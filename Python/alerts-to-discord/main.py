@@ -82,7 +82,7 @@ ID: `{issue.id}`
     try:
         # [START v2SendToDiscord]
         response = post_message_to_discord(
-            "Crashlytics Bot", message, DISCORD_WEBHOOK_URL.value()
+            "Crashlytics Bot", message, DISCORD_WEBHOOK_URL.value
         )
         if response.ok:
             print(
@@ -115,14 +115,14 @@ def post_new_udid_to_discord(
     message = f"""
 📱 New iOS device registered by {app_dist.tester_name} <{app_dist.tester_email}> for {app_id}
 
-UDID **{app_dist.device_id}** for {app_dist.device_model}
+UDID **{app_dist.tester_device_identifier}** for {app_dist.tester_device_model_name}
 """.strip()
     # [END v2AppDistributionEventPayload]
 
     try:
         # [START v2SendNewTesterIosDeviceToDiscord]
         response = post_message_to_discord(
-            "App Distro Bot", message, DISCORD_WEBHOOK_URL.value()
+            "App Distro Bot", message, DISCORD_WEBHOOK_URL.value
         )
         if response.ok:
             print(
@@ -168,7 +168,7 @@ Number of samples checked: {perf.num_samples}
     try:
         # [START v2SendPerformanceAlertToDiscord]
         response = post_message_to_discord(
-            "App Performance Bot", message, DISCORD_WEBHOOK_URL.value()
+            "App Performance Bot", message, DISCORD_WEBHOOK_URL.value
         )
         if response.ok:
             print(

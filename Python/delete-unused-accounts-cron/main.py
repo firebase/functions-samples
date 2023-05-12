@@ -30,10 +30,10 @@ firebase_admin.initialize_app()
 # [START accountcleanup]
 # Run once a day at midnight, to clean up inactive users.
 # Manually run the task here https://console.cloud.google.com/cloudscheduler
-@scheduler_fn.on_schedule("every day 00:00")
+@scheduler_fn.on_schedule(schedule="every day 00:00")
 def accountcleanup(event: scheduler_fn.ScheduledEvent) -> None:
     """Delete users who've been inactive for 30 days or more."""
-    user_page: auth.ListUsersPage = auth.list_users()
+    user_page: auth.ListUsersPage | None = auth.list_users()
     while user_page is not None:
         inactive_uids = [
             user.uid

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # [START all]
+from typing import Any
 from urllib import parse as urllib_parse
 
 # [START import]
@@ -40,11 +41,12 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
     # [START adminSdkPush]
 
     # Push the new message into the Realtime Database using the Firebase Admin SDK.
-    ref = db.reference("/messages").push({"original": original})
+    ref = db.reference("/messages").push({"original": original})  # type: ignore
 
     # Redirect with 303 SEE OTHER to the URL of the pushed object.
-    scheme, location, path, query, fragment = urllib_parse.urlsplit(
-        app.options.get("databaseURL")
+    scheme, location, path, query, fragment = (
+        b.decode()
+        for b in urllib_parse.urlsplit(app.options.get("databaseURL"))
     )
     path = f"{ref.path}.json"
     return https_fn.Response(
@@ -63,21 +65,25 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
 # [START makeUppercase]
 @db_fn.on_value_created(reference="/messages/{pushId}/original")
-def makeuppercase(event: db_fn.Event[object]) -> None:
+def makeuppercase(event: db_fn.Event[Any]) -> None:
     """Listens for new messages added to /messages/{pushId}/original and
     creates an uppercase version of the message to /messages/{pushId}/uppercase
     """
 
     # Grab the value that was written to the Realtime Database.
     original = event.data
-    if not hasattr(original, "upper"):
+    if not isinstance(original, str):
         print(f"Not a string: {event.reference}")
         return
 
     # Use the Admin SDK to set an "uppercase" sibling.
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
-    db.reference(event.reference).parent.child("uppercase").set(upper)
+    parent = db.reference(event.reference).parent
+    if parent is None:
+        print("Message can't be root node.")
+        return
+    parent.child("uppercase").set(upper)
 
 
 # [END makeUppercase]
@@ -107,7 +113,11 @@ def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
     # Use the Admin SDK to set an "uppercase" sibling.
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
-    db.reference(event.reference).parent.child("uppercase").set(upper)
+    parent = db.reference(event.reference).parent
+    if parent is None:
+        print("Message can't be root node.")
+        return
+    parent.child("uppercase").set(upper)
 
 
 # [END makeUppercase2]

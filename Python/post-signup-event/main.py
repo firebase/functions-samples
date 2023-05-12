@@ -59,7 +59,7 @@ def savegoogletoken(
 
         tasks_client = google.cloud.tasks_v2.CloudTasksClient()
         task_queue = tasks_client.queue_path(
-            params.PROJECT_ID.value(),
+            params.PROJECT_ID.value,
             options.SupportedRegion.US_CENTRAL1,
             "scheduleonboarding",
         )
@@ -105,7 +105,10 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
     user_info = (
         firestore_client.collection("user_info").document(uid).get().to_dict()
     )
-    if "calendar_access_token" not in user_info:
+    if (
+        not isinstance(user_info, dict)
+        or "calendar_access_token" not in user_info
+    ):
         return https_fn.Response(
             status=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
             response="No Google OAuth token found.",
@@ -144,6 +147,8 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
     calendar_client.events().insert(
         calendarId="primary", body=calendar_event
     ).execute()
+
+    return https_fn.Response("Success")
 
 
 # [END scheduleonboarding]
