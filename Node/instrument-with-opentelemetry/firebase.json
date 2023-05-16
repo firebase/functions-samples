@@ -1,6 +1,7 @@
 {
   "functions": {
-    "source": "functions"
+    "source": "functions",
+    "codebase": "instrument-with-opentelemetry"
   },
   "emulators": {
     "functions": {
