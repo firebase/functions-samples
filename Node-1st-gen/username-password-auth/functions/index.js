@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 
 // CORS Express middleware to enable CORS Requests.
 const cors = require('cors')({origin: true});

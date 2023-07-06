@@ -17,7 +17,7 @@
 
 // Sample trigger function that copies new Firebase data to a Google Sheet
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const {OAuth2Client} = require('google-auth-library');

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 
 exports.logTestComplete = functions.testLab
   .testMatrix()

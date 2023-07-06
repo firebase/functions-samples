@@ -16,7 +16,7 @@
 'use strict';
 
 // [START functionsimport]
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 // [END functionsimport]
 // [START additionalimports]
 // Moments library to format dates.

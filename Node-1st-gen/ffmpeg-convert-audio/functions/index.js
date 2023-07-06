@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const os = require('os');

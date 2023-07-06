@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const { BitlyClient } = require('bitly');
 // TODO: Make sure to set the bitly.access_token cloud functions config using the CLI.
 const bitly = new BitlyClient(functions.config().bitly.access_token);
