@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "exif-images"
+  },
   "database": {
     "rules": "database.rules.json"
   },

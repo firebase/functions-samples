@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "email-confirmation"
+  },
   "database": {
     "rules": "database.rules.json"
   },

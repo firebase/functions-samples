@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "authenticated-json-api"
+  },
   "hosting": {
     "public": "public",
     "rewrites": [

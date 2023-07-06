@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "fcm-notifications"
+  },
   "database": {
     "rules": "database.rules.json"
   },

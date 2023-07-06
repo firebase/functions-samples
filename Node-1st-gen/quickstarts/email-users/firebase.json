@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "email-users"
+  },
   "hosting": {
     "public": "./public"
   },
