@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "username-password-auth"
+  },
   "database": {
     "rules": "database.rules.json"
   },
