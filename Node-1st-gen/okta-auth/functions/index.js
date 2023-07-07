@@ -65,7 +65,7 @@ const oktaAuth = async (req, res, next) => {
         req.jwt = jwt;
         return next();
     } catch (err) {
-        functions.logger.log(err.message);
+        functions.logger.log('Unable to verify Okta access token', err);
         res.status(401);
         return next('Unauthorized');
     }
@@ -79,7 +79,7 @@ app.get('/firebaseCustomToken', [cors, oktaAuth], async (req, res) => {
                 await firebaseApp.auth().createCustomToken(oktaUid);
         res.send(firebaseToken);
     } catch (err) {
-        functions.logger.log(err.message);
+        functions.logger.error('Error minting token.', err);
         res.status(500).send('Error minting token.');
     }
 });
