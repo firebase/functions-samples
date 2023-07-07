@@ -21,8 +21,8 @@
     "@opentelemetry/instrumentation-http": "^0.33.0",
     "@opentelemetry/resource-detector-gcp": "^0.27.3",
     "@opentelemetry/sdk-node": "^0.33.0",
-    "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.4.0",
+    "firebase-admin": "^11.9.0",
+    "firebase-functions": "^4.4.1",
     "opentelemetry-instrumentation-express": "^0.29.0"
   },
   "private": true,
