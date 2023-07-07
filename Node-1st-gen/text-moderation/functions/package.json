@@ -4,8 +4,8 @@
   "dependencies": {
     "bad-words": "^3.0.4",
     "capitalize-sentence": "^0.1.5",
-    "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.4.0"
+    "firebase-admin": "^11.9.0",
+    "firebase-functions": "^4.4.1"
   },
   "devDependencies": {
     "eslint": "^8.40.0"

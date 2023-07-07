@@ -16,8 +16,8 @@
   },
   "main": "index.js",
   "dependencies": {
-    "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.4.0",
+    "firebase-admin": "^11.9.0",
+    "firebase-functions": "^4.4.1",
     "google-auth-library": "^8.6.0",
     "node-fetch": "^2.6.7"
   },
