@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "template-handlebars"
+  },
   "hosting": {
     "public": "public",
     "rewrites": [

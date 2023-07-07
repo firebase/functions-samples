@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "image-maker"
+  },
   "hosting": {
     "public": "public",
     "rewrites": [

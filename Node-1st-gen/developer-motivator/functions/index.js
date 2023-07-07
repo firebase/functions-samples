@@ -16,7 +16,7 @@
 'use strict';
 
 const admin = require('firebase-admin');
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 admin.initializeApp();
 
 // TODO: Make sure you configure the 'dev_motivator.device_token' Google Cloud environment variables.

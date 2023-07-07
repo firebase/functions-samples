@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "pubsub-helloworld"
+  },
   "emulators": {
     "functions": {
       "port": 5001

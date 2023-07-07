@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "uppercase-rtdb"
+  },
   "rulesFile": "database.rules.json",
   "emulators": {
     "functions": {

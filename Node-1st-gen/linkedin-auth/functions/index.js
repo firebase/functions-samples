@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 

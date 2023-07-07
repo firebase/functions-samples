@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const fs = require('fs');
 const crypto = require('crypto');
 const path = require('path');

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const app = require('express')();
 const { Canvas } = require('canvas');
 const _ = require('lodash');

@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 const paypal = require('paypal-rest-sdk');
 // firebase-admin SDK init
 const admin = require('firebase-admin');

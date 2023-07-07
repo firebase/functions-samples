@@ -17,7 +17,7 @@
 
 const admin = require('firebase-admin');
 const cookieParser = require('cookie-parser')();
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 
 // Express middleware that checks if a Firebase ID Tokens is passed in the `Authorization` HTTP
 // header or the `__session` cookie and decodes it.

@@ -1,6 +1,7 @@
 {
   "functions": {
-    "source": "functions"
+    "source": "functions",
+    "codebase": "google-sheet-sync"
   },
   "hosting": {
     "rewrites": [

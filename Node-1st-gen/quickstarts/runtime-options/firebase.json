@@ -1,6 +1,7 @@
 {
   "functions": {
     "source": "functions",
+    "codebase": "runtime-options",
     "predeploy": [
       "npm --prefix \"$RESOURCE_DIR\" run lint"
     ]

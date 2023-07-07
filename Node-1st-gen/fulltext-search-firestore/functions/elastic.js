@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const functions = require("firebase-functions");
+const functions = require('firebase-functions/v1');
 
 // [START init_elastic]
 const { Client } = require("@elastic/elasticsearch");

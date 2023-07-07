@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions');
+const functions = require('firebase-functions/v1');
 
 // The node-fetch library to send web requests to Slack.
 const fetch = require("node-fetch");

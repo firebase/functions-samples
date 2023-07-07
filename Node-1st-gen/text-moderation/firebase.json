@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "text-moderation"
+  },
   "database": {
     "rules": "security.rules.json"
   },

@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "stripe"
+  },
   "firestore": {
     "rules": "firestore.rules"
   },

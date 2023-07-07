@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "linkedin-auth"
+  },
   "database": {
     "rules": "database.rules.json"
   },

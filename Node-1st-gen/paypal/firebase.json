@@ -1,5 +1,6 @@
 {
   "functions": {
+    "codebase": "paypal",
     "source": "functions"
   },
   "hosting": {

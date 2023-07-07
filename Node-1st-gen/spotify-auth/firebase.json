@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "spotify-auth"
+  },
   "database": {
     "rules": "database.rules.json"
   },

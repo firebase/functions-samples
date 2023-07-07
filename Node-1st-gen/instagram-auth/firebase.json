@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "instagram-auth"
+  },
   "database": {
     "rules": "database.rules.json"
   },

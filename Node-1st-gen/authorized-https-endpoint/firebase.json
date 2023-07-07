@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "codebase": "authorized-https-endpoint"
+  },
   "hosting": {
     "public": "public",
     "rewrites": [
