@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions/v1');
+const functions = require("firebase-functions/v1");
 
 exports.helloJS = functions.https.onRequest((request, response) => {
   functions.logger.info("Hello logs!", {structuredData: true});
