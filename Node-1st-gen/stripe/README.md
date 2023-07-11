@@ -24,19 +24,22 @@ This sample shows you how to create Stripe customers when your users sign up, se
 
 ## Deploy and test
 
-- Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
-- Enable billing on your project by switching to the Blaze plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
-- Enable Google & Email sign-in in your [authentication provider settings](https://console.firebase.google.com/project/_/authentication/providers).
-- Install [Firebase CLI Tools](https://github.com/firebase/firebase-tools) if you have not already and log in with `firebase login`.
-- Configure this sample to use your project using `firebase use --add` and select your project.
-- Install dependencies locally by running: `cd functions; npm install; cd -`
-- [Add your Stripe API Secret Key](https://dashboard.stripe.com/account/apikeys) to firebase config:
+1. Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
+2. Enable billing on your project by switching to the Blaze plan. See [pricing](https://firebase.google.com/pricing/) for more details. This is required to be able to do requests to non-Google services.
+3. Enable Google & Email sign-in in your [authentication provider settings](https://console.firebase.google.com/project/_/authentication/providers).
+4. Install [Firebase CLI Tools](https://github.com/firebase/firebase-tools) if you have not already. `npm install -g firebase-tools` (`sudo` might be needed)
+5. Log CLI into Firebase with `firebase login`.
+6. In the functions-samples directory: `cd Node-1st-gen/stripe`
+7. Configure this sample to use your project using `firebase use --add` and select the project you created in step 1.
+8. Initialize this project for both functions & hosting: `firebase init`
+9. Install dependencies locally by running: `cd functions; npm install; cd -` (`sudo` might be needed)
+10. [Add your Stripe API Secret Key (testing key, see switch at top right)](https://dashboard.stripe.com/account/apikeys) to Firebase config:
   ```bash
   firebase functions:config:set stripe.secret=<YOUR STRIPE SECRET KEY>
   ```
-- Set your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) for the `STRIPE_PUBLISHABLE_KEY` const in [`/public/javascript/app.js`](./public/javascript/app.js#L16)
-- Deploy your project using `firebase deploy`
-- Test your Stripe integration by viewing your deployed site `firebase open hosting:site`
+11. Set your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) for the `STRIPE_PUBLISHABLE_KEY` const in [`/public/javascript/app.js`](./public/javascript/app.js#L16)
+12. Deploy your project using `firebase deploy`
+13. Test your Stripe integration by viewing your deployed site `firebase open hosting:site`
 
 ### Run the client locally
 
