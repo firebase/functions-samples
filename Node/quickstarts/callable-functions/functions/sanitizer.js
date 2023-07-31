@@ -16,23 +16,23 @@
 "use strict";
 
 const capitalizeSentence = require("capitalize-sentence");
-const { isProfane, replaceProfanities } = import("no-profanity");
+const {isProfane, replaceProfanities} = import("no-profanity");
 
 // Sanitizes the given text if needed by replacing bad words with '*'.
 exports.sanitizeText = (text) => {
-    // Re-capitalize if the user is Shouting.
-    if (isShouting(text)) {
-        console.log("User is shouting. Fixing sentence case...");
-        text = stopShouting(text);
-    }
+  // Re-capitalize if the user is Shouting.
+  if (isShouting(text)) {
+    console.log("User is shouting. Fixing sentence case...");
+    text = stopShouting(text);
+  }
 
-    // Moderate if the user uses SwearWords.
-    if (isProfane(text)) {
-        console.log("User is swearing. moderating...");
-        text = replaceSwearwords(text);
-    }
+  // Moderate if the user uses SwearWords.
+  if (isProfane(text)) {
+    console.log("User is swearing. moderating...");
+    text = replaceSwearwords(text);
+  }
 
-    return text;
+  return text;
 };
 
 /**
@@ -41,7 +41,7 @@ exports.sanitizeText = (text) => {
  * @return {string}
  */
 function replaceSwearwords(message) {
-    return replaceProfanities(message);
+  return replaceProfanities(message);
 }
 
 /**
@@ -51,7 +51,7 @@ function replaceSwearwords(message) {
  * @return {boolean}
  */
 function isShouting(message) {
-    return message.replace(/[^A-Z]/g, "").length > message.length / 2 || message.replace(/[^!]/g, "").length >= 3;
+  return message.replace(/[^A-Z]/g, "").length > message.length / 2 || message.replace(/[^!]/g, "").length >= 3;
 }
 
 /**
@@ -61,5 +61,5 @@ function isShouting(message) {
  * @return {string} capitalized string
  */
 function stopShouting(message) {
-    return capitalizeSentence(message.toLowerCase()).replace(/!+/g, ".");
+  return capitalizeSentence(message.toLowerCase()).replace(/!+/g, ".");
 }
