@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+// [START imports]
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const {getDatabase} = require("firebase-admin/database");
 const {logger} = require("firebase-functions/v2");
 const sanitizer = require("./sanitizer");
+// [END imports]
 
 // [START v2allAdd]
 // [START v2addFunctionTrigger]
