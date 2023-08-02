@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 "use strict";
+// [START imports]
 const path = require("path");
 const fetch = require("node-fetch");
 const functions = require("firebase-functions");
@@ -25,6 +26,7 @@ const {getStorage} = require("firebase-admin/storage");
 const {GoogleAuth} = require("google-auth-library");
 const logger = functions.logger;
 const HttpsError = functions.https.HttpsError;
+// [END imports]
 initializeApp();
 
 const BACKUP_START_DATE = new Date("1995-06-17");
