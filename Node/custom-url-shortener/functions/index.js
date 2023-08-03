@@ -38,6 +38,7 @@ exports.redirectToFullURL = onRequest(async (request, response) => {
       `Found too many URLs. Something is wrong`,
       result.docs.map((docSnap) => docSnap.ref.id)
     );
+    return;
   }
   const redirectUrl = result.docs[0].data().longUrl;
 
@@ -49,6 +50,15 @@ exports.shortenUrl = onDocumentCreated(
   "links/{linkid}",
   async (event, params) => {
     const hash = (Math.random() + 1).toString(36).substring(7);
+
+    // check if the URL is valid
+    try {
+        new URL(event.data.data().longUrl);
+    } catch {
+        logger.error(`invalid URL "${event.data.data().longUrl}"`, event.data.data());
+        return;
+    }
+
     await event.data.ref.update({ shortUrl: hash });
     logger.info(`created shortlink`, {
       documentId: params.linkid,
