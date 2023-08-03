@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@okta/jwt-verifier": "^1.0.0",
-    "@okta/oidc-middleware": "^4.0.1",
+    "@okta/oidc-middleware": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
