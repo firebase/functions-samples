@@ -8,12 +8,17 @@ const { getFirestore } = require("firebase-admin/firestore");
 initializeApp();
 
 exports.listAllRedirects = onRequest(async (request, response) => {
-    result = await getFirestore()
-    .collection("links").get();
+  result = await getFirestore().collection("links").get();
 
-    response.type('json');
-    response.send(JSON.stringify(result.docs.map(docSnap => docSnap.data()), null, 2));
-})
+  response.type("json");
+  response.send(
+    JSON.stringify(
+      result.docs.map((docSnap) => docSnap.data()),
+      null,
+      2
+    )
+  );
+});
 
 exports.redirectToFullURL = onRequest(async (request, response) => {
   const shortLink = request.path.split("/")[1];
@@ -53,10 +58,13 @@ exports.shortenUrl = onDocumentCreated(
 
     // check if the URL is valid
     try {
-        new URL(event.data.data().longUrl);
+      new URL(event.data.data().longUrl);
     } catch {
-        logger.error(`invalid URL "${event.data.data().longUrl}"`, event.data.data());
-        return;
+      logger.error(
+        `invalid URL "${event.data.data().longUrl}"`,
+        event.data.data()
+      );
+      return;
     }
 
     await event.data.ref.update({ shortUrl: hash });
