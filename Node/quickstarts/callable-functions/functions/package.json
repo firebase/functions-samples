@@ -19,7 +19,7 @@
         "capitalize-sentence": "^0.1.5",
         "firebase-admin": "^11.9.0",
         "firebase-functions": "^4.4.1",
-        "no-profanity": "^1.1.6"
+        "no-profanity": "^1.4.2"
     },
     "devDependencies": {
         "eslint": "^8.40.0",
