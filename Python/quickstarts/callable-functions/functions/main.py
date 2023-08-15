@@ -15,8 +15,13 @@
 import re
 from typing import Any
 
-from firebase_admin import db, initialize_app
+# [START v2imports]
+# Dependencies for callable functions
 from firebase_functions import https_fn, options
+
+# Dependencies for messageFunctionTrigger
+from firebase_admin import db, initialize_app
+# [END v2imports]
 
 initialize_app()
 
