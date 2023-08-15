@@ -15,9 +15,12 @@
  */
 
 // [START imports]
+// Dependencies for callable functions
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
-const {getDatabase} = require("firebase-admin/database");
 const {logger} = require("firebase-functions/v2");
+
+// Dependencies for the addMessage function
+const {getDatabase} = require("firebase-admin/database");
 const sanitizer = require("./sanitizer");
 // [END imports]
 
