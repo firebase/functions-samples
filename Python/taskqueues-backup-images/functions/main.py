@@ -18,7 +18,7 @@ from google.cloud import tasks_v2
 import requests
 from firebase_functions.options import RetryConfig, RateLimits, SupportedRegion
 
-// Dependencies for image backup sample
+# Dependencies for image backup
 from datetime import datetime, timedelta
 import json
 import pathlib
