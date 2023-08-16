@@ -15,13 +15,13 @@
  */
 "use strict";
 // [START imports]
-// Dependencies for task queue functions
+// Dependencies for task queue functions.
 const {onTaskDispatched} = require("firebase-functions/v2/tasks");
 const {onRequest} = require("firebase-functions/v2/https");
 const {getFunctions} = require("firebase-admin/functions");
 const {logger} = require("firebase-functions/v2");
 
-// Dependencies for image backup sample
+// Dependencies for image backup.
 const path = require("path");
 const fetch = require("node-fetch");
 const {initializeApp} = require("firebase-admin/app");
