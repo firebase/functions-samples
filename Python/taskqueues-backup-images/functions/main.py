@@ -12,19 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# [START v2imports]
+# Dependencies for task queue functions.
+from google.cloud import tasks_v2
+import requests
+from firebase_functions.options import RetryConfig, RateLimits, SupportedRegion
+
+# Dependencies for image backup.
 from datetime import datetime, timedelta
 import json
 import pathlib
 from urllib.parse import urlparse
-
 from firebase_admin import initialize_app, storage
 from firebase_functions import https_fn, tasks_fn, params
-from firebase_functions.options import RetryConfig, RateLimits, SupportedRegion
-
 import google.auth
 from google.auth.transport.requests import AuthorizedSession
-from google.cloud import tasks_v2
-import requests
+# [END v2imports]
+
 
 app = initialize_app()
 

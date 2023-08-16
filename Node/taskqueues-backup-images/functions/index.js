@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 "use strict";
-const path = require("path");
-const fetch = require("node-fetch");
-const functions = require("firebase-functions");
+// [START imports]
+// Dependencies for task queue functions.
 const {onTaskDispatched} = require("firebase-functions/v2/tasks");
 const {onRequest} = require("firebase-functions/v2/https");
-const {initializeApp} = require("firebase-admin/app");
 const {getFunctions} = require("firebase-admin/functions");
+const {logger} = require("firebase-functions/v2");
+
+// Dependencies for image backup.
+const path = require("path");
+const fetch = require("node-fetch");
+const {initializeApp} = require("firebase-admin/app");
 const {getStorage} = require("firebase-admin/storage");
 const {GoogleAuth} = require("google-auth-library");
-const logger = functions.logger;
 const HttpsError = functions.https.HttpsError;
+// [END imports]
 initializeApp();
 
 const BACKUP_START_DATE = new Date("1995-06-17");
