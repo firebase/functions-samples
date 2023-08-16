@@ -19,7 +19,7 @@ from typing import Any
 # Dependencies for callable functions
 from firebase_functions import https_fn, options
 
-# Dependencies for messageFunctionTrigger
+# Dependencies for writing to Realtime Database
 from firebase_admin import db, initialize_app
 # [END v2imports]
 
