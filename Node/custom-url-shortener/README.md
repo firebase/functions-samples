@@ -7,4 +7,4 @@
    }
    ```
 1. View the available shortlinks at the `/links` path on your Hosting site
-1. Visit a shortlink's path on your hosting site `https://<your-site>/<shortlink>` to be redirected!
+1. Visit a shortlink's path on your hosting site `https://<ekc9399>/<dev.xyz>` to be redirected!
