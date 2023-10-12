@@ -21,6 +21,7 @@ from firebase_functions import https_fn, options
 
 # Dependencies for writing to Realtime Database.
 from firebase_admin import db, initialize_app
+
 # [END v2imports]
 
 initialize_app()

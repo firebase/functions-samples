@@ -27,6 +27,7 @@ from firebase_admin import initialize_app, storage
 from firebase_functions import https_fn, tasks_fn, params
 import google.auth
 from google.auth.transport.requests import AuthorizedSession
+
 # [END v2imports]
 
 
