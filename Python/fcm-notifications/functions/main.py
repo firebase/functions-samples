@@ -25,10 +25,15 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
     print(f"User {follower_uid} is now following user {followed_uid}")
     tokens_ref = db.reference(f"users/{followed_uid}/notificationTokens")
     notification_tokens = tokens_ref.get()
-    if not isinstance(notification_tokens, dict) or len(notification_tokens) < 1:
+    if (
+        not isinstance(notification_tokens, dict)
+        or len(notification_tokens) < 1
+    ):
         print("There are no tokens to send notifications to.")
         return
-    print(f"There are {len(notification_tokens)} tokens to send notifications to.")
+    print(
+        f"There are {len(notification_tokens)} tokens to send notifications to."
+    )
 
     follower: auth.UserRecord = auth.get_user(follower_uid)
     notification = messaging.Notification(
