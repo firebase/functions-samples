@@ -8,7 +8,7 @@ firebase_admin.initialize_app()
 @db_fn.on_value_written(reference=r"followers/{followedUid}/{followerUid}")
 def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
     """Triggers when a user gets a new follower and sends a notification.
-    
+
     Followers add a flag to `/followers/{followedUid}/{followerUid}`.
     Users save their device notification tokens to
     `/users/{followedUid}/notificationTokens/{notificationToken}`.
@@ -23,9 +23,7 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
         return
 
     print(f"User {follower_uid} is now following user {followed_uid}")
-    tokens_ref = db.reference(
-        f"users/{followed_uid}/notificationTokens"
-    )
+    tokens_ref = db.reference(f"users/{followed_uid}/notificationTokens")
     notification_tokens = tokens_ref.get()
     if not isinstance(notification_tokens, dict) or len(notification_tokens) < 1:
         print("There are no tokens to send notifications to.")
@@ -41,7 +39,8 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
 
     # Send notifications to all tokens.
     msgs = [
-        messaging.Message(token=token, notification=notification) for token in notification_tokens
+        messaging.Message(token=token, notification=notification)
+        for token in notification_tokens
     ]
     batch_response: messaging.BatchResponse = messaging.send_each(msgs)
     if batch_response.failure_count < 1:
