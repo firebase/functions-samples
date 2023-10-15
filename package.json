@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "eslint": "^8.44.0",
-    "pnpm": "^8.2.0",
+    "pnpm": "^8.6.8",
     "typescript": "^5.0.4"
   },
   "engines": {
