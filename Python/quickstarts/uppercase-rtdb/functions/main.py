@@ -33,33 +33,23 @@ app = initialize_app()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
     """Take the text parameter passed to this HTTP endpoint and insert it into
     the Realtime Database under the path /messages/{pushId}/original"""
-    # [END addMessageTrigger]
+# [END addMessageTrigger]
     # Grab the text parameter.
     original = req.args.get("text")
     if original is None:
         return https_fn.Response("No text parameter provided", status=400)
     # [START adminSdkPush]
-
     # Push the new message into the Realtime Database using the Firebase Admin SDK.
     ref = db.reference("/messages").push({"original": original})  # type: ignore
 
     # Redirect with 303 SEE OTHER to the URL of the pushed object.
     scheme, location, path, query, fragment = (
-        b.decode()
-        for b in urllib_parse.urlsplit(app.options.get("databaseURL"))
-    )
+        b.decode() for b in urllib_parse.urlsplit(app.options.get("databaseURL")))
     path = f"{ref.path}.json"
     return https_fn.Response(
         status=303,
-        headers={
-            "Location": urllib_parse.urlunsplit(
-                (scheme, location, path, query, fragment)
-            )
-        },
-    )
+        headers={"Location": urllib_parse.urlunsplit((scheme, location, path, query, fragment))})
     # [END adminSdkPush]
-
-
 # [END addMessage]
 
 
@@ -84,8 +74,6 @@ def makeuppercase(event: db_fn.Event[Any]) -> None:
         print("Message can't be root node.")
         return
     parent.child("uppercase").set(upper)
-
-
 # [END makeUppercase]
 
 
@@ -118,7 +106,5 @@ def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
         print("Message can't be root node.")
         return
     parent.child("uppercase").set(upper)
-
-
 # [END makeUppercase2]
 # [END all]

@@ -19,9 +19,7 @@ from firebase_functions import test_lab_fn, params
 
 # The requests library to send web requests to Slack.
 import requests
-
 # [END import]
-
 
 # [START postToSlack]
 SLACK_WEBHOOK_URL = params.SecretParam("SLACK_WEBHOOK_URL")
@@ -29,43 +27,31 @@ SLACK_WEBHOOK_URL = params.SecretParam("SLACK_WEBHOOK_URL")
 
 def post_to_slack(title: str, details: str) -> requests.Response:
     """Posts a message to Slack via a Webhook."""
-    return requests.post(
-        SLACK_WEBHOOK_URL.value,
-        json={
-            "blocks": [
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": title,
-                    },
-                },
-                {
-                    "type": "divider",
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": details,
-                    },
-                },
-            ],
-        },
-    )
-
-
+    return requests.post(SLACK_WEBHOOK_URL.value,
+                         json={
+                             "blocks": [{
+                                 "type": "section",
+                                 "text": {
+                                     "type": "mrkdwn",
+                                     "text": title
+                                 }
+                             }, {
+                                 "type": "divider"
+                             }, {
+                                 "type": "section",
+                                 "text": {
+                                     "type": "mrkdwn",
+                                     "text": details
+                                 }
+                             }]
+                         })
 # [END postToSlack]
 
 
 # [START getSlackmoji]
-def slackmoji(
-    status: test_lab_fn.TestState | test_lab_fn.OutcomeSummary,
-) -> str:
+def slackmoji(status: test_lab_fn.TestState | test_lab_fn.OutcomeSummary) -> str:
     """Convert a test result status into a Slackmoji."""
-    status_slackmoji: dict[
-        test_lab_fn.TestState | test_lab_fn.OutcomeSummary, str
-    ] = {
+    status_slackmoji: dict[test_lab_fn.TestState | test_lab_fn.OutcomeSummary, str] = {
         test_lab_fn.OutcomeSummary.SUCCESS: ":tada:",
         test_lab_fn.OutcomeSummary.FAILURE: ":broken_heart:",
         test_lab_fn.OutcomeSummary.INCONCLUSIVE: ":question:",
@@ -74,19 +60,16 @@ def slackmoji(
         test_lab_fn.TestState.PENDING: ":soon:",
         test_lab_fn.TestState.FINISHED: ":white_check_mark:",
         test_lab_fn.TestState.ERROR: ":red_circle:",
-        test_lab_fn.TestState.INVALID: ":large_orange_diamond:",
+        test_lab_fn.TestState.INVALID: ":large_orange_diamond:"
     }
     return status_slackmoji[status] if status in status_slackmoji else ""
-
-
 # [END getSlackmoji]
 
 
 # [START posttestresultstoslack]
 @test_lab_fn.on_test_matrix_completed(secrets=["SLACK_WEBHOOK_URL"])
 def posttestresultstoslack(
-    event: test_lab_fn.CloudEvent[test_lab_fn.TestMatrixCompletedData],
-) -> None:
+        event: test_lab_fn.CloudEvent[test_lab_fn.TestMatrixCompletedData]) -> None:
     """Posts a test matrix result to Slack."""
 
     # Obtain Test Matrix properties from the CloudEvent
@@ -98,17 +81,13 @@ def posttestresultstoslack(
     title = f"{slackmoji(state)} {slackmoji(outcome_summary)} {test_matrix_id}"
 
     # Create the details of the message
-    details = (
-        f"Status: *{state}* {slackmoji(state)}\n"
-        f"Outcome: *{outcome_summary}* {slackmoji(outcome_summary)}"
-    )
+    details = (f"Status: *{state}* {slackmoji(state)}\n"
+               f"Outcome: *{outcome_summary}* {slackmoji(outcome_summary)}")
 
     # Post the message to Slack
     response = post_to_slack(title, details)
 
     # Log the response
     print(response.status_code, response.text)
-
-
 # [END posttestresultstoslack]
 # [END all]
