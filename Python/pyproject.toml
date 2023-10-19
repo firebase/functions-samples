@@ -15,7 +15,8 @@
 [project]
 name = "functions_samples"
 version = "1.0.0"
-[tool.black]
-line-length = 80
+[tool.yapf]
+based_on_style = "google"
+column_limit = 100
 [tool.mypy]
 python_version = "3.10"
