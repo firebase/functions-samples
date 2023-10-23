@@ -46,6 +46,4 @@ def add_widget():
 def httpsflaskexample(req: https_fn.Request) -> https_fn.Response:
     with app.request_context(req.environ):
         return app.full_dispatch_request()
-
-
 # [END httpflaskexample]

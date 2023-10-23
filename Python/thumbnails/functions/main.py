@@ -23,12 +23,10 @@ from firebase_admin import initialize_app
 
 initialize_app()
 from firebase_admin import storage
-
 # [END storageAdditionalImports]
 
 # [START storageSDKImport]
 from firebase_functions import storage_fn
-
 # [END storageSDKImport]
 # [END storageImports]
 
@@ -36,12 +34,10 @@ from firebase_functions import storage_fn
 # [START storageGenerateThumbnail]
 # [START storageGenerateThumbnailTrigger]
 @storage_fn.on_object_finalized()
-def generatethumbnail(
-    event: storage_fn.CloudEvent[storage_fn.StorageObjectData],
-):
+def generatethumbnail(event: storage_fn.CloudEvent[storage_fn.StorageObjectData]):
     """When an image is uploaded in the Storage bucket, generate a thumbnail
     automatically using Pillow."""
-    # [END storageGenerateThumbnailTrigger]
+# [END storageGenerateThumbnailTrigger]
 
     # [START storageEventAttributes]
     bucket_name = event.data.bucket
@@ -71,14 +67,8 @@ def generatethumbnail(
     image.thumbnail((200, 200))
     thumbnail_io = io.BytesIO()
     image.save(thumbnail_io, format="png")
-    thumbnail_path = file_path.parent / pathlib.PurePath(
-        f"thumb_{file_path.stem}.png"
-    )
+    thumbnail_path = file_path.parent / pathlib.PurePath(f"thumb_{file_path.stem}.png")
     thumbnail_blob = bucket.blob(str(thumbnail_path))
-    thumbnail_blob.upload_from_string(
-        thumbnail_io.getvalue(), content_type="image/png"
-    )
+    thumbnail_blob.upload_from_string(thumbnail_io.getvalue(), content_type="image/png")
     # [END storageThumbnailGeneration]
-
-
 # [END storageGenerateThumbnail]

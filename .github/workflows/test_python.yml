@@ -45,4 +45,4 @@ jobs:
         run: pip install -r requirements.txt
       - name: Lint
         working-directory: ./Python
-        run: black . --exclude=venv --check --diff
+        run: python pyfmt.py --check_only --exclude "**/venv/**/*.py" **/*.py

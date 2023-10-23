@@ -36,14 +36,10 @@ def accountcleanup(event: scheduler_fn.ScheduledEvent) -> None:
     user_page: auth.ListUsersPage | None = auth.list_users()
     while user_page is not None:
         inactive_uids = [
-            user.uid
-            for user in user_page.users
-            if is_inactive(user, timedelta(days=30))
+            user.uid for user in user_page.users if is_inactive(user, timedelta(days=30))
         ]
         auth.delete_users(inactive_uids)
         user_page = user_page.get_next_page()
-
-
 # [END accountcleanup]
 
 
@@ -59,6 +55,4 @@ def is_inactive(user: auth.UserRecord, inactive_limit: timedelta) -> bool:
     last_seen = datetime.fromtimestamp(last_seen_timestamp)
     inactive_time = datetime.now() - last_seen
     return inactive_time >= inactive_limit
-
-
 # [END all]

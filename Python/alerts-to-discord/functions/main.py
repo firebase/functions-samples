@@ -16,12 +16,7 @@ import pprint
 
 # [START v2import]
 from firebase_functions import params
-from firebase_functions.alerts import (
-    app_distribution_fn,
-    crashlytics_fn,
-    performance_fn,
-)
-
+from firebase_functions.alerts import app_distribution_fn, crashlytics_fn, performance_fn
 # [END v2import]
 
 import requests
@@ -29,9 +24,8 @@ import requests
 DISCORD_WEBHOOK_URL = params.SecretParam("DISCORD_WEBHOOK_URL")
 
 
-def post_message_to_discord(
-    bot_name: str, message_body: str, webhook_url: str
-) -> requests.Response:
+def post_message_to_discord(bot_name: str, message_body: str,
+                            webhook_url: str) -> requests.Response:
     """Posts a message to Discord with Discord's Webhook API.
 
     Params:
@@ -42,8 +36,7 @@ def post_message_to_discord(
         raise EnvironmentError(
             "No webhook URL found. Set the Discord Webhook URL before deploying. "
             "Learn more about Discord webhooks here: "
-            "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks"
-        )
+            "https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks")
 
     return requests.post(
         url=webhook_url,
@@ -51,19 +44,16 @@ def post_message_to_discord(
             # Here's what the Discord API supports in the payload:
             # https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params
             "username": bot_name,
-            "content": message_body,
-        },
-    )
+            "content": message_body
+        })
 
 
 # [START v2Alerts]
 # [START v2CrashlyticsAlertTrigger]
 @crashlytics_fn.on_new_fatal_issue_published(secrets=["DISCORD_WEBHOOK_URL"])
-def post_fatal_issue_to_discord(
-    event: crashlytics_fn.CrashlyticsNewFatalIssueEvent,
-) -> None:
+def post_fatal_issue_to_discord(event: crashlytics_fn.CrashlyticsNewFatalIssueEvent) -> None:
     """Publishes a message to Discord whenever a new Crashlytics fatal issue occurs."""
-    # [END v2CrashlyticsAlertTrigger]
+# [END v2CrashlyticsAlertTrigger]
     # [START v2CrashlyticsEventPayload]
     # Construct a helpful message to send to Discord.
     app_id = event.app_id
@@ -81,33 +71,22 @@ ID: `{issue.id}`
 
     try:
         # [START v2SendToDiscord]
-        response = post_message_to_discord(
-            "Crashlytics Bot", message, DISCORD_WEBHOOK_URL.value
-        )
+        response = post_message_to_discord("Crashlytics Bot", message, DISCORD_WEBHOOK_URL.value)
         if response.ok:
-            print(
-                f"Posted fatal Crashlytics alert {issue.id} for {app_id} to Discord."
-            )
+            print(f"Posted fatal Crashlytics alert {issue.id} for {app_id} to Discord.")
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
         # [END v2SendToDiscord]
     except (EnvironmentError, requests.HTTPError) as error:
-        print(
-            f"Unable to post fatal Crashlytics alert {issue.id} for {app_id} to Discord.",
-            error,
-        )
+        print(f"Unable to post fatal Crashlytics alert {issue.id} for {app_id} to Discord.", error)
 
 
 # [START v2AppDistributionAlertTrigger]
-@app_distribution_fn.on_new_tester_ios_device_published(
-    secrets=["DISCORD_WEBHOOK_URL"]
-)
-def post_new_udid_to_discord(
-    event: app_distribution_fn.NewTesterDeviceEvent,
-) -> None:
+@app_distribution_fn.on_new_tester_ios_device_published(secrets=["DISCORD_WEBHOOK_URL"])
+def post_new_udid_to_discord(event: app_distribution_fn.NewTesterDeviceEvent) -> None:
     """Publishes a message to Discord whenever someone registers a new iOS test device."""
-    # [END v2AppDistributionAlertTrigger]
+# [END v2AppDistributionAlertTrigger]
     # [START v2AppDistributionEventPayload]
     # Construct a helpful message to send to Discord.
     app_id = event.app_id
@@ -121,13 +100,9 @@ UDID **{app_dist.tester_device_identifier}** for {app_dist.tester_device_model_n
 
     try:
         # [START v2SendNewTesterIosDeviceToDiscord]
-        response = post_message_to_discord(
-            "App Distro Bot", message, DISCORD_WEBHOOK_URL.value
-        )
+        response = post_message_to_discord("App Distro Bot", message, DISCORD_WEBHOOK_URL.value)
         if response.ok:
-            print(
-                f"Posted iOS device registration alert for {app_dist.tester_email} to Discord."
-            )
+            print(f"Posted iOS device registration alert for {app_dist.tester_email} to Discord.")
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
@@ -135,17 +110,14 @@ UDID **{app_dist.tester_device_identifier}** for {app_dist.tester_device_model_n
     except (EnvironmentError, requests.HTTPError) as error:
         print(
             f"Unable to post iOS device registration alert for {app_dist.tester_email} to Discord.",
-            error,
-        )
+            error)
 
 
 # [START v2PerformanceAlertTrigger]
 @performance_fn.on_threshold_alert_published(secrets=["DISCORD_WEBHOOK_URL"])
-def post_performance_alert_to_discord(
-    event: performance_fn.PerformanceThresholdAlertEvent,
-) -> None:
+def post_performance_alert_to_discord(event: performance_fn.PerformanceThresholdAlertEvent) -> None:
     """Publishes a message to Discord whenever a performance threshold alert is fired."""
-    # [END v2PerformanceAlertTrigger]
+# [END v2PerformanceAlertTrigger]
     # [START v2PerformanceEventPayload]
     # Construct a helpful message to send to Discord.
     app_id = event.app_id
@@ -167,22 +139,14 @@ Number of samples checked: {perf.num_samples}
 
     try:
         # [START v2SendPerformanceAlertToDiscord]
-        response = post_message_to_discord(
-            "App Performance Bot", message, DISCORD_WEBHOOK_URL.value
-        )
+        response = post_message_to_discord("App Performance Bot", message,
+                                           DISCORD_WEBHOOK_URL.value)
         if response.ok:
-            print(
-                f"Posted Firebase Performance alert {perf.event_name} to Discord."
-            )
+            print(f"Posted Firebase Performance alert {perf.event_name} to Discord.")
             pprint.pp(event.data.payload)
         else:
             response.raise_for_status()
         # [END v2SendPerformanceAlertToDiscord]
     except (EnvironmentError, requests.HTTPError) as error:
-        print(
-            f"Unable to post Firebase Performance alert {perf.event_name} to Discord.",
-            error,
-        )
-
-
+        print(f"Unable to post Firebase Performance alert {perf.event_name} to Discord.", error)
 # [END v2Alerts]

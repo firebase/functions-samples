@@ -25,15 +25,10 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
     print(f"User {follower_uid} is now following user {followed_uid}")
     tokens_ref = db.reference(f"users/{followed_uid}/notificationTokens")
     notification_tokens = tokens_ref.get()
-    if (
-        not isinstance(notification_tokens, dict)
-        or len(notification_tokens) < 1
-    ):
+    if (not isinstance(notification_tokens, dict) or len(notification_tokens) < 1):
         print("There are no tokens to send notifications to.")
         return
-    print(
-        f"There are {len(notification_tokens)} tokens to send notifications to."
-    )
+    print(f"There are {len(notification_tokens)} tokens to send notifications to.")
 
     follower: auth.UserRecord = auth.get_user(follower_uid)
     notification = messaging.Notification(
@@ -44,8 +39,7 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
 
     # Send notifications to all tokens.
     msgs = [
-        messaging.Message(token=token, notification=notification)
-        for token in notification_tokens
+        messaging.Message(token=token, notification=notification) for token in notification_tokens
     ]
     batch_response: messaging.BatchResponse = messaging.send_each(msgs)
     if batch_response.failure_count < 1:
@@ -54,7 +48,7 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
     # Clean up the tokens that are not registered any more.
     for response in batch_response.responses:
         if response.exception.code in (
-            "messaging/invalid-registration-token",
-            "messaging/registration-token-not-registered",
+                "messaging/invalid-registration-token",
+                "messaging/registration-token-not-registered",
         ):
             tokens_ref.child(response.message_id).delete()

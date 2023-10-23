@@ -31,8 +31,7 @@ initialize_app()
 # [START savegoogletoken]
 @identity_fn.before_user_created()
 def savegoogletoken(
-    event: identity_fn.AuthBlockingEvent,
-) -> identity_fn.BeforeCreateResponse | None:
+        event: identity_fn.AuthBlockingEvent) -> identity_fn.BeforeCreateResponse | None:
     """During sign-up, save the Google OAuth2 access token and queue up a task
     to schedule an onboarding session on the user's Google Calendar.
 
@@ -41,41 +40,33 @@ def savegoogletoken(
 
     https://console.firebase.google.com/project/_/authentication/settings
     """
-    if (
-        event.credential is not None
-        and event.credential.provider_id == "google.com"
-    ):
-        print(
-            f"Signed in with {event.credential.provider_id}. Saving access token."
-        )
+    if event.credential is not None and event.credential.provider_id == "google.com":
+        print(f"Signed in with {event.credential.provider_id}. Saving access token.")
 
         firestore_client: google.cloud.firestore.Client = firestore.client()
-        doc_ref = firestore_client.collection("user_info").document(
-            event.data.uid
-        )
-        doc_ref.set(
-            {"calendar_access_token": event.credential.access_token}, merge=True
-        )
+        doc_ref = firestore_client.collection("user_info").document(event.data.uid)
+        doc_ref.set({"calendar_access_token": event.credential.access_token}, merge=True)
 
         tasks_client = google.cloud.tasks_v2.CloudTasksClient()
-        task_queue = tasks_client.queue_path(
-            params.PROJECT_ID.value,
-            options.SupportedRegion.US_CENTRAL1,
-            "scheduleonboarding",
-        )
+        task_queue = tasks_client.queue_path(params.PROJECT_ID.value,
+                                             options.SupportedRegion.US_CENTRAL1,
+                                             "scheduleonboarding")
         target_uri = get_function_url("scheduleonboarding")
-        calendar_task = google.cloud.tasks_v2.Task(
-            http_request={
-                "http_method": google.cloud.tasks_v2.HttpMethod.POST,
-                "url": target_uri,
-                "headers": {"Content-type": "application/json"},
-                "body": json.dumps({"data": {"uid": event.data.uid}}).encode(),
+        calendar_task = google.cloud.tasks_v2.Task(http_request={
+            "http_method": google.cloud.tasks_v2.HttpMethod.POST,
+            "url": target_uri,
+            "headers": {
+                "Content-type": "application/json"
             },
-            schedule_time=datetime.now() + timedelta(minutes=1),
-        )
+            "body": json.dumps({
+                "data": {
+                    "uid": event.data.uid
+                }
+            }).encode()
+        },
+                                                   schedule_time=datetime.now() +
+                                                   timedelta(minutes=1))
         tasks_client.create_task(parent=task_queue, task=calendar_task)
-
-
 # [END savegoogletoken]
 
 
@@ -88,75 +79,54 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
     """
 
     if "uid" not in request.data:
-        return https_fn.Response(
-            status=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
-            response="No user specified.",
-        )
+        return https_fn.Response(status=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+                                 response="No user specified.")
     uid = request.data["uid"]
 
     user_record: auth.UserRecord = auth.get_user(uid)
     if user_record.email is None:
-        return https_fn.Response(
-            status=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
-            response="No email address on record.",
-        )
+        return https_fn.Response(status=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+                                 response="No email address on record.")
 
     firestore_client: google.cloud.firestore.Client = firestore.client()
-    user_info = (
-        firestore_client.collection("user_info").document(uid).get().to_dict()
-    )
-    if (
-        not isinstance(user_info, dict)
-        or "calendar_access_token" not in user_info
-    ):
-        return https_fn.Response(
-            status=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
-            response="No Google OAuth token found.",
-        )
+    user_info = firestore_client.collection("user_info").document(uid).get().to_dict()
+    if not isinstance(user_info, dict) or "calendar_access_token" not in user_info:
+        return https_fn.Response(status=https_fn.FunctionsErrorCode.PERMISSION_DENIED,
+                                 response="No Google OAuth token found.")
     calendar_access_token = user_info["calendar_access_token"]
     firestore_client.collection("user_info").document(uid).update(
-        {"calendar_access_token": google.cloud.firestore.DELETE_FIELD}
-    )
+        {"calendar_access_token": google.cloud.firestore.DELETE_FIELD})
 
-    google_credentials = google.oauth2.credentials.Credentials(
-        token=calendar_access_token
-    )
+    google_credentials = google.oauth2.credentials.Credentials(token=calendar_access_token)
 
-    calendar_client = googleapiclient.discovery.build(
-        "calendar", "v3", credentials=google_credentials
-    )
+    calendar_client = googleapiclient.discovery.build("calendar",
+                                                      "v3",
+                                                      credentials=google_credentials)
     calendar_event = {
         "summary": "Onboarding with ExampleCo",
         "location": "Video call",
         "description": "Walk through onboarding tasks with an ExampleCo engineer.",
         "start": {
             "dateTime": (datetime.now() + timedelta(days=3)).isoformat(),
-            "timeZone": "America/Los_Angeles",
+            "timeZone": "America/Los_Angeles"
         },
         "end": {
-            "dateTime": (
-                datetime.now() + timedelta(days=3, hours=1)
-            ).isoformat(),
-            "timeZone": "America/Los_Angeles",
+            "dateTime": (datetime.now() + timedelta(days=3, hours=1)).isoformat(),
+            "timeZone": "America/Los_Angeles"
         },
-        "attendees": [
-            {"email": user_record.email},
-            {"email": "onboarding@example.com"},
-        ],
+        "attendees": [{
+            "email": user_record.email
+        }, {
+            "email": "onboarding@example.com"
+        }]
     }
-    calendar_client.events().insert(
-        calendarId="primary", body=calendar_event
-    ).execute()
+    calendar_client.events().insert(calendarId="primary", body=calendar_event).execute()
 
     return https_fn.Response("Success")
-
-
 # [END scheduleonboarding]
 
 
-def get_function_url(
-    name: str, location: str = options.SupportedRegion.US_CENTRAL1
-) -> str:
+def get_function_url(name: str, location: str = options.SupportedRegion.US_CENTRAL1) -> str:
     """Get the URL of a given v2 cloud function.
 
     Params:
@@ -167,15 +137,10 @@ def get_function_url(
         The URL of the function
     """
     credentials, project_id = google.auth.default(
-        scopes=["https://www.googleapis.com/auth/cloud-platform"]
-    )
-    authed_session = google.auth.transport.requests.AuthorizedSession(
-        credentials
-    )
-    url = (
-        "https://cloudfunctions.googleapis.com/v2beta/"
-        + f"projects/{project_id}/locations/{location}/functions/{name}"
-    )
+        scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    authed_session = google.auth.transport.requests.AuthorizedSession(credentials)
+    url = ("https://cloudfunctions.googleapis.com/v2beta/" +
+           f"projects/{project_id}/locations/{location}/functions/{name}")
     response = authed_session.get(url)
     data = response.json()
     function_url = data["serviceConfig"]["uri"]
