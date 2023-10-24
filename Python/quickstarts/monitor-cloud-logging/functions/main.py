@@ -59,8 +59,10 @@ def get_inspirational_quote(req: https_fn.Request) -> https_fn.Response:
             quote = default_quote
     except:
         e = sys.exc_info()[0]
+        # [START logError]
         # Attach an error object as the second argument
         logger.error("Unable to read quote from Firestore, sending default instead", error=e)
+        # [END logError]
         quote = default_quote
 
     # Attach relevant structured data to any log
