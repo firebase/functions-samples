@@ -17,7 +17,7 @@
 // [START imports]
 // Dependencies for task queue functions.
 const {onTaskDispatched} = require("firebase-functions/v2/tasks");
-const {onRequest} = require("firebase-functions/v2/https");
+const {onRequest, HttpsError} = require("firebase-functions/v2/https");
 const {getFunctions} = require("firebase-admin/functions");
 const {logger} = require("firebase-functions/v2");
 
@@ -27,7 +27,6 @@ const fetch = require("node-fetch");
 const {initializeApp} = require("firebase-admin/app");
 const {getStorage} = require("firebase-admin/storage");
 const {GoogleAuth} = require("google-auth-library");
-const HttpsError = functions.https.HttpsError;
 // [END imports]
 initializeApp();
 
