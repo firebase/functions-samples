@@ -1,8 +1,9 @@
 import firebase_admin
-from firebase_admin import auth, db, messaging
+from firebase_admin import auth, db, messaging, exceptions
 from firebase_functions import db_fn
 
 firebase_admin.initialize_app()
+messaging.UnregisteredError
 
 
 @db_fn.on_value_written(reference=r"followers/{followedUid}/{followerUid}")
@@ -45,10 +46,13 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
     if batch_response.failure_count < 1:
         # Messages sent sucessfully. We're done!
         return
+
     # Clean up the tokens that are not registered any more.
-    for response in batch_response.responses:
-        if response.exception.code in (
-                "messaging/invalid-registration-token",
-                "messaging/registration-token-not-registered",
-        ):
-            tokens_ref.child(response.message_id).delete()
+    for i in range(len(batch_response.responses)):
+        exception = batch_response.responses[i].exception
+        if not isinstance(exception, exceptions.FirebaseError):
+            continue
+        message = exception.http_response.json()["error"]["message"]
+        if (isinstance(exception, messaging.UnregisteredError) or
+                message == "The registration token is not a valid FCM registration token"):
+            tokens_ref.child(msgs[i].token).delete()

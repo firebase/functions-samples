@@ -83,12 +83,16 @@ export const sendFollowerNotification = onValueWritten(
           batchResponse);
 
       // Clean up the tokens that are not registered any more.
-      for (const response of batchResponse.responses) {
-        if (response.error?.code ===
-            "messaging/invalid-registration-token" ||
-                response.error?.code ===
-                "messaging/registration-token-not-registered") {
-          await tokensRef.child(response.messageId).remove();
+      for (let i = 0; i < batchResponse.responses.length; i++) {
+        const errorCode = batchResponse.responses[i].error?.code;
+        const errorMessage = batchResponse.responses[i].error?.message;
+        if ((errorCode === "messaging/invalid-registration-token") ||
+            (errorCode === "messaging/registration-token-not-registered") ||
+            (errorCode === "messaging/invalid-argument" &&
+              errorMessage ===
+              "The registration token is not a valid FCM registration token")) {
+          log(`Removing invalid token: ${messages[i].token}`);
+          await tokensRef.child(messages[i].token).remove();
         }
       }
     });
