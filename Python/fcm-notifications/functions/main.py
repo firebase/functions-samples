@@ -3,7 +3,6 @@ from firebase_admin import auth, db, messaging, exceptions
 from firebase_functions import db_fn
 
 firebase_admin.initialize_app()
-messaging.UnregisteredError
 
 
 @db_fn.on_value_written(reference=r"followers/{followedUid}/{followerUid}")
