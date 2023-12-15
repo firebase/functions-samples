@@ -97,7 +97,7 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
 def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
     """Adds backup tasks to a Cloud Tasks queue."""
     tasks_client = tasks_v2.CloudTasksClient()
-    task_queue = tasks_client.queue_path(params.PROJECT_ID.value, SupportedRegion.US_CENTRAL1,
+    task_queue = tasks_client.queue_path(params.PROJECT_ID.value, SupportedRegion.US_CENTRAL1.value,
                                          "backupapod")
     target_uri = get_function_url("backupapod")
 
@@ -126,7 +126,7 @@ def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
 
 
 # [START v2GetFunctionUri]
-def get_function_url(name: str, location: str = SupportedRegion.US_CENTRAL1) -> str:
+def get_function_url(name: str, location: str = SupportedRegion.US_CENTRAL1.value) -> str:
     """Get the URL of a given v2 cloud function.
 
     Params:
