@@ -110,11 +110,9 @@ def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
 
         backup_date = BACKUP_START_DATE + timedelta(days=i)
         body = {"data": {"date": backup_date.isoformat()[:10]}}
-        task_options = functions.TaskOptions(
-            schedule_time=schedule_time,
-            dispatch_deadline_seconds=dispatch_deadline_seconds,
-            uri=target_uri
-        )
+        task_options = functions.TaskOptions(schedule_time=schedule_time,
+                                             dispatch_deadline_seconds=dispatch_deadline_seconds,
+                                             uri=target_uri)
         task_queue.enqueue(body, task_options)
     return https_fn.Response(status=200, response=f"Enqueued {BACKUP_COUNT} tasks")
 # [END v2EnqueueTasks]
