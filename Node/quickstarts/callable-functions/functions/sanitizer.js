@@ -16,8 +16,7 @@
 "use strict";
 
 const capitalizeSentence = require("capitalize-sentence");
-const Filter = require("bad-words");
-const badWordsFilter = new Filter();
+const {isProfane, replaceProfanities} = import("no-profanity");
 
 // Sanitizes the given text if needed by replacing bad words with '*'.
 exports.sanitizeText = (text) => {
@@ -28,7 +27,7 @@ exports.sanitizeText = (text) => {
   }
 
   // Moderate if the user uses SwearWords.
-  if (containsSwearwords(text)) {
+  if (isProfane(text)) {
     console.log("User is swearing. moderating...");
     text = replaceSwearwords(text);
   }
@@ -37,21 +36,12 @@ exports.sanitizeText = (text) => {
 };
 
 /**
- * Returns true if the string contains swearwords.
- * @param {string} message
- * @return {boolean}
- */
-function containsSwearwords(message) {
-  return message !== badWordsFilter.clean(message);
-}
-
-/**
  * Hide all swearwords. e.g: Crap => ****.
  * @param {string} message
  * @return {string}
  */
 function replaceSwearwords(message) {
-  return badWordsFilter.clean(message);
+  return replaceProfanities(message);
 }
 
 /**
@@ -61,8 +51,7 @@ function replaceSwearwords(message) {
  * @return {boolean}
  */
 function isShouting(message) {
-  return message.replace(/[^A-Z]/g, "").length > message.length / 2 ||
-   message.replace(/[^!]/g, "").length >= 3;
+  return message.replace(/[^A-Z]/g, "").length > message.length / 2 || message.replace(/[^!]/g, "").length >= 3;
 }
 
 /**
