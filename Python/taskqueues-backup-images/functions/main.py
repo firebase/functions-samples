@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 import json
 import pathlib
 from urllib.parse import urlparse
-from firebase_admin import initialize_app, storage
+from firebase_admin import initialize_app, storage, functions
 from firebase_functions import https_fn, tasks_fn, params
 import google.auth
 from google.auth.transport.requests import AuthorizedSession
@@ -96,9 +96,7 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
 @https_fn.on_request()
 def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
     """Adds backup tasks to a Cloud Tasks queue."""
-    tasks_client = tasks_v2.CloudTasksClient()
-    task_queue = tasks_client.queue_path(params.PROJECT_ID.value, SupportedRegion.US_CENTRAL1,
-                                         "backupapod")
+    task_queue = functions.task_queue("backupapod")
     target_uri = get_function_url("backupapod")
 
     for i in range(BACKUP_COUNT):
@@ -108,19 +106,14 @@ def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
         schedule_delay = timedelta(hours=batch)
         schedule_time = datetime.now() + schedule_delay
 
+        dispatch_deadline_seconds = 60 * 5  # 5 minutes
+
         backup_date = BACKUP_START_DATE + timedelta(days=i)
         body = {"data": {"date": backup_date.isoformat()[:10]}}
-        task = tasks_v2.Task(http_request={
-            "http_method": tasks_v2.HttpMethod.POST,
-            "url": target_uri,
-            "headers": {
-                "Content-type": "application/json"
-            },
-            "body": json.dumps(body).encode()
-        },
-                             schedule_time=schedule_time)
-        tasks_client.create_task(parent=task_queue, task=task)
-
+        task_options = functions.TaskOptions(schedule_time=schedule_time,
+                                             dispatch_deadline_seconds=dispatch_deadline_seconds,
+                                             uri=target_uri)
+        task_queue.enqueue(body, task_options)
     return https_fn.Response(status=200, response=f"Enqueued {BACKUP_COUNT} tasks")
 # [END v2EnqueueTasks]
 
