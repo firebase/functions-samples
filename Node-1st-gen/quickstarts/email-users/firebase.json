@@ -16,7 +16,7 @@
       "port": 5000
     },
     "ui": {
-      "enabled": true
+      "enabled": false
     }
   }
 }
