@@ -1,0 +1,15 @@
+#!/bin/sh
+# Print the metrics from a font in AFM format.  Usage:
+#	printafm fontname
+# Output goes to stdout.
+
+# This definition is changed on install to match the
+# executable name set in the makefile
+GS_EXECUTABLE=gs
+gs="`dirname \"$0\"`/$GS_EXECUTABLE"
+if test ! -x "$gs"; then
+	gs="$GS_EXECUTABLE"
+fi
+GS_EXECUTABLE="$gs"
+
+exec "$GS_EXECUTABLE" -q -P- -dSAFER -dNODISPLAY -- printafm.ps "$@"

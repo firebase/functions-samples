@@ -1,0 +1,1523 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Extract the ASCII text from a PostScript file.  Nothing is displayed.
+% Instead, ASCII information is written to stdout.  The idea is similar to
+% Glenn Reid's `distillery', only a lot more simple-minded, and less robust.
+
+% If SIMPLE is defined, just the text is written, with a guess at line
+% breaks and word spacing.  If SIMPLE is not defined, lines are written
+% to stdout as follows:
+%
+%	F <height> <width> (<fontname>)
+%		Indicate the font height and the width of a space.
+%
+%	P
+%		Indicate the end of the page.
+%
+%	S <x> <y> (<string>) <width>
+%		Display a string.
+%
+% <width> and <height> are integer dimensions in units of 1/720".
+% <x> and <y> are integer coordinates, in units of 1/720", with the origin
+%   at the lower left.
+% <string> and <fontname> are strings represented with the standard
+%   PostScript escape conventions.
+
+% If COMPLEX is defined, the following additional types of lines are
+% written to stdout.
+%
+%	C <r> <g> <b>
+%		Indicate the current color.
+%
+%	I <x> <y> <width> <height>
+%		Note the presence of an image.
+%
+%	R <x> <y> <width> <height>
+%		Fill a rectangle.
+%
+% <r>, <g>, and <b> are RGB values expressed as integers between 0 and 1000.
+%
+% Note that future versions of this program (in COMPLEX mode) may add
+%   other output elements, so programs parsing the output should be
+%   prepared to ignore elements that they do not recognize.
+
+% Note that this code will only work in all cases if systemdict is writable
+% and if `binding' the definitions of operators defined as procedures
+% is deferred.  For this reason, it is normally invoked with
+%	gs -q -dNODISPLAY -dDELAYBIND -dWRITESYSTEMDICT ps2ascii.ps
+
+% Thanks to:
+%    J Greely <jgreely@cis.ohio-state.edu> for improvements to this code;
+%    Jerry Whelan <jerryw@abode.ccd.bnl.gov> for motivating other improvements;
+%    David M. Jones <dmjones@theory.lcs.mit.edu> for improvements noted below.
+
+%%  Additional modifications by David M. Jones
+%%  (dmjones@theory.lcs.mit.edu), December 23, 1997
+%%
+%%  (a) Rewrote forall loop at the end of .show.write.  This fixes a
+%%      stack leakage problem, but the changes are more significant
+%%      than that.
+%%
+%%      .char.map includes the names of all characters in the
+%%      StandardEncoding, ISOLatin1Encoding, OT1Encoding and
+%%      T1Encoding vectors.  Thus, if the Encoding vector for the
+%%      current font contains a name that is not in .char.map, it's
+%%      redundant to check if the Encoding vector is equal to one of
+%%      the known vectors.  Previous versions of ps2ascii would give
+%%      up at this point, and substitute an asterisk (*) for the
+%%      character.  I've taken the liberty of instead using the
+%%      OT1Encoding vector to translate the character, on the grounds
+%%      that in the cases I'm most interested in, a font without a
+%%      useful Encoding vector was most likely created by a DVI to PS
+%%      converter such as dvips or DVILASER (and OT1Encoding is
+%%      largely compatible with StandardEncoding anyway).  [Note that
+%%      this does not make my earlier changes to support dvips (see
+%%      fix (a) under my 1996 changes) completely obsolete, since
+%%      there's additional useful information I can extract in that
+%%      case.]
+%%
+%%      Overall, this should provide better support for some documents
+%%      (e.g, DVILASER documents will no longer be translated into a
+%%      series of *'s) without breaking any other documents any worse
+%%      than they already were broken.
+%%
+%%  (b) Fixed two bugs in dvips.df-tail: (1) changed "dup 127" to "dup
+%%      128" to fix fencepost error, and (2) gave each font it's own
+%%      FontName rather than having all fonts share the same name.
+%%
+%%  (c) Added one further refinement to the heuristic for detecting
+%%      paragraph breaks: do not ever start a new paragraph after a
+%%      line ending in a hyphen.
+%%
+%%  (d) Added a bunch of missing letters from the T1Encoding,
+%%      OT1Encoding and ISOLatin1Encoding vectors to .letter.chars to
+%%      improve hyphen-elimination algorithm.  This still won't help
+%%      if there's no useful Encoding vector.
+%%
+%%  NOTE: A better solution to the problem of missing Encoding vectors
+%%  might be to redefine definefont to check whether the Encoding
+%%  vector is sensible and, if not, replace it by a default.  This
+%%  would alleviate the need for constant tests in the .show.write
+%%  loop, as well as automatically solving the problem noted in fix
+%%  (d) above, and the similar problem with .break.chars.  This should
+%%  be investigated.  Also, the hyphen-elimination algorithm really
+%%  needs to be looked at carefully and rethought.
+
+%%* Modifications to ps2ascii.ps by David M. Jones
+%%* (dmjones@theory.lcs.mit.edu), June 25-July 8, 1996
+
+%%* Modifications:
+%%*
+%%* (a) added code to give better support for dvips files by providing
+%%*     FontBBox's, FontName's and Encoding vectors for downloaded
+%%*     bitmap fonts.  This is done by using dvips's start-hook to
+%%*     overwrite the df-tail and D procedures that dvips uses to
+%%*     define its Type 3 bitmap fonts.  Thus, this change should
+%%*     provide better support for dvips-generated PS files without
+%%*     affecting the handling of other documents.
+%%*
+%%* (b) Fixed two bugs that could potentially affect any PS file, not
+%%*     just those created by dvips: (1) added missing "get" operator
+%%*     in .show.write and (2) fixed bug that caused a hyphen at the
+%%*     end of a line to be replaced by a space rather than begin
+%%*     deleted.  Note that the first bug was a source of stack
+%%*     leakage, causing ps2ascii to run out of operand stack space
+%%*     occasionally.
+%%*
+%%*     Search for "%%* BF" to find these modifications.
+%%*
+%%* (c) Improved the heuristic for determining whether a line break
+%%*     has occurred and whether a line break represents a paragraph
+%%*     break.  Previously, any change in the vertical position caused
+%%*     a line break; now a line break is only registered if the
+%%*     change is larger than the height of the current font.  This
+%%*     means that superscripts, subscripts, and such things as
+%%*     shifted accents generated by TeX won't cause line breaks.
+%%*     Paragraph-recognition is now done by comparing the indentation
+%%*     of the new line to the indentation of the previous line and by
+%%*     comparing the vertical distance between the new line and the
+%%*     previous line to the vertical distance between the previous
+%%*     line and its predecessor.
+%%*
+%%* (d) Added a hook for renaming the files where stdout and stderr
+%%*     go.
+%%*
+%%* In general, my additions or changes to the code are described in
+%%* comments beginning with "%%*".  However, there are numerous other
+%%* places where I have either re-formatted code or added comments to
+%%* the code while I was trying to understand it.  These are usually
+%%* not specially marked.
+%%*
+
+/QUIET true def
+systemdict wcheck { systemdict } { userdict } ifelse begin
+/.max where { pop } { /.max { 2 copy lt { exch } if pop } bind def } ifelse
+/COMPLEX dup where { pop true } { false } ifelse def
+/SIMPLE dup where { pop true } { false } ifelse def
+/setglobal where
+ { pop currentglobal /setglobal load true setglobal }
+ { { } }
+ifelse
+
+% Define a way to store and retrieve integers that survives save/restore.
+/.i.string0 (0               ) def
+/.i.string .i.string0 length string def
+/.iget { cvi } bind def
+/.iput { exch //.i.string exch copy cvs pop } bind def
+/.inew { //.i.string0 dup length string copy } bind def
+
+% We only want to redefine operators if they are defined already.
+
+/codef { 1 index where { pop def } { pop pop } ifelse } def
+
+% Redefine the end-of-page operators.
+
+/erasepage { } codef
+/copypage { SIMPLE { (\014) } { (P\n) } ifelse //print } codef
+/showpage { copypage erasepage initgraphics } codef
+
+% Redefine the fill operators to detect rectangles.
+
+/.orderrect	% <llx> <lly> <urx> <ury> .orderrect <llx> <lly> <w> <h>
+ {	% Ensure llx <= urx, lly <= ury.
+   1 index 4 index lt { 4 2 roll } if
+   dup 3 index lt { 3 1 roll exch } if
+   exch 3 index sub exch 2 index sub
+ } odef
+/.fillcomplex
+ {	% Do a first pass to see if the path is all rectangles in
+        % the output coordinate system.  We don't worry about overlapping
+        % rectangles that might be partially not filled.
+        % Stack: mark llx0 lly0 urx0 ury0 ... true mark x0 y0 ...
+   mark true mark
+        % Add a final moveto so we pick up any trailing unclosed subpath.
+   0 0 itransform moveto
+    { .coord counttomark 2 gt
+       { counttomark 4 gt { .fillcheckrect } { 4 2 roll pop pop }  ifelse }
+      if
+    }
+    { .coord }
+    { cleartomark not mark exit }
+    { counttomark -2 roll 2 copy counttomark 2 roll .fillcheckrect }
+   pathforall cleartomark
+    { .showcolor counttomark 4 idiv
+       { counttomark -4 roll .orderrect
+         (R ) //print .show==4
+       }
+      repeat pop
+    }
+    { cleartomark
+    }
+   ifelse
+ } odef
+/.fillcheckrect
+ {	% Check whether the current subpath is a rectangle.
+        % If it is, add it to the list of rectangles being accumulated;
+        % if not exit the .fillcomplex loop.
+        % The subpath has not been closed.
+        % Stack: as in .fillcomplex, + newx newy
+   counttomark 10 eq { 9 index 9 index 4 2 roll } if
+   counttomark 12 ne { cleartomark not mark exit } if
+   12 2 roll
+        % Check for the two possible forms of rectangles:
+        %	x0 y0  x0 y1  x1 y1  x1 y0  x0 y0
+        %	x0 y0  x1 y0  x1 y1  x0 y1  x0 y0
+   9 index 2 index eq 9 index 2 index eq and
+   10 index 9 index eq
+    {	% Check for first form.
+      7 index 6 index eq and 6 index 5 index eq and 3 index 2 index eq and
+    }
+    {	% Check for second form.
+      9 index 8 index eq and
+      8 index 7 index eq and 5 index 4 index eq and 4 index 3 index eq and
+    }
+   ifelse not { cleartomark not mark exit } if
+        % We have a rectangle.
+   pop pop pop pop 4 2 roll pop pop 8 4 roll
+ } odef
+/eofill { COMPLEX { .fillcomplex } if newpath } codef
+/fill { COMPLEX { .fillcomplex } if newpath } codef
+/rectfill { gsave newpath .rectappend fill grestore } codef
+/ueofill { gsave newpath uappend eofill grestore } codef
+/ufill { gsave newpath uappend fill grestore } codef
+
+% Redefine the stroke operators to detect rectangles.
+
+/rectstroke
+ { gsave newpath
+   dup type dup /arraytype eq exch /packedarraytype eq or
+    { dup length 6 eq { exch .rectappend concat } { .rectappend } ifelse }
+    { .rectappend }
+   ifelse stroke grestore
+ } codef
+/.strokeline	% <fromx> <fromy> <tox> <toy> .strokeline <tox> <toy>
+                % Note: fromx and fromy are in output coordinates;
+                % tox and toy are in user coordinates.
+ { .coord 2 copy 6 2 roll .orderrect
+        % Add in the line width.  Assume square or round caps.
+   currentlinewidth 2 div dup .dcoord add abs 1 .max 5 1 roll
+   4 index add 4 1 roll 4 index add 4 1 roll
+   4 index sub 4 1 roll 5 -1 roll sub 4 1 roll
+   (R ) //print .show==4
+ } odef
+/.strokecomplex
+ {	% Do a first pass to see if the path is all horizontal and vertical
+        % lines in the output coordinate system.
+        % Stack: true mark origx origy curx cury
+   true mark null null null null
+    { .coord 6 2 roll pop pop pop pop 2 copy }
+    { .coord 1 index 4 index eq 1 index 4 index eq or
+       { 4 2 roll pop pop }
+       { cleartomark not mark exit }
+      ifelse
+    }
+    { cleartomark not mark exit }
+    { counttomark -2 roll 2 copy counttomark 2 roll
+      1 index 4 index eq 1 index 4 index eq or
+       { pop pop 2 copy }
+       { cleartomark not mark exit }
+      ifelse
+    }
+   pathforall cleartomark
+   0 currentlinewidth .dcoord 0 eq exch 0 eq or and
+        % Do the second pass to write out the rectangles.
+        % Stack: origx origy curx cury
+    { .showcolor null null null null
+       { 6 2 roll pop pop pop pop 2 copy .coord }
+       { .strokeline }
+       { }
+       { 3 index 3 index .strokeline }
+      pathforall pop pop pop pop
+    }
+   if
+ } odef
+/stroke { COMPLEX { .strokecomplex } if newpath } codef
+/ustroke
+ { gsave newpath
+   dup length 6 eq { exch uappend concat } { uappend } ifelse
+   stroke grestore
+ } codef
+
+% The image operators must read the input and note the dimensions.
+% Eventually we should redefine these to detect 1-bit-high all-black images,
+% since this is how dvips does underlining (!).
+
+/.noteimagerect		% <width> <height> <matrix> .noteimagerect -
+ { COMPLEX
+    { gsave setmatrix itransform 0 0 itransform
+      grestore .coord 4 2 roll .coord .orderrect
+      (I ) //print .show==4
+    }
+    { pop pop pop
+    }
+   ifelse
+ } odef
+/colorimage where
+ { pop /colorimage
+    { 1 index
+       { dup 6 add index 1 index 6 add index 2 index 5 add index }
+       { 6 index 6 index 5 index }
+      ifelse .noteimagerect gsave nulldevice //colorimage grestore
+    } codef
+ } if
+/.noteimage		% Arguments as for image[mask]
+ { dup type /dicttype eq
+    { dup /Width get 1 index /Height get 2 index /ImageMatrix get }
+    { 4 index 4 index 3 index }
+   ifelse .noteimagerect
+ } odef
+/image { .noteimage gsave nulldevice //image grestore } codef
+/imagemask { .noteimage gsave nulldevice //imagemask grestore } codef
+
+% Output the current color if necessary.
+/.color.r .inew def
+  .color.r -1 .iput		% make sure we write the color at the beginning
+/.color.g .inew def
+/.color.b .inew def
+/.showcolor
+ { COMPLEX
+    { currentrgbcolor
+      1000 mul round cvi
+      3 1 roll 1000 mul round cvi
+      exch 1000 mul round cvi
+                % Stack: b g r
+      dup //.color.r .iget eq
+      2 index //.color.g .iget eq and
+      3 index //.color.b .iget eq and
+       { pop pop pop
+       }
+       { (C ) //print
+         dup //.color.r exch .iput .show==only
+         ( ) //print dup //.color.g exch .iput .show==only
+         ( ) //print dup //.color.b exch .iput .show==only
+         (\n) //print
+       }
+      ifelse
+    }
+   if
+ } bind def
+
+% Redefine `show'.
+
+% Set things up so our output will be in tenths of a point, with origin at
+% lower left.  This isolates us from the peculiarities of individual devices.
+
+/.show.ident.matrix matrix def
+/.show.ident {		% - .show.ident <scale> <matrix>
+%   //.show.ident.matrix defaultmatrix
+%               % Assume the original transformation is well-behaved.
+%   0.1 0 2 index dtransform abs exch abs .max /.show.scale exch def
+%   0.1 dup 3 -1 roll scale
+  gsave initmatrix
+                % Assume the original transformation is well-behaved...
+  0.1 0 dtransform abs exch abs .max
+  0.1 dup scale .show.ident.matrix currentmatrix
+                % ... but undo any rotation into landscape orientation.
+  dup 0 get 0 eq {
+    1 get dup abs div 90 mul rotate
+    .show.ident.matrix currentmatrix
+  } if
+  grestore
+} bind def
+
+/.coord {		% <x> <y> .coord <x'> <y'>
+  transform .show.ident exch pop itransform
+  exch round cvi exch round cvi
+} odef
+
+/.dcoord {		% <dx> <dy> .coord <dx'> <dy'>
+                % Transforming distances is trickier, because
+                % the coordinate system might be rotated.
+   .show.ident pop 3 1 roll
+   exch 0 dtransform
+    dup mul exch dup mul add sqrt
+     2 index div round cvi
+   exch 0 exch dtransform
+    dup mul exch dup mul add sqrt
+     3 -1 roll div round cvi
+} odef
+
+% Remember the current X, Y, and height.
+/.show.x .inew def
+/.show.y .inew def
+/.show.height .inew def
+
+% Remember the last character of the previous string; if it was a
+% hyphen preceded by a letter, we didn't output the hyphen.
+
+/.show.last (\000) def
+
+% Remember the current font.
+/.font.name 130 string def
+/.font.name.length .inew def
+/.font.height .inew def
+/.font.width .inew def
+
+%%* Also remember indentation of current line and previous vertical
+%%* skip
+
+/.show.indent .inew def
+/.show.dy     .inew def
+
+% We have to redirect stdout somehow....
+
+/.show.stdout { (%stdout) (w) file } bind def
+
+% Make sure writing will work even if a program uses =string.
+/.show.string =string length string def
+/.show.=string =string length string def
+/.show==only
+ { //=string //.show.=string copy pop
+   dup type /stringtype eq
+    { dup length //.show.string length le
+       { dup rcheck { //.show.string copy } if
+       } if
+    } if
+   .show.stdout exch write==only
+   //.show.=string //=string copy pop
+ } odef
+/.show==4
+ { 4 -1 roll .show==only ( ) //print
+   3 -1 roll .show==only ( ) //print
+   exch .show==only ( ) //print
+   .show==only (\n) //print
+ } odef
+
+/.showwidth	% Same as stringwidth, but disable COMPLEX so that
+                % we don't try to detect rectangles during BuildChar.
+ { COMPLEX
+    { /COMPLEX false def stringwidth /COMPLEX true def }
+    { stringwidth }
+   ifelse
+ } odef
+
+/.showfont	% <string> .showfont <string>
+ { gsave
+        % Try getting the height and width of the font from the FontBBox.
+     currentfont /FontBBox .knownget not { {0 0 0 0} } if
+     aload pop      % llx lly urx ury
+     exch 4 -1 roll % lly ury urx llx
+     sub            % lly ury dx
+     3 1 roll exch  % dx ury lly
+     sub            % dx dy
+     2 copy .max 0 ne
+      { currentfont /FontMatrix get dtransform
+      }
+      {	pop pop
+        % Fonts produced by dvips, among other applications, have
+        % BuildChar procedures that bomb out when given unexpected
+        % characters, and there is no way to determine whether a given
+        % character will do this.  So for Type 1 fonts, we measure a
+        % typical character ('X'); for others, we punt.
+        currentfont /FontType get 1 eq
+         { (X) .showwidth pop dup 1.3 mul
+         }
+         {	% No safe way to get the character size.  Punt.
+           0 0
+         }
+        ifelse
+      }
+     ifelse .dcoord exch
+     currentfont /FontName .knownget not { () } if
+     dup type /stringtype ne { //.show.string cvs } if
+   grestore
+        % Stack: height width fontname
+   SIMPLE
+    { pop pop //.show.height exch .iput }
+    { 2 index //.font.height .iget eq
+      2 index //.font.width .iget eq and
+      1 index //.font.name 0 //.font.name.length .iget getinterval eq and
+       { pop pop pop
+       }
+       { (F ) //print
+         3 -1 roll dup //.font.height exch .iput .show==only ( ) //print
+         exch dup //.font.width exch .iput .show==only ( ) //print
+         dup length //.font.name.length exch .iput
+         //.font.name cvs .show==only (\n) //print
+       }
+      ifelse
+    }
+   ifelse
+ } odef
+
+% Define the letters -- characters which, if they occur followed by a hyphen
+% at the end of a line, cause the hyphen and line break to be ignored.
+/.letter.chars 100 dict def
+mark
+  65 1 90 { dup 32 add } for
+    counttomark
+        { StandardEncoding exch get .letter.chars exch dup put }
+    repeat
+pop
+
+%%* Add the rest of the letters from the [O]T1Encoding and
+%%* ISOLatin1Encoding vectors
+
+mark
+    /AE
+    /Aacute
+    /Abreve
+    /Acircumflex
+    /Adieresis
+    /Agrave
+    /Aogonek
+    /Aring
+    /Atilde
+    /Cacute
+    /Ccaron
+    /Ccedilla
+    /Dcaron
+    /Eacute
+    /Ecaron
+    /Ecircumflex
+    /Edieresis
+    /Egrave
+    /Eng
+    /Eogonek
+    /Eth
+    /Gbreve
+    /Germandbls
+    /IJ
+    /Iacute
+    /Icircumflex
+    /Idieresis
+    /Idot
+    /Igrave
+    /Lacute
+    /Lcaron
+    /Lslash
+    /Nacute
+    /Ncaron
+    /Ntilde
+    /OE
+    /Oacute
+    /Ocircumflex
+    /Odieresis
+    /Ograve
+    /Ohungarumlaut
+    /Oslash
+    /Otilde
+    /Racute
+    /Rcaron
+    /Sacute
+    /Scaron
+    /Scedilla
+    /Tcaron
+    /Tcedilla
+    /Thorn
+    /Uacute
+    /Ucircumflex
+    /Udieresis
+    /Ugrave
+    /Uhungarumlaut
+    /Uring
+    /Yacute
+    /Ydieresis
+    /Zacute
+    /Zcaron
+    /Zdot
+    /aacute
+    /abreve
+    /acircumflex
+    /adieresis
+    /ae
+    /agrave
+    /aogonek
+    /aring
+    /atilde
+    /cacute
+    /ccaron
+    /ccedilla
+    /dbar
+    /dcaron
+    /dotlessi
+    /dotlessj
+    /eacute
+    /ecaron
+    /ecircumflex
+    /edieresis
+    /egrave
+    /eng
+    /eogonek
+    /eth
+    /exclamdown
+    /ff
+    /ffi
+    /ffl
+    /fi
+    /fl
+    /gbreve
+    /germandbls
+    /iacute
+    /icircumflex
+    /idieresis
+    /igrave
+    /ij
+    /lacute
+    /lcaron
+    /lslash
+    /nacute
+    /ncaron
+    /ntilde
+    /oacute
+    /ocircumflex
+    /odieresis
+    /oe
+    /ograve
+    /ohungarumlaut
+    /oslash
+    /otilde
+    /questiondown
+    /racute
+    /rcaron
+    /sacute
+    /scaron
+    /scedilla
+    /section
+    /sterling
+    /tcaron
+    /tcedilla
+    /thorn
+    /uacute
+    /ucircumflex
+    /udieresis
+    /ugrave
+    /uhungarumlaut
+    /uring
+    /yacute
+    /ydieresis
+    /zacute
+    /zcaron
+    /zdot
+counttomark
+    { .letter.chars exch dup put }
+repeat
+pop
+
+% Define a set of characters which, if they occur at the start of a line,
+% are taken as indicating a paragraph break.
+/.break.chars 50 dict def
+mark
+    /bullet /dagger /daggerdbl /periodcentered /section
+    counttomark
+        { .break.chars exch dup put }
+    repeat
+pop
+
+% Define character translation to ASCII.
+% We have to do this for the entire character set.
+
+/.char.map 500 dict def
+
+/.chars.def { counttomark 2 idiv { .char.map 3 1 roll put } repeat pop } def
+
+% Encode the printable ASCII characters.
+
+mark 32 1 126
+ { 1 string dup 0 4 -1 roll put
+   dup 0 get StandardEncoding exch get exch
+ }
+for .chars.def
+
+        % Encode accents.
+mark
+    /acute      (')
+    /caron      (^)
+    /cedilla    (,)
+    /circumflex (^)
+    /dieresis   (")
+    /grave      (`)
+    /ring       (*)
+    /tilde      (~)
+.chars.def
+
+        % Encode the ISO accented characters.
+mark 192 1 255
+ { ISOLatin1Encoding exch get =string cvs
+   dup 0 1 getinterval 1 index dup length 1 sub 1 exch getinterval
+   .char.map 2 index known .char.map 2 index known and
+    { .char.map 3 -1 roll get .char.map 3 -1 roll get concatstrings
+      .char.map 3 1 roll put
+    }
+    { pop pop pop
+    }
+   ifelse
+ }
+for .chars.def
+
+% Encode the remaining standard and ISO alphabetic characters.
+
+mark
+  /AE (AE) /Eth (DH) /OE (OE) /Thorn (Th)
+  /ae (ae) /eth (dh)
+  /ffi (ffi) /ffl (ffl) /fi (fi) /fl (fl)
+  /germandbls (ss) /oe (oe) /thorn (th)
+.chars.def
+
+% Encode the other standard and ISO characters.
+
+mark
+  /brokenbar (|) /bullet (*) /copyright ((C)) /currency (#)
+  /dagger (#) /daggerdbl (##) /degree (o) /divide (/) /dotaccent (.)
+  /dotlessi (i)
+  /ellipsis (...) /emdash (--) /endash (-) /exclamdown (!)
+  /florin (f) /fraction (/)
+  /guillemotleft (<<) /guillemotright (>>)
+  /guilsinglleft (<) /guilsinglright (>) /hungarumlaut ("") /logicalnot (~)
+  /macron (_) /minus (-) /mu (u) /multiply (*)
+  /ogonek (,) /onehalf (1/2) /onequarter (1/4) /onesuperior (1)
+  /ordfeminine (-a) /ordmasculine (-o)
+  /paragraph (||) /periodcentered (*) /perthousand (o/oo) /plusminus (+-)
+  /questiondown (?) /quotedblbase (") /quotedblleft (") /quotedblright (")
+  /quotesinglbase (,) /quotesingle (') /registered ((R))
+  /section ($) /sterling (#)
+  /threequarters (3/4) /threesuperior (3) /trademark ((TM)) /twosuperior (2)
+  /yen (Y)
+.chars.def
+
+% Encode a few common Symbol characters.
+
+mark
+  /asteriskmath (*) /copyrightsans ((C)) /copyrightserif ((C))
+  /greaterequal (>=) /lessequal (<=) /registersans ((R)) /registerserif ((R))
+  /trademarksans ((TM)) /trademarkserif ((TM))
+.chars.def
+
+%%* Add a few characters from StandardEncoding and ISOLatin1Encoding
+%%* that were missing.
+
+mark
+    /cent           (c)
+    /guilsinglleft  (<)
+    /guilsinglright (>)
+    /breve          (*)
+    /Lslash         (L/)
+    /lslash         (l/)
+.chars.def
+
+%%* Define the OT1Encoding and T1Encoding vectors for use with dvips
+%%* files.  Unfortunately, there's no way of telling what font is
+%%* really being used within a dvips document, so we can't provide an
+%%* appropriate encoding for each individual font.  Instead, we'll
+%%* just provide support for the two most popular text encodings, the
+%%* OT1 and T1 encodings, and just accept the fact that any font not
+%%* using one of those encodings will be rendered as gibberish.
+%%*
+%%* OT1 is Knuth's 7-bit encoding for the CMR text fonts, while T1
+%%* (aka the Cork encoding) is the 8-bit encoding used by the DC
+%%* fonts, a preliminary version of the proposed Extended Computer
+%%* Modern fonts.  Unfortunately, T1 is not a strict extension of OT1;
+%%* they differ in positions 8#000 through 8#040, 8#074, 8#076, 8#134,
+%%* 8#137, 8#173, 8#174, 8#175 and 8#177, so we can't use the same
+%%* vector for both.
+%%*
+%%* Of course, we also can't reliably tell the difference between an
+%%* OT1-encoded font and a T1-encoded font based on the information in
+%%* a dvips-created PostScript file.  As a best-guess solution, we'll
+%%* use the T1 encoding if the font contains any characters in
+%%* positions above 8#177 and the OT1 encoding if it doesn't.
+
+/T1Encoding  256 array def
+
+/OT1Encoding 256 array def
+
+%%* T1Encoding shares a lot with StandardEncoding, so let's start
+%%* there.
+
+StandardEncoding T1Encoding copy pop
+
+/OT1.encode {
+    counttomark
+    2 idiv
+      { OT1Encoding 3 1 roll put }
+    repeat
+    cleartomark
+} def
+
+/T1.encode {
+    counttomark
+    2 idiv
+      { T1Encoding 3 1 roll put }
+    repeat
+    cleartomark
+} def
+
+mark
+    8#000 /grave
+    8#001 /acute
+    8#002 /circumflex
+    8#003 /tilde
+    8#004 /dieresis
+    8#005 /hungarumlaut
+    8#006 /ring
+    8#007 /caron
+
+    8#010 /breve
+    8#011 /macron
+    8#012 /dotaccent
+    8#013 /cedilla
+    8#014 /ogonek
+    8#015 /quotesinglbase
+    8#016 /guilsinglleft
+    8#017 /guilsinglright
+
+    8#020 /quotedblleft
+    8#021 /quotedblright
+    8#022 /quotedblbase
+    8#023 /guillemotleft
+    8#024 /guillemotright
+    8#025 /endash
+    8#026 /emdash
+    8#027 /cwm
+
+    8#030 /perthousandzero
+    8#031 /dotlessi
+    8#032 /dotlessj
+    8#033 /ff
+    8#034 /fi
+    8#035 /fl
+    8#036 /ffi
+    8#037 /ffl
+
+%%  8#040 through 8#176 follow StandardEncoding
+
+    8#177 /hyphen
+T1.encode
+
+mark
+    8#200 /Abreve
+    8#201 /Aogonek
+    8#202 /Cacute
+    8#203 /Ccaron
+    8#204 /Dcaron
+    8#205 /Ecaron
+    8#206 /Eogonek
+    8#207 /Gbreve
+    8#210 /Lacute
+    8#211 /Lcaron
+    8#212 /Lslash
+    8#213 /Nacute
+    8#214 /Ncaron
+    8#215 /Eng
+    8#216 /Ohungarumlaut
+    8#217 /Racute
+    8#220 /Rcaron
+    8#221 /Sacute
+    8#222 /Scaron
+    8#223 /Scedilla
+    8#224 /Tcaron
+    8#225 /Tcedilla
+    8#226 /Uhungarumlaut
+    8#227 /Uring
+    8#230 /Ydieresis
+    8#231 /Zacute
+    8#232 /Zcaron
+    8#233 /Zdot
+    8#234 /IJ
+    8#235 /Idot
+    8#236 /dbar
+    8#237 /section
+    8#240 /abreve
+    8#241 /aogonek
+    8#242 /cacute
+    8#243 /ccaron
+    8#244 /dcaron
+    8#245 /ecaron
+    8#246 /eogonek
+    8#247 /gbreve
+    8#250 /lacute
+    8#251 /lcaron
+    8#252 /lslash
+    8#253 /nacute
+    8#254 /ncaron
+    8#255 /eng
+    8#256 /ohungarumlaut
+    8#257 /racute
+    8#260 /rcaron
+    8#261 /sacute
+    8#262 /scaron
+    8#263 /scedilla
+    8#264 /tcaron
+    8#265 /tcedilla
+    8#266 /uhungarumlaut
+    8#267 /uring
+    8#270 /ydieresis
+    8#271 /zacute
+    8#272 /zcaron
+    8#273 /zdot
+    8#274 /ij
+    8#275 /exclamdown
+    8#276 /questiondown
+    8#277 /sterling
+
+    8#300 /Agrave
+    8#301 /Aacute
+    8#302 /Acircumflex
+    8#303 /Atilde
+    8#304 /Adieresis
+    8#305 /Aring
+    8#306 /AE
+    8#307 /Ccedilla
+    8#310 /Egrave
+    8#311 /Eacute
+    8#312 /Ecircumflex
+    8#313 /Edieresis
+    8#314 /Igrave
+    8#315 /Iacute
+    8#316 /Icircumflex
+    8#317 /Idieresis
+    8#320 /Eth
+    8#321 /Ntilde
+    8#322 /Ograve
+    8#323 /Oacute
+    8#324 /Ocircumflex
+    8#325 /Otilde
+    8#326 /Odieresis
+    8#327 /OE
+    8#330 /Oslash
+    8#331 /Ugrave
+    8#332 /Uacute
+    8#333 /Ucircumflex
+    8#334 /Udieresis
+    8#335 /Yacute
+    8#336 /Thorn
+    8#337 /Germandbls
+
+    8#340 /agrave
+    8#341 /aacute
+    8#342 /acircumflex
+    8#343 /atilde
+    8#344 /adieresis
+    8#345 /aring
+    8#346 /ae
+    8#347 /ccedilla
+    8#350 /egrave
+    8#351 /eacute
+    8#352 /ecircumflex
+    8#353 /edieresis
+    8#354 /igrave
+    8#355 /iacute
+    8#356 /icircumflex
+    8#357 /idieresis
+    8#360 /eth
+    8#361 /ntilde
+    8#362 /ograve
+    8#363 /oacute
+    8#364 /ocircumflex
+    8#365 /otilde
+    8#366 /odieresis
+    8#367 /oe
+    8#370 /oslash
+    8#371 /ugrave
+    8#372 /uacute
+    8#373 /ucircumflex
+    8#374 /udieresis
+    8#375 /yacute
+    8#376 /thorn
+    8#377 /germandbls
+
+T1.encode
+
+%%* Now copy OT1Encoding into T1Encoding and make a few changes.
+
+T1Encoding OT1Encoding copy pop
+
+mark
+    8#000 /Gamma
+    8#001 /Delta
+    8#002 /Theta
+    8#003 /Lambda
+    8#004 /Xi
+    8#005 /Pi
+    8#006 /Sigma
+    8#007 /Upsilon
+
+    8#010 /Phi
+    8#011 /Psi
+    8#012 /Omega
+    8#013 /ff
+    8#014 /fi
+    8#015 /fl
+    8#016 /ffi
+    8#017 /ffl
+
+    8#020 /dotlessi
+    8#021 /dotlessj
+    8#022 /grave
+    8#023 /acute
+    8#024 /caron
+    8#025 /breve
+    8#026 /macron
+    8#027 /ring
+
+    8#030 /cedilla
+    8#031 /germandbls
+    8#032 /ae
+    8#033 /oe
+    8#034 /oslash
+    8#035 /AE
+    8#036 /OE
+    8#037 /Oslash
+
+    8#040 /polishslash
+
+    8#042 /quotedblright
+
+    8#074 /exclamdown
+    8#076 /questiondown
+
+    8#134 /quotedblleft
+    8#137 /dotaccent
+
+    8#173 /endash
+    8#174 /emdash
+    8#175 /hungarumlaut
+    8#177 /dieresis
+OT1.encode
+
+%%* And add a few characters from the OT1Encoding
+
+mark
+    /Gamma              (\\Gamma )
+    /Delta              (\\Delta )
+    /Theta              (\\Theta )
+    /Lambda             (\\Lambda )
+    /Xi                 (\\Xi )
+    /Pi                 (\\Pi )
+    /Sigma              (\\Sigma )
+    /Upsilon            (\\Upsilon )
+
+    /Phi                (\\Phi )
+    /Psi                (\\Psi )
+    /Omega              (\\Omega )
+
+    /dotlessj           (j)
+    /ff                 (ff)
+
+    /cwm                ()
+
+    /perthousandzero    (0)
+
+    /polishslash        ()
+
+    /Abreve             (A*)
+    /Aogonek            (A,)
+    /Cacute             (C')
+    /Ccaron             (C^)
+    /Dcaron             (D^)
+    /Ecaron             (E^)
+    /Eogonek            (E,)
+    /Gbreve             (G*)
+    /Lacute             (L')
+    /Lcaron             (L^)
+    /Nacute             (N')
+    /Ncaron             (N^)
+    /Eng                (NG)
+    /Ohungarumlaut      (O"")
+    /Racute             (R')
+    /Rcaron             (R^)
+    /Sacute             (S')
+    /Scaron             (S^)
+    /Scedilla           (S,)
+    /Tcaron             (T^)
+    /Tcedilla           (T,)
+    /Uhungarumlaut      (U"")
+    /Uring              (U*)
+    /Ydieresis          (Y")
+    /Zacute             (Z')
+    /Zcaron             (Z^)
+    /Zdot               (Z.)
+    /IJ                 (IJ)
+    /Idot               (I.)
+    /dbar               (d-)
+    /abreve             (a*)
+    /aogonek            (a,)
+    /cacute             (c')
+    /ccaron             (c^)
+    /dcaron             (d^)
+    /ecaron             (e^)
+    /eogonek            (e,)
+    /gbreve             (g*)
+    /lacute             (l')
+    /lcaron             (l^)
+    /nacute             (n')
+    /ncaron             (n^)
+    /eng                (ng)
+    /ohungarumlaut      (o"")
+    /racute             (r')
+    /rcaron             (r^)
+    /sacute             (s')
+    /scaron             (s^)
+    /scedilla           (s,)
+    /tcaron             (t^)
+    /tcedilla           (t,)
+    /uhungarumlaut      (u"")
+    /uring              (u*)
+    /zacute             (z')
+    /zcaron             (z^)
+    /zdot               (z.)
+    /ij                 (ij)
+    /Germandbls         (SS)
+.chars.def
+
+%%* We extend the df-tail command to stick in an Encoding vector (see
+%%* above for a discussion of the T1 and OT1 encodings), put in a
+%%* FontName (which will just be dvips's name for the font, i.e., Fa,
+%%* Fb, etc.) and give each font a separate FontBBox instead of
+%%* letting them all share a single one.
+
+/dvips.df-tail      % id numcc maxcc df-tail
+  {
+    /nn 9 dict N
+    nn begin
+        %%
+        %%  Choose an encoding based on the highest position occupied.
+        %%
+        dup 128 gt { T1Encoding } { OT1Encoding } ifelse
+        /Encoding X
+        /FontType 3 N
+        %%
+        %%  It's ok for all the fonts to share a FontMatrix, but they
+        %%  need to have separate FontBBoxes
+        %%
+        /FontMatrix fntrx N
+        /FontBBox [0 0 0 0] N
+        string /base X
+        array /BitMaps X
+        %%
+        %%  And let's throw in a FontName for good measure
+        %%
+        dup (    ) cvs
+        %%
+        %%  Make sure each font gets it own private FontName.  -- dmj,
+        %%  12/23/97
+        %%
+        dup length string copy
+        /FontName X
+        /BuildChar {CharBuilder} N
+    end
+    dup { /foo setfont }
+       2 array copy cvx N
+    load
+       0 nn put
+    /ctr 0 N
+    [
+} def
+
+%%* This is functionally equivalent to dvips's /D procedure, but it
+%%* also calculates the Font Bounding Box while defining the
+%%* characters.
+
+/dvips.D   % char-data ch D - : define character bitmap in current font
+{
+    /cc X                           % char-data
+    dup type /stringtype ne {]} if  % char-data
+
+    /ch-xoff where
+    { pop }
+    { dup /Cd exch def
+      /ch-width { Cw } def
+      /ch-height { Ch } def
+      /ch-xoff { Cx } def
+      /ch-yoff { Cy } def
+      /ch-dx { Cdx } def
+    } ifelse
+    /ch-data X
+    nn /base get cc ctr put     % (adds ctr to cc'th position of BASE)
+    nn /BitMaps get
+    ctr
+    ch-data                     % BitMaps ctr char-data
+    sf 1 ne {
+       dup dup length 1 sub dup 2 index S get sf div put
+    } if
+    put                         % puts char-data into BitMaps at index ctr
+    /ctr ctr 1 add N
+%%
+%%  Make sure the Font Bounding Box encloses the Bounding Box of the
+%%  current character
+%%
+    nn /FontBBox get        % BB
+
+    dup                     % calculate new llx
+    dup 0 get
+    ch-xoff
+    .min
+    0 exch put
+
+    dup                     % calculate new lly
+    dup 1 get
+    ch-yoff ch-height sub
+    .min
+    1 exch put
+
+    dup                     % calculate new urx
+    dup 2 get
+    ch-dx ch-width add
+    .max
+    2 exch put
+
+    dup 3 get               % calculate new ury
+    ch-yoff
+    .max
+    3 exch put
+
+} def
+
+%%* Define start-hook to replace df-tail and D by our versions.
+%%* Unfortunately, the user can redefine start-hook and thus bypass
+%%* these changes, but I don't see an obvious way around that.
+
+userdict /start-hook {
+    TeXDict /df-tail /dvips.df-tail load bind put
+    TeXDict /D       /dvips.D       load bind put
+} put
+
+%%* Introduce a symbolic constant for hyphens.  (Need to make
+%%* allowance for hyphen being in different place?)
+
+/.hyphen 45 def
+
+% Write out a string.  If it ends in a letter and a hyphen,
+% don't write the hyphen, and set .show.last to a hyphen;
+% otherwise, set .show.last to the character (or \000 if it was a hyphen).
+/.show.write    % <string>
+ {
+    dup length 1 ge
+        { dup dup length 1 sub get      % string last_char
+          dup .hyphen eq                % string last_char hyphen?
+            {                           % string last_char
+                1 index length 1 gt
+                    { 1 index dup length 2 sub get }
+                    { //.show.last 0 get }
+                ifelse                  % string last_char prev-char
+                currentfont /Encoding get exch get  % look up prev-char
+                //.letter.chars exch known          % is it a letter?
+                    { % Remove the hyphen           % string last_char
+                        exch                        % last_char string
+                        dup length 1 sub            % last_char string len-1
+                        0 exch getinterval          % last_char string-1
+                        exch                        % string-1 last_char
+                    }
+                    { pop 0 }                       % string 0
+                ifelse
+            }
+          if
+          //.show.last 0 3 -1 roll put              % store last_char
+                                                    % in .show.last
+                                                    % If .show.last ==
+                                                    % hyphen, then
+                                                    % last char of
+                                                    % previous string
+                                                    % was a hyphen
+        }
+    if                                          % string
+    currentfont /FontType get 0 ne
+      {
+          { % begin forall                          % c
+            dup                                     % c c
+            currentfont /Encoding get               % c c vec
+            exch get                                % c name
+            dup //.char.map exch known              % c name bool
+              { exch pop }
+              { pop OT1Encoding exch get }
+            ifelse                                  % name
+            //.char.map exch get                    % translation
+            .show.stdout exch writestring
+          }
+        forall
+      }
+      { (\0) dup 0 get 0 eq
+          { 0 1 put
+            (%stderr) (w) file dup
+            (*** Warning: composite font characters dumped without decoding.\n) writestring
+            closefile
+          }
+          { pop
+          }
+        ifelse
+        .show.stdout exch writestring
+      }
+    ifelse
+} odef
+
+/.showstring1 {                 % string
+    currentpoint .coord         % string x y
+    3 -1 roll dup .showwidth    % x y string dx dy
+    1 index                     % x y string dx dy dx
+    0 rmoveto                   % x y string dx dy
+    .dcoord pop                 % x y string width
+    SIMPLE
+      {                         % x y string width
+        2 index                 % x y string width y
+        //.show.y .iget         % x y string width y old.y
+        %%*
+        %%* Replaced test "has y changed" by "has y changed by more
+        %%* than the current font height" so that subscripts and
+        %%* superscripts won't cause line/paragraph breaks
+        %%*
+         sub abs dup            % x y string width dy dy
+         //.show.height .iget
+         gt
+         {                      % x y string width dy
+
+            %%* Vertical position has changed by more than the font
+            %%* height, so we now try to figure out whether we've
+            %%* started a new paragraph or merely a new line, using a
+            %%* variety of heuristics.
+
+            %%* If any of the following is true, we start a new
+            %%* paragraph:
+
+            %%* (a) the current vertical shift is more than 1.1 times
+            %%*     the previous vertical shift, where 1.1 is an
+            %%*     arbitrarily chosen factor that could probably be
+            %%*     refined.
+
+            dup                 % x y string width dy dy
+            //.show.dy .iget 1.1 mul
+            gt
+            exch
+
+            %%* Save the new vertical shift
+
+            //.show.dy exch .iput
+
+            %%* (b) The vertical shift is more than 1.3 times the
+            %%*     "size" of the current font.  I've removed this
+            %%*     test since it's not really very useful.
+
+%%*            //.show.dy .iget
+%%*            //.show.height .iget 1.4 mul
+%%*            gt                          % x y string width bool
+%%*            .show.height .iget 0 gt and % only perform test if font
+%%*                                        % height is nonzero
+%%*            or
+
+            %%* (c) the first character of the new line is one of the
+            %%*     .break.chars
+
+            2 index length      % x y string width newpar? len
+            0 gt                % x y string width newpar? len>0?
+              {
+                2 index 0 get   % x y string width newpar? s
+                currentfont /Encoding get
+                exch get        % x y string width newpar? s_enc
+                //.break.chars exch known { pop true } if
+              }
+            if                  % x y string width newpar?
+
+            %%* (d) The indentation of the new line is greater than
+            %%*     the indentation of the previous line.
+
+            4 index
+            //.show.indent .iget
+            gt
+            or
+
+            %%* HOWEVER, if the line ends in a hyphen, we do NOT begin
+            %%* a new paragraph (cf. comment at end of BF2).  --dmj,
+            %%* 12/23/97
+
+            //.show.last 0 get .hyphen ne
+            and
+
+            % newpar?
+              { (\n\n) }        % Paragraph
+              {                 % Line
+                                %%*
+                                %%* BF2: If last character on a line is
+                                %%* a hyphen, we omit the hyphen and
+                                %%* run the lines together.  Of
+                                %%* course, this will fail if a word
+                                %%* with an explicit hyphen (e.g.,
+                                %%* X-ray) is split across two lines.
+                                %%* Oh, well.  (What should we do
+                                %%* about a hyphen that ends a
+                                %%* "paragraph"?  Perhaps that should
+                                %%* inhibit a paragraph break.)
+                                %%*
+                //.show.last 0 get .hyphen eq
+                    { ()  }
+                    { (\n) }
+                ifelse          % x y string width char
+              }
+            ifelse
+            //print
+
+            //.show.y 3 index .iput % x y string width
+            //.show.x 4 index .iput % x y string width
+            //.show.indent 4 index .iput
+         }
+         {                      % x y string width dy
+                  % If the word processor split a hyphenated word within
+                  % the same line, put out the hyphen now.
+            pop
+            //.show.last 0 get .hyphen eq { (-) //print } if
+         }
+        ifelse
+                                %%*
+                                %%* If have moved more than 1 point to
+                                %%* the right, interpret it as a
+                                %%* space?  This need to be looked at
+                                %%* more closely.
+                                %%*
+        3 index                     % x y string width x
+        //.show.x .iget 10 add gt   % x y string width bool
+            { ( ) //print }
+        if
+                                    % x y string width
+        4 1 roll                    % width x y string
+        .show.write pop             % width x
+        add //.show.x exch .iput    % <empty>
+      }
+      { (S ) //print .show==4 }
+    ifelse
+} odef
+
+/.showstring
+ { dup () eq { pop } { .showstring1 } ifelse
+ } bind def
+
+% Redefine all the string display operators.
+
+/show {
+    .showfont
+    .showcolor
+    .showstring
+} codef
+
+% We define all the other operators in terms of .show1.
+
+/.show1.string ( ) def
+/.show1 { //.show1.string exch 0 exch put //.show1.string .showstring } odef
+/ashow
+ { .showfont .showcolor
+   { .show1 2 copy rmoveto } forall
+   pop pop
+ } codef
+/awidthshow
+ { .showfont .showcolor
+    { dup .show1 4 index eq { 4 index 4 index rmoveto } if
+      2 copy rmoveto
+    }
+   forall
+   pop pop pop pop pop
+ } codef
+/widthshow
+ { .showfont .showcolor
+   //.show1.string 0 4 -1 roll put
+    { //.show1.string search not { exit } if
+      .showstring .showstring
+      2 index 2 index rmoveto
+    } loop
+   .showstring pop pop
+ } codef
+/kshow
+ { .showfont .showcolor
+        %**************** Should construct a closure, in case the procedure
+        %**************** affects the o-stack.
+    { .show1 dup exec } forall pop
+ } codef
+
+% We don't really do the right thing with the Level 2 show operators,
+% but we do something semi-reasonable.
+/xshow { pop show } codef
+/yshow { pop show } codef
+/xyshow { pop show } codef
+/glyphshow
+ { currentfont /Encoding .knownget not { {} } if
+   0 1 2 index length 1 sub
+    {		% Stack: glyph encoding index
+      2 copy get 3 index eq { exch pop exch pop null exit } if
+      pop
+    }
+   for null eq { (X) dup 0 4 -1 roll put show } { pop } ifelse
+ } codef
+
+end
+
+% Bind the operators we just defined, and all the others if we didn't
+% do it before.
+
+DELAYBIND { .bindnow } if
+
+% Make systemdict read-only if it wasn't already.
+
+systemdict wcheck { systemdict readonly pop } if
+
+% Restore the current local/global VM mode.
+
+exec

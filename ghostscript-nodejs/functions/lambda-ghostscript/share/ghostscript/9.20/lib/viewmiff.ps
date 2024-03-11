@@ -1,0 +1,137 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% viewmiff.ps
+% Display a MIFF file.  You would think the 'display' command would do this,
+% but many versions of 'display' either core-dump or require unacceptably
+% large amounts of memory.
+% FITPAGE is true, it fits the output page size to the image
+
+% Recognize MIFF keywords.
+/miffwords mark
+  /class { cvn /class exch def }
+  /colors { cvi /colors exch def }
+  /columns { cvi /Width exch def }
+  /compression { cvn /compression exch def }
+  /depth { cvi /depth exch def }
+  /packets { cvi /packets exch def }
+  /rows { cvi /Height exch def }
+.dicttomark readonly def
+
+% Recognize MIFF image classes.
+/miffclasses mark
+  /DirectClass {
+    /DeviceRGB setcolorspace
+    /BitsPerComponent depth def
+    /Decode [ 0 1 0 1 0 1 ] def
+  }
+  /PseudoClass {
+    [ /Indexed
+                % The MIFF documentation lies about the size of pixels
+                % for this case: the pixel size is determined only by
+                % the number of colors, and is not affected by the image
+                % depth.  Specifically, if there are 256 or fewer colors
+                % but the depth (of color map entries) is 16, each pixel
+                % is still only 1 byte, not 2.
+      currentdict /colors known {
+        /DeviceRGB colors 1 sub
+        /BitsPerComponent colors 256 le { 8 } { 16 } ifelse def
+        colors 3 mul string depth 8 eq {
+          f exch readstring pop
+        } {
+                % 16-bit color map entries: take only the high-order byte.
+          0 1 2 index length 1 sub {
+            f read pop 2 index 3 1 roll put f read pop pop
+          } for
+        } ifelse
+      } {
+        /colors 256 def
+        /DeviceGray 255
+        256 string 0 1 255 { 1 index exch dup put } for
+      } ifelse
+    ] setcolorspace
+    /Decode [ 0 1 BitsPerComponent bitshift 1 sub ] def
+  }
+.dicttomark readonly def
+
+% Recognize MIFF compression methods.
+/rlstring 768 string def
+/rlread {
+                % packets is not reliable -- disregard it.
+  dup rlstring 0 3 getinterval readstring {
+    pop read pop 3 mul 3 3 2 index {
+      rlstring exch rlstring 0 3 getinterval putinterval
+    } for
+    rlstring 0 3 -1 roll 3 add getinterval
+  } {
+    pop pop ()
+  } ifelse
+} bind def
+/miffcompress mark
+  /Uncompressed { f }
+  /RunLengthEncoded { { f rlread } }
+  /Zip { [ f /FlateDecode filter cvlit /rlread cvx ] cvx }
+.dicttomark readonly def
+
+% Read a MIFF file and display the image.
+/viewmiff {		% <filename> viewmiff -
+  50 dict begin
+  /fname 1 index def
+  /f exch (r) file def
+                % Set defaults.
+  /ImageType 1 def
+  /class /DirectClass def
+  /compression /Uncompressed def
+  /depth 8 def
+  /packets 16#7fffffff def
+                % Read and parse the header.
+  { f token pop
+    dup (:) eq { pop exit } if
+    dup type /nametype eq {
+      .namestring (=) search {
+        exch pop miffwords exch .knownget { exec } { pop } ifelse
+      } {
+        pop	% who knows?
+      } ifelse
+    } {
+      pop	% probably a comment in braces
+    } ifelse
+  } loop
+                % Read and display the image.
+  miffclasses class get exec
+  /DataSource miffcompress compression get exec def
+  /FITPAGE where
+  {
+    /FITPAGE get
+    {
+      % we've already set the image color space, so
+      % push it on the stack, and set it again after
+      % setting the page size
+      currentcolorspace
+      <</PageSize [Width Height] >> setpagedevice
+      setcolorspace
+    } if
+  } if
+
+  /ImageMatrix [Width 0 0 Height neg 0 Height] def
+  currentpagedevice /PageSize get
+    dup 0 get exch 1 get scale
+  gsave 0.8 setgray 0 0 1 1 rectfill grestore	% provide background
+  currentdict image
+  showpage
+                % Clean up.
+  f closefile
+  end
+} bind def

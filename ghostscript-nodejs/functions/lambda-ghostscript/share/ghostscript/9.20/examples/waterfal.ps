@@ -1,0 +1,84 @@
+%!
+/waterfalsave save def	% prevent residual side effects
+%    Copyright (C) 1992, 1993, 1996 Aladdin Enterprises.  All rights reserved.
+% 
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+% 
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+% 
+% For more information about licensing, please refer to
+% http://www.ghostscript.com/licensing/. For information on
+% commercial licensing, go to http://www.artifex.com/licensing/ or
+% contact Artifex Software, Inc., 101 Lucas Valley Road #110,
+% San Rafael, CA  94903, U.S.A., +1(415)492-9861.
+
+% waterfal.ps
+% This file produces a 'waterfall' printout of fonts at various sizes.
+
+
+% Specify any desired set of up to 3 fonts here.
+/Fonts [/Courier /Helvetica] def
+
+% Specify any desired set of point sizes here.
+% The sum of the sizes should not exceed (roughly) 100.
+% For sizes larger than about 16, some characters may fall off the page.
+/Sizes [6 7 8 9 10 11 12 14 16] def
+
+/eol
+ { currentfont /FontBBox get aload pop
+   exch pop sub exch pop 0 exch
+	% Many Ghostscript fonts have incorrect FontBBoxes....
+	pop -1000
+   1.15 mul currentfont /FontMatrix get dtransform
+   translate
+   0 0 moveto
+ } def
+
+% draw the page landscape
+gsave clippath pathbbox grestore
+4 dict begin
+/ury exch def /urx exch def /lly exch def /llx exch def
+90 rotate  llx neg               llx urx sub lly sub  translate  % llx,lly
+end
+
+clippath pathbbox newpath
+/ury exch def /urx exch def /lly exch def /llx exch def
+llx 18 add ury 18 sub translate
+% Read the current Y resolution without using Ghostscript-specific operators.
+gsave initmatrix 0 72 dtransform abs exch abs exch .max grestore
+round cvi /dpi exch def
+QUIET not
+ { (Creating waterfall printout at ) print dpi =only ( DPI.\n) print flush
+ }
+if
+
+newpath 0 setgray
+/Courier findfont 20 scalefont setfont
+
+Fonts
+ { save exch
+   QUIET not { dup ==only flush } if
+   findfont /basefont exch def
+   basefont 20 scalefont setfont eol
+   basefont /FontName get =string cvs show
+   ( ) show dpi =string cvs show ( DPI) show
+   Sizes
+    { QUIET not { ( ) print dup =only flush } if
+      dup /size exch def basefont exch scalefont setfont eol
+      size =string cvs show ( ) show
+      (qwertyuiop-asdfghjkl_zxcvbnm ) show
+      (QWERTYUIOP+ASDFGHJKL/ZXCVBNM ) show
+      (1470258369 .,:;?!) show
+    } forall
+   QUIET not { () = flush } if
+   matrix currentmatrix aload pop
+   7 -1 roll restore
+   6 array astore setmatrix
+ } forall
+
+showpage
+clear cleardictstack
+waterfalsave restore

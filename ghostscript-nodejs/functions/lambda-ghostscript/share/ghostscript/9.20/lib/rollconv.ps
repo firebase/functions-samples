@@ -1,0 +1,383 @@
+%!
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Utility program for converting Japanese fonts produced by Macromedia's
+% Rollup program to Type 0 fonts suitable for use with Ghostscript.
+%
+% Rollup produces the following files, where xxx is the font name:
+%	xxx-H, xxx-SA, xxx-SB, xxx-SK, xxx-SR, xxx-UG
+%	JIS83-1_COD
+%	JIS83-1_CSA
+% The _COD and _CSA files are large files containing the actual
+% character outline data; they may theoretically be shared between
+% multiple fonts.
+%
+% rollconv.ps converts the above to files named:
+%	fff.ps
+%	fff.COD
+%	fff.CSA
+%	fff.CSR
+% where fff is a font file name provided by the user at conversion time.
+% The fff.ps file is the actual font file to be loaded with `run'
+% or placed in a Fontmap or a directory named by [GS_]FONTPATH;
+% the other two files must be present at runtime in a directory that is
+% on Ghostscript's search path (-I, GS_LIB, GS_LIB_DEFAULT).
+%
+% The normal way to invoke this program is
+%	gsnd -- rollconv.ps xxx fff InDir CDir OutDir
+% (assuming that gsnd is an alias for gs -dNODISPLAY), where:
+%	xxx is the font name;
+%	fff is the base part of the output file name;
+%	InDir is the name of the directory containing the xxx-* input files;
+%	CDir is the name of the directory containing the _COD and _CSA
+%	  input files (typically the same as InDir);
+%	OutDir is the name of the directory where the output should be written
+%	  (OutDir must already exist).
+% For example:
+%	gsnd -- rollconv.ps HGGothicBPRO gothic /gs/k/rufonts/Gothic \
+%	  /gs/k/rufonts/Gothic /gs/k/gsfonts
+% To suppress output messages, you may insert -q:
+%	gsnd -q -- rollconv.ps ...
+%
+% This program assumes that the files have been FTP'ed from a Macintosh and
+% therefore have 128 bytes of garbage at the beginning.  If you have
+% transferred them in some manner that avoids this, change true to false
+% in the following line.
+/fromMac true def
+% The FontName of the converted font is xxx-83pv-RKSJ-H.  In order to
+% use a converted font with Ghostscript, you may either load it explicitly
+% at run time, e.g.,
+%	(gothic.ps) run
+% or you may add an entry to the Fontmap file, in the form:
+%	/HGGothicBPRO-83pv-RKSJ-H  (gothic.ps)  ;
+% which will allow the font to be loaded automatically.  After
+% loading the font, by either method, you can select it in the usual way:
+%	/HGGothicBPRO-83pv-RKSJ-H findfont 36 scalefont setfont
+% or
+%	/HGGothicBPRO-83pv-RKSJ-H 36 selectfont
+
+/macrfile		% <filename> macrfile <file>
+ { (r) file
+   fromMac
+    {		% Get rid of the initial Mac garbage (128 characters).
+                % The garbage at the end is unpredictable,
+                % so we'll just have to hope that it's all nulls.
+      dup =string 0 128 getinterval readstring pop pop
+    }
+   if
+ } bind def
+
+/convert		% <FName> <OutBase> <InDir> <CDir> <OutDir> convert -
+ { /OutDir exch def
+   /CDir exch def
+   /InDir exch def
+   /OutBase exch def
+   /FName exch def
+
+   /inprefix InDir (/) concatstrings FName concatstrings (-) concatstrings def
+   /inh inprefix (H) concatstrings def
+
+                % Open the output file.
+
+/OutDot OutDir (/) concatstrings OutBase concatstrings (.) concatstrings def
+/outname OutDot (ps) concatstrings def
+QUIET not { (Writing ) print outname = flush } if
+/cdfromstr (\(pgfonts/) FName concatstrings (-JIS83-1_) concatstrings def
+/cdstr (\() OutBase concatstrings (.) concatstrings def
+/out outname (w) file def
+/buffer 65000 string def
+
+                % Copy the initial comments from the input file.
+
+inh macrfile
+ { dup =string readline pop
+   out 1 index writestring out (\n) writestring
+   (%%EndComments) eq { exit } if
+ }
+loop
+
+                % Write out our preamble.
+
+out (
+currentpacking true setpacking
+userdict /AltsysCFD3 known { (%END) .skipeof } if
+userdict /AltsysCFD3 25 dict dup begin
+/beint { 0 exch { exch 8 bitshift add } forall } bind def
+/rfile { findlibfile { exch pop } { (r) file } ifelse } bind def
+/str 500 string def
+/AltRO { } def
+/BuildCh		% <font> <ccode> <bias> BuildCh -
+ { /bias exch def  /ccode exch def  begin % font
+   ccode dup 255 and dup bias lt exch 252 gt or { pop 127 } if
+   dup -8 bitshift -67 mul add % subfonts have 189 chars, not 256
+   bias sub buildch1
+ } bind def
+/BuildChr		% <font> <ccode> BuildChr -
+ { /ccode exch def  begin % font
+   ccode buildch1
+ } bind def
+/buildch1
+ { 6 mul PGOffsets add
+   FileNames 0 get rfile dup dup 4 -1 roll setfileposition
+   (xxxxxx) readstring pop exch closefile
+   dup 1 3 getinterval beint % COD offset
+   exch 4 2 getinterval beint % length
+   dup 0 eq
+    { pop pop currentdict end
+      1000 0 0 0 1 1 0 -1000 500 1000 setcachedevice2
+    }
+    { dup str length gt { /str 1 index string store } if
+      FileNames 1 get rfile dup dup % offset length file file file
+      5 -1 roll setfileposition % length file file
+      str 0 5 -1 roll getinterval readstring pop pop closefile
+      currentdict end ccode str 1183615869 internaldict /CCRun get exec
+    }
+   ifelse
+ } bind def
+/privates 100 dict def
+/BuildPr		% <stdhw> <stdvw> BuildPr <dict>
+ { 2 copy 1000 mul add privates 1 index known
+    { privates exch get 3 1 roll pop pop
+    }
+    { 7 dict begin
+        /MinFeature{16 16}executeonly def
+        /BlueValues BlueValues def
+        /StdVW 3 -1 roll 1 array astore def
+        /StdHW 3 -1 roll 1 array astore def
+        /password 5839 def
+        /LanguageGroup 1 def
+        /Subrs Subrs def
+      currentdict readonly end
+      privates 2 index 2 index put exch pop
+    }
+   ifelse
+ } bind def
+/FullEncoding
+  systemdict { pop } forall
+  systemdict length 512 sub 1 255 { (x) dup 0 4 -1 roll put cvn } for
+768 packedarray def
+/BlueValues[-250 -250 1100 1100]readonly def
+/BuildChar{AltsysCFD3 begin 64 BuildCh end}bind def
+/CharStrings 1 dict
+dup /.notdef (ø1py 8èÂ) noaccess put
+readonly def
+/CDevProc
+ { pop pop pop pop 0 exch -1000 exch 2 div currentfont /FontBBox get 3 get
+ } bind def
+/FontMatrix[0.001 0.0 0.0 0.001 0.0 0.0]readonly def
+/Subrs [
+(ø1p|=-ìD\‚R) noaccess
+(ø1pyºˆUz) noaccess
+(ø1pyΩƒûi) noaccess
+(ø1p˘) noaccess
+(ø1p|35r∑I) noaccess
+] noaccess def
+end put
+%END
+) writestring
+
+                % Locate and copy the definition of NotDefFont.
+
+out (
+FontDirectory /NotDefFont known { (%END) .skipeof } if
+) writestring
+ { dup =string readline pop
+   dup (/NotDefFont) eq { exit } if pop
+ }
+loop out exch writestring out (\n) writestring
+ { dup =string readline pop
+   (definefont) search { pop pop pop exit } if
+   out exch writestring out (\n) writestring
+ }
+loop out (definefont pop
+%END
+) writestring
+
+                % Copy the definitions of the subfonts, moving the
+                % CharStrings of the Roman supplement to an external file.
+                % Stack for pattern procedures: infile line
+
+/CSRName OutDot (CSR) concatstrings def
+/csr CSRName (w) file def
+QUIET not { (Writing ) print CSRName = flush } if
+
+/encoding 256 array def
+
+/patterns [
+                % Patterns specific to the Roman supplement, in which
+                % the outlines are in an eexec section.
+ { (/Encoding 256 array) {
+   pop out (/Encoding ) writestring
+    { dup buffer readline pop
+      dup (dup) search { exit } if pop pop
+    }
+   loop
+    {	% Stack: infile dupline postdup (dup) predup
+      pop pop exch pop
+        % The top element of the stack is a string beginning with
+        % an index and value to put into the Encoding.
+      token pop exch token pop exch pop encoding 3 1 roll put
+      dup buffer readline pop
+      dup (dup) search not { pop exit } if
+    }
+   loop
+   out encoding cvx write== out ( cvlit ) writestring
+   out exch writestring out (\n) writestring
+ } }
+ { (/FontType 1 def) {
+   pop out (/FontType 4 def\n) writestring
+   out (/BuildChar{AltsysCFD3 begin BuildChr end}bind def\n) writestring
+   out (/FileNames[) writestring
+   2 { out OutBase (.CSR) concatstrings write==only } repeat
+   out (]def\n) writestring
+ } }
+ { (currentfile eexec) {
+   pop out (systemdict begin\n) writestring
+   dup //.eexec_param_dict /eexecDecode filter
+ } }
+ { (dup/CharStrings ) {
+        % Copy the individual CharStrings to the CSR file,
+        % recording the lengths and offsets.
+   pop out (dup/CharStrings AltsysCFD3 /CharStrings get put\n) writestring
+   /offsets 256 dict def
+    { dup token pop		% char name
+      dup dup type /nametype eq exch xcheck not and not { pop exit } if
+      1 index token pop		% length of binary data
+      2 index token pop pop	% skip RD
+      2 index buffer 0 3 index getinterval readstring pop	% charstring
+      offsets 3 index csr fileposition 16 bitshift 4 index add put
+      csr exch writestring pop pop
+      dup buffer readline pop pop	% skip ND
+    }
+   loop
+        % We skipped the 'end'; skip the 'readonly put' as well.
+   2 { dup token pop pop } repeat
+   out (dup/PGOffsets ) writestring
+     out csr fileposition write=only
+     out ( put\n) writestring
+   encoding
+    { offsets exch .knownget not { 0 } if
+      2 { csr 0 write } repeat
+      4 { dup -24 bitshift csr exch write 8 bitshift } repeat pop
+    }
+   forall
+ } }
+ { (/OtherSubrs[) {
+   pop
+    { dup buffer readline pop
+      (]noaccess def) search { pop pop pop exit } if pop
+    }
+   loop
+ } }
+ { (/Subrs 5 array) {
+   pop out (/Subrs AltsysCFD3 /Subrs get def\n) writestring
+   6 { dup buffer readline pop pop } repeat
+ } }
+ { (currentfile closefile) {
+   pop out (end % systemdict\n) writestring
+   closefile
+ } }
+                % Patterns for other supplements.
+ { (pgfonts/) {
+    { cdfromstr search not { exit } if
+      out exch writestring pop out cdstr writestring
+    }
+   loop out exch writestring out (\n) writestring
+ } }
+ { (/BuildChar{AltsysCFD3 begin 64 BuildCh end}bind def) {
+   pop out (\t/BuildChar AltsysCFD3 /BuildChar get def\n) writestring
+ } }
+ { (/CDevProc{pop pop pop pop 0 exch -1000 exch 2 div ) {
+   pop out (\t/CDevProc AltsysCFD3 /CDevProc get def\n) writestring
+ } }
+ { (/CharStrings 1 dict dup begin) {
+   pop out (\t/CharStrings AltsysCFD3 /CharStrings get def\n) writestring
+   2 { dup buffer readline pop pop } repeat
+ } }
+ { (/FontMatrix[0.001 0.0 0.0 0.001 0.0 0.0]def) {
+   pop out (\t/FontMatrix AltsysCFD3 /FontMatrix get def\n) writestring
+ } }
+ { (/Private 14 dict dup begin) {
+   pop out (\t/Private) writestring
+    { dup buffer readline pop
+      (end def) search { pop pop pop exit } if
+      (/Std) search
+       { pop pop dup length 3 sub 3 exch getinterval
+         (]) search pop out ( ) writestring out exch writestring pop
+       }
+      if pop
+    }
+   loop out ( AltsysCFD3 begin BuildPr end def\n) writestring
+ } }
+ { (UniqueID) { pop } }
+ { () {
+   out exch writestring out (\n) writestring
+ } }
+] def
+[ (SR) (SA) (SK) (SB) (UG) ]
+ { 0 1 255 { encoding exch /.notdef put } for
+   inprefix exch concatstrings macrfile
+    { dup buffer readline not { pop exit } if
+      /patterns load
+       { 2 copy 0 get search { pop pop pop 1 get exec exit } if pop pop }
+      forall
+    }
+   loop closefile
+ }
+forall
+csr closefile
+
+                % Copy the definition of the root font.
+
+dup buffer readstring pop out exch writestring closefile
+out (
+setpacking
+) writestring
+out closefile
+
+                % Remove the Mac garbage from the outline files.
+
+[ (COD) (CSA) ]
+ { CDir (/) concatstrings (JIS83-1_) concatstrings
+     1 index concatstrings macrfile
+   exch OutDot exch concatstrings
+     QUIET not { (Writing ) print dup = flush } if
+     (w) file
+                % Stack: infile outfile
+    { 1 index buffer readstring exch
+                % Stack: infile outfile noteof substring
+      2 index exch writestring not { exit } if
+    }
+   loop closefile closefile
+ }
+forall
+
+ } bind def
+
+% If the program was invoked from the command line, run it now.
+[ shellarguments
+ { counttomark 5 eq
+    { convert
+      QUIET not { (Done.\n) print flush } if
+    }
+    { cleartomark
+      (Usage: gsnd -- rollconv.ps FName OutBase InDir CDir OutDir\n) print
+      ( e.g.: gsnd -- rollconv.ps HGMinchoE mincho HGfonts/Mincho HGfonts/Mincho HGfonts/gs\n) print flush
+      mark
+    }
+   ifelse
+ }
+if pop

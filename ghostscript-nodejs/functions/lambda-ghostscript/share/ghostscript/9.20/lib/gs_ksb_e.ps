@@ -1,0 +1,63 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Define the KanjiSub encoding vector.
+/currentglobal where
+ { pop currentglobal { setglobal } true setglobal }
+ { { } }
+ifelse
+/KanjiSubEncoding
+%\x00
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%\x20
+    /.notdef /c21     /c22     /c23     /c24     /c25     /c26     /c27
+    /c28     /c29     /c2A     /c2B     /c2C     /c2D     /c2E     /c2F
+    /c30     /c31     /c32     /c33     /c34     /c35     /c36     /c37
+    /c38     /c39     /c3A     /c3B     /c3C     /c3D     /c3E     /c3F
+%\x40
+    /c40     /c41     /c42     /c43     /c44     /c45     /c46     /c47
+    /c48     /c49     /c4A     /c4B     /c4C     /c4D     /c4E     /c4F
+    /c50     /c51     /c52     /c53     /c54     /c55     /c56     /c57
+    /c58     /c59     /c5A     /c5B     /c5C     /c5D     /c5E     /c5F
+%\x60
+    /c60     /c61     /c62     /c63     /c64     /c65     /c66     /c67
+    /c68     /c69     /c6A     /c6B     /c6C     /c6D     /c6E     /c6F
+    /c70     /c71     /c72     /c73     /c74     /c75     /c76     /c77
+    /c78     /c79     /c7A     /c7B     /c7C     /c7D     /c7E     /.notdef
+%\x80
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+%\xA0
+    /.notdef /c21     /c22     /c23     /c24     /c25     /c26     /c27
+    /c28     /c29     /c2A     /c2B     /c2C     /c2D     /c2E     /c2F
+    /c30     /c31     /c32     /c33     /c34     /c35     /c36     /c37
+    /c38     /c39     /c3A     /c3B     /c3C     /c3D     /c3E     /c3F
+%\xC0
+    /c40     /c41     /c42     /c43     /c44     /c45     /c46     /c47
+    /c48     /c49     /c4A     /c4B     /c4C     /c4D     /c4E     /c4F
+    /c50     /c51     /c52     /c53     /c54     /c55     /c56     /c57
+    /c58     /c59     /c5A     /c5B     /c5C     /c5D     /c5E     /c5F
+%\xE0
+    /c60     /c61     /c62     /c63     /c64     /c65     /c66     /c67
+    /c68     /c69     /c6A     /c6B     /c6C     /c6D     /c6E     /c6F
+    /c70     /c71     /c72     /c73     /c74     /c75     /c76     /c77
+    /c78     /c79     /c7A     /c7B     /c7C     /c7D     /c7E     /.notdef
+256 packedarray .defineencoding
+exec

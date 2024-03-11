@@ -1,0 +1,173 @@
+%!
+% written by James Clark <jjc@jclark.uucp>
+% print an afm file on the standard output
+% usage is `fontname printafm' eg `/Times-Roman printafm'
+
+% From the `dvitops' distribution, which included this notice:
+% dvitops is not copyrighted; you can do with it exactly as you please.
+% I would, however, ask that if you make improvements or modifications,
+% you ask me before distributing them to others.
+
+% Altered by d.love@dl.ac.uk to produce input for Rokicki's afm2tfm,
+% which groks the format of the Adobe AFMs.
+
+% Modified by L. Peter Deutsch 9/14/93:
+%   uses Ghostscript's =only procedure to replace 'buf cvs print'.
+% Modified by L. Peter Deutsch 9/6/95:
+%   uses Ghostscript's shellarguments facility to accept the font name
+%     on the command line.
+
+% Altered my master@iaas.msu.ru to work with fonts of more than 256 glyphs
+% and avoid FSType output. Also print a comment with UniqueID of the font.
+
+/onechar 1 string def
+
+% c toupper - c
+/toupper {
+        dup dup 8#141 ge exch 8#172 le and {
+                8#40 sub
+        } if
+} bind def
+
+% print unencoded character metric data lines for glyphs in `v' array
+% and reset `v' -
+/printv {
+        % define a new font with v as its encoding vector
+        currentfont maxlength dict /f exch def
+        currentfont {
+                exch dup dup /FID ne exch /Encoding ne and {
+                        exch f 3 1 roll put
+                } {
+                        pop pop
+                } ifelse
+        } forall
+        f /Encoding v put
+        f /FontName /temp put
+        % make this new font the current font
+        /temp f definefont setfont
+        % print a entry for each character not in old vector
+        /e currentfont /Encoding get def
+        0 1 255 {
+                dup e exch get
+                dup dup /.notdef ne exch s exch known not and {
+                        exch -1 printmetric
+                } {
+                        pop pop
+                } ifelse
+        } for
+        0 1 255 {
+                v exch /.notdef put
+        } for
+} bind def
+
+% printcharmetrics -
+
+/printcharmetrics {
+        (StartCharMetrics ) print
+        currentfont /CharStrings get dup length exch /.notdef known { 1 sub } if =
+        currentfont 1000 scalefont setfont 0 0 moveto
+        /e currentfont /Encoding get def
+        0 1 255 {
+                dup e exch get
+                dup /.notdef ne {
+                        exch dup printmetric
+                } {
+                        pop pop
+                } ifelse
+        } for
+        % s contains an entry for each name in the original encoding vector
+        /s 256 dict def
+        e {
+                s exch true put
+        } forall
+        % v is the new encoding vector
+        /v 256 array def
+        0 1 255 {
+                v exch /.notdef put
+        } for
+        % fill up v with names in CharStrings
+        /i 0 def
+        currentfont /CharStrings get {
+                pop
+                i 255 le {
+                        v i 3 -1 roll put
+                        /i i 1 add def
+                } {
+                        printv
+                        v 0 3 -1 roll put
+                        /i 1 def
+                } ifelse
+        } forall
+        printv
+        (EndCharMetrics) =
+} bind def
+
+% name actual_code normal_code printmetric -
+
+/printmetric {
+        /saved save def
+        (C ) print =only
+        ( ; WX ) print
+        onechar 0 3 -1 roll put
+        onechar stringwidth pop round cvi =only
+        ( ; N ) print =only
+        ( ; B ) print
+        onechar false charpath flattenpath mark pathbbox counttomark {
+                counttomark -1 roll
+                round cvi =only
+                ( ) print
+        } repeat pop
+        (;) =
+        saved restore
+} bind def
+
+% fontname printafm -
+
+/printafm {
+        findfont gsave setfont
+        (StartFontMetrics 2.0) =
+
+                % Print the UniqueID
+
+        currentfont /UniqueID known {
+                (Comment UniqueID ) print
+                currentfont /UniqueID get =only
+                (\n) print
+        } if
+
+        (FontName ) print currentfont /FontName get =
+
+                % Print the FontInfo
+
+        currentfont /FontInfo get {
+                exch
+                dup /FSType ne {
+                        =string cvs dup dup 0 get 0 exch toupper put print
+                        ( ) print =
+                } {
+                        pop pop
+                } ifelse
+        } forall
+
+                % Print the FontBBox
+
+        (FontBBox) print
+        currentfont /FontBBox get {
+                ( ) print round cvi =only
+        } forall
+        (\n) print
+
+        printcharmetrics
+        (EndFontMetrics) =
+        grestore
+} bind def
+
+% Check for command line arguments.
+[ shellarguments
+ { ] dup length 1 eq
+    { 0 get printafm }
+    { (Usage: printafm fontname\n) print flush }
+   ifelse
+ }
+ { pop }
+ifelse
