@@ -16,8 +16,8 @@
 from firebase_functions import firestore_fn
 
 
-# [START authContext]
-@on_document_updated_with_auth_context(document="comments/{comment_id}")
+# [START verifyComment]
+@firestore_fn.on_document_updated_with_auth_context(document="comments/{comment_id}")
 def verify_comment(event: Event[Change[DocumentSnapshot]]) -> None:
 
     # Get the current and previous document values.
