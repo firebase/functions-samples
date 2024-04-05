@@ -39,7 +39,5 @@ def verify_comment(event: Event[Change[DocumentSnapshot]]) -> None:
 
     # add auth medadata to the document
     new_value.reference.update({"created_by": user_auth_id, "verified": verified})
-
-
 # [END verifyComment]
 # [END all]
