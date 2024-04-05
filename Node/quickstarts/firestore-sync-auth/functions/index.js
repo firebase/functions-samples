@@ -46,12 +46,12 @@ exports.verifyComment = onDocumentWrittenWithAuthContext(
         verified = true;
       }
     }
-    
+
     // add auth medadata to the document
     return data.after.ref.set(
       {
         created_by: authId,
-        verified: false,
+        verified,
       },
       { merge: true }
     );
