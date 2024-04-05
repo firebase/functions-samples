@@ -21,41 +21,41 @@
 const {
   onDocumentWrittenWithAuthContext,
 } = require("firebase-functions/v2/firestore");
-const { logger } = require("firebase-functions");
+const {logger} = require("firebase-functions");
 
 exports.verifyComment = onDocumentWrittenWithAuthContext(
-  "comments/{commentId}",
-  (event) => {
-    const snapshot = event.data;
-    if (!snapshot) {
-      logger.log("No data associated with the event");
-      return;
-    }
-    const data = snapshot.data();
-
-    // retrieve auth context from event
-    const { authType, authId } = event;
-
-    let verified = false;
-    if (authType === "system") {
-      // system-generated users are automatically verified
-      verified = true;
-    } else if (authType === "unknown" || authType === "unauthenticated") {
-      // admin users from a specific domain are verified
-      if (authId.endsWith("@example.com")) {
-        verified = true;
+    "comments/{commentId}",
+    (event) => {
+      const snapshot = event.data;
+      if (!snapshot) {
+        logger.log("No data associated with the event");
+        return;
       }
-    }
+      const data = snapshot.data();
 
-    // add auth medadata to the document
-    return data.after.ref.set(
-      {
-        created_by: authId,
-        verified,
-      },
-      { merge: true }
-    );
-  }
+      // retrieve auth context from event
+      const {authType, authId} = event;
+
+      let verified = false;
+      if (authType === "system") {
+      // system-generated users are automatically verified
+        verified = true;
+      } else if (authType === "unknown" || authType === "unauthenticated") {
+      // admin users from a specific domain are verified
+        if (authId.endsWith("@example.com")) {
+          verified = true;
+        }
+      }
+
+      // add auth medadata to the document
+      return data.after.ref.set(
+          {
+            created_by: authId,
+            verified,
+          },
+          {merge: true},
+      );
+    },
 );
 
 // [END all]
