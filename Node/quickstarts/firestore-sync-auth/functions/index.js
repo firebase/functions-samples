@@ -36,6 +36,7 @@ exports.verifyComment = onDocumentWrittenWithAuthContext(
     // retrieve auth context from event
     const { authType, authId } = event;
 
+    let verified = false;
     if (authType === "system") {
       // system-generated users are automatically verified
       verified = true;
@@ -44,10 +45,8 @@ exports.verifyComment = onDocumentWrittenWithAuthContext(
       if (authId.endsWith("@example.com")) {
         verified = true;
       }
-    } else {
-      verified = false;
     }
-
+    
     // add auth medadata to the document
     return data.after.ref.set(
       {
