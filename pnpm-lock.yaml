@@ -1218,8 +1218,8 @@ importers:
         specifier: ^11.9.0
         version: 11.9.0
       firebase-functions:
-        specifier: ^4.4.1
-        version: 4.4.1(firebase-admin@11.9.0)
+        specifier: ^4.9.0
+        version: 4.9.0(firebase-admin@11.9.0)
     devDependencies:
       chai:
         specifier: ^4.3.6
@@ -3293,7 +3293,7 @@ packages:
   /@types/cors@2.8.13:
     resolution: {integrity: sha512-RG8AStHlUiV5ysZQKq97copd2UmVYw3/pRMLefISZ3S1hK104Cwm7iLQ3fTKx+lsUH2CE8FlLaYeEA2LSeqYUA==}
     dependencies:
-      '@types/node': 20.4.0
+      '@types/node': 17.0.45
 
   /@types/debug@0.0.30:
     resolution: {integrity: sha512-orGL5LXERPYsLov6CWs3Fh6203+dXzJkR7OnddIr2514Hsecwc8xRpzCapshBbKFImCsvS/mk6+FWiN5LyZJAQ==}
@@ -3463,9 +3463,6 @@ packages:
 
   /@types/node@17.0.45:
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
-
-  /@types/node@20.4.0:
-    resolution: {integrity: sha512-jfT7iTf/4kOQ9S7CHV9BIyRaQqHu67mOjsIQBC3BKZvzvUB6zLxEwJ6sBE3ozcvP8kF6Uk5PXN0Q+c0dfhGX0g==}
 
   /@types/prettier@2.7.3:
     resolution: {integrity: sha512-+68kP9yzs4LMp7VNh8gdzMSPZFL44MLGqiHWvttYJe+6qnuVr4Ek9wSBQoveqY/r+LwjCcU29kNVkidwim+kYA==}
@@ -5606,6 +5603,23 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+
+  /firebase-functions@4.9.0(firebase-admin@11.9.0):
+    resolution: {integrity: sha512-IqxOEsVAWGcRv9KRGzWQR5mOFuNsil3vsfkRPPiaV1U/ATC27/jbahh4z8I4rW8Xqa6cQE5xqnw0ueyMH7i7Ag==}
+    engines: {node: '>=14.10.0'}
+    hasBin: true
+    peerDependencies:
+      firebase-admin: ^10.0.0 || ^11.0.0 || ^12.0.0
+    dependencies:
+      '@types/cors': 2.8.13
+      '@types/express': 4.17.3
+      cors: 2.8.5
+      express: 4.18.2
+      firebase-admin: 11.9.0
+      protobufjs: 7.2.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /flat-cache@3.0.4:
     resolution: {integrity: sha512-dm9s5Pw7Jc0GvMYbshN6zchCA9RgQlzzEZX3vylR9IqFfS8XciblUXOKfW6SiuJ0e13eDYZoZV5wdrev7P3Nwg==}
@@ -8817,7 +8831,7 @@ packages:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 20.4.0
+      '@types/node': 17.0.45
       long: 4.0.0
     dev: false
 
@@ -8855,7 +8869,7 @@ packages:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.4.0
+      '@types/node': 17.0.45
       long: 5.2.3
 
   /proxy-addr@2.0.7:
