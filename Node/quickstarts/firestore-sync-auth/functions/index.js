@@ -26,7 +26,7 @@ const {logger} = require("firebase-functions");
 exports.verifyComment = onDocumentWrittenWithAuthContext(
     "comments/{commentId}",
     (event) => {
-      const snapshot = event.data;
+      const snapshot = event.data.after;
       if (!snapshot) {
         logger.log("No data associated with the event");
         return;
