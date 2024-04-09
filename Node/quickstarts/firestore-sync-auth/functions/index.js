@@ -31,7 +31,6 @@ exports.verifyComment = onDocumentWrittenWithAuthContext(
         logger.log("No data associated with the event");
         return;
       }
-      const data = snapshot.data();
 
       // retrieve auth context from event
       const {authType, authId} = event;
