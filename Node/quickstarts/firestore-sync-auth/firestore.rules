@@ -1,0 +1,8 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /comments/{comment} {
+      // Allow authenticated users to read/write the comments collection
+      allow read, write: if request.auth != null;
+    }
+  }
+}
