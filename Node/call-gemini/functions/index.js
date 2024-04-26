@@ -37,4 +37,3 @@
   const text = response.text();
   return {text};
  })
- 
