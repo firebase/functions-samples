@@ -25,5 +25,8 @@
         "@firebase/app-types"
       ]
     }
+  },
+  "dependencies": {
+    "firebase": "^10.11.1"
   }
 }
