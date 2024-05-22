@@ -1,0 +1,2 @@
+# Don't accidentally push Discord Webhook URL to prod
+functions/.env
