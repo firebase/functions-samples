@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "remote-config-server-with-vertex",
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "serve": "firebase emulators:start --only functions",
