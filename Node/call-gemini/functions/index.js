@@ -16,15 +16,24 @@
  const {onCall, HttpsError} = require("firebase-functions/v2/https");
  const {logger} = require("firebase-functions/v2");
  const { GoogleGenerativeAI } = require("@google/generative-ai");
- const { defineSecret } = require('firebase-functions/params');
+ const { defineSecret, defineBoolean } = require('firebase-functions/params');
 
  const geminiToken = defineSecret("API_TOKEN", {
   description: "Gemini API token. Created using " +
       "https://ai.google.dev/tutorials/get_started_node#set-up-project",
 });
 
- exports.callGemini = onCall({secrets: [geminiToken]}, async (request) => {
+const appCheckRequired = defineBoolean("APP_CHECK_REQUIRED");
+const authRequired = defineBoolean("AUTH_REQUIRED");
 
+ exports.callGemini = onCall({secrets: [geminiToken], enforceAppCheck: appCheckRequired }, async (request) => {
+
+    if (authRequired.val() && !request.auth) {
+        throw new HttpsError(
+          "failed-precondition",
+          "The function must be called while authenticated.",
+        );
+    }
   const genAI = new GoogleGenerativeAI(geminiToken.value());
 
   // For text-only input, use the gemini-pro model

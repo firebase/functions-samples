@@ -15,4 +15,3 @@
 packages:
   - 'Node/**'
   - 'Node-1st-gen/**'
-  - "!Node-1st-gen/image-maker/**"
