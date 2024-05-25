@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@firebase/functions": "^0.11.5",
-    "@types/firebase": "^3.2.1",
     "firebase": "^10.12.1",
     "showdown": "^2.1.0"
   }

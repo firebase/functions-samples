@@ -70,7 +70,7 @@ const defaultConfig = {
 
 // [START remote_config_server_vertex_create_function]
 // Export the function.
-exports.generateWithVertex = onCall(
+exports.callVertexWithRC = onCall(
   {
     enforceAppCheck: appCheckRequired, // Enable App Check enforcement
     consumeAppCheckToken: false, // Don't consume the token (optional)
@@ -124,7 +124,7 @@ exports.generateWithVertex = onCall(
 
       // Check if Vertex AI is enabled
       if (vertexEnabled !== true) {
-        console.log("Vertex AI is not enabled");
+        logger.log("Vertex AI is not enabled");
         return;
       }
       logger.log(

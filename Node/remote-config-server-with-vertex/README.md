@@ -5,7 +5,16 @@ using Google's Vertex AI Gemini API. It uses
 the Firebase Admin SDK for Node.js and Remote Config to manage model parameters,
 safety settings, and feature flags.
 
-## Setting up the sample
+To protect your API endpoints, function is intended to run with a service
+account with unauthenticated access blocked as described in
+[Use server-side Remote Config with Cloud Functions and Vertex
+AI](https://firebase.google.com/docs/remote-config/solution-server).
+
+For a callable function with App Check enabled, try the
+[Call the Vertex AI Gemini API with Remote Config and App Check](../call-vertex-remote-config-server)
+sample function and client.
+
+## Set up the sample
 
 Follow the [User server-side Remote Config with Cloud Functions and Vertex AI
 guide](https://firebase.google.com/docs/remote-config/solution-server) to:
@@ -29,3 +38,14 @@ a Free Trial Cloud Billing account.
 Learn more about Remote Config server implementations at
 [Use Remote Config in server
 environments](https://firebase.google.com/docs/remote-config/server).
+
+Support
+-------
+
+- [Firebase Support](https://firebase.google.com/support/)
+
+License
+-------
+
+© Google, 2024. Licensed under an [Apache-2](../../LICENSE) license.
+

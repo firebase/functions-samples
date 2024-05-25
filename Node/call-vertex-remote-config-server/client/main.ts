@@ -28,7 +28,7 @@ import {
 } from "firebase/functions";
 
 // Set to true to test in emulator.
-const testMode = false;
+const testMode = true;
 
 // Use showdown to convert Gemini-provided Markdown to HTML
 import { Converter } from "showdown";
@@ -46,8 +46,8 @@ initializeAppCheck(app, {
   provider: new ReCaptchaEnterpriseProvider(RECAPTCHA_ENTERPRISE_SITE_KEY),
 });
 
-// Define generateWithVertex as a call to the generateWithVertex function.
-const generateWithVertex = httpsCallable(getFunctions(), "generateWithVertex", {
+// Define callVertexWithRC as a call to the callVertexWithRC function.
+const callVertexWithRC = httpsCallable(getFunctions(), "callVertexWithRC", {
   limitedUseAppCheckTokens: true,
 });
 
@@ -60,14 +60,16 @@ if (testMode) {
 
 // Generate body for index.html.
 document.body.innerHTML += `
+    
+    <div id="waitingMessage"></div>
+    <div id="generatedText"></div>
+    <div id="errorMessage"></div>
+    <br/>
     <form id="promptForm">
-        <label for="promptInput">Prompt:</label><br>
+        <label for="promptInput">Ask Gemini a question!</label><br>
         <input type="text" id="promptInput" name="prompt"><br><br>
         <input type="submit" value="Submit">
     </form>
-    <br/>
-    <p id="generatedText"></p>
- 
 `;
 
 const promptForm = document.getElementById("promptForm") as HTMLFormElement;
@@ -79,15 +81,22 @@ promptForm.addEventListener("submit", async (event) => {
   ) as HTMLInputElement;
   const prompt = promptInput.value;
 
+  const waitingMessageElement = document.getElementById("waitingMessage");
+  waitingMessageElement.textContent = "Waiting for response...";
+
   try {
-    const { data } = await generateWithVertex({ prompt });
+    const { data } = await callVertexWithRC({ prompt });
     const generatedTextElement = document.getElementById("generatedText"); // Access the element
     const htmlContent = converter.makeHtml(data);
-    if (!generatedTextElement){
+    if (!generatedTextElement) {
       throw new Error("Missing generated text.");
     }
     generatedTextElement.innerHTML = htmlContent; // Set the element's content
+    waitingMessageElement.textContent = "";
+
   } catch (error) {
-    console.error("Error calling generateWithVertex:", error);
+    const errorMessageElement = document.getElementById("errorMessage");
+    errorMessageElement.textContent = "Error calling generateWithVertex: " + error.message;
+    waitingMessageElement.textContent = "";
   }
 });

@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/',
+  base: '',
   build: {
     rollupOptions: {
-      input: ['index.html'],
+      input: ['index.html','main.ts'],
     },
   },
   logLevel: 'info',

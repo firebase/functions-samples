@@ -9,8 +9,24 @@
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local",
-        "*.bak",
+        "*.bak"
       ]
     }
-  ]
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  },
+  "hosting": {
+    "public": "client/dist",
+    "ignore": [
+      "firebase.json",
+      "**/node_modules/**"
+    ]
+  }
 }
