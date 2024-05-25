@@ -82,7 +82,21 @@ promptForm.addEventListener("submit", async (event) => {
   const prompt = promptInput.value;
 
   const waitingMessageElement = document.getElementById("waitingMessage");
-  waitingMessageElement.textContent = "Waiting for response...";
+  //waitingMessageElement.textContent = "Waiting for response...";
+
+  // Define a variable to keep track of the number of dots
+  let dotCount = 0;
+
+  // Set interval to add dots every second
+  const intervalId = setInterval(() => {
+    // Increment dotCount
+    dotCount = (dotCount + 1) % 7;
+    const dots = ".".repeat(dotCount);
+    waitingMessageElement.textContent = "Waiting for response" + dots;
+   }, 1000);
+
+  const errorMessageElement = document.getElementById("errorMessage");
+  errorMessageElement.textContent = "";
 
   try {
     const { data } = await callVertexWithRC({ prompt });
@@ -93,10 +107,12 @@ promptForm.addEventListener("submit", async (event) => {
     }
     generatedTextElement.innerHTML = htmlContent; // Set the element's content
     waitingMessageElement.textContent = "";
+    errorMessageElement.textContent = "";
 
   } catch (error) {
-    const errorMessageElement = document.getElementById("errorMessage");
-    errorMessageElement.textContent = "Error calling generateWithVertex: " + error.message;
+    errorMessageElement.textContent = "Error calling function: " + error.message;
     waitingMessageElement.textContent = "";
   }
+  // Clear welcome dots.
+  clearInterval(intervalId);
 });
