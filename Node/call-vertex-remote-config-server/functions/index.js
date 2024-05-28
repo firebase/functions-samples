@@ -114,8 +114,7 @@ exports.callVertexWithRC = onCall(
         generation_config: generationConfig,
       });
 
-      // Create the chat; append user input to Remote Config-defined prompt.
-      const chat = generativeModel.startChat();
+      // Combine prompt from Remote Config with optional user input.
       const chatInput = textPrompt + " " + userInput;
 
       if (!chatInput) {
@@ -141,7 +140,7 @@ exports.callVertexWithRC = onCall(
         "\n"
       );
 
-      const result = await chat.sendMessageStream(chatInput);
+      const result = await generativeModel.generateContentStream(chatInput);
 
       const chunks = [];
       for await (const item of result.stream) {
@@ -152,7 +151,7 @@ exports.callVertexWithRC = onCall(
 
       return chunks.join(""); // Return the concatenated chunks
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       throw new HttpsError("internal", "Internal server error");
     }
   }

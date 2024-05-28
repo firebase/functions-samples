@@ -80,8 +80,7 @@ exports.generateWithVertex = onRequest(async (request, response) => {
       generation_config: generationConfig,
     });
 
-    // Create the chat; append user input to Remote Config-defined prompt.
-    const chat = generativeModel.startChat();
+    // Combine prompt from Remote Config with optional user input.
     const chatInput = textPrompt + " " + userInput;
 
     if (!chatInput) {
@@ -95,23 +94,23 @@ exports.generateWithVertex = onRequest(async (request, response) => {
       return;
     }
 
-    console.log("\nRunning with model ", textModel, ", prompt: ", textPrompt,
+    logger.log("\nRunning with model ", textModel, ", prompt: ", textPrompt,
       ", generationConfig: ", generationConfig, ", safetySettings: ",
       safetySettings, " in ", location, "\n");
 
-    const result = await chat.sendMessageStream(chatInput);
+    const result = await generativeModel.generateContentStream(chatInput); 
     response.writeHead(200, { 'Content-Type': 'text/plain' });
 
     for await (const item of result.stream) {
       const chunk = item.candidates[0].content.parts[0].text;
-      console.log("Received chunk:", chunk);
+      logger.log("Received chunk:", chunk);
       response.write(chunk);
     }
 
     response.end();
 
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     response.status(500).send('Internal server error');
   }
 });
