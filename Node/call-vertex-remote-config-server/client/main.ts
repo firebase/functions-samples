@@ -82,7 +82,6 @@ promptForm.addEventListener("submit", async (event) => {
   const prompt = promptInput.value;
 
   const waitingMessageElement = document.getElementById("waitingMessage");
-  //waitingMessageElement.textContent = "Waiting for response...";
 
   // Define a variable to keep track of the number of dots
   let dotCount = 0;
