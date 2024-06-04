@@ -1,0 +1,33 @@
+{
+  "name": "call-vertex-remote-config-server-client",
+  "version": "1.0.0",
+  "description": "JavaScript quickstart for Vertex AI, Firebase Remote Config server, and App Check.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firebase/functions-samples.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/firebase/functions-samples/issues"
+  },
+  "engines": {
+    "npm": ">=9.0.0 <10.0.0",
+    "node": ">=18.0.0 <=20.0.0"
+  },
+  "homepage": "https://github.com/firebase/functions-samples#readme",
+  "devDependencies": {
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@firebase/functions": "^0.11.5",
+    "firebase": "^10.12.1",
+    "showdown": "^2.1.0"
+  }
+}
