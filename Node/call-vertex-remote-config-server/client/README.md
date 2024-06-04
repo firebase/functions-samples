@@ -6,8 +6,8 @@ Introduction
 
 This is a basic web app that calls the `callVertexWithRC` function. The
 function uses values stored in Remote Config server templates with
-the Firebase Admin SDK to change Vertex AI Gemini API parameters on the
-fly. Access is controlled using Firebase App Check.
+the Firebase Admin SDK to dynamically update Vertex AI Gemini API
+parameters. Access is controlled using Firebase App Check.
 
 - [Read more about Remote Config for servers](https://firebase.google.com/docs/remote-config/server).
 - [Read more about App Check](https://firebase.google.com/docs/app-check).
@@ -32,12 +32,21 @@ Get started
  4. Copy your Firebase project config and your ReCAPTCHA Enterprise site key
     into the appropriate places in `config.ts` in this directory.
  5. In this directory, run `npm install`.
- 6. Set up the function as described in [../README.md](../README.md).
+ 6. Set up and deploy the function as described in [../README.md](../README.md).
  7. In this directory, run `npm run dev` to run the client.
 
-We recommend running and testing functions locally before deploying to Google
-Cloud. To run this app against the `callVertexWithRC` function running in an
-emulator, set `testMode` to true.
+To run this app against the `callVertexWithRC` function running in the Firebase
+emulator, ensure that `testMode`in `main.ts` is set to `true`. Before testing
+with a deployed (i.e., not emulated) function, set `testMode` to `false`.
+
+TIP: You can build the client and deploy to Firebase Hosting by running
+     `npm run build` from the `client` directory. Hosting deliverables are
+     generated and saved in `client/dist` and you can then deploy to
+     the emulator or Firebase Hosting from the parent directory. We recommend
+     deploying to the emulator first--you can use the following command to
+     deploy the function and web client simultaneously:
+   
+     firebase serve --only functions,hosting 
 
 Support
 -------
