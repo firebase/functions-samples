@@ -1,0 +1,135 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 0 0 380 200
+%%Creator: karl@cs.umb.edu from code by Roger Hersch
+%%CreationDate: 8 March 1991
+%%Title: RIDT logo
+
+% Forget everything we do.
+save
+
+% Make definitions in our own dictionary.
+20 dict begin
+
+% However, this isn't quite a true EPS file, because we use the
+% setscreen operator, which has device- and document-dependent effects.
+% In particular, if the document is being printed in landscape mode, we
+% have to rotate the cell by 90 degrees.  The dvips translator sets the
+% variable `isls' to be true in landscape mode, so we test for that.
+% 
+/screen_angle
+    /isls where
+    { /isls get { 90 } { 0 } ifelse }
+    { 0 }
+  ifelse
+def
+
+
+% Increasing this number makes the screen finer (it isn't the actual
+% frequency).
+% 
+/screen_frequency 10 def
+
+
+% If you change these numbers, change the bounding box comment above.
+% This default size is approximately 134mm by 71mm.
+/logo_width 380 def
+/logo_height 200 def
+
+% Besides changing the size from the outside, you can also change the
+% scale factor defined here.  Of course then the bounding box won't be
+% accurate.
+/scalefactor 1 def
+
+% We need a string to hold the gray values.
+/fountainstring 256 string def
+
+% Put values varying from 0 to 255 into the string; these will be values
+% for the image operator.
+0 1 255
+  {
+    fountainstring exch dup
+    255 div 180 mul cos neg 2 div
+    .5 add 255 mul cvi
+    put
+  }
+bind for
+
+
+% This procedure takes the bounding box of a rectangle, and images
+% /fountainstring into it.
+/fountain
+  { 
+    /ury exch def
+    /urx exch def
+    /lly exch def
+    /llx exch def
+    gsave
+      llx lly translate
+      
+      % Scale to the size of the rectangle.
+      urx llx sub ury lly sub scale
+
+      % The source image has one row of 256 8-bit values.
+      1 256 8
+      
+      % Map unit square to source.
+      [1 0 0 -256 0 256]
+      
+      % Image the string.
+      { fountainstring } image
+   grestore
+  }
+bind def
+
+
+% Draw a line across the bottom for visual anchoring.
+% 
+0 0 moveto
+logo_width 0 lineto stroke
+
+  screen_frequency scalefactor div
+  screen_angle
+  { exch pop abs 1 exch sub } bind
+setscreen
+
+scalefactor scalefactor scale
+
+/Palatino-Roman findfont 100 scalefont setfont
+
+% Determine the dimensions of our string.
+/logo_words (RIDT 91) def
+
+0 0 moveto
+logo_words true charpath flattenpath pathbbox
+/word_height exch def
+/word_width exch def
+pop pop % llx and lly are zero.
+newpath
+
+/x_offset logo_width word_width sub 2 div def
+/y_offset 15 def
+
+% Draw the background pattern, which is dark at the top and light at the
+% bottom.
+% 
+0 0 logo_width logo_height fountain
+
+% Make the clipping path be `RIDT 91', twice.
+x_offset y_offset moveto
+logo_words true charpath
+x_offset logo_height y_offset word_height add sub moveto
+logo_words true charpath
+clip
+newpath
+
+% Paint the pattern again, this time with light at the top and dark at
+% the bottom.
+% 
+logo_width logo_height translate
+180 rotate
+0 0 logo_width logo_height fountain
+
+end 
+restore
+
+% showpage

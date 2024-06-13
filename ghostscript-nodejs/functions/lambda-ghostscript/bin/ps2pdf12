@@ -1,0 +1,7 @@
+#!/bin/sh
+# Convert PostScript to PDF 1.2 (Acrobat 3-and-later compatible).
+ps2pdfwr="`dirname \"$0\"`/ps2pdfwr"
+if test ! -x "$ps2pdfwr"; then
+	ps2pdfwr="ps2pdfwr"
+fi
+exec "$ps2pdfwr" -dCompatibilityLevel=1.2 "$@"

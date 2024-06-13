@@ -1,0 +1,588 @@
+%!
+% vasarely
+% Elizabeth D. Zwicky
+% zwicky@sgi.com
+/vasarelysave save def	% prevent residual side effects
+%
+% Inspired by Vasarely's experiments with tilting circles and squares
+% (for instance "Tlinko" and "Betelgeuse"
+
+%% circles
+/part { circle } def /nnrand false def
+%% squares
+% /part { ngon } def /nn 4 def /nnrand false def
+%% random polygons
+% /part { ngon } def /nnrand true def
+%% random stars (not my favorite on this program)
+% /part { nstar } def /nnrand true def 
+
+%% tilt the base shape a random amount?
+/twist false def
+% /twist true def
+
+
+/rainbow false def
+%% To make rainbows
+% /rainbow true def 
+%% Set this to 1 to go through a full range of colors
+/rainrange .25 def
+
+% number of different designs per page
+/inheight 2 def
+/inwidth 2 def
+% number of repeats in a design
+/xtimes 10 def
+/ytimes 16 def
+
+%% This sets the relationship between the two hues: comptwo is maximum contrast
+/colorway {comptwo} def
+%% monochrome comptwo harmtwo harmfour freecolor compthree closeharm
+%% origcolor
+
+%% This sets the brightness and saturation of the colors; vivid makes
+%% them both bright
+/colorfam {vivid} def
+%% vivid jewel intense medium pastel free orig contrast
+%% medjewel medvivid vivpastel medpastel
+
+
+%% Only experts below this point!
+
+usertime srand
+/seed rand def
+
+/starcompensate false def
+/constroke 1 def
+
+
+
+/circle {
+  /radius radius 1.33 mul def
+  currentpoint /herey exch def /herex exch def
+   herex herey radius 0 360 arc
+} def 
+
+/ngon{ % polygon of n sides, n determined by nn
+  nside 2 div radius rmoveto
+   nn cvi {
+         nside neg 0 rlineto
+         360 360 nn div sub neg rotate
+       } repeat
+  closepath
+} def
+
+/nstar{ % star of n points, n determined by nstarslider
+  /radius radius 1.33 mul def
+  currentpoint /herey exch def /herex exch def
+   0 radius rmoveto
+       90 nstarangle 2 div add  neg rotate 
+	nn cvi {nstarside 0 rlineto
+	    180 180 nstarangle 2 mul sub sub neg rotate
+	    nstarside 0 rlineto
+	    180 180 360 nn div sub nstarangle 2 mul sub sub  rotate
+	} repeat
+        90 nstarangle 2 div add  rotate
+	closepath
+} def
+
+/nstarangle {180 360 nn div sub 3 div}  def
+/nstarside { 
+   2 
+     radius
+        1 
+          180 nn div 
+          sin 
+        div 
+     div 
+   mul 
+   nstarangle sin 
+   mul
+   180 
+     nstarangle 2 mul
+   sub 
+   sin 
+   div 
+} def
+
+/nside { 
+   2 
+   radius
+   360 nn div 2 div tan
+   mul
+   mul  
+} def
+
+
+/tan { /alpha exch def
+  alpha sin
+  1 alpha sin dup mul sub sqrt
+  div
+} def
+
+
+/pastel {
+   /backbright  high def
+   /backsat medlow def
+   /fillbright  high def
+   /fillsat medlow def
+   /eobright  high def
+   /eosat medlow def
+   constroke 0 eq {
+     /strokebright  high def
+     /strokesat medlow def
+   }
+   {
+      /strokebright  low def
+      /strokesat  high def
+   } ifelse
+} def
+
+/jewel {
+   /fillbright  med def
+   /fillsat  high def
+   /backbright  med def
+   /backsat  high def
+   /eobright  med def
+   /eosat  high def
+   constroke 0 eq {
+     /strokebright  medlow def
+     /strokesat  high def
+   }
+   {
+     /strokebright  high def
+     /strokesat  medlow def
+  } ifelse
+} def
+
+/vivid {
+   /fillsat 1 def
+   /fillbright  high def
+   /eosat 1 def
+  /eobright  high def
+   /backsat 1 def
+   /backbright  high def
+   constroke 0 eq {
+     /strokesat 1 def
+     /strokebright  high def
+   }
+   { 
+     /strokesat  high def
+     /strokebright  medlow def
+   } ifelse
+} def
+
+/free {
+   /fillsat  anyrand   def
+   /fillbright  anyrand def
+   /eosat anyrand def
+   /eobright anyrand def
+   /backsat  anyrand  def
+   /backbright  anyrand def
+   /strokesat  anyrand def
+     /strokebright  anyrand def
+} def
+
+/contrast {
+  /sat medhigh def
+  /bright rand 2 mod 0 eq {medhigh} {medlow} ifelse def 
+  /backsat  sat def
+  /backbright  bright def
+  /eosat  sat def
+  /eobright  1 bright sub def
+  /fillsat  sat def
+  /fillbright  bright def
+  /strokebright rand 2 mod def
+  /strokesat  rand 2 mod def
+
+} def
+/medium {
+  /backsat  med def
+  /backbright  med def
+  /eosat  med def
+  /eobright  med def
+  /fillsat  med def
+  /fillbright  med def
+  /strokebright med def
+  /strokesat  med def
+
+} def
+/intense {
+  /backsat  high def
+  /backbright  med def
+  /eosat  high def
+  /eobright  high def
+  /fillsat  high def
+  /fillbright  med def
+  /strokebright high def
+  /strokesat  high def
+
+} def
+/orig {
+  /backsat  rand 99 mod 55 add 100 div def
+  /backbright  rand 99 mod 35 add 100 div def
+  /eosat  rand 77 mod 22 add 100 div def
+  /eobright  90 rand 75 mod sub 15 add 100 div def
+  /fillsat  100 rand 90 mod sub 100 div def
+  /fillbright  100 rand 45 mod sub 20 add 100 div def
+  /strokebright 100 rand 55 mod sub 100 div def
+  /strokesat  100 rand 85 mod sub 100 div def
+
+} def
+
+/medjewel {
+  /alt rand 2 mod def
+  /backsat alt 0 eq {high} { med} ifelse def
+  /fillsat alt 0 eq {med} {high} ifelse def
+  /eosat alt 0 eq {high} {med} ifelse def
+  /backbright med def
+  /fillbright med def
+  /eobright med def
+   constroke 0 eq {
+     /strokebright  medlow def
+     /strokesat  high def
+   }
+   {
+     /strokebright  high def
+     /strokesat  medlow def
+  } ifelse
+} def
+
+/medvivid {
+  /alt rand 2 mod def
+  /backsat alt 0 eq {1} { med} ifelse def
+  /fillsat alt 0 eq {med} {1} ifelse def
+  /eosat alt 0 eq {1} {med} ifelse def
+  /backbright alt 0 eq {high} {med} ifelse def
+  /eobright alt 0 eq {high} {med} ifelse def
+  /fillbright alt 0 eq {med} {high} ifelse def
+   constroke 0 eq {
+     /strokesat 1 def
+     /strokebright  high def
+   }
+   { 
+     /strokesat  high def
+     /strokebright  medlow def
+   } ifelse
+} def
+/vivpastel {
+   /backlight rand 2 mod def
+   /backsat backlight 0 eq {medlow} {1} ifelse def
+   /eosat backlight 0 eq {medlow} {1} ifelse def
+   /fillsat backlight 0 eq {1} {medlow} ifelse def
+   /fillbright  high def
+   /backbright  high def
+   /eobright  high def
+   constroke 0 eq {
+     /strokesat 1 def
+     /strokebright  high def
+   }
+   { 
+     /strokesat  high def
+     /strokebright  medlow def
+   } ifelse
+} def
+
+/medpastel {
+   /alt rand 2 mod def
+   /backsat alt 0 eq {medlow} {med} ifelse def
+   /eosat alt 0 eq {medlow} {med} ifelse def
+   /fillsat alt 0 eq {med} {medlow} ifelse def
+   /fillbright alt 0 eq { high }  {med} ifelse def
+   /backbright alt 0 eq {med} { high } ifelse def
+   /eobright alt 0 eq {med} { high } ifelse def
+   constroke 0 eq {
+     /strokebright  high def
+     /strokesat medlow def
+   }
+   {
+      /strokebright  low def
+      /strokesat  high def
+   } ifelse
+} def
+
+/maxcon {
+     rand 2 mod 1 eq {
+	/backsat 0 def
+	/backbright 0 def
+	/eosat 0 def
+	/eobright 0 def
+	/fillsat 0 def
+	/fillbright 1 def
+	/strokebright 1 def
+	/strokesat 0 def
+     }
+     {
+	/backsat 0 def
+	/backbright 1 def
+	/eosat 0 def
+	/eobright 1 def
+	/fillsat 0 def
+	/fillbright 0 def
+	/strokebright 0 def
+	/strokesat 0 def
+     }
+     ifelse
+} def
+
+/monochrome {
+   /fillhue hue closevary def
+   /strokehue hue closevary def
+   /eohue hue closevary def
+   /backhue hue def
+} def
+
+/blackandwhite {
+	/fillhue 1 def
+	/eohue 0 def
+	/backhue 0 def
+	/strokehue 1 def
+} def
+	
+
+/freecolor {
+   /fillhue anyrand def
+   /strokehue anyrand def
+   /eohue anyrand def
+   /backhue anyrand def
+} def
+
+/purple {
+  /fillhue rand 15 mod 80 add 100 div def
+  /backhue rand 15 mod 80 add 100 div def
+  /strokehue rand 15 mod 80 add 100 div def
+  /eohue rand 15 mod 80 add 100 div def
+  /backhue rand 15 mod 80 add 100 div def
+} def
+
+/comptwo {
+  /fillhue hue closevary def
+  /strokehue hue .5 add dup 1 gt {1 sub} if def
+  /backhue strokehue def
+  /eohue strokehue closevary def
+} def
+
+/compthree {
+  /backhue hue def
+  /strokehue hue 1 3 div add dup 1 gt {1 sub} if closevary  def
+  /fillhue strokehue closevary def
+  /eohue hue 1 3 div sub dup 1 lt { 1 add} if closevary def
+} def
+
+/origcolor {
+  /backhue hue def
+  /strokehue 
+     hue 1000 mul cvi 3 mod dup 1 eq
+	          {hue closevary}
+	          {2 eq
+                    {rand 999 mod 1000 div} 
+                    {hue .5 add dup 1 gt {1 sub} if }
+                    ifelse
+                   }
+		ifelse def
+  /fillhue hue 1000 mul cvi 3 mod dup 1 eq 
+			{hue closevary}
+                        {2 eq
+  			  {rand 999 mod 1000 div} 
+                          {hue .5 add dup 1 gt {1 sub} if }
+                         ifelse
+                        }
+		ifelse 
+  def
+  /eohue hue 1000 mul cvi 2 mod 1 eq 
+			{hue closevary}
+			{rand 999 mod 1000 div}
+		ifelse def
+} def
+
+/harmtwo {
+  /fillhue hue closevary def
+  /backhue hue def
+  /strokehue hue .2 add dup 1 gt {1 sub} if closevary def
+  /eohue strokehue closevary def
+} def
+
+/harmfour {
+  /fillhue hue closevary def
+  /backhue hue .1 add dup 1 gt {1 sub} if def 
+  /strokehue hue .2 add dup 1 gt {1 sub} if closevary def
+  /eohue hue .1 sub dup 1 lt {1 add} if closevary def
+} def
+
+/closeharm {
+  /fillhue hue def
+  /backhue hue .05 add dup 1 gt {1 sub} if closevary def 
+  /strokehue hue .1 add dup 1 gt {1 sub} if closevary def
+  /eohue hue .05 sub dup 0 lt {1 add} if closevary def
+} def
+
+
+/high {100 rand 25 mod sub 100 div } def
+/med { rand 33 mod 33 add 100 div } def
+/medhigh {100 rand 50 mod sub 100 div } def
+/medlow {rand 50 mod 100 div } def
+/low { rand 25 mod  100 div} def
+/anyrand { rand 100 mod 100 div } def
+/closevary {rand 70 mod rand 100 mod sub 1000 div add} def
+
+%rainbow 
+%  {/colorfill {fillhue 1 1 sethsbcolor fill} def}
+  /colorfill {fillhue fillsat fillbright sethsbcolor fill } def
+%ifelse
+/colorstroke {strokehue strokesat strokebright sethsbcolor stroke } def
+/eocolorfill {eohue eosat eobright sethsbcolor eofill } def
+/backfill{ backhue backsat backbright sethsbcolor fill } def
+
+/xstep { xrange xtimes 1 sub div x 1 sub mul } def
+/ystep { yrange ytimes 1 sub div y 1 sub mul} def
+
+/functionarray [
+ {sin abs}
+ {sin } 
+ {cos  }
+ {cos abs}
+ {sin dup mul  }
+ {cos dup mul  }
+ {sin abs sqrt }
+ {cos abs sqrt }
+] def
+
+/range { /top exch def /bottom exch def /number exch def
+% number is between -1 and 1
+ /rangesize top bottom sub def
+ number 1 add 2 div
+ % number is now between 0 and 1
+ rangesize mul
+ bottom add
+ } def
+
+/drawone {
+    /radius 
+      width height lt {width 3 div} {height 3 div} ifelse
+    def
+    seed srand
+    0 0 moveto 
+    /origmatrix  [ 0 0 0 0 0 0 ] currentmatrix def 
+    [ % xstep  function ystep function2 add .4 1.3 range
+	1
+      ystep function xstep function add -.25 .25 range
+      ystep function3 xstep function2 add -.5 .5 range
+%      xstep  function4 ystep function mul .4 1.3 range
+	1
+     0 
+     0
+      ]
+    concat
+    twist {twistdeg rotate} if
+    part colorfill
+    origmatrix setmatrix
+    rainbow
+      {/fillhue fillhue rainrange xtimes ytimes mul div add dup 1 gt {1 sub} if def}
+    if
+
+} def
+
+/notdrawone {
+  seed srand
+  twist {/twistdeg rand 360 mod def} if
+  nnrand {/nn rand 6 mod 3 add def} if
+  /x1 rand width 3 div cvi mod width 8 div add  def
+  /y1 rand height 3 div cvi mod height 8 div add def
+  rand 3 mod dup 1 eq 
+    {pop /x2 rand width 2 div cvi mod def
+     /y2 rand height 2 div cvi mod def}
+    { 2 eq 
+       {/x2 y1 def /y2 x1 def}
+       {/x2 y1 width mul height div def /y2 x1 height mul width div def}
+      ifelse
+    }
+  ifelse
+  /radius width height gt {width} {height} ifelse  2.5   div def
+  /stripe rand width 10 div cvi  mod 2 add def
+  starcompensate { /stripe stripe 2 mul def /radius radius 10 nn div  mul def } if
+  /i 1 def
+  /repeats radius stripe div cvi 1 add def
+  /nnincr 1 def
+  repeats {
+   colorvary {colorfam colorway} if
+    /i i 1 add def
+    /radius radius stripe sub def
+    
+  } repeat
+} def
+
+
+/page {
+ clippath pathbbox /ury exch def /urx exch def /lly exch def /llx exch
+def
+/pagewidth urx llx sub 36 72 mul min def
+/pageheight ury lly sub 36 72 mul min def
+0 0 moveto 
+ llx lly translate
+   /outerwidth
+     pagewidth inwidth div
+   def
+   /outerheight
+     pageheight inheight div
+   def
+   /width
+     outerwidth xtimes div
+   def
+   /height
+     outerheight ytimes div
+   def
+
+
+ 
+ /size
+   width height gt {width} {height} ifelse
+ def
+  inwidth {
+     inheight {
+      
+        /seed rand def
+        /hue rand 999 mod 1000 div def
+        colorway colorfam
+        /x 1 def /y 1 def   
+    nnrand {/nn rand 6 mod 3 add def} if
+    /twistdeg rand 360 mod  def
+
+  /function functionarray rand functionarray length mod get def
+  /function2 functionarray rand functionarray length mod get def
+  /function3 functionarray rand functionarray length mod get def
+  /function4 functionarray rand functionarray length mod get def
+
+/xrange [ 90 180 270 360 180 360 ]  rand 6 mod get def
+/yrange [ 90 180 270 360 180 360 ] rand 6 mod get  def
+            initclip
+	    newpath
+            0 0 moveto
+            outerwidth 0 rlineto
+            0 outerheight rlineto
+            outerwidth neg 0 rlineto
+	backfill
+
+        xtimes {
+           ytimes{ 
+	    /y y 1 add def
+            width 2 div height 2 div translate
+            drawone
+            width 2 div neg height 2 div neg translate
+	    0 height translate
+           } repeat
+
+         /y 1 def
+         /x x 1 add def
+         width height ytimes mul neg translate
+ 
+        } repeat
+        
+        width xtimes mul neg  outerheight translate
+      } repeat
+      outerwidth outerheight inheight mul neg translate
+   } repeat
+  
+ } def
+	
+page showpage
+clear cleardictstack
+vasarelysave restore

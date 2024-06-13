@@ -1,0 +1,169 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% stcolor.ps
+% Epson Stylus-Color Printer-Driver
+
+% The purpose of this file is to configure the stcolor-printer driver
+
+%
+% It is useless and dangerous to interpret the following code with anything
+% else than Ghostscript, so this condition is verified first. If this fails
+% a message is send to the output. If this message bothers you, remove it,
+% but I prefer to know why the device-setup failed.
+
+statusdict begin product end
+dup (Ghostscript) eq 1 index (Artifex Ghostscript) eq or
+exch (AFPL Ghostscript) eq or{
+
+% fetch the current device-parameters this is specific for Ghostscript.
+
+  /STCold currentdevice getdeviceprops .dicttomark def
+
+% Any Ghostscript-Driver has a Name, verify that the selected device is
+% stcolor, otherwise nothing than another message will be produced.
+
+  STCold /Name get (stcolor) eq {
+
+%
+% The main thing this file does, is to establish transfer-functions.
+% Here are two predefined arrays for 360x360Dpi and for 720x720DpI.
+% If resolution is 360x720 or 720x360 the average is used. You may
+% want to define other arrays here.
+%
+
+     /STCdeftransfer [ 0.0 1.0 ] def
+
+     /STCKtransfer360 [
+       0.0000 0.0034 0.0185 0.0377 0.0574 0.0769 0.0952 0.1147
+       0.1337 0.1540 0.1759 0.1985 0.2209 0.2457 0.2706 0.2949
+       0.3209 0.3496 0.3820 0.4145 0.4505 0.4907 0.5344 0.5840
+       0.6445 0.7093 0.8154 0.9816 0.9983 0.9988 0.9994 1.0000
+     ] def
+
+     /STCKtransfer720 [
+       0.0000 0.0011 0.0079 0.0151 0.0217 0.0287 0.0354 0.0425
+       0.0492 0.0562 0.0633 0.0700 0.0766 0.0835 0.0900 0.0975
+       0.1054 0.1147 0.1243 0.1364 0.1489 0.1641 0.1833 0.2012
+       0.2217 0.2492 0.2814 0.3139 0.3487 0.3996 0.4527 0.5195
+     ] def
+
+% compute the resolution
+
+     STCold /HWResolution get dup
+     0 get exch 1 get mul sqrt /STCdpi exch def
+
+% pick the colormodel
+     STCold /ProcessColorModel get /STCcolor exch def
+
+     mark % prepare stack for "putdeviceprops"
+
+% warn for BitsPerPixel=30 with fsrgb
+     STCcolor /DeviceRGB eq STCold /BitsPerPixel get 32 eq and
+     {
+       (%%[ stcolor.ps: inefficient RGB-setup, recommend BitsPerPixel=24 ]%%\n)
+       print
+      } if
+
+% if the Dithering-Method is default (gscmyk), change it to fscmyk
+% this is achieved by pushing a name/value-pair onto the stack
+% if the selected algorithm uses another ProcessColorModel, it is necessary
+% to change the Value of STCcolor according to the new algorithm.
+
+     STCold /Dithering get (gscmyk) eq
+     {
+        /Dithering (hscmyk) % preferred dithering-method
+     } if % might be necessary to change STCcolor too
+
+%
+% select the array according to the resolution
+%
+     STCdpi 359.0 lt
+     { STCdeftransfer }
+     { STCdpi 361.0 lt
+       { STCKtransfer360 }
+       { STCdpi 719.0 gt
+         { STCKtransfer720 }
+         {
+           STCKtransfer360 length STCKtransfer720 length eq
+           {
+             0 1 STCKtransfer360 length 1 sub
+             {
+               dup dup
+               STCKtransfer360 exch get
+               exch STCKtransfer720 exch get
+               add 2.0 div
+               STCKtransfer360 3 1 roll put
+             } for
+           }if
+           STCKtransfer360
+         } ifelse
+       }ifelse
+     } ifelse
+     /STCtransfer exch def
+
+%
+% Add the arrays. With Version 1.17 and above, it seems to be
+% a good idea, to use the transfer-arrays as coding-arrays too.
+%
+
+%
+% RGB-Model requires inversion of the transfer-arrays
+%
+     STCcolor /DeviceRGB eq
+     {
+        /RGBtransfer STCtransfer length array def
+        0 1 STCtransfer length 1 sub
+        {
+          dup RGBtransfer length 1 sub exch sub exch
+          STCtransfer exch get 1.0 exch sub
+          RGBtransfer 3 1 roll put
+        } for
+
+        /Rtransfer RGBtransfer
+        /Gtransfer RGBtransfer
+        /Btransfer RGBtransfer
+
+        /Rcoding   RGBtransfer
+        /Gcoding   RGBtransfer
+        /Bcoding   RGBtransfer
+
+     }{
+
+       /Ctransfer STCtransfer
+       /Mtransfer STCtransfer
+       /Ytransfer STCtransfer
+       /Ktransfer STCtransfer
+
+       /Ccoding   STCtransfer
+       /Mcoding   STCtransfer
+       /Ycoding   STCtransfer
+       /Kcoding   STCtransfer
+
+     } ifelse
+
+     counttomark 0 ne
+        {currentdevice putdeviceprops pop}{cleartomark}ifelse
+
+% decativate predefined correction
+
+     {} dup dup currenttransfer setcolortransfer
+
+  }{
+    (%%[ stcolor.ps: currentdevice is not stcolor - ignored ]%%\n) print
+  } ifelse
+}{
+  (%%[ stcolor.ps: not interpreted by AFPL Ghostscript - ignored ]%%\n) print
+} ifelse

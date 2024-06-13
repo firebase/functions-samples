@@ -1,0 +1,14 @@
+%!
+% Decrypt an eexec-encoded file.
+
+(t.in) (r) file /in exch def
+(t.out) (w) file /out exch def
+256 string /buf exch def
+55665		% eexec encryption seed
+ { in buf readhexstring /more exch def
+   dup .type1decrypt out exch writestring
+   more not { exit } if
+ } loop
+in closefile
+out closefile
+quit

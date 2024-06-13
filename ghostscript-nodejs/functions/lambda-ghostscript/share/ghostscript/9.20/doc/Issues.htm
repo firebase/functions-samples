@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Ghostscript Open Issues.</title>
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Known limitations and minor bugs.</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<ul>
+<li><a href="#Known_Limitations">Known Limitations</a>
+<li><a href="#Minor_bugs">Minor bugs</a>
+<li><a href="#Driver_Issues">Specific Driver Issues</a>
+<li><a href="#Performance">Performance</a>
+<li><a href="#Differences_from_Adobe">Differences from Adobe Implementation</a>
+</ul>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Projects.htm">Development Projects list
+</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<p>
+There are many areas that might make Ghostscript more useful or minor bugs
+that we would like to investigate and possibly fix, but for which we don't
+have enough resources. These may or may not be addressed in future releases.
+<p>
+If you would like to take responsibility for any of these issues, please
+<a href="mailto:info@artifex.com">contact us</a>.
+<p>
+Additional comments on implementation approaches or project goals are in
+<I>italic type like this</I>.
+<hr>
+
+<h2><a name="Known_Limitations"></a>Known Limitations.</h2>
+
+<h3>bbox device doesn't allow min coords &lt; 0.</h3>
+Adobe eps specification doesn't say that bbox values must be positive,
+and, for example Adobe Illustrator, can create EPS files with negative bboxes.
+In such case, Ghostscipt returns zero instead of proper negative number. 
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=202735"
+class="offsite">#202735</a>, March 09, 2000.
+<p>
+<i>This might be able to be fixed by applying a large positive translation to
+the bbox CTM which would be subtracted from coordinates passed to the target
+device as well as from the results the bbox device reports.</i>
+<p>
+<i>If coordinates for the ImagingBBox[0] and [1] values, then negative
+values are handled, but this is not reliable since there are places in
+the graphics library that depend on first quadrant coordinates.</i>
+
+<h3>Error messages are too low level and confusing.</h3>
+
+<p>
+Although technically correct many error messages are confusing for
+end users. Some commonly reported examples are listed below.
+
+<p>
+When pdfwrite device cannot open the output file it fails with:
+<pre>**** Unable to open the initial device, quitting.</pre>
+
+When CIDFont-CMap pair required by PDF file is not available GS
+fails with:
+<blockquote><pre>/undefinedresource in --findresource--</pre></blockquote>
+
+
+<h3>epswrite device generates low level PostScript.</h3>
+
+<p>
+epswrite devices reduce everything to path, fill, stroke, clip
+image, and imagemask operations. Although the resulting file 
+prints OK it produces unsatisfactory results when scaled,
+distilled or imported into graphic editors. 
+The file can easily exceed 4GB and hit file size limits 
+in some applications or operation systems. Handling of big files is 
+slow.
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=615165"
+class="offsite">#615165</a>, September 26, 2002.
+<p>NB. The epswrite device is deprecated as of the 9.12 release, the eps2write device
+should be used instead which does not suffer these limitations.
+</p>
+<hr>
+<h2><a name="Minor_bugs"></a>Minor Bugs.</h2>
+
+<h3> Bad JPEG stream in PDF generated when source ends prematurely</h3>
+When GS converts the source image to JPEG stream in PDF file and the
+source data end prematurely, it generates bad JPEG stream. 
+tiff2ps from libtiff distribution often generates such files.
+<p>
+One potential workaround is to use -dAutoFilterColorImages=false and 
+-dColorImageFilter=/FlateEncode.
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=228808"
+class="offsite">#228808</a>, Jan 15, 2000.
+<p>
+<I>
+JPEG stream writes image dimensions in JPEG header when the stream is created.
+When the source data end the dimensions are not updated. There may be other
+problems too.
+</I>
+
+<h3> Some attributes of Catalog object are lost during PDF to PDF conversion</h3>
+Dests, OpenAction, URI, PageMode, ViewerPreferences are lost during PDF to PDF
+conversion. Other attributes have not been checked.
+<p>
+<I>
+The loss happens diring PDF interpretation. GS can generate these attributes
+from pdfmark's.
+</I>
+<p>
+March 25, 2001.
+
+<h3>GS doesn't handle names of separations with HalftoneType 5.</h3>
+PLRM3 says, that HalftoneType 5 may use user defined 
+names of separations. Neither zht2.c nor cmd_put_drawing_color in
+gxclpath.c can handle this. GS chooses default halftone component
+for any non-standard separation name. 
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=406643"
+class="offsite">#406643</a>, March 7, 2001.
+
+<h3> PDF 1.4 images don't deallocate all memory </h3>
+
+<p>
+The pdf14_begin_typed_image() function in the PDF 1.4 device creates
+a marking device, but this is not freed on end_image. The garbage
+collector will free it, so it's not a real memory leak, but it would
+still be nicer to free it explicitly.
+
+<h3> Truetype fonts are written with incorrect table checksums </h3>
+
+<p>
+psf_write_truetype_data() writes truetype fonts with incorrect 
+checksums on most tables. Most truetype interpreters ignore these
+so in practice the issue hasn't been a problem. Nevertheless,
+Ghostscript is embedding off-spec fonts in pdf documents.
+
+<p>
+A complete fix should generate font data in 2 passes: the
+first pass computes the checksums, the second one
+really writes data. Fonts can be very large, so
+buffering the entire font is not a good solution. The 
+checksums can't be modified after the data is written
+because the output stream may not be positionable 
+(likely it's a FlateEncode filter).
+
+<p>
+<i>Igor suggests implementing a special encoding filter for
+checksums, and executing the body of
+psf_write_truetype_data twice: first with the checksum
+filter, second with the real output stream. After a TT
+table is completed, its checksum to be taken from the
+filter and to be put into the 'tables' array.</i>
+
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=615620"
+class="offsite">#615620</a>, September 27, 2002.
+
+<hr>
+
+<h2><a name="Driver_Issues"></a>Driver Issues.</h2>
+
+<h3> [ ] Missing text in landscape mode.</h3>
+Using GSWIN32C.EXE with djet500 to print a file in landscape mode
+on a HP 2000C, the first 3 characters on the left margin are missing.<br>
+When the postscript file is editted to use a larger offset (1st moveto
+parameter), the text appears ok.<br>
+When the postscript file is sent to a printer with a builtin postscript
+interpreter, it prints ok.
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=206652"
+class="offsite">#206652</a>
+<p><I>
+A possible work around is to send the following
+postscript file to the printer prior to printing the problem
+file.  This works but it leaves a .5" margin at the top
+and left which is may be ok for some uses.
+</I>
+<blockquote><pre>
+
+%!PS-Adobe-2.0
+% Reset the offset and margins.
+&lt;&lt;
+    /PageOffset [-12 -18]
+    /Margins [0 0]
+    /.HWMargins [0 0 0 0]
+&gt;&gt;
+setpagedevice
+</pre></blockquote>
+
+<I>
+This is an instance of the endless struggle with printer margins, especially
+for HP printers. The HP drivers are inconsistent as to whether the user space
+(0,0) should be the physical corner of the page (as it is in PostScript) or
+the corner of the printable area, and if the latterm whether the page should
+be clipped or scaled.
+</I>
+<p>
+
+<hr>
+
+<h2><a name="Performance"></a>Performance.</h2>
+
+<h3>Incremental loading for CIDFontType 2 and TrueType fonts.</h3>
+
+Entire TrueType outline data in CIDFontType 2 and TrueType fonts are
+loaded into memory at once.  Incremental loading of the outline data is
+indispensable for practical use of Asian fonts.
+<p>
+There is one other type of CID-keyed font that should also be
+loaded incrementally: CFF CIDFontType0, i.e., a CIDFontType 0
+font represented using the compact binary CFF format. This is
+important because this is one of the two variants of Asian OpenType
+fonts (the other is essentially the same as TrueType). Ghostscript
+already supports both of these OpenType variants, but not with
+incremental loading.
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=223992"
+class="offsite">#223992</a>, November 30, 2000.
+<p><I>
+We suggest that anyone who would like to work on this project
+start by looking at how CIDFontType 0 fonts do incremental loading
+(lib/gs_cidfn.ps and psi/zfcid0.c). Probably much of this
+code can be also be used with CIDFontType 2 and TrueType fonts.
+</I>
+
+<hr>
+
+<h2><a name="Differences_from_Adobe"></a>Differences from Adobe Implementation.</h2>
+
+<h3>pdfwrite + TT font =&gt; Acrobat 3.x for Windows gives error</h3>
+
+Running ps2pdf12 on the file test1.ps produces a PDF on which Acrobat
+3.x for Windows complains about not being able to find or create a
+particular TrueType font that is embedded in the PDF file.  However,
+Acrobat 3.x for other platforms, and Acrobat 4.x for all platforms,
+accepts the file.
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=201955"
+class="offsite">#201955</a>, February 14, 2000.
+
+<p><I>
+Since Acrobat 3 is superseded by Acrobat 4 which is available at no
+charge, and the file produced by Ghostscript meets published PDF
+specification, this will most likely be left as is.
+</I>
+
+<h3> Inconsistent handling of /Orientation.</h3>
+PLRM says "The dictionary returned by currentpagedevice always
+contains an entry for every parameter supported by the device".
+GS prints both messages in the following program: 
+
+<blockquote><pre>
+%! 
+currentpagedevice /Orientation known not 
+{ (This printer does _not_ support Orientation.) = 
+} 
+if 
+&lt;&lt;/Orientation 1gt;gt; setpagedevice 
+currentpagedevice /Orientation known 
+{ (Err... wait... it does.) = 
+} 
+if 
+%%EOF 
+</pre></blockquote>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=220967"
+class="offsite">#220967</a>, October 31, 2000.
+<p>
+<i>The handling of Orientation is a mess. The PLRM says quite explicitly
+that it is only supported for roll devices, where the page size
+alone doesn't give enough information to decide whether to rotate
+the page.</i>
+<p>
+<i>The reason that Ghostscript accepts it for other devices at all
+is twofold: displays are like roll media in that they don't have
+an inherent orientation, and almost none of the other Ghostscript
+devices actually specify their page sizes. Both of these reasons
+are now poorly motivated: displays should behave like
+portrait-orientation devices (albeit with variable page dimensions),
+rotating the image if the requested page width is greater than
+the height, and now that setpagedevice and the Resource machinery
+are fully implemented, all printer drivers should be updated
+to provide the paper size information. Once these fixes are made
+(which will probably have some repercussions other places in
+the code), Ghostscript will handle Orientation properly.</i>
+<p>
+<i>This should be addressed when the "setpagedevice in C" project is
+completed since part of this will require printer drivers to make
+page size information available to the setpagedevice logic.
+</i>
+
+<h3>Filesystem implementation differences.</h3>
+Adobe implementations often treat the filesystem as flat. This means that the
+path separator characters are not handled as special characters in filenames.
+The PLRM states that file names are implementation specific (section 3.8.2)
+and Ghostscript currently implements filenames that conform with the underlying
+operating system as is stated in this section about the %os% device. This
+can result from behaviour that is different from Adobe printer implementations.
+<br><br>
+<em>Current implementation is incompatible with most font installers. Installers
+expect that:</em>
+<ul>
+<li>"filenameforall" enumerates all files in all directories using the relative path name.
+Directory names, including . and .. are not enumerated
+</ul>
+<ul>
+<li>characters not supported on the platform are encoded.
+</ul>
+<ul>
+<li>"(w) file" operator creates directories if necessary.
+</ul>
+
+<h3>Cannot load Adobe's fonts. </h3>
+The following program fails with Adobe fonts: 
+
+<blockquote><pre>
+(C*) 
+{ cvn findfont pop 
+} 255 string /Font resourceforall 
+</pre></blockquote>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=226462"
+class="offsite">#226462</a>, December 20, 2000.
+<p>
+<i>
+The 'findfont' operator and '/Font resourceforall' are very difficult to
+keep consistent, because the same logic algorithms must be implemented
+in two different ways. The problem is likely to be in lib/gs_fonts.ps,
+lib/gs_res.ps, and lib/gs_cidcm.ps.
+</i>
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=226391"
+class="offsite">#226391</a>, December 19, 2000.
+<p>
+
+
+<h3> ps2ascii can't handle incremental fonts</h3>
+ps2ascii fails with rangecheck on incremental fonts.
+Need to recognise incremental fonts and say that incremental
+fonts are impossible to convert to ASCII.
+<p>
+Bug <a href="http://bugs.ghostscript.com/show_bug.cgi?id=441959"
+class="offsite">#441959</a> keeps good test data for this.
+<p>
+
+
+<h3> Buffering in input filters</h3>
+
+The following program prints differently to stdout on GS and Adobe :
+<p>
+<blockquote><pre>
+%!
+/proc
+  { currentfile =string readline pop
+    dup ==
+    (%) anchorsearch { pop } if
+  } bind def
+/test
+  { //proc /ASCIIHexDecode filter 
+    3 string readstring pop ==
+  } bind def
+
+(start) ==
+
+test
+%31
+%32
+%33
+%34
+%35
+%36
+%37
+%38
+%39
+
+(stop) ==
+
+%%EOF
+</pre></blockquote>
+<p>
+<I>
+Adobe fills entire input buffer of ASCIIHexDecode with procedure's output,
+before passing data to ASCIIHexDecode, and without knowledge how much data
+does ASCIIHexDecode want. GS does know the size of data requested,
+so as the procedure is called exact number of times. Thus, GS is more conservative.
+</I>
+<p>
+Anoter useful test to be made by repeating lines %31-%39 hundred times,
+without intermediate empty lines.
+<p>
+
+<h3>Improper handling of hybrid fonts.</h3>
+
+Hybrid fonts are described in section 9.2 of the "Adobe Type 1 Font Format" book.
+Such fonts cannot load into global VM due to internal usage of <I>save/restore</I>
+(and should do into local VM).
+Hybrid fonts can be recognized by the appearance of the word 'hires' with
+a pre-scan over the font, the same way that .findfontvalue works now.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

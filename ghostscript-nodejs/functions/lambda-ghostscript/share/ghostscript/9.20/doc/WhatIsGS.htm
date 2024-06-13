@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>What is Ghostscript?</title>
+<!-- Originally: README -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>What is Ghostscript?</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>
+There are various different products in the Ghostscript family; this document
+attempts to explain what they are, and how they are related.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Ghostscript">What is Ghostscript?</a>
+<li><a href="#GhostPDF">What is GhostPDF?</a>
+<li><a href="#GhostPCL">What is GhostPCL?</a>
+<li><a href="#GhostXPS">What is GhostXPS?</a>
+<li><a href="#GhostSVG">What is GhostSVG?</a>
+<li><a href="#GhostPDL">What is GhostPDL?</a>
+<li><a href="#MuPDF">What is MuPDF?</a>
+<li><a href="#MuXPS">What is MuXPS?</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Ghostscript"></a>What is Ghostscript?</h2>
+
+<p>Ghostscript is an interpreter for <a href="http://en.wikipedia.org/wiki/PostScript">PostScript</a><a href="#foot1">&trade;</a> and <a href="http://en.wikipedia.org/wiki/Portable_Document_Format">Portable Document Format</a>
+(PDF) files. It is available both under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU GPL Affero license</a>
+and for <a href="http://www.artifex.com/page/licensing-information.html">commercial licensing</a>
+from <a href="http://www.artifex.com.">Artifex</a>. It has been under active
+development for over 20 years and has been ported to many different systems
+during this time.
+
+<p>Ghostscript consists of a PostScript interpreter layer, and a graphics
+library. Sometimes the Ghostscript graphics library is confusingly also referred
+to simply as Ghostscript. Even more confusingly, sometimes people say Ghostscript
+when they really mean GhostPDL.
+
+<p>Binaries for Ghostscript for various systems can be downloaded from
+<a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>. The
+source code is included in both the Ghostscript and GhostPDL downloads from
+the same site.
+
+<h2><a name="GhostPDF"></a>What is GhostPDF?</h2>
+
+<p>GhostPDF is an interpreter built on top of Ghostscript that handles PDF files.
+Currently GhostPDF relies on extensions to the PostScript language/imaging model,
+and so cannot be used independently of the Ghostscript PostScript interpreter
+component. As such GhostPDF is an umbrella term used to refer to both these
+extensions and the interpreter code.
+
+<p>Many people (including the authors) frequently just refer to Ghostscript
+as supporting PDF and only specifically mention GhostPDF when wanting to make
+the distinction between the PostScript and PDF support.
+
+<p>GhostPDF is included in the Ghostscript binaries for various systems available
+from <a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>.
+The source can be found in both the Ghostscript and GhostPDL downloads from
+the same site.
+
+<h2><a name="GhostPCL"></a>What is GhostPCL?</h2>
+
+<p>GhostPCL is an interpreter for PCL<a href="#foot2">&trade;</a> and PXL files. This consists of an
+PCL/PXL interpreter hooked up to the Ghostscript graphics library.
+
+<p>GhostPCL is available both under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero GPL license</a>
+and for <a href="http://www.artifex.com/page/licesnsing-information.html">commercial licensing</a>
+from <a href="http://www.artifex.com">Artifex</a>.
+
+<p>Binaries for GhostPCL for various systems can be downloaded from
+<a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>. The
+source can be found in the GhostPCL/GhostPDL downloads from the same site.
+
+<h2><a name="GhostXPS"></a>What is GhostXPS?</h2>
+
+<p>GhostXPS is an interpreter for XPS (XML Paper Specfication) files. This
+consists of an XPS interpreter hooked up to the Ghostscript graphics library.
+
+<p>GhostXPS is available both under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero GPL license</a>
+and for <a href="http://www.artifex.com/page/licesnsing-information.html">commercial licensing</a>
+from <a href="http://www.artifex.com">Artifex</a>.
+
+<p>Binaries for GhostXPS for various systems can be downloaded from
+<a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>. The
+source can be found in the GhostXPS/GhostPDL downloads from the same site.
+
+<h2><a name="GhostSVG"></a>What is GhostSVG?</h2>
+
+<p>GhostSVG is an interpreter for SVG (Scalable Vector Graphics) files. This
+consists of an SVG interpreter hooked up to the Ghostscript graphics library.
+This project has acheived proof of concept, but is not actively being worked
+on.
+
+<p>GhostSVG is available both under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero GPL license</a>
+and for <a href="http://www.artifex.com/page/licesnsing-information.html">commercial licensing</a>
+from <a href="http://www.artifex.com">Artifex</a>.
+
+<p>The source code for GhostSVG can be found in the GhostPDL archives on
+<a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>.
+
+<h2><a name="GhostPDL"></a>What is GhostPDL?</h2>
+
+<p>GhostPDL (Ghost Page Description Languages) is an umbrella term for all
+the above technologies. As all the above interpreters are built upon a
+single graphics library, there are size and portability benefits to using
+two of more of the languages in a given project. A product that
+includes more than one such language in a single binary and automatically
+chooses between them is sometimes referred to as a "Language Switch" build.
+
+<p>GhostPDL is available both under the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero GPL license</a>
+and for <a href="http://www.artifex.com/page/licesnsing-information.html">commercial licensing</a>
+from <a href="http://www.artifex.com">Artifex</a>.
+
+<p>The source code for GhostPDL can be found on
+<a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>.
+
+<h2><a name="MuPDF"></a>What is MuPDF?</h2>
+
+<p>MuPDF is an alternative PDF viewer/library also written by some of the
+Ghostscript developers and licensed under the same dual
+<a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero GPL</a>/
+<a href="http://www.artifex.com/page/licesnsing-information.html">commercial license scheme</a>
+by <a href="http://www.artifex.com">Artifex</a>.
+
+<p>Like Ghostscript, MuPDF consists both of an interpreter and a graphics
+library (sometimes called 'Fitz'). The name MuPDF is used both to
+refer to the PDF interpreter/viewer, the associated tools for manipulating
+PDF files and to the package of MuPDF and MuXPS together.
+
+<p>MuPDF itself supports only PDF, not PostScript, and none of the
+Ghostscript PostScript/PDF interpreter code is shared with MuPDF (except
+for certain self-contained decoder libraries, such as JBig2Dec).
+
+<p>Binaries for MuPDF for various systems can be downloaded from
+<a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>. The
+source can be found on the same site.
+
+<h2><a name="MuXPS"></a>What is MuXPS?</h2>
+
+<p>MuXPS is an XPS viewer/library, developed from the GhostXPS interpreter
+and the MuPDF graphics library. MuXPS is distributed as part of the MuXPS
+bundle, but can be separated from the PDF interpreter component of MuPDF
+if required.
+
+<p>Binaries for MuXPS for various systems can be downloaded as part of the MuPDF
+distributions from
+<a href="http://www.ghostscript.com/download">www.ghostscript.com/download</a>. The
+source can be found on the same site.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+<p><a name="foot1">PostScript</a> is a registered trademark of Adobe Systems Inc.
+<p><a name="foot2">PCL</a> is a registered trademark of Hewlett-Packard Company.
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2012 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

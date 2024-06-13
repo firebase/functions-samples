@@ -1,0 +1,72 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Print a page that indicates the proper settings of Margins and HWMargins
+% for a given device.  Requires a Level 2 system.
+
+% Reset the offset and margins.
+
+<<
+  /PageOffset [0 0]
+  /Margins [0 0]
+  /.HWMargins [0 0 0 0]
+>>
+setpagedevice
+<<
+  /ImagingBBox null
+>>
+setpagedevice
+
+% Determine the actual page size.
+
+clippath pathbbox newpath
+/y1 exch def  /x1 exch def  pop pop
+
+% Draw lines that should be exactly 1" in from each edge,
+% and should extend precisely to the edge of the paper.
+
+1 setlinewidth
+0 setgray
+72 0 moveto 0 y1 rlineto stroke
+0 72 moveto x1 0 rlineto stroke
+
+% Print the text in the middle of the page.
+
+/S 80 string def
+108 480 moveto
+/Helvetica 12 selectfont
+ { currentfile S readline pop dup (%END) eq { pop exit } if
+   gsave show grestore 0 -15 rmoveto
+ } loop
+Let the distance in inches from the left edge of the page to
+the vertical line be H, and from the bottom edge to the
+horizontal line be V; let the lengths of the gaps at the top
+and bottom of the vertical line be T and B respectively, and
+the gaps at the left and right of the horizontal line be L
+and R.  For correct alignment of pages, put the following line
+in a file named (for example) margins.ps, and then mention
+margins.ps on the gs command line when printing any of your
+own files:
+
+    <<  /.HWMargins [ml mb mr mt] /Margins [x y]  >>  setpagedevice
+
+where
+        ml = L * 72, mb = B * 72, mr = R * 72, mt = T * 72,
+%END
+/res currentpagedevice /.MarginsHWResolution get def
+(        x = (1 - H) * ) show res 0 get =string cvs show
+(, y = (V - 1) * ) show res 1 get =string cvs show
+
+showpage

@@ -1,0 +1,225 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% viewpbm.ps
+% Display a PBM/PGM/PPM file.
+% Requires the Level 2 `image' operator (to handle variable pixel widths).
+% If SCALE is defined, maps input pixels to output pixels with that scale;
+% if SCALE is undefined, scales the image to fit the page.
+% If FITPAGE true, it fits the output page size to the image, honouring SCALE
+
+/s 100 string def
+/readmaxv {		% <file> readmaxv -
+  10 string readline pop cvx exec /maxv exch def
+} bind def
+/readrow {		% <file> <row> readrow <row>
+  0 1 2 index length 1 sub {
+    1 index exch 3 index token pop put
+  } for exch pop
+} bind def
+/read01 {		% <file> <count> read01 <byte>
+  0 exch {
+    1 index read pop 48 xor dup 1 le { exch dup add add } { pop } ifelse
+  } repeat
+} bind def
+/readrow01 {		% <file> <row> readrow01 <row>
+  0 1 w 8 idiv {
+    1 index exch 3 index 8 read01 put
+  } for
+  wrem 0 ne {
+     dup rsize 1 sub wrem read01 8 wrem sub bitshift put
+  } if
+  exch pop
+} bind def
+/readwh {		% <file> readwh <w> <h>
+ dup s readline pop		% check for comment
+ (#) anchorsearch {
+   pop pop dup s readline pop
+ } if
+ cvx exec
+} bind def
+/pbmtypes mark
+% The procedures in this dictionary are called as
+%	<file> Pn <w> <h> <readproc>
+/P1 {			% ASCII 1-bit white/black
+  /bpc 1 def /maxv 1 def /rsize w 7 add 8 idiv def
+  /wrem w 8 mod def
+  /ncomp 1 def /invert true def /DeviceGray setcolorspace
+  readwh
+        { readrow01 }
+} bind
+/P2 {			% ASCII 8-bit gray
+  readwh
+  /bpc 8 def 2 index readmaxv /rsize 2 index def
+  /ncomp 1 def /invert false def /DeviceGray setcolorspace
+        { readrow }
+} bind
+/P3 {			% ASCII 8-bit RGB
+  readwh
+  /bpc 8 def 2 index readmaxv /rsize 2 index 3 mul def
+  /ncomp 3 def /invert false def /DeviceRGB setcolorspace
+        { readrow }
+} bind
+/P4 {			% Binary 1-bit white/black
+  readwh
+  /bpc 1 def /maxv 1 def /rsize 2 index 7 add 8 idiv def
+  /ncomp 1 def /invert true def /DeviceGray setcolorspace
+        { readstring pop }
+} bind
+/P5 {			% Binary 8-bit gray
+  readwh
+  /bpc 8 def 2 index readmaxv /rsize 2 index def
+  /ncomp 1 def /invert false def /DeviceGray setcolorspace
+        { readstring pop }
+} bind
+/P6 {			% Binary 8-bit RGB
+  readwh
+  /bpc 8 def 2 index readmaxv /rsize 2 index 3 mul def
+  /ncomp 3 def /invert false def /DeviceRGB setcolorspace
+        { readstring pop }
+} bind
+.dicttomark readonly def
+/pbmsetup {			% <file> <w> <h> <readproc> runpbm -
+   /readproc exch def
+   /h exch def
+   /w exch def
+   /f exch def
+   20 dict begin		% image dictionary
+     /ImageType 1 def
+     /Width w def
+     /Height h def
+     /ImageMatrix [w 0 0 h neg 0 h] def
+     /BitsPerComponent bpc def
+     /Decode [ 0 255 maxv div invert { exch } if ncomp 1 sub { 2 copy } repeat ] def
+     /DataSource [ f rsize string /readproc load /exec load ] cvx def
+   currentdict end
+} def
+/imagescale {			% <imagedict> imagescale -
+  begin
+    /SCALE where {
+      pop
+      /FITPAGE where {/FITPAGE get}{false} ifelse
+      {
+          Width 72 mul SCALE mul Height 72 mul SCALE mul
+      }
+      {
+        % Map pixels SCALE-for-1.  Assume orthogonal transformation.
+        Width 1 0 dtransform add abs div SCALE mul
+        Height 0 1 dtransform add abs div SCALE mul
+      } ifelse
+    } {
+      /FITPAGE where {/FITPAGE get}{false} ifelse
+      {
+          Width 72 mul Height 72 mul
+      }
+      {
+          % Scale the image (uniformly) to fit the page.
+        clippath pathbbox pop pop translate
+        pathbbox .min exch pop exch pop ceiling
+        dup Height Width gt {
+          Width mul Height div exch
+        } {
+          Height mul Width div
+        } ifelse
+      } ifelse
+    }
+    ifelse scale
+  end
+} def
+
+% Image a PBM file page by page.
+/viewpbm {			% <filename> viewpbm -
+  20 dict begin
+    (r) file /pf exch def {
+      pf token not { exit } if
+      pbmtypes exch get pf exch exec pbmsetup
+      /FITPAGE where
+      {
+        /FITPAGE get
+        {
+          /SCALE where
+          {
+            pop
+            <</PageSize [w 72 mul SCALE mul h 72 mul SCALE mul] >>
+          }
+          {
+            <</PageSize [w 72 mul h 72 mul] >>
+          } ifelse
+          setpagedevice
+        } if
+      } if
+      dup imagescale image showpage
+    } loop
+  end
+} def
+
+% Reassemble a composite PBM file from the CMYK separations.
+/viewpsm {
+  20 dict begin
+    /fname exch def
+    /sources [ 0 1 3 {
+      /plane exch def
+      /pf fname (r) file def
+      pf pbmtypes pf token pop get exec
+                % Stack: pf w h readproc
+      plane {
+        /readproc exch def /h exch def /w exch def pop
+        /row rsize string def
+        h { pf row readproc pop } repeat
+        pf pbmtypes pf token pop get exec
+      } repeat
+      pbmsetup
+    } for ] def
+    /datas [ sources { /DataSource get 0 get } forall ] def
+    /decode sources 0 get /Decode get
+      dup 0 get exch 1 get add cvi 0 exch
+      2 copy 4 copy 8 array astore def
+    sources 0 get
+      dup /MultipleDataSources true put
+      dup /DataSource datas put
+      dup /Decode decode put
+    /DeviceCMYK setcolorspace
+    /FITPAGE where
+    {
+      /FITPAGE get
+      {
+        /SCALE where
+        {
+            <</PageSize [w SCALE mul h SCALE mul]>>
+        }
+        {
+            <</PageSize [w h]>>
+        }ifelse
+        setpagedevice
+      } if
+    } if
+    dup imagescale image showpage
+  end
+} def
+
+% If the program was invoked from the command line, run it now.
+[ shellarguments
+ { counttomark 1 ge
+    { ] { viewpbm } forall
+    }
+    { cleartomark
+      (Usage: gs [--] viewpbm.ps filename.p*m ...\n) print
+      ( e.g.: gs [--] viewpbm.ps my.ppm another.ppm\n) print flush
+    }
+   ifelse
+ }
+ { pop
+ }
+ifelse
