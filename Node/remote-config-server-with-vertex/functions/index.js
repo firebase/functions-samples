@@ -18,7 +18,7 @@ const app = initializeApp();
 const defaultConfig = {
 
   // Default values for Vertex AI.
-  model_name: "gemini-1.5-flash-preview-0514",
+  model_name: "gemini-1.5-flash-002",
   generation_config: [{
     "stopSequences": [], "temperature": 0.7,
     "maxOutputTokens": 64, "topP": 0.1, "topK": 20
