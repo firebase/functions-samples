@@ -1,0 +1,261 @@
+%!
+%%Creator: Eric Gisin <egisin@waterloo.csnet>
+%%Title: Print font catalog
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+% Copyright (c) 1986 Eric Gisin
+% Copyright (C) 1992 Aladdin Enterprises, Menlo Park, CA
+%   Modified to print all 256 encoded characters.
+% Copyright (C) 1993 Aladdin Enterprises, Menlo Park, CA
+%   Modified to print unencoded characters.
+% Copyright (C) 1994 Aladdin Enterprises, Menlo Park, CA
+%   Modified to always create 256-element Encoding vectors.
+% Copyright (C) 1995 Aladdin Enterprises, Menlo Park, CA
+%   Modified to print more than 128 unencoded characters.
+% Copyright (C) 1996 Aladdin Enterprises, Menlo Park, CA
+%   Modified to leave a slightly wider left margin, because many H-P
+%     printers can't print in the leftmost 1/4" of the page.
+%   Modified to print unencoded characters in any font that has CharStrings.
+% Copyright (C) 1999 Aladdin Enterprises, Menlo Park, CA
+%   Modified to sort unencoded characters.
+% Copyright (C) 2000 Aladdin Enterprises, Menlo Park, CA
+%   Modified to print CIDFonts as well as fonts.
+%   O(N^2) sorting replaced with O(N log N).
+% Copyright transferred 2000/09/15 to Artifex Software, Inc.  Send any questions to
+%   bug-gs@ghostscript.com.
+
+
+% Example usages at bottom of file
+
+/#copies 1 def
+/min { 2 copy gt { exch } if pop } bind def
+
+/T6 /Times-Roman findfont 6 scalefont def
+/Temp 64 string def
+/Inch {72 mul} def
+/Base 16 def	% char code output base
+/TempEncoding [ 256 { /.notdef } repeat ] def
+
+% Sort an array.  Code used by permission of the author, Aladdin Enterprises.
+/sort {			% <array> <lt-proc> sort <array>
+        % Heapsort (algorithm 5.2.3H, Knuth vol. 2, p. 146),
+        % modified for 0-origin indexing. */
+  10 dict begin
+  /LT exch def
+  /recs exch def
+  /N recs length def
+  N 1 gt {
+    /l N 2 idiv def
+    /r N 1 sub def {
+      l 0 gt {
+        /l l 1 sub def
+        /R recs l get def
+      } {
+        /R recs r get def
+        recs r recs 0 get put
+        /r r 1 sub def
+        r 0 eq { recs 0 R put exit } if
+      } ifelse
+      /j l def {
+        /i j def
+        /j j dup add 1 add def
+        j r lt {
+          recs j get recs j 1 add get LT { /j j 1 add def } if
+        } if
+        j r gt { recs i R put exit } if
+        R recs j get LT not { recs i R put exit } if
+        recs i recs j get put
+      } loop
+    } loop
+  } if recs end
+} def
+
+% do single character of page
+% output to rectangle ll=(0,-24) ur=(36,24)
+/DoGlyph {	% C, N, W set
+
+  % print code name, width and char name
+  T6 setfont
+  N /.notdef ne {0 -20 moveto N Temp cvs show} if
+  0 -12 moveto C Base Temp cvrs show (  ) show
+  W 0.0005 add Temp cvs 0 5 getinterval show
+
+  % print char with reference lines
+  N /.notdef ne {
+    3 0 translate
+    0 0 moveto F24 setfont N glyphshow
+    /W W 24 mul def
+    0 -6 moveto 0 24 lineto
+    W -6 moveto W 24 lineto
+    -3 0 moveto W 3 add 0 lineto
+    0 setlinewidth stroke
+  } if
+} def
+/DoChar {
+  /C exch def
+  /N F /Encoding get C get def
+  /S (_) dup 0 C put def
+  /W F setfont S stringwidth pop def
+  DoGlyph
+} def
+/CIDTemp 20 string def
+/DoCID {
+  /N exch def
+  /C N def
+  /W F setfont gsave
+    matrix currentmatrix nulldevice setmatrix
+    0 0 moveto N glyphshow currentpoint pop
+  grestore def
+  DoGlyph
+} def
+
+% print page title
+/DoTitle {
+  /Times-Roman findfont 18 scalefont setfont
+  36 10.5 Inch moveto FName Temp cvs show ( ) show ((24 point)) show
+} def
+
+% print one block of characters
+/DoBlock {	% firstcode lastcode
+  /FirstCode 2 index def
+  1 exch {
+    /I exch def
+    /Xn I FirstCode sub 16 mod def /Yn I FirstCode sub 16 idiv def
+    gsave
+    Xn 35 mul 24 add Yn -56 mul 9.5 Inch add translate
+    I DoCode
+    grestore
+  } for
+} def
+
+% print a line of character
+/DoCharLine {	% firstcode lastcode
+  1 exch { (_) dup 0 3 index put show pop } for
+} def
+/DoCIDLine {	% firstcode lastcode
+  1 exch { glyphshow } for
+} def
+
+% initialize variables
+/InitDoFont {	% fontname font
+  /F exch def		% font
+  /FName exch def	% font name
+  /F24 F 24 scalefont def
+  /Line0 96 string def
+  /Line1 96 string def
+  /Namestring1 128 string def
+  /Namestring2 128 string def
+} def
+
+% print pages of unencoded characters
+/DoUnencoded {	% glyphs
+  /Unencoded exch def
+  /Count Unencoded length def
+
+                % Print the unencoded characters in blocks of 128.
+
+  0 128 Unencoded length 1 sub
+   { /BlockStart 1 index def
+     dup 128 add Unencoded length min 1 index sub
+     Unencoded 3 1 roll getinterval TempEncoding copy
+     /BlockEncoding exch def
+     /BlockCount BlockEncoding length def
+     save
+     F /Encoding known {
+       F length dict F
+        { 1 index /FID eq { pop pop } { 2 index 3 1 roll put } ifelse }
+       forall dup /Encoding TempEncoding put
+       /* exch definefont
+       /F exch def
+       /F24 F 24 scalefont def
+       /BlockStart 0 def
+     } if
+
+     DoTitle (, unencoded characters) show
+     BlockStart dup BlockCount 1 sub add DoBlock
+     F 10 scalefont setfont
+     36 2.4 Inch moveto
+    0 32 BlockCount 1 sub {
+      0 -0.4 Inch rmoveto gsave
+      dup 31 add BlockCount 1 sub min
+      exch BlockStart add exch BlockStart add DoLine
+      grestore
+    } for
+     showpage
+     restore
+   } for
+
+} def
+
+% print font sample pages
+/DoFont {
+  dup findfont InitDoFont
+  /DoCode {DoChar} def
+  /DoLine {DoCharLine} def
+
+        % Display the first 128 encoded characters.
+
+  DoTitle (, characters 0-127) show
+  0 127 DoBlock
+  F 10 scalefont setfont
+  36 2.0 Inch moveto   0  31 DoLine
+  36 1.6 Inch moveto  32  63 DoLine
+  36 1.2 Inch moveto  64  95 DoLine
+  36 0.8 Inch moveto  96 127 DoLine
+  showpage
+
+        % Display the second 128 encoded characters.
+
+  DoTitle (, characters 128-255) show
+  128 255 DoBlock
+  F 10 scalefont setfont
+  36 2.0 Inch moveto 128 159 DoLine
+  36 1.6 Inch moveto 160 191 DoLine
+  36 1.2 Inch moveto 192 223 DoLine
+  36 0.8 Inch moveto 224 255 DoLine
+  showpage
+
+  F /CharStrings known
+   {
+                % Find and display the unencoded characters.
+
+        /Encoded F /Encoding get length dict def
+        F /Encoding get { true Encoded 3 1 roll put } forall
+        [ F /CharStrings get
+         { pop dup Encoded exch known { pop } if }
+        forall ] {
+          exch Namestring1 cvs exch Namestring2 cvs lt
+        } sort DoUnencoded
+
+   }
+  if
+
+} def
+
+% print CIDFont sample pages
+/DoCIDFont {
+  dup /CIDFont findresource InitDoFont
+  /DoCode {DoCID} def
+  /DoLine {DoCIDLine} def
+
+  [ 0 1 F /CIDCount get 1 sub { } for ] DoUnencoded
+} def
+
+% Do font samples
+% /Times-Roman DoFont			% Test (less than a minute)
+% /Hershey-Gothic-English DoFont	% Test (8 minutes)
+
+% Do a complete catalog
+% FontDirectory {pop DoFont} forall	% All fonts (quite a long time)

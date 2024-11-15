@@ -1,0 +1,33 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% pfbtopfa.ps
+% Convert a .pfb font to .pfa format.
+
+[ shellarguments {
+  counttomark 2 eq {
+    /pfa exch def /pfb exch def pop
+    /in1 pfb (r) file def
+    /in in1 true /PFBDecode filter def
+    /out pfa (w) file def
+    { in read not { exit } if out exch write } loop
+    out closefile in closefile in1 closefile
+    quit
+  } {
+    cleartomark (Usage: pfbtopfa input.pfb output.pfa) = flush
+  } ifelse
+} {
+  pop
+} ifelse

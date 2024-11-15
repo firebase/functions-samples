@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Fonts and font facilities supplied with Ghostscript</title>
+<!-- Originally: fonts.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Fonts and font facilities supplied with Ghostscript</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#About">About Ghostscript fonts</a>
+<li><a href="#Free_fonts">Ghostscript's free fonts</a>
+<li><a href="#Get_fonts">How Ghostscript gets fonts when it runs</a>
+<li><a href="#Platform_fonts">Platform fonts</a>
+<li><a href="#Add_fonts">Adding your own fonts</a>
+<ul>
+<li><a href="#Convert_BDF">Converting BDF fonts</a>
+</ul>
+<li><a href="#For_developers">For developers only</a>
+<li><a href="#Use_gs_fonts_with_X">Using Ghostscript fonts on X Windows displays</a>
+<ul>
+<li><a href="#Using_xset">Using <code>xset</code></a>
+<li><a href="#Font_permanent_installation">Permanent installation</a>
+<ul>
+<li><a href="#Configure_xfs">Configuring the <code>xfs</code> font server</a>
+<li><a href="#Configure_Xfree86">Xfree86 display servers</a>
+</ul>
+</ul>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="About"></a>About Ghostscript fonts</h2>
+
+<p>
+Ghostscript is distributed with two kinds of files related to fonts:
+
+<ul>
+<li>the fonts themselves in individual files, and
+<li>a file &quot;<code>Fontmap</code>&quot; that defines for
+Ghostscript which file represents which font.
+</ul>
+
+<p>
+Additionally, the file <code>cidfmap</code> can be used
+to create substitutes for CIDFonts referenced by name in Postscript and PDF jobs.
+See the section on <a href="Use.htm#CIDFontSubstitution">CID Font Substitution</a>
+for details. NOTE: care must be exercised since poor or incorrect output may result
+from inappropriate CIDFont substitution. We therefore <strong>strongly</strong> recommend
+embedding CIDFonts in your Postscript and PDF files if at all possible.
+
+<p>
+The &quot;base 35&quot; fonts required for Postscript (and "base 14" required for PDF)
+are Postscript Type 1 font files.
+<p><a name="Fontmap"></a>
+When Ghostscript needs a font, it must have some way to know where to look
+for it: that's the purpose of the <code>Fontmap</code> file, which
+associates the names of <em>fonts</em> such as <code>/Times-Roman</code>
+with the names of font <em>files</em>, such as
+<code>n021003l.pfb</code>.  <code>Fontmap</code> can also create
+aliases for font names, so that for instance,
+<code>/NimbusNo9L-Regu</code> means the same font as
+<code>/Times-Roman</code>.
+
+<hr>
+
+<h2><a name="Free_fonts"></a>Ghostscript's free fonts</h2>
+<ul>
+<li>35 commercial-quality Type 1 basic PostScript fonts -- Times,
+Helvetica, Courier, Symbol, etc. -- contributed by URW++ Design and
+Development Incorporated, of Hamburg, Germany
+(<a href="http://www.urwpp.de/">http://www.urwpp.de/</a>).  Fontmap names
+them all.
+</ul>
+
+<h2><a name="Get_fonts"></a>How Ghostscript gets fonts when it runs</h2>
+
+<p>
+Fonts occupy about 50KB each, so Ghostscript doesn't load them all
+automatically when it runs.  Instead, as part of normal initialization
+Ghostscript runs a file <code>gs_fonts.ps</code>, which arranges to load
+fonts on demand using information from the font map.  To preload all of the
+known fonts, invoke the procedure
+
+<blockquote><code>
+loadallfonts
+</code></blockquote>
+
+<p>
+The file <code>lib/prfont.ps</code> contains code to print a sample page of
+a font.  Load this program by including it in the <code>gs</code>
+command line or by invoking
+
+<blockquote><code>
+(prfont.ps) run
+</code></blockquote>
+
+<p>
+Then to produce a sampler of a particular font XYZ, invoke
+
+<blockquote><code>
+/XYZ DoFont
+</code></blockquote>
+
+<p>For example,
+
+<blockquote><code>
+/Times-Roman DoFont
+</code></blockquote>
+
+<p>
+For more information about how Ghostscript loads fonts during execution,
+see <a href="Use.htm#Font_lookup">here</a>.
+
+<hr>
+
+<h2><a name="Add_fonts"></a>Adding your own fonts</h2>
+
+<p>
+Ghostscript can use any Type 0, 1, 3, 4, or 42 font acceptable to
+other PostScript language interpreters or to ATM, including MultiMaster
+fonts. Ghostscript can also use TrueType font files.
+
+<p>
+To add fonts of your own, you must edit Fontmap to include at the end an
+entry for your new font; the format for entries is documented
+in Fontmap itself.  Since later entries in Fontmap override earlier
+entries, a font you add at the end supersedes any corresponding fonts supplied
+with Ghostscript and defined earlier in the file. To ensure correct output,
+it is vital that entries for the &quot;base 35&quot; fonts remain intact
+in the Fontmap file.
+
+<p>
+In the PC world, Type 1 fonts are customarily given names ending in
+<code>.PFA</code> or <code>.PFB</code>.  Ghostscript can use these
+directly: you just need to make the entry in Fontmap.  If you want to use
+with Ghostscript a commercial Type 1 font (such as fonts obtained in
+conjunction with Adobe Type Manager), please read carefully the license that
+accompanies the font to satisfy yourself that you may do so legally; we take
+no responsibility for any possible violations of such licenses.  The same
+applies to TrueType fonts.
+
+<h3><a name="Convert_BDF"></a>Converting BDF fonts (- deprecated!)</h3>
+
+<p>
+Ghostscript provides a way to construct a (low-quality) Type 1 font from a
+bitmap font in the BDF format popular in the Unix world.  The shell script
+<code>bdftops</code> (Unix) or the command file
+<code>bdftops.bat</code> (DOS) converts a BDF file to a
+scalable outline using <code>bdftops.ps</code> .  Run the
+shell command
+
+<blockquote><code>
+bdftops&nbsp;BDF_filename&nbsp;[AFM_file1_name&nbsp;...]&nbsp;gsf_filename&nbsp;fontname<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UniqueID&nbsp;[XUID]&nbsp;[encodingname]
+</code></blockquote>
+
+<p>
+The arguments have these meanings:
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>BDF_filename</code>
+	<td>&nbsp;&nbsp;
+	<td>Input bitmap file in BDF format
+	<td>&nbsp;&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td><code>AFM_file1_name</code>
+	<td>&nbsp;
+	<td>AFM files giving metrics
+	<td>&nbsp;
+	<td>(Optional)
+<tr valign=top>	<td><code>gsf_filename</code>
+	<td>&nbsp;
+	<td>Output file
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td><code>fontname</code>
+	<td>&nbsp;
+	<td>Name of the font
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td><code>UniqueID</code>
+	<td>&nbsp;
+	<td>UniqueID (<a href="#Unique_IDs">as described below</a>)
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td><code>XUID</code>
+	<td>&nbsp;
+	<td>XUID, in the form <code>n1.n2.n3...</code> (<a href="#Unique_IDs">as described below</a>)
+	<td>&nbsp;
+	<td>(Optional)
+<tr valign=top>	<td><code>encodingname</code>
+	<td>&nbsp;
+	<td>"StandardEncoding" (the default), "ISOLatin1Encoding",<br>"SymbolEncoding", "DingbatsEncoding"
+	<td>&nbsp;
+	<td>(Optional)
+</table></blockquote>
+
+<p>
+For instance
+
+<blockquote><code>
+bdftops&nbsp;pzdr.bdf&nbsp;ZapfDingbats.afm&nbsp;pzdr.gsf&nbsp;ZapfDingbats&nbsp;4100000&nbsp;1000000.1.41
+</code></blockquote>
+
+<p>
+Then make an entry in Fontmap for the <code>.gsf</code>
+file (<code>pzdr.gsf</code> in the example) as
+<a href="#Add_fonts">described above</a>.
+
+<hr>
+
+<h2><a name="For_developers"></a>For developers only</h2>
+
+<p>
+The rest of this document is very unlikely to be of value to ordinary
+users.
+
+<h3><a name="Font_contents"></a>Contents of fonts</h3>
+
+<p>
+As noted above, Ghostscript accepts fonts in the same formats as PostScript
+interpreters.  Type 0, 1, and 3 fonts are documented in the PostScript
+Language Reference Manual (Second Edition); detailed documentation for Type
+1 fonts appears in a separate Adobe book.  Type 2 (compressed format) fonts
+are documented in separate Adobe publications.  Type 4 fonts are not
+documented anywhere; they are essentially Type 1 fonts with a BuildChar or
+BuildGlyph procedure.  Types 9, 10, and 11 (CIDFontType 0, 1, and 2) and
+Type 32 (downloaded bitmap) fonts are documented in Adobe supplements.
+Type 42 (encapsulated TrueType) fonts are documented in an Adobe
+supplement; the TrueType format is documented in publications available
+from Apple and Microsoft.  Ghostscript does not support Type 14 (Chameleon)
+fonts, which use a proprietary Adobe format.
+
+<h3><a name="Unique_IDs"></a>Font names and unique IDs</h3>
+
+<p>
+If you create your own fonts and will use them only within your own
+organization, you should use <code>UniqueID</code> values between
+4000000 and 4999999.
+
+<p>
+If you plan to distribute fonts, ask Adobe to assign you some UniqueIDs and
+also an <code>XUID</code> for your organization. Contact
+
+<blockquote><address>
+Unique ID Coordinator<br>
+Adobe Developers Association<br>
+Adobe Systems, Inc.<br>
+345 Park Avenue<br>
+San Jose, CA  95110-2704<br>
++1-408-536-9000 telephone (ADA)<br>
++1-408-536-6883 fax<br>
+<a href="mailto:fontdev-person@adobe.com">fontdev-person@adobe.com</a><br>
+</address></blockquote>
+
+<p>
+The XUID is a Level 2 PostScript feature that serves the same function as
+the UniqueID, but is not limited to a single 24-bit integer.  The
+<code>bdftops</code> program creates XUIDs of the form
+"<code>[-X-&nbsp;0&nbsp;-U-]</code>" where "<code>-X-</code>" is the
+organization XUID and "<code>-U-</code>" is the UniqueID.  (Aladdin
+Enterprises' organization XUID, which appears in a few places in various
+font-related files distributed with Ghostscript, is 107; do not use this for
+your own fonts that you distribute.)
+
+<hr>
+
+<h2><a name="Use_gs_fonts_with_X"></a>Using Ghostscript fonts on X Windows displays</h2>
+
+<p> The &quot;Xfonts&quot; feature is no longer supported.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+.\" Using encoding of the German (de_DE) translation: ISO-8859-1
+.\" Translation by Tobias Burnus <burnus@gmx.de> and Thomas Hoffmann
+.TH PS2PS 1 "8.Juli 2002" 7.21 "Ghostscript-Werkzeuge" \" -*- nroff -*-
+.SH NAME
+ps2ps, eps2eps \- Ghostscript PostScript "Distiller"
+.SH SYNTAX
+\fBps2ps\fR [ \fIOptionen\fR ] \fIEingabe.ps Ausgabe.ps\fR
+.br
+\fBeps2eps\fR [ \fIOptionen\fR ] \fIEingabe.eps Ausgabe.eps\fR
+.SH BESCHREIBT
+\fBps2ps\fR  benutzt \fIgs\fR(1) um die \fBPostScript\fR(tm)-Dateien
+"Eingabe.ps" in einfacheres und (meist) schnelleres PostScript in
+"Ausgabe.ps" zu konvertieren.  Normalerweise darf die Ausgabe
+PostScript-Level-2-Konstrukte benutzen, aber 
+\fB\-dLanguageLevel=1\fR erzwingt die Ausgabe von Level 1.
+.PP
+\fBeps2eps\fR führt analoge Optimierungen bei Encapsulated
+PostScript (EPS) Dateien durch.
+.SH DATEIEN
+Rufen Sie "\fBgs -h\fR" auf, um den Ort der Ghostscript-Dokumentation auf Ihrem System zu 
+ermitteln, wo Sie weitere Informationen finden.
+.SH VERSION
+Dieses Document wurde zuletzt für Ghostscript Version 7.21 überarbeitet.
+.SH AUTOR
+Artifex Software, Inc. sind die
+Hauptautoren von Ghostscript.

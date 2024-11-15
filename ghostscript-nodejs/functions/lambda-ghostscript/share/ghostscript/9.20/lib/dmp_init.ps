@@ -1,0 +1,206 @@
+%!
+%    Copyright (C) 1989, 1992, 1993 Aladdin Enterprises.  All rights reserved.
+%
+% This file is part of Ghostscript.
+%
+% Ghostscript is distributed in the hope that it will be useful, but
+% WITHOUT ANY WARRANTY.  No author or distributor accepts responsibility
+% to anyone for the consequences of using it or for whether it serves any
+% particular purpose or works at all, unless he says so in writing.  Refer
+% to the Ghostscript General Public License for full details.
+%
+% Everyone is granted permission to copy, modify and redistribute
+% Ghostscript, but only under the conditions described in the Ghostscript
+% General Public License.  A copy of this license is supposed to have been
+% given to you along with Ghostscript so you can know your rights and
+% responsibilities.  It should be in a file named COPYING.  Among other
+% things, the copyright notice and this notice must be preserved on all
+% copies.
+
+% dmp_init.ps
+%   Initialization file for `dmprt' device driver.
+%
+%   Written initial version by...         ASAYAMA Kazunori  1993 Nov.
+%   Modified for Ghostscript 4.03 by ...  ASAYAMA Kazunori  1997 May.
+
+%%%%%                        check version                         %%%%%
+
+201 % version of this initialization file.
+
+/dmprt finddevice { /DmprtParams gsgetdeviceprop /Version get }
+  stopped { pop pop 0 } if
+2 copy ne {
+  (\ndmprt: driver version\() print
+  dup 0 eq {pop (unknown) print }{==only}ifelse
+  (\) does not match dmp_init.ps version\() print
+  ==only (\).\n) print
+  flush 1 .quit
+} { pop pop } ifelse
+
+%%%%%                            BODY                              %%%%%
+
+40 dict begin         % .WorkDict .UserParams
+                      % .DmprtDevice
+                      % .GetDmprtParam .SetDmprtParam
+                      % .DmprtParams .Xdpi .Ydpi .Xdot .Ydot
+                      %
+                      % in cm mm pt bp dot
+                      % BeginMode EndMode
+                      % .ModeDataBase .CurrentMode
+                      % BeginConfig EndConfig
+                      % BeginPrinterProps EndPrinterProps
+
+/.WorkDict currentdict def
+/.ModeDataBase 10 dict def
+/.dicttomark {
+  counttomark 2 idiv dup dict begin { def } repeat pop currentdict end
+} bind def
+
+%%%%%                utilities for user customization.             %%%%%
+
+/in { } bind def
+/cm { 2.54 div } bind def
+/mm { 25.4 div } bind def
+/pt { 72.27 div } bind def
+/bp { 72.0 div } bind def
+/dot { [ exch truncate cvi ] } bind def
+
+% the database of user customizations. (not implemented yet.)
+/BeginMode { % <name> -> <name> mark
+  mark
+} bind def
+/EndMode { % <name> mark <item1> <value1> ... <itemN> <valueN> -> --
+  .dicttomark .ModeDataBase
+  dup dup maxlength exch length eq {
+    % Expand capacity of database dictionaly.
+    dup maxlength 10 add dict copy dup /.ModeDataBase exch def
+  } if
+  3 1 roll put
+} bind def
+
+% these procedures are undocumented in the user's manual.
+% these are used in order to specify the propaties directly.
+/BeginPrinterProps { [ } bind def
+/EndPrinterProps { ] /printer exch } bind def
+
+%%%%%                run the user customization file.              %%%%%
+
+/BeginConfig mark def
+/EndConfig { .dicttomark /.UserParams exch def } bind def
+systemdict /DMPCONFIG 2 copy known
+{ get run }    % -sDMPCONFIG=<filename>
+{ pop pop (dmp_site.ps) findlibfile { closefile run } if } ifelse
+
+%%%%%                        refer database                        %%%%%
+
+/.UsedMode .ModeDataBase length dict def
+/.ExpandUserParams { % <dict> -> <param1> <value1> ... <paramN> <valueN>
+  /.InheritMode null def
+  { 1 index /inherit eq {
+      exch pop dup .UsedMode exch known { % check recursive reference.
+        /.ExpandUserParams /rangecheck signalerror
+      } if
+      /.InheritMode exch def
+    } if } forall
+  .InheritMode type /nametype eq {
+    .UsedMode .InheritMode true put
+    .ModeDataBase .InheritMode get .ExpandUserParams
+  } if
+} bind def
+
+systemdict /DMPMODE 2 copy known
+  {get .ModeDataBase exch get} {pop pop .UserParams} ifelse
+mark exch .ExpandUserParams .dicttomark /.UserParams exch def
+
+%%%%%                Local variables and procedures.               %%%%%
+/.DmprtDevice /dmprt finddevice def
+/.SetDmprtParam {   % <key> <value> -> --
+  .DmprtParams 3 1 roll put
+} bind def
+/.SetLocalParam { .LocalParams 3 1 roll put } bind def
+/.GetDmprtParam {   % <key> -> <value>
+  .DmprtParams exch get
+} bind def
+/.GetUserParam {       % <key> <default-value> -> <value>
+  .UserParams 3 -1 roll 2 copy known {get exch pop}{pop pop} ifelse
+} bind def
+/.SetUserParam { % <prop-name> <key> <default-value> -> --
+  .GetUserParam .SetDmprtParam
+} bind def
+
+%%%%%                     dviprt proparties                        %%%%%
+
+mark
+.UserParams /printer 2 copy known {
+  get dup type /dicttype ne { mark /FileName 3 -1 roll .dicttomark } if
+}
+{ pop pop % Default printer is `ESC/P 24 pins'.
+    mark
+    /Name          (ESC/P 24 pins)
+    /Transpose     true
+    /Reverse       false
+    /NonMoving     false
+    /Encoding      (Null)
+    /HDpi           180
+    /VDpi           180
+    /Pins          24
+    /MinimalUnit   1
+    /MaximalUnit   180
+    /Constant      1
+    /BitImageMode  (\007\0333\030\033?Z\047)
+    /NormalMode    (\004\015\014\0332)
+    /SendBitImage  (\002\033Z\002\001\200)
+    /SkipSpaces    (\002\033\\\002\001\200)
+    /LineFeed      (\002\015\012)
+    /FormFeed      (\002\015\014)
+    /AfterBitImage ()
+    /BitRowHeader  ()
+    .dicttomark
+} ifelse
+/DviprtParams exch .DmprtDevice putdeviceprops
+
+getdeviceprops .dicttomark /.DmprtParams exch def
+.DmprtParams /DviprtParams get /.DviprtParams exch def
+.DmprtParams /DmprtParams get /.LocalParams exch def
+
+% calcurate resolutions and define operators converting
+% from user-coordination to device-coordination(count by dots).
+/resolution [ .DviprtParams dup /HDpi get exch /VDpi get ]
+  .GetUserParam {} forall /.Ydpi exch def /.Xdpi exch def
+/.Xdot { dup type /arraytype eq { 0 get } { .Xdpi mul truncate cvi } ifelse
+} bind def
+/.Ydot { dup type /arraytype eq { 0 get } { .Ydpi mul truncate cvi } ifelse
+} bind def
+
+%%%%%           Standard Ghostscript device propaties.             %%%%%
+
+/HWSize  % default is A4.
+  /defaultsize [8.3 11.7] .GetUserParam
+  [ exch dup 0 get .Xdot exch 1 get .Ydot ] .SetDmprtParam
+
+%%%%%                   dmprt device propaties.                    %%%%%
+
+/MaxSize
+  /maxsize [0.0 0.0] .GetUserParam [ exch dup 0 get .Xdot exch 1 get .Ydot ]
+  .SetLocalParam
+/Margins /margin [0.0 0.0 0.0 0.0] .GetUserParam
+  [ exch dup 0 get .Xdot exch dup 1 get .Ydot
+    exch dup 2 get .Xdot exch     3 get .Ydot ] .SetLocalParam
+/Verbose QUIET {false}
+  {/verbose false .GetUserParam} ifelse .SetLocalParam
+/Debug /debug false .GetUserParam .SetLocalParam
+
+%%%%%                   Page device propaties.                     %%%%%
+%%%%%         See PostScript Reference Manual 2nd edition.         %%%%%
+
+/HWResolution [ .Xdpi .Ydpi ] .SetDmprtParam
+/Offsets
+  /offset [0.0 0.0] .GetUserParam [ exch dup 0 get .Xdot exch 1 get .Ydot ]
+  .SetLocalParam
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+mark .DmprtParams {} forall .DmprtDevice putdeviceprops pop
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%   End of file   %%%%%%%%%%%%%%%%%%%%%%%%%%%
