@@ -26,8 +26,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@firebase/functions": "^0.11.5",
-    "firebase": "^10.12.1",
+    "@firebase/functions": "^0.11.10",
+    "firebase": "^11.0.2",
     "showdown": "^2.1.0"
   }
 }
