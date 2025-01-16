@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>title</title>
+  </head>
+  <body>
+    <button id="btn-call-func">Call function</button>
+    <p id="p-result"></p>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+      import {
+        getFunctions,
+        httpsCallable,
+        connectFunctionsEmulator,
+      } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-functions.js";
+
+      // set your firebase config object
+      const firebaseConfig = undefined;
+      if (!firebaseConfig) {
+        throw new Error('You must set your Firebase config');
+      }
+      const app = initializeApp(firebaseConfig);
+      const functions = getFunctions(app);
+      connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+      const streamResponse = httpsCallable(functions, "streamResponse");
+
+      const callableButton = document.getElementById("btn-call-func");
+      const resultElement = document.getElementById("p-result");
+      callableButton.onclick = async () => {
+        // reset result
+        resultElement.innerHTML = "";
+
+        const resp = await streamResponse.stream({
+          text: "What is your favorite Firebase service and why?",
+        });
+
+        // append text each time 
+        for await (const message of resp.stream) {
+          resultElement.innerHTML += message;
+        }
+      };
+    </script>
+  </body>
+</html>
