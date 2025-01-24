@@ -34,30 +34,34 @@ async function generateStream() {
     const sentence = "Hello from Cloud Functions for Firebase!";
 
     for (const word of sentence.split(" ")) {
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 500));
+      const randomDelay = Math.floor(Math.random() * 500);
+      await new Promise((resolve) => setTimeout(resolve, randomDelay));
       yield {text: () => " " + word};
     }
+
+    return {text: () => sentence};
   }
 
-  return {
-    metadata: {
-      acceptsStreaming: true},
-    stream: mockAsyncIterable,
-  };
+  return mockAsyncIterable;
 }
 
 exports.streamResponse = onCall(async (request, response) => {
-  console.log("I was called!!!");
-  console.log("data", request.data);
-  const prompt = request.data.text || "hello";
+  const prompt = request.data?.text || "hello world";
 
-  const {metadata, stream} = await generateStream(prompt);
+  try {
+    // Call a streaming API, like an LLM
+    const stream = await generateStream(prompt);
 
-  for await (const chunk of stream()) {
-    console.log(chunk);
-    if (metadata.acceptsStreaming) {
-      response.sendChunk(chunk.text());
+    if (request.acceptsStreaming) {
+      // Wait for each value of the returned Async Iterable
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator
+      for await (const chunk of stream()) {
+        response.sendChunk(chunk.text());
+      }
     }
+
+    return await stream.text();
+  } catch (error) {
+    throw new HttpsError("internal", error.message);
   }
-  return true;
 });

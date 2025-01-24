@@ -15,6 +15,11 @@
         connectFunctionsEmulator,
       } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-functions.js";
 
+      const callableButton = document.getElementById("btn-call-func");
+      const resultElement = document.getElementById("p-result");
+
+      callableButton.onclick = handleClick;
+
       // set your firebase config object
       const firebaseConfig = undefined;
       if (!firebaseConfig) {
@@ -25,21 +30,27 @@
       connectFunctionsEmulator(functions, "127.0.0.1", 5001);
       const streamResponse = httpsCallable(functions, "streamResponse");
 
-      const callableButton = document.getElementById("btn-call-func");
-      const resultElement = document.getElementById("p-result");
-      callableButton.onclick = async () => {
+      async function handleClick() {
         // reset result
-        resultElement.innerHTML = "";
+        clearOutput();
 
         const resp = await streamResponse.stream({
           text: "What is your favorite Firebase service and why?",
         });
 
-        // append text each time 
-        for await (const message of resp.stream) {
-          resultElement.innerHTML += message;
+        // add each new chunk to the output
+        for await (const chunk of resp.stream) {
+          appendToOutput(chunk);
         }
       };
+
+      function clearOutput() {
+        resultElement.innerHTML = "";
+      }
+
+      function appendToOutput(str) {
+        resultElement.innerHTML += str;
+      }
     </script>
   </body>
 </html>
