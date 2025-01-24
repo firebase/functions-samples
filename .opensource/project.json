@@ -8,7 +8,7 @@
     "content": "README.md",
     "pages": {
         "quickstarts/big-ben/README.md": "Quickstart: HTTP Trigger + Hosting",
-        "quickstarts/email-users/README.md": "Quickstart: Auth Trigger",
+        "quickstarts/email-users/README.md": "Quickstart:  disable Auth Trigger",
         "quickstarts/pubsub-helloworld/README.md": "Quickstart: PubSub Trigger",
         "quickstarts/thumbnails/README.md": "Quickstart: Cloud Storage Trigger",
         "quickstarts/time-server/README.md": "Quickstart: HTTP Trigger",
