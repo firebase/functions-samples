@@ -6,7 +6,7 @@
     "firebase-functions": "^4.4.1"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "scripts": {
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"

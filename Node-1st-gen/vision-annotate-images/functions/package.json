@@ -11,7 +11,7 @@
     "compile": "npm run build"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
