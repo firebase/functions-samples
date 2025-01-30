@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/firebase/functions-samples#readme",
   "devDependencies": {
+    "eslint-config-google": "^0.14.0",
     "typescript": "^5.1.6",
     "vite": "^4.4.9"
   },
@@ -27,6 +28,7 @@
   },
   "dependencies": {
     "@firebase/functions": "^0.11.5",
+    "eslint": "8",
     "firebase": "^10.12.1",
     "showdown": "^2.1.0"
   }

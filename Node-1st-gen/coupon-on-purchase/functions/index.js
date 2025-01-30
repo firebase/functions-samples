@@ -70,7 +70,10 @@ async function sendCouponViaFCM(uid, userLanguage) {
     }
 
     // Send notifications to all tokens.
-    return admin.messaging().sendToDevice(tokens, payload);
+    return admin.messaging().sendEachForMulticast({
+      notification: payload.notification,
+      tokens
+    });
   }
   return null;
 }
@@ -104,7 +107,10 @@ async function sendHighValueCouponViaFCM(uid, userLanguage) {
     }
 
     // Send notifications to all tokens.
-    return admin.messaging().sendToDevice(tokens, payload);
+    return admin.messaging().sendEachForMulticast({
+      notification: payload.notification,
+      tokens
+    });
   }
   return null;
 }

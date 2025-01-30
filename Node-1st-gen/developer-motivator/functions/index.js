@@ -36,7 +36,7 @@ exports.appinstalled = functions.analytics.event('first_open').onLog((event) => 
     }
   };
 
-  return admin.messaging().sendToDevice(deviceToken, payload);
+  return admin.messaging().send({token: deviceToken, notification: payload.notification});
 });
 
 /**
@@ -55,5 +55,5 @@ exports.appremoved = functions.analytics.event('app_remove').onLog((event) => {
     }
   };
 
-  return admin.messaging().sendToDevice(deviceToken, payload);
+  return admin.messaging().send({token: deviceToken, notification: payload.notification});
 });

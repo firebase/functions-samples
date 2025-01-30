@@ -15,12 +15,12 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "firebase-functions": "^4.4.1",
+    "firebase-functions": "^6.3.0",
     "formdata-polyfill": "^4.0.10",
     "node-fetch": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.40.0",
+    "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0"
   },
   "private": true

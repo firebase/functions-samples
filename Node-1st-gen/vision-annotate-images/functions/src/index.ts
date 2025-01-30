@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as functions from "firebase-functions";
+import * as functions from "firebase-functions/v1";
 import vision from "@google-cloud/vision";
 
 const client = new vision.ImageAnnotatorClient();
@@ -29,7 +29,7 @@ const client = new vision.ImageAnnotatorClient();
 //    || context.auth.token?.firebase?.email_verified === false
 // Also see: https://firebase.google.com/docs/auth/admin/custom-claims
 export const annotateImage = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+  if (!context?.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
       "annotateImage must be called while authenticated."
@@ -38,7 +38,7 @@ export const annotateImage = functions.https.onCall(async (data, context) => {
   try {
     return await client.annotateImage(data);
   } catch (e) {
-    // @ts-expect-error
-    throw new functions.https.HttpsError("internal", e.message, e.details);
+
+    throw new functions.https.HttpsError("internal", (e as Error).message);
   }
 });
