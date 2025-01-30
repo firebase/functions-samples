@@ -11,7 +11,7 @@
     "compile": "cp ../../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "dependencies": {
     "firebase-admin": "^11.9.0",
