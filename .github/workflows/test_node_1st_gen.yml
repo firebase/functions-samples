@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 2nd Gen CI Tests
+name: 1st Gen CI Tests
 
 on:
   pull_request:
     paths:
-      - 'Node/**'
+      - 'Node-1st-gen/**'
       - 'package.json'
       - 'package-lock.json'
       - 'pnpm-workspace.yaml'
@@ -27,7 +27,7 @@ on:
     branches:
       - main
     paths:
-      - 'Node/**'
+      - 'Node-1st-gen/**'
       - 'package.json'
       - 'package-lock.json'
       - 'pnpm-workspace.yaml'
@@ -43,9 +43,9 @@ jobs:
     strategy:
       matrix:
         node-version:
-          # The latest Node version for 2nd gen
+          # The latest Node version for 1st gen
           # https://cloud.google.com/functions/docs/runtime-support#node.js
-          - 22.x
+          - 20.x
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -59,7 +59,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - run: npm install
-      - run: npm run bootstrap-2nd-gen
-      - run: npm run lint-2nd-gen
-      - run: npm run compile-2nd-gen
-      - run: npm run test-2nd-gen
+      - run: npm run bootstrap-1st-gen
+      - run: npm run lint-1st-gen
+      - run: npm run compile-1st-gen
+      - run: npm run test-1st-gen
