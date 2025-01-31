@@ -20,6 +20,8 @@ on:
       - 'Python/**'
 
   push:
+    branches:
+      - main
     paths:
       - 'Python/**'
 
