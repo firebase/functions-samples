@@ -29,22 +29,24 @@
       connectFunctionsEmulator(functions, "127.0.0.1", 5001);
       const getForecast = httpsCallable(functions, "getForecast");
 
-      async function handleClick() {
-        // reset result
-        clearUi();
-
-        const resp = await getForecast.stream({
-          locations: [
+      const favoriteLocations = [
             // Google HQ
             { latitude: 37.4220199895279, longitude: -122.08531347325561 },
             // Yosemite Valley
             { latitude: 37.745192257741984, longitude: -119.5945133017153 },
             // Old Faithful
             { latitude: 44.46037818049411, longitude: -110.82802255265777 },
-          ],
+          ]
+
+      async function handleClick() {
+        // reset result
+        clearUi();
+
+        const resp = await getForecast.stream({
+          locations: favoriteLocations,
         });
 
-        // add each new chunk to the output
+        // loop through the `stream` async iterable
         for await (const forecastData of resp.stream) {
           updateUi(forecastData);
         }
