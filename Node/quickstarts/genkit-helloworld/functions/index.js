@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
+// [START complete-example]
 // [START imports]
 // Dependencies for callable functions.
 const {onCallGenkit} = require("firebase-functions/v2/https");
+// [START import-params]
 const {defineSecret} = require("firebase-functions/params");
+// [END import-params]
 
+// [START import-genkit]
 // Dependencies for Genkit
 const {gemini15Flash, googleAI} = require("@genkit-ai/googleai");
 const {genkit, z} = require("genkit");
+// [END import-genkit]
 // [END imports]
 
+// [START define-secret]
 // Store the Gemini API key in Cloud Secret Manager
 const apiKey = defineSecret("GOOGLE_GENAI_API_KEY");
+// [END define-secret]
 
+// [START flow]
 const ai = genkit({
   plugins: [googleAI()],
   model: gemini15Flash,
@@ -52,13 +60,21 @@ const jokeTeller = ai.defineFlow({
   return (await aiResponse).text;
 },
 );
+// [END flow]
 
+// [START trigger]
 exports.tellJoke = onCallGenkit({
+  // [START bind-secrets]
   // bind the Gemini API key secret parameter  to the function
   secrets: [apiKey],
+  // [END bind-secrets]
+  // [START auth-policy]
+  // protect your endpoint with authPolicy
+  authPolicy: (auth) => !!auth && auth.token.email_verified,
+  // [END auth-policy]
 },
 // pass in the genkit flow
 jokeTeller,
 );
-
-
+// [END trigger]
+// [END complete-example]
