@@ -12,18 +12,18 @@ importers:
         specifier: ^13.0.2
         version: 13.0.2
       firebase-functions:
-        specifier: ^6.2.0
-        version: 6.3.0(firebase-admin@13.0.2)
+        specifier: ^6.3.1
+        version: 6.3.1(firebase-admin@13.0.2)
     devDependencies:
       eslint:
-        specifier: ^8.40.0
+        specifier: ^8.57.1
         version: 8.57.1
       eslint-config-google:
         specifier: ^0.14.0
         version: 0.14.0(eslint@8.57.1)
       firebase-functions-test:
         specifier: ^3.4.0
-        version: 3.4.0(firebase-admin@13.0.2)(firebase-functions@6.3.0(firebase-admin@13.0.2))(jest@29.7.0(@types/node@22.12.0))
+        version: 3.4.0(firebase-admin@13.0.2)(firebase-functions@6.3.1(firebase-admin@13.0.2))(jest@29.7.0(@types/node@22.12.0))
 
 packages:
 
@@ -1010,8 +1010,8 @@ packages:
       firebase-functions: '>=4.9.0'
       jest: '>=28.0.0'
 
-  firebase-functions@6.3.0:
-    resolution: {integrity: sha512-88dRx3dPYvlxIN64H1lJCFV7wGt0cFL0lmXKzVm+rfnkILC0Qt3rMXp3/J/ojf2StclBwJBu2QZ4MRbNYh7B7g==}
+  firebase-functions@6.3.1:
+    resolution: {integrity: sha512-LTbmsEkSgaOhzTzGUoF7dv906JJJW89o0/spXgnU8gASyR8JLMrCqwV7FnWLso5hyF0fUqNPaEEw/TzLdZMVXw==}
     engines: {node: '>=14.10.0'}
     hasBin: true
     peerDependencies:
@@ -3345,16 +3345,16 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions-test@3.4.0(firebase-admin@13.0.2)(firebase-functions@6.3.0(firebase-admin@13.0.2))(jest@29.7.0(@types/node@22.12.0)):
+  firebase-functions-test@3.4.0(firebase-admin@13.0.2)(firebase-functions@6.3.1(firebase-admin@13.0.2))(jest@29.7.0(@types/node@22.12.0)):
     dependencies:
       '@types/lodash': 4.17.15
       firebase-admin: 13.0.2
-      firebase-functions: 6.3.0(firebase-admin@13.0.2)
+      firebase-functions: 6.3.1(firebase-admin@13.0.2)
       jest: 29.7.0(@types/node@22.12.0)
       lodash: 4.17.21
       ts-deepmerge: 2.0.7
 
-  firebase-functions@6.3.0(firebase-admin@13.0.2):
+  firebase-functions@6.3.1(firebase-admin@13.0.2):
     dependencies:
       '@types/cors': 2.8.17
       '@types/express': 4.17.21
