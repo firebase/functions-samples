@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "codebase": "oncallgenkit-helloworld",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run lint"
+    ]
+  }
+}
