@@ -33,7 +33,7 @@ const ai = genkit({
 });
 
 const jokeTeller = ai.defineFlow({
-  name: "joketeller",
+  name: "jokeTeller",
   inputSchema: z.string().nullable(),
   outputSchema: z.string(),
   streamSchema: z.string(),
