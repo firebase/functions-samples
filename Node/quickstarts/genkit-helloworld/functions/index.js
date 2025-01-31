@@ -16,8 +16,9 @@
 
 // [START complete-example]
 // [START imports]
-// Dependencies for callable functions.
+// [START import-trigger]
 const {onCallGenkit} = require("firebase-functions/v2/https");
+// [END import-trigger]
 // [START import-params]
 const {defineSecret} = require("firebase-functions/params");
 // [END import-params]
@@ -70,7 +71,7 @@ exports.tellJoke = onCallGenkit({
   // [END bind-secrets]
   // [START auth-policy]
   // protect your endpoint with authPolicy
-  authPolicy: (auth) => !!auth && auth.token.email_verified,
+  authPolicy: (auth) => !!auth?.token.email_verified,
   // [END auth-policy]
 },
 // pass in the genkit flow
