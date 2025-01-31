@@ -5,10 +5,15 @@
   "author": "Firebase (https://firebase.google.com/)",
   "license": "Apache-2.0",
   "scripts": {
-    "bootstrap": "pnpm -r install",
-    "lint": "pnpm -r --workspace-concurrency=4 --aggregate-output run lint",
-    "test": "pnpm -r --workspace-concurrency=4 --aggregate-output run test ",
-    "compile": "pnpm -r --workspace-concurrency=4 --aggregate-output run compile "
+    "bootstrap": "pnpm --recursive install",
+    "bootstrap-1st-gen": "pnpm --recursive --filter  \"./Node-1st-gen/**\" install",
+    "bootstrap-2nd-gen": "pnpm --recursive --filter  \"./Node/**\" install",
+    "lint-1st-gen": "pnpm --recursive --filter  \"./Node-1st-gen/**\" run lint",
+    "lint-2nd-gen": "pnpm --recursive --filter  \"./Node/**\" run lint",
+    "test-1st-gen": "pnpm --recursive --filter  \"./Node-1st-gen/**\" run test ",
+    "test-2nd-gen": "pnpm --recursive --filter  \"./Node/**\" run test ",
+    "compile-1st-gen": "pnpm --recursive --filter  \"./Node-1st-gen/**\" run compile ",
+    "compile-2nd-gen": "pnpm --recursive --filter  \"./Node/**\" run compile "
   },
   "devDependencies": {
     "eslint": "^8.57.1",

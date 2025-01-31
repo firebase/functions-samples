@@ -59,7 +59,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
 
       - run: npm install
-      - run: npm run bootstrap -- --filter "./Node-1st-gen/**"
-      - run: npm run lint -- --filter "./Node-1st-gen/**"
-      - run: npm run compile -- --filter "./Node-1st-gen/**"
-      - run: npm run test -- --filter "./Node-1st-gen/**"
+      - run: npm run bootstrap-1st-gen
+      - run: npm run lint-1st-gen
+      - run: npm run compile-1st-gen
+      - run: npm run test-1st-gen
