@@ -14,54 +14,61 @@
  * limitations under the License.
  */
 
-// [START imports]
+// [START full-sample]
 // Dependencies for callable functions.
 const {onCall, HttpsError} = require("firebase-functions/v2/https");
-const {logger} = require("firebase-functions/v2");
-// [END imports]
 
 /**
- * Mock api for streaming response
+ * Gets the weather from the national weather service
+ * https://www.weather.gov/documentation/services-web-api
+ *
+ * @param {number} lat
+ * @param {number} lng
  */
-async function generateStream() {
-  // simulate some latency for a remote API call
-  await new Promise((resolve) => setTimeout(resolve, 100));
+async function weatherForecastApi(lat, lng) {
+  const resp = await fetch(`https://api.weather.gov/points/${lat},${lng}`);
 
-  /**
-   * Fake a few async responses
-   */
-  async function* mockAsyncIterable() {
-    const sentence = "Hello from Cloud Functions for Firebase!";
-
-    for (const word of sentence.split(" ")) {
-      const randomDelay = Math.floor(Math.random() * 500);
-      await new Promise((resolve) => setTimeout(resolve, randomDelay));
-      yield {text: () => " " + word};
-    }
-
-    return {text: () => sentence};
+  if (!resp.ok) {
+    return `error: ${resp.status}`;
   }
 
-  return mockAsyncIterable;
+  const forecastUrl = (await resp.json()).properties.forecast;
+  const forecastResp = await fetch(forecastUrl);
+
+  if (!forecastResp.ok) {
+    return `error: ${forecastResp.status}`;
+  }
+
+  // add an artificial wait to emphasize stream-iness
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 1500));
+
+  return forecastResp.json();
 }
 
-exports.streamResponse = onCall(async (request, response) => {
-  const prompt = request.data?.text || "hello world";
-
-  try {
-    // Call a streaming API, like an LLM
-    const stream = await generateStream(prompt);
-
-    if (request.acceptsStreaming) {
-      // Wait for each value of the returned Async Iterable
-      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator
-      for await (const chunk of stream()) {
-        response.sendChunk(chunk.text());
-      }
-    }
-
-    return await stream.text();
-  } catch (error) {
-    throw new HttpsError("internal", error.message);
+// [START streaming-callable]
+exports.getForecast = onCall(async (request, response) => {
+  if (request.data?.locations?.length < 1) {
+    throw new HttpsError("invalid-argument", "Missing locations to forecast");
   }
+
+  // fetch forecast data for all requested locations
+  const allRequests = request.data.locations.map(
+      async ({latitude, longitude}) => {
+        const forecast = await weatherForecastApi(latitude, longitude);
+        const result = {latitude, longitude, forecast};
+
+        // clients that support streaming will have each
+        // forecast streamed to them as they complete
+        if (request.acceptsStreaming) {
+          response.sendChunk(result);
+        }
+
+        return result;
+      },
+  );
+
+  // Return the full set of data to all clients
+  return Promise.all(allRequests);
 });
+// [END streaming-callable]
+// [END full-sample]

@@ -1,8 +1,7 @@
-Firebase HTTPS Callable functions Quickstart
+Firebase HTTPS Callable functions streaming quickstart
 ================================================
 
-The HTTPS Callable functions Quickstart demonstrates how to send requests to a server-side function and get a response back using one of the Client SDKs. It interoperates with the Web, iOS and Android quickstarts.
-
+This quickstart demonstrates how to send requests to a server-side function and _stream_ a response to a client SDK.
 
 [Read more about Cloud Functions for Firebase](https://firebase.google.com/docs/functions/)
 
@@ -10,12 +9,11 @@ The HTTPS Callable functions Quickstart demonstrates how to send requests to a s
 Getting Started
 ---------------
 
-1. Install dependencies with `npm install` and deploy with `firebase deploy --only functions`
-1. Set up a client (import the functions client SDK, initializeApp, init the functions sdk)
-2. Call the function
-
+1. Install dependencies with `npm install`
+1. Start the hosting and functions emulators with `firebase emulators:start --only functions,hosting`
+1. Visit the url of the emulated Hosting site, and click "Call function"
 
 License
 -------
 
-© Google, 2022. Licensed under an [Apache-2](../../../LICENSE) license.
+© Google, 2025. Licensed under an [Apache-2](../../../LICENSE) license.

@@ -20,36 +20,50 @@
 
       callableButton.onclick = handleClick;
 
-      // set your firebase config object
-      const firebaseConfig = undefined;
-      if (!firebaseConfig) {
-        throw new Error('You must set your Firebase config');
-      }
+      // https://firebase.google.com/docs/hosting/reserved-urls#sdk_auto-configuration
+      const firebaseConfig = await fetch('/__/firebase/init.json').then(response => {
+        return response.json()
+      });
       const app = initializeApp(firebaseConfig);
       const functions = getFunctions(app);
       connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-      const streamResponse = httpsCallable(functions, "streamResponse");
+      const getForecast = httpsCallable(functions, "getForecast");
 
       async function handleClick() {
         // reset result
-        clearOutput();
+        clearUi();
 
-        const resp = await streamResponse.stream({
-          text: "What is your favorite Firebase service and why?",
+        const resp = await getForecast.stream({
+          locations: [
+            // Google HQ
+            { latitude: 37.4220199895279, longitude: -122.08531347325561 },
+            // Yosemite Valley
+            { latitude: 37.745192257741984, longitude: -119.5945133017153 },
+            // Old Faithful
+            { latitude: 44.46037818049411, longitude: -110.82802255265777 },
+          ],
         });
 
         // add each new chunk to the output
-        for await (const chunk of resp.stream) {
-          appendToOutput(chunk);
+        for await (const forecastData of resp.stream) {
+          updateUi(forecastData);
         }
-      };
+      }
 
-      function clearOutput() {
+      function clearUi() {
         resultElement.innerHTML = "";
       }
 
-      function appendToOutput(str) {
-        resultElement.innerHTML += str;
+      function updateUi(forecastData) {
+        resultElement.innerHTML += '<pre>' + JSON.stringify(
+          {
+            latitude: forecastData.latitude,
+            longitude: forecastData.longitude,
+            forecast: forecastData.forecast.properties.periods[0],
+          },
+          null,
+          2
+        ); + '</pre>'
       }
     </script>
   </body>
