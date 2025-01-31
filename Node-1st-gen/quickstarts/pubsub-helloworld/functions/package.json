@@ -2,11 +2,12 @@
   "name": "pubsub-hello-functions",
   "description": "Logs the data published to PubSub topics",
   "dependencies": {
-    "firebase-admin": "^11.9.0",
-    "firebase-functions": "^4.4.1"
+    "eslint-plugin-promise": "^7.2.1",
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.40.0"
+    "eslint": "^8.57.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
@@ -18,7 +19,7 @@
     "compile": "cp ../../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "private": true
 }

@@ -9,16 +9,18 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "main": "index.js",
   "dependencies": {
     "@google-cloud/vertexai": "^1.1.0",
-    "firebase-admin": "^12.1.0",
-    "firebase-functions": "^4.3.0"
+    "eslint": "8",
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.3.0"
   },
   "devDependencies": {
-    "firebase-functions-test": "^3.1.0"
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.4.0"
   },
   "private": true
 }

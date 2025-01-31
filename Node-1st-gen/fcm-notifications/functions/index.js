@@ -87,10 +87,13 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       // Listing all tokens as an array.
       tokens = Object.keys(tokensSnapshot.val());
       // Send notifications to all tokens.
-      const response = await admin.messaging().sendToDevice(tokens, payload);
+      const {responses} = await admin.messaging().sendEachForMulticast({
+        notification: payload.notification,
+        tokens,
+      });
       // For each message check if there was an error.
       const tokensToRemove = [];
-      response.results.forEach((result, index) => {
+      responses.forEach((result, index) => {
         const error = result.error;
         if (error) {
           functions.logger.error(
