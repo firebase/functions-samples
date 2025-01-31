@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         node-version:
-          # The latest Node version for 1st gen
+          # The latest Node version for 2nd gen
           # https://cloud.google.com/functions/docs/runtime-support#node.js
           - 22.x
     steps:
