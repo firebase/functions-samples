@@ -84,7 +84,9 @@ describe('Cloud Functions', () => {
       const wrapped = test.wrap(myFunctions.makeUppercase);
       // Since we've stubbed snap.ref.parent.child(childParam).set(setParam) to return true if it was
       // called with the parameters we expect, we assert that it indeed returned true.
-      return assert.equal(wrapped(snap), true);
+      return wrapped(snap).then(makeUppercaseResult => {
+        return assert.equal(makeUppercaseResult, true);
+      });
       // [END assertOffline]
     })
   });
