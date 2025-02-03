@@ -11,7 +11,7 @@ Getting Started
 
 1. Install dependencies with `npm install`
 1. Start the hosting and functions emulators with `firebase emulators:start --only functions,hosting`
-1. Visit the url of the emulated Hosting site, and click "Call function"
+1. Visit the url of the emulated Hosting site, and click "Get forecasts"
 
 License
 -------
