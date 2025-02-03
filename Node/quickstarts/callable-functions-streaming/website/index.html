@@ -27,7 +27,7 @@
       const app = initializeApp(firebaseConfig);
       const functions = getFunctions(app);
       connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-      const getForecast = httpsCallable(functions, "getForecast");
+      
 
       const favoriteLocations = [
             // Google HQ
@@ -36,20 +36,35 @@
             { latitude: 37.745192257741984, longitude: -119.5945133017153 },
             // Old Faithful
             { latitude: 44.46037818049411, longitude: -110.82802255265777 },
-          ]
+          ];
 
       async function handleClick() {
         // reset result
         clearUi();
 
-        const resp = await getForecast.stream({
+        // [START stream_data_client]
+        // Get the callable by passing an initialized functions SDK.
+        const getForecast = httpsCallable(functions, "getForecast");
+
+        // Call the function with the `.stream()` method to start streaming.
+        const {stream, data} = await getForecast.stream({
           locations: favoriteLocations,
         });
 
-        // loop through the `stream` async iterable
-        for await (const forecastData of resp.stream) {
-          updateUi(forecastData);
+        // The `stream` async iterable returned by `.stream()`
+        // will yield a new value every time the callable
+        // function calls `sendChunk()`.
+        for await (const forecastDataChunk of stream) {
+          // update the UI every time a new chunk is received
+          // from the callable function
+          updateUi(forecastDataChunk);
         }
+
+        // The `data` promise resolves when the callable
+        // function completes.
+        const allWeatherForecasts = await data;
+        finalizeUi(allWeatherForecasts);
+        // [END stream_data_client]
       }
 
       function clearUi() {
