@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>title</title>
+  </head>
+  <body>
+    <h1>Many forecasts</h1>
+    <p>Click the button to get the forecast for all your favorite locations.</p>
+    <button id="btn-call-func">Get forecasts</button>
+    <div id="forecasts"></div>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+      import {
+        getFunctions,
+        httpsCallable,
+        connectFunctionsEmulator,
+      } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-functions.js";
+
+      const callableButton = document.getElementById("btn-call-func");
+      const resultElement = document.getElementById("forecasts");
+
+      callableButton.onclick = handleClick;
+
+      // https://firebase.google.com/docs/hosting/reserved-urls#sdk_auto-configuration
+      const firebaseConfig = await fetch("/__/firebase/init.json").then(
+        (response) => {
+          return response.json();
+        }
+      );
+      const app = initializeApp(firebaseConfig);
+      const functions = getFunctions(app);
+      connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+
+      const favoriteLocations = [
+        {
+          name: "The Googleplex",
+          latitude: 37.4220199895279,
+          longitude: -122.08531347325561,
+        },
+        {
+          name: "Yosemite Valley",
+          latitude: 37.745192257741984,
+          longitude: -119.5945133017153,
+        },
+        {
+          name: "Old Faithful",
+          latitude: 44.46037818049411,
+          longitude: -110.82802255265777,
+        },
+      ];
+
+      async function handleClick() {
+        // reset result
+        initializeUi();
+
+        // [START stream_data_client]
+        // Get the callable by passing an initialized functions SDK.
+        const getForecast = httpsCallable(functions, "getForecast");
+
+        // Call the function with the `.stream()` method to start streaming.
+        const { stream, data } = await getForecast.stream({
+          locations: favoriteLocations,
+        });
+
+        // The `stream` async iterable returned by `.stream()`
+        // will yield a new value every time the callable
+        // function calls `sendChunk()`.
+        for await (const forecastDataChunk of stream) {
+          // update the UI every time a new chunk is received
+          // from the callable function
+          updateUi(forecastDataChunk);
+        }
+
+        // The `data` promise resolves when the callable
+        // function completes.
+        const allWeatherForecasts = await data;
+        finalizeUi(allWeatherForecasts);
+        // [END stream_data_client]
+      }
+
+      function initializeUi() {
+        resultElement.innerHTML = "";
+        callableButton.disabled = true;
+        callableButton.innerText = "Streaming forecasts...";
+      }
+
+      function finalizeUi() {
+        callableButton.disabled = false;
+        callableButton.innerText = "Get forecasts";
+      }
+
+      function updateUi(forecastData) {
+        const newWeatherCard = document.createElement("div");
+
+        const locationName = document.createElement("h2");
+        locationName.innerHTML = favoriteLocations.find(
+          (v) => v.latitude === forecastData.latitude
+        ).name;
+
+        const forecast = document.createElement("p");
+        console.log(forecastData);
+        forecast.innerHTML =
+          forecastData.forecast.properties.periods[0].detailedForecast;
+
+        newWeatherCard.append(locationName, forecast);
+        resultElement.appendChild(newWeatherCard);
+      }
+    </script>
+  </body>
+</html>
