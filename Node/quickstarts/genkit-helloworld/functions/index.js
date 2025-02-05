@@ -24,14 +24,14 @@ const {defineSecret} = require("firebase-functions/params");
 // [END import-params]
 
 // [START import-genkit]
-// Dependencies for Genkit
+// Dependencies for Genkit.
 const {gemini15Flash, googleAI} = require("@genkit-ai/googleai");
 const {genkit, z} = require("genkit");
 // [END import-genkit]
 // [END imports]
 
 // [START define-secret]
-// Store the Gemini API key in Cloud Secret Manager
+// Store the Gemini API key in Cloud Secret Manager.
 const apiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 // [END define-secret]
 
@@ -48,16 +48,19 @@ const jokeTeller = ai.defineFlow({
   streamSchema: z.string(),
 }, async (jokeType = "knock-knock", response) => {
   const prompt = `Tell me a ${jokeType} joke.`;
+
+  // Call the `generateStream()` method to
+  // receive the `stream` async iterable.
   const {stream, response: aiResponse} = ai.generateStream(prompt);
 
-  // Loop over the `stream` async iterable to
-  // send new words of the AI response
-  // to the client as they're generated
+  // Send new words of the generative AI response
+  // to the client as they're generated.
   for await (const chunk of stream) {
     response.sendChunk(chunk.text);
   }
 
-  // Return the full response
+  // Return the full generative AI response
+  // to clients that may not support streaming.
   return (await aiResponse).text;
 },
 );
@@ -66,15 +69,15 @@ const jokeTeller = ai.defineFlow({
 // [START trigger]
 exports.tellJoke = onCallGenkit({
   // [START bind-secrets]
-  // bind the Gemini API key secret parameter to the function
+  // Bind the Gemini API key secret parameter to the function.
   secrets: [apiKey],
   // [END bind-secrets]
   // [START auth-policy]
-  // protect your endpoint with authPolicy
-  authPolicy: (auth) => !!auth?.token.email_verified,
+  // Protect your endpoint with authPolicy.
+  // authPolicy: (auth) => !!auth?.token.email_verified,
   // [END auth-policy]
 },
-// pass in the genkit flow
+// Pass in the genkit flow.
 jokeTeller,
 );
 // [END trigger]
