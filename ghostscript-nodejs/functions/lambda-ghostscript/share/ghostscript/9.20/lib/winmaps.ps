@@ -1,0 +1,105 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% winmaps.ps - make maps between PostScript encodings and Windows
+% character sets.
+
+% Define the two Windows encodings.
+
+/ANSIEncoding
+  ISOLatin1Encoding 256 array copy
+  dup 16#90 /.notdef put
+  16#93 1 16#9f { 2 copy /.notdef put pop } for
+def
+
+/OEMEncoding [
+  /.notdef /.notdef /.notdef /heart /diamond /club /spade /bullet
+    8 { /.notdef } repeat
+  /.notdef /.notdef /.notdef /.notdef /paragraph /section /.notdef /.notdef
+    /arrowup /arrowdown /arrowright /arrowleft /.notdef /arrowboth /.notdef /.notdef
+  StandardEncoding 32 96 getinterval aload pop
+  /Ccedilla /udieresis /eacute /acircumflex /adieresis /agrave /aring /ccedilla
+    /ecircumflex /edieresis /egrave /idieresis /igrave /Adieresis /Aring
+  /Eacute /ae /AE /ocircumflex /odieresis /ograve /ucircumflex /ugrave
+    /ydieresis /Odieresis /Udieresis /cent /sterling /yen /.notdef /florin
+  /aacute /iacute /oacute /uacute /ntilde /Ntilde /ordfeminine /ordmasculine
+    /questiondown /.notdef /logicalnot /onehalf /onequarter /exclamdown /guillemotleft /guillemotright
+  48 { /.notdef } repeat
+  /alpha /beta /Gamma /Pi /Sigma /sigma /mu /tau
+    /Phi /Theta /Omega /delta /infinity /phi /element /intersection
+  /equivalence /plusminus /greaterequal /lessequal /integraltp /integralbt /divide /.notdef
+    /degree /dotmath /periodcentered /radical /.notdef /twosuperior /.notdef /.notdef
+] def
+
+% Utility procedures
+
+/invertencoding		% <array> invertencoding <dict>
+ { 256 dict exch dup length 1 sub -1 0
+    {	% stack: dict array index
+      2 copy get /.notdef ne
+       { 2 copy get exch 3 index 3 1 roll put }
+       { pop }
+      ifelse
+    } for
+   pop
+ } def
+
+/pmarray 256 array def
+/printmap		% <chars> <decode> printmap -
+ { mark 3 1 roll exch
+    { 2 copy known { 1 index exch get } { pop 0 } ifelse exch
+    }
+   forall pop
+   pmarray 0 counttomark 2 sub getinterval astore
+   ([) print dup length =only 0 exch (] = {\n  ) exch
+    { exch print =only
+      1 add 15 and dup 0 eq { (,\n  ) } { (, ) } ifelse
+    }
+   forall pop pop (\n};\n) print pop
+ } def
+
+/decodeStd StandardEncoding invertencoding def
+/decodeISO ISOLatin1Encoding
+        % Remove the redundant characters
+  dup length array copy
+  [8#222 8#225 8#230 8#233 8#240] { 2 copy /.notdef put pop } forall
+invertencoding def
+/decodeSym SymbolEncoding invertencoding def
+
+/decodeANSI ANSIEncoding invertencoding def
+/decodeOEM OEMEncoding invertencoding def
+
+% Construct the map from Symbol to OEM.
+
+(\nprivate const byte far_data gs_map_symbol_to_oem) print
+SymbolEncoding decodeOEM printmap
+
+% Construct the map from ISOLatin1 to OEM.
+
+(\nprivate const byte far_data gs_map_iso_to_oem) print
+ISOLatin1Encoding decodeOEM printmap
+
+% Construct the map from Standard to ISOLatin1.
+
+(\nprivate const byte far_data gs_map_std_to_iso) print
+StandardEncoding decodeISO printmap
+
+% Construct the map from ISOLatin1 to Standard.
+% The Windows driver doesn't need this, but the X11 driver does.
+
+(\nprivate const byte far_data gs_map_iso_to_std) print
+ISOLatin1Encoding decodeStd printmap
+
+quit

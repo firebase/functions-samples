@@ -1,0 +1,99 @@
+%!
+% Check that operators do their access tests correctly.
+
+% proc dotest => .
+/dotest
+  {
+    dup
+    mark
+    exch
+    stopped not % False if error, true if no error.
+    { (Allowed access: ) print cleartomark == }
+    if
+    clear
+  }
+def
+
+0 0 moveto % So the show commands don't bomb because of nocurrentpoint.
+
+{ [1 2] executeonly aload }					dotest
+{ (string) executeonly (seek) anchorsearch }			dotest
+{ (string) (seek) executeonly anchorsearch }			dotest
+{ 100 101 (string) noaccess ashow}				dotest
+{ 100 1 array readonly astore }					dotest
+{ 100 101 102 103 104 (string) noaccess awidthshow }		dotest
+{ 1 dict noacess begin }					dotest
+{ 1 array executeonly 1 array copy }				dotest
+{ 1 array 1 array readonly copy }				dotest
+{ 1 dict noaccess 1 dict copy }					dotest
+{ 1 dict 1 dict readonly copy }					dotest
+{ 1 string executeonly 1 string copy }				dotest
+{ 1 string 1 string readonly copy }				dotest
+{ (100) executeonly cvi }					dotest
+{ (string) executeonly cvn }					dotest
+{ (100.001) executeonly cvr }					dotest
+{ 1 10 1 string readonly cvrs }					dotest
+{ true 5 string readonly cvs }					dotest
+{ 1 dict readonly begin /foo true def }				dotest
+{ 10 array readonly dictstack }					dotest
+{ 1 string executeonly 1 string eq }				dotest
+{ 1 string 1 string executeonly eq }				dotest
+{ 10 array readonly execstack }					dotest
+{ 1 string noaccess executeonly }				dotest
+{ 1 array noaccess executeonly }				dotest
+{ 1 array executeonly { pop } forall }				dotest
+{ 1 dict noaccess { pop pop } forall }				dotest
+{ 1 string executeonly { pop } forall }				dotest
+{ (string1) executeonly (string2) ge }				dotest
+{ (string1) (string2) executeonly ge }				dotest
+{ 1 array executeonly 0 get }					dotest
+{ 1 dict noaccess /key get }					dotest
+{ 1 string executeonly 0 get }					dotest
+{ 1 array executeonly 0 1 getinterval }				dotest
+{ 1 string executeonly 0 1 getinterval }			dotest
+{ (string1) executeonly (string2) gt }				dotest
+{ (string1) (string2) executeonly gt }				dotest
+{ 1 dict noaccess /key known }					dotest
+{ {} (string) executeonly kshow }				dotest
+{ (string1) executeonly (string2) le }				dotest
+{ (string1) (string2) executeonly le }				dotest
+{ 1 array executeonly length }					dotest
+{ 1 dict noaccess length }					dotest
+{ 1 string executeonly length }					dotest
+%%{ /foo 1 dict def foo begin /bar foo def bar noaccess pop /key load } dotest
+{ (string1) executeonly (string2) lt }				dotest
+{ (string1) (string2) executeonly lt }				dotest
+{ 1 dict noaccess maxlength }					dotest
+{ 1 string executeonly 1 string ne }				dotest
+{ 1 string 1 string executeonly ne }				dotest
+%{ newpath 0 0 moveto (a) false charpath
+%  {} {} {} {} pathforall closepath }				dotest
+{ 1 array executeonly 0 put }					dotest
+{ 1 dict noaccess /key put }					dotest
+{ 1 string executeonly 0 put }					dotest
+{ 1 array executeonly 0 1 putinterval }				dotest
+{ 1 string executeonly 0 1 putinterval }			dotest
+{ (access.ps) (r) file executeonly read }			dotest
+{ (access.ps) (r) file executeonly 10 string readhexstring }	dotest
+{ (access.ps) (r) file 10 string readonly readhexstring }	dotest
+{ (access.ps) (r) file executeonly 100 string readline }	dotest
+{ (access.ps) (r) file 100 string readonly readline }		dotest
+{ (access.ps) (r) file executeonly 10 string readstring }	dotest
+{ (access.ps) (r) file 10 string readonly readstring }		dotest
+% run does not check for no read access?
+{ (string) executeonly (seek) search }				dotest
+{ (string) (seek) executeonly search }				dotest
+{ (string) executeonly show }
+%% some test for store.
+{ (string) executeonly stringwidth }				dotest
+{ (access.ps) (r) file executeonly token }			dotest
+{ (10) executeonly token }					dotest
+{ /foo 1 dict def foo begin /bar foo def bar noaccess pop /key where } dotest
+{ 100 101 102 (string) noaccess widthshow }			dotest
+{ (/tmp/_.ps) noaccess (w) file closefile }			dotest
+{ (/tmp/_.ps) (w) noaccess file closefile }			dotest
+{ (/tmp/_.ps) (w) file executeonly 100 write }			dotest
+{ (/tmp/_.ps) (w) file executeonly 10 string writehexstring }	dotest
+{ (/tmp/_.ps) (w) file 10 string executeonly writehexstring }	dotest
+{ (/tmp/_.ps) (w) file executeonly 10 string writestring }	dotest
+{ (/tmp/_.ps) (w) file 10 string executeonly writestring }	dotest

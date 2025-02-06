@@ -1,0 +1,34 @@
+-supModel="Epson Stylus Color 680, 720x720DpI, Plain Paper"
+-sDEVICE=uniprint
+-dNOPAUSE
+-dSAFER
+-dupColorModel=/DeviceCMYKgenerate
+-dupRendering=/FSCMYK32
+-dupOutputFormat=/EscP2
+-r720x720
+-dupMargins="{ 9.0 31.0 9.0 9.0}"
+-dupBlackTransfer="{   0.0000 0.0173 0.0391 0.0719 0.1406 0.2500 }"
+-dupCyanTransfer="{    0.0000 0.0169 0.0413 0.0713 0.1500 0.2750 }"
+-dupMagentaTransfer="{ 0.0000 0.0155 0.0379 0.0654 0.1375 0.2750 }"
+-dupYellowTransfer="{  0.0000 0.0141 0.0344 0.0594 0.1500 0.2750 }"
+-dupOutputComponentOrder="{ 1 2 3 0 }"
+-dupWeaveYPasses=6
+-dupOutputPins=48
+-dupWeaveYFeeds="{47 47 47 53 47 47}"
+-dupWeaveInitialYFeeds="{1  1  1  1  1  43}"
+-dupWeaveInitialPins="{ 8 48 40 31 23 15}"
+-dupBeginJobCommand="(\000\000\000\000\000\000\033\001@EJL\0401284.4\012@EJL\040\040\040\040\040\012)"
+-dupBeginPageCommand="<
+   1b40   1b40
+   1b2847 0100 01
+   1b2855 0100 05
+   1b5501
+   1b2865 0200 0000
+   1b2843 0200 0000
+   1b2863 0400 0000 0000
+>"
+-dupAdjustPageLengthCommand
+-dupAdjustTopMarginCommand
+-dupAdjustBottomMarginCommand
+-dupEndPageCommand="(\033@\014)"
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"
