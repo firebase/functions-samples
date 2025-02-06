@@ -74,7 +74,7 @@ exports.tellJoke = onCallGenkit({
   // [END bind-secrets]
   // [START auth-policy]
   // Protect your endpoint with authPolicy.
-  // authPolicy: (auth) => !!auth?.token.email_verified,
+  authPolicy: (auth) => !!auth?.token.email_verified,
   // [END auth-policy]
 },
 // Pass in the genkit flow.
