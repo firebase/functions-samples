@@ -54,7 +54,7 @@ const jokeTeller = ai.defineFlow({
   const {stream, response: aiResponse} = ai.generateStream(prompt);
 
   // Send new words of the generative AI response
-  // to the client as they're generated.
+  // to the client as they are generated.
   for await (const chunk of stream) {
     response.sendChunk(chunk.text);
   }
