@@ -46,7 +46,7 @@ const jokeTeller = ai.defineFlow({
   inputSchema: z.string().nullable(),
   outputSchema: z.string(),
   streamSchema: z.string(),
-}, async (jokeType = "knock-knock", { sendChunk }) => {
+}, async (jokeType = "knock-knock", {sendChunk}) => {
   const prompt = `Tell me a ${jokeType} joke.`;
 
   // Call the `generateStream()` method to
