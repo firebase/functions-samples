@@ -46,7 +46,7 @@ const jokeTeller = ai.defineFlow({
   inputSchema: z.string().nullable(),
   outputSchema: z.string(),
   streamSchema: z.string(),
-}, async (jokeType = "knock-knock", response) => {
+}, async (jokeType = "knock-knock", {sendChunk}) => {
   const prompt = `Tell me a ${jokeType} joke.`;
 
   // Call the `generateStream()` method to
@@ -56,7 +56,7 @@ const jokeTeller = ai.defineFlow({
   // Send new words of the generative AI response
   // to the client as they're generated.
   for await (const chunk of stream) {
-    response.sendChunk(chunk.text);
+    sendChunk(chunk.text);
   }
 
   // Return the full generative AI response
