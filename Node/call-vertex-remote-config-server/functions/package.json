@@ -16,8 +16,8 @@
     "@google-cloud/vertexai": "^1.2.0",
     "cors": "^2.8.5",
     "eslint": "8",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0"
+    "firebase-admin": "^13.1.0",
+    "firebase-functions": "^6.3.1"
   },
   "devDependencies": {
     "eslint-config-google": "^0.14.0",
