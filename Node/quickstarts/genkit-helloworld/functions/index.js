@@ -72,10 +72,6 @@ exports.tellJoke = onCallGenkit({
   // Bind the Gemini API key secret parameter to the function.
   secrets: [apiKey],
   // [END bind-secrets]
-  // [START auth-policy]
-  // Protect your endpoint with authPolicy.
-  authPolicy: (auth) => !!auth?.token.email_verified,
-  // [END auth-policy]
 },
 // Pass in the genkit flow.
 jokeTeller,
