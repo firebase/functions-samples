@@ -1,0 +1,92 @@
+%!
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Prefix this to very well-behaved PostScript files for n-up printing.
+
+/cdef { 1 index where { pop pop } { def } ifelse } def
+
+%%%%%%%%%%%%%%%% Begin parameters %%%%%%%%%%%%%%%%
+
+% All parameters are also settable from the command line with -d, e.g.,
+% -d.Nx=3
+
+/.Nx 2 cdef			% # of pages across the physical page
+/.Ny 2 cdef			% # of pages down the physical page
+/.Landscape false cdef		% if true, rotate page by 90 degrees
+
+%%%%%%%%%%%%%%%% End parameters %%%%%%%%%%%%%%%%
+
+vmstatus pop pop 0 eq { save pop } if
+.Landscape {
+  currentpagedevice /PageSize get aload pop
+  exch 2 array astore
+  1 dict dup /PageSize 4 -1 roll put
+  setpagedevice
+} if
+/.BP currentpagedevice /BeginPage get def
+/.EP currentpagedevice /EndPage get def
+/.Ps 1 string def	% survive save/restore
+/.Pn { .Ps 0 get } def
+true setglobal		% protect from restore
+/.ELevel [0] def
+/.Rmat matrix def
+false setglobal
+/.max { 2 copy lt { exch } if pop } cdef
+% Work around the common save ... showpage ... restore locution.
+/restore {
+  .Rmat currentmatrix pop restore
+  vmstatus pop pop .ELevel 0 get lt { .Rmat setmatrix } if
+} bind def
+<<
+  /BeginPage {
+    .Nx .Ny .max
+    gsave
+      initclip clippath pathbbox exch 4 -1 roll sub 3 1 roll exch sub
+    grestore
+    2 copy exch .Nx div exch .Ny div
+    .Pn dup .Nx mod exch .Nx idiv .Ny 1 sub exch sub
+                % Stack: nmax pw ph pw/nx ph/ny ix iy
+    exch 3 index mul exch 2 index mul
+    translate
+                % Stack: nmax pw ph pw/nx ph/ny
+    4 -1 roll 4 index div 4 -1 roll 4 index div
+                % Stack: nmax pw/nx ph/ny pw/nmax ph/nmax
+    exch 4 -1 roll exch sub 2 div
+    3 1 roll sub 2 div
+    translate
+                % Stack: nmax
+    1 exch div dup scale
+    .BP
+  }
+  /EndPage {
+    dup 2 lt {
+      .ELevel 0 vmstatus pop pop put
+      .Ps 0 .Pn 1 add .Nx .Ny mul mod put
+      .Pn 0 eq {
+        .EP
+      } {
+        pop pop false
+      } ifelse
+    } {
+      pop pop false
+    } ifelse
+  }
+>> setpagedevice
+/.EOJ {
+  { .Pn 0 eq { exit } if showpage } loop
+} def
+
+{ currentfile cvx exec .EOJ } exec

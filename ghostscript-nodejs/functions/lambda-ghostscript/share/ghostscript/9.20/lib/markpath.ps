@@ -1,0 +1,58 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% markpath.ps
+% Mark the corners of a path, drawing it slowly if desired.
+
+/Delay where { pop } { /Delay 0 def } ifelse
+/setxy0
+ { currentpoint /y0 exch def /x0 exch def
+ } def
+/bip
+ { epsx epsy idtransform /ey exch def /ex exch def
+   currentpoint ex 2 div ey 2 div rlineto currentpoint 0 ey neg rlineto
+   ex neg 0 rlineto 0 ey rlineto lineto lineto
+   stroke
+ } def
+/dally
+ { Delay { } repeat
+   Delay 0 ne { flushpage } if
+ } def
+/movebip
+ { /xs 2 index def /ys 1 index def
+   gsave newpath mpmx transform moveto setxy0 bip grestore
+ } def
+/linebip
+ { gsave newpath x0 y0 moveto mpmx transform lineto setxy0 bip dally grestore
+ } def
+/curvebip
+ { gsave newpath x0 y0 moveto 5 index 5 index mpmx transform lineto bip
+   2 copy mpmx transform moveto 3 index 3 index mpmx transform lineto bip
+   x0 y0 moveto
+   3 { mpmx transform 6 2 roll } repeat
+   curveto setxy0 bip dally grestore
+ } def
+/closebip
+ { xs ys linebip
+ } def
+
+/markpath		% <matrix> markpath -
+ { /mpmx exch def
+   gsave initgraphics 9 dup dtransform grestore
+     /epsy exch def   /epsx exch def
+   gsave 0 setlinewidth
+    { movebip } { linebip } { curvebip } { closebip } pathforall
+   grestore
+ } def

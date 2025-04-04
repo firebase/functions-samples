@@ -1,0 +1,8 @@
+-supModel="SUN rasterfile, 4 Bit, 6+1 Colors (CMYK-Ghostscript)"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceCMYK
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/SunRaster
+-dupComponentBits="{1 1 1 1}"

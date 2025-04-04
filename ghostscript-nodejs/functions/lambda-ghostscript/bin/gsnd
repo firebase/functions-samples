@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# This definition is changed on install to match the
+# executable name set in the makefile
+GS_EXECUTABLE=gs
+gs="`dirname \"$0\"`/$GS_EXECUTABLE"
+if test ! -x "$gs"; then
+	gs="$GS_EXECUTABLE"
+fi
+GS_EXECUTABLE="$gs"
+
+exec "$GS_EXECUTABLE" -P- -dSAFER -dNODISPLAY "$@"

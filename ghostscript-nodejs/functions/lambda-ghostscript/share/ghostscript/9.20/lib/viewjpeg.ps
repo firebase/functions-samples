@@ -1,0 +1,173 @@
+%! viewjpeg.ps   Copyright (C) 1994 Thomas Merz <tm@pdflib.com>
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% For more information about licensing, please refer to
+% http://www.ghostscript.com/licensing/. For information on
+% commercial licensing, go to http://www.artifex.com/licensing/ or
+% contact Artifex Software, Inc., 101 Lucas Valley Road #110,
+% San Rafael, CA  94903, U.S.A., +1(415)492-9861.
+
+% View JPEG files with Ghostscript
+%
+% This PostScript code relies on level 2 features.
+%
+% Only JPEG baseline, extended sequential, and progressive files
+% are supported.  Note that Adobe PostScript level 2 does not include
+% progressive-JPEG support.  Ghostscript with IJG JPEG v6 or later
+% will decode progressive JPEG, but only if you edit gsjmorec.h to
+% enable that feature.
+%
+% Author's address:
+% ------------------------------+
+% {(pstack exec quit) = flush } |    Thomas Merz, Munich
+% pstack exec quit              |    voice +49/89/29160728
+% ------------------------------+    tm@muc.de  http://www.muc.de/~tm/
+%
+% Updated by L. Peter Deutsch 20-May-1997:
+%   move the usage example to the beginning
+% Updates by Tom Lane 6-Sep-1995
+
+% Usage example:
+%	(jpeg-6/testimg.jpg) viewJPEG
+
+/languagelevel where {pop languagelevel 2 lt}{true} ifelse {
+  (JPEG needs PostScript Level 2!\n) print flush stop
+} if
+
+/JPEGdict 20 dict def
+JPEGdict begin
+
+/NoParamMarkers [	% JPEG markers without additional parameters
+    16#D0 16#D1 16#D2 16#D3 16#D4 16#D5 16#D6 16#D7 16#D8 16#01
+] def
+
+/NotSupportedMarkers [ 	% JPEG markers not supported by PostScript level 2
+    16#C3 16#C5 16#C6 16#C7 16#C8 16#C9 16#CA 16#CB 16#CD 16#CE 16#CF
+] def
+
+% Names of color spaces
+/ColorSpaceNames << /1 /DeviceGray /3 /DeviceRGB /4 /DeviceCMYK >> def
+
+% read one byte from file F
+% - ==> int --or-- stop context
+/NextByte {
+    F read not { (Read error in ViewJPEG!\n) print flush stop } if
+} bind def
+
+/SkipSegment {	% read two bytes and skip that much data
+    NextByte 8 bitshift NextByte add 2 sub { NextByte pop } repeat
+} bind def
+
+% read width, height, and # of components from JPEG markers
+% and store in dict
+/readJPEGmarkers {	% - ==> dict --or-- stop context
+    5 dict begin
+
+    { % loop: read JPEG marker segments until we find SOFn marker or EOF
+        NextByte
+        16#FF eq {				% found marker
+            /markertype NextByte def
+            % Is it S0F0=baseline, SOF1=extended sequential, SOF2=progressive ?
+            markertype dup 16#C0 ge exch 16#C2 le and {
+                NextByte pop NextByte pop	% segment length
+                % Ghostscript and Adobe PS accept only data precision 8
+                NextByte 8 ne {
+                    (Error: not 8 bits per component!\n) print flush stop
+                } if
+
+                % Read crucial image parameters
+                /height NextByte 8 bitshift NextByte add def
+                /width NextByte 8 bitshift NextByte add def
+                /colors NextByte def
+
+                VJPGDEBUG { currentdict { exch == == } forall flush } if
+                exit
+            } if
+
+            % detect several segment types which are not compatible with PS
+            NotSupportedMarkers {
+                markertype eq {
+                    (Marker ) print markertype ==
+                    (not supported!\n) print flush stop
+                } if
+            } forall
+
+            % Skip segment if marker has parameters associated with it
+            true NoParamMarkers { markertype eq {pop false exit} if } forall
+            { SkipSegment } if
+        } if
+    } loop
+
+    currentdict dup /markertype undef
+    end
+} bind def
+
+end	% JPEGdict
+
+% read image parameters from JPEG file and display the image
+/viewJPEG {		% <file|string> ==> -
+    save
+    JPEGdict begin
+    /saved exch def
+    /scratch 1 string def
+    dup type /stringtype eq { (r) file } if
+    /F exch def
+
+    readJPEGmarkers begin
+    F 0 setfileposition		% reset file pointer
+
+    % We use the whole clipping area for the image (at least in one dimension)
+    gsave clippath pathbbox grestore
+    /ury exch def /urx exch def
+    /lly exch def /llx exch def
+
+    llx lly translate
+    width height scale
+
+    % use whole width or height, whichever is appropriate
+    urx llx sub width div ury lly sub height div
+    2 copy gt { exch } if pop		% min
+    dup scale
+    ColorSpaceNames colors scratch cvs get setcolorspace
+
+    % prepare image dictionary
+    << /ImageType 1
+       /Width width
+       /Height height
+       /ImageMatrix [ width 0 0 height neg 0 height ]
+       /BitsPerComponent 8
+       % If 4-component (CMYK), assume data is inverted per Adobe Photoshop
+       colors 4 eq {
+         /Decode [ colors { 1 0 } repeat ]
+       } {
+         /Decode [ colors { 0 1 } repeat ]
+       } ifelse
+       /DataSource F /DCTDecode filter
+    >> image
+
+    end		% image parameter dictionary
+
+    saved end restore
+} bind def
+
+% This lets you do stuff on the command line like:
+% gs -sDEVICE=pdfwrite -o stuff%03d.pdf viewjpeg.ps -c "(image.jpg) << /PageSize 2 index viewJPEGgetsize 2 array astore  >> setpagedevice viewJPEG"
+% so the output size matches the original image.
+/viewJPEGgetsize {		% <file|string> ==> width height
+    save
+    JPEGdict begin
+    /saved exch def
+    /scratch 1 string def
+    dup type /stringtype eq { (r) file } if
+    /F exch def
+    readJPEGmarkers begin
+    F 0 setfileposition		% reset file pointer
+    width height
+    saved end restore
+} bind def

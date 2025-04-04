@@ -1,0 +1,62 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Define the ISO Latin-2 (8859-2) encoding vector.
+
+% The original version of this encoding vector used Unicode names, rather
+% than Adobe names, for many characters.  Here are the names that appeared
+% in the original version:
+%	\047	/quoteright	/apostrophe
+%	\056	/period		/fullstop
+%	\137	/underscore	/lowline
+%	\140	/quoteleft	/grave
+% \055 is /hyphen in StandardEncoding, but /minus in 8859-1; we follow
+% 8859-1 here.  In addition, the following substitutions were made:
+%	/Lstroke => /Lslash
+%	/Dstroke => /Dcroat
+%	/*diaeresis => /*dieresis
+%	/softhyphen => /hyphen
+%	/*abovedot => /*dotaccent
+%	/*doubleacute => /*hungarumlaut
+%	/division => /divide
+%	/ssharp => /germandbls
+
+/currentglobal where
+ { pop currentglobal { setglobal } true setglobal }
+ { { } }
+ifelse
+/ISOLatin2Encoding
+% The first 144 entries are the same as the ISO Latin-1 encoding.
+ISOLatin1Encoding 0 144 getinterval aload pop
+% \22x
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+    /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+% \24x
+    /nbspace /Aogonek /breve /Lslash /currency /Lcaron /Sacute /section
+    /dieresis /Scaron /Scedilla /Tcaron /Zacute /hyphen /Zcaron /Zdotaccent
+    /degree /aogonek /ogonek /lslash /acute /lcaron /sacute /caron
+    /cedilla /scaron /scedilla /tcaron /zacute /hungarumlaut /zcaron /zdotaccent
+% \30x
+    /Racute /Aacute /Acircumflex /Abreve /Adieresis /Lacute /Cacute /Ccedilla
+    /Ccaron /Eacute /Eogonek /Edieresis /Ecaron /Iacute /Icircumflex /Dcaron
+    /Dcroat /Nacute /Ncaron /Oacute /Ocircumflex /Ohungarumlaut /Odieresis /multiply
+    /Rcaron /Uring /Uacute /Uhungarumlaut /Udieresis /Yacute /Tcedilla /germandbls
+% \34x
+    /racute /aacute /acircumflex /abreve /adieresis /lacute /cacute /ccedilla
+    /ccaron /eacute /eogonek /edieresis /ecaron /iacute /icircumflex /dcaron
+    /dcroat /nacute /ncaron /oacute /ocircumflex /ohungarumlaut /odieresis /divide
+    /rcaron /uring /uacute /uhungarumlaut /udieresis /yacute /tcedilla /dotaccent
+256 packedarray .defineencoding
+exec

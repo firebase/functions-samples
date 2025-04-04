@@ -1,0 +1,159 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Construct an inverse map from CIDs to codes.
+
+% Create an inverse map from CIDs to code values.
+% We only use this for 16-bit Unicode, so it has some limitations.
+% After invoking .cmap2code, loading a CMap file prints out the map
+% instead of doing what it usually does.  For example:
+%
+%	gs -dNODISPLAY -dBATCH lib/cid2code.ps -c .cmap2code\
+%	  -f Resource/CMap/UniJIS-UCS2-H > mapfile
+
+/.cmap2codedict 10 dict begin
+
+/begincmap {
+  mark
+} def
+/endcmap {
+                % Stack: mark code_lo1 code_hi1 cid1 ...
+  20 dict begin
+    /depth counttomark 3 sub def
+                % Do a first pass to determine the maximum CID.
+    0 0 3 depth {
+      1 add /d exch def
+      d index d 2 add index 1 get add d 3 add index 1 get sub .max
+    } for
+    1 add /ncid exch def
+    /map ncid 2 mul string def
+                % Now fill in the map.
+    0 3 depth {
+      /d exch def
+      d index 2 mul /cid2 exch def
+      d 1 add index /hi exch def
+      d 2 add index 2 string copy /lo exch def
+      lo 1 get 1 hi 1 get {
+        map cid2 lo 0 get put
+        map cid2 1 add 3 -1 roll put
+        /cid2 cid2 2 add def
+      } for
+    } for
+                % Print the map.
+    (%stdout) (w) file
+      dup (<) print
+      dup /ASCIIHexEncode filter
+        dup map writestring
+      closefile
+      () = flush
+    closefile
+  end
+} def
+%/begincodespacerange
+/endcodespacerange {cleartomark} def
+%/usecmap
+
+%/beginbfchar
+/endbfchar {cleartomark} def
+%/beginbfrange
+/endbfrange {cleartomark} def
+
+%/begincidchar
+/endcidchar {
+  counttomark 2 idiv { dup counttomark 1 add 3 roll } repeat pop
+} def
+%/begincidrange
+/endcidrange {
+  counttomark 1 add -1 roll pop
+} def
+
+%/beginnotdefchar
+/endnotdefchar {cleartomark} def
+%/beginnotdefrange
+/endnotdefrange {cleartomark} def
+
+currentdict end readonly def
+
+/.cmap2code {		% - .cmap2code -
+  /CIDInit /ProcSet findresource dup length dict copy
+  .cmap2codedict { 3 copy put pop pop } forall
+  /CIDInit exch /ProcSet defineresource pop
+} def
+
+% Extract and print reverse mapping information from a cid2code.txt file.
+/.printhex2 {		% <int16> .printhex2 -
+  (<) print
+  16#10000 add 16 =string cvrs 1 4 getinterval print
+  (>) print
+} def
+/.cid2code {		% <cmaptemplate> <file> <column> .cid2code -
+  30 dict begin
+  /column exch def
+  (r) file /f exch def
+  (%!) =
+  (/CIDInit /ProcSet findresource begin   12 dict begin   begincmap) =
+                % Print the information from the template.
+  {
+    exch ==only ( ) print
+    dup type /dicttype eq {
+      dup length =only ( dict dup begin) = {
+        (  ) print exch ===only ( ) print ===only ( def) =
+      } forall (end def) =
+    } {
+      ===only
+    } ifelse ( def) =
+  } forall
+                % Read the data from the cid2code.txt file.
+  {
+    f =string readline pop (CID\t) anchorsearch { pop pop exit } if pop
+  } loop
+  /map [ {
+    f =string readline not { pop exit } if
+    column { (\t) search pop pop pop } repeat
+    (\t) search { exch pop exch pop } if
+    (,) search { exch pop exch pop } if
+    dup length 4 ne { pop (*) } if
+    dup (*) eq { pop (0000) } if
+    (16#) exch concatstrings cvi
+  } loop ] def
+                % Print the code space range(s).
+  /maxcid map length 1 sub def
+  mark maxcid
+  dup 255 and 255 eq {
+    0 exch
+  } {
+    dup 16#ff00 and exch 0 2 index 1 sub
+  } ifelse
+  counttomark 2 idiv dup =only ( begincodespacerange) = {
+    exch .printhex2 .printhex2 () =
+  } repeat (endcodespacerange) =
+                % Print the map data.
+  0 1 100 maxcid {
+    /lo exch def
+    /hi lo 99 add maxcid .min def
+    0 lo 1 hi { map exch get 0 ne { 1 add } if } for
+    dup 0 eq {
+      pop
+    } {
+      =only ( begincidchar) = lo 1 hi {
+        map 1 index get dup 0 eq { pop pop } { exch .printhex2 = } ifelse
+      } for (endcidchar) =
+    } ifelse
+  } for
+                % Wrap up.
+  (endcmap   CMapName currentdict /CMap defineresource pop   end   end) =
+  f closefile
+  end
+} bind def

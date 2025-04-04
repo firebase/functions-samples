@@ -1,0 +1,503 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Third Party Libraries Used by Ghostscript and GhostPDL</title>
+<!-- Originally: NEWS -->
+<!--
+	WARNING: do not use Pete Kaiser's emacs function "gs-toc" alone to
+	re-create the table of contents here, because it will replace the
+	hand-edited TOC subheads with a separate subhead for each H2 in
+	the body of the file.  Or if you do, first look at the original
+	TOC to see how to edit it for visual conciseness.
+-->
+<link rel="stylesheet" type="text/css" href="gs.css">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Third Party Libraries Used by
+<br>
+Ghostscript and GhostPDL</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>
+The table below details the third party libraries that Ghostscript and/or
+GhostPDL include, the versions QA tested and shipped with our releases,
+the relevant license, and the "upstream" URL.
+<p>
+
+<table border="1" align="center" valign="middle" height=60%>
+<tr>
+<td align="center" valign="middle" height="60">
+<u><b>Library Name</b></u>
+</td>
+<td align="center" valign="middle" height="60">
+<u><b>Version</b></u>
+</td>
+<td align="center" valign="middle" height="60">
+<u><b>Function</b></u>
+</td>
+<td align="center" valign="middle" height="60">
+<u><b>License</b></u>
+</td>
+<td align="center" valign="middle" height="60">
+<u><b>URL</b></u>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+CUPS
+<br>
+<font size="1">(AGPL Release Only)</font>
+</td>
+<td align="center" valign="middle" height="60">
+2.8.0
+</td>
+<td align="center" valign="middle" height="60">
+CUPS raster format output
+</td>
+<td align="center" valign="middle" height="60">
+GPL Version 3
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.cups.org">http://www.cups.org/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+eXpat
+</td>
+<td align="center" valign="middle" height="60">
+2.0.1
+</td>
+<td align="center" valign="middle" height="60">
+XML parsing for XPS interpreter
+</td>
+<td align="center" valign="middle" height="60">
+MIT/eXpat License
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://expat.sourceforge.net/">http://expat.sourceforge.net/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+FreeType
+</td>
+<td align="center" valign="middle" height="60">
+2.4.3
+</td>
+<td align="center" valign="middle" height="60">
+Font scaling and rendering for Ghostscript
+</td>
+<td align="center" valign="middle" height="60">
+FreeType License
+<br>
+<font size="1">(BSD-style license with a credit clause)</font>
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.freetype.org/">http://www.freetype.org/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+jbig2dec
+</td>
+<td align="center" valign="middle" height="60">
+0.11
+</td>
+<td align="center" valign="middle" height="60">
+JBIG2 decoding for the PDF interpreter
+</td>
+<td align="center" valign="middle" height="60">
+Licensed with Ghostscript/GhostPDL
+<br>
+<font size="1">(copyright owned by Artifex)</font>
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.ghostscript.com/">http://www.ghostscript.com/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+libjpeg
+</td>
+<td align="center" valign="middle" height="60">
+8.3
+<br>
+<font size="1">with patches</font>
+</td>
+<td align="center" valign="middle" height="60">
+JPEG/DCT decoding/encoding
+</td>
+<td align="center" valign="middle" height="60">
+"Free"
+<br>
+<font size="1">Can be used in commercial applications without royalty, with acknowledgement.</font>
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.ijg.org/">http://www.ijg.org/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+LittleCMS 2
+<br>
+<font size="1">(lcms2)</font>
+</td>
+<td align="center" valign="middle" height="60">
+2.03
+<br>
+<font size="1">with patches</font>
+</td>
+<td align="center" valign="middle" height="60">
+ICC profile based color conversion and management
+</td>
+<td align="center" valign="middle" height="60">
+MIT LICENSE
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.littlecms.com/">http://www.littlecms.com/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+libpng
+</td>
+<td align="center" valign="middle" height="60">
+1.2.42
+</td>
+<td align="center" valign="middle" height="60">
+PNG image encoding/decoding.
+</td>
+<td align="center" valign="middle" height="60">
+libpng license
+<br>
+<font size="1">classified as "a permissive free software license"</font>
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.libpng.org/">http://www.libpng.org/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+OpenJPEG
+</td>
+<td align="center" valign="middle" height="60">
+1.4.0
+<br>
+<font size="1">with patches backported from OpenJPEG development tree</font>
+</td>
+<td align="center" valign="middle" height="60">
+JPEG2000 image decoding for the PDF interpreter
+</td>
+<td align="center" valign="middle" height="60">
+BSD-style
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.openjpeg.org/">http://www.openjpeg.org/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+libtiff
+</td>
+<td align="center" valign="middle" height="60">
+3.9.2
+</td>
+<td align="center" valign="middle" height="60">
+TIFF image encoding/decoding
+</td>
+<td align="center" valign="middle" height="60">
+BSD-style
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.remotesensing.org/libtiff/">http://www.remotesensing.org/libtiff/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+zlib
+</td>
+<td align="center" valign="middle" height="60">
+1.2.3
+</td>
+<td align="center" valign="middle" height="60">
+(De)Flate compression.
+</td>
+<td align="center" valign="middle" height="60">
+zlib License
+<br>
+<font size="1">classified as "a permissive free software license"</font>
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.zlib.net/">http://www.zlib.net/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+<br>
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+<font size="2">The following are no-cost, open source licensed, but not GPL compatible</font>
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+jpegxr
+<br>
+<font size="1">(JPEG XR reference software)</font>
+</td>
+<td align="center" valign="middle" height="60">
+1.8
+</td>
+<td align="center" valign="middle" height="60">
+HDPhoto/JPEG-XR image decoding for the XPS interpreter.
+</td>
+<td align="center" valign="middle" height="60">
+ITU/ISO/IEC "Free" Licence
+<br>
+<font size="1">Reference implementation</font>
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.itu.int/rec/T-REC-T.835">http://www.itu.int/rec/T-REC-T.835</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+<br>
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+<font size="2">The following are relevant to Artifex commercial releases only</font>
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+</tr>
+<tr>
+
+<td align="center" valign="middle" height="60">
+AGFA UFST
+<br>
+<font size="1">Optional</font>
+</td>
+<td align="center" valign="middle" height="60">
+5.x/6.x
+<br>
+<font size="1">with patches</font>
+</td>
+<td align="center" valign="middle" height="60">
+Access, scale and render AGFA MicroType fonts
+</td>
+<td align="center" valign="middle" height="60">
+Commercial
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.monotypeimaging.com/">http://www.monotypeimaging.com/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+Luratech LuraDocument JBIG2 C-SDK 
+<br>
+<font size="1">Included in commercial release</font>
+</td>
+<td align="center" valign="middle" height="60">
+1.08
+<br>
+<font size="1">with patches</font>
+</td>
+<td align="center" valign="middle" height="60">
+Replacement JBIG2 image decoder for the PDF interpreter
+</td>
+<td align="center" valign="middle" height="60">
+Commercial
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.luratech.com/">http://www.luratech.com/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle" height="60">
+Luratech LuraWave JP2 C-SDK
+<br>
+<font size="1">Included in commercial release</font>
+</td>
+<td align="center" valign="middle" height="60">
+2.10
+<br>
+<font size="1">with patches</font>
+</td>
+<td align="center" valign="middle" height="60">
+Replacement JPEG2000 image decoder for the PDF interpreter
+</td>
+<td align="center" valign="middle" height="60">
+Commercial
+</td>
+<td align="center" valign="middle" height="60">
+<a href="http://www.luratech.com/">http://www.luratech.com/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+<br>
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+<font size="1">The following are deprecated but still available for use</font>
+</td>
+<td align="center" valign="middle">
+<font size="1">Support will be removed in a future release</font>
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+<td align="center" valign="middle">
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+JasPer
+</td>
+<td align="center" valign="middle">
+1.701.0
+<br>
+<font size="1">(with patches, hence v1.701.0-gs5)</font>
+</td>
+<td align="center" valign="middle">
+JPEG2000 image decoding for the PDF interpreter
+</td>
+<td align="center" valign="middle">
+JasPer License Version 2.0
+<br>
+<font size="1">based on MIT License</font>
+</td>
+<td align="center" valign="middle">
+<a href="http://www.ece.uvic.ca/~frodo/jasper/">http://www.ece.uvic.ca/~frodo/jasper/</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+LittleCMS
+<br>
+<font size="1">(lcms2)</font>
+</td>
+<td align="center" valign="middle">
+1.1.8
+<br>
+<font size="1">with patches</font>
+</td>
+<td align="center" valign="middle">
+ICC profile base color conversion and management
+</td>
+<td align="center" valign="middle">
+MIT LICENSE
+</td>
+<td align="center" valign="middle">
+<a href="http://www.littlecms.com/">http://www.littlecms.com/</a>
+</td>
+</tr>
+
+</table>
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2005-2012 Artifex Software, Inc.
+All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

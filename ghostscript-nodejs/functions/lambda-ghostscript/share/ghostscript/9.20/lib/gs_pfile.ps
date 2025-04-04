@@ -1,0 +1,126 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Runtime support for minimum-space fonts and packed files.
+
+% ****** NOTE: This file must be kept consistent with
+% ****** packfile.ps and wrfont.ps.
+
+% ---------------- Packed file support ---------------- %
+
+% A packed file is the concatenation of several file groups, each of which
+% is the result of compressing several files concatenated together.
+% The packed file begins with a procedure that creates an appropriate
+% decoding filter for each file group, as follows:
+%	<group-subfile-filter> -proc- <group-decode-filter>
+% Thus, accessing an individual file requires 4 parameters:
+% the starting address and length of the outer compressed file,
+% and the starting address and length of the inner file.
+/.packedfilefilter	% <file> <ostart> <olength> <istart> <ilength>
+                        %   .packedfilefilter <filter>
+ { 4 index systemdict begin token pop end 6 1 roll
+        % Stack: fproc file ostart olength istart ilength
+   4 index 5 -1 roll setfileposition
+        % Stack: fproc file olength istart ilength
+   4 -2 roll () /SubFileDecode filter
+        % Stack: fproc istart ilength ofilter
+   4 -1 roll exec
+        % Filters don't support setfileposition, so we must skip data
+        % by reading it into a buffer.  We rely on the fact that
+        % save/restore don't affect file positions.
+        % Stack: istart ilength dfilter
+   save exch 64000 string
+        % Stack: istart ilength save dfilter scratch
+   4 index 1 index length idiv { 2 copy readstring pop pop } repeat
+   2 copy 0 8 -1 roll 2 index length mod getinterval readstring pop pop pop
+        % Stack: ilength save dfilter
+   exch restore exch () /SubFileDecode filter
+ } bind def
+
+% Run a packed library file.
+/.runpackedlibfile	% <filename> <ostart> <olength> <istart> <ilength>
+                        %   .runpackedlibfile
+ { 5 -1 roll findlibfile
+    { exch pop dup 6 2 roll .packedfilefilter
+      currentobjectformat exch 1 setobjectformat run
+      setobjectformat closefile
+    }
+    { 5 1 roll /findlibfile .systemvar /undefinedfilename signalerror
+    }
+   ifelse
+ } bind def
+
+% ---------------- Compacted font support ---------------- %
+
+% Compacted fonts written by wrfont.ps depend on the existence and
+% specifications of the procedures and data in this section.
+
+/.compactfontdefault mark
+        /PaintType 0
+        /FontMatrix [0.001 0 0 0.001 0 0] readonly
+        /FontType 1
+        /Encoding StandardEncoding
+.dicttomark readonly def
+
+/.checkexistingfont	% <fontname> <uid> <privatesize> <fontsize>
+                        %   .checkexistingfont
+                        %   {} (<font> on d-stack)
+                        % <fontname> <uid> <privatesize> <fontsize>
+                        %   .checkexistingfont
+                        %   -save- --restore-- (<font> on d-stack)
+ { FontDirectory 4 index .knownget
+    { dup /UniqueID .knownget
+       { 4 index eq exch /FontType get 1 eq and }
+       { pop false }
+      ifelse
+    }
+    { false
+    }
+   ifelse
+    { save /restore load 6 2 roll }
+    { {} 5 1 roll }
+   ifelse
+   dict //.compactfontdefault exch .copydict begin
+   dict /Private exch def
+   Private begin
+     /MinFeature {16 16} def
+     /Password 5839 def
+     /UniqueID 1 index def
+   end
+   /UniqueID exch def
+   /FontName exch def
+ } bind def
+
+/.knownEncodings [
+   ISOLatin1Encoding
+   StandardEncoding
+   SymbolEncoding
+] readonly def
+
+/.readCharStrings	% <count> <encrypt> .readCharStrings <dict>
+ { exch dup dict dup 3 -1 roll
+    { currentfile token pop dup type /integertype eq
+       { dup -8 bitshift //.knownEncodings exch get exch 255 and get } if
+      currentfile token pop dup type /nametype eq
+       { 2 index exch get
+       }
+       {	% Stack: encrypt dict dict key value
+         4 index { 4330 exch dup .type1encrypt exch pop } if
+         readonly
+       }
+      ifelse put dup
+    }
+   repeat pop exch pop
+ } bind def

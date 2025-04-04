@@ -1,0 +1,21 @@
+.\" Using encoding of the German (de_DE) translation: ISO-8859-1
+.\" Translation by Tobias Burnus <burnus@gmx.de> and Thomas Hoffmann
+.TH PDF2PS 1 "8.Juli 2002" 7.21 "Ghostscript Tools" \" -*- nroff -*-
+.SH NAME
+pdf2ps \- Ghostscript PDF nach PostScript Konverter
+.SH SYNTAX
+\fBpdf2ps\fR [ \fIOptionen\fR ] \fIEingabe.pdf [Ausgabe.ps]\fR
+.SH DESCRIPTION
+\fBpdf2ps\fR benutzt \fBgs\fR(1) um die Datei "Eingabe.pdf" im \fBPortable Document Format\fR (PDF) 
+in die Datei "Ausgabe.ps" im \fBPostScript\fR(tm)-Format zu konvertieren.
+Normalerweise darf die Ausgabe PostScript-Level-2-Konstrukte (nicht jedoch PostScript LanguageLevel 3) 
+benutzen; die \fB-dLanguageLevel=1\fR Option erzwingt
+Level 1, während \fB-dLanguageLevel=3\fR LanguageLevel-3-Konstrukte für die Ausgabe erlaubt.
+.SH DATEIEN
+Starten Sie "\fBgs -h\fR" um den Ort der Ghostscript-Dokumentation auf Ihrem System zu ermitteln, 
+wo Sie weitere Datails finden.
+.SH VERSION
+Dieses Dokument wurde zuletzt für Ghostscript Version 7.21 durchgesehen.
+.SH AUTOR
+Artifex Software, Inc. sind die
+Hauptautoren of Ghostscript.

@@ -1,0 +1,63 @@
+-supModel="Epson Stylus Color 300, 360x360 dpi, colour, Plain Paper"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceCMYK
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/EscNozzleMap
+-r360x360
+-dupMargins="{ 9.0 39.96 9.0 9.0}"
+-dupWeaveYPasses=6
+-dupOutputPins=11
+-dupWeaveYFeeds="{11 11 11 11 11 11}"
+-dupWeaveInitialYFeeds="{1  1  1  1  1  7}"
+-dupWeaveInitialPins="{  2  11  9  7  5  3}"
+-dupWeaveYOffset=0
+-dupNozzleMapRowsPerPass=64
+-dupNozzleMapPatternRepeat=6
+-dupNozzleMapRowMask="{ 2 4 1 3 0 0 }"
+-dupNozzleMapMaskScanOffset="{ 0 1 2 3 0 0 }"
+-dupBlackTransfer="{
+       0.0000 0.0034 0.0185 0.0377 0.0574 0.0769 0.0952 0.1147
+       0.1337 0.1540 0.1759 0.1985 0.2209 0.2457 0.2706 0.2949
+       0.3209 0.3496 0.3820 0.4145 0.4505 0.4907 0.5344 0.5840
+       0.6445 0.7093 0.8154 0.9816 0.9983 0.9988 0.9994 1.0000
+}"
+-dupCyanTransfer="{
+       0.0000 0.0034 0.0185 0.0377 0.0574 0.0769 0.0952 0.1147
+       0.1337 0.1540 0.1759 0.1985 0.2209 0.2457 0.2706 0.2949
+       0.3209 0.3496 0.3820 0.4145 0.4505 0.4907 0.5344 0.5840
+       0.6445 0.7093 0.8154 0.9816 0.9983 0.9988 0.9994 1.0000
+}"
+-dupMagentaTransfer="{
+       0.0000 0.0034 0.0185 0.0377 0.0574 0.0769 0.0952 0.1147
+       0.1337 0.1540 0.1759 0.1985 0.2209 0.2457 0.2706 0.2949
+       0.3209 0.3496 0.3820 0.4145 0.4505 0.4907 0.5344 0.5840
+       0.6445 0.7093 0.8154 0.9816 0.9983 0.9988 0.9994 1.0000
+}"
+-dupYellowTransfer="{
+       0.0000 0.0034 0.0185 0.0377 0.0574 0.0769 0.0952 0.1147
+       0.1337 0.1540 0.1759 0.1985 0.2209 0.2457 0.2706 0.2949
+       0.3209 0.3496 0.3820 0.4145 0.4505 0.4907 0.5344 0.5840
+       0.6445 0.7093 0.8154 0.9816 0.9983 0.9988 0.9994 1.0000
+}"
+
+-dupBeginPageCommand="<
+   00 00 00 
+   1b01 40 45 4a 4c 20 31 32 38 34 2e 34 0a 
+   40 45 4a 4c 20 20 20 20 20 0a 
+   1b40   1b40
+   1b7c000900802a2c640316110524
+   1b285208000052454d4f544531
+   1b000000
+   1b2847 0100 01
+   1b2855 0100 0A
+   1b2843 0200 7210
+   1b5501
+>"
+-dupAdjustPageLengthCommand
+-dupAdjustTopMarginCommand
+-dupAdjustBottomMarginCommand
+-dupEndPageCommand="(\033@\014)"
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"
+

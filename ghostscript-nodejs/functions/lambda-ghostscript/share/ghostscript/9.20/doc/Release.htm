@@ -1,0 +1,807 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>How to prepare a Ghostscript release</title>
+<!-- Originally: make.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>How to prepare a Ghostscript release</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Introduction">Introduction</a>
+<li><a href="#Servers">Servers</a>
+<ul>
+<li><a href="#Development_files">Development sources and bug reports</a>
+<li><a href="#Distribution">Distribution</a>
+</ul>
+<li><a href="#Release_numbering">Release numbering</a>
+<li><a href="#Making_distributions">Making distributions</a>
+<ul>
+<li><a href="#Preparing_source">Preparing the source code</a>
+<li><a href="#Testing">Testing</a>
+<li><a href="#Changelog">Updating the Changelog</a>
+<li><a href="#Making_Tarballs">Making the source distribution</a>
+<li><a href="#Testing_on_Windows">Testing on Windows</a>
+<li><a href="#Windows_distribution">Building the Windows distribution</a>
+<li><a href="#Finishing_up">Finishing up</a>
+<li><a href="#Beta_distributions">Beta distributions</a>
+<li><a href="#Public_releases">Public releases</a>
+</ul>
+<li><a href="#After_releasing">After releasing</a>
+<li><a href="#GPL_releases">GPL Ghostscript releases</a>
+<ul>
+<li><a href="#GPL_code">AGPL code</a>
+<li><a href="#GPL_after_releasing">After releasing (AGPL)</a>
+</ul>
+<li><a href="#Fonts">Fonts</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a> and the instructions on how to <a href="Make.htm">build
+Ghostscript</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Introduction"></a>Introduction</h2>
+
+<p>
+This document describes the process for making new Ghostscript releases.
+Please note
+that while the the license allows anyone to prepare and distribute
+releases in accordance with its terms and conditions, this document is
+really meant only to document the process used by Artifex Software, Inc.
+However, the eventual purpose of this document is to describe
+Ghostscript release procedures in enough detail that someone who knows
+little about Ghostscript but is generally familiar with the platform on
+which the procedure is being carried out can execute the procedures
+correctly. So if you add or changing anything to/in this document,
+be sure to specify all command lines, file names, etc. in explicit
+detail.
+
+<p>
+If you do plan to make your own distribution, please be aware of some items
+you will want to change.
+
+<ul>
+
+<li>If you make any significant changes, please edit
+<code>base/gscdef.c</code> to change <code>GS_PRODUCTFAMILY</code> 
+and <code>GS_PRODUCT</code> from "GPL Ghostscript" to something else,
+in order to avoid confusion with Artifex releases.
+
+<li>In the same file, you may also want to edit <code>GS_COPYRIGHT</code>
+to add your own copyright notice (although you must not remove any
+notice that is there).
+
+<li>You will almost certainly want to edit <code>version.mak</code> to
+change the revision date, <code>GS_REVISIONDATE</code>.
+
+<li>If you want to change the release number, you must change it in all the
+places listed under <a href="#Release_numbering">"Release numbering"</a>
+below.
+
+</ul>
+
+<h2><a name="Servers"></a>Servers</h2>
+
+<p>
+The GPL Ghostscript files are maintained on sites accessible to
+the public.  One specific site hosts the active SVN repository for code,
+data, and documentation, and the bug report data base; several sites
+offer distributions with release numbers, intended for wider
+distribution.
+
+<h3><a name="Development_files"></a>Development sources and bug reports</h3>
+
+<p>
+The primary repository for GPL Ghostscript is <a
+href="http://www.ghostscript.com/" class="offsite">ghostscript.com</a>.
+Please check there first for any news about releases or current work,
+and for information about where to download ghostscript and how to
+access the mailing lists.
+
+Development source access is through <a
+href="http://svn.ghostscript.com/"
+class="offsite">svn.ghostscript.com</a>.
+
+<p>
+It may also be helpful to
+read the SourceForge Ghostscript home page (<a
+href="http://sourceforge.net/projects/ghostscript/" 
+class="offsite">http://sourceforge.net/projects/ghostscript/</a>).
+
+<h3><a name="Distribution"></a>Distribution</h3>
+
+<p>
+Stable, beta, and development releases are all available from
+<blockquote>
+<br>
+<a href="http://ghostscript.com/download/"
+class="offsite">http://ghostscript.com/download/</a>
+</blockquote>
+
+<h2><a name="Release_numbering"></a>Release numbering</h2>
+
+<p>
+Ghostscript uses a two-part (major.minor) release number. The second part
+of the release number is a 2-digit decimal fraction: it counts 00,
+01, 02, and so on through 99.
+
+<ul>
+
+<li>Release numbers N.0x and N.5x indicate stable versions.
+<li>Successive increments generally indicate bug fixes and minor enhancements. 
+<li>Development, testing and beta releases generally begin with a minor release number that is
+a multiple of ten and increment from there.
+</ul>
+
+<p>
+Release numbers appear in the following places in the Ghostscript files:
+
+<ul>
+
+<li>In <code>Resource/Init/gs_init.ps</code>, as an integer (release 
+number x100) at the beginning of the
+file just after the initial comment blocks.
+
+<li>In <code>base/version.mak</code>, split into 3 lines.
+
+<li>In <code>doc/News.htm</code>, in the two headers and their labels and at the very end in
+the copyright footer.
+
+<li>At the foot of most documenation files. However, these are updated mechanically from the value
+in <code>News.htm</code> as part of the release process and do not need to be maintained
+directly.
+</ul>
+
+<h3>Before a release</h3>
+
+<p>
+The current release number in the development code must be set to the desired value. The increment
+from just after the previous release (see below) is sufficient for minor updates. In the case of
+major changes or a new stable release, the number will need to be bumped; this is generally done
+as the first step of preparing a new release.
+
+<h3>After a release</h3>
+
+<p>
+After making a release the release number in the repository is 
+incremented. Thus versions built from svn are always marked with a 
+future (or unused) release number to avoid confusion.
+
+<p>
+Additionally, After an N.00 or N.50 stable release, a branch is made in svn so that development 
+can continue independently of changes to the stable series. When this happens, the minor release
+number is incremented by 10 (or 20) on the development branch (and by 1 on the new stable branch,
+as above) to avoid collisions.
+
+<p>
+While incrementing the release number after making a release may seem
+counter-intuitive, it ensures that, at any given time, the version
+number alone is sufficient to distinguish between the current SVN
+state and a numbered release.
+
+<h2><a name="Making_distributions"></a>Making distributions</h2>
+
+<p>
+This document only discusses source distributions.  Source distributions
+currently can only be made on Linux systems (but it probably wouldn't take
+much work to support other Unix systems).  Ghostscript as distributed also
+often includes executables or other packages for the Windows and MacOS
+environments, but upstream does not always produce these, and this 
+document does not discuss them.  
+
+<p>
+To make a source distribution, you will need the scripts and data files in
+the <code>toolbin/</code> directory. The instructions below generally
+assume that you're invoking the relative to the top level of the source 
+tree.
+
+To run the scripts, you will need reasonably current versions of Tcl,
+freely available from Scriptics 
+(<a class="offsite" href="http://www.scriptics.com"><tt>http://www.scriptics.com</tt></a>), and
+Python, freely available from <a class="offsite"
+href="http://www.python.org"><tt>http://www.python.org</tt></a>.
+
+<p>
+The instructions below also refer to some files that are deliberately
+omitted from the public distribution, because they are not freely
+redistributable. You will need to provide similar files for your
+environment.
+
+<blockquote><pre>
+<code>data/*/*.ps</code> (PostScript files) - needed for smoke testing
+</pre></blockquote>
+
+<h3><a name="Preparing_source"></a>Preparing the source code</h3>
+
+<p>
+If necessary, update the release number by incrementing it as described in
+<a href="#Release_numbering">Release numbering</a> above.
+
+<p>
+Update references to the date for release:
+
+<ul>
+
+<li>In <code>version.mak</code>, the numeric date.
+
+<li>In <code>doc/News.htm</code>, in two places, skipping the Id:
+line. That is, in parentheses after the <tt>VERSION X.YY</tt> heading,
+and in the copyright footer both the year and the release date.
+
+<li>In <code>psi/dwsetup.rc</code> and <code>psi/winint.mak</code>,
+update the year in the embedded copyright notice.
+
+</ul>
+
+<p>
+We recommend using a UTC release date to avoid timezone skew.
+
+<p>
+Also in <code>doc/News.htm</code>, update the number of the highest
+closed bug and the list of open bugs.
+
+<p>
+Check in <code>gscdef.c</code> that the definition of
+<code>GS_PRODUCT</code> includes the appropriate one of "DEVELOPMENT
+RELEASE", "BETA RELEASE", or neither, and does not include "SVN PRE-RELEASE".
+
+<p>Run the source-consistency checks from the test suite:
+
+<blockquote><pre>
+toolbin/tests/check_all.py --gsroot=.
+</pre></blockquote>
+Where the argument of --gsroot is the path to the top level of the
+source tree. Fix any problems it indicates, and commit them to svn.
+
+<p>
+Check for patched configuration parameters, <code>#define TEST</code>s,
+version/date inconsistencies, and mismatches between the working directory
+and the SVN repository by running:
+
+<blockquote><pre>
+toolbin/pre.tcl
+</pre></blockquote>
+
+<p>
+This program compares the result of various greps against a check file,
+writing the results of grep on one output file and the differences from the
+check file on another.  See the source code for the default file names.  The
+important one is the check file,
+<code>toolbin/pre.chk</code>.  <code>pre.tcl</code> also verifies
+that the
+right information is in the following places:
+<ul>
+<li>release number in <code>man/*.1</code>, <code>doc/*.htm</code>,
+<code>version.mak</code>, <code>doc/gs-vms.hlp</code>,
+<code>Resource/Init/gs_init.ps</code>
+<li>revision date in <code>man/*.1</code>, <code>doc/*.htm</code>,
+<code>version.mak</code>, <code>doc/gs-vms.hlp</code>
+<li>copyright year (if necessary) in <code>gscdef.c</code>
+<li>third-party library version number in <code>*.mak</code>
+</ul>
+
+<p>
+If necessary, run
+
+<blockquote><pre>
+toolbin/pre.tcl update
+</pre></blockquote>
+
+<p>
+to update the version and revision date in the doc files, and then run
+
+<blockquote><pre>
+toolbin/pre.tcl
+</pre></blockquote>
+
+<p>
+again. To confirm that everything is updated. You may have to commit to
+svn after the update to satify the script that all the dates are
+correct.
+
+<p>
+Check the consistency of the source code with the makefiles by
+running:
+
+<blockquote><pre>
+toolbin/gsmake.tcl check
+</pre></blockquote>
+
+This script assumes the top level makefile is named '<tt>makefile</tt>'.
+
+<p>
+Fix any problems and commit to svn.
+
+<h3><a name="Testing"></a>Testing</h3>
+
+<p>
+Edit your top-level the Makefile to set
+<blockquote><pre>
+FEATURE_DEVS=&#36;(FEATURE_DEVS_ALL)
+COMPILE_INITS=1
+</pre></blockquote>
+
+<p>
+This will help catch compilation problems.
+
+<p>
+Run
+
+<blockquote><pre>
+rm obj/*
+make -j2 &gt;&amp; make.log
+</pre></blockquote>
+
+<p>
+and look for warnings and errors in the log file.
+
+<p>
+Do a smoke test, updating the example paths as necessary:
+
+<blockquote><pre>
+unset GS_DEVICE GS_FONTPATH GS_LIB GS_OPTIONS
+./bin/gs -I./lib -I./fonts -dNOPAUSE -dBATCH toolbin/smoke.ps
+./bin/gs -I./lib -I./fonts -dNOPAUSE -dBATCH -sDEVICE=bitcmyk\
+  -sOutputFile=/dev/null -r600 -dBufferSpace=200000 toolbin/smoke.ps
+</pre></blockquote>
+
+<p>
+This reads files named
+
+<blockquote><pre>
+<code>data/misc/*.ps</code>
+<code>data/ps/*.ps</code>
+<code>data/psl2/*.ps</code>
+<code>data/psl3/*.ps</code>
+</pre></blockquote>
+
+<p>
+(Edit <code>toolbin/smoke.ps</code> to use other test sets.)
+Watch for crashes, unusual error messages, or anomalous displayed output.
+If there are any problems, start over from the beginning of the process.
+
+<p>
+Undo the <code>FEATURE_DEVS</code> and <code>COMPILE_INITS</code>
+edits.
+
+<p>
+Run
+
+<blockquote><pre>
+svn commit
+</pre></blockquote>
+
+<p>
+to ensure the repository is up to date.
+
+<h3><a name="Changelog"></a>Updating the changelog</h3>
+
+<p>
+Create a new changelog by running
+
+<blockquote><pre>
+svn log -rHEAD:<i>rev</i> --xml --verbose &gt; doc/changelog.xml
+</pre></blockquote>
+
+where <i>rev</i> is the revision number of the branch point for the 
+previous release.
+
+<p>
+This consolidates all the commit logs since the previous release in a 
+readable format. You may also wish to remap user names in the 
+&lt;author/&gt; tags of the output to the real names of the developers.
+
+<p>
+Create the html-format changes and details documents as follows:
+
+<blockquote><pre>
+cd doc
+../toolbin/split_changelog.py changelog.xml Changes.htm Details.htm
+cd ..
+</pre></blockquote>
+
+<p>
+The xml changelog file can now be deleted.
+
+<p>
+[Deprecated]<br>
+Copy the contents of News.htm and Changes.htm into a new section in 
+History8.htm, and News.htm and Details.htm into Details8.htm. Then 
+update the hyperlinks in History8.htm to point to Details8.htm instead  
+of Details.htm so these remain valid after the next release.<br>
+[/Deprecated]<br>
+<br>
+As of Ghostscript 9.02, to reduce the pointless duplication of information,
+Changes.htm and Details#.htm have been deprecated. 
+
+Copy the contents of Changes.htm into a new section in History9.htm, and ensure
+the links in News.htm are updated to reference the new section in History9.htm. 
+
+<p>
+Then run
+
+<blockquote><pre>
+svn commit
+</pre></blockquote>
+
+<p>
+again to check in the Changes and history files.
+
+<h3><a name="Making_Tarballs"></a>Making the source distribution</h3>
+
+<p>
+First, tag the versions of the files in svn with the release version
+number.
+
+<blockquote>
+<pre><tt>svn cp svn+ssh://svn.ghostscript.com/svn/ghostscript/trunk/gs \
+    svn+ssh://svn.ghostscript.com/svn/ghostscript/tags/ghostscript-#.##</tt></pre>
+</blockquote>
+
+If you've already tagged this release (e.g. in making an earlier
+release candidate) you'll need to svn rm the old tree first. We
+recommend just appending 'rc<i>n</i>' to the end of release candidate 
+tag names, or a '.<i>n</i>' tiny release number to post-release fixes.
+
+<p>
+Pull a fresh copy for distribution from the repository:
+
+<blockquote><pre>
+<code>svn export http://svn.ghostscript.com/ghostscript/tags/ghostscript-#.##</code>
+</pre></blockquote>
+
+
+<p>
+Generate the text versions of the README document:
+
+<blockquote><pre>
+cd ghostscript-#.##
+lynx -dump -nolist doc/Readme.htm &gt; doc/README
+</pre></blockquote>
+
+<p>
+Add copies of needed third-party libraries for the release. Versions
+of the normally required ones are included in the repository so this
+is only needed when doing special feature releases.
+
+<p>
+For the unix source distributions only, generate the configure
+scripts. From the top level directory, run 
+
+<blockquote><pre>
+./autogen.sh
+make distclean
+</pre></blockquote>
+
+This should create links to <tt>configure.ac</tt> and
+<tt>Makefile.in</tt> in the top level directory and
+invoke autoconf to create the <tt>configure</tt> script.
+
+<p>
+Also run <tt>make distclean</tt> in the <tt>jasper</tt> subdir to
+clean up any incidental config there. If you get a warning,
+for example if the build files think they need updating
+and not all the tools are available, be sure to run <tt>autoreconf &amp;&amp; 
+make distclean</tt> to avoid version skew issues.
+You may also need to manually remove the <tt>autom4te.cache</tt> directory. 
+
+<p>
+Move back to directory containing the distribution code and make the
+source archives with:
+
+<blockquote><pre>
+tar cvzf ghostscript-#.##.tar.gz ghostscript-#.##/*
+zcat ghostscript-#.##.tar.gz | bzip2 -c &gt; ghostscript-#.##.tar.bz2
+</pre></blockquote>
+
+<p>
+This creates the files
+
+<blockquote><pre>
+<code>ghostscript-#.##.tar.gz</code> (main archive)
+<code>ghostscript-#.##.tar.bz2</code> (main archive)
+</pre></blockquote>
+
+<p>
+The important issue is that the tarballs unpack into a directory
+of the same name, and that the code be a pristine copy without
+build or .svn housekeeping files.
+
+<p>
+It is also customary to make a <tt>gs###src.zip</tt> archive for the
+convenience of windows developers. See below.
+
+<h3><a name="Testing_on_Windows"></a>Testing on Windows</h3>
+
+<p>
+For Windows testing, you will need, in addition to the files listed
+under "<a href="#Preparing_source">Preparing the source</a>" above:
+<blockquote><pre>
+<code>toolbin/makewin.tcl</code>
+</pre></blockquote>
+
+<p>
+The following procedures rely on a large number of MS-DOS batch scripts that
+are not discussed here: they are unlikely to be generally useful.
+
+<p>
+Mount the Windows partition on <code>/c</code>, and create the
+<code>/c/work</code> directory if needed.
+
+<p>
+Make the zip archive of all files needed for a Windows build, and copy it to
+the Windows partition:
+
+<blockquote><pre>
+toolbin/makewin
+cp gs###.zip /c/work
+</pre></blockquote>
+
+<p>
+Boot into Windows.  Unpack the archive:
+
+<blockquote><pre>
+cd \work
+unzip -oq gs###.zip
+gs###
+</pre></blockquote>
+
+<p>
+The <code>gs###.bat</code> script creates some necessary directories,
+sets up <code>PATH</code> and <code>GS_LIB</code> for testing, and
+makes the <code>gs#.##</code> directory current.
+
+<p>
+Build with the Borland compiler:
+
+<blockquote><pre>
+config bcwin32
+copy /y /b ..\gs\makefile
+erase obj\*.*
+make &gt; bc.log
+</pre></blockquote>
+
+<p>
+Smoke test the executables (both <code>gswin32</code> and
+<code>gswin32c</code>), as described above for source distributions.
+Then build with the Microsoft compiler:
+
+<blockquote><pre>
+config msvc32
+copy /y /b ..\gs\makefile
+erase obj\*.*
+nmake &gt; msvc.log
+</pre></blockquote>
+
+<p>
+Smoke test these executables too.
+
+<p>
+Building with the Watcom compiler doesn't work, because the
+<code>wmake</code> or <code>wmakel</code> program runs out of memory.
+However, if it did work, this is how to do it:
+
+<blockquote><pre>
+config watcw32
+copy /y /b ..\gs\makefile
+erase obj\*.*
+wmake -u &gt; watc.log
+</pre></blockquote>
+
+<p>
+Boot back into Linux.  If testing in Windows revealed problems, edit the
+source files as necessary, and go back to <a
+href="#Preparing_source">"Preparing the source code."</a>
+
+<h3><a name="Windows_distribution"></a>Building the Windows distribution</h3>
+<p>
+Extract the sources from <code>ghostscript-N.NN.tar.gz</code>
+then repackage in a zip file as follows:
+<blockquote>
+<code>zip -r temp.zip gsN.NN/LICENSE gsN.NN/doc gsN.NN/examples 
+  gsN.NN/icclib gsN.NN/ijs gsN.NN/jasper gsN.NN/jbig2dec gsN.NN/jpeg
+  gsN.NN/lib gsN.NN/libpng gsN.NN/base gsN.NN/psi gsN.NN/Resource 
+  gsN.NN/zlib</code>
+</blockquote>
+Unzip converting the line endings to CRLF:
+<blockquote>
+<code>unzip -a temp.zip<br>
+del temp.zip</code>
+</blockquote>
+Then finally zip up the sources to the distribution file:
+<blockquote>
+<code>zip -9 -r -X gsNNNsrc.zip gsN.NN</code>
+</blockquote>
+This method is reasonably portable, and does not convert binary
+files such as
+<code><a href="../examples/annots.pdf">examples/annots.pdf</a></code>.
+<p>
+Unzip <code>gsNNNsrc.zip</code>.  
+The directory must be named <code>gsN.NN</code>.
+<p>
+Extract the fonts <code>ghostscript-fonts-std-#.##.tar.gz</code>
+into a directory <code>fonts</code> adjacent to the 
+<code>gsN.NN</code> directory.  
+The fonts are needed in this location for building 
+the distribution archive later.
+<p>
+You will need the command line Info-Zip zip program available from
+<a href="http://www.info-zip.org/pub/infozip/">
+http://www.info-zip.org/pub/infozip/</a> 
+Alternatively, the command line version of WinZip 
+(<code>wzzip.exe</code>) can be used by replacing the 
+Info-Zip command line options <code>-9 -r</code>
+with <code>-ex -P</code> in
+<code><a href="../psi/winint.mak">winint.mak</a></code>.
+<p>
+You will need WinZip Self-Extractor for building the
+self extracting archive.  This is commercial software.
+You may need to update the path <code>WINZIPSE_XE</code> in 
+<code><a href="../psi/winint.mak">winint.mak</a></code>.
+<p>
+Unzip the jpeg, libpng and zlib libraries, then make ghostscript
+as documented in <a href="Make.htm">Make.htm</a>.
+<p>
+Run the command <code>nmake archive</code>.  This builds the distribution
+archive <code>gsNNNw32.exe</code> and an ordinary zip file
+<code>gsNNNw32.zip</code> in the parent directory.
+If you do not have WinZip Self-Extractor, you can use
+<code>nmake zip</code> to make <code>gsNNNw32.zip</code> only. 
+
+<p>Starting with Ghostscript 9.x (Summer 2010), <code>nmake nsis</code> (msvc)
+or <code>make nsis</code> (Borland) builds an nsis-based installer
+<code>gsNNNw32.exe</code>. This requires
+<a href="http://nsis.sourceforge.net/">Nullsoft Scriptable Install System</a>.
+You may need to update the path <code>MAKENSIS_XE</code> in
+<code><a href="../psi/winint.mak">winint.mak</a></code>.
+
+<h3><a name="Finishing_up"></a>Finishing up</h3>
+
+<p>
+Upload <code>ghostscript-#.##.tar.*</code> to SourceForge (by anonymous
+FTP to <code>upload.sourceforge.net</code>, directory
+<code>/incoming</code>), and then post it using the "File Release"
+facility in the Ghostscript project. Put the release in the appropriate 
+package, usually "GPL Ghostscript".
+If you are adding executable builds or source archives for other
+platforms to an existing source release, please use the same release
+date as the source release, not the current date.
+
+<h3><a name="Beta_distributions"></a>Beta distributions</h3>
+
+<p>
+Do the steps for distributions in general.
+
+<p>
+Upload <code>ghostscript-#.##.tar.*</code> to
+<code><a href="http://ghostscript.com/download/"
+class="offsite">http://ghostscript.com/download/</a>
+</code>.
+
+<h3><a name="Public_releases"></a>Public releases</h3>
+
+<p>
+Do the steps for distributions in general.
+
+<li>MS Windows source and executables:
+
+<blockquote><pre>
+<code>gs###w32.exe</code>
+<code>gs###w64.exe</code>
+</pre></blockquote>
+
+<li>Third-party libraries, as links (upload these if not installed), where
+<code>&#36;&#36;&#36;</code> et al. refer to the version number of the library, which
+should be the latest compatible release of the library and should be 
+consistent with the values of and version numbers specifically listed in
+the makefiles.
+
+<blockquote><pre>
+<code>jpegsrc.v&#36;&#36;.tar.gz</code> -&gt; <code>../../3rdparty/jpegsrc.v&#36;&#36;.tar.gz</code>
+<code>libpng-&#36;.&#36;.&#36;.tar.gz</code> -&gt; <code>../../3rdparty/libpng-&#36;.&#36;.&#36;.tar.gz</code>
+<code>zlib-&#36;.&#36;.&#36;.tar.gz</code> -&gt; <code>../../3rdparty/zlib-&#36;.&#36;.&#36;.tar.gz</code>
+<code>jpegsr&#36;&#36;.zip</code> -&gt; <code>../../3rdparty/jpegsr&#36;&#36;.zip</code>
+<code>lpng&#36;&#36;&#36;.zip</code> -&gt; <code>../../3rdparty/lpng&#36;&#36;&#36;.zip</code>
+<code>zlib&#36;&#36;&#36;.zip</code> -&gt; <code>../../3rdparty/zlib&#36;&#36;&#36;.zip</code>
+</pre></blockquote>
+
+In any case, the names of the links in the distribution directory should reflect
+the original name of the upstream file.
+
+<li>Fonts, where <code>&#36;.&#36;&#36;</code> refers to the most recent version
+number of the fonts:
+
+<blockquote><pre>
+<code>ghostscript-fonts-other-&#36;.&#36;.tar.gz</code> -&gt; <code>../fonts/ghostscript-fonts-other-&#36;.&#36;.tar.gz</code>
+<code>ghostscript-fonts-std-&#36;.&#36;.tar.gz</code> -&gt; <code>../fonts/ghostscript-fonts-std-&#36;.&#36;.tar.gz</code>
+</pre></blockquote>
+
+</ul>
+
+<p>
+(Note that the link names are somewhat inconsistent: some of them retain the
+version number of the file being referenced, and some of them use the
+Ghostscript release number.  This is a historical artifact that might be
+changed someday.)
+
+<p>
+E-mail the release announcement using:
+<blockquote><pre>
+To: gs-announce
+</pre></blockquote>
+
+<p>
+Also update the documentation snapshots on the website.
+
+<h2><a name="After_releasing"></a>After releasing</h2>
+
+<p>
+Update the release number by incrementing it as described in <a
+href="#Release_numbering">Release numbering</a> above.
+
+<p>
+In <code>gscdef.c</code>, edit the definition of
+<code>GS_PRODUCT</code> to include "SVN PRE-RELEASE".
+
+<p>
+Edit <code>doc/News.htm</code> to remove all the content.
+
+
+<h2><a name="Fonts"></a>Fonts</h2>
+
+<p>
+Artifex Software, Inc. distributes a package of the base 35 PostScript 
+fonts, and a package of other miscellaneous fonts.
+<p>
+These are included in the Ghostscript release archive.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

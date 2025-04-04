@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Ghostscript's external font and text interface</title>
+<!-- Originally: xfonts.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Ghostscript's external font and text interface</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Deprecated">Deprecated</a>
+<li><a href="#Introduction">Introduction</a>
+<li><a href="#Types">Types</a>
+<li><a href="#Implementation_procedures">Implementation procedures</a>
+<li><a href="#Font_level_procedures">Font-level procedures</a>
+<ul>
+<li><a href="#lookup_font"><code>lookup_font</code></a>
+<li><a href="#char_xglyph"><code>char_xglyph</code></a>
+<li><a href="#char_metrics"><code>char_metrics</code></a>
+<li><a href="#render_char"><code>render_char</code></a>
+<li><a href="#release"><code>release</code></a>
+</ul>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+<h2><a name="Removal"></a>Removal</h2>
+<p>
+As of Ghostscript 9.04, the Xfont functionality has been removed
+
+<h2><a name="Deprecated"></a>Deprecated</h2>
+<p>
+As of Ghostscript 9.01 Xfont functionality is considered deprecated, and
+unsupported. Its complete removal is planned for a near future release.
+<p>
+If your application relies on this feature you should either plan for
+its removal, or contact the Ghostscript developers so our Xfont plans
+can be revisited.
+
+<h2><a name="Introduction"></a>Introduction</h2>
+
+<p>
+Ghostscript can use the character rasterizer provided by the underlying
+operating system and window system; specifically, Adobe Type Manager (ATM)
+or a TrueType rasterizer under MS Windows, or the facilities provided by X
+Windows.  This ability augments, but does not replace, Ghostscript's own
+Type 1 rasterizer: Ghostscript may still use its own rasterizer for very
+large characters, characters that are clipped or transformed in unusual
+ways, and for output to devices other than the screen.
+
+<p>
+Ghostscript connects to these platform facilities through a driver-like
+interface called the xfont (external font) interface.  Current xfont
+implementations are associated directly with device drivers; in a future
+release, Ghostscript may separate them, so that (for example) it will be
+possible to use the platform rasterizer when writing to a file.
+
+<p>
+Please note that from this point, this file is likely to be useful only
+to a small number of Ghostscript porters and implementors.
+
+<hr>
+
+<h2><a name="Types"></a>Types</h2>
+
+<table cellpadding=0 cellspacing=0>
+<tr>	<th valign=bottom align=left>Type
+	<td>&nbsp;&nbsp;
+	<th valign=bottom align=left>Declared /<br>defined in
+	<td>&nbsp;
+	<th valign=bottom align=left>Represents
+<tr>	<td colspan=5><hr>
+<tr>	<td valign=top><code>gs_char</code>
+	<td>&nbsp;
+	<td valign=top><code>gsccode.h</code>
+	<td>&nbsp;
+	<td valign=top>A character code that appears in a string. Currently
+	    it is always a single byte, but composite fonts or Unicode may
+	    require it to be wider in the future.
+<tr>	<td valign=top><code>gs_glyph</code>
+	<td>&nbsp;
+	<td valign=top><code>gsccode.h</code>
+	<td>&nbsp;
+	<td valign=top>A character name like "period" or "epsilon". From
+	    the xfont implementation's point of view, it is just a handle;
+	    when necessary, Ghostscript provides a
+	    <code>gs_proc_glyph_name_t</code> procedure to
+	    convert it to a string name.
+<tr>	<td valign=top><code>gs_proc_glyph_name_t</code>
+	<td>&nbsp;
+	<td valign=top><code>gsccode.h</code>
+	<td>&nbsp;
+	<td valign=top>A procedure that maps a <code>gs_glyph</code> to
+	    its string name; see the <code>char_xglyph</code> procedure.
+<tr>	<td valign=top><code>gx_xglyph</code>
+	<td>&nbsp;
+	<td valign=top><code>gsxfont.h</code>
+	<td>&nbsp;
+	<td valign=top>A character or glyph code that can be used with a
+	    specific platform font.  Normally it will be a character code
+	    that the implementation of <code>render_char</code> will
+	    turn into a 1-character string and give to the platform's
+	    "display string" operation.
+<tr>	<td valign=top><code>gx_xfont_procs</code>
+	<td>&nbsp;
+	<td valign=top><code>gsxfont.h</code>, <code>gxxfont.h</code>
+	<td>&nbsp;
+	<td valign=top>The xfont analogue of
+	    <code>gx_device_procs</code>, the type of the
+	    procedure record that defines an xfont implementation.
+<tr>	<td valign=top><code>gx_xfont</code>
+	<td>&nbsp;
+	<td valign=top><code>gsxfont.h</code>, <code>gxxfont.h</code>
+	<td>&nbsp;
+	<td valign=top>The gxfont analogue of <code>gx_device</code>,
+	    the type of the basic structure for an xfont.
+<tr>	<td valign=top>(<code>encoding_index</code>)
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td valign=top>Not really a type, although it probably should be:
+	    an <code>int</code> used to indicate the
+	    <code>Encoding</code> used by a font.  Defined values are
+		<dl compact>
+		<dt>0<dd><code>StandardEncoding</code>
+		<dt>1<dd><code>ISOLatin1Encoding</code>
+		<dt>2<dd><code>SymbolEncoding</code>
+		<dt>3<dd><code>DingbatsEncoding</code>
+		<dt>-1<dd>Other encoding
+		</dl>
+</table>
+
+<hr>
+
+<h2><a name="Implementation_procedures"></a>Implementation
+procedures</h2>
+
+<p>
+All the procedures that return <code>int</code> results return 0 on
+success, or an appropriate negative error code for error conditions; these
+error codes are defined in <code>gserrors.h</code>.  The relevant ones
+are the same as for <a href="Drivers.htm">drivers</a>, and as with drivers,
+if an implementation procedure returns an error, it should use the
+<code>return_error</code> macro -- defined in <code>gx.h</code>,
+which is automatically included by <code>gdevprn.h</code> but not by
+<code>gserrors.h</code> -- rather than a simple <code>return</code>
+statement, for instance
+
+<blockquote>
+<code>return_error(gs_error_VMerror);</code>
+</blockquote>
+
+<h2><a name="Font_level_procedures"></a>Font-level procedures</h2>
+
+<h3><a name="lookup_font"></a><code>lookup_font</code></h3>
+
+<dl>
+<dt><code>gx_xfont *(*lookup_font)(P7(gx_device&nbsp;*dev,
+const&nbsp;byte&nbsp;*fname, uint&nbsp;len, int&nbsp;encoding_index,
+const&nbsp;gs_uid&nbsp;*puid, const&nbsp;gs_matrix&nbsp;*pmat,
+const&nbsp;gs_memory_procs&nbsp;*mprocs))</code>
+<dd>Look up a font name, <code>UniqueID</code>, and matrix, and return
+an xfont, or <code>NULL</code> if no suitable xfont exists.  Use
+<code>mprocs</code> to allocate the xfont and any subsidiary data
+structures.  The matrix is the <code>FontMatrix</code> concatenated with
+the CTM, so (roughly speaking) the font size in pixels is
+<code>pmat&nbsp;-&gt;&nbsp;yy</code>&nbsp;&times;&nbsp;1000 for a normal
+Type 1 font.
+
+<p>
+Note that this is the only implementation procedure that does not take an
+xfont * as its first argument.  In fact, callers of
+<code>lookup_font</code> must use the <code>get_xfont_device</code>
+driver procedure to get the correct device to pass as the first argument to
+<code>lookup_font</code>.
+</dl>
+
+<h3><a name="char_xglyph"></a><code>char_xglyph</code></h3>
+
+<dl>
+<dt><code>gx_xglyph (*char_xglyph)(P5(gx_xfont&nbsp;*xf, gs_char&nbsp;chr,
+int&nbsp;encoding_index, gs_glyph&nbsp;glyph,
+gs_proc_glyph_name_t&nbsp;glyph_name))</code>
+<dd>Convert a character name to an xglyph code.  In the case of
+<code>glyphshow</code>, <code>chr</code> may be
+<code>gs_no_char</code>; for an ordinary <code>show</code> operation,
+if the character code is invalid, <code>glyph</code> may be
+<code>gs_no_glyph</code>.
+</dl>
+
+<h3><a name="char_metrics"></a><code>char_metrics</code></h3>
+
+<dl>
+<dt><code>int (*char_metrics)(P5(gx_xfont&nbsp;*xf, gx_xglyph&nbsp;xg,
+int&nbsp;wmode, gs_int_point&nbsp;*pwidth,
+gs_int_rect&nbsp;*pbbox))</code>
+<dd>Get the metrics for a character.  If the metrics are unavailable,
+return 1.
+</dl>
+
+<h3><a name="render_char"></a><code>render_char</code></h3>
+
+<dl>
+<dt><code>int (*render_char)(P7(gx_xfont&nbsp;*xf, gx_xglyph&nbsp;xg,
+gx_device&nbsp;*target, int&nbsp;x, int&nbsp;y, gx_color_index&nbsp;color,
+int&nbsp;required))</code>
+<dd>Render a character.  <em>(x,y)</em> corresponds to the character
+origin.  The target may be any Ghostscript device.  A good implementation
+will check whether the target can handle this type of xfont directly (for
+instance by checking the target name), and if so, will render the character
+directly; otherwise, it will do what has to be done in the general case,
+namely, get a bitmap for the character and use the target's
+<code>copy_mono</code> operation.  If <code>required</code> is false,
+the procedure should return an error if the rendering operation would be
+expensive, since in this case Ghostscript has already cached the bitmap and
+metrics from a previous call with <code>required</code>=true.  If the
+operation cannot be done, return 1.
+</dl>
+
+<h3><a name="release"></a><code>release</code></h3>
+
+<dl>
+<dt><code>int (*release)(P2(gx_xfont&nbsp;*xf,
+const&nbsp;gs_memory_procs&nbsp;*mprocs))</code>
+<dd>Release any external resources associated with an xfont.  If
+<code>mprocs</code> is not <code>NULL</code>, also free any storage
+allocated by <code>lookup_font</code> (including the xfont itself).
+</dl>
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

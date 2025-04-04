@@ -1,0 +1,43 @@
+-supModel="Epson Stylus Color 300, 180x180 dpi, black only, Plain Paper"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceGray
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/EscNozzleMap
+-r360x180
+-dupMargins="{ 9.0 39.96 9.0 9.0}"
+-dupWeaveYPasses=1
+-dupOutputPins=31
+-dupNozzleMapRowsPerPass=64
+-dupNozzleMapPatternRepeat=6
+-dupNozzleMapRowMask="{ 0 0 1 0 1 1}"
+-dupNozzleMapMaskScanOffset="{ 0 0 0 0 1 2 }"
+-dupWhiteTransfer="{
+1.0            0.921295345  0.846429467   0.775337517   0.707954228
+0.644212425    0.584044278  0.527380228   0.474149585   0.424279869
+0.377697408    0.334326446  0.294089675   0.256907612   0.222698912
+0.191379622    0.162863538  0.137061611   0.113881744   0.0932285339
+0.0750028      0.0591011234 0.0454152822  0.0338314585  0.0242292974
+0.0164806321   0.0104477014 0.00598061318 0.00291339168 0.00105723308
+0.000186894162 0.0
+}"
+-dupBeginPageCommand="<
+   00 00 00 
+   1b01 40 45 4a 4c 20 31 32 38 34 2e 34 0a 
+   40 45 4a 4c 20 20 20 20 20 0a 
+   1b40   1b40
+   1b7c000900802a2c640316110524
+   1b285208000052454d4f544531
+   1b000000
+   1b2847 0100 01
+   1b2855 0100 14
+   1b2843 0200 7210
+   1b5501
+>"
+-dupAdjustPageLengthCommand
+-dupAdjustTopMarginCommand
+-dupAdjustBottomMarginCommand
+-dupEndPageCommand="(\033@\014)"
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"
+

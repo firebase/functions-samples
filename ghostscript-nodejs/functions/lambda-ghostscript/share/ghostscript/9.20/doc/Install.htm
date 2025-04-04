@@ -1,0 +1,515 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>How to install Ghostscript</title>
+<!-- Originally: install.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>How to install Ghostscript</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Overview">Overview of how to install Ghostscript</a>
+<li><a href="#Install_Unix">Installing Ghostscript on Unix</a>
+<ul>
+<li><a href="#Shared_object">Ghostscript as a shared object</a>
+<li><a href="#Install_Linux">Additional notes on Linux</a>
+</ul>
+<li><a href="#Install_Windows">Installing Ghostscript on MS Windows</a>
+<li><a href="#Install_VMS">Installing Ghostscript on OpenVMS</a>
+<li><a href="#Install_DOS">Installing Ghostscript on DOS</a>
+<li><a href="#Install_OS2">Installing Ghostscript on OS/2 2.x</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a> and "<a href="Make.htm">How to build Ghostscript from source
+code</a>".
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Overview"></a>Overview of how to install Ghostscript</h2>
+
+<p>
+You must have three things to run Ghostscript:
+<ol>
+<li>The Ghostscript executable file; on some operating
+systems, more than one file is required.  These are entirely
+platform-specific.  See below for details.
+
+<li>Initialization files that Ghostscript reads in when it
+starts up; these are the same on all platforms.
+<ul>
+<li><code>gs_</code>*<code>.ps</code> unless Ghostscript was compiled
+using the "compiled initialization files" option.  See the documentation of
+<a href="Psfiles.htm">PostScript files distributed with Ghostscript</a>.
+
+<li><code>pdf_</code>*<code>.ps</code> if Ghostscript was compiled
+with the ability to interpret Adobe Portable Document Format (PDF) files,
+that is, <code>pdf.dev</code> was included in
+<code>FEATURE_DEVS</code> when Ghostscript was built.
+
+<li><code>Fontmap</code> and <code>Fontmap.GS</code> (or the
+appropriate <code>Fontmap.</code><em>xxx</em> for your platform), unless
+you plan always to invoke Ghostscript with the <a
+href="Use.htm#FONTMAP_switch"><code>-dNOFONTMAP</code> switch</a>.
+</ul>
+
+<li>Fonts, for rendering text.  These are platform-independent,
+but if you already have fonts of the right kind on your platform,
+you may be able to use those.  See below for details.  Also see the
+<a href="Fonts.htm">documentation on fonts</a>.
+</ol>
+
+<p>
+The <a href="Use.htm">usage documentation</a> describes the search
+algorithms used to find initialization files and font files.  The
+per-platform descriptions that follow tell you where to install these
+files.
+
+<hr>
+
+<h2><a name="Install_Unix"></a>Installing Ghostscript on Unix</h2>
+
+<p>
+Ghostscript uses the common configure, build and install method common 
+to many modern software packages. In general the following with suffice
+to build ghostscript:
+<blockquote><code>
+	./configure<br>
+	make
+</code></blockquote>
+and then it may be installed in the default location with:
+<blockquote><b>
+	<tt>make install</tt>
+</b></blockquote>	
+This last command may need to be performed with super user privileges.
+
+<p>
+You can set the installation directory by adding <tt>--prefix=<em>path</em></tt>
+to the configure invocation in the first step. The default prefix is <tt>/usr/local</tt>,
+which is to say the <tt>gs</tt> executable is installed as <tt>/usr/local/bin/gs</tt>.
+
+</p>A list of similar configuration options is available via <tt>./configure --help</tt>
+
+<p>
+For more detailed information on building Ghostscript see
+<a href="Make.htm#Unix_build">how to build Ghostscript on Unix</a> in
+the documentation on building Ghostscript, especially regarding information
+on using the older <a href="Make.htm#UNIX_makefile">hand edited makefile</a>
+approach. Whatever configuration method you use, execute "<code>make
+install</code>" to install the executable and all the required and
+ancillary files after the build is complete.
+
+<h3><a name="Use_Acrobat_fonts_Unix"></a>Fonts</h3>
+
+<p>
+The makefile installs all the files except fonts under the directory
+defined in the makefile as <code>prefix</code>. Fonts need to be
+installed separately. The fonts should be installed in
+<tt><em>{prefix}</em>/share/ghostscript/fonts</tt>.
+(That is, <tt>/usr/local/share/ghostscript/fonts/</tt> if you used the default
+configuration above.)
+
+<p>
+If you have Adobe Acrobat installed, you can use the Acrobat fonts 
+in place of the ones distributed with with Ghostscript by adding the 
+Acrobat fonts directory to
+<code>GS_FONTPATH</code> and removing these fonts from
+<code>Fontmap.GS</code>:
+
+<blockquote>
+Courier, Courier-Bold, Courier-BoldOblique, Courier-Oblique, Helvetica,
+Helvetica-Bold, Helvetica-BoldOblique, Helvetica-Oblique, Symbol, Times-Bold,
+Times-BoldItalic, Times-Italic, Times-Roman, ZapfDingbats
+</blockquote>
+
+<p>
+Similarly, you can have ghostscript use other fonts on your system by adding
+entries to the fontmap or adding the directories to the GS_FONTMAP environment
+variable. See the <a href="Use.htm#Font_lookup">usage documentation</a> for more
+information. 
+For example, many linux distributions place fonts under <tt>/usr/share/fonts</tt>.
+
+<h3><a name="Shared_object"></a>Ghostscript as a shared object</h3>
+If you've built Ghostscript as a shared object, instead of '<tt>make install</tt>', 
+you must use '<tt>make soinstall</tt>'.  
+See <a href="Make.htm#Shared_object">how to build Ghostscript
+as a shared object</a> for more details.
+
+<h3><a name="Install_Linux"></a>Additional notes on Linux</h3>
+
+<p>
+For Linux, you may be able to install or upgrade Ghostscript from
+precompiled <a href="http://www.rpm.org">RPM</a> files using:
+
+<blockquote><code>
+rpm -U ghostscript-N.NN-1.i386.rpm<br>
+rpm -U ghostscript-fonts-N.NN-1.noarch.rpm
+</code></blockquote>
+
+<p>
+However, please note that we do not create RPMs for Ghostscript, and we take
+no responsibility for RPMs created by others.
+
+<hr>
+
+<h2><a name="Install_Windows"></a>Installing Ghostscript on MS Windows</h2>
+
+<p>
+We usually distribute Ghostscript releases for Windows as a binary installer,
+for the convenience of most users.
+
+<h4><a name="Windows16"></a>Windows 3.1 (16-bit)</h4>
+<p>
+The last version to run on 16-bit Windows 3.1 was Ghostscript 4.03.
+
+<h4><a name="Windows32"></a>Windows 95, 98, Me</h4>
+<p>
+The last version to be available as a binary for Windows 95/98/Me was 8.60. Although
+building from source with Visual Studio 2003 should produce a working binary for those
+versions.
+
+<h4><a name="Windows32"></a>Windows NT4, 2000, XP, 2003 or Vista (32-bit)</h4>
+<p>
+The installer is normally named
+<code>gs###w32.exe</code>,
+where ### is the release number (e.g., 871 for Ghostscript 8.71, 
+910 for Ghostscript 9.10).  
+
+<h4><a name="Windows64"></a>Windows XP x64 edition, 2003 or Vista (64-bit)</h4>
+<p>
+The x64 installer is normally named
+<code>gs###w64.exe</code>
+This is for 64-bit Windows operating systems based on the x64 instruction set.
+Do not use this on 64-bit processors running 32-bit Windows.
+
+<h3><a name="Windows4"></a>Installing</h3>
+<p>
+To install Ghostscript on Windows, you should run the installer executable.
+
+<p>The installer is NSIS-based (see also <a href="Release.htm">Release.htm</a>) and
+supports a few standard NSIS options: <code>/NCRC</code> disables the CRC check,
+<code>/S</code> runs the installer or uninstaller silently, <code>/D</code>
+sets the default installation directory (It must be the last parameter
+used in the command line and must not contain any quotes, even if the path
+contains spaces. Only absolute paths are supported).
+
+<h3><a name="General_Windows"></a>General Windows configuration</h3>
+
+<p>
+The installer includes files in these subdirectories:
+
+<blockquote><code>
+gs<em>#.##</em>\bin
+<br>gs<em>#.##</em>\examples
+<br>gs<em>#.##</em>\lib
+<br>gs<em>#.##</em>\doc
+<br>gs<em>#.##</em>\Resource
+<br>fonts
+</code></blockquote>
+
+<p>
+The actual executable files for the 32-bit Windows install, in the <code>gs<em>#.##</em>\bin</code>
+subdirectory, are:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>GSWIN32C.EXE</code>
+	<td>&nbsp;
+	<td>Ghostscript as a 32-bit Windows command line program.
+	This is usually the preferred executable.
+<tr valign=top>	<td><code>GSWIN32.EXE</code>
+	<td>&nbsp;
+	<td>32-bit Ghostscript using its own window for commands
+<tr valign=top>	<td><code>GSDLL32.DLL</code>
+	<td>&nbsp;
+	<td>32-bit dynamic link library containing most of Ghostscript's
+functionality
+</table></blockquote>
+
+<p>
+For the 64-bit Windows install, also in the <code>gs<em>#.##</em>\bin</code>
+subdirectory, they are:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>GSWIN64C.EXE</code>
+	<td>&nbsp;
+	<td>Ghostscript as a 64-bit Windows command line program.
+	This is usually the preferred executable.
+<tr valign=top>	<td><code>GSWIN64.EXE</code>
+	<td>&nbsp;
+	<td>64-bit Ghostscript using its own window for commands
+<tr valign=top>	<td><code>GSDLL64.DLL</code>
+	<td>&nbsp;
+	<td>64-bit dynamic link library containing most of Ghostscript's
+functionality
+</table></blockquote>
+
+<p>
+For printer devices, the default output is the default printer.
+This can be modified as follows:
+
+<blockquote>
+<dl>
+<dt><code>-sOutputFile="%printer%printer name"</code>
+<dd>Output to the named printer.  If your printer is named "HP DeskJet 500"
+then you would use <tt>-sOutputFile="%printer%HP DeskJet 500"</tt>.
+
+</dl>
+</blockquote>
+
+<p>
+If Ghostscript fails to find an environment variable, it looks for a
+registry value of the same name under the key
+
+<blockquote><code>
+HKEY_CURRENT_USER\Software\GPL Ghostscript\#.##
+</code></blockquote>
+
+<p>
+or if that fails, under the key
+
+<blockquote><code>
+HKEY_LOCAL_MACHINE\SOFTWARE\GPL Ghostscript\#.##
+</code></blockquote>
+
+<p>
+where #.## is the Ghostscript version number.
+
+<p>
+Ghostscript will attempt to load the Ghostscript dynamic link 
+library <code>GSDLL32.DLL</code> in the following order:
+<ul>
+<li> In the same directory as the Ghostscript executable.
+<li> If the environment variable <code>GS_DLL</code> is defined, 
+Ghostscript tries to load the Ghostscript dynamic link library (DLL) 
+with the name given.  
+<li> Using the standard Windows library search method: the directory
+from which the application loaded, the current directory, the Windows
+system directory, the Windows directory and the directories listed in
+the PATH environment variable.
+</ul>
+
+<p>
+The Ghostscript installer will create registry values
+for the environment variables <code>GS_LIB</code> 
+and <code>GS_DLL</code>.
+
+<h3><a name="Uninstall_Windows"></a>Uninstalling Ghostscript on Windows</h3>
+
+<p>
+To uninstall Ghostscript, use the Control Panel, Add/Remove Programs and
+remove "Ghostscript #.##" and "Ghostscript Fonts".  (The entries may be
+called "GPL Ghostscript" or "AFPL Ghostscript", rather than just
+"Ghostscript", depending on what version of Ghostscript was installed).
+Alternatively, an uninstall shortcut is also available in the Start Menu
+group.
+<hr>
+
+<h2><a name="Install_VMS"></a>Installing Ghostscript on OpenVMS</h2>
+
+<p>
+Support for OpenVMS has stagnated (and almost certainly bit-rotted), and
+as the core development team has no access to an OpenVMS environment, we
+are unable to bring it up to date. We will consider patches from contributors
+if any wish to take on the task of getting it working again. Given the
+very limited appeal of OpenVMS these days, however, we are unlikely to consider
+patches with invasive code changes.
+
+<p>
+You need the file <code>GS.EXE</code> to run Ghostscript on OpenVMS, and
+installing Ghostscript on an OpenVMS system requires building it first:
+please read <a href="Make.htm#VMS_build">how to build Ghostscript on VMS</a>
+in the documentation on building Ghostscript.
+
+<p>
+The following installation steps assume that the Ghostscript directory is
+<code>DISK1:[DIR.GHOSTSCRIPT]</code>.  Yours will almost certainly be in
+a different location so adjust the following commands accordingly.
+
+<ul>
+
+<li>Download the fonts and unpack them into
+<code>DISK1:[DIR.GHOSTSCRIPT.LIB]</code>.
+
+<li>Enable access to the program and support files for all users with:
+
+<blockquote><pre>
+&#36; set file/prot=w:re DISK1:[DIR]GHOSTSCRIPT.dir
+&#36; set file/prot=w:re DISK1:[DIR.GHOSTSCRIPT...]*.*
+</pre></blockquote>
+
+<li>Optionally, add the Ghostscript help instructions to your system wide
+help file:
+
+<blockquote><pre>
+&#36; lib/help sys&#36;help:HELPLIB.HLB DISK1:[DIR.GHOSTSCRIPT.DOC]GS-VMS.HLP
+</pre></blockquote>
+
+<li>Lastly, add the following lines to the appropriate system wide or user
+specific login script.
+
+<blockquote><pre>
+&#36; define gs_exe DISK1:[DIR.GHOSTSCRIPT.BIN]
+&#36; define gs_lib DISK1:[DIR.GHOSTSCRIPT.EXE]
+&#36; gs :== &#36;gs_exe:gs.exe
+</pre></blockquote>
+
+</ul>
+
+<p>
+If you have DECWindows/Motif installed, you may wish to replace the
+<code>FONTMAP.GS</code> file with <code>FONTMAP.VMS</code>.  Read the
+comment at the beginning of the latter file for more information.
+
+<hr>
+
+<h2><a name="Install_DOS"></a>Installing Ghostscript on DOS</h2>
+
+<p>
+The last version to run on DOS was Aladdin Ghostscript 5.10,
+which used a 386 DOS extender.
+<p>
+If you are running MS Windows, then use the MS Windows Ghostscript
+command line executable <code>GSWIN32C.EXE</code>.
+
+<hr>
+
+<h2><a name="Install_OS2"></a>Installing Ghostscript on OS/2 2.x</h2>
+
+<p>
+Support for OS/2 has stagnated (and almost certainly bit-rotted), and
+as the core development team has no access to an OS/2 environment, we
+are unable to bring it up to date. We will consider patches from contributors
+if any wish to take on the task of getting it working again. Given the
+very limited appeal of OS/2 these days, however, we are unlikely to consider
+patches with invasive code changes.
+
+<p>
+The Ghostscript OS/2 implementation is designed for OS/2 2.1 or later.
+You need these files to run Ghostscript on OS/2:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>GSOS2.EXE</code>
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>A text application that will run windowed or full screen
+<tr valign=top>	<td><code>GSDLL2.DLL</code>
+	<td>&nbsp;
+	<td>A dynamic link library that must be in the same directory as
+	    <code>GSOS2.EXE</code> or on the <code>LIBPATH</code>.
+<tr valign=top>	<td><code>GSPMDRV.EXE</code>
+	<td>&nbsp;
+	<td>An "external driver" used by the <code>display</code>
+	    device, which is normally the default device and which displays
+	    output in a Presentation Manager window;
+	    <code>GSPMDRV.EXE</code> must be located in the same
+	    directory as <code>GSOS2.EXE</code> or on the
+	    <code>PATH</code>
+</table></blockquote>
+
+<p>
+<code>GSOS2.EXE</code>, <code>GSDLL2.DLL</code> and
+<code>GSPMDRV.EXE</code> are compiled using EMX/GCC 0.9d.  You must have
+the EMX DLLs on your <code>LIBPATH</code>; they are available in a
+package <code>emxrt.zip</code> from many places on the Internet.
+
+<p>
+The system menu of the Ghostscript Image window includes a "Copy" command
+to copy the currently displayed bitmap to the Clipboard.
+
+<p>
+OS/2 comes with some Adobe Type Manager fonts. If you wish to use these with
+Ghostscript, you should replace the <code>FONTMAP</code> file with
+<code>FONTMAP.OS2</code>, and add to the environment variable
+<code>GS_LIB</code> (see <a href="Use.htm#Finding_files">Use.htm</a> 
+for more information about
+<code>GS_LIB</code>) the name of the directory where the fonts are
+located, usually <code>C:\PSFONTS</code>.  Before you do this, please
+read carefully the license that accompanies the ATM fonts; we take no
+responsibility for any possible violations of such licenses.
+
+<p>
+Since <code>GSOS2.EXE</code> is not a PM application, it cannot
+determine the depth of the PM display.  You must provide this information
+using the <code>-dBitsPerPixel</code> option.  Valid values are 1, 4, 8
+(the default), and 24.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=bottom>
+	<th align=left>Use
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>For
+<tr>	<td colspan=3><hr>
+<tr valign=top>	<td><code>-dBitsPerPixel=1</code>
+	<td>&nbsp;
+	<td>VGA monochrome
+<tr valign=top>	<td><code>-dBitsPerPixel=4</code>
+	<td>&nbsp;
+	<td>VGA standard
+<tr valign=top>	<td><code>-dBitsPerPixel=8</code>
+	<td>&nbsp;
+	<td>SVGA 256 colors
+</table></blockquote>
+
+<p>
+Standard VGA is very slow because it uses double buffering to avoid bugs
+and because of 1-plane to 4-plane conversion; it's better to use a
+256-color display driver.  Many display drivers have bugs which cause 1
+bit-per-pixel bitmaps to be displayed incorrectly.
+
+<p>
+<code>GSOS2.EXE</code> and <code>GSPMDRV.EXE</code> will stay in
+memory for the number of minutes specified in the environment variable
+<code>GS_LOAD</code>.
+
+<p>
+For printer devices, output goes to the default queue.  To print to a
+specified queue, use <code>-sOutputFile=\\spool\NullLPT1</code>, where
+<code>NullLPT1</code> is the queue's physical name.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>
