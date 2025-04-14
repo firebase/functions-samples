@@ -20,7 +20,8 @@
     "node-fetch": "^2.0.0"
   },
   "devDependencies": {
-    "firebase-functions-test": "^3.4.0"
+    "firebase-functions-test": "^3.4.0",
+    "prettier": "^3.5.3"
   },
   "private": true
 }

@@ -9,7 +9,8 @@
     "googleapis": "^47.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "eslint": "^8.57.1",
+    "prettier": "^3.5.3"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",

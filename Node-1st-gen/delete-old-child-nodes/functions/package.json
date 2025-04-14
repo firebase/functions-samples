@@ -13,5 +13,8 @@
   "scripts": {
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
 }

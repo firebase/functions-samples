@@ -27,6 +27,7 @@
     "eslint-plugin-import": "^2.26.0",
     "firebase-functions-test": "^3.4.0",
     "mocha": "^10.1.0",
+    "prettier": "^3.5.3",
     "sinon": "^13.0.2"
   },
   "private": true

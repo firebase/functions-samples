@@ -11,6 +11,7 @@
     "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
     "mocha": "^7.2.0",
+    "prettier": "^3.5.3",
     "sinon": "^9.2.4"
   },
   "scripts": {

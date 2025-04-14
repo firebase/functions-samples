@@ -18,6 +18,7 @@
   "homepage": "https://github.com/firebase/functions-samples#readme",
   "devDependencies": {
     "eslint-config-google": "^0.14.0",
+    "prettier": "^3.5.3",
     "typescript": "^5.1.6",
     "vite": "^4.4.9"
   },

@@ -11,6 +11,7 @@
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.57.1",
     "mocha": "^7.2.0",
+    "prettier": "^3.5.3",
     "sinon": "^9.2.4"
   },
   "scripts": {
