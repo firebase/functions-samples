@@ -3,7 +3,7 @@
   "description": "Send a message to Discord when an alert is received from Firebase",
   "scripts": {
     "lint": "prettier . --check && eslint .",
-    "lint:fix": "prettier . --fix",
+    "lint:fix": "prettier . --write",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",

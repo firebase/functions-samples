@@ -3,7 +3,7 @@
   "description": "File new issue in Jira when receiving in-app feedback facilitated by Firebase App Distribution",
   "scripts": {
     "lint": "prettier . --check && eslint .",
-    "lint:fix": "prettier . --fix",
+    "lint:fix": "prettier . --write",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",

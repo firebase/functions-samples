@@ -3,7 +3,7 @@
   "description": "Get the difference between the previous and current Remote Config template",
   "scripts": {
     "lint": "prettier . --check && eslint .",
-    "lint:fix": "prettier . --fix",
+    "lint:fix": "prettier . --write",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",

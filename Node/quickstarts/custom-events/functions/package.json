@@ -3,7 +3,7 @@
   "description": "Custom event handler for Image Resizer extension.",
   "scripts": {
     "lint": "prettier . --check && eslint .",
-    "lint:fix": "prettier . --fix",
+    "lint:fix": "prettier . --write",
     "lint:fix": "eslint . --fix",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",

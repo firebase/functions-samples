@@ -3,7 +3,7 @@
   "description": "Back up images from NASA's Astronomy Picture of the Day using Cloud Tasks.",
   "scripts": {
     "lint": "prettier . --check && eslint .",
-    "lint:fix": "prettier . --fix",
+    "lint:fix": "prettier . --write",
     "lint:fix": "eslint . --fix",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
