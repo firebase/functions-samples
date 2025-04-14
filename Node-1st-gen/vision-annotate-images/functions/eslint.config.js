@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-const eslint = require("@eslint/js");
-const tseslint = require("typescript-eslint");
-
-module.exports = tseslint.config(
-  eslint.configs.recommended,
-  tseslint.configs.recommended,
-);
+module.exports = {
+  env: {
+    es2022: true,
+    node: true,
+  },
+  extends: ["eslint:recommended", "google", "prettier"],
+  rules: {
+    "valid-jsdoc": ["off"],
+  },
+};

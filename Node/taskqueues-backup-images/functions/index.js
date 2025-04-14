@@ -16,17 +16,17 @@
 "use strict";
 // [START imports]
 // Dependencies for task queue functions.
-const { onTaskDispatched } = require("firebase-functions/v2/tasks");
-const { onRequest, HttpsError } = require("firebase-functions/v2/https");
-const { getFunctions } = require("firebase-admin/functions");
-const { logger } = require("firebase-functions/v2");
+const {onTaskDispatched} = require("firebase-functions/v2/tasks");
+const {onRequest, HttpsError} = require("firebase-functions/v2/https");
+const {getFunctions} = require("firebase-admin/functions");
+const {logger} = require("firebase-functions/v2");
 
 // Dependencies for image backup.
 const path = require("path");
 const fetch = require("node-fetch");
-const { initializeApp } = require("firebase-admin/app");
-const { getStorage } = require("firebase-admin/storage");
-const { GoogleAuth } = require("google-auth-library");
+const {initializeApp} = require("firebase-admin/app");
+const {getStorage} = require("firebase-admin/storage");
+const {GoogleAuth} = require("google-auth-library");
 // [END imports]
 initializeApp();
 
@@ -41,66 +41,66 @@ const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
  */
 // [START v2TaskFunctionSetup]
 exports.backupapod = onTaskDispatched(
-  {
-    retryConfig: {
-      maxAttempts: 5,
-      minBackoffSeconds: 60,
+    {
+      retryConfig: {
+        maxAttempts: 5,
+        minBackoffSeconds: 60,
+      },
+      rateLimits: {
+        maxConcurrentDispatches: 6,
+      },
     },
-    rateLimits: {
-      maxConcurrentDispatches: 6,
-    },
-  },
-  async (req) => {
+    async (req) => {
     // [END v2TaskFunctionSetup]
-    const date = req.data.date;
-    if (!date) {
-      logger.warn("Invalid payload. Must include date.");
-      throw new HttpsError(
-        "invalid-argument",
-        "Invalid payload. Must include date.",
-      );
-    }
-    logger.info(`Requesting data from apod api for date ${date}`);
-    let url = "https://api.nasa.gov/planetary/apod";
-    url += `?date=${date}`;
-    url += `&api_key=${process.env.NASA_API_KEY}`;
-    const apiResp = await fetch(url);
-    if (!apiResp.ok) {
-      logger.warn(
-        `request to NASA APOD API failed with reponse ${apiResp.status}`,
-      );
-      if (apiResp.status === 404) {
-        // APOD not published for the day. This is fine!
-        return;
-      }
-      if (apiResp.status >= 500) {
+      const date = req.data.date;
+      if (!date) {
+        logger.warn("Invalid payload. Must include date.");
         throw new HttpsError(
-          "unavailable",
-          "APOD API temporarily not available.",
+            "invalid-argument",
+            "Invalid payload. Must include date.",
         );
       }
-      throw new HttpsError("internal", "Uh-oh. Something broke.");
-    }
-    const apod = await apiResp.json();
-    const picUrl = apod.hdurl;
-    logger.info(`Fetched ${picUrl} from NASA API for date ${date}.`);
+      logger.info(`Requesting data from apod api for date ${date}`);
+      let url = "https://api.nasa.gov/planetary/apod";
+      url += `?date=${date}`;
+      url += `&api_key=${process.env.NASA_API_KEY}`;
+      const apiResp = await fetch(url);
+      if (!apiResp.ok) {
+        logger.warn(
+            `request to NASA APOD API failed with reponse ${apiResp.status}`,
+        );
+        if (apiResp.status === 404) {
+        // APOD not published for the day. This is fine!
+          return;
+        }
+        if (apiResp.status >= 500) {
+          throw new HttpsError(
+              "unavailable",
+              "APOD API temporarily not available.",
+          );
+        }
+        throw new HttpsError("internal", "Uh-oh. Something broke.");
+      }
+      const apod = await apiResp.json();
+      const picUrl = apod.hdurl;
+      logger.info(`Fetched ${picUrl} from NASA API for date ${date}.`);
 
-    const picResp = await fetch(picUrl);
-    const dest = getStorage()
-      .bucket(BACKUP_BUCKET)
-      .file(`apod/${date}${path.extname(picUrl)}`);
-    try {
-      await new Promise((resolve, reject) => {
-        const stream = dest.createWriteStream();
-        picResp.body.pipe(stream);
-        picResp.body.on("end", resolve);
-        stream.on("error", reject);
-      });
-    } catch (err) {
-      logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
-      throw new HttpsError("internal", "Uh-oh. Something broke.");
-    }
-  },
+      const picResp = await fetch(picUrl);
+      const dest = getStorage()
+          .bucket(BACKUP_BUCKET)
+          .file(`apod/${date}${path.extname(picUrl)}`);
+      try {
+        await new Promise((resolve, reject) => {
+          const stream = dest.createWriteStream();
+          picResp.body.pipe(stream);
+          picResp.body.on("end", resolve);
+          stream.on("error", reject);
+        });
+      } catch (err) {
+        logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
+        throw new HttpsError("internal", "Uh-oh. Something broke.");
+      }
+    },
 );
 
 let auth;
@@ -125,7 +125,7 @@ async function getFunctionUrl(name, location = "us-central1") {
     `projects/${projectId}/locations/${location}/functions/${name}`;
 
   const client = await auth.getClient();
-  const res = await client.request({ url });
+  const res = await client.request({url});
   const uri = res.data?.serviceConfig?.uri;
   if (!uri) {
     throw new Error(`Unable to retreive uri for function at ${url}`);
@@ -150,14 +150,14 @@ exports.enqueuebackuptasks = onRequest(async (_request, response) => {
     // Extract just the date portion (YYYY-MM-DD) as string.
     const date = backupDate.toISOString().substring(0, 10);
     enqueues.push(
-      queue.enqueue(
-        { date },
-        {
-          scheduleDelaySeconds,
-          dispatchDeadlineSeconds: 60 * 5, // 5 minutes
-          uri: targetUri,
-        },
-      ),
+        queue.enqueue(
+            {date},
+            {
+              scheduleDelaySeconds,
+              dispatchDeadlineSeconds: 60 * 5, // 5 minutes
+              uri: targetUri,
+            },
+        ),
     );
   }
   await Promise.all(enqueues);

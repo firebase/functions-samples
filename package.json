@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.2",
     "pnpm": "^9.15.4",
     "prettier": "^3.5.3",
     "typescript": "^5.0.4"

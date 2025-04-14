@@ -26,6 +26,9 @@ importers:
       eslint-config-google:
         specifier: ^0.14.0
         version: 0.14.0(eslint@8.57.1)
+      eslint-config-prettier:
+        specifier: ^10.1.2
+        version: 10.1.2(eslint@8.57.1)
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
@@ -811,6 +814,15 @@ packages:
     engines: { node: ">=0.10.0" }
     peerDependencies:
       eslint: ">=5.16.0"
+
+  eslint-config-prettier@10.1.2:
+    resolution:
+      {
+        integrity: sha512-Epgp/EofAUeEpIdZkW60MHKvPyru1ruQJxPL+WIycnaPApuseK0Zpkrh/FwL9oIpQvIhJwV7ptOy0DWUjTlCiA==,
+      }
+    hasBin: true
+    peerDependencies:
+      eslint: ">=7.0.0"
 
   eslint-plugin-promise@7.2.1:
     resolution:
@@ -2611,6 +2623,10 @@ snapshots:
   escape-string-regexp@4.0.0: {}
 
   eslint-config-google@0.14.0(eslint@8.57.1):
+    dependencies:
+      eslint: 8.57.1
+
+  eslint-config-prettier@10.1.2(eslint@8.57.1):
     dependencies:
       eslint: 8.57.1
 

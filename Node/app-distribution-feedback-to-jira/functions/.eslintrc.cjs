@@ -15,17 +15,12 @@
  */
 
 module.exports = {
-  root: true,
   env: {
-    es6: true,
+    es2022: true,
     node: true,
   },
-  extends: ["eslint:recommended", "google"],
+  extends: ["eslint:recommended", "google", "prettier"],
   rules: {
-    quotes: ["error", "double"],
-  },
-  parserOptions: {
-    sourceType: "module",
-    ecmaVersion: 2022,
+    "valid-jsdoc": ["off"],
   },
 };

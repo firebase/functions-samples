@@ -1,26 +1,26 @@
+/**
+ * Copyright 2023 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 module.exports = {
   env: {
     es2022: true,
     node: true,
   },
-  parserOptions: {
-    ecmaVersion: 2022,
-    sourceType: "module",
-  },
-  extends: ["eslint:recommended", "google"],
+  extends: ["eslint:recommended", "google", "prettier"],
   rules: {
-    "no-restricted-globals": ["error", "name", "length"],
-    "prefer-arrow-callback": "error",
-    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    "valid-jsdoc": ["off"],
   },
-  overrides: [
-    {
-      files: ["**/*.spec.*"],
-      env: {
-        mocha: true,
-      },
-      rules: {},
-    },
-  ],
-  globals: {},
 };

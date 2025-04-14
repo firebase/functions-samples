@@ -23,7 +23,7 @@ const PromisePool = require("es6-promise-pool").default;
 const MAX_CONCURRENT = 3;
 
 /**
- * Run once a day at midnight, to cleanup the users
+ * Run once a day at midnight, to clean up the users
  * Manually run the task here https://console.cloud.google.com/cloudscheduler
  */
 exports.accountcleanup = functions.pubsub

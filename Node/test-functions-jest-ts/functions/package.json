@@ -26,6 +26,7 @@
     "@typescript-eslint/parser": "^5.58.0",
     "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-import": "^2.26.0",
     "firebase-functions": "^4.3.1",
     "firebase-functions-test": "^3.4.0",

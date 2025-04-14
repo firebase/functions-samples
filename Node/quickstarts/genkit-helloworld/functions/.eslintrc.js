@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
  */
 
 module.exports = {
-  root: true,
   env: {
-    es2020: true,
+    es2022: true,
     node: true,
   },
-  extends: ["eslint:recommended", "google"],
+  extends: ["eslint:recommended", "google", "prettier"],
   rules: {
-    quotes: ["error", "double"],
+    "valid-jsdoc": ["off"],
   },
 };

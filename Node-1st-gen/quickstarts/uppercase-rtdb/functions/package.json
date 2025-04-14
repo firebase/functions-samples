@@ -11,6 +11,7 @@
     "@types/mocha": "^8.2.3",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
+    "eslint-config-prettier": "^10.1.2",
     "firebase-functions-test": "3.4.0",
     "mocha": "^7.2.0",
     "prettier": "^3.5.3",

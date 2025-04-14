@@ -15,14 +15,12 @@
  */
 
 module.exports = {
-  root: true,
   env: {
-    es2017: true,
+    es2022: true,
     node: true,
-    jest: true,
   },
-  extends: ["eslint:recommended", "google"],
+  extends: ["eslint:recommended", "google", "prettier"],
   rules: {
-    quotes: ["error", "double"],
+    "valid-jsdoc": ["off"],
   },
 };

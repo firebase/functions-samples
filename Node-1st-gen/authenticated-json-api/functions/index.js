@@ -107,17 +107,15 @@ app.get("/api/messages", async (req, res) => {
     // Update the query with the valid category
     query = query.orderByChild("category").equalTo(category);
   } else if (category) {
-    res
-      .status(404)
-      .json({
-        errorCode: 404,
-        errorMessage: `category '${category}' not found`,
-      });
+    res.status(404).json({
+      errorCode: 404,
+      errorMessage: `category '${category}' not found`,
+    });
     return;
   }
   try {
     const snapshot = await query.once("value");
-    let messages = [];
+    const messages = [];
     snapshot.forEach((childSnapshot) => {
       messages.push({
         key: childSnapshot.key,
@@ -149,12 +147,10 @@ app.get("/api/message/:messageId", async (req, res) => {
       .once("value");
 
     if (!snapshot.exists()) {
-      return res
-        .status(404)
-        .json({
-          errorCode: 404,
-          errorMessage: `message '${messageId}' not found`,
-        });
+      return res.status(404).json({
+        errorCode: 404,
+        errorMessage: `message '${messageId}' not found`,
+      });
     }
     res.set("Cache-Control", "private, max-age=300");
     return res.status(200).json(snapshot.val());

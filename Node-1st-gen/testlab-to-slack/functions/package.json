@@ -20,6 +20,7 @@
     "node-fetch": "^2.0.0"
   },
   "devDependencies": {
+    "eslint-config-prettier": "^10.1.2",
     "firebase-functions-test": "^3.4.0",
     "prettier": "^3.5.3"
   },

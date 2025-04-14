@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-promise": "^7.2.1",
     "prettier": "^3.5.3"
   },

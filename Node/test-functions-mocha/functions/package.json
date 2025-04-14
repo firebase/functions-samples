@@ -24,6 +24,7 @@
     "chai": "^4.3.6",
     "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-import": "^2.26.0",
     "firebase-functions-test": "^3.4.0",
     "mocha": "^10.1.0",
