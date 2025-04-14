@@ -24,7 +24,7 @@ As an example we'll be using the database structure shown below. It keeps tracks
     /posts
         /key-123456
             likes_count: 32
-            /likes 
+            /likes
                 user123456: true
                 user456789: true
                 user786245: true

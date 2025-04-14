@@ -18,16 +18,15 @@ const opentelemetry = require("@opentelemetry/sdk-node");
 const {
   TraceExporter,
 } = require("@google-cloud/opentelemetry-cloud-trace-exporter");
-const {HttpInstrumentation} = require("@opentelemetry/instrumentation-http");
-const {GrpcInstrumentation} = require("@opentelemetry/instrumentation-grpc");
+const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
+const { GrpcInstrumentation } = require("@opentelemetry/instrumentation-grpc");
 const {
   ExpressInstrumentation,
 } = require("opentelemetry-instrumentation-express");
-const {gcpDetector} = require("@opentelemetry/resource-detector-gcp");
+const { gcpDetector } = require("@opentelemetry/resource-detector-gcp");
 const {
   CloudPropagator,
 } = require("@google-cloud/opentelemetry-cloud-trace-propagator");
-
 
 // Only enable OpenTelemetry if the function is actually deployed.
 // Emulators don't reflect real-world latency"

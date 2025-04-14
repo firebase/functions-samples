@@ -28,7 +28,7 @@ and install the Firebase CLI tool:
         have a sign-up flow.)
     4.  On the Applications page, add a Single-Page App:
         1.  Set the **Base URIs** to `http://localhost:5000`.
-        2.  Set the **Login redirect URIs**  to `http://localhost:5000`.
+        2.  Set the **Login redirect URIs** to `http://localhost:5000`.
         3.  Enable the **Authorization Code** grant type.
         4.  Click **Done**. Take note of the app's **Client ID** for later.
     5.  In **API > Trusted Origins**, confirm that `http://localhost:5000` is
@@ -126,7 +126,7 @@ and install the Firebase CLI tool:
 
     1.  [Enable the IAM Service Account Credentials API](https://console.cloud.google.com/apis/api/iamcredentials.googleapis.com/overview?project=_).
     2.  On the [Cloud Functions](https://console.cloud.google.com/functions/list?project=_)
-        page, 
+        page,
         1.  Click the name of your Cloud Function (**`api`**) to open the
             Function Details page.
         2.  Click **Edit**.

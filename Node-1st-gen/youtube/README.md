@@ -29,36 +29,39 @@ default it will return information about the
 ### Clone and configure the function
 
 1. Install the Firebase CLI and log in:
+
    ```
    npm install --global firebase-tools
 
    firebase login
    ```
+
 1. Clone or download this repo and open the `youtube` directory.
 1. `cd` into the `functions` directory and install dependencies with `npm install`
 1. Set up your Firebase project by running `firebase use --add` with the
    Firebase CLI, select your Project ID and follow the instructions.
 1. Set the YouTube API key as an environment variable:
-    ```bash
-    firebase functions:config:set youtube.key="THE API KEY"
-    ```
+   ```bash
+   firebase functions:config:set youtube.key="THE API KEY"
+   ```
 
 ### Run your function locally with the Firebase Emulator Suite
 
 1. Set up the Firebase emulators with your config ([docs](https://firebase.google.com/docs/functions/local-emulator#set_up_functions_configuration_optional)):
-    ```bash
-    cd functions
 
-    firebase functions:config:get > .runtimeconfig.json
-    ```
+   ```bash
+   cd functions
+
+   firebase functions:config:get > .runtimeconfig.json
+   ```
+
 1. Run the following command to start the emulator:
-    ```bash
-    firebase emulators:start --only functions
-    ```
+   ```bash
+   firebase emulators:start --only functions
+   ```
 1. Check the emulator output to find the URL of the `getChannelInfo` function. It will looks something like `http://localhost:5001/my-project-id/us-central1/getChannelInfo`
 1. Via CURL or in your browser, visit the URL that the function is running at. Optionally, add a query string `?channelId=SOME_CHANNEL_ID` to the end of the URL.
 1. You should get a JSON response with information about the YouTube channel!
-
 
 ## Deploy the app to prod
 

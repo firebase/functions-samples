@@ -1,5 +1,5 @@
 {
-    "functions": {
-        "codebase": "delete-unused-accounts"
-    }
+  "functions": {
+    "codebase": "delete-unused-accounts"
+  }
 }

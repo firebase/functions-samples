@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const {onRequest} = require("firebase-functions/v2/https");
+const { onRequest } = require("firebase-functions/v2/https");
 const {
   onRegressionAlertPublished,
 } = require("firebase-functions/v2/alerts/crashlytics");
@@ -31,8 +31,8 @@ const {
 } = require("firebase-functions/logger");
 // [END loggerImport]
 
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 // Initialize admin sdk for Firestore read in getInspirationalQuote
 initializeApp();
 
@@ -50,13 +50,13 @@ exports.getInspirationalQuote = onRequest(async (request, response) => {
   const db = getFirestore();
   const today = new Date();
   const quoteOfTheMonthRef = db
-      .collection("quotes")
-      .doc(`${today.getFullYear()}`)
-      .collection("months")
-      .doc(`${today.getMonth()}`);
+    .collection("quotes")
+    .doc(`${today.getFullYear()}`)
+    .collection("months")
+    .doc(`${today.getMonth()}`);
 
   const DEFAULT_QUOTE =
-      "You miss 100% of the shots you don't take. -Wayne Gretzky";
+    "You miss 100% of the shots you don't take. -Wayne Gretzky";
   let quote;
   try {
     const quoteOfTheMonthDocSnap = await quoteOfTheMonthRef.get();
@@ -82,16 +82,15 @@ exports.getInspirationalQuote = onRequest(async (request, response) => {
     // [START logError]
   } catch (err) {
     // Attach an error object as the second argument
-    error("Unable to read quote from Firestore, sending default instead",
-        err);
+    error("Unable to read quote from Firestore, sending default instead", err);
     // [END logError]
 
     quote = DEFAULT_QUOTE;
   }
 
   // Attach relevant structured data to any log
-  info("Sending a quote!", {quote: quote});
-  response.json({inspirationalQuote: quote});
+  info("Sending a quote!", { quote: quote });
+  response.json({ inspirationalQuote: quote });
 });
 // [END logsKitchenSink]
 

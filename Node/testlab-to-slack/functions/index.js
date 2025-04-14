@@ -18,8 +18,8 @@
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
-const {onTestMatrixCompleted} = require("firebase-functions/v2/testLab");
-const {logger} = require("firebase-functions");
+const { onTestMatrixCompleted } = require("firebase-functions/v2/testLab");
+const { logger } = require("firebase-functions");
 // The node-fetch library to send web requests to Slack.
 const fetch = require("node-fetch");
 // [END import]
@@ -55,7 +55,7 @@ async function postToSlack(title, details) {
         },
       ],
     }),
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
   });
   return response.json();
 }
@@ -95,27 +95,28 @@ function getSlackmoji(term) {
 
 // [START posttestresultstoslack]
 exports.posttestresultstoslack = onTestMatrixCompleted(
-    {secrets: ["SLACK_WEBHOOK_URL"]},
-    async (event) => {
+  { secrets: ["SLACK_WEBHOOK_URL"] },
+  async (event) => {
     // Obtain Test Matrix properties from the CloudEvent
-      const {testMatrixId, state, outcomeSummary} = event.data;
+    const { testMatrixId, state, outcomeSummary } = event.data;
 
-      // Create the title of the message
-      const title = `${getSlackmoji(state)} ${getSlackmoji(
-          outcomeSummary,
-      )} ${testMatrixId}`;
+    // Create the title of the message
+    const title = `${getSlackmoji(state)} ${getSlackmoji(
+      outcomeSummary,
+    )} ${testMatrixId}`;
 
-      // Create the details of the message
-      const details = `Status: *${state}* ${getSlackmoji(
-          state,
-      )}\nOutcome: *${outcomeSummary}* ${getSlackmoji(outcomeSummary)}
+    // Create the details of the message
+    const details = `Status: *${state}* ${getSlackmoji(
+      state,
+    )}\nOutcome: *${outcomeSummary}* ${getSlackmoji(outcomeSummary)}
     `;
 
-      // Post the message to slack
-      const slackResponse = await postToSlack(title, details);
+    // Post the message to slack
+    const slackResponse = await postToSlack(title, details);
 
-      // Log the response
-      logger.log(slackResponse);
-    });
+    // Log the response
+    logger.log(slackResponse);
+  },
+);
 // [END posttestresultstoslack]
 // [END all]

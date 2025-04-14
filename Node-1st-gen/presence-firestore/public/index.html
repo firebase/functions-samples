@@ -11,25 +11,23 @@
   See the License for the specific language governing permissions and
   limitations under the License
 -->
-<html> 
-    <head>
-        <title>Presence in Firestore</title>
-    </head>
-    <body>
-        <h3>History of user presence (since this page was opened)</h3>
-        <div id="history">
+<html>
+  <head>
+    <title>Presence in Firestore</title>
+  </head>
+  <body>
+    <h3>History of user presence (since this page was opened)</h3>
+    <div id="history"></div>
+    <!-- Import and configure the Firebase SDK -->
+    <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+    <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+    <script src="/__/firebase/10.0.0/firebase-app-compat.js"></script>
+    <script src="/__/firebase/10.0.0/firebase-auth-compat.js"></script>
+    <script src="/__/firebase/10.0.0/firebase-database-compat.js"></script>
+    <script src="/__/firebase/10.0.0/firebase-firestore-compat.js"></script>
 
-        </div>
-        <!-- Import and configure the Firebase SDK -->
-        <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
-        <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-        <script src="/__/firebase/10.0.0/firebase-app-compat.js"></script>
-        <script src="/__/firebase/10.0.0/firebase-auth-compat.js"></script>
-        <script src="/__/firebase/10.0.0/firebase-database-compat.js"></script>
-        <script src="/__/firebase/10.0.0/firebase-firestore-compat.js"></script>
-   
-        <script src="/__/firebase/init.js"></script>
+    <script src="/__/firebase/init.js"></script>
 
-        <script src="./index.js"></script>
-    </body>
+    <script src="./index.js"></script>
+  </body>
 </html>

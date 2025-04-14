@@ -16,7 +16,7 @@
 
 // [START full-sample]
 // Dependencies for callable functions.
-const {onCall, HttpsError} = require("firebase-functions/v2/https");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
 
 /**
  * Gets the weather from the national weather service
@@ -53,18 +53,18 @@ exports.getForecast = onCall(async (request, response) => {
 
   // fetch forecast data for all requested locations
   const allRequests = request.data.locations.map(
-      async ({latitude, longitude}) => {
-        const forecast = await weatherForecastApi(latitude, longitude);
-        const result = {latitude, longitude, forecast};
+    async ({ latitude, longitude }) => {
+      const forecast = await weatherForecastApi(latitude, longitude);
+      const result = { latitude, longitude, forecast };
 
-        // clients that support streaming will have each
-        // forecast streamed to them as they complete
-        if (request.acceptsStreaming) {
-          response.sendChunk(result);
-        }
+      // clients that support streaming will have each
+      // forecast streamed to them as they complete
+      if (request.acceptsStreaming) {
+        response.sendChunk(result);
+      }
 
-        return result;
-      },
+      return result;
+    },
   );
 
   // Return the full set of data to all clients

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-html, body {
-  font-family: 'Roboto', 'Helvetica', sans-serif;
+html,
+body {
+  font-family: "Roboto", "Helvetica", sans-serif;
 }
 .mdl-layout__header-row span {
   margin-left: 15px;

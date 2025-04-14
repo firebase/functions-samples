@@ -2,7 +2,6 @@
 
 This template shows how to shorten URLs automatically as they are added.
 
-
 ## Functions Code
 
 See file [functions/index.js](functions/index.js) for the code.
@@ -13,16 +12,15 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Setting up the sample
 
- - Create a Firebase project using the [Firebase Console](https://console.firebase.google.com).
- - Create a [Bit.ly application](https://bitly.com/a/oauth_apps) and generate an **Access Tokens**.
- - Set the sample to use your Firebase project using `firebase use --add` and select your new Firebase project.
- - Set your Bit.ly app's access token on your function by running:
-     ```bash
-     firebase functions:config:set bitly.access_token=XXXXXXXXXXXXX
-     ```
- - Deploy the function using `firebase deploy`
- - Manually add an object to the Realtime Database following the structure described below.
-
+- Create a Firebase project using the [Firebase Console](https://console.firebase.google.com).
+- Create a [Bit.ly application](https://bitly.com/a/oauth_apps) and generate an **Access Tokens**.
+- Set the sample to use your Firebase project using `firebase use --add` and select your new Firebase project.
+- Set your Bit.ly app's access token on your function by running:
+  ```bash
+  firebase functions:config:set bitly.access_token=XXXXXXXXXXXXX
+  ```
+- Deploy the function using `firebase deploy`
+- Manually add an object to the Realtime Database following the structure described below.
 
 ## Sample Database Structure
 

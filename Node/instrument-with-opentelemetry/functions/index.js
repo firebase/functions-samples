@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-const {onCall} = require("firebase-functions/v2/https");
+const { onCall } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 const opentelemetry = require("@opentelemetry/api");
-const {Timer} = require("./timer");
+const { Timer } = require("./timer");
 
 initializeApp();
 const db = getFirestore();
@@ -48,12 +48,12 @@ async function calculatePrice(productIds) {
   const timer = new Timer();
   let totalUsd = 0;
   const products = await db.getAll(
-      ...productIds.map((id) => db.doc(`products/${id}`)),
+    ...productIds.map((id) => db.doc(`products/${id}`)),
   );
   for (const product of products) {
     totalUsd += product.data()?.usd || 0;
   }
-  logger.info("calculatePrice", {calcPriceMs: timer.measureMs()});
+  logger.info("calculatePrice", { calcPriceMs: timer.measureMs() });
   return totalUsd;
 }
 
@@ -65,24 +65,25 @@ async function calculatePrice(productIds) {
 async function calculateDiscount(productIds) {
   const timer = new Timer();
 
-
   let discountUsd = 0;
-  const processConcurrently = sliceIntoChunks(productIds, 10)
-      .map(async (productIds) => {
-        const discounts = await db.collection("discounts")
-            .where("products", "array-contains-any", productIds)
-            .get();
-        for (const discount of discounts.docs) {
-          discountUsd += discount.data().usd || 0;
-        }
-      });
+  const processConcurrently = sliceIntoChunks(productIds, 10).map(
+    async (productIds) => {
+      const discounts = await db
+        .collection("discounts")
+        .where("products", "array-contains-any", productIds)
+        .get();
+      for (const discount of discounts.docs) {
+        discountUsd += discount.data().usd || 0;
+      }
+    },
+  );
   await Promise.all(processConcurrently);
-  logger.info("calculateDiscount", {calcDiscountMs: timer.measureMs()});
+  logger.info("calculateDiscount", { calcDiscountMs: timer.measureMs() });
   return discountUsd;
 }
 
 exports.calculatetotal = onCall(async (req) => {
-  const {productIds} = req.data;
+  const { productIds } = req.data;
 
   let totalUsd = 0;
   const tracer = opentelemetry.trace.getTracer();
@@ -94,5 +95,5 @@ exports.calculatetotal = onCall(async (req) => {
     totalUsd -= await calculateDiscount(productIds);
     span.end();
   });
-  return {totalUsd};
+  return { totalUsd };
 });

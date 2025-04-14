@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-const eslint = require('@eslint/js');
-const tseslint = require('typescript-eslint');
+const eslint = require("@eslint/js");
+const tseslint = require("typescript-eslint");
 
 module.exports = tseslint.config(
   eslint.configs.recommended,

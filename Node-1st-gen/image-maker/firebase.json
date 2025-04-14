@@ -4,8 +4,6 @@
   },
   "hosting": {
     "public": "public",
-    "rewrites": [
-      {"source":"/api/**", "function":"app" }
-    ]
+    "rewrites": [{ "source": "/api/**", "function": "app" }]
   }
 }

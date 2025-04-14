@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
+const functions = require("firebase-functions/v1");
+const admin = require("firebase-admin");
 admin.initializeApp();
 
 /**
  * This Function updates the `/lastmodified` with the timestamp of the last write to `/chat/$message`.
  */
-exports.touch = functions.database.ref('/chat/{message}').onWrite(
-    (change, context) => admin.database().ref('/lastmodified').set(context.timestamp));
+exports.touch = functions.database
+  .ref("/chat/{message}")
+  .onWrite((change, context) =>
+    admin.database().ref("/lastmodified").set(context.timestamp),
+  );

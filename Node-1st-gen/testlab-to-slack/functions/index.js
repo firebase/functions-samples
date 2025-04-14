@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions/v1');
+const functions = require("firebase-functions/v1");
 
 // The node-fetch library to send web requests to Slack.
 const fetch = require("node-fetch");
@@ -25,7 +25,7 @@ const fetch = require("node-fetch");
  * @param {string} details
  * @return {Promise<string>}
  */
- async function postToSlack(title, details) {
+async function postToSlack(title, details) {
   const response = await fetch(process.env.SLACK_WEBHOOK_URL, {
     method: "post",
     body: JSON.stringify({
@@ -49,47 +49,47 @@ const fetch = require("node-fetch");
         },
       ],
     }),
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
   });
   return response.json();
 }
 
 function getSlackmoji(term) {
   switch (term) {
-    case 'SUCCESS':
-      return ':tada:';
-    case 'FAILURE':
-      return ':broken_heart:';
-    case 'INCONCLUSIVE':
-      return ':question:';
-    case 'SKIPPED':
-      return ':arrow_heading_down:';
-    case 'VALIDATING':
-      return ':thought_balloon:';
-    case 'PENDING':
-      return ':soon:';
-    case 'FINISHED':
-      return ':white_check_mark:';
-    case 'ERROR':
-      return ':red_circle:';
-    case 'INVALID':
-      return ':large_orange_diamond:';
+    case "SUCCESS":
+      return ":tada:";
+    case "FAILURE":
+      return ":broken_heart:";
+    case "INCONCLUSIVE":
+      return ":question:";
+    case "SKIPPED":
+      return ":arrow_heading_down:";
+    case "VALIDATING":
+      return ":thought_balloon:";
+    case "PENDING":
+      return ":soon:";
+    case "FINISHED":
+      return ":white_check_mark:";
+    case "ERROR":
+      return ":red_circle:";
+    case "INVALID":
+      return ":large_orange_diamond:";
     default:
-      return '';
+      return "";
   }
 }
 
 exports.postTestResultsToSlack = functions.testLab
   .testMatrix()
-  .onComplete(async testMatrix => {
+  .onComplete(async (testMatrix) => {
     const { testMatrixId, state, outcomeSummary } = testMatrix;
 
     const title = `${getSlackmoji(state)} ${getSlackmoji(
-      outcomeSummary
+      outcomeSummary,
     )} ${testMatrixId}`;
 
     const details = `Status: *${state}* ${getSlackmoji(
-      state
+      state,
     )}\nOutcome: *${outcomeSummary}* ${getSlackmoji(outcomeSummary)}
     `;
 

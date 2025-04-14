@@ -13,24 +13,23 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
+const functions = require("firebase-functions/v1");
 
 // CORS Express middleware to enable CORS Requests.
-const cors = require('cors')({origin: true});
+const cors = require("cors")({ origin: true });
 
 // Firebase Setup
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 // @ts-ignore
-const serviceAccount = require('./service-account.json');
+const serviceAccount = require("./service-account.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
-const fetch = require('node-fetch');
-
+const fetch = require("node-fetch");
 
 /**
  * Authenticate the provided credentials returning a Firebase custom auth token.
@@ -55,7 +54,7 @@ exports.auth = functions.https.onRequest((req, res) => {
           Status: status,
           Body: body,
         },
-      }
+      },
     );
     if (body) {
       return res.status(200).json(body);
@@ -63,11 +62,11 @@ exports.auth = functions.https.onRequest((req, res) => {
     return res.sendStatus(status);
   };
 
-  let username = '';
+  let username = "";
   try {
     return cors(req, res, async () => {
       // Authentication requests are POSTed, other requests are forbidden
-      if (req.method !== 'POST') {
+      if (req.method !== "POST") {
         return handleResponse(username, 403);
       }
       username = req.body.username;
@@ -80,7 +79,7 @@ exports.auth = functions.https.onRequest((req, res) => {
       }
 
       // TODO(DEVELOPER): In production you'll need to update the `authenticate` function so that it authenticates with your own credentials system.
-      const valid = await authenticate(username, password)
+      const valid = await authenticate(username, password);
       if (!valid) {
         return handleResponse(username, 401); // Invalid username/password
       }
@@ -105,15 +104,18 @@ async function authenticate(username, password) {
   const authEndpoint = `https://httpbin.org/basic-auth/${username}/Testing123`;
   const response = await fetch(authEndpoint, {
     headers: {
-      Authorization: 'Basic ' + Buffer.from(username + ":" + password).toString('base64')
-    }
+      Authorization:
+        "Basic " + Buffer.from(username + ":" + password).toString("base64"),
+    },
   });
 
   if (response.status === 200) {
     return true;
   } else if (response.status === 401) {
-    return false
+    return false;
   } else {
-    throw new Error(`invalid response returned from ${authEndpoint} status code ${response.status}`)
+    throw new Error(
+      `invalid response returned from ${authEndpoint} status code ${response.status}`,
+    );
   }
 }

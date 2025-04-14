@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-const {logger} = require("firebase-functions");
+const { logger } = require("firebase-functions");
 const test = require("firebase-functions-test");
-const {logstore} = require("./index");
+const { logstore } = require("./index");
 
-const {wrap} = test();
+const { wrap } = test();
 
 describe("firebase-functions-test", () => {
   describe("#logstore", () => {

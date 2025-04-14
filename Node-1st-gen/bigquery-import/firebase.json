@@ -1,5 +1,5 @@
 {
-    "functions": {
-        "codebase": "bigquery-import"
-    }
+  "functions": {
+    "codebase": "bigquery-import"
+  }
 }

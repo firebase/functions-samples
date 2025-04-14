@@ -17,6 +17,6 @@
 const functions = require("firebase-functions/v1");
 
 exports.helloJS = functions.https.onRequest((request, response) => {
-  functions.logger.info("Hello logs!", {structuredData: true});
+  functions.logger.info("Hello logs!", { structuredData: true });
   response.send("Hello from JS codebase!");
 });

@@ -2,7 +2,6 @@
 
 This sample demonstrates how to delete the accounts of users who have not signed-in in the last month.
 
-
 ## Functions Code
 
 See the file [functions/index.js](functions/index.js) for the code.
@@ -15,10 +14,10 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 To set up the sample:
 
- - Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
- - Download this sample e.g. `git clone https://github.com/firebase/functions-samples`
- - Enter the sample directory `cd functions-samples/delete-unused-accounts-cron`
- - Setup the sample with your project `firebase use --add` and follow the instructions.
- - Install node dependencies of your Functions `cd functions; npm install; cd -`
- - Deploy your project using `firebase deploy`.
- - The pubsub task should then run once a day and delete any inactive users. You can manually run the task by [navigating to Cloud Scheduler in the Google Cloud Platform Console](https://console.cloud.google.com/cloudscheduler).
+- Create a Firebase Project using the [Firebase Developer Console](https://console.firebase.google.com)
+- Download this sample e.g. `git clone https://github.com/firebase/functions-samples`
+- Enter the sample directory `cd functions-samples/delete-unused-accounts-cron`
+- Setup the sample with your project `firebase use --add` and follow the instructions.
+- Install node dependencies of your Functions `cd functions; npm install; cd -`
+- Deploy your project using `firebase deploy`.
+- The pubsub task should then run once a day and delete any inactive users. You can manually run the task by [navigating to Cloud Scheduler in the Google Cloud Platform Console](https://console.cloud.google.com/cloudscheduler).

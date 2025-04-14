@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
-const { BitlyClient } = require('bitly');
+const functions = require("firebase-functions/v1");
+const { BitlyClient } = require("bitly");
 // TODO: Make sure to set the bitly.access_token cloud functions config using the CLI.
 const bitly = new BitlyClient(functions.config().bitly.access_token);
 
 // Shorten URL written to /links/{linkID}.
-exports.shortenUrl = functions.database.ref('/links/{linkID}').onCreate(async (snap) => {
-  const originalUrl = snap.val();
-  const response = await bitly.shorten(originalUrl);
-  // @ts-ignore
-  const shortUrl = response.url;
+exports.shortenUrl = functions.database
+  .ref("/links/{linkID}")
+  .onCreate(async (snap) => {
+    const originalUrl = snap.val();
+    const response = await bitly.shorten(originalUrl);
+    // @ts-ignore
+    const shortUrl = response.url;
 
-  return snap.ref.set({
-    original: originalUrl,
-    short: shortUrl,
-  })
-});
+    return snap.ref.set({
+      original: originalUrl,
+      short: shortUrl,
+    });
+  });

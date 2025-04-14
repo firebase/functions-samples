@@ -13,18 +13,18 @@
  * See the License for t`he specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
-const fs = require('fs');
-const crypto = require('crypto');
-const path = require('path');
-const os = require('os');
+const functions = require("firebase-functions/v1");
+const fs = require("fs");
+const crypto = require("crypto");
+const path = require("path");
+const os = require("os");
 
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 admin.initializeApp();
-const { Storage } = require('@google-cloud/storage');
-const spawn = require('child-process-promise').spawn;
+const { Storage } = require("@google-cloud/storage");
+const spawn = require("child-process-promise").spawn;
 
 const gcs = new Storage();
 
@@ -36,30 +36,33 @@ exports.metadata = functions.storage.object().onFinalize(async (object) => {
   const filePath = object.name;
 
   // Create random filename with same extension as uploaded file.
-  const randomFileName = crypto.randomBytes(20).toString('hex') + path.extname(filePath);
+  const randomFileName =
+    crypto.randomBytes(20).toString("hex") + path.extname(filePath);
   const tempLocalFile = path.join(os.tmpdir(), randomFileName);
 
   // Exit if this is triggered on a file that is not an image.
-  if (!object.contentType.startsWith('image/')) {
-    functions.logger.log('This is not an image.');
+  if (!object.contentType.startsWith("image/")) {
+    functions.logger.log("This is not an image.");
     return null;
   }
 
   let metadata;
   // Download file from bucket.
   const bucket = gcs.bucket(object.bucket);
-  await bucket.file(filePath).download({destination: tempLocalFile});
+  await bucket.file(filePath).download({ destination: tempLocalFile });
   // Get Metadata from image.
-  const result = await spawn('identify', ['-verbose', tempLocalFile], {capture: ['stdout', 'stderr']});
+  const result = await spawn("identify", ["-verbose", tempLocalFile], {
+    capture: ["stdout", "stderr"],
+  });
   // Save metadata to realtime datastore.
   metadata = imageMagickOutputToObject(result.stdout);
   const safeKey = makeKeyFirebaseCompatible(filePath);
   await admin.database().ref(safeKey).set(metadata);
-  functions.logger.log('Wrote to:', filePath, 'data:', metadata);
+  functions.logger.log("Wrote to:", filePath, "data:", metadata);
   // Cleanup temp directory after metadata is extracted
   // Remove the file from temp directory
-  await fs.unlinkSync(tempLocalFile)
-  return functions.logger.log('cleanup successful!');
+  await fs.unlinkSync(tempLocalFile);
+  return functions.logger.log("cleanup successful!");
 });
 
 /**
@@ -72,23 +75,29 @@ function imageMagickOutputToObject(output) {
   lines.forEach((line, index) => {
     const currentIdent = line.search(/\S/);
     line = line.trim();
-    if (line.endsWith(':')) {
-      lines[index] = makeKeyFirebaseCompatible(`"${line.replace(':', '":{')}`);
+    if (line.endsWith(":")) {
+      lines[index] = makeKeyFirebaseCompatible(`"${line.replace(":", '":{')}`);
     } else {
-      const split = line.replace('"', '\\"').split(': ');
+      const split = line.replace('"', '\\"').split(": ");
       split[0] = makeKeyFirebaseCompatible(split[0]);
       lines[index] = `"${split.join('":"')}",`;
     }
     if (currentIdent < previousLineIndent) {
-      lines[index - 1] = lines[index - 1].substring(0, lines[index - 1].length - 1);
-      lines[index] = new Array(1 + (previousLineIndent - currentIdent) / 2).join('}') + ',' + lines[index];
+      lines[index - 1] = lines[index - 1].substring(
+        0,
+        lines[index - 1].length - 1,
+      );
+      lines[index] =
+        new Array(1 + (previousLineIndent - currentIdent) / 2).join("}") +
+        "," +
+        lines[index];
     }
     previousLineIndent = currentIdent;
   });
-  output = lines.join('');
-  output = '{' + output.substring(0, output.length - 1) + '}'; // remove trailing comma.
+  output = lines.join("");
+  output = "{" + output.substring(0, output.length - 1) + "}"; // remove trailing comma.
   output = JSON.parse(output);
-  functions.logger.log('Metadata extracted from image', output);
+  functions.logger.log("Metadata extracted from image", output);
   return output;
 }
 
@@ -97,5 +106,5 @@ function imageMagickOutputToObject(output) {
  * Realtime Database keys such as '.' and replaces them by '*'.
  */
 function makeKeyFirebaseCompatible(key) {
-  return key.replace(/\./g, '*');
+  return key.replace(/\./g, "*");
 }

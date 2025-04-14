@@ -20,10 +20,7 @@ module.exports = {
     es2017: true,
     node: true,
   },
-  extends: [
-    "eslint:recommended",
-    "google",
-  ],
+  extends: ["eslint:recommended", "google"],
   rules: {
     quotes: ["error", "double"],
   },

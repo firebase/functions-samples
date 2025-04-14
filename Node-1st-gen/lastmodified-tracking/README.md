@@ -27,7 +27,6 @@ As an example we'll be using a simple chat database structure:
 
 The function will write to `/lastmodified`:
 
-
 ```
 /functions-project-12345
     /lastmodified: 1234567890
@@ -54,5 +53,3 @@ The following security rules ensures only a Function with admin access can updat
   }
 }
 ```
-
-

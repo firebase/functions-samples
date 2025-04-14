@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
+const functions = require("firebase-functions/v1");
+const admin = require("firebase-admin");
 admin.initializeApp();
-const { Logging } = require('@google-cloud/logging');
+const { Logging } = require("@google-cloud/logging");
 const logging = new Logging({
   projectId: process.env.GCLOUD_PROJECT,
 });
 
-const { Stripe } = require('stripe');
+const { Stripe } = require("stripe");
 const stripe = new Stripe(functions.config().stripe.secret, {
-  apiVersion: '2020-08-27',
+  apiVersion: "2020-08-27",
 });
 
 /**
@@ -38,7 +38,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const intent = await stripe.setupIntents.create({
     customer: customer.id,
   });
-  await admin.firestore().collection('stripe_customers').doc(user.uid).set({
+  await admin.firestore().collection("stripe_customers").doc(user.uid).set({
     customer_id: customer.id,
     setup_secret: intent.client_secret,
   });
@@ -50,13 +50,12 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
  * this function is triggered to retrieve the payment method details.
  */
 exports.addPaymentMethodDetails = functions.firestore
-  .document('/stripe_customers/{userId}/payment_methods/{pushId}')
+  .document("/stripe_customers/{userId}/payment_methods/{pushId}")
   .onCreate(async (snap, context) => {
     try {
       const paymentMethodId = snap.data().id;
-      const paymentMethod = await stripe.paymentMethods.retrieve(
-        paymentMethodId
-      );
+      const paymentMethod =
+        await stripe.paymentMethods.retrieve(paymentMethodId);
       await snap.ref.set(paymentMethod);
       // Create a new SetupIntent so the customer can add a new method next time.
       const intent = await stripe.setupIntents.create({
@@ -66,7 +65,7 @@ exports.addPaymentMethodDetails = functions.firestore
         {
           setup_secret: intent.client_secret,
         },
-        { merge: true }
+        { merge: true },
       );
       return;
     } catch (error) {
@@ -85,7 +84,7 @@ exports.addPaymentMethodDetails = functions.firestore
 // [START chargecustomer]
 
 exports.createStripePayment = functions.firestore
-  .document('stripe_customers/{userId}/payments/{pushId}')
+  .document("stripe_customers/{userId}/payments/{pushId}")
   .onCreate(async (snap, context) => {
     const { amount, currency, payment_method } = snap.data();
     try {
@@ -102,9 +101,9 @@ exports.createStripePayment = functions.firestore
           payment_method,
           off_session: false,
           confirm: true,
-          confirmation_method: 'manual',
+          confirmation_method: "manual",
         },
-        { idempotencyKey }
+        { idempotencyKey },
       );
       // If the result is successful, write it back to the database.
       await snap.ref.set(payment);
@@ -126,11 +125,11 @@ exports.createStripePayment = functions.firestore
  * @see https://stripe.com/docs/payments/accept-a-payment-synchronously#web-confirm-payment
  */
 exports.confirmStripePayment = functions.firestore
-  .document('stripe_customers/{userId}/payments/{pushId}')
+  .document("stripe_customers/{userId}/payments/{pushId}")
   .onUpdate(async (change, context) => {
-    if (change.after.data().status === 'requires_confirmation') {
+    if (change.after.data().status === "requires_confirmation") {
       const payment = await stripe.paymentIntents.confirm(
-        change.after.data().id
+        change.after.data().id,
       );
       change.after.ref.set(payment);
     }
@@ -140,19 +139,19 @@ exports.confirmStripePayment = functions.firestore
  * When a user deletes their account, clean up after them
  */
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
-  const dbRef = admin.firestore().collection('stripe_customers');
+  const dbRef = admin.firestore().collection("stripe_customers");
   const customer = (await dbRef.doc(user.uid).get()).data();
   await stripe.customers.del(customer.customer_id);
   // Delete the customers payments & payment methods in firestore.
   const batch = admin.firestore().batch();
   const paymetsMethodsSnapshot = await dbRef
     .doc(user.uid)
-    .collection('payment_methods')
+    .collection("payment_methods")
     .get();
   paymetsMethodsSnapshot.forEach((snap) => batch.delete(snap.ref));
   const paymentsSnapshot = await dbRef
     .doc(user.uid)
-    .collection('payments')
+    .collection("payments")
     .get();
   paymentsSnapshot.forEach((snap) => batch.delete(snap.ref));
 
@@ -174,13 +173,13 @@ function reportError(err, context = {}) {
   // This is the name of the log stream that will receive the log
   // entry. This name can be any valid log stream name, but must contain "err"
   // in order for the error to be picked up by Error Reporting.
-  const logName = 'errors';
+  const logName = "errors";
   const log = logging.log(logName);
 
   // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
   const metadata = {
     resource: {
-      type: 'cloud_function',
+      type: "cloud_function",
       labels: { function_name: process.env.FUNCTION_NAME },
     },
   };
@@ -190,7 +189,7 @@ function reportError(err, context = {}) {
     message: err.stack,
     serviceContext: {
       service: process.env.FUNCTION_NAME,
-      resourceType: 'cloud_function',
+      resourceType: "cloud_function",
     },
     context: context,
   };
@@ -214,5 +213,5 @@ function reportError(err, context = {}) {
 function userFacingMessage(error) {
   return error.type
     ? error.message
-    : 'An error occurred, developers have been alerted';
+    : "An error occurred, developers have been alerted";
 }

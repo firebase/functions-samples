@@ -19,14 +19,21 @@
 <!-- the Okta access token for a Firebase custom authentication token, and  -->
 <!-- authenticating with Firebase using the custom token.                   -->
 <html>
-<head>
-    <meta charset="utf-8"/>
+  <head>
+    <meta charset="utf-8" />
     <title>Okta sign-in demo</title>
     <script src="/__/firebase/10.0.0/firebase-app-compat.js"></script>
     <script src="/__/firebase/10.0.0/firebase-auth-compat.js"></script>
     <script src="/__/firebase/init.js"></script>
-    <script src="https://global.oktacdn.com/okta-signin-widget/4.1.1/js/okta-sign-in.min.js" type="text/javascript"></script>
-    <link href="https://global.oktacdn.com/okta-signin-widget/4.1.1/css/okta-sign-in.min.css" type="text/css" rel="stylesheet"/>
+    <script
+      src="https://global.oktacdn.com/okta-signin-widget/4.1.1/js/okta-sign-in.min.js"
+      type="text/javascript"
+    ></script>
+    <link
+      href="https://global.oktacdn.com/okta-signin-widget/4.1.1/css/okta-sign-in.min.css"
+      type="text/css"
+      rel="stylesheet"
+    />
 
     <!-- okta-config.js defines the following values:                       -->
     <!--   OKTA_ORG_URL: Your Okta organization URL                         -->
@@ -34,46 +41,49 @@
     <!--   CUSTOM_TOKEN_ENDPOINT: The URL of your custom token endpoint     -->
     <!-- Create this file with setup.js or manually.                        -->
     <script src="/okta-config.js"></script>
-</head>
-<body>
-<div id="authenticated-user-content" hidden>
-    <h2>Authenticated with Firebase</h2>
-    <p id="user-info"></p>
-    <button onclick="firebase.auth().signOut();">Sign out</button>
-</div>
-<div id="signin-widget" hidden></div>
-<script>
-window.onload = async () => {
-    const oktaSignIn = new OktaSignIn({
-        baseUrl: OKTA_ORG_URL,
-        redirectUri: window.location.url,
-        authParams: {
-            display: 'page',
-        },
-        el: '#signin-widget',
-    });
-
-    if (oktaSignIn.hasTokensInUrl()) {
-        // The user has been redirected back to your app after signing in with
-        // Okta. Get the Okta access token from the response and use it to
-        // authenticate with Firebase.
-
-        // Get the access token from Okta.
-        const oktaTokenResponse = await oktaSignIn.authClient.token.parseFromUrl();
-        const accessToken = oktaTokenResponse.tokens.accessToken.value;
-        const oktaUserName = oktaTokenResponse.tokens.idToken.claims.name || '';
-        const oktaUserEmail = oktaTokenResponse.tokens.idToken.claims.email || '';
-
-        // Use the access token to call the firebaseCustomToken endpoint.
-        const firebaseTokenResponse = await fetch(CUSTOM_TOKEN_ENDPOINT, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            }
+  </head>
+  <body>
+    <div id="authenticated-user-content" hidden>
+      <h2>Authenticated with Firebase</h2>
+      <p id="user-info"></p>
+      <button onclick="firebase.auth().signOut();">Sign out</button>
+    </div>
+    <div id="signin-widget" hidden></div>
+    <script>
+      window.onload = async () => {
+        const oktaSignIn = new OktaSignIn({
+          baseUrl: OKTA_ORG_URL,
+          redirectUri: window.location.url,
+          authParams: {
+            display: "page",
+          },
+          el: "#signin-widget",
         });
-        const firebaseToken = await firebaseTokenResponse.text();
 
-        // Use the Firebase custom token to authenticate with Firebase.
-        try {
+        if (oktaSignIn.hasTokensInUrl()) {
+          // The user has been redirected back to your app after signing in with
+          // Okta. Get the Okta access token from the response and use it to
+          // authenticate with Firebase.
+
+          // Get the access token from Okta.
+          const oktaTokenResponse =
+            await oktaSignIn.authClient.token.parseFromUrl();
+          const accessToken = oktaTokenResponse.tokens.accessToken.value;
+          const oktaUserName =
+            oktaTokenResponse.tokens.idToken.claims.name || "";
+          const oktaUserEmail =
+            oktaTokenResponse.tokens.idToken.claims.email || "";
+
+          // Use the access token to call the firebaseCustomToken endpoint.
+          const firebaseTokenResponse = await fetch(CUSTOM_TOKEN_ENDPOINT, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          const firebaseToken = await firebaseTokenResponse.text();
+
+          // Use the Firebase custom token to authenticate with Firebase.
+          try {
             await firebase.auth().signInWithCustomToken(firebaseToken);
 
             // Now that the user is authenticated, you can use auth-enabled
@@ -81,20 +91,20 @@ window.onload = async () => {
             // user profile with information from Okta:
             const user = firebase.auth().currentUser;
             if (user.displayName !== oktaUserName) {
-                await user.updateProfile({displayName: oktaUserName});
+              await user.updateProfile({ displayName: oktaUserName });
             }
             if (user.email !== oktaUserEmail) {
-                await user.updateEmail(oktaUserEmail);
+              await user.updateEmail(oktaUserEmail);
             }
-        } catch (err) {
-            console.error('Error signing in with custom token.');
+          } catch (err) {
+            console.error("Error signing in with custom token.");
+          }
         }
-    }
 
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
             // User is signed in. Display some user profile information.
-            document.getElementById('user-info').innerHTML = `\
+            document.getElementById("user-info").innerHTML = `\
                     <table>
                         <tr>
                             <th>Display name</th>
@@ -109,22 +119,23 @@ window.onload = async () => {
                             <td>${user.uid}</td>
                         </tr>
                     </table>`;
-            document.getElementById('authenticated-user-content').hidden = false;
-            document.getElementById('signin-widget').hidden = true;
-        } else {
+            document.getElementById("authenticated-user-content").hidden =
+              false;
+            document.getElementById("signin-widget").hidden = true;
+          } else {
             // User is signed out. Display the Okta sign-in widget.
             oktaSignIn.showSignInToGetTokens({
-                clientId: OKTA_CLIENT_ID,
-                redirectUri: window.location.url,
-                getAccessToken: true,
-                getIdToken: true,
-                scope: 'openid profile email',
+              clientId: OKTA_CLIENT_ID,
+              redirectUri: window.location.url,
+              getAccessToken: true,
+              getIdToken: true,
+              scope: "openid profile email",
             });
-            document.getElementById('authenticated-user-content').hidden = true;
-            document.getElementById('signin-widget').hidden = false;
-        }
-    });
-}
-</script>
-</body>
+            document.getElementById("authenticated-user-content").hidden = true;
+            document.getElementById("signin-widget").hidden = false;
+          }
+        });
+      };
+    </script>
+  </body>
 </html>

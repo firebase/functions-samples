@@ -21,40 +21,40 @@
 const {
   onDocumentWrittenWithAuthContext,
 } = require("firebase-functions/v2/firestore");
-const {logger} = require("firebase-functions");
+const { logger } = require("firebase-functions");
 
 exports.verifyComment = onDocumentWrittenWithAuthContext(
-    "comments/{commentId}",
-    (event) => {
-      const snapshot = event.data.after;
-      if (!snapshot) {
-        logger.log("No data associated with the event");
-        return;
-      }
+  "comments/{commentId}",
+  (event) => {
+    const snapshot = event.data.after;
+    if (!snapshot) {
+      logger.log("No data associated with the event");
+      return;
+    }
 
-      // retrieve auth context from event
-      const {authType, authId} = event;
+    // retrieve auth context from event
+    const { authType, authId } = event;
 
-      let verified = false;
-      if (authType === "system") {
+    let verified = false;
+    if (authType === "system") {
       // system-generated users are automatically verified
-        verified = true;
-      } else if (authType === "unknown" || authType === "unauthenticated") {
+      verified = true;
+    } else if (authType === "unknown" || authType === "unauthenticated") {
       // admin users from a specific domain are verified
-        if (authId.endsWith("@example.com")) {
-          verified = true;
-        }
+      if (authId.endsWith("@example.com")) {
+        verified = true;
       }
+    }
 
-      // add auth medadata to the document
-      return snapshot.ref.set(
-          {
-            created_by: authId ?? "undefined",
-            verified,
-          },
-          {merge: true},
-      );
-    },
+    // add auth medadata to the document
+    return snapshot.ref.set(
+      {
+        created_by: authId ?? "undefined",
+        verified,
+      },
+      { merge: true },
+    );
+  },
 );
 
 // [END all]

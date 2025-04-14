@@ -39,20 +39,20 @@ async function postMessageToDiscord(botName, messageBody) {
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
   if (!webhookUrl) {
     throw new Error(
-        "No webhook URL found. Set the Discord Webhook URL before deploying. Learn more about Discord webhooks here: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
+      "No webhook URL found. Set the Discord Webhook URL before deploying. Learn more about Discord webhooks here: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks",
     );
   }
 
   return fetch(webhookUrl, {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(
-        // Here's what the Discord API supports in the payload:
-        // https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params
-        {
-          content: messageBody,
-          username: botName,
-        },
+      // Here's what the Discord API supports in the payload:
+      // https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params
+      {
+        content: messageBody,
+        username: botName,
+      },
     ),
   });
 }
@@ -64,11 +64,11 @@ async function postMessageToDiscord(botName, messageBody) {
  */
 // [START v2CrashlyticsAlertTrigger]
 exports.postfatalissuetodiscord = onNewFatalIssuePublished(async (event) => {
-// [END v2CrashlyticsAlertTrigger]
+  // [END v2CrashlyticsAlertTrigger]
   // [START v2CrashlyticsEventPayload]
   // construct a helpful message to send to Discord
   const appId = event.appId;
-  const {id, title, subtitle, appVersion} = event.data.payload.issue;
+  const { id, title, subtitle, appVersion } = event.data.payload.issue;
   const message = `
 🚨 New fatal issue for ${appId} in version ${appVersion} 🚨
 
@@ -85,8 +85,8 @@ id: \`${id}\`
     const response = await postMessageToDiscord("Crashlytics Bot", message);
     if (response.ok) {
       logger.info(
-          `Posted fatal Crashlytics alert ${id} for ${appId} to Discord`,
-          event.data.payload,
+        `Posted fatal Crashlytics alert ${id} for ${appId} to Discord`,
+        event.data.payload,
       );
     } else {
       throw new Error(response.error);
@@ -94,8 +94,8 @@ id: \`${id}\`
     // [END v2SendToDiscord]
   } catch (error) {
     logger.error(
-        `Unable to post fatal Crashlytics alert ${id} for ${appId} to Discord`,
-        error,
+      `Unable to post fatal Crashlytics alert ${id} for ${appId} to Discord`,
+      error,
     );
   }
 });
@@ -106,7 +106,7 @@ id: \`${id}\`
  */
 // [START v2AppDistributionAlertTrigger]
 exports.postnewduuidtodiscord = onNewTesterIosDevicePublished(async (event) => {
-// [END v2AppDistributionAlertTrigger]
+  // [END v2AppDistributionAlertTrigger]
   // [START v2AppDistributionEventPayload]
   // construct a helpful message to send to Discord
   const appId = event.appId;
@@ -128,7 +128,7 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
     const response = await postMessageToDiscord("AppDistribution Bot", message);
     if (response.ok) {
       logger.info(
-          `Posted iOS device registration alert for ${testerEmail} to Discord`,
+        `Posted iOS device registration alert for ${testerEmail} to Discord`,
       );
     } else {
       throw new Error(response.error);
@@ -136,8 +136,8 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
     // [END v2SendNewTesterIosDeviceToDiscord]
   } catch (error) {
     logger.error(
-        `Unable to post iOS device registration for ${testerEmail} to Discord`,
-        error,
+      `Unable to post iOS device registration for ${testerEmail} to Discord`,
+      error,
     );
   }
 });
@@ -149,25 +149,25 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
  */
 // [START v2PerformanceAlertTrigger]
 exports.postperformancealerttodiscord = onThresholdAlertPublished(
-    async (event) => {
-      // [END v2PerformanceAlertTrigger]
-      // [START v2PerformanceEventPayload]
-      // construct a helpful message to send to Discord
-      const appId = event.appId;
-      const {
-        eventName,
-        metricType,
-        eventType,
-        numSamples,
-        thresholdValue,
-        thresholdUnit,
-        conditionPercentile,
-        appVersion,
-        violationValue,
-        violationUnit,
-        investigateUri,
-      } = event.data.payload;
-      const message = `
+  async (event) => {
+    // [END v2PerformanceAlertTrigger]
+    // [START v2PerformanceEventPayload]
+    // construct a helpful message to send to Discord
+    const appId = event.appId;
+    const {
+      eventName,
+      metricType,
+      eventType,
+      numSamples,
+      thresholdValue,
+      thresholdUnit,
+      conditionPercentile,
+      appVersion,
+      violationValue,
+      violationUnit,
+      investigateUri,
+    } = event.data.payload;
+    const message = `
     ⚠️ Performance Alert for ${metricType} of ${eventType}: **${eventName}** ⚠️
     
     App id: ${appId}
@@ -180,26 +180,29 @@ exports.postperformancealerttodiscord = onThresholdAlertPublished(
     
     **Investigate more:** ${investigateUri}
     `;
-      // [END v2PerformanceEventPayload]
+    // [END v2PerformanceEventPayload]
 
-      try {
-        // [START v2SendPerformanceAlertToDiscord]
-        const response = await postMessageToDiscord(
-            "Firebase Performance Bot", message);
-        if (response.ok) {
-          logger.info(
-              `Posted Firebase Performance alert ${eventName} to Discord`,
-              event.data.payload,
-          );
-        } else {
-          throw new Error(response.error);
-        }
-        // [END v2SendPerformanceAlertToDiscord]
-      } catch (error) {
-        logger.error(
-            `Unable to post Firebase Performance alert ${eventName} to Discord`,
-            error,
+    try {
+      // [START v2SendPerformanceAlertToDiscord]
+      const response = await postMessageToDiscord(
+        "Firebase Performance Bot",
+        message,
+      );
+      if (response.ok) {
+        logger.info(
+          `Posted Firebase Performance alert ${eventName} to Discord`,
+          event.data.payload,
         );
+      } else {
+        throw new Error(response.error);
       }
-    });
+      // [END v2SendPerformanceAlertToDiscord]
+    } catch (error) {
+      logger.error(
+        `Unable to post Firebase Performance alert ${eventName} to Discord`,
+        error,
+      );
+    }
+  },
+);
 // [END v2Alerts]

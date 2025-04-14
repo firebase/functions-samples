@@ -1,5 +1,5 @@
 {
-    "functions": {
-        "codebase": "ffmpeg-convert-audio"
-    }
+  "functions": {
+    "codebase": "ffmpeg-convert-audio"
+  }
 }

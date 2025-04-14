@@ -26,7 +26,8 @@
   margin-left: 10px;
 }
 
-.mdl-textfield, .mdl-textfield > textarea {
+.mdl-textfield,
+.mdl-textfield > textarea {
   width: 100%;
   resize: none;
 }
@@ -40,12 +41,12 @@ button:not(:first-child) {
 }
 
 li:hover {
-  background-color: rgba(158,158,158,.2);
+  background-color: rgba(158, 158, 158, 0.2);
   cursor: pointer;
 }
 
 li.selected {
-  background-color: rgba(158,158,158,.4);
+  background-color: rgba(158, 158, 158, 0.4);
 }
 
 .demo-create-message {

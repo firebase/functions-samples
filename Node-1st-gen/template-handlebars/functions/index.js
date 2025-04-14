@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
+const functions = require("firebase-functions/v1");
+const admin = require("firebase-admin");
 admin.initializeApp();
 
-const express = require('express');
-const exphbs = require('express-handlebars');
+const express = require("express");
+const exphbs = require("express-handlebars");
 const app = express();
-const firebaseUser = require('./firebaseUser');
+const firebaseUser = require("./firebaseUser");
 
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
-app.set('view engine', 'handlebars');
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 app.use(firebaseUser.validateFirebaseIdToken);
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   // @ts-ignore
   const user = req.user;
 
-  functions.logger.log('Signed-in user:', user);
-  return res.render('user', {
+  functions.logger.log("Signed-in user:", user);
+  return res.render("user", {
     user: user,
   });
 });

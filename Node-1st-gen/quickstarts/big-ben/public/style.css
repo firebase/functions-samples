@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
- body {
-    font-family: sans-serif;
-    text-align: center;
+
+body {
+  font-family: sans-serif;
+  text-align: center;
 }
 
 #bongs {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }

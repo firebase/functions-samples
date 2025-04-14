@@ -1,5 +1,5 @@
 {
-    "functions": {
-        "codebase": "github-to-slack"
-    }
+  "functions": {
+    "codebase": "github-to-slack"
+  }
 }

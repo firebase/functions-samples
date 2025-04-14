@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
+const _ = require("lodash");
 
 const getDefaultOpts = () => ({
   strokes: {
-    clock: '#325FA2',
-    hour: '#000000',
-    minute: '#000000',
-    seconds: '#D40000'
+    clock: "#325FA2",
+    hour: "#000000",
+    minute: "#000000",
+    seconds: "#D40000",
   },
   fills: {
-    clock: '#eeeeee',
-    tip: '#555555',
-    seconds: '#D40000'
-  }
+    clock: "#eeeeee",
+    tip: "#555555",
+    seconds: "#D40000",
+  },
 });
 
 const getX = (angle) => {
-  return -Math.sin(angle + Math.PI)
+  return -Math.sin(angle + Math.PI);
 };
 
 const getY = (angle) => {
-  return Math.cos(angle + Math.PI)
+  return Math.cos(angle + Math.PI);
 };
 
 const clock = (ctx, colorOpts) => {
@@ -60,8 +60,8 @@ const clock = (ctx, colorOpts) => {
   ctx.lineWidth = 8;
   ctx.strokeStyle = colors.strokes.hour;
   for (i = 0; i < 12; i++) {
-    x = getX(Math.PI / 6 * i);
-    y = getY(Math.PI / 6 * i);
+    x = getX((Math.PI / 6) * i);
+    y = getY((Math.PI / 6) * i);
     ctx.beginPath();
     ctx.moveTo(x * 100, y * 100);
     ctx.lineTo(x * 125, y * 125);
@@ -73,8 +73,8 @@ const clock = (ctx, colorOpts) => {
   ctx.strokeStyle = colors.strokes.minute;
   for (i = 0; i < 60; i++) {
     if (i % 5 !== 0) {
-      x = getX(Math.PI / 30 * i);
-      y = getY(Math.PI / 30 * i);
+      x = getX((Math.PI / 30) * i);
+      y = getY((Math.PI / 30) * i);
       ctx.beginPath();
       ctx.moveTo(x * 117, y * 117);
       ctx.lineTo(x * 125, y * 125);
@@ -86,11 +86,15 @@ const clock = (ctx, colorOpts) => {
   const min = now.getMinutes();
   const hr = now.getHours() % 12;
 
-  ctx.fillStyle = 'black';
+  ctx.fillStyle = "black";
 
   // Write hours
-  x = getX(hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) * sec);
-  y = getY(hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) * sec);
+  x = getX(
+    hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) * sec,
+  );
+  y = getY(
+    hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) * sec,
+  );
   ctx.lineWidth = 14;
   ctx.beginPath();
   ctx.moveTo(x * -20, y * -20);
@@ -108,8 +112,8 @@ const clock = (ctx, colorOpts) => {
   ctx.stroke();
 
   // Write seconds
-  x = getX(sec * Math.PI / 30);
-  y = getY(sec * Math.PI / 30);
+  x = getX((sec * Math.PI) / 30);
+  y = getY((sec * Math.PI) / 30);
   ctx.strokeStyle = colors.strokes.seconds;
   ctx.fillStyle = colors.fills.seconds;
   ctx.lineWidth = 6;
@@ -128,6 +132,6 @@ const clock = (ctx, colorOpts) => {
   ctx.fill();
 
   ctx.restore();
-}
+};
 
 module.exports = clock;

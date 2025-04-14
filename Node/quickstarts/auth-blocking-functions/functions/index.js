@@ -19,7 +19,7 @@ const {
   beforeUserSignedIn,
   HttpsError,
 } = require("firebase-functions/v2/identity");
-const {admin} = require("firebase-admin");
+const { admin } = require("firebase-admin");
 
 admin.initializeApp();
 const db = admin.firestore();

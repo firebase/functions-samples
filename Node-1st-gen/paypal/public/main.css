@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-html, body {
-  font-family: 'Roboto', 'Helvetica', sans-serif;
+html,
+body {
+  font-family: "Roboto", "Helvetica", sans-serif;
   background-color: #f5f5f5;
 }
 a {
@@ -38,11 +39,13 @@ li a {
 .mdl-layout__header-row {
   padding: 0;
 }
-.quickstart-user-details-container, .user-details-container {
+.quickstart-user-details-container,
+.user-details-container {
   margin-top: 20px;
   line-height: 25px;
 }
-#quickstart-sign-in-status, #sign-in-status {
+#quickstart-sign-in-status,
+#sign-in-status {
   font-weight: bold;
 }
 pre {
@@ -54,19 +57,20 @@ code {
   word-break: break-all;
 }
 h3 {
-  background: url('firebase-logo.png') no-repeat;
+  background: url("firebase-logo.png") no-repeat;
   background-size: 40px;
   padding-left: 50px;
   color: white;
 }
 #verification-code-form {
-  display:none;
+  display: none;
 }
 #recaptcha-container {
   margin-top: 10px;
   margin-bottom: 20px;
 }
-#verify-code-button, #cancel-verify-code-button {
+#verify-code-button,
+#cancel-verify-code-button {
   margin-left: 20px;
 }
 #sign-out-button {

@@ -77,7 +77,7 @@ const promptForm = document.getElementById("promptForm") as HTMLFormElement;
 promptForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const promptInput = document.getElementById(
-    "promptInput"
+    "promptInput",
   ) as HTMLInputElement;
   const prompt = promptInput.value;
 
@@ -92,7 +92,7 @@ promptForm.addEventListener("submit", async (event) => {
     dotCount = (dotCount + 1) % 7;
     const dots = ".".repeat(dotCount);
     waitingMessageElement.textContent = "Waiting for response" + dots;
-   }, 1000);
+  }, 1000);
 
   const errorMessageElement = document.getElementById("errorMessage");
   errorMessageElement.textContent = "";
@@ -107,9 +107,9 @@ promptForm.addEventListener("submit", async (event) => {
     generatedTextElement.innerHTML = htmlContent; // Set the element's content
     waitingMessageElement.textContent = "";
     errorMessageElement.textContent = "";
-
   } catch (error) {
-    errorMessageElement.textContent = "Error calling function: " + error.message;
+    errorMessageElement.textContent =
+      "Error calling function: " + error.message;
     waitingMessageElement.textContent = "";
   }
   // Clear welcome dots.
