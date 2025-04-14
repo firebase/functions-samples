@@ -2,7 +2,8 @@
   "name": "firebase-okta-auth",
   "description": "Example of authenticating with Firebase using Okta",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "prettier . --check && eslint .",
+    "lint:fix": "prettier . --fix",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",

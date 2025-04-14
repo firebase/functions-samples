@@ -2,7 +2,8 @@
   "name": "alerts-to-discord",
   "description": "Send a message to Discord when an alert is received from Firebase",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "prettier . --check && eslint .",
+    "lint:fix": "prettier . --fix",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",

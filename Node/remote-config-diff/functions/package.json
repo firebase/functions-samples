@@ -2,7 +2,8 @@
   "name": "remote-config-diff",
   "description": "Get the difference between the previous and current Remote Config template",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "prettier . --check && eslint .",
+    "lint:fix": "prettier . --fix",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
