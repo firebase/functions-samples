@@ -17,16 +17,16 @@
 // [START complete-example]
 // [START imports]
 // [START import-trigger]
-const {onCallGenkit} = require("firebase-functions/v2/https");
+const { onCallGenkit } = require("firebase-functions/v2/https");
 // [END import-trigger]
 // [START import-params]
-const {defineSecret} = require("firebase-functions/params");
+const { defineSecret } = require("firebase-functions/params");
 // [END import-params]
 
 // [START import-genkit]
 // Dependencies for Genkit.
-const {gemini15Flash, googleAI} = require("@genkit-ai/googleai");
-const {genkit, z} = require("genkit");
+const { gemini15Flash, googleAI } = require("@genkit-ai/googleai");
+const { genkit, z } = require("genkit");
 // [END import-genkit]
 // [END imports]
 
@@ -41,40 +41,43 @@ const ai = genkit({
   model: gemini15Flash,
 });
 
-const jokeTeller = ai.defineFlow({
-  name: "jokeTeller",
-  inputSchema: z.string().nullable(),
-  outputSchema: z.string(),
-  streamSchema: z.string(),
-}, async (jokeType = "knock-knock", {sendChunk}) => {
-  const prompt = `Tell me a ${jokeType} joke.`;
+const jokeTeller = ai.defineFlow(
+  {
+    name: "jokeTeller",
+    inputSchema: z.string().nullable(),
+    outputSchema: z.string(),
+    streamSchema: z.string(),
+  },
+  async (jokeType = "knock-knock", { sendChunk }) => {
+    const prompt = `Tell me a ${jokeType} joke.`;
 
-  // Call the `generateStream()` method to
-  // receive the `stream` async iterable.
-  const {stream, response: aiResponse} = ai.generateStream(prompt);
+    // Call the `generateStream()` method to
+    // receive the `stream` async iterable.
+    const { stream, response: aiResponse } = ai.generateStream(prompt);
 
-  // Send new words of the generative AI response
-  // to the client as they are generated.
-  for await (const chunk of stream) {
-    sendChunk(chunk.text);
-  }
+    // Send new words of the generative AI response
+    // to the client as they are generated.
+    for await (const chunk of stream) {
+      sendChunk(chunk.text);
+    }
 
-  // Return the full generative AI response
-  // to clients that may not support streaming.
-  return (await aiResponse).text;
-},
+    // Return the full generative AI response
+    // to clients that may not support streaming.
+    return (await aiResponse).text;
+  },
 );
 // [END flow]
 
 // [START trigger]
-exports.tellJoke = onCallGenkit({
-  // [START bind-secrets]
-  // Bind the Gemini API key secret parameter to the function.
-  secrets: [apiKey],
-  // [END bind-secrets]
-},
-// Pass in the genkit flow.
-jokeTeller,
+exports.tellJoke = onCallGenkit(
+  {
+    // [START bind-secrets]
+    // Bind the Gemini API key secret parameter to the function.
+    secrets: [apiKey],
+    // [END bind-secrets]
+  },
+  // Pass in the genkit flow.
+  jokeTeller,
 );
 // [END trigger]
 // [END complete-example]

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
+const functions = require("firebase-functions/v1");
+const admin = require("firebase-admin");
 admin.initializeApp();
 
 // [START all]
@@ -24,21 +24,23 @@ admin.initializeApp();
  * After a user has completed a purchase, send them a coupon via FCM valid on their next purchase.
  */
 // [START trigger]
-exports.sendCouponOnPurchase = functions.analytics.event('in_app_purchase').onLog((event) => {
-// [END trigger]
-  // [START attributes]
-  const user = event.user;
-  const uid = user.userId; // The user ID set via the setUserId API.
-  const purchaseValue = event.valueInUSD; // Amount of the purchase in USD.
-  const userLanguage = user.deviceInfo.userDefaultLanguage; // The user language in language-country format.
-  // [END attributes]
+exports.sendCouponOnPurchase = functions.analytics
+  .event("in_app_purchase")
+  .onLog((event) => {
+    // [END trigger]
+    // [START attributes]
+    const user = event.user;
+    const uid = user.userId; // The user ID set via the setUserId API.
+    const purchaseValue = event.valueInUSD; // Amount of the purchase in USD.
+    const userLanguage = user.deviceInfo.userDefaultLanguage; // The user language in language-country format.
+    // [END attributes]
 
-  // For purchases above 500 USD, we send a coupon of higher value.
-  if (purchaseValue > 500) {
-    return sendHighValueCouponViaFCM(uid, userLanguage);
-  }
-  return sendCouponViaFCM(uid, userLanguage);
-});
+    // For purchases above 500 USD, we send a coupon of higher value.
+    if (purchaseValue > 500) {
+      return sendHighValueCouponViaFCM(uid, userLanguage);
+    }
+    return sendCouponViaFCM(uid, userLanguage);
+  });
 // [END all]
 
 /**
@@ -54,16 +56,16 @@ async function sendCouponViaFCM(uid, userLanguage) {
     // Notification details.
     let payload = {
       notification: {
-        title: 'Thanks for your Purchase!',
+        title: "Thanks for your Purchase!",
         body: 'Get 10% off your next purchase with "COMEBACK10".',
       },
     };
 
     // Notification in French.
-    if (userLanguage.split('-')[0] === 'fr') {
+    if (userLanguage.split("-")[0] === "fr") {
       payload = {
         notification: {
-          title: 'Merci pour votre achat!',
+          title: "Merci pour votre achat!",
           body: 'Obtenez 10% de réduction sur votre prochain achat avec "COMEBACK10".',
         },
       };
@@ -72,7 +74,7 @@ async function sendCouponViaFCM(uid, userLanguage) {
     // Send notifications to all tokens.
     return admin.messaging().sendEachForMulticast({
       notification: payload.notification,
-      tokens
+      tokens,
     });
   }
   return null;
@@ -91,16 +93,16 @@ async function sendHighValueCouponViaFCM(uid, userLanguage) {
     // Notification details.
     let payload = {
       notification: {
-        title: 'Thanks for your Purchase!',
+        title: "Thanks for your Purchase!",
         body: 'Get 30% off your next purchase with "COMEBACK30".',
       },
     };
 
     // Notification in French.
-    if (userLanguage.split('-')[0] === 'fr') {
+    if (userLanguage.split("-")[0] === "fr") {
       payload = {
         notification: {
-          title: 'Merci pour votre achat!',
+          title: "Merci pour votre achat!",
           body: 'Obtenez 30% de réduction sur votre prochain achat avec "COMEBACK30".',
         },
       };
@@ -109,7 +111,7 @@ async function sendHighValueCouponViaFCM(uid, userLanguage) {
     // Send notifications to all tokens.
     return admin.messaging().sendEachForMulticast({
       notification: payload.notification,
-      tokens
+      tokens,
     });
   }
   return null;
@@ -121,7 +123,7 @@ async function sendHighValueCouponViaFCM(uid, userLanguage) {
  * @param {string} uid The UID of the user.
  */
 async function getDeviceTokens(uid) {
-  const snap = await admin.database().ref(`/users/${uid}/tokens`).once('value');
+  const snap = await admin.database().ref(`/users/${uid}/tokens`).once("value");
   if (snap.exists()) {
     return Object.keys(snap.val());
   }

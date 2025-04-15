@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
-const functions = require('firebase-functions/v1');
-const { actionssdk } = require('actions-on-google');
+const functions = require("firebase-functions/v1");
+const { actionssdk } = require("actions-on-google");
 
 const app = actionssdk();
-app.intent('actions.intent.MAIN', (conv) => {
-    conv.ask(`<speak>
+app.intent("actions.intent.MAIN", (conv) => {
+  conv.ask(`<speak>
       Hi! <break time="1"/>
       I can read out an ordinal number like <say-as interpret-as="ordinal">123</say-as>.
       Say a number.
     </speak>`);
 });
 
-app.intent('actions.intent.TEXT', (conv) => {
+app.intent("actions.intent.TEXT", (conv) => {
   const rawInput = conv.input.raw;
-  if (rawInput === 'bye') {
-    conv.ask('Goodbye!');
+  if (rawInput === "bye") {
+    conv.ask("Goodbye!");
   } else if (isNaN(parseInt(rawInput, 10))) {
-    conv.ask('I didn\'t quite get that, what was the number?');
+    conv.ask("I didn't quite get that, what was the number?");
   } else {
     conv.ask(`<speak>
       The ordinal of <say-as interpret-as="cardinal">${rawInput}</say-as> is

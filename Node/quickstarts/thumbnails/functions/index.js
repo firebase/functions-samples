@@ -17,12 +17,12 @@
 
 // [START v2storageImports]
 // [START v2storageSDKImport]
-const {onObjectFinalized} = require("firebase-functions/v2/storage");
+const { onObjectFinalized } = require("firebase-functions/v2/storage");
 // [END v2storageSDKImport]
 
 // [START v2storageAdditionalImports]
-const {initializeApp} = require("firebase-admin/app");
-const {getStorage} = require("firebase-admin/storage");
+const { initializeApp } = require("firebase-admin/app");
+const { getStorage } = require("firebase-admin/storage");
 const logger = require("firebase-functions/logger");
 const path = require("path");
 
@@ -39,8 +39,8 @@ initializeApp();
  * generate a thumbnail automatically using sharp.
  */
 // [START v2storageGenerateThumbnailTrigger]
-exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
-// [END v2storageGenerateThumbnailTrigger]
+exports.generateThumbnail = onObjectFinalized({ cpu: 2 }, async (event) => {
+  // [END v2storageGenerateThumbnailTrigger]
 
   // [START v2storageEventAttributes]
   const fileBucket = event.data.bucket; // Storage bucket containing the file.
@@ -68,11 +68,13 @@ exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
   logger.log("Image downloaded!");
 
   // Generate a thumbnail using sharp.
-  const thumbnailBuffer = await sharp(imageBuffer).resize({
-    width: 200,
-    height: 200,
-    withoutEnlargement: true,
-  }).toBuffer();
+  const thumbnailBuffer = await sharp(imageBuffer)
+    .resize({
+      width: 200,
+      height: 200,
+      withoutEnlargement: true,
+    })
+    .toBuffer();
   logger.log("Thumbnail created");
 
   // Prefix 'thumb_' to file name.
@@ -80,7 +82,7 @@ exports.generateThumbnail = onObjectFinalized({cpu: 2}, async (event) => {
   const thumbFilePath = path.join(path.dirname(filePath), thumbFileName);
 
   // Upload the thumbnail.
-  const metadata = {contentType: contentType};
+  const metadata = { contentType: contentType };
   await bucket.file(thumbFilePath).save(thumbnailBuffer, {
     metadata: metadata,
   });

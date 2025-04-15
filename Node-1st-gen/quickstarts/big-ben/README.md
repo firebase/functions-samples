@@ -2,15 +2,13 @@
 
 This quickstart demonstrates using the **Firebase SDK for Cloud Functions** with an HTTPS trigger that's triggered through a Firebase Hosting URL. The function will display a repeated number of "BONG" depending on the hour of the day.
 
-
 ## Introduction
 
 The function `bigben` returns an HTML page that display a repeated number of "BONG" depending on the hour of the day.
 
 Further reading:
 
- - [Read more about the Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions)
-
+- [Read more about the Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions)
 
 ## Initial setup, build tools and dependencies
 
@@ -18,13 +16,11 @@ Further reading:
 
 Clone or download this repo and open the `quickstarts/big-ben` directory.
 
-
 ### 2. Create a Firebase project and configure the quickstart
 
 Create a Firebase Project on the [Firebase Console](https://console.firebase.google.com).
 
 Set up your Firebase project by running `firebase use --add`, select your Project ID and follow the instructions.
-
 
 ### 3. Install the Firebase CLI
 
@@ -52,7 +48,6 @@ A page containing a repeated number of "BONG" - One for each hour of the day - w
 
 You can click on the **Refresh** button which will call the API by doing an XHR to `/api` and refresh the "BONG" display on the page.
 
-
 ## Deploy the app to prod
 
 First you need to install the `npm` dependencies of the functions:
@@ -73,7 +68,6 @@ This deploys and activates the `bigben` Function.
 
 > The first time you call `firebase deploy` on a new project with Functions will take longer than usual.
 
-
 ## Try the sample on prod
 
 After deploying the function you can open the following URL in your browser:
@@ -84,11 +78,9 @@ https://<your-project-id>.firebaseapp.com/bigben
 
 A page containing a repeated number of "BONG" will be displayed.
 
-
 ## Contributing
 
 We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../../CONTRIBUTING.md).
-
 
 ## License
 

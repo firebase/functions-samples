@@ -11,58 +11,60 @@
   See the License for the specific language governing permissions and
   limitations under the License
 -->
-<html> 
-    <head>
-        <title>Full Text Search via Algolia and Firestore</title>
-        <style>
-            #content > * {
-                width: 600px;
-                clear: both;
-            }
+<html>
+  <head>
+    <title>Full Text Search via Algolia and Firestore</title>
+    <style>
+      #content > * {
+        width: 600px;
+        clear: both;
+      }
 
-            #results {
-                min-height: 20px;
-                border: 1px solid #ccc;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="content">
-            <textarea id="note-text"></textarea>
-            <button id="do-add-note">Add Note to Firestore / Algolia</button>
-            <br /><br />
-            <input type="text" id="query-text" placeholder="Search your notes..." />
-            <button id="do-query">Search</button>
-            <br />
-            <h3>Results</h3>
-            <pre id="results">
+      #results {
+        min-height: 20px;
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <textarea id="note-text"></textarea>
+      <button id="do-add-note">Add Note to Firestore / Algolia</button>
+      <br /><br />
+      <input type="text" id="query-text" placeholder="Search your notes..." />
+      <button id="do-query">Search</button>
+      <br />
+      <h3>Results</h3>
+      <pre id="results"></pre>
+      <br />
+      <b
+        >Make sure to follow setup steps in the
+        <a href="https://firebase.google.com/docs/firestore/solutions/search"
+          >documentation</a
+        > </b
+      ><br /><br />
+      <i>
+        Open your JavaScript console for helpful errors.
+        <br /><br />
+        Indexing can take several seconds and may require a page refresh for
+        new<br />
+        notes to appear due to Algolia's search client caching results.
+      </i>
+    </div>
 
-            </pre>
-            <br />
-            <b>Make sure to follow setup steps in the 
-                <a href="https://firebase.google.com/docs/firestore/solutions/search">documentation</a>
-            </b><br /><br />
-            <i>
-                Open your JavaScript console for helpful errors.
-                <br /><br />
-                Indexing can take several seconds and may require a page refresh for new<br />
-                notes to appear due to Algolia's search client caching results.
-            </i>
-        </div>
+    <!-- Import the Algolia SDK -->
+    <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
 
-        <!-- Import the Algolia SDK -->
-        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
-        
-        <!-- Import and configure the Firebase SDK -->
-        <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
-        <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-        <script src="/__/firebase/10.0.0/firebase-app-compat.js"></script>
-        <script src="/__/firebase/10.0.0/firebase-auth-compat.js"></script>
-        <script src="/__/firebase/10.0.0/firebase-firestore-compat.js"></script>
-        <script src="/__/firebase/10.0.0/firebase-firestore-compat.js"></script>
-        
-        <script src="/__/firebase/init.js"></script>
+    <!-- Import and configure the Firebase SDK -->
+    <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+    <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+    <script src="/__/firebase/10.0.0/firebase-app-compat.js"></script>
+    <script src="/__/firebase/10.0.0/firebase-auth-compat.js"></script>
+    <script src="/__/firebase/10.0.0/firebase-firestore-compat.js"></script>
+    <script src="/__/firebase/10.0.0/firebase-firestore-compat.js"></script>
 
-        <script src="./index.js"></script>
-    </body>
+    <script src="/__/firebase/init.js"></script>
+
+    <script src="./index.js"></script>
+  </body>
 </html>

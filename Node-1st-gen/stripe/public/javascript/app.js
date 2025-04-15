@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const STRIPE_PUBLISHABLE_KEY = '<YOUR STRIPE PUBLISHABLE KEY>';
+const STRIPE_PUBLISHABLE_KEY = "<YOUR STRIPE PUBLISHABLE KEY>";
 let currentUser = {};
 let customerData = {};
 
@@ -30,43 +30,43 @@ const firebaseUiConfig = {
       return true;
     },
     uiShown: () => {
-      document.getElementById('loader').style.display = 'none';
+      document.getElementById("loader").style.display = "none";
     },
   },
-  signInFlow: 'popup',
-  signInSuccessUrl: '/',
+  signInFlow: "popup",
+  signInSuccessUrl: "/",
   signInOptions: [
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
   ],
   credentialHelper: firebaseui.auth.CredentialHelper.NONE,
   // Your terms of service url.
-  tosUrl: 'https://example.com/terms',
+  tosUrl: "https://example.com/terms",
   // Your privacy policy url.
-  privacyPolicyUrl: 'https://example.com/privacy',
+  privacyPolicyUrl: "https://example.com/privacy",
 };
 firebase.auth().onAuthStateChanged((firebaseUser) => {
   if (firebaseUser) {
     currentUser = firebaseUser;
     firebase
       .firestore()
-      .collection('stripe_customers')
+      .collection("stripe_customers")
       .doc(currentUser.uid)
       .onSnapshot((snapshot) => {
         if (snapshot.data()) {
           customerData = snapshot.data();
           startDataListeners();
-          document.getElementById('loader').style.display = 'none';
-          document.getElementById('content').style.display = 'block';
+          document.getElementById("loader").style.display = "none";
+          document.getElementById("content").style.display = "block";
         } else {
           console.warn(
-            `No Stripe customer found in Firestore for user: ${currentUser.uid}`
+            `No Stripe customer found in Firestore for user: ${currentUser.uid}`,
           );
         }
       });
   } else {
-    document.getElementById('content').style.display = 'none';
-    firebaseUI.start('#firebaseui-auth-container', firebaseUiConfig);
+    document.getElementById("content").style.display = "none";
+    firebaseUI.start("#firebaseui-auth-container", firebaseUiConfig);
   }
 });
 
@@ -75,14 +75,14 @@ firebase.auth().onAuthStateChanged((firebaseUser) => {
  */
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 const elements = stripe.elements();
-const cardElement = elements.create('card');
-cardElement.mount('#card-element');
-cardElement.on('change', ({ error }) => {
-  const displayError = document.getElementById('error-message');
+const cardElement = elements.create("card");
+cardElement.mount("#card-element");
+cardElement.on("change", ({ error }) => {
+  const displayError = document.getElementById("error-message");
   if (error) {
     displayError.textContent = error.message;
   } else {
-    displayError.textContent = '';
+    displayError.textContent = "";
   }
 });
 
@@ -95,12 +95,12 @@ function startDataListeners() {
    */
   firebase
     .firestore()
-    .collection('stripe_customers')
+    .collection("stripe_customers")
     .doc(currentUser.uid)
-    .collection('payment_methods')
+    .collection("payment_methods")
     .onSnapshot((snapshot) => {
       if (snapshot.empty) {
-        document.querySelector('#add-new-card').open = true;
+        document.querySelector("#add-new-card").open = true;
       }
       snapshot.forEach(function (doc) {
         const paymentMethod = doc.data();
@@ -113,10 +113,10 @@ function startDataListeners() {
 
         // Add a new option if one doesn't exist yet.
         if (!optionElement) {
-          optionElement = document.createElement('option');
+          optionElement = document.createElement("option");
           optionElement.id = optionId;
           document
-            .querySelector('select[name=payment-method]')
+            .querySelector("select[name=payment-method]")
             .appendChild(optionElement);
         }
 
@@ -130,48 +130,48 @@ function startDataListeners() {
    */
   firebase
     .firestore()
-    .collection('stripe_customers')
+    .collection("stripe_customers")
     .doc(currentUser.uid)
-    .collection('payments')
+    .collection("payments")
     .onSnapshot((snapshot) => {
       snapshot.forEach((doc) => {
         const payment = doc.data();
 
         let liElement = document.getElementById(`payment-${doc.id}`);
         if (!liElement) {
-          liElement = document.createElement('li');
+          liElement = document.createElement("li");
           liElement.id = `payment-${doc.id}`;
         }
 
-        let content = '';
+        let content = "";
         if (
-          payment.status === 'new' ||
-          payment.status === 'requires_confirmation'
+          payment.status === "new" ||
+          payment.status === "requires_confirmation"
         ) {
           content = `Creating Payment for ${formatAmount(
             payment.amount,
-            payment.currency
+            payment.currency,
           )}`;
-        } else if (payment.status === 'succeeded') {
+        } else if (payment.status === "succeeded") {
           const card = payment.charges.data[0].payment_method_details.card;
           content = `✅ Payment for ${formatAmount(
             payment.amount,
-            payment.currency
+            payment.currency,
           )} on ${card.brand} card •••• ${card.last4}.`;
-        } else if (payment.status === 'requires_action') {
+        } else if (payment.status === "requires_action") {
           content = `🚨 Payment for ${formatAmount(
             payment.amount,
-            payment.currency
+            payment.currency,
           )} ${payment.status}`;
           handleCardAction(payment, doc.id);
         } else {
           content = `⚠️ Payment for ${formatAmount(
             payment.amount,
-            payment.currency
+            payment.currency,
           )} ${payment.status}`;
         }
         liElement.innerText = content;
-        document.querySelector('#payments-list').appendChild(liElement);
+        document.querySelector("#payments-list").appendChild(liElement);
       });
     });
 }
@@ -182,23 +182,23 @@ function startDataListeners() {
 
 // Signout button
 document
-  .getElementById('signout')
-  .addEventListener('click', () => firebase.auth().signOut());
+  .getElementById("signout")
+  .addEventListener("click", () => firebase.auth().signOut());
 
 // Add new card form
 document
-  .querySelector('#payment-method-form')
-  .addEventListener('submit', async (event) => {
+  .querySelector("#payment-method-form")
+  .addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!event.target.reportValidity()) {
       return;
     }
     document
-      .querySelectorAll('button')
+      .querySelectorAll("button")
       .forEach((button) => (button.disabled = true));
 
     const form = new FormData(event.target);
-    const cardholderName = form.get('name');
+    const cardholderName = form.get("name");
 
     const { setupIntent, error } = await stripe.confirmCardSetup(
       customerData.setup_secret,
@@ -209,58 +209,58 @@ document
             name: cardholderName,
           },
         },
-      }
+      },
     );
 
     if (error) {
-      document.querySelector('#error-message').textContent = error.message;
+      document.querySelector("#error-message").textContent = error.message;
       document
-        .querySelectorAll('button')
+        .querySelectorAll("button")
         .forEach((button) => (button.disabled = false));
       return;
     }
 
     await firebase
       .firestore()
-      .collection('stripe_customers')
+      .collection("stripe_customers")
       .doc(currentUser.uid)
-      .collection('payment_methods')
+      .collection("payment_methods")
       .add({ id: setupIntent.payment_method });
 
-    document.querySelector('#add-new-card').open = false;
+    document.querySelector("#add-new-card").open = false;
     document
-      .querySelectorAll('button')
+      .querySelectorAll("button")
       .forEach((button) => (button.disabled = false));
   });
 
 // Create payment form
 document
-  .querySelector('#payment-form')
-  .addEventListener('submit', async (event) => {
+  .querySelector("#payment-form")
+  .addEventListener("submit", async (event) => {
     event.preventDefault();
     document
-      .querySelectorAll('button')
+      .querySelectorAll("button")
       .forEach((button) => (button.disabled = true));
 
     const form = new FormData(event.target);
-    const amount = Number(form.get('amount'));
-    const currency = form.get('currency');
+    const amount = Number(form.get("amount"));
+    const currency = form.get("currency");
     const data = {
-      payment_method: form.get('payment-method'),
+      payment_method: form.get("payment-method"),
       currency,
       amount: formatAmountForStripe(amount, currency),
-      status: 'new',
+      status: "new",
     };
 
     await firebase
       .firestore()
-      .collection('stripe_customers')
+      .collection("stripe_customers")
       .doc(currentUser.uid)
-      .collection('payments')
+      .collection("payments")
       .add(data);
 
     document
-      .querySelectorAll('button')
+      .querySelectorAll("button")
       .forEach((button) => (button.disabled = false));
   });
 
@@ -273,8 +273,8 @@ function formatAmount(amount, currency) {
   amount = zeroDecimalCurrency(amount, currency)
     ? amount
     : (amount / 100).toFixed(2);
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency,
   }).format(amount);
 }
@@ -289,15 +289,15 @@ function formatAmountForStripe(amount, currency) {
 // Check if we have a zero decimal currency
 // https://stripe.com/docs/currencies#zero-decimal
 function zeroDecimalCurrency(amount, currency) {
-  let numberFormat = new Intl.NumberFormat(['en-US'], {
-    style: 'currency',
+  let numberFormat = new Intl.NumberFormat(["en-US"], {
+    style: "currency",
     currency: currency,
-    currencyDisplay: 'symbol',
+    currencyDisplay: "symbol",
   });
   const parts = numberFormat.formatToParts(amount);
   let zeroDecimalCurrency = true;
   for (let part of parts) {
-    if (part.type === 'decimal') {
+    if (part.type === "decimal") {
       zeroDecimalCurrency = false;
     }
   }
@@ -307,7 +307,7 @@ function zeroDecimalCurrency(amount, currency) {
 // Handle card actions like 3D Secure
 async function handleCardAction(payment, docId) {
   const { error, paymentIntent } = await stripe.handleCardAction(
-    payment.client_secret
+    payment.client_secret,
   );
   if (error) {
     alert(error.message);
@@ -318,9 +318,9 @@ async function handleCardAction(payment, docId) {
 
   await firebase
     .firestore()
-    .collection('stripe_customers')
+    .collection("stripe_customers")
     .doc(currentUser.uid)
-    .collection('payments')
+    .collection("payments")
     .doc(docId)
     .set(payment, { merge: true });
 }

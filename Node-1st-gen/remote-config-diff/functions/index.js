@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-const fetch = require('node-fetch');
-const jsonDiff = require('json-diff');
+const functions = require("firebase-functions/v1");
+const admin = require("firebase-admin");
+const fetch = require("node-fetch");
+const jsonDiff = require("json-diff");
 
 admin.initializeApp();
 
 // [START remote_config_function]
-exports.showConfigDiff = functions.remoteConfig.onUpdate(versionMetadata => {
-  return admin.credential.applicationDefault().getAccessToken()
-    .then(accessTokenObj => {
+exports.showConfigDiff = functions.remoteConfig.onUpdate((versionMetadata) => {
+  return admin.credential
+    .applicationDefault()
+    .getAccessToken()
+    .then((accessTokenObj) => {
       return accessTokenObj.access_token;
     })
-    .then(accessToken => {
+    .then((accessToken) => {
       const currentVersion = versionMetadata.versionNumber;
       const templatePromises = [];
       templatePromises.push(getTemplate(currentVersion, accessToken));
@@ -35,7 +37,7 @@ exports.showConfigDiff = functions.remoteConfig.onUpdate(versionMetadata => {
 
       return Promise.all(templatePromises);
     })
-    .then(results => {
+    .then((results) => {
       const currentTemplate = results[0];
       const previousTemplate = results[1];
 
@@ -44,7 +46,8 @@ exports.showConfigDiff = functions.remoteConfig.onUpdate(versionMetadata => {
       functions.logger.log(diff);
 
       return null;
-    }).catch(error => {
+    })
+    .catch((error) => {
       functions.logger.error(error);
       return null;
     });
@@ -60,8 +63,7 @@ async function getTemplate(version, accessToken) {
       method: "POST",
       body: params,
       headers: { Authorization: "Bearer " + accessToken },
-    }
+    },
   );
   return response.json();
 }
-

@@ -17,8 +17,14 @@
   },
   "homepage": "https://github.com/firebase/functions-samples#readme",
   "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
     "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^10.1.2",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
     "typescript": "^5.1.6",
+    "typescript-eslint": "^8.30.1",
     "vite": "^4.4.9"
   },
   "scripts": {
@@ -28,7 +34,6 @@
   },
   "dependencies": {
     "@firebase/functions": "^0.11.5",
-    "eslint": "8",
     "firebase": "^10.12.1",
     "showdown": "^2.1.0"
   }

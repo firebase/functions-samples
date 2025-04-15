@@ -12,7 +12,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
 
 ## Sample Database Structure
 
-The example uses the database structure shown below: 
+The example uses the database structure shown below:
 
 ```
 /functions-project-12345
@@ -23,7 +23,7 @@ The example uses the database structure shown below:
                     timestamp: 1497911193083
                 },
                 item2: {
-                    timestamp: 1597911193083                    
+                    timestamp: 1597911193083
                 }
                 ...
 ```

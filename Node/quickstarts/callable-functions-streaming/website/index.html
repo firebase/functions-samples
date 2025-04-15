@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -26,7 +26,7 @@
       const firebaseConfig = await fetch("/__/firebase/init.json").then(
         (response) => {
           return response.json();
-        }
+        },
       );
       const app = initializeApp(firebaseConfig);
       const functions = getFunctions(app);
@@ -95,7 +95,7 @@
 
         const locationName = document.createElement("h2");
         locationName.innerHTML = favoriteLocations.find(
-          (v) => v.latitude === forecastData.latitude
+          (v) => v.latitude === forecastData.latitude,
         ).name;
 
         const forecast = document.createElement("p");

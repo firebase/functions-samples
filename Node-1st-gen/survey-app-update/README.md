@@ -2,7 +2,6 @@
 
 This sample shows how to send a survey to your users who have updated your app. App Update is detected using a Firebase Analytics event.
 
-
 ## Functions Code
 
 See file [functions/index.js](functions/index.js) for the trigger and the email sending code.
@@ -11,11 +10,9 @@ Sending emails is performed using [nodemailer](https://www.npmjs.com/package/nod
 
 The dependencies are listed in [functions/package.json](functions/package.json).
 
-
 ## Trigger rules
 
 The function triggers on changes to `app_update` Firebase Analytics events. For other automatically logged events see: https://support.google.com/firebase/answer/6317485
-
 
 ## Setting up the sample
 
@@ -25,13 +22,12 @@ Set the `gmail.email` and `gmail.password` Google Cloud environment variables to
 firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
 ```
 
-
 ## Deploy and test
 
 This sample can be tested on your Android and iOS app. To test it out:
 
- - Make sure you set the `app_update` events as being a **Conversion event** in your project. You can do this on the Analytics section > Events tab.
- - Set the project to your Firebase project using `firebase use --add` then select your projec tin the list.
- - Deploy your project using `firebase deploy`
- - Have users update your app, for instance through the play store.
- - Within a few hours the emails to the survey will be sent.
+- Make sure you set the `app_update` events as being a **Conversion event** in your project. You can do this on the Analytics section > Events tab.
+- Set the project to your Firebase project using `firebase use --add` then select your projec tin the list.
+- Deploy your project using `firebase deploy`
+- Have users update your app, for instance through the play store.
+- Within a few hours the emails to the survey will be sent.

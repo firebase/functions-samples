@@ -2,9 +2,9 @@
 
 This template shows how to enable full text search on Firestore documents by using one of the followning hosted search services:
 
-  * [Algolia](https://algolia.com)
-  * [Elastic](https://elastic.co)
-  * [Typesense](https://typesense.org)
+- [Algolia](https://algolia.com)
+- [Elastic](https://elastic.co)
+- [Typesense](https://typesense.org)
 
 ## Functions Code
 

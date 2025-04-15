@@ -12,73 +12,95 @@
   limitations under the License
 -->
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="Demonstrates how to authorize Firebase with Spotify auth using Firebase Functions">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Authenticate with Spotify</title>
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="description"
+      content="Demonstrates how to authorize Firebase with Spotify auth using Firebase Functions"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authenticate with Spotify</title>
+  </head>
+  <body>
+    Please wait...
 
-Please wait...
+    <!-- Firebase -->
+    <script src="/__/firebase/10.0.0/firebase-app-compat.js"></script>
+    <script src="/__/firebase/10.0.0/firebase-auth-compat.js"></script>
+    <script src="/__/firebase/init.js"></script>
 
-<!-- Firebase -->
-<script src="/__/firebase/10.0.0/firebase-app-compat.js"></script>
-<script src="/__/firebase/10.0.0/firebase-auth-compat.js"></script>
-<script src="/__/firebase/init.js"></script>
+    <script>
+      /**
+       * Returns the value of the given URL query parameter.
+       */
+      function getURLParameter(name) {
+        return (
+          decodeURIComponent(
+            (new RegExp("[?|&]" + name + "=" + "([^&;]+?)(&|#|;|$)").exec(
+              location.search,
+            ) || [null, ""])[1].replace(/\+/g, "%20"),
+          ) || null
+        );
+      }
 
-<script>
-  /**
-   * Returns the value of the given URL query parameter.
-   */
-  function getURLParameter(name) {
-    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) ||
-        [null, ''])[1].replace(/\+/g, '%20')) || null;
-  }
+      /**
+       * Returns the ID of the Firebase project.
+       */
+      function getFirebaseProjectId() {
+        return firebase.app().options.authDomain.split(".")[0];
+      }
 
-  /**
-   * Returns the ID of the Firebase project.
-   */
-  function getFirebaseProjectId() {
-    return firebase.app().options.authDomain.split('.')[0];
-  }
+      /**
+       * This callback is called by the JSONP callback of the 'token' Firebase Function with the Firebase auth token.
+       */
+      function tokenReceived(data) {
+        if (data.token) {
+          firebase
+            .auth()
+            .signInWithCustomToken(data.token)
+            .then(function () {
+              window.close();
+            });
+        } else {
+          console.error(data);
+          document.body.innerText =
+            "Error in the token Function: " + data.error;
+        }
+      }
 
-  /**
-   * This callback is called by the JSONP callback of the 'token' Firebase Function with the Firebase auth token.
-   */
-  function tokenReceived(data) {
-    if (data.token) {
-      firebase.auth().signInWithCustomToken(data.token).then(function() {
-        window.close();
-      });
-    } else {
-      console.error(data);
-      document.body.innerText = 'Error in the token Function: ' + data.error;
-    }
-  }
-
-  var code = getURLParameter('code');
-  var state = getURLParameter('state');
-  var error = getURLParameter('error');
-  if (error) {
-    document.body.innerText = 'Error back from the Spotify auth page: ' + error;
-  } else if(!code) {
-    // Start the auth flow.
-    window.location.href  = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/redirect';
-  } else {
-    // Use JSONP to load the 'token' Firebase Function to exchange the auth code against a Firebase custom token.
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    // This is the URL to the HTTP triggered 'token' Firebase Function.
-    // See https://firebase.google.com/docs/functions.
-    var tokenFunctionURL = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/token';
-    script.src = tokenFunctionURL +
-        '?code=' + encodeURIComponent(code) +
-        '&state=' + encodeURIComponent(state) +
-        '&callback=' + tokenReceived.name;
-    document.head.appendChild(script);
-  }
-</script>
-</body>
+      var code = getURLParameter("code");
+      var state = getURLParameter("state");
+      var error = getURLParameter("error");
+      if (error) {
+        document.body.innerText =
+          "Error back from the Spotify auth page: " + error;
+      } else if (!code) {
+        // Start the auth flow.
+        window.location.href =
+          "https://us-central1-" +
+          getFirebaseProjectId() +
+          ".cloudfunctions.net/redirect";
+      } else {
+        // Use JSONP to load the 'token' Firebase Function to exchange the auth code against a Firebase custom token.
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        // This is the URL to the HTTP triggered 'token' Firebase Function.
+        // See https://firebase.google.com/docs/functions.
+        var tokenFunctionURL =
+          "https://us-central1-" +
+          getFirebaseProjectId() +
+          ".cloudfunctions.net/token";
+        script.src =
+          tokenFunctionURL +
+          "?code=" +
+          encodeURIComponent(code) +
+          "&state=" +
+          encodeURIComponent(state) +
+          "&callback=" +
+          tokenReceived.name;
+        document.head.appendChild(script);
+      }
+    </script>
+  </body>
 </html>

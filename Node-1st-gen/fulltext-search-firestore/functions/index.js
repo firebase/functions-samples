@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const functions = require('firebase-functions/v1');
-const algoliasearch = require('algoliasearch').default;
+const functions = require("firebase-functions/v1");
+const algoliasearch = require("algoliasearch").default;
 
 // [START init_algolia]
 // Initialize Algolia, requires installing Algolia dependencies:
@@ -25,55 +25,63 @@ const ALGOLIA_ID = functions.config().algolia.app_id;
 const ALGOLIA_ADMIN_KEY = functions.config().algolia.api_key;
 const ALGOLIA_SEARCH_KEY = functions.config().algolia.search_key;
 
-const ALGOLIA_INDEX_NAME = 'notes';
+const ALGOLIA_INDEX_NAME = "notes";
 const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 // [END init_algolia]
 
 // [START update_index_function]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate((snap, context) => {
-  // Get the note document
-  const note = snap.data();
+exports.onNoteCreated = functions.firestore
+  .document("notes/{noteId}")
+  .onCreate((snap, context) => {
+    // Get the note document
+    const note = snap.data();
 
-  // Add an 'objectID' field which Algolia requires
-  note.objectID = context.params.noteId;
+    // Add an 'objectID' field which Algolia requires
+    note.objectID = context.params.noteId;
 
-  // Write to the algolia index
-  const index = client.initIndex(ALGOLIA_INDEX_NAME);
-  return index.saveObject(note);
-});
+    // Write to the algolia index
+    const index = client.initIndex(ALGOLIA_INDEX_NAME);
+    return index.saveObject(note);
+  });
 // [END update_index_function]
 
 // [START get_firebase_user]
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
 admin.initializeApp();
 
 async function getFirebaseUser(req, res, next) {
-  functions.logger.log('Check if request is authorized with Firebase ID token');
+  functions.logger.log("Check if request is authorized with Firebase ID token");
 
-  if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) {
+  if (
+    !req.headers.authorization ||
+    !req.headers.authorization.startsWith("Bearer ")
+  ) {
     functions.logger.error(
-      'No Firebase ID token was passed as a Bearer token in the Authorization header.',
-      'Make sure you authorize your request by providing the following HTTP header:',
-      'Authorization: Bearer <Firebase ID Token>'
+      "No Firebase ID token was passed as a Bearer token in the Authorization header.",
+      "Make sure you authorize your request by providing the following HTTP header:",
+      "Authorization: Bearer <Firebase ID Token>",
     );
     return res.sendStatus(403);
   }
 
   let idToken;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
     functions.logger.log("Found 'Authorization' header");
-    idToken = req.headers.authorization.split('Bearer ')[1];
+    idToken = req.headers.authorization.split("Bearer ")[1];
   }
 
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    functions.logger.log('ID Token correctly decoded', decodedIdToken);
+    functions.logger.log("ID Token correctly decoded", decodedIdToken);
     req.user = decodedIdToken;
     return next();
-  } catch(error) {
-    functions.logger.error('Error while verifying Firebase ID token:', error);
-    return res.status(403).send('Unauthorized');
+  } catch (error) {
+    functions.logger.error("Error while verifying Firebase ID token:", error);
+    return res.status(403).send("Unauthorized");
   }
 }
 // [END get_firebase_user]
@@ -81,11 +89,11 @@ async function getFirebaseUser(req, res, next) {
 // [START get_algolia_user_token]
 // This complex HTTP function will be created as an ExpressJS app:
 // https://expressjs.com/en/4x/api.html
-const app = require('express')();
+const app = require("express")();
 
 // We'll enable CORS support to allow the function to be invoked
 // from our app client-side.
-app.use(require('cors')({origin: true}));
+app.use(require("cors")({ origin: true }));
 
 // Then we'll also use a special 'getFirebaseUser' middleware which
 // verifies the Authorization header and adds a `user` field to the
@@ -94,7 +102,7 @@ app.use(require('cors')({origin: true}));
 app.use(getFirebaseUser);
 
 // Add a route handler to the app to generate the secured key
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   // @ts-ignore
   const uid = req.user.uid;
 
@@ -111,7 +119,7 @@ app.get('/', (req, res) => {
   const key = client.generateSecuredApiKey(ALGOLIA_SEARCH_KEY, params);
 
   // Then return this key as {key: '...key'}
-  res.json({key});
+  res.json({ key });
 });
 
 // Finally, pass our ExpressJS app to Cloud Functions as a function

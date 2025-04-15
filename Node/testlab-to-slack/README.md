@@ -28,7 +28,7 @@ this:
     ```bash
     firebase functions:secrets:set SLACK_WEBHOOK_URL
     ```
-    
+
     Enter the value of your Slack url to save it into Secret Manager.
 
 ## Deploy and test

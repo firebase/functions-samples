@@ -18,7 +18,7 @@
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-const functions = require('firebase-functions/v1');
+const functions = require("firebase-functions/v1");
 
 // The Firebase Admin SDK to access Firestore.
 const admin = require("firebase-admin");

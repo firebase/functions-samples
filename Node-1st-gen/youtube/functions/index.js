@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions/v1');
-const { google } = require('googleapis');
+const functions = require("firebase-functions/v1");
+const { google } = require("googleapis");
 
 const youtube = google.youtube({
-  version: 'v3',
+  version: "v3",
   auth: functions.config().youtube.key,
 });
 
-const FIREBASE_YOUTUBE_CHANNEL_ID = 'UCP4bf6IHJJQehibu6ai__cg';
+const FIREBASE_YOUTUBE_CHANNEL_ID = "UCP4bf6IHJJQehibu6ai__cg";
 
 exports.getChannelInfo = functions.https.onRequest(
   async (request, response) => {
@@ -31,7 +31,7 @@ exports.getChannelInfo = functions.https.onRequest(
     // Fetch channel information
     // https://developers.google.com/youtube/v3/docs/channels/list
     const { data: channelData } = await youtube.channels.list({
-      part: 'snippet,statistics',
+      part: "snippet,statistics",
       id: channelId,
       maxResults: 1,
     });
@@ -46,8 +46,8 @@ exports.getChannelInfo = functions.https.onRequest(
     // Fetch the channel's latest videos
     // https://developers.google.com/youtube/v3/docs/search/list
     const { data: videoData } = await youtube.search.list({
-      part: 'id, snippet',
-      order: 'date',
+      part: "id, snippet",
+      order: "date",
       channelId,
       maxResults: 3,
     });
@@ -71,10 +71,10 @@ exports.getChannelInfo = functions.https.onRequest(
     // Respond with channel details as JSON
     const channelJSON = JSON.stringify(channelDetails, null, 2);
     response.writeHead(200, {
-      'Content-Length': channelJSON.length,
-      'Content-Type': 'application/json',
+      "Content-Length": channelJSON.length,
+      "Content-Type": "application/json",
     });
     response.write(channelJSON);
     response.end();
-  }
+  },
 );

@@ -1,11 +1,14 @@
 {{#if user}}
   <h1>Hello {{user.name}}!</h1>
-  Here is your UID: {{user.uid}}
-  <br><br>
+  Here is your UID:
+  {{user.uid}}
+  <br /><br />
   <button onclick="firebase.auth().signOut()">Sign-out</button>
-{{^}}
+{{else}}
   <h1>Hey there!</h1>
   Please sign-in!
-  <br><br>
-  <button onclick="firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())">Sign-in with Google</button>
+  <br /><br />
+  <button
+    onclick="firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())"
+  >Sign-in with Google</button>
 {{/if}}

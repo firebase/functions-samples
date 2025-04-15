@@ -1,9 +1,7 @@
 {
   "functions": {
     "codebase": "test-functions-jest",
-    "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint"
-    ],
+    "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run lint"],
     "source": "functions"
   }
 }

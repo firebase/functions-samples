@@ -15,10 +15,10 @@
  */
 
 // [START import]
-const {onCustomEventPublished} = require("firebase-functions/v2/eventarc");
+const { onCustomEventPublished } = require("firebase-functions/v2/eventarc");
 const logger = require("firebase-functions/logger");
-const {initializeApp} = require("firebase-admin/app");
-const {getFirestore} = require("firebase-admin/firestore");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 
 // [END import]
 
@@ -26,13 +26,14 @@ initializeApp();
 
 // [START imageresizedEvent]
 exports.onimageresized = onCustomEventPublished(
-    "firebase.extensions.storage-resize-images.v1.complete",
-    (event) => {
-      logger.info("Received image resize completed event", event);
-      // For example, write resized image details into Firestore.
-      return getFirestore()
-          .collection("images")
-          .doc(event.subject.replace("/", "_")) // original file path
-          .set(event.data); // resized images paths and sizes
-    });
+  "firebase.extensions.storage-resize-images.v1.complete",
+  (event) => {
+    logger.info("Received image resize completed event", event);
+    // For example, write resized image details into Firestore.
+    return getFirestore()
+      .collection("images")
+      .doc(event.subject.replace("/", "_")) // original file path
+      .set(event.data); // resized images paths and sizes
+  },
+);
 // [END imageresizedEvent]

@@ -61,8 +61,10 @@ function replaceSwearwords(message) {
  * @return {boolean}
  */
 function isShouting(message) {
-  return message.replace(/[^A-Z]/g, "").length > message.length / 2 ||
-   message.replace(/[^!]/g, "").length >= 3;
+  return (
+    message.replace(/[^A-Z]/g, "").length > message.length / 2 ||
+    message.replace(/[^!]/g, "").length >= 3
+  );
 }
 
 /**

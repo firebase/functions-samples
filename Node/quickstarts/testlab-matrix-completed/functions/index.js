@@ -18,20 +18,20 @@
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
-const {onTestMatrixCompleted} = require("firebase-functions/v2/testLab");
-const {logger} = require("firebase-functions");
+const { onTestMatrixCompleted } = require("firebase-functions/v2/testLab");
+const { logger } = require("firebase-functions");
 // [END import]
 
 // [START logtestcomplete]
 exports.logtestcomplete = onTestMatrixCompleted((event) => {
   // Obtain Test Matrix properties from the CloudEvent
-  const {testMatrixId, createTime, state, outcomeSummary} = event.data;
+  const { testMatrixId, createTime, state, outcomeSummary } = event.data;
 
   // Log the properties of the completed Test Matrix
   logger.log(
-      `TEST ${testMatrixId} (created at ${createTime}): ${state}. ${
-        outcomeSummary || ""
-      }`,
+    `TEST ${testMatrixId} (created at ${createTime}): ${state}. ${
+      outcomeSummary || ""
+    }`,
   );
 });
 // [END logtestcomplete]

@@ -4,9 +4,12 @@
     "public": "public",
 
     // Add the following rewrites section *within* "hosting".
-    "rewrites": [ {
-      "source": "**", "function": "app"
-    } ]
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "app"
+      }
+    ]
   }
 }
 // [END rewriterules]

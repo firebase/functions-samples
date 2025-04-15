@@ -3,6 +3,7 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "lint": "eslint .",
+    "lint:fix": "prettier . --write",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
@@ -19,8 +20,13 @@
     "firebase-functions": "^6.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
-    "firebase-functions-test": "^3.4.0"
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.2",
+    "firebase-functions-test": "^3.4.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.30.1"
   },
   "private": true
 }

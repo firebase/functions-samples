@@ -16,7 +16,7 @@
 "use strict";
 
 // [START v2import]
-const {onMessagePublished} = require("firebase-functions/v2/pubsub");
+const { onMessagePublished } = require("firebase-functions/v2/pubsub");
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
@@ -31,16 +31,15 @@ exports.hellopubsub = onMessagePublished("topic-name", (event) => {
   // [START v2readBase64]
   // Decode the PubSub Message body.
   const message = event.data.message;
-  const messageBody = message.data ?
-        Buffer.from(message.data, "base64").toString() :
-        null;
+  const messageBody = message.data
+    ? Buffer.from(message.data, "base64").toString()
+    : null;
   // [END v2readBase64]
   // Print the message in the logs.
   logger.log(`Hello ${messageBody || "World"}!`);
   return null;
 });
 // [END v2helloWorld]
-
 
 /**
  * Cloud Function to be triggered by Pub/Sub that logs a message using the
@@ -65,13 +64,15 @@ exports.hellopubsubjson = onMessagePublished("another-topic-name", (event) => {
  * Cloud Function to be triggered by Pub/Sub that logs a message using the
  *  data attributes published to the topic.
  */
-exports.hellopubsubattributes = onMessagePublished("yet-another-topic-name",
-    (event) => {
-      // [START v2readAttributes]
-      // Get the `name` attribute of the message.
-      const name = event.data.message.attributes.name;
-      // [END v2readAttributes]
-      // Print the message in the logs.
-      logger.log(`Hello ${name || "World"}!`);
-      return null;
-    });
+exports.hellopubsubattributes = onMessagePublished(
+  "yet-another-topic-name",
+  (event) => {
+    // [START v2readAttributes]
+    // Get the `name` attribute of the message.
+    const name = event.data.message.attributes.name;
+    // [END v2readAttributes]
+    // Print the message in the logs.
+    logger.log(`Hello ${name || "World"}!`);
+    return null;
+  },
+);

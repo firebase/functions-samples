@@ -14,56 +14,61 @@
  * limitations under the License.
  */
 
-const functions = require('firebase-functions/v1');
-const app = require('express')();
-const { Canvas } = require('canvas');
-const _ = require('lodash');
+const functions = require("firebase-functions/v1");
+const app = require("express")();
+const { Canvas } = require("canvas");
+const _ = require("lodash");
 
-const clock = require('./clock');
-const spark = require('./sparkline');
-const ray = require('./ray');
+const clock = require("./clock");
+const spark = require("./sparkline");
+const ray = require("./ray");
 
-app.get('/api/ray', (req, res) => {
+app.get("/api/ray", (req, res) => {
   const tracers = JSON.parse(`${req.query.tracers}`);
-  if (!_.isArray(tracers) ||
-    !_.every(tracers, (depth) => typeof depth === 'number')) {
+  if (
+    !_.isArray(tracers) ||
+    !_.every(tracers, (depth) => typeof depth === "number")
+  ) {
     // invalid format
     res.status(422);
     res.end();
   }
   const canvas = new Canvas(243 * tracers.length, 243);
-  const ctx = canvas.getContext('2d');
-  for (let i=0; i<tracers.length; i++) {
-    ray(Math.round(27/tracers[i]), 81, ctx, {x: 243, y: 0});
+  const ctx = canvas.getContext("2d");
+  for (let i = 0; i < tracers.length; i++) {
+    ray(Math.round(27 / tracers[i]), 81, ctx, { x: 243, y: 0 });
   }
-  res.set('Cache-Control', 'public, max-age=60, s-maxage=31536000');
-  res.writeHead(200, {'Content-Type': 'image/png'});
+  res.set("Cache-Control", "public, max-age=60, s-maxage=31536000");
+  res.writeHead(200, { "Content-Type": "image/png" });
   canvas.createPNGStream().pipe(res);
 });
 
-app.get('/api/clock', (req, res) => {
+app.get("/api/clock", (req, res) => {
   const colorOpts = req.query;
   const canvas = new Canvas(320, 320);
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   clock(ctx, colorOpts);
-  res.set('Cache-Control', 'public, max-age=60, s-maxage=31536000');
-  res.writeHead(200, {'Content-Type': 'image/png'});
+  res.set("Cache-Control", "public, max-age=60, s-maxage=31536000");
+  res.writeHead(200, { "Content-Type": "image/png" });
   canvas.createPNGStream().pipe(res);
 });
 
-app.get('/api/spark', (req, res) => {
+app.get("/api/spark", (req, res) => {
   const dataSeries = JSON.parse(`${req.query.series}`);
   const colorOpts = req.query.colorOpts || {};
-  if (!_.isArray(dataSeries) || !_.every(dataSeries, (num) => typeof num === 'number')) {
+  if (
+    !_.isArray(dataSeries) ||
+    !_.every(dataSeries, (num) => typeof num === "number")
+  ) {
     // invalid format
     res.status(422);
     res.end();
   }
   const canvas = new Canvas(320, 100);
-  let ctx = canvas.getContext('2d');
+  let ctx = canvas.getContext("2d");
   spark(ctx, dataSeries, colorOpts);
-  res.set('Cache-Control', 'public, max-age=60, s-maxage=31536000');
-  res.writeHead(200, {'Content-Type': 'image/png'});
+  res.set("Cache-Control", "public, max-age=60, s-maxage=31536000");
+  res.writeHead(200, { "Content-Type": "image/png" });
   canvas.createPNGStream().pipe(res);
 });
 

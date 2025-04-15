@@ -15,19 +15,19 @@
         "function": "pay"
       },
       {
-        "source":"/error",
-        "destination":"/error.html",
-        "type":301
+        "source": "/error",
+        "destination": "/error.html",
+        "type": 301
       },
       {
-        "source":"/cancel",
-        "destination":"/cancel.html",
-        "type":301
+        "source": "/cancel",
+        "destination": "/cancel.html",
+        "type": 301
       },
       {
-        "source":"/success",
-        "destination":"/success.html",
-        "type":301
+        "source": "/success",
+        "destination": "/success.html",
+        "type": 301
       }
     ]
   }

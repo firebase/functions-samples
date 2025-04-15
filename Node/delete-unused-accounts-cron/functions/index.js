@@ -18,8 +18,8 @@
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
-const {onSchedule} = require("firebase-functions/v2/scheduler");
-const {logger} = require("firebase-functions");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { logger } = require("firebase-functions");
 
 // The Firebase Admin SDK to delete inactive users.
 const admin = require("firebase-admin");
@@ -40,8 +40,8 @@ exports.accountcleanup = onSchedule("every day 00:00", async (event) => {
 
   // Use a pool so that we delete maximum `MAX_CONCURRENT` users in parallel.
   const promisePool = new PromisePool(
-      () => deleteInactiveUser(inactiveUsers),
-      MAX_CONCURRENT,
+    () => deleteInactiveUser(inactiveUsers),
+    MAX_CONCURRENT,
   );
   await promisePool.start();
 
@@ -60,20 +60,24 @@ function deleteInactiveUser(inactiveUsers) {
     const userToDelete = inactiveUsers.pop();
 
     // Delete the inactive user.
-    return admin.auth().deleteUser(userToDelete.uid).then(() => {
-      return logger.log(
+    return admin
+      .auth()
+      .deleteUser(userToDelete.uid)
+      .then(() => {
+        return logger.log(
           "Deleted user account",
           userToDelete.uid,
           "because of inactivity",
-      );
-    }).catch((error) => {
-      return logger.error(
+        );
+      })
+      .catch((error) => {
+        return logger.error(
           "Deletion of inactive user account",
           userToDelete.uid,
           "failed:",
           error,
-      );
-    });
+        );
+      });
   } else {
     return null;
   }
@@ -92,10 +96,10 @@ async function getInactiveUsers(users = [], nextPageToken) {
   const result = await admin.auth().listUsers(1000, nextPageToken);
   // Find users that have not signed in in the last 30 days.
   const inactiveUsers = result.users.filter(
-      (user) =>
-        Date.parse(
-            user.metadata.lastRefreshTime || user.metadata.lastSignInTime,
-        ) <
+    (user) =>
+      Date.parse(
+        user.metadata.lastRefreshTime || user.metadata.lastSignInTime,
+      ) <
       Date.now() - 30 * 24 * 60 * 60 * 1000,
   );
 

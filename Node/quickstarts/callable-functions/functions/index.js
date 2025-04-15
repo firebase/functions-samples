@@ -16,11 +16,11 @@
 
 // [START imports]
 // Dependencies for callable functions.
-const {onCall, HttpsError} = require("firebase-functions/v2/https");
-const {logger} = require("firebase-functions/v2");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { logger } = require("firebase-functions/v2");
 
 // Dependencies for the addMessage function.
-const {getDatabase} = require("firebase-admin/database");
+const { getDatabase } = require("firebase-admin/database");
 const sanitizer = require("./sanitizer");
 // [END imports]
 
@@ -39,9 +39,12 @@ exports.addnumbers = onCall((request) => {
   // Checking that attributes are present and are numbers.
   if (!Number.isFinite(firstNumber) || !Number.isFinite(secondNumber)) {
     // Throwing an HttpsError so that the client gets the error details.
-    throw new HttpsError("invalid-argument", "The function must be called " +
-            "with two arguments \"firstNumber\" and \"secondNumber\" which " +
-            "must both be numbers.");
+    throw new HttpsError(
+      "invalid-argument",
+      "The function must be called " +
+        'with two arguments "firstNumber" and "secondNumber" which ' +
+        "must both be numbers.",
+    );
   }
   // [END v2addHttpsError]
 
@@ -70,14 +73,19 @@ exports.addmessage = onCall((request) => {
   // Checking attribute.
   if (!(typeof text === "string") || text.length === 0) {
     // Throwing an HttpsError so that the client gets the error details.
-    throw new HttpsError("invalid-argument", "The function must be called " +
-            "with one arguments \"text\" containing the message text to add.");
+    throw new HttpsError(
+      "invalid-argument",
+      "The function must be called " +
+        'with one arguments "text" containing the message text to add.',
+    );
   }
   // Checking that the user is authenticated.
   if (!request.auth) {
     // Throwing an HttpsError so that the client gets the error details.
-    throw new HttpsError("failed-precondition", "The function must be " +
-            "called while authenticated.");
+    throw new HttpsError(
+      "failed-precondition",
+      "The function must be " + "called while authenticated.",
+    );
   }
   // [END v2messageHttpsErrors]
 
@@ -93,20 +101,25 @@ exports.addmessage = onCall((request) => {
   // Saving the new message to the Realtime Database.
   const sanitizedMessage = sanitizer.sanitizeText(text); // Sanitize message.
 
-  return getDatabase().ref("/messages").push({
-    text: sanitizedMessage,
-    author: {uid, name, picture, email},
-  }).then(() => {
-    logger.info("New Message written");
-    // Returning the sanitized message to the client.
-    return {text: sanitizedMessage};
-  })
-  // [END v2returnMessageAsync]
+  return (
+    getDatabase()
+      .ref("/messages")
+      .push({
+        text: sanitizedMessage,
+        author: { uid, name, picture, email },
+      })
+      .then(() => {
+        logger.info("New Message written");
+        // Returning the sanitized message to the client.
+        return { text: sanitizedMessage };
+      })
+      // [END v2returnMessageAsync]
       .catch((error) => {
         // Re-throwing the error as an HttpsError so that the client gets
         // the error details.
         throw new HttpsError("unknown", error.message, error);
-      });
+      })
+  );
   // [END_EXCLUDE]
 });
 // [END v2messageFunctionTrigger]

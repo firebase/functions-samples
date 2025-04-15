@@ -19,13 +19,13 @@ sample function and client.
 Follow the [User server-side Remote Config with Cloud Functions and Vertex AI
 guide](https://firebase.google.com/docs/remote-config/solution-server) to:
 
-* Set up your Firebase project.
-* Enable required APIs and SDKs.
-* Configure IAM permissions.
-* Test your function in the Firebase emulator.
-* Deploy your function.
+- Set up your Firebase project.
+- Enable required APIs and SDKs.
+- Configure IAM permissions.
+- Test your function in the Firebase emulator.
+- Deploy your function.
 
-Important:  Vertex AI and Cloud Functions require a billing account. Review
+Important: Vertex AI and Cloud Functions require a billing account. Review
 [Vertex AI pricing](https://cloud.google.com/vertex-ai/pricing) and
 [Cloud Functions pricing](https://firebase.google.com/pricing) before running
 this function. If you're new to Firebase and Google Cloud, check to see if
@@ -39,13 +39,10 @@ Learn more about Remote Config server implementations at
 [Use Remote Config in server
 environments](https://firebase.google.com/docs/remote-config/server).
 
-Support
--------
+## Support
 
 - [Firebase Support](https://firebase.google.com/support/)
 
-License
--------
+## License
 
 © Google, 2024. Licensed under an [Apache-2](../../LICENSE) license.
-

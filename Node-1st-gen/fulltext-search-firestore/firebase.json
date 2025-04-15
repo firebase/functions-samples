@@ -1,8 +1,8 @@
 {
-    "functions": {
-        "codebase": "fulltext-search-firestore"
-    },
-    "hosting": {
-        "public": "public"
-    }
+  "functions": {
+    "codebase": "fulltext-search-firestore"
+  },
+  "hosting": {
+    "public": "public"
+  }
 }

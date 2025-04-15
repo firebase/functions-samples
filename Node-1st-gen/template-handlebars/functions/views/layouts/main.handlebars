@@ -1,58 +1,47 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Example App</title>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example App</title>
 
-  <!-- Import and configure the Firebase SDK -->
-  <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
-  <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-  <script defer src="/__/firebase/3.9.0/firebase-app-compat.js"></script>
-  <script defer src="/__/firebase/3.9.0/firebase-auth-compat.js"></script>
-  <script defer src="/__/firebase/init.js"></script>
+    <!-- Import and configure the Firebase SDK -->
+    <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
+    <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+    <script defer src="/__/firebase/3.9.0/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/3.9.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/init.js"></script>
 
-  <script>
-    function checkCookie() {
-      // Checks if it's likely that there is a signed-in Firebase user and the session cookie expired.
-      // In that case we'll hide the body of the page until it will be reloaded after the cookie has been set.
-      var hasSessionCookie = document.cookie.indexOf('__session=') !== -1;
-      var isProbablySignedInFirebase = typeof Object.keys(localStorage).find(function (key) {
-            return key.startsWith('firebase:authUser')
-          }) !== 'undefined';
-      if (!hasSessionCookie && isProbablySignedInFirebase) {
-        var style = document.createElement('style');
-        style.id = '__bodyHider';
-        style.appendChild(document.createTextNode('body{display:none}'));
-        document.head.appendChild(style);
-      }
-    }
-    checkCookie();
+    <script>
+      function checkCookie() { // Checks if it's likely that there is a
+      signed-in Firebase user and the session cookie expired. // In that case
+      we'll hide the body of the page until it will be reloaded after the cookie
+      has been set. var hasSessionCookie = document.cookie.indexOf('__session=')
+      !== -1; var isProbablySignedInFirebase = typeof
+      Object.keys(localStorage).find(function (key) { return
+      key.startsWith('firebase:authUser') }) !== 'undefined'; if
+      (!hasSessionCookie && isProbablySignedInFirebase) { var style =
+      document.createElement('style'); style.id = '__bodyHider';
+      style.appendChild(document.createTextNode('body{display:none}'));
+      document.head.appendChild(style); } } checkCookie();
+      document.addEventListener('DOMContentLoaded', function() { // Make sure
+      the Firebase ID Token is always passed as a cookie.
+      firebase.auth().addAuthTokenListener(function (idToken) { var
+      hadSessionCookie = document.cookie.indexOf('__session=') !== -1;
+      document.cookie = '__session=' + idToken + ';max-age=' + (idToken ? 3600 :
+      0); // If there is a change in the auth state compared to what's in the
+      session cookie we'll reload after setting the cookie. if
+      ((!hadSessionCookie && idToken) || (hadSessionCookie && !idToken)) {
+      window.location.reload(true); } else { // In the rare case where there was
+      a user but it could not be signed in (for instance the account has been
+      deleted). // We un-hide the page body. var style =
+      document.getElementById('__bodyHider'); if (style) {
+      document.head.removeChild(style); } } }); });
+    </script>
 
-    document.addEventListener('DOMContentLoaded', function() {
-      // Make sure the Firebase ID Token is always passed as a cookie.
-      firebase.auth().addAuthTokenListener(function (idToken) {
-        var hadSessionCookie = document.cookie.indexOf('__session=') !== -1;
-        document.cookie = '__session=' + idToken + ';max-age=' + (idToken ? 3600 : 0);
-        // If there is a change in the auth state compared to what's in the session cookie we'll reload after setting the cookie.
-        if ((!hadSessionCookie && idToken) || (hadSessionCookie && !idToken)) {
-          window.location.reload(true);
-        } else {
-          // In the rare case where there was a user but it could not be signed in (for instance the account has been deleted).
-          // We un-hide the page body.
-          var style = document.getElementById('__bodyHider');
-          if (style) {
-            document.head.removeChild(style);
-          }
-        }
-      });
-    });
-  </script>
+    <link rel="stylesheet" href="/main.css" />
+  </head>
+  <body>
 
-  <link rel="stylesheet" href="/main.css">
-</head>
-<body>
+    {{{body}}}
 
-{{{body}}}
-
-</body>
+  </body>
 </html>

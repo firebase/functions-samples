@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {logger} from "firebase-functions";
-import {expect, jest, test} from "@jest/globals";
+import { logger } from "firebase-functions";
+import { expect, jest, test } from "@jest/globals";
 import firebaseFunctionsTest from "firebase-functions-test";
-import {logstore} from "../index";
+import { logstore } from "../index";
 
-const {wrap} = firebaseFunctionsTest();
+const { wrap } = firebaseFunctionsTest();
 
 test("logstore", () => {
   const mockLog = jest.spyOn(logger, "log");
@@ -34,7 +34,7 @@ test("logstore", () => {
   /**
    * Invoke the function once using {@link Partial<CloudEvent>}.
    */
-  const cloudEventPartial = {data: {bucket: "my-other-bucket"}};
+  const cloudEventPartial = { data: { bucket: "my-other-bucket" } };
   wrappedLogStore(cloudEventPartial);
   expect(mockLog).toBeCalledTimes(2);
 });

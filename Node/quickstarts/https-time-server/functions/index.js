@@ -16,7 +16,7 @@
 "use strict";
 
 // [START v2httpImport]
-const {onRequest} = require("firebase-functions/v2/https");
+const { onRequest } = require("firebase-functions/v2/https");
 // [END v2httpImport]
 
 // [START v2httpAdditionalImports]
@@ -45,35 +45,35 @@ const moment = require("moment");
  */
 // [START v2httpTrigger]
 exports.date = onRequest(
-    {timeoutSeconds: 1200, region: ["us-west1", "us-east1"]},
-    (req, res) => {
+  { timeoutSeconds: 1200, region: ["us-west1", "us-east1"] },
+  (req, res) => {
     // [END v2httpTrigger]
 
-      // [START v2httpSendError]
-      // Forbidding PUT requests.
-      if (req.method === "PUT") {
-        res.status(403).send("Forbidden!");
-        return;
-      }
-      // [END v2httpSendError]
+    // [START v2httpSendError]
+    // Forbidding PUT requests.
+    if (req.method === "PUT") {
+      res.status(403).send("Forbidden!");
+      return;
+    }
+    // [END v2httpSendError]
 
-      // Reading date format from URL query parameter.
-      // [START v2httpReadQueryParam]
-      let format = req.query.format;
-      // [END v2httpReadQueryParam]
+    // Reading date format from URL query parameter.
+    // [START v2httpReadQueryParam]
+    let format = req.query.format;
+    // [END v2httpReadQueryParam]
 
-      // Reading date format from request body query parameter
-      if (!format) {
+    // Reading date format from request body query parameter
+    if (!format) {
       // [START v2httpReadBodyParam]
-        format = req.body.format;
+      format = req.body.format;
       // [END v2httpReadBodyParam]
-      }
+    }
 
-      // [START v2httpSendResponse]
-      const formattedDate = moment().format(`${format}`);
-      logger.log("Sending formatted date:", formattedDate);
-      res.status(200).send(formattedDate);
+    // [START v2httpSendResponse]
+    const formattedDate = moment().format(`${format}`);
+    logger.log("Sending formatted date:", formattedDate);
+    res.status(200).send(formattedDate);
     // [END v2httpSendResponse]
-    },
+  },
 );
 // [END v2httpAll]

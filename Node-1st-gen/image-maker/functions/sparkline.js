@@ -21,8 +21,8 @@ const spark = (ctx, data, opts) => {
   const height = ctx.canvas.height;
   const barWidth = width / len;
   const max = Math.max.apply(null, data);
-  ctx.fillStyle = opts.barFill || 'rgba(0,0,255,0.5)';
-  ctx.strokeStyle = opts.lineStroke || 'red';
+  ctx.fillStyle = opts.barFill || "rgba(0,0,255,0.5)";
+  ctx.strokeStyle = opts.lineStroke || "red";
   ctx.lineWidth = 1;
 
   data.forEach((n, i) => {
@@ -31,7 +31,7 @@ const spark = (ctx, data, opts) => {
 
     ctx.lineTo(x, height - y);
     ctx.fillRect(x, height, barWidth - pad, -y);
-  })
+  });
 
   ctx.stroke();
 };

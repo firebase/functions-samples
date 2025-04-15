@@ -137,7 +137,7 @@ exports.callVertexWithRC = onCall(
         safetySettings,
         " in ",
         location,
-        "\n"
+        "\n",
       );
 
       const result = await generativeModel.generateContentStream(chatInput);
@@ -154,6 +154,6 @@ exports.callVertexWithRC = onCall(
       logger.error(error);
       throw new HttpsError("internal", "Internal server error");
     }
-  }
+  },
 );
 // [END remote_config_server_vertex_function_logic]

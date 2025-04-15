@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const functions = require('firebase-functions/v1');
+/* eslint no-unused-vars: ["off"] */
+const functions = require("firebase-functions/v1");
 
 // [START init_elastic]
 const { Client } = require("@elastic/elasticsearch");
@@ -31,26 +32,28 @@ const client = new Client({
     id: ELASTIC_ID,
     username: ELASTIC_USERNAME,
     password: ELASTIC_PASSWORD,
-  }
+  },
 });
 // [END init_elastic]
 
 // [START update_index_function_elastic]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(async (snap, context) => {
-  // Get the note document
-  const note = snap.data();
+exports.onNoteCreated = functions.firestore
+  .document("notes/{noteId}")
+  .onCreate(async (snap, context) => {
+    // Get the note document
+    const note = snap.data();
 
-  // Use the 'nodeId' path segment as the identifier for Elastic
-  const id = context.params.noteId;
+    // Use the 'nodeId' path segment as the identifier for Elastic
+    const id = context.params.noteId;
 
-  // Write to the Elastic index
-  client.index({
-    index: "notes",
-    id,
-    body: note,
+    // Write to the Elastic index
+    client.index({
+      index: "notes",
+      id,
+      body: note,
+    });
   });
-});
 // [END update_index_function_elastic]
 
 // [START search_function_elastic]
@@ -66,12 +69,10 @@ exports.searchNotes = functions.https.onCall(async (data, context) => {
       query: {
         query_string: {
           query: `*${query}*`,
-          fields: [
-            "text"
-          ]
-        }
-      }
-    }
+          fields: ["text"],
+        },
+      },
+    },
   });
 
   // Each entry will have the following properties:
@@ -79,9 +80,9 @@ exports.searchNotes = functions.https.onCall(async (data, context) => {
   //   _source: the original item data
   const hits = searchRes.body.hits.hits;
 
-  const notes = hits.map(h => h["_source"]);
+  const notes = hits.map((h) => h["_source"]);
   return {
-    notes: notes
+    notes: notes,
   };
 });
 // [END search_function_elastic]

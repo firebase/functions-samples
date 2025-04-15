@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
- const render = (min, max, ctx, posObject) => {
+const render = (min, max, ctx, posObject) => {
   ctx.fillStyle = getPointColor(122, 122);
   ctx.fillRect(0, 0, 240, 240);
   renderLevel(min, max, 0, ctx);
@@ -46,15 +46,10 @@ const renderLevel = (minimumLevel, level, y, ctx) => {
 const drawBlock = (x, y, level, ctx) => {
   ctx.fillStyle = getPointColor(
     x * level + (level - 1) / 2,
-    y * level + (level - 1) / 2
+    y * level + (level - 1) / 2,
   );
 
-  ctx.fillRect(
-    x * level,
-    y * level,
-    level,
-    level
-  );
+  ctx.fillRect(x * level, y * level, level, level);
 };
 
 const getPointColor = (x, y) => {
@@ -63,7 +58,7 @@ const getPointColor = (x, y) => {
 
   const x2y2 = x * x + y * y;
   if (x2y2 > 1) {
-    return '#000';
+    return "#000";
   }
 
   const root = Math.sqrt(1 - x2y2);
@@ -77,7 +72,7 @@ const getPointColor = (x, y) => {
   const g = Math.round(brightness * 127.5 * (x3d + 1));
   const b = Math.round(brightness * 127.5 * (z3d + 1));
 
-  return 'rgb(' + r + ', ' + g + ', ' + b + ')';
-}
+  return "rgb(" + r + ", " + g + ", " + b + ")";
+};
 
 module.exports = render;

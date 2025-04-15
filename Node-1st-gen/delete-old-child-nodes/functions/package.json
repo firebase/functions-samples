@@ -2,7 +2,6 @@
   "name": "delete-old-child-nodes",
   "description": "Delete nodes of a Realtime Database collection that are older than a given threshold.",
   "dependencies": {
-    "eslint": "8",
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0"
@@ -13,5 +12,13 @@
   "scripts": {
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.2",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.30.1"
+  }
 }

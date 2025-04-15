@@ -2,5 +2,5 @@
   "functions": {
     "codebase": "presence-firestore"
   },
-  "hosting": {"public": "public"}
+  "hosting": { "public": "public" }
 }

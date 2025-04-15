@@ -6,15 +6,21 @@
     "firebase-functions": "^6.3.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.24.0",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.57.1",
+    "eslint": "^9.24.0",
     "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^10.1.2",
+    "globals": "^16.0.0",
     "mocha": "^7.2.0",
-    "sinon": "^9.2.4"
+    "prettier": "^3.5.3",
+    "sinon": "^9.2.4",
+    "typescript-eslint": "^8.30.1"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+    "lint": "eslint .",
+    "lint:fix": "prettier . --write",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",

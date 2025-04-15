@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+"use strict";
 
 // [START functionsimport]
-const functions = require('firebase-functions/v1');
+const functions = require("firebase-functions/v1");
 // [END functionsimport]
 // [START additionalimports]
 // Moments library to format dates.
-const moment = require('moment');
+const moment = require("moment");
 // CORS Express middleware to enable CORS Requests.
-const cors = require('cors')({
+const cors = require("cors")({
   origin: true,
 });
 // [END additionalimports]
@@ -49,8 +49,8 @@ exports.date = functions.https.onRequest((req, res) => {
   // [END trigger]
   // [START sendError]
   // Forbidding PUT requests.
-  if (req.method === 'PUT') {
-    res.status(403).send('Forbidden!');
+  if (req.method === "PUT") {
+    res.status(403).send("Forbidden!");
     return;
   }
   // [END sendError]
@@ -71,7 +71,7 @@ exports.date = functions.https.onRequest((req, res) => {
     }
     // [START sendResponse]
     const formattedDate = moment().format(`${format}`);
-    functions.logger.log('Sending Formatted date:', formattedDate);
+    functions.logger.log("Sending Formatted date:", formattedDate);
     res.status(200).send(formattedDate);
     // [END sendResponse]
   });

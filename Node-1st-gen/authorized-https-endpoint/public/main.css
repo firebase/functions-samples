@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-html, body {
-  font-family: 'Roboto', 'Helvetica', sans-serif;
+html,
+body {
+  font-family: "Roboto", "Helvetica", sans-serif;
 }
 .mdl-grid {
   max-width: 1024px;
@@ -29,7 +30,7 @@ html, body {
   padding: 0;
 }
 h3 {
-  background: url('firebase-logo.png') no-repeat;
+  background: url("firebase-logo.png") no-repeat;
   background-size: 40px;
   padding-left: 50px;
 }
