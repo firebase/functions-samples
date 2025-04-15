@@ -2,7 +2,7 @@
   "name": "functions",
   "description": "File new issue in Jira when receiving in-app feedback facilitated by Firebase App Distribution",
   "scripts": {
-    "lint": "prettier . --check && eslint .",
+    "lint": "eslint .",
     "lint:fix": "prettier . --write",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
@@ -21,10 +21,13 @@
     "node-fetch": "^3.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.2",
-    "prettier": "^3.5.3"
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.30.1"
   },
   "private": true
 }

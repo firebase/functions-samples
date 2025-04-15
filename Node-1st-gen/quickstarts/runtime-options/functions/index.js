@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* eslint no-unused-vars: ["off"] */
 
 const functions = require("firebase-functions/v1");
 

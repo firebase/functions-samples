@@ -28,7 +28,7 @@ const MAX_CONCURRENT = 3;
  */
 exports.accountcleanup = functions.pubsub
   .schedule("every day 00:00")
-  .onRun(async (context) => {
+  .onRun(async () => {
     // Fetch all user details.
     const inactiveUsers = await getInactiveUsers();
 

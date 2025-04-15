@@ -51,6 +51,7 @@ const authenticate = async (req, res, next) => {
     next();
     return;
   } catch (e) {
+    functions.logger.error(e.message);
     res.status(403).send("Unauthorized");
     return;
   }

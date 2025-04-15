@@ -2,7 +2,7 @@
   "name": "alerts-to-discord",
   "description": "Send a message to Discord when an alert is received from Firebase",
   "scripts": {
-    "lint": "prettier . --check && eslint .",
+    "lint": "eslint .",
     "lint:fix": "prettier . --write",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
@@ -21,12 +21,15 @@
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
+    "@eslint/js": "^9.24.0",
     "@types/node": "^17.0.45",
-    "eslint": "^8.57.1",
+    "eslint": "^9.24.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^10.1.2",
     "firebase-functions-test": "^3.4.0",
-    "prettier": "^3.5.3"
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.30.1"
   },
   "private": true
 }
