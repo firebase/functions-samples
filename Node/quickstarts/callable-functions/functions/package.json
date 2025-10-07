@@ -17,6 +17,7 @@
   "main": "index.js",
   "dependencies": {
     "bad-words": "^3.0.4",
+    "capitalize-sentence": "^0.1.5",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0"
   },

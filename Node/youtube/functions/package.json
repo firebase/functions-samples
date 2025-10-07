@@ -2,10 +2,12 @@
   "name": "youtube-2nd-gen",
   "description": "Cloud Functions for Firebase 2nd Gen YouTube Sample",
   "main": "lib/index.js",
+  "type": "module",
   "engines": {
     "node": "22"
   },
   "scripts": {
+    "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
     "compile": "tsc",
     "deploy": "firebase deploy --only functions",

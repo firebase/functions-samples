@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-const { onCall } = require("firebase-functions/https");
-const { defineSecret } = require("firebase-functions/params");
-const { google } = require("googleapis");
+import { onCall, CallableRequest } from "firebase-functions/https";
+import { defineSecret } from "firebase-functions/params";
+import { google } from "googleapis";
 
 const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
 
 const FIREBASE_YOUTUBE_CHANNEL_ID = "UCP4bf6IHJJQehibu6ai__cg";
 
-exports.getChannelInfo = onCall({ secrets: [youtubeApiKey] }, async (request: any) => {
+export const getChannelInfo = onCall({ secrets: [youtubeApiKey] }, async (request: CallableRequest) => {
   const youtube = google.youtube({
     version: "v3",
     auth: youtubeApiKey.value(),

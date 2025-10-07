@@ -3,6 +3,7 @@
   "description": "Moderate text using Firebase Functions",
   "dependencies": {
     "bad-words": "^3.0.4",
+    "capitalize-sentence": "^0.1.5",
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0"
