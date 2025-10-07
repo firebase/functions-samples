@@ -15,7 +15,6 @@
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0",
     "json-diff": "^1.0.3",
-    "node-fetch": "^2.6.9",
     "request": "^2.88.2",
     "request-promise": "^4.2.5"
   },

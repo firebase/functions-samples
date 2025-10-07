@@ -20,8 +20,6 @@
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
 const {onTestMatrixCompleted} = require("firebase-functions/testLab");
 const {logger} = require("firebase-functions");
-// The node-fetch library to send web requests to Slack.
-const fetch = require("node-fetch");
 // [END import]
 
 // [START postToSlack]

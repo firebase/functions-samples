@@ -13,8 +13,7 @@
   "dependencies": {
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0",
-    "json-diff": "^0.5.5",
-    "node-fetch": "^2.6.7"
+    "json-diff": "^0.5.5"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

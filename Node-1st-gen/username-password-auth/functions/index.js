@@ -29,9 +29,6 @@ admin.initializeApp({
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
-const fetch = require('node-fetch');
-
-
 /**
  * Authenticate the provided credentials returning a Firebase custom auth token.
  * `username` and `password` values are expected in the body of the request.

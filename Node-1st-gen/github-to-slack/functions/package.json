@@ -5,7 +5,6 @@
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0",
-    "node-fetch": "^2.6.7",
     "secure-compare": "^3.0.1"
   },
   "devDependencies": {

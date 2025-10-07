@@ -16,8 +16,7 @@
   "type": "module",
   "dependencies": {
     "firebase-functions": "^6.3.0",
-    "formdata-polyfill": "^4.0.10",
-    "node-fetch": "^3.3.0"
+    "formdata-polyfill": "^4.0.10"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

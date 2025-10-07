@@ -23,7 +23,6 @@ const logger = require("firebase-functions/logger");
 // The Firebase Admin SDK to obtain access tokens.
 const admin = require("firebase-admin");
 const app = admin.initializeApp();
-const fetch = require("node-fetch");
 const jsonDiff = require("json-diff");
 // [END import]
 

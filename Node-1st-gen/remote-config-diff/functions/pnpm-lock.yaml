@@ -20,9 +20,6 @@ importers:
       json-diff:
         specifier: ^1.0.3
         version: 1.0.6
-      node-fetch:
-        specifier: ^2.6.9
-        version: 2.7.0
       request:
         specifier: ^2.88.2
         version: 2.88.2

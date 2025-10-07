@@ -27,8 +27,6 @@ const {
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
-const fetch = require("node-fetch");
-
 /**
  * Posts a message to Discord with Discord's Webhook API
  *
@@ -89,7 +87,7 @@ id: \`${id}\`
           event.data.payload,
       );
     } else {
-      throw new Error(response.error);
+      throw new Error(`Discord returned status code ${response.status}`);
     }
     // [END v2SendToDiscord]
   } catch (error) {
@@ -131,7 +129,7 @@ UDID **${testerDeviceIdentifier}** for ${testerDeviceModelName}
           `Posted iOS device registration alert for ${testerEmail} to Discord`,
       );
     } else {
-      throw new Error(response.error);
+      throw new Error(`Discord returned status code ${response.status}`);
     }
     // [END v2SendNewTesterIosDeviceToDiscord]
   } catch (error) {
@@ -192,7 +190,7 @@ exports.postperformancealerttodiscord = onThresholdAlertPublished(
               event.data.payload,
           );
         } else {
-          throw new Error(response.error);
+          throw new Error(`Discord returned status code ${response.status}`);
         }
         // [END v2SendPerformanceAlertToDiscord]
       } catch (error) {

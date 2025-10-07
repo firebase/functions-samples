@@ -16,7 +16,6 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const fetch = require('node-fetch');
 
 // This is the URL that we will callback and send the content of the updated data node.
 // As an example we're using a Request Bin from http://requestb.in
@@ -33,7 +32,7 @@ exports.webhook = functions.database.ref('/hooks/{hookId}').onCreate(async (snap
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP Error: ${response.statusCode}`);
+    throw new Error(`HTTP Error: ${response.status}`);
   }
   functions.logger.log('SUCCESS! Posted', snap.ref);
 });
