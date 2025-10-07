@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "source": "functions",
+    "predeploy": [
+      "pnpm --prefix \"$RESOURCE_DIR\" run compile"
+    ]
+  }
+}

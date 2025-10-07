@@ -1,0 +1,28 @@
+{
+  "name": "youtube-2nd-gen",
+  "description": "Cloud Functions for Firebase 2nd Gen YouTube Sample",
+  "main": "lib/index.js",
+  "type": "module",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "compile": "tsc",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.3.0",
+    "googleapis": "^133.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "typescript": "^5.4.5"
+  },
+  "private": true
+}
