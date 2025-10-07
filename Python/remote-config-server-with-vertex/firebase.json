@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "source": "functions",
+    "codebase": "remote-config-server-with-vertex"
+  }
+}

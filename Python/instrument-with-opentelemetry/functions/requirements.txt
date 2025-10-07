@@ -1,0 +1,11 @@
+firebase-admin
+firebase-functions
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-google-cloud-trace
+opentelemetry-propagator-gcp
+opentelemetry-instrumentation
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-grpc
+opentelemetry-instrumentation-wsgi
+opentelemetry-resourcedetector-gcp
