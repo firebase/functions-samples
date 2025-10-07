@@ -11,9 +11,6 @@ importers:
       bad-words:
         specifier: ^3.0.4
         version: 3.0.4
-      capitalize-sentence:
-        specifier: ^0.1.5
-        version: 0.1.5
       firebase-admin:
         specifier: ^13.0.2
         version: 13.0.2
@@ -700,9 +697,6 @@ packages:
 
   caniuse-lite@1.0.30001696:
     resolution: {integrity: sha512-pDCPkvzfa39ehJtJ+OwGT/2yvT2SbjfHhiIW2LWOAcMQ7BzwxT/XuyUp4OTOd0XFWA6BKw0JalnBHgSi5DGJBQ==}
-
-  capitalize-sentence@0.1.5:
-    resolution: {integrity: sha512-iFo4mR7kdy5SyDshYlqi6Wzw+gTcgayvU4AyB32hJydHvNw630YPbny2UjUZB8G6GWyl3KADXEs5MLvgq3cu1w==}
 
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
@@ -2993,8 +2987,6 @@ snapshots:
   camelcase@6.3.0: {}
 
   caniuse-lite@1.0.30001696: {}
-
-  capitalize-sentence@0.1.5: {}
 
   chalk@4.1.2:
     dependencies:

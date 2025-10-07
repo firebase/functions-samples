@@ -11,9 +11,6 @@ importers:
       bad-words:
         specifier: ^3.0.4
         version: 3.0.4
-      capitalize-sentence:
-        specifier: ^0.1.5
-        version: 0.1.5
       eslint-plugin-promise:
         specifier: ^7.2.1
         version: 7.2.1(eslint@8.57.1)
@@ -329,9 +326,6 @@ packages:
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
     engines: {node: '>=6'}
-
-  capitalize-sentence@0.1.5:
-    resolution: {integrity: sha512-iFo4mR7kdy5SyDshYlqi6Wzw+gTcgayvU4AyB32hJydHvNw630YPbny2UjUZB8G6GWyl3KADXEs5MLvgq3cu1w==}
 
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
@@ -1561,8 +1555,6 @@ snapshots:
       get-intrinsic: 1.2.7
 
   callsites@3.1.0: {}
-
-  capitalize-sentence@0.1.5: {}
 
   chalk@4.1.2:
     dependencies:
