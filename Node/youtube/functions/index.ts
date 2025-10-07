@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-const { onCall } = require("firebase-functions/v2/https");
-const { defineSecret } = require("firebase-functions/v2/params");
+const { onCall } = require("firebase-functions/https");
+const { defineSecret } = require("firebase-functions/params");
 const { google } = require("googleapis");
 
 const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
