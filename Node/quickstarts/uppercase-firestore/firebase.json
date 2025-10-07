@@ -1,6 +1,9 @@
 {
   "functions": {
-    "codebase": "uppercase-firestore"
+    "codebase": "uppercase-firestore",
+    "predeploy": [
+      "npm --prefix \"$RESOURCE_DIR\" run compile"
+    ]
   },
   "firestore": {
     "rules": "firestore.rules",
