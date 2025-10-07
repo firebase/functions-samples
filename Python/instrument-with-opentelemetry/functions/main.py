@@ -27,6 +27,7 @@ tracer = trace.get_tracer(__name__)
 
 
 class Timer:
+
     def __init__(self):
         self.start_time = time.time()
 
@@ -37,7 +38,7 @@ class Timer:
 def slice_into_chunks(arr, chunk_size):
     res = []
     for i in range(0, len(arr), chunk_size):
-        chunk = arr[i: i + chunk_size]
+        chunk = arr[i:i + chunk_size]
         res.append(chunk)
     return res
 
@@ -45,9 +46,7 @@ def slice_into_chunks(arr, chunk_size):
 async def calculate_price(product_ids):
     timer = Timer()
     total_usd = 0
-    products = await asyncio.gather(
-        *[db.document(f"products/{id}").get() for id in product_ids]
-    )
+    products = await asyncio.gather(*[db.document(f"products/{id}").get() for id in product_ids])
     for product in products:
         total_usd += product.to_dict().get("usd", 0)
     print(f"calculatePrice: {timer.measure_ms()}ms")

@@ -48,7 +48,7 @@ default_config = {
         "top_k": 20,
     },
     "prompt": "I'm a developer who wants to learn about Firebase and you are a "
-    "helpful assistant who knows everything there is to know about Firebase!",
+              "helpful assistant who knows everything there is to know about Firebase!",
     "safety_settings": {
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
     },
@@ -95,9 +95,8 @@ def call_vertex_with_rc(req: https_fn.CallableRequest):
         chat_input = text_prompt + " " + user_input
 
         if not chat_input:
-            raise https_fn.HttpsError(
-                https_fn.FunctionsErrorCode.INVALID_ARGUMENT, "Missing text prompt"
-            )
+            raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+                                      "Missing text prompt")
 
         # Check if Vertex AI is enabled
         if not vertex_enabled:
@@ -120,6 +119,4 @@ def call_vertex_with_rc(req: https_fn.CallableRequest):
         return "".join(chunks)  # Return the concatenated chunks
     except Exception as error:
         print(error)
-        raise https_fn.HttpsError(
-            https_fn.FunctionsErrorCode.INTERNAL, "Internal server error"
-        )
+        raise https_fn.HttpsError(https_fn.FunctionsErrorCode.INTERNAL, "Internal server error")

@@ -42,7 +42,7 @@ default_config = {
         "top_k": 20,
     },
     "prompt": "I'm a developer who wants to learn about Firebase and you are a "
-    "helpful assistant who knows everything there is to know about Firebase!",
+              "helpful assistant who knows everything there is to know about Firebase!",
     "safety_settings": {
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
     },
@@ -89,9 +89,7 @@ def generate_with_vertex(req: https_fn.Request) -> https_fn.Response:
 
         # If vertexEnabled isn't true, do not send queries to Vertex AI.
         if not vertex_enabled:
-            return https_fn.Response(
-                "Vertex AI call skipped. Vertex is not enabled.", status=200
-            )
+            return https_fn.Response("Vertex AI call skipped. Vertex is not enabled.", status=200)
 
         print(
             f"\nRunning with model {text_model}, prompt: {text_prompt}, "

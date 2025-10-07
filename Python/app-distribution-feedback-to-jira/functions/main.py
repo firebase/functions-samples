@@ -37,9 +37,8 @@ JIRA_URI = StringParam(
         }
     },
 )
-PROJECT_KEY = StringParam(
-    "PROJECT_KEY", description="Project key of your Jira instance (e.g. 'XY')"
-)
+PROJECT_KEY = StringParam("PROJECT_KEY",
+                          description="Project key of your Jira instance (e.g. 'XY')")
 ISSUE_TYPE_ID = IntParam(
     "ISSUE_TYPE_ID",
     description="Issue type ID for the Jira issues being created",
@@ -55,8 +54,10 @@ API_TOKEN_OWNER = StringParam(
     description="Owner of the Jira API token",
     input={
         "text": {
-            "validation_regex": r"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$",
-            "validation_error_message": "Please enter a valid email address",
+            "validation_regex":
+                r"^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$",
+            "validation_error_message":
+                "Please enter a valid email address",
         }
     },
 )
@@ -94,8 +95,7 @@ def create_issue(event: InAppFeedbackEvent):
     )
     if not response.ok:
         raise Exception(
-            f"Issue creation failed: {response.status_code} {response.reason} for {request_json}"
-        )
+            f"Issue creation failed: {response.status_code} {response.reason} for {request_json}")
     return response.json()["self"]  # issueUri
 
 
@@ -104,8 +104,7 @@ def upload_screenshot(issue_uri: str, screenshot_uri: str):
     dl_response = requests.get(screenshot_uri)
     if not dl_response.ok:
         raise Exception(
-            f"Screenshot download failed: {dl_response.status_code} {dl_response.reason}"
-        )
+            f"Screenshot download failed: {dl_response.status_code} {dl_response.reason}")
     blob = dl_response.content
     files = {"file": ("screenshot.png", blob, "image/png")}
     ul_response = requests.post(
@@ -118,16 +117,17 @@ def upload_screenshot(issue_uri: str, screenshot_uri: str):
         files=files,
     )
     if not ul_response.ok:
-        raise Exception(
-            f"Screenshot upload failed: {ul_response.status_code} {ul_response.reason}"
-        )
+        raise Exception(f"Screenshot upload failed: {ul_response.status_code} {ul_response.reason}")
 
 
 def lookup_reporter(tester_email: str):
     """Looks up Jira user ID."""
     response = requests.get(
         f"{JIRA_URI.value()}/rest/api/3/user/search?query={tester_email}",
-        headers={"Authorization": auth_header(), "Accept": "application/json"},
+        headers={
+            "Authorization": auth_header(),
+            "Accept": "application/json"
+        },
     )
     if not response.ok:
         print(
@@ -148,52 +148,79 @@ def build_create_issue_request(event: InAppFeedbackEvent):
         "update": {},
         "fields": {
             "summary": summary,
-            "issuetype": {"id": str(ISSUE_TYPE_ID.value())},
-            "project": {"key": PROJECT_KEY.value()},
+            "issuetype": {
+                "id": str(ISSUE_TYPE_ID.value())
+            },
+            "project": {
+                "key": PROJECT_KEY.value()
+            },
             "description": {
-                "type": "doc",
-                "version": 1,
+                "type":
+                    "doc",
+                "version":
+                    1,
                 "content": [
                     {
-                        "type": "paragraph",
+                        "type":
+                            "paragraph",
                         "content": [
                             {
                                 "text": "Firebase App ID: ",
                                 "type": "text",
-                                "marks": [{"type": "strong"}],
+                                "marks": [{
+                                    "type": "strong"
+                                }],
                             },
-                            {"text": event.app_id, "type": "text"},
+                            {
+                                "text": event.app_id,
+                                "type": "text"
+                            },
                         ],
                     },
                     {
-                        "type": "paragraph",
+                        "type":
+                            "paragraph",
                         "content": [
                             {
                                 "text": "App Version: ",
                                 "type": "text",
-                                "marks": [{"type": "strong"}],
+                                "marks": [{
+                                    "type": "strong"
+                                }],
                             },
-                            {"text": event.data.payload.app_version, "type": "text"},
+                            {
+                                "text": event.data.payload.app_version,
+                                "type": "text"
+                            },
                         ],
                     },
                     {
-                        "type": "paragraph",
+                        "type":
+                            "paragraph",
                         "content": [
                             {
                                 "text": "Tester Email: ",
                                 "type": "text",
-                                "marks": [{"type": "strong"}],
+                                "marks": [{
+                                    "type": "strong"
+                                }],
                             },
-                            {"text": event.data.payload.tester_email, "type": "text"},
+                            {
+                                "text": event.data.payload.tester_email,
+                                "type": "text"
+                            },
                         ],
                     },
                     {
-                        "type": "paragraph",
+                        "type":
+                            "paragraph",
                         "content": [
                             {
                                 "text": "Tester Name: ",
                                 "type": "text",
-                                "marks": [{"type": "strong"}],
+                                "marks": [{
+                                    "type": "strong"
+                                }],
                             },
                             {
                                 "text": event.data.payload.tester_name or "None",
@@ -202,33 +229,38 @@ def build_create_issue_request(event: InAppFeedbackEvent):
                         ],
                     },
                     {
-                        "type": "paragraph",
+                        "type":
+                            "paragraph",
                         "content": [
                             {
                                 "text": "Feedback text: ",
                                 "type": "text",
-                                "marks": [{"type": "strong"}],
+                                "marks": [{
+                                    "type": "strong"
+                                }],
                             },
-                            {"text": event.data.payload.text, "type": "text"},
+                            {
+                                "text": event.data.payload.text,
+                                "type": "text"
+                            },
                         ],
                     },
                     {
-                        "type": "paragraph",
-                        "content": [
-                            {
-                                "text": "Console link",
-                                "type": "text",
-                                "marks": [
-                                    {
-                                        "type": "link",
-                                        "attrs": {
-                                            "href": event.data.payload.feedback_console_uri,
-                                            "title": "Firebase console",
-                                        },
-                                    }
-                                ],
-                            }
-                        ],
+                        "type":
+                            "paragraph",
+                        "content": [{
+                            "text":
+                                "Console link",
+                            "type":
+                                "text",
+                            "marks": [{
+                                "type": "link",
+                                "attrs": {
+                                    "href": event.data.payload.feedback_console_uri,
+                                    "title": "Firebase console",
+                                },
+                            }],
+                        }],
                     },
                 ],
             },

@@ -28,9 +28,7 @@ from opentelemetry.resourcedetector.gcp import GcpResourceDetector
 if "FUNCTIONS_EMULATOR" not in os.environ:
     # Set up OpenTelemetry
     trace.set_tracer_provider(TracerProvider(resource=GcpResourceDetector().detect()))
-    trace.get_tracer_provider().add_span_processor(
-        BatchSpanProcessor(CloudTraceSpanExporter())
-    )
+    trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(CloudTraceSpanExporter()))
     trace.set_text_map_propagator(GcpCloudPropagator())
 
     # Instrument libraries
