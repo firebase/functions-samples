@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
     "moduleResolution": "node",
-    "target": "ES2022",
-    "outDir": "lib",
+    "noEmit": true,
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
