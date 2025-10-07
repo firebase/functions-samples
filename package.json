@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.1",
-    "pnpm": "^9.15.4",
+    "pnpm": "^9.15.9",
     "typescript": "^5.0.4"
   },
   "engines": {
@@ -29,6 +29,9 @@
         "@firebase/app-compat",
         "@firebase/app-types"
       ]
+    },
+    "allowedDeprecatedVersions": {
+      "eslint": "8.57.1"
     }
   }
 }
