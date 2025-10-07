@@ -20,7 +20,7 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
 const {
   onDocumentWrittenWithAuthContext,
-} = require("firebase-functions/v2/firestore");
+} = require("firebase-functions/firestore");
 const {logger} = require("firebase-functions");
 
 exports.verifyComment = onDocumentWrittenWithAuthContext(

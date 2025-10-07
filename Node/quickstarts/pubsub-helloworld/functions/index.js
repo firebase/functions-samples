@@ -16,7 +16,7 @@
 "use strict";
 
 // [START v2import]
-const {onMessagePublished} = require("firebase-functions/v2/pubsub");
+const {onMessagePublished} = require("firebase-functions/pubsub");
 const logger = require("firebase-functions/logger");
 // [END v2import]
 

@@ -16,10 +16,10 @@
 "use strict";
 // [START imports]
 // Dependencies for task queue functions.
-const {onTaskDispatched} = require("firebase-functions/v2/tasks");
-const {onRequest, HttpsError} = require("firebase-functions/v2/https");
+const {onTaskDispatched} = require("firebase-functions/tasks");
+const {onRequest, HttpsError} = require("firebase-functions/https");
 const {getFunctions} = require("firebase-admin/functions");
-const {logger} = require("firebase-functions/v2");
+const {logger} = require("firebase-functions");
 
 // Dependencies for image backup.
 const path = require("path");

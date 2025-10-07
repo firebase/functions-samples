@@ -16,7 +16,7 @@
 
 // [START full-sample]
 // Dependencies for callable functions.
-const {onCall, HttpsError} = require("firebase-functions/v2/https");
+const {onCall, HttpsError} = require("firebase-functions/https");
 
 /**
  * Gets the weather from the national weather service

@@ -18,7 +18,7 @@
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
-const {onSchedule} = require("firebase-functions/v2/scheduler");
+const {onSchedule} = require("firebase-functions/scheduler");
 const {logger} = require("firebase-functions");
 
 // The Firebase Admin SDK to delete inactive users.
