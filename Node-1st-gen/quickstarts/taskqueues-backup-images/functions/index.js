@@ -15,7 +15,6 @@
  */
 "use strict";
 const path = require("path");
-const fetch = require("node-fetch");
 const functions = require('firebase-functions/v1');
 const {initializeApp} = require("firebase-admin/app");
 const {getFunctions} = require("firebase-admin/functions");

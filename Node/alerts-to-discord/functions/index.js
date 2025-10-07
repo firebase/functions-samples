@@ -27,8 +27,6 @@ const {
 const logger = require("firebase-functions/logger");
 // [END v2import]
 
-const fetch = require("node-fetch");
-
 /**
  * Posts a message to Discord with Discord's Webhook API
  *

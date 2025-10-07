@@ -18,8 +18,7 @@
   "dependencies": {
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0",
-    "google-auth-library": "^8.6.0",
-    "node-fetch": "^2.6.7"
+    "google-auth-library": "^8.6.0"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

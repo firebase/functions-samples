@@ -16,7 +16,6 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const fetch = require('node-fetch');
 const crypto = require('node:crypto');
 const secureCompare = require('secure-compare');
 

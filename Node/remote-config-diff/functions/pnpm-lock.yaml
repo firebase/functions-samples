@@ -17,9 +17,6 @@ importers:
       json-diff:
         specifier: ^0.5.5
         version: 0.5.5
-      node-fetch:
-        specifier: ^2.6.7
-        version: 2.7.0
     devDependencies:
       eslint:
         specifier: ^8.57.1

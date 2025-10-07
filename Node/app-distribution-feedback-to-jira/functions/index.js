@@ -18,7 +18,6 @@ import {
   onInAppFeedbackPublished} from "firebase-functions/alerts/appDistribution";
 import {defineInt, defineSecret, defineString} from "firebase-functions/params";
 import logger from "firebase-functions/logger";
-import fetch from "node-fetch";
 import {FormData} from "formdata-polyfill/esm.min.js";
 
 // The keys are either defined in .env or they are created

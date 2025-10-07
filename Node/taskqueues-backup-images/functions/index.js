@@ -23,7 +23,6 @@ const {logger} = require("firebase-functions");
 
 // Dependencies for image backup.
 const path = require("path");
-const fetch = require("node-fetch");
 const {initializeApp} = require("firebase-admin/app");
 const {getStorage} = require("firebase-admin/storage");
 const {GoogleAuth} = require("google-auth-library");

@@ -16,9 +16,6 @@
 
 const functions = require('firebase-functions/v1');
 
-// The node-fetch library to send web requests to Slack.
-const fetch = require("node-fetch");
-
 /**
  * Posts a message to Slack via a Webhook
  * @param {string} title

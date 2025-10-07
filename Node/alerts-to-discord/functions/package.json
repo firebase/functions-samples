@@ -16,8 +16,7 @@
   "main": "index.js",
   "dependencies": {
     "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0",
-    "node-fetch": "^2.6.7"
+    "firebase-functions": "^6.3.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.45",

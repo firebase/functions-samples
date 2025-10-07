@@ -17,9 +17,6 @@ importers:
       firebase-functions:
         specifier: ^6.3.0
         version: 6.3.0(firebase-admin@13.0.2)
-      node-fetch:
-        specifier: ^2.6.7
-        version: 2.7.0
     devDependencies:
       eslint:
         specifier: ^8.57.1

@@ -17,9 +17,6 @@ importers:
       google-auth-library:
         specifier: ^8.6.0
         version: 8.9.0
-      node-fetch:
-        specifier: ^2.6.7
-        version: 2.7.0
     devDependencies:
       eslint:
         specifier: ^8.57.1
