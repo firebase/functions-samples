@@ -17,6 +17,8 @@
 const path = require("path");
 const functions = require('firebase-functions/v1');
 const {initializeApp} = require("firebase-admin/app");
+const {Readable} = require("stream");
+const {pipeline} = require("stream/promises");
 const {getFunctions} = require("firebase-admin/functions");
 const {getStorage} = require("firebase-admin/storage");
 const logger = functions.logger;
@@ -83,12 +85,10 @@ exports.backupApod = functions
           .bucket(BACKUP_BUCKET)
           .file(`apod/${date}${path.extname(picUrl)}`);
       try {
-        await new Promise((resolve, reject) => {
-          const stream = dest.createWriteStream();
-          picResp.body.pipe(stream);
-          picResp.body.on("end", resolve);
-          stream.on("error", reject);
-        });
+        await pipeline(
+          Readable.fromWeb(picResp.body),
+          dest.createWriteStream()
+        );
       } catch (err) {
         logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
         throw new HttpsError("internal", "Uh-oh. Something broke.");
