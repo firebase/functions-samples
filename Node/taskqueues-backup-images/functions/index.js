@@ -26,8 +26,6 @@ const path = require("path");
 const {initializeApp} = require("firebase-admin/app");
 const {getStorage} = require("firebase-admin/storage");
 const {GoogleAuth} = require("google-auth-library");
-const {Readable} = require("stream");
-const {pipeline} = require("stream/promises");
 // [END imports]
 initializeApp();
 
@@ -86,14 +84,14 @@ exports.backupapod = onTaskDispatched(
       logger.info(`Fetched ${picUrl} from NASA API for date ${date}.`);
 
       const picResp = await fetch(picUrl);
+      const picResp = await fetch(picUrl);
+      const imageBuffer = await picResp.arrayBuffer();
+      const buffer = Buffer.from(imageBuffer);
       const dest = getStorage()
           .bucket(BACKUP_BUCKET)
           .file(`apod/${date}${path.extname(picUrl)}`);
       try {
-        await pipeline(
-          Readable.fromWeb(picResp.body),
-          dest.createWriteStream()
-        );
+        await dest.save(buffer);
       } catch (err) {
         logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
         throw new HttpsError("internal", "Uh-oh. Something broke.");
