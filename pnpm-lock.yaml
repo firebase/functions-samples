@@ -12,8 +12,8 @@ importers:
         specifier: ^8.57.1
         version: 8.57.1
       pnpm:
-        specifier: ^9.15.4
-        version: 9.15.4
+        specifier: ^10.0.0
+        version: 10.0.0
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
@@ -322,8 +322,8 @@ packages:
     resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
     engines: {node: '>=8'}
 
-  pnpm@9.15.4:
-    resolution: {integrity: sha512-stwg4vxys+GISEWbNzWaMgZGY+VielHkx0ssKd2OjgSRSDw6u0B4nP1Xi/Ni+2uoJhsF8Dh9dnku1uI+o7G2oA==}
+  pnpm@10.0.0:
+    resolution: {integrity: sha512-uP71SUvT/ky9Ttq9B0XfLuW+PksLiwj6ZDqj5MZwLMwPANaPqKjJhYpzWgAySFpEmQ7SgQUmyHXkFvABsX3xKw==}
     engines: {node: '>=18.12'}
     hasBin: true
 
@@ -729,7 +729,7 @@ snapshots:
 
   path-key@3.1.1: {}
 
-  pnpm@9.15.4: {}
+  pnpm@10.0.0: {}
 
   prelude-ls@1.2.1: {}
 
