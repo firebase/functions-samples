@@ -17,13 +17,13 @@
 
 const {
   onNewFatalIssuePublished,
-} = require("firebase-functions/v2/alerts/crashlytics");
+} = require("firebase-functions/alerts/crashlytics");
 const {
   onNewTesterIosDevicePublished,
-} = require("firebase-functions/v2/alerts/appDistribution");
+} = require("firebase-functions/alerts/appDistribution");
 const {
   onThresholdAlertPublished,
-} = require("firebase-functions/v2/alerts/performance");
+} = require("firebase-functions/alerts/performance");
 const logger = require("firebase-functions/logger");
 // [END v2import]
 

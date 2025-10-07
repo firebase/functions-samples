@@ -16,7 +16,7 @@
  */
 
 // [START remote_config_server_vertex_init]
-const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { onCall, HttpsError } = require("firebase-functions/https");
 const logger = require("firebase-functions/logger");
 
 const { initializeApp } = require("firebase-admin/app");

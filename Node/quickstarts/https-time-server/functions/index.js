@@ -16,7 +16,7 @@
 "use strict";
 
 // [START v2httpImport]
-const {onRequest} = require("firebase-functions/v2/https");
+const {onRequest} = require("firebase-functions/https");
 // [END v2httpImport]
 
 // [START v2httpAdditionalImports]

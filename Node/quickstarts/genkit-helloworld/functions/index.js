@@ -17,7 +17,7 @@
 // [START complete-example]
 // [START imports]
 // [START import-trigger]
-const {onCallGenkit} = require("firebase-functions/v2/https");
+const {onCallGenkit} = require("firebase-functions/https");
 // [END import-trigger]
 // [START import-params]
 const {defineSecret} = require("firebase-functions/params");

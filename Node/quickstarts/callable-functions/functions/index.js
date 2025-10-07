@@ -16,8 +16,8 @@
 
 // [START imports]
 // Dependencies for callable functions.
-const {onCall, HttpsError} = require("firebase-functions/v2/https");
-const {logger} = require("firebase-functions/v2");
+const {onCall, HttpsError} = require("firebase-functions/https");
+const {logger} = require("firebase-functions");
 
 // Dependencies for the addMessage function.
 const {getDatabase} = require("firebase-admin/database");

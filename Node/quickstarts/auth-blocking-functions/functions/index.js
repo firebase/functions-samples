@@ -18,7 +18,7 @@ const {
   beforeUserCreated,
   beforeUserSignedIn,
   HttpsError,
-} = require("firebase-functions/v2/identity");
+} = require("firebase-functions/identity");
 const {admin} = require("firebase-admin");
 
 admin.initializeApp();

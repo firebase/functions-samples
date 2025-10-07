@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-const {onRequest} = require("firebase-functions/v2/https");
+const {onRequest} = require("firebase-functions/https");
 const {
   onRegressionAlertPublished,
-} = require("firebase-functions/v2/alerts/crashlytics");
+} = require("firebase-functions/alerts/crashlytics");
 
 // [START loggerImport]
 // All available logging functions
