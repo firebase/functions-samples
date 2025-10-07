@@ -6,7 +6,6 @@
     "node": "22"
   },
   "scripts": {
-    "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
     "compile": "tsc",
     "deploy": "firebase deploy --only functions",
