@@ -32,7 +32,7 @@ exports.webhook = functions.database.ref('/hooks/{hookId}').onCreate(async (snap
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP Error: ${response.statusCode}`);
+    throw new Error(`HTTP Error: ${response.status}`);
   }
   functions.logger.log('SUCCESS! Posted', snap.ref);
 });
