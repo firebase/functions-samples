@@ -2,7 +2,7 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "type": "module",
-  "main": "lib/index.js",
+  "main": "index.ts",
   "dependencies": {
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0"
@@ -22,7 +22,6 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "compile": "tsc",
     "format": "prettier --write '**/*.ts'"
   },
   "engines": {
