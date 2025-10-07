@@ -6,10 +6,11 @@
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": [
-    "*.ts"
+    "index.ts"
   ],
   "exclude": [
     "node_modules"
