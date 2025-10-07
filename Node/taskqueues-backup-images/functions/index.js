@@ -84,7 +84,6 @@ exports.backupapod = onTaskDispatched(
       logger.info(`Fetched ${picUrl} from NASA API for date ${date}.`);
 
       const picResp = await fetch(picUrl);
-      const picResp = await fetch(picUrl);
       const imageBuffer = await picResp.arrayBuffer();
       const buffer = Buffer.from(imageBuffer);
       const dest = getStorage()
