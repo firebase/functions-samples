@@ -1,6 +1,6 @@
-# Accept PayPal payment in functions firebase
+# Accept PayPal payment in Firebase Functions
 
-This sample demonstrates how to use the Paypal-rest-sdk with a Google Cloud Functions.
+This sample demonstrates how to use the Paypal-rest-sdk with Google Cloud Functions.
 
 
 ## Functions Code
@@ -55,10 +55,9 @@ To deploy and test on prod do:
 
 ## Contributing
 
-We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../CONTRIBUTING.md).
+We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../../CONTRIBUTING.md).
 
 
 ## License
 
-© Google, 2017. Licensed under an [Apache-2](../LICENSE) license.
-
+© Google, 2017. Licensed under an [Apache-2](../../LICENSE) license.
