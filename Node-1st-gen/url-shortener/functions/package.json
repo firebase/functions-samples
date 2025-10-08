@@ -1,6 +1,6 @@
 {
   "name": "url-shortener-functions",
-  "description": "URL Shortener Firebase Functions sample",
+  "description": "URL Shortener Cloud Functions for Firebase sample",
   "dependencies": {
     "bitly": "^6.1.0",
     "eslint-plugin-promise": "^7.2.1",

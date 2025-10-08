@@ -46,7 +46,7 @@ cd functions && npm install; cd ..
 ```
 
 This installs locally:
- - The Firebase SDK and the Firebase Functions SDK.
+ - The Firebase SDK and the Cloud Functions for Firebase SDK.
  - The [moment](https://www.npmjs.com/package/moment) npm package to format time.
  - The [cors](https://www.npmjs.com/package/cors) npm package to allow Cross Origin AJAX requests on the endpoint.
 

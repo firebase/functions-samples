@@ -1,6 +1,6 @@
 {
   "name": "message-translation-functions",
-  "description": "Transalte Messages Firebase Functions sample",
+  "description": "Transalte Messages Cloud Functions for Firebase sample",
   "dependencies": {
     "@google-cloud/translate": "^5.3.0",
     "eslint-plugin-promise": "^7.2.1",

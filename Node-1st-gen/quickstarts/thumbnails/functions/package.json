@@ -1,6 +1,6 @@
 {
   "name": "generate-thumbnail-functions-quickstart",
-  "description": "Generate Thumbnail Firebase Functions sample",
+  "description": "Generate Thumbnail Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",

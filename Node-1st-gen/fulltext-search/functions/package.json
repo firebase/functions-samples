@@ -1,6 +1,6 @@
 {
   "name": "fulltext-search-functions",
-  "description": "Full Text Search with Algolia Firebase Functions sample",
+  "description": "Full Text Search with Algolia Cloud Functions for Firebase sample",
   "dependencies": {
     "algoliasearch": "^4.14.2",
     "eslint-plugin-promise": "^7.2.1",

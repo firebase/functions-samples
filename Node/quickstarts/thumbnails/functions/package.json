@@ -1,6 +1,6 @@
 {
   "name": "generate-thumbnail-functions-quickstart",
-  "description": "Generate Thumbnail Firebase Functions sample",
+  "description": "Generate Thumbnail Cloud Functions for Firebase sample",
   "dependencies": {
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.3.0",
