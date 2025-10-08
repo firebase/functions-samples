@@ -4,7 +4,7 @@ This quickstart demonstrates how to run unit tests on gen-2 functions.
 
 ## Setting up the sample
 
-1. Clone or download this repo and open the `2nd-gen/test-functions-jest`
+1. Clone or download this repo and open the `Node/test-functions-jest`
    directory.
 1. Install Cloud Functions dependencies locally by running:
    `cd functions; npm install; cd -`
