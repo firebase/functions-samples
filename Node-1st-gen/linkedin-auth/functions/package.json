@@ -1,6 +1,6 @@
 {
   "name": "linkedin-auth-functions",
-  "description": "Authenticate with LinkedIn Firebase Functions sample",
+  "description": "Authenticate with LinkedIn Cloud Functions for Firebase sample",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "eslint-plugin-promise": "^7.2.1",

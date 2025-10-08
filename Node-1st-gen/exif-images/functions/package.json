@@ -1,6 +1,6 @@
 {
   "name": "exif-images-functions",
-  "description": "Extract EXIF metadata from images Firebase Functions sample",
+  "description": "Extract EXIF metadata from images Cloud Functions for Firebase sample",
   "dependencies": {
     "@google-cloud/storage": "^4.7.2",
     "child-process-promise": "^2.2.1",

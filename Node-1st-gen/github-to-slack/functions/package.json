@@ -1,6 +1,6 @@
 {
   "name": "github-to-slack-functions",
-  "description": "Firebase Functions that posts new GitHub commits to a Slack channel.",
+  "description": "Cloud Functions for Firebase that posts new GitHub commits to a Slack channel.",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",

@@ -1,6 +1,6 @@
 {
   "name": "minimal-webhook-functions",
-  "description": "Queries a Webhook Firebase Functions sample",
+  "description": "Queries a Webhook Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",

@@ -1,6 +1,6 @@
 {
   "name": "bigquery-import-functions",
-  "description": "Import data to BigQuery Firebase Functions sample",
+  "description": "Import data to BigQuery Cloud Functions for Firebase sample",
   "dependencies": {
     "@google-cloud/bigquery": "^4.7.0",
     "eslint-plugin-promise": "^7.2.1",

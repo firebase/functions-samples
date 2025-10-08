@@ -1,6 +1,6 @@
 {
   "name": "uppercase-firestore-quickstart-functions",
-  "description": "Uppercaser Firebase Functions Quickstart sample for Firestore",
+  "description": "Uppercaser Cloud Functions for Firebase Quickstart sample for Firestore",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",

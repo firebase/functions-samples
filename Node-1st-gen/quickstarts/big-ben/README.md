@@ -61,7 +61,7 @@ First you need to install the `npm` dependencies of the functions:
 cd functions && npm install; cd ..
 ```
 
-This installs locally the Firebase SDK and the Firebase Functions SDK.
+This installs locally the Firebase SDK and the Cloud Functions for Firebase SDK.
 
 Deploy to Firebase using the following command:
 

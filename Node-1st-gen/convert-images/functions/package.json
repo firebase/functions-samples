@@ -1,6 +1,6 @@
 {
   "name": "convert-images-functions",
-  "description": "Convert images to JPEG Firebase Functions sample",
+  "description": "Convert images to JPEG Cloud Functions for Firebase sample",
   "dependencies": {
     "child-process-promise": "^2.2.1",
     "eslint-plugin-promise": "^7.2.1",

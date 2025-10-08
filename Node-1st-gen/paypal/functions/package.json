@@ -1,6 +1,6 @@
 {
   "name": "paypal-functions",
-  "description": "Paypal Firebase Functions",
+  "description": "Paypal Cloud Functions for Firebase",
   "dependencies": {
     "cors": "^2.8.5",
     "eslint-plugin-promise": "^7.2.1",

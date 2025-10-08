@@ -1,6 +1,6 @@
 {
   "name": "instagram-auth-functions",
-  "description": "Authenticate with Instagram Firebase Functions sample",
+  "description": "Authenticate with Instagram Cloud Functions for Firebase sample",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "eslint-plugin-promise": "^7.2.1",

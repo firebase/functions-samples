@@ -1,6 +1,6 @@
 {
   "name": "stripe-functions",
-  "description": "Stripe Firebase Functions",
+  "description": "Stripe Cloud Functions for Firebase",
   "dependencies": {
     "@google-cloud/logging": "^7.3.0",
     "eslint-plugin-promise": "^7.2.1",

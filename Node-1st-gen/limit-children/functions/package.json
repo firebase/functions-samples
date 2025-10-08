@@ -1,6 +1,6 @@
 {
   "name": "limit-children-functions",
-  "description": "Limit number of child nodes Firebase Functions sample",
+  "description": "Limit number of child nodes Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",
