@@ -1,4 +1,4 @@
-# Accept PayPal payment in Firebase Functions
+# Accept PayPal payment in Cloud Functions for Firebase
 
 This sample demonstrates how to use the Paypal-rest-sdk with Google Cloud Functions.
 
