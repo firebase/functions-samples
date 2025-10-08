@@ -1,4 +1,4 @@
-# Firebase Functions Test (with mocha) - Quickstart
+# Cloud Functions for Firebase Test (with mocha) - Quickstart
 
 This quickstart demonstrates how to run unit tests on Cloud Functions (2nd gen).
 

@@ -1,4 +1,4 @@
-# Cloud Functions for Firebase Test (with jest) - Quickstart
+# Firebase Functions Test (with jest) - Quickstart
 
 This quickstart demonstrates how to run unit tests on gen-2 functions.
 
