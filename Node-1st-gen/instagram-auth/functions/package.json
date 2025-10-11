@@ -4,8 +4,8 @@
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.5.0",
     "simple-oauth2": "^3.4.0"
   },
   "devDependencies": {
