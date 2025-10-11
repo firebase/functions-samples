@@ -10,12 +10,12 @@
     <button id="btn-call-func">Get forecasts</button>
     <div id="forecasts"></div>
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
       import {
         getFunctions,
         httpsCallable,
         connectFunctionsEmulator,
-      } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-functions.js";
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 
       const callableButton = document.getElementById("btn-call-func");
       const resultElement = document.getElementById("forecasts");
