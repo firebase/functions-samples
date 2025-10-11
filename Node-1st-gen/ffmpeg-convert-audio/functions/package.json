@@ -5,8 +5,8 @@
     "@google-cloud/storage": "^4.7.2",
     "eslint-plugin-promise": "^7.2.1",
     "ffmpeg-static": "^4.4.1",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.5.0",
     "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {

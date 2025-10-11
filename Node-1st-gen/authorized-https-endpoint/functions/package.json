@@ -5,8 +5,8 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0"
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.5.0"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

@@ -4,14 +4,14 @@
   "dependencies": {
     "eslint": "8",
     "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0"
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.5.0"
   },
   "devDependencies": {
     "@types/mocha": "^8.2.3",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
-    "firebase-functions-test": "3.4.0",
+    "firebase-functions-test": "3.4.1",
     "mocha": "^7.2.0",
     "sinon": "^9.2.4"
   },
