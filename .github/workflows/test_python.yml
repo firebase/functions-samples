@@ -45,7 +45,7 @@ jobs:
       - uses: astral-sh/setup-uv@v1
       - name: Install dev dependencies
         working-directory: ./Python
-        run: uv pip install -r requirements.txt
+        run: uv pip install --system -r requirements.txt
       - name: Lint
         working-directory: ./Python
         run: |
