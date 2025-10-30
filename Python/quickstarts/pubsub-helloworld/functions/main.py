@@ -16,6 +16,7 @@ import base64
 
 # [START import]
 from firebase_functions import pubsub_fn
+
 # [END import]
 
 
@@ -24,7 +25,7 @@ from firebase_functions import pubsub_fn
 @pubsub_fn.on_message_published(topic="topic-name")
 def hellopubsub(event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> None:
     """Log a message using data published to a Pub/Sub topic."""
-# [END trigger]
+    # [END trigger]
     # [START readBase64]
     # Decode the PubSub message body.
     message_body = base64.b64decode(event.data.message.data)
@@ -32,6 +33,8 @@ def hellopubsub(event: pubsub_fn.CloudEvent[pubsub_fn.MessagePublishedData]) -> 
 
     # Print the message.
     print(f"Hello, {message_body.decode('utf-8') if message_body else 'World'}")
+
+
 # [END helloWorld]
 
 

@@ -1,5 +1,5 @@
 import firebase_admin
-from firebase_admin import auth, db, messaging, exceptions
+from firebase_admin import auth, db, exceptions, messaging
 from firebase_functions import db_fn
 
 firebase_admin.initialize_app()
@@ -25,7 +25,7 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
     print(f"User {follower_uid} is now following user {followed_uid}")
     tokens_ref = db.reference(f"users/{followed_uid}/notificationTokens")
     notification_tokens = tokens_ref.get()
-    if (not isinstance(notification_tokens, dict) or len(notification_tokens) < 1):
+    if not isinstance(notification_tokens, dict) or len(notification_tokens) < 1:
         print("There are no tokens to send notifications to.")
         return
     print(f"There are {len(notification_tokens)} tokens to send notifications to.")
@@ -52,6 +52,8 @@ def send_follower_notification(event: db_fn.Event[db_fn.Change]) -> None:
         if not isinstance(exception, exceptions.FirebaseError):
             continue
         message = exception.http_response.json()["error"]["message"]
-        if (isinstance(exception, messaging.UnregisteredError) or
-                message == "The registration token is not a valid FCM registration token"):
+        if (
+            isinstance(exception, messaging.UnregisteredError)
+            or message == "The registration token is not a valid FCM registration token"
+        ):
             tokens_ref.child(msgs[i].token).delete()

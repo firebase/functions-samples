@@ -16,12 +16,12 @@
 from typing import Any
 from urllib import parse as urllib_parse
 
+# The Firebase Admin SDK to access the Firebase Realtime Database.
+from firebase_admin import db, initialize_app
+
 # [START import]
 # The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
 from firebase_functions import db_fn, https_fn
-
-# The Firebase Admin SDK to access the Firebase Realtime Database.
-from firebase_admin import initialize_app, db
 
 app = initialize_app()
 # [END import]
@@ -33,7 +33,7 @@ app = initialize_app()
 def addmessage(req: https_fn.Request) -> https_fn.Response:
     """Take the text parameter passed to this HTTP endpoint and insert it into
     the Realtime Database under the path /messages/{pushId}/original"""
-# [END addMessageTrigger]
+    # [END addMessageTrigger]
     # Grab the text parameter.
     original = req.args.get("text")
     if original is None:
@@ -44,12 +44,16 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
     # Redirect with 303 SEE OTHER to the URL of the pushed object.
     scheme, location, path, query, fragment = (
-        b.decode() for b in urllib_parse.urlsplit(app.options.get("databaseURL")))
+        b.decode() for b in urllib_parse.urlsplit(app.options.get("databaseURL"))
+    )
     path = f"{ref.path}.json"
     return https_fn.Response(
         status=303,
-        headers={"Location": urllib_parse.urlunsplit((scheme, location, path, query, fragment))})
+        headers={"Location": urllib_parse.urlunsplit((scheme, location, path, query, fragment))},
+    )
     # [END adminSdkPush]
+
+
 # [END addMessage]
 
 
@@ -74,6 +78,8 @@ def makeuppercase(event: db_fn.Event[Any]) -> None:
         print("Message can't be root node.")
         return
     parent.child("uppercase").set(upper)
+
+
 # [END makeUppercase]
 
 
@@ -106,5 +112,7 @@ def makeuppercase2(event: db_fn.Event[db_fn.Change]) -> None:
         print("Message can't be root node.")
         return
     parent.child("uppercase").set(upper)
+
+
 # [END makeUppercase2]
 # [END all]

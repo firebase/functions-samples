@@ -14,10 +14,11 @@
 
 # [START additionalimports]
 from datetime import datetime
-# [END additionalimports]
 
+# [END additionalimports]
 # [START functionsimport]
 from firebase_functions import https_fn, options
+
 # [END functionsimport]
 
 
@@ -42,8 +43,8 @@ from firebase_functions import https_fn, options
 @https_fn.on_request(cors=options.CorsOptions(cors_origins="*", cors_methods=["get", "post"]))
 def date(req: https_fn.Request) -> https_fn.Response:
     """Get the server's local date and time."""
-# [END usingMiddleware]
-# [END trigger]
+    # [END usingMiddleware]
+    # [END trigger]
     # [START sendError]
     # Forbidding PUT requests.
     if req.method == "PUT":
@@ -68,4 +69,6 @@ def date(req: https_fn.Request) -> https_fn.Response:
     print(f"Sending Formatted date: {formatted_date}")
     return https_fn.Response(formatted_date)
     # [END sendResponse]
+
+
 # [END all]
