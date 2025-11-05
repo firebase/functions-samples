@@ -6,7 +6,7 @@
     "eslint-plugin-promise": "^7.2.1",
     "ffmpeg-static": "^4.4.1",
     "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0",
+    "firebase-functions": "7.0.0-rc.0",
     "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {
