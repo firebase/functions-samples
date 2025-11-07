@@ -75,7 +75,7 @@ export const sendFollowerNotification = onValueWritten(
       const batchResponse = await messaging.sendEach(messages);
 
       if (batchResponse.failureCount < 1) {
-        // Messages sent sucessfully. We're done!
+        // Messages sent successfully. We're done!
         log("Messages sent.");
         return;
       }

@@ -65,7 +65,7 @@ exports.backupapod = onTaskDispatched(
       const apiResp = await fetch(url);
       if (!apiResp.ok) {
         logger.warn(
-            `request to NASA APOD API failed with reponse ${apiResp.status}`,
+            `request to NASA APOD API failed with response ${apiResp.status}`,
         );
         if (apiResp.status === 404) {
           // APOD not published for the day. This is fine!
@@ -122,7 +122,7 @@ async function getFunctionUrl(name, location="us-central1") {
   const res = await client.request({url});
   const uri = res.data?.serviceConfig?.uri;
   if (!uri) {
-    throw new Error(`Unable to retreive uri for function at ${url}`);
+    throw new Error(`Unable to retrieve uri for function at ${url}`);
   }
   return uri;
 }
