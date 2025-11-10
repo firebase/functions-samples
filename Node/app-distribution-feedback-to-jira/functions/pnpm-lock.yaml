@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       firebase-functions:
-        specifier: 7.0.0-rc.0
-        version: 7.0.0-rc.0(firebase-admin@12.7.0)
+        specifier: 7.0.0
+        version: 7.0.0(firebase-admin@12.7.0)
       formdata-polyfill:
         specifier: ^4.0.10
         version: 4.0.10
@@ -92,8 +92,8 @@ packages:
     resolution: {integrity: sha512-gOnCAbFgAYKRozywLsxagdevTF7Gm+2Ncz5u5CQAuOv/2VCa0rdGJWvJFDOftPx1tc+q8TXiC2pEJfFKu+yeMQ==}
     engines: {node: '>=14'}
 
-  '@grpc/grpc-js@1.14.0':
-    resolution: {integrity: sha512-N8Jx6PaYzcTRNzirReJCtADVoq4z7+1KQ4E70jTg/koQiMoUSN1kbNjPOqpPbhMFhfU1/l7ixspPl8dNY+FoUg==}
+  '@grpc/grpc-js@1.14.1':
+    resolution: {integrity: sha512-sPxgEWtPUR3EnRJCEtbGZG2iX8LQDUls2wUS3o27jg07KqJFMq6YDeWvMo1wfpmy3rqRdS0rivpLwhqQtEyCuQ==}
     engines: {node: '>=12.10.0'}
 
   '@grpc/proto-loader@0.7.15':
@@ -566,8 +566,8 @@ packages:
     resolution: {integrity: sha512-raFIrOyTqREbyXsNkSHyciQLfv8AUZazehPaQS1lZBSCDYW74FYXU0nQZa3qHI4K+hawohlDbywZ4+qce9YNxA==}
     engines: {node: '>=14'}
 
-  firebase-functions@7.0.0-rc.0:
-    resolution: {integrity: sha512-zUpnCcH3ozEfvdrPGliqnmTAtoIuBKQjHC504EEmwn5wnDz2WtRYhpnjvW10Ytg/1sPCPKaFQuJc95Tb064psw==}
+  firebase-functions@7.0.0:
+    resolution: {integrity: sha512-IPedw7JJ4Ok7t1Lg75RDCQkLtUhs5V1I/WzZK25iGjK9Ej7U5EWFBchiLX0uhuNlRMKixUFuiDAGj2A5ryg2bw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -1343,7 +1343,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@grpc/grpc-js@1.14.0':
+  '@grpc/grpc-js@1.14.1':
     dependencies:
       '@grpc/proto-loader': 0.8.0
       '@js-sdsl/ordered-map': 4.4.2
@@ -1912,7 +1912,7 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions@7.0.0-rc.0(firebase-admin@12.7.0):
+  firebase-functions@7.0.0(firebase-admin@12.7.0):
     dependencies:
       '@types/cors': 2.8.19
       '@types/express': 4.17.25
@@ -2031,7 +2031,7 @@ snapshots:
 
   google-gax@4.6.1:
     dependencies:
-      '@grpc/grpc-js': 1.14.0
+      '@grpc/grpc-js': 1.14.1
       '@grpc/proto-loader': 0.7.15
       '@types/long': 4.0.2
       abort-controller: 3.0.0

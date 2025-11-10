@@ -15,8 +15,8 @@ importers:
         specifier: ^13.0.2
         version: 13.0.2
       firebase-functions:
-        specifier: 7.0.0-rc.0
-        version: 7.0.0-rc.0(firebase-admin@13.0.2)
+        specifier: 7.0.0
+        version: 7.0.0(firebase-admin@13.0.2)
       json-diff:
         specifier: ^1.0.3
         version: 1.0.6
@@ -605,8 +605,8 @@ packages:
     resolution: {integrity: sha512-YWVpoN+tZVSRXF0qC0gojoF5bSqvBRbnBk8+xUtFiguM2L4vB7f0moAwV1VVWDDHvTnvQ68OyTMpdp6wKo/clw==}
     engines: {node: '>=18'}
 
-  firebase-functions@7.0.0-rc.0:
-    resolution: {integrity: sha512-zUpnCcH3ozEfvdrPGliqnmTAtoIuBKQjHC504EEmwn5wnDz2WtRYhpnjvW10Ytg/1sPCPKaFQuJc95Tb064psw==}
+  firebase-functions@7.0.0:
+    resolution: {integrity: sha512-IPedw7JJ4Ok7t1Lg75RDCQkLtUhs5V1I/WzZK25iGjK9Ej7U5EWFBchiLX0uhuNlRMKixUFuiDAGj2A5ryg2bw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -2056,7 +2056,7 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions@7.0.0-rc.0(firebase-admin@13.0.2):
+  firebase-functions@7.0.0(firebase-admin@13.0.2):
     dependencies:
       '@types/cors': 2.8.19
       '@types/express': 4.17.25

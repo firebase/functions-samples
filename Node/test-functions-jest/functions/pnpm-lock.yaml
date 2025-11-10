@@ -12,8 +12,8 @@ importers:
         specifier: ^13.0.2
         version: 13.0.2
       firebase-functions:
-        specifier: 7.0.0-rc.0
-        version: 7.0.0-rc.0(firebase-admin@13.0.2)
+        specifier: 7.0.0
+        version: 7.0.0(firebase-admin@13.0.2)
     devDependencies:
       '@types/jest':
         specifier: ^27.5.2
@@ -26,10 +26,10 @@ importers:
         version: 0.14.0(eslint@8.57.1)
       firebase-functions-test:
         specifier: ^3.4.0
-        version: 3.4.0(firebase-admin@13.0.2)(firebase-functions@7.0.0-rc.0(firebase-admin@13.0.2))(jest@28.1.3(@types/node@22.12.0))
+        version: 3.4.0(firebase-admin@13.0.2)(firebase-functions@7.0.0(firebase-admin@13.0.2))(jest@28.1.3(@types/node@24.10.0))
       jest:
         specifier: ^28.1.3
-        version: 28.1.3(@types/node@22.12.0)
+        version: 28.1.3(@types/node@24.10.0)
 
 packages:
 
@@ -1028,8 +1028,8 @@ packages:
       firebase-functions: '>=4.9.0'
       jest: '>=28.0.0'
 
-  firebase-functions@7.0.0-rc.0:
-    resolution: {integrity: sha512-zUpnCcH3ozEfvdrPGliqnmTAtoIuBKQjHC504EEmwn5wnDz2WtRYhpnjvW10Ytg/1sPCPKaFQuJc95Tb064psw==}
+  firebase-functions@7.0.0:
+    resolution: {integrity: sha512-IPedw7JJ4Ok7t1Lg75RDCQkLtUhs5V1I/WzZK25iGjK9Ej7U5EWFBchiLX0uhuNlRMKixUFuiDAGj2A5ryg2bw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -2467,7 +2467,7 @@ snapshots:
   '@jest/console@28.1.3':
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       chalk: 4.1.2
       jest-message-util: 28.1.3
       jest-util: 28.1.3
@@ -2480,14 +2480,14 @@ snapshots:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       ci-info: 3.9.0
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 28.1.3
-      jest-config: 28.1.3(@types/node@22.12.0)
+      jest-config: 28.1.3(@types/node@24.10.0)
       jest-haste-map: 28.1.3
       jest-message-util: 28.1.3
       jest-regex-util: 28.0.2
@@ -2512,7 +2512,7 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       jest-mock: 28.1.3
 
   '@jest/expect-utils@28.1.3':
@@ -2530,7 +2530,7 @@ snapshots:
     dependencies:
       '@jest/types': 28.1.3
       '@sinonjs/fake-timers': 9.1.2
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       jest-message-util: 28.1.3
       jest-mock: 28.1.3
       jest-util: 28.1.3
@@ -2551,7 +2551,7 @@ snapshots:
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
       '@jridgewell/trace-mapping': 0.3.25
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       chalk: 4.1.2
       collect-v8-coverage: 1.0.2
       exit: 0.1.2
@@ -2622,7 +2622,7 @@ snapshots:
       '@jest/schemas': 28.1.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -2750,7 +2750,7 @@ snapshots:
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
 
   '@types/http-errors@2.0.5': {}
 
@@ -3385,16 +3385,16 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions-test@3.4.0(firebase-admin@13.0.2)(firebase-functions@7.0.0-rc.0(firebase-admin@13.0.2))(jest@28.1.3(@types/node@22.12.0)):
+  firebase-functions-test@3.4.0(firebase-admin@13.0.2)(firebase-functions@7.0.0(firebase-admin@13.0.2))(jest@28.1.3(@types/node@24.10.0)):
     dependencies:
       '@types/lodash': 4.17.15
       firebase-admin: 13.0.2
-      firebase-functions: 7.0.0-rc.0(firebase-admin@13.0.2)
-      jest: 28.1.3(@types/node@22.12.0)
+      firebase-functions: 7.0.0(firebase-admin@13.0.2)
+      jest: 28.1.3(@types/node@24.10.0)
       lodash: 4.17.21
       ts-deepmerge: 2.0.7
 
-  firebase-functions@7.0.0-rc.0(firebase-admin@13.0.2):
+  firebase-functions@7.0.0(firebase-admin@13.0.2):
     dependencies:
       '@types/cors': 2.8.19
       '@types/express': 4.17.25
@@ -3686,7 +3686,7 @@ snapshots:
       '@jest/expect': 28.1.3
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
@@ -3704,7 +3704,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jest-cli@28.1.3(@types/node@22.12.0):
+  jest-cli@28.1.3(@types/node@24.10.0):
     dependencies:
       '@jest/core': 28.1.3
       '@jest/test-result': 28.1.3
@@ -3713,7 +3713,7 @@ snapshots:
       exit: 0.1.2
       graceful-fs: 4.2.11
       import-local: 3.2.0
-      jest-config: 28.1.3(@types/node@22.12.0)
+      jest-config: 28.1.3(@types/node@24.10.0)
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -3723,7 +3723,7 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-config@28.1.3(@types/node@22.12.0):
+  jest-config@28.1.3(@types/node@24.10.0):
     dependencies:
       '@babel/core': 7.26.7
       '@jest/test-sequencer': 28.1.3
@@ -3748,7 +3748,7 @@ snapshots:
       slash: 3.0.0
       strip-json-comments: 3.1.1
     optionalDependencies:
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
     transitivePeerDependencies:
       - supports-color
 
@@ -3783,7 +3783,7 @@ snapshots:
       '@jest/environment': 28.1.3
       '@jest/fake-timers': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       jest-mock: 28.1.3
       jest-util: 28.1.3
 
@@ -3795,7 +3795,7 @@ snapshots:
     dependencies:
       '@jest/types': 28.1.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -3841,7 +3841,7 @@ snapshots:
   jest-mock@28.1.3:
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@28.1.3):
     optionalDependencies:
@@ -3875,7 +3875,7 @@ snapshots:
       '@jest/test-result': 28.1.3
       '@jest/transform': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       chalk: 4.1.2
       emittery: 0.10.2
       graceful-fs: 4.2.11
@@ -3952,7 +3952,7 @@ snapshots:
   jest-util@28.1.3:
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -3971,7 +3971,7 @@ snapshots:
     dependencies:
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.10.2
@@ -3980,16 +3980,16 @@ snapshots:
 
   jest-worker@28.1.3:
     dependencies:
-      '@types/node': 22.12.0
+      '@types/node': 24.10.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@28.1.3(@types/node@22.12.0):
+  jest@28.1.3(@types/node@24.10.0):
     dependencies:
       '@jest/core': 28.1.3
       '@jest/types': 28.1.3
       import-local: 3.2.0
-      jest-cli: 28.1.3(@types/node@22.12.0)
+      jest-cli: 28.1.3(@types/node@24.10.0)
     transitivePeerDependencies:
       - '@types/node'
       - supports-color
