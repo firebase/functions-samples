@@ -16,6 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {defineSecret} = require('firebase-functions/params');
 const cookieParser = require('cookie-parser');
 const crypto = require('node:crypto');
 
@@ -31,16 +32,19 @@ admin.initializeApp({
 const OAUTH_REDIRECT_URI = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`;
 const OAUTH_SCOPES = 'basic';
 
+const INSTAGRAM_CLIENT_ID = defineSecret('INSTAGRAM_CLIENT_ID');
+const INSTAGRAM_CLIENT_SECRET = defineSecret('INSTAGRAM_CLIENT_SECRET');
+
 /**
  * Creates a configured simple-oauth2 client for Instagram.
  */
 function instagramOAuth2Client() {
   // Instagram OAuth 2 setup
-  // TODO: Configure the `instagram.client_id` and `instagram.client_secret` Google Cloud environment variables.
+  // TODO: Configure the `INSTAGRAM_CLIENT_ID` and `INSTAGRAM_CLIENT_SECRET` secrets.
   const credentials = {
     client: {
-      id: functions.config().instagram.client_id,
-      secret: functions.config().instagram.client_secret,
+      id: INSTAGRAM_CLIENT_ID.value(),
+      secret: INSTAGRAM_CLIENT_SECRET.value(),
     },
     auth: {
       tokenHost: 'https://api.instagram.com',
@@ -54,7 +58,7 @@ function instagramOAuth2Client() {
  * Redirects the User to the Instagram authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
+exports.redirect = functions.runWith({secrets: ["INSTAGRAM_CLIENT_ID", "INSTAGRAM_CLIENT_SECRET"]}).https.onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   cookieParser()(req, res, () => {
@@ -81,7 +85,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token, display name, photo URL and Instagram acces token are sent back in a JSONP callback
  * function with function name defined by the 'callback' query parameter.
  */
-exports.token = functions.https.onRequest(async (req, res) => {
+exports.token = functions.runWith({secrets: ["INSTAGRAM_CLIENT_ID", "INSTAGRAM_CLIENT_SECRET"]}).https.onRequest(async (req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   try {

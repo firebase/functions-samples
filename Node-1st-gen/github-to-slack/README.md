@@ -30,7 +30,8 @@ To test this integration:
  - [Add an **Incoming Webhook**](https://my.slack.com/services/new/incoming-webhook/) to your Slack channel and take note of the **Webhook URL**.
  - Set the `slack.webhook_url` and `github.secret` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
    ```bash
-   firebase functions:config:set slack.webhook_url="https://hooks.slack.com/services/..." github.secret="A_SECRET_YOU_DEFINED_WHEN_SETTING_UP_THE_GITHUB_WEBHOOK"
+   firebase functions:secrets:set SLACK_WEBHOOK_URL
+   firebase functions:secrets:set GITHUB_SECRET
    ```
  - Deploy your project using `firebase deploy`
  - Push a commit to your GitHub repo

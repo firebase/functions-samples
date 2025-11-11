@@ -16,12 +16,14 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {defineSecret} = require('firebase-functions/params');
 const { BitlyClient } = require('bitly');
-// TODO: Make sure to set the bitly.access_token cloud functions config using the CLI.
-const bitly = new BitlyClient(functions.config().bitly.access_token);
+// TODO: Make sure to set the `BITLY_ACCESS_TOKEN` secret using the CLI.
+const BITLY_ACCESS_TOKEN = defineSecret('BITLY_ACCESS_TOKEN');
 
 // Shorten URL written to /links/{linkID}.
-exports.shortenUrl = functions.database.ref('/links/{linkID}').onCreate(async (snap) => {
+exports.shortenUrl = functions.runWith({secrets: ["BITLY_ACCESS_TOKEN"]}).database.ref('/links/{linkID}').onCreate(async (snap) => {
+  const bitly = new BitlyClient(BITLY_ACCESS_TOKEN.value());
   const originalUrl = snap.val();
   const response = await bitly.shorten(originalUrl);
   // @ts-ignore

@@ -16,20 +16,23 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {defineSecret} = require('firebase-functions/params');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
 // Authenticate to Algolia Database.
-// TODO: Make sure you configure the `algolia.app_id` and `algolia.api_key` Google Cloud environment variables.
+// TODO: Make sure you configure the `ALGOLIA_APP_ID` and `ALGOLIA_API_KEY` secrets.
 const algoliasearch = require('algoliasearch').default;
-const client = algoliasearch(functions.config().algolia.app_id, functions.config().algolia.api_key);
+const ALGOLIA_APP_ID = defineSecret('ALGOLIA_APP_ID');
+const ALGOLIA_API_KEY = defineSecret('ALGOLIA_API_KEY');
 
 // Name fo the algolia index for Blog posts content.
 const ALGOLIA_POSTS_INDEX_NAME = 'blogposts';
 
 // Updates the search index when new blog entries are created or updated.
-exports.indexentry = functions.database.ref('/blog-posts/{blogid}/text').onWrite(
+exports.indexentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API_KEY"]}).database.ref('/blog-posts/{blogid}/text').onWrite(
     async (data, context) => {
+      const client = algoliasearch(ALGOLIA_APP_ID.value(), ALGOLIA_API_KEY.value());
       const index = client.initIndex(ALGOLIA_POSTS_INDEX_NAME);
       const firebaseObject = {
         text: data.after.val(),
@@ -42,8 +45,9 @@ exports.indexentry = functions.database.ref('/blog-posts/{blogid}/text').onWrite
 
 // Starts a search query whenever a query is requested (by adding one to the `/search/queries`
 // element. Search results are then written under `/search/results`.
-exports.searchentry = functions.database.ref('/search/queries/{queryid}').onCreate(
+exports.searchentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API_KEY"]}).database.ref('/search/queries/{queryid}').onCreate(
     async (snap, context) => {
+      const client = algoliasearch(ALGOLIA_APP_ID.value(), ALGOLIA_API_KEY.value());
       const index = client.initIndex(ALGOLIA_POSTS_INDEX_NAME);
 
       const query = snap.val().query;

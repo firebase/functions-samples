@@ -18,36 +18,34 @@
 // Sample trigger function that copies new Firebase data to a Google Sheet
 
 const functions = require('firebase-functions/v1');
+const {defineString, defineSecret} = require('firebase-functions/params');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const {OAuth2Client} = require('google-auth-library');
 const {google} = require('googleapis');
 
-// TODO: Use firebase functions:config:set to configure your googleapi object:
-// googleapi.client_id = Google API client ID,
-// googleapi.client_secret = client secret, and
-// googleapi.sheet_id = Google Sheet id (long string in middle of sheet URL)
-const CONFIG_CLIENT_ID = functions.config().googleapi.client_id;
-const CONFIG_CLIENT_SECRET = functions.config().googleapi.client_secret;
-const CONFIG_SHEET_ID = functions.config().googleapi.sheet_id;
+// TODO: Configure the `GOOGLEAPI_CLIENT_ID` and `GOOGLEAPI_CLIENT_SECRET` secrets,
+// and the `GOOGLEAPI_SHEET_ID` environment variable.
+const GOOGLEAPI_CLIENT_ID = defineSecret('GOOGLEAPI_CLIENT_ID');
+const GOOGLEAPI_CLIENT_SECRET = defineSecret('GOOGLEAPI_CLIENT_SECRET');
+const GOOGLEAPI_SHEET_ID = defineString('GOOGLEAPI_SHEET_ID');
 
-// TODO: Use firebase functions:config:set to configure your watchedpaths object:
-// watchedpaths.data_path = Firebase path for data to be synced to Google Sheet
-const CONFIG_DATA_PATH = functions.config().watchedpaths.data_path;
+// TODO: Configure the `WATCHEDPATHS_DATA_PATH` environment variable.
+const WATCHEDPATHS_DATA_PATH = defineString('WATCHEDPATHS_DATA_PATH');
 
 // The OAuth Callback Redirect.
 const FUNCTIONS_REDIRECT = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/oauthcallback`;
 
 // setup for authGoogleAPI
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const functionsOauthClient = new OAuth2Client(CONFIG_CLIENT_ID, CONFIG_CLIENT_SECRET,
-  FUNCTIONS_REDIRECT);
 
 // OAuth token cached locally.
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
-exports.authgoogleapi = functions.https.onRequest((req, res) => {
+exports.authgoogleapi = functions.runWith({secrets: ["GOOGLEAPI_CLIENT_ID", "GOOGLEAPI_CLIENT_SECRET"]}).https.onRequest((req, res) => {
+  const functionsOauthClient = new OAuth2Client(GOOGLEAPI_CLIENT_ID.value(), GOOGLEAPI_CLIENT_SECRET.value(),
+    FUNCTIONS_REDIRECT);
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
@@ -61,7 +59,9 @@ const DB_TOKEN_PATH = '/api_tokens';
 
 // after you grant access, you will be redirected to the URL for this Function
 // this Function stores the tokens to your Firebase database
-exports.oauthcallback = functions.https.onRequest(async (req, res) => {
+exports.oauthcallback = functions.runWith({secrets: ["GOOGLEAPI_CLIENT_ID", "GOOGLEAPI_CLIENT_SECRET"]}).https.onRequest(async (req, res) => {
+  const functionsOauthClient = new OAuth2Client(GOOGLEAPI_CLIENT_ID.value(), GOOGLEAPI_CLIENT_SECRET.value(),
+    FUNCTIONS_REDIRECT);
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   const code = `${req.query.code}`;
   try {
@@ -75,12 +75,15 @@ exports.oauthcallback = functions.https.onRequest(async (req, res) => {
   }
 });
 
-// trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
-exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onCreate(
-    (snap) => {
+// trigger function to write to Sheet when new data comes in on WATCHEDPATHS_DATA_PATH
+exports.appendrecordtospreadsheet = functions.runWith({secrets: ["GOOGLEAPI_CLIENT_ID", "GOOGLEAPI_CLIENT_SECRET"]}).database.ref('/{ITEM}').onCreate(
+    (snap, context) => {
+      if (context.resource.name.split('/')[1] !== WATCHEDPATHS_DATA_PATH.value()) {
+        return null;
+      }
       const newRecord = snap.val();
       return appendPromise({
-        spreadsheetId: CONFIG_SHEET_ID,
+        spreadsheetId: GOOGLEAPI_SHEET_ID.value(),
         range: 'A:C',
         valueInputOption: 'USER_ENTERED',
         insertDataOption: 'INSERT_ROWS',
@@ -110,7 +113,10 @@ function appendPromise(requestWithoutAuth) {
 
 // checks if oauthTokens have been loaded into memory, and if not, retrieves them
 async function getAuthorizedClient() {
+  const functionsOauthClient = new OAuth2Client(GOOGLEAPI_CLIENT_ID.value(), GOOGLEAPI_CLIENT_SECRET.value(),
+    FUNCTIONS_REDIRECT);
   if (oauthTokens) {
+    functionsOauthClient.setCredentials(oauthTokens);
     return functionsOauthClient;
   }
   const snapshot = await admin.database().ref(DB_TOKEN_PATH).once('value');
@@ -119,13 +125,13 @@ async function getAuthorizedClient() {
   return functionsOauthClient;
 }
 
-// HTTPS function to write new data to CONFIG_DATA_PATH, for testing
+// HTTPS function to write new data to WATCHEDPATHS_DATA_PATH, for testing
 exports.testsheetwrite = functions.https.onRequest(async (req, res) => {
   const random1 = Math.floor(Math.random() * 100);
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
   const ID = new Date().getUTCMilliseconds();
-  await admin.database().ref(`${CONFIG_DATA_PATH}/${ID}`).set({
+  await admin.database().ref(`${WATCHEDPATHS_DATA_PATH.value()}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
     thirdColumn: random3,

@@ -22,7 +22,14 @@ The function triggers on changes to `app_update` Firebase Analytics events. For 
 Set the `gmail.email` and `gmail.password` Google Cloud environment variables to match the email and password of the Gmail account used to send emails. For this use:
 
 ```bash
-firebase functions:config:set gmail.email="myusername@gmail.com" gmail.password="secretpassword"
+Add the following configuration to your `.env` file:
+```
+GMAIL_EMAIL="myusername@gmail.com"
+```
+Then, set the `GMAIL_PASSWORD` secret:
+```
+firebase functions:secrets:set GMAIL_PASSWORD
+```
 ```
 
 

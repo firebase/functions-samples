@@ -50,5 +50,6 @@ Enable Billing on your Firebase project by switching to the Blaze plan. You need
 Set the `algolia.app_id` and `algolia.api_key` Google Cloud environment variables to match the Algolia application ID and API key of your account. For this use:
 
 ```bash
-firebase functions:config:set algolia.app_id="myAlgoliaAppId" algolia.api_key="myAlgoliaApiKey"
+firebase functions:secrets:set ALGOLIA_APP_ID
+firebase functions:secrets:set ALGOLIA_API_KEY
 ```

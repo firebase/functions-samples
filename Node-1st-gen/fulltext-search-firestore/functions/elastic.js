@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions/v1');
+const {defineString, defineSecret} = require('firebase-functions/params');
 
 // [START init_elastic]
 const { Client } = require("@elastic/elasticsearch");
@@ -22,22 +23,21 @@ const { Client } = require("@elastic/elasticsearch");
 // https://github.com/elastic/elasticsearch-js
 //
 // ID, username, and password are stored in functions config variables
-const ELASTIC_ID = functions.config().elastic.id;
-const ELASTIC_USERNAME = functions.config().elastic.username;
-const ELASTIC_PASSWORD = functions.config().elastic.password;
-
-const client = new Client({
-  cloud: {
-    id: ELASTIC_ID,
-    username: ELASTIC_USERNAME,
-    password: ELASTIC_PASSWORD,
-  }
-});
+const ELASTIC_ID = defineString('ELASTIC_ID');
+const ELASTIC_USERNAME = defineString('ELASTIC_USERNAME');
+const ELASTIC_PASSWORD = defineSecret('ELASTIC_PASSWORD');
 // [END init_elastic]
 
 // [START update_index_function_elastic]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(async (snap, context) => {
+exports.onNoteCreated = functions.runWith({secrets: ["ELASTIC_PASSWORD"]}).firestore.document('notes/{noteId}').onCreate(async (snap, context) => {
+  const client = new Client({
+    cloud: {
+      id: ELASTIC_ID.value(),
+      username: ELASTIC_USERNAME.value(),
+      password: ELASTIC_PASSWORD.value(),
+    }
+  });
   // Get the note document
   const note = snap.data();
 
@@ -54,7 +54,14 @@ exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(
 // [END update_index_function_elastic]
 
 // [START search_function_elastic]
-exports.searchNotes = functions.https.onCall(async (data, context) => {
+exports.searchNotes = functions.runWith({secrets: ["ELASTIC_PASSWORD"]}).https.onCall(async (data, context) => {
+  const client = new Client({
+    cloud: {
+      id: ELASTIC_ID.value(),
+      username: ELASTIC_USERNAME.value(),
+      password: ELASTIC_PASSWORD.value(),
+    }
+  });
   const query = data.query;
 
   // Search for any notes where the text field contains the query text.

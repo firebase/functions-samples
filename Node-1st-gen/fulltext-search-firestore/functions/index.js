@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions/v1');
+const {defineSecret} = require('firebase-functions/params');
 const algoliasearch = require('algoliasearch').default;
 
 // [START init_algolia]
@@ -21,17 +22,17 @@ const algoliasearch = require('algoliasearch').default;
 // https://www.algolia.com/doc/api-client/javascript/getting-started/#install
 //
 // App ID and API Key are stored in functions config variables
-const ALGOLIA_ID = functions.config().algolia.app_id;
-const ALGOLIA_ADMIN_KEY = functions.config().algolia.api_key;
-const ALGOLIA_SEARCH_KEY = functions.config().algolia.search_key;
+const ALGOLIA_ID = defineSecret('ALGOLIA_ID');
+const ALGOLIA_ADMIN_KEY = defineSecret('ALGOLIA_ADMIN_KEY');
+const ALGOLIA_SEARCH_KEY = defineSecret('ALGOLIA_SEARCH_KEY');
 
 const ALGOLIA_INDEX_NAME = 'notes';
-const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
 // [END init_algolia]
 
 // [START update_index_function]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate((snap, context) => {
+exports.onNoteCreated = functions.runWith({secrets: ["ALGOLIA_ID", "ALGOLIA_ADMIN_KEY"]}).firestore.document('notes/{noteId}').onCreate((snap, context) => {
+  const client = algoliasearch(ALGOLIA_ID.value(), ALGOLIA_ADMIN_KEY.value());
   // Get the note document
   const note = snap.data();
 
@@ -108,7 +109,8 @@ app.get('/', (req, res) => {
   };
 
   // Call the Algolia API to generate a unique key based on our search key
-  const key = client.generateSecuredApiKey(ALGOLIA_SEARCH_KEY, params);
+  const client = algoliasearch(ALGOLIA_ID.value(), ALGOLIA_ADMIN_KEY.value());
+  const key = client.generateSecuredApiKey(ALGOLIA_SEARCH_KEY.value(), params);
 
   // Then return this key as {key: '...key'}
   res.json({key});
@@ -116,5 +118,5 @@ app.get('/', (req, res) => {
 
 // Finally, pass our ExpressJS app to Cloud Functions as a function
 // called 'getSearchKey';
-exports.getSearchKey = functions.https.onRequest(app);
+exports.getSearchKey = functions.runWith({secrets: ["ALGOLIA_ID", "ALGOLIA_ADMIN_KEY", "ALGOLIA_SEARCH_KEY"]}).https.onRequest(app);
 // [END get_algolia_user_token]
