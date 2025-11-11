@@ -26,12 +26,12 @@ const {google} = require('googleapis');
 
 // TODO: Configure the `GOOGLEAPI_CLIENT_ID` and `GOOGLEAPI_CLIENT_SECRET` secrets,
 // and the `GOOGLEAPI_SHEET_ID` environment variable.
-const GOOGLEAPI_CLIENT_ID = defineSecret('GOOGLEAPI_CLIENT_ID');
-const GOOGLEAPI_CLIENT_SECRET = defineSecret('GOOGLEAPI_CLIENT_SECRET');
-const GOOGLEAPI_SHEET_ID = defineString('GOOGLEAPI_SHEET_ID');
+const googleApiClientId = defineSecret('GOOGLEAPI_CLIENT_ID');
+const googleApiClientSecret = defineSecret('GOOGLEAPI_CLIENT_SECRET');
+const googleApiSheetId = defineString('GOOGLEAPI_SHEET_ID');
 
 // TODO: Configure the `WATCHEDPATHS_DATA_PATH` environment variable.
-const WATCHEDPATHS_DATA_PATH = defineString('WATCHEDPATHS_DATA_PATH');
+const watchedpathsDataPath = defineString('WATCHEDPATHS_DATA_PATH');
 
 // The OAuth Callback Redirect.
 const FUNCTIONS_REDIRECT = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/oauthcallback`;
@@ -43,8 +43,8 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
-exports.authgoogleapi = functions.runWith({secrets: ["GOOGLEAPI_CLIENT_ID", "GOOGLEAPI_CLIENT_SECRET"]}).https.onRequest((req, res) => {
-  const functionsOauthClient = new OAuth2Client(GOOGLEAPI_CLIENT_ID.value(), GOOGLEAPI_CLIENT_SECRET.value(),
+exports.authgoogleapi = functions.runWith({secrets: ["googleApiClientId", "googleApiClientSecret"]}).https.onRequest((req, res) => {
+  const functionsOauthClient = new OAuth2Client(googleApiClientId.value(), googleApiClientSecret.value(),
     FUNCTIONS_REDIRECT);
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   res.redirect(functionsOauthClient.generateAuthUrl({
@@ -59,8 +59,8 @@ const DB_TOKEN_PATH = '/api_tokens';
 
 // after you grant access, you will be redirected to the URL for this Function
 // this Function stores the tokens to your Firebase database
-exports.oauthcallback = functions.runWith({secrets: ["GOOGLEAPI_CLIENT_ID", "GOOGLEAPI_CLIENT_SECRET"]}).https.onRequest(async (req, res) => {
-  const functionsOauthClient = new OAuth2Client(GOOGLEAPI_CLIENT_ID.value(), GOOGLEAPI_CLIENT_SECRET.value(),
+exports.oauthcallback = functions.runWith({secrets: ["googleApiClientId", "googleApiClientSecret"]}).https.onRequest(async (req, res) => {
+  const functionsOauthClient = new OAuth2Client(googleApiClientId.value(), googleApiClientSecret.value(),
     FUNCTIONS_REDIRECT);
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   const code = `${req.query.code}`;
@@ -75,15 +75,15 @@ exports.oauthcallback = functions.runWith({secrets: ["GOOGLEAPI_CLIENT_ID", "GOO
   }
 });
 
-// trigger function to write to Sheet when new data comes in on WATCHEDPATHS_DATA_PATH
-exports.appendrecordtospreadsheet = functions.runWith({secrets: ["GOOGLEAPI_CLIENT_ID", "GOOGLEAPI_CLIENT_SECRET"]}).database.ref('/{ITEM}').onCreate(
+// trigger function to write to Sheet when new data comes in on watchedpathsDataPath
+exports.appendrecordtospreadsheet = functions.runWith({secrets: ["googleApiClientId", "googleApiClientSecret"]}).database.ref('/{ITEM}').onCreate(
     (snap, context) => {
-      if (context.resource.name.split('/')[1] !== WATCHEDPATHS_DATA_PATH.value()) {
+      if (context.resource.name.split('/')[1] !== watchedpathsDataPath.value()) {
         return null;
       }
       const newRecord = snap.val();
       return appendPromise({
-        spreadsheetId: GOOGLEAPI_SHEET_ID.value(),
+        spreadsheetId: googleApiSheetId.value(),
         range: 'A:C',
         valueInputOption: 'USER_ENTERED',
         insertDataOption: 'INSERT_ROWS',
@@ -113,7 +113,7 @@ function appendPromise(requestWithoutAuth) {
 
 // checks if oauthTokens have been loaded into memory, and if not, retrieves them
 async function getAuthorizedClient() {
-  const functionsOauthClient = new OAuth2Client(GOOGLEAPI_CLIENT_ID.value(), GOOGLEAPI_CLIENT_SECRET.value(),
+  const functionsOauthClient = new OAuth2Client(googleApiClientId.value(), googleApiClientSecret.value(),
     FUNCTIONS_REDIRECT);
   if (oauthTokens) {
     functionsOauthClient.setCredentials(oauthTokens);
@@ -125,13 +125,13 @@ async function getAuthorizedClient() {
   return functionsOauthClient;
 }
 
-// HTTPS function to write new data to WATCHEDPATHS_DATA_PATH, for testing
+// HTTPS function to write new data to watchedpathsDataPath, for testing
 exports.testsheetwrite = functions.https.onRequest(async (req, res) => {
   const random1 = Math.floor(Math.random() * 100);
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
   const ID = new Date().getUTCMilliseconds();
-  await admin.database().ref(`${WATCHEDPATHS_DATA_PATH.value()}/${ID}`).set({
+  await admin.database().ref(`${watchedpathsDataPath.value()}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
     thirdColumn: random3,

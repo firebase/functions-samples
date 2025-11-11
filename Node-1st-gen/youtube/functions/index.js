@@ -18,7 +18,7 @@ const functions = require('firebase-functions/v1');
 const {defineSecret} = require('firebase-functions/params');
 const { google } = require('googleapis');
 
-const YOUTUBE_KEY = defineSecret('YOUTUBE_KEY');
+const youtubeKey = defineSecret('YOUTUBE_KEY');
 
 const FIREBASE_YOUTUBE_CHANNEL_ID = 'UCP4bf6IHJJQehibu6ai__cg';
 
@@ -26,7 +26,7 @@ exports.getChannelInfo = functions.runWith({secrets: ["YOUTUBE_KEY"]}).https.onR
   async (request, response) => {
     const youtube = google.youtube({
       version: 'v3',
-      auth: YOUTUBE_KEY.value(),
+      auth: youtubeKey.value(),
     });
     const channelId = request.query.channelId || FIREBASE_YOUTUBE_CHANNEL_ID;
 

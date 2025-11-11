@@ -32,8 +32,8 @@ admin.initializeApp({
 const OAUTH_REDIRECT_URI = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`;
 const OAUTH_SCOPES = 'basic';
 
-const INSTAGRAM_CLIENT_ID = defineSecret('INSTAGRAM_CLIENT_ID');
-const INSTAGRAM_CLIENT_SECRET = defineSecret('INSTAGRAM_CLIENT_SECRET');
+const instagramClientId = defineSecret('INSTAGRAM_CLIENT_ID');
+const instagramClientSecret = defineSecret('INSTAGRAM_CLIENT_SECRET');
 
 /**
  * Creates a configured simple-oauth2 client for Instagram.
@@ -43,8 +43,8 @@ function instagramOAuth2Client() {
   // TODO: Configure the `INSTAGRAM_CLIENT_ID` and `INSTAGRAM_CLIENT_SECRET` secrets.
   const credentials = {
     client: {
-      id: INSTAGRAM_CLIENT_ID.value(),
-      secret: INSTAGRAM_CLIENT_SECRET.value(),
+      id: instagramClientId.value(),
+      secret: instagramClientSecret.value(),
     },
     auth: {
       tokenHost: 'https://api.instagram.com',

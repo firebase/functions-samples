@@ -21,17 +21,17 @@ const { BigQuery } = require('@google-cloud/bigquery');
 
 const bigquery = new BigQuery();
 
-const BIGQUERY_DATASETNAME = defineString('BIGQUERY_DATASETNAME');
-const BIGQUERY_TABLENAME = defineString('BIGQUERY_TABLENAME');
+const bigqueryDatasetname = defineString('BIGQUERY_DATASETNAME');
+const bigqueryTablename = defineString('BIGQUERY_TABLENAME');
 
 /**
  * Writes all logs from the Realtime Database into bigquery.
  */
 exports.addtobigquery = functions.database.ref('/logs/{logid}').onCreate((snapshot) => {
   // TODO: Make sure you set the `BIGQUERY_DATASETNAME` environment variable.
-  const dataset = bigquery.dataset(BIGQUERY_DATASETNAME.value());
+  const dataset = bigquery.dataset(bigqueryDatasetname.value());
   // TODO: Make sure you set the `BIGQUERY_TABLENAME` environment variable.
-  const table = dataset.table(BIGQUERY_TABLENAME.value());
+  const table = dataset.table(bigqueryTablename.value());
 
   return table.insert({
     ID: snapshot.key,

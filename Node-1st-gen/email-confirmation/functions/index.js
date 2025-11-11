@@ -21,16 +21,16 @@ const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
 // For other types of transports such as Sendgrid see https://nodemailer.com/transports/
 // TODO: Configure the `GMAIL_EMAIL` environment variable and the `GMAIL_PASSWORD` secret.
-const GMAIL_EMAIL = defineString('GMAIL_EMAIL');
-const GMAIL_PASSWORD = defineSecret('GMAIL_PASSWORD');
+const gmailEmail = defineString('GMAIL_EMAIL');
+const gmailPassword = defineSecret('GMAIL_PASSWORD');
 
 // Sends an email confirmation when a user changes his mailing list subscription.
 exports.sendEmailConfirmation = functions.runWith({secrets: ["GMAIL_PASSWORD"]}).database.ref('/users/{uid}').onWrite(async (change) => {
   const mailTransport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: GMAIL_EMAIL.value(),
-      pass: GMAIL_PASSWORD.value(),
+      user: gmailEmail.value(),
+      pass: gmailPassword.value(),
     },
   });
   // Early exit if the 'subscribedToMailingList' field has not changed

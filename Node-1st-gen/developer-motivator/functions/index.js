@@ -21,7 +21,7 @@ const {defineSecret} = require('firebase-functions/params');
 admin.initializeApp();
 
 // TODO: Make sure you configure the 'DEV_MOTIVATOR_DEVICE_TOKEN' secret.
-const DEV_MOTIVATOR_DEVICE_TOKEN = defineSecret('DEV_MOTIVATOR_DEVICE_TOKEN');
+const devMotivatorDeviceToken = defineSecret('DEV_MOTIVATOR_DEVICE_TOKEN');
 
 /**
  * Triggers when the app is opened the first time in a user device and sends a notification to your developer device.
@@ -37,7 +37,7 @@ exports.appinstalled = functions.runWith({secrets: ["DEV_MOTIVATOR_DEVICE_TOKEN"
     }
   };
 
-  return admin.messaging().send({token: DEV_MOTIVATOR_DEVICE_TOKEN.value(), notification: payload.notification});
+  return admin.messaging().send({token: devMotivatorDeviceToken.value(), notification: payload.notification});
 });
 
 /**
@@ -56,5 +56,5 @@ exports.appremoved = functions.runWith({secrets: ["DEV_MOTIVATOR_DEVICE_TOKEN"]}
     }
   };
 
-  return admin.messaging().send({token: DEV_MOTIVATOR_DEVICE_TOKEN.value(), notification: payload.notification});
+  return admin.messaging().send({token: devMotivatorDeviceToken.value(), notification: payload.notification});
 });

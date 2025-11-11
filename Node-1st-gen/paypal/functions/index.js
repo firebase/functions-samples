@@ -22,20 +22,20 @@ const paypal = require('paypal-rest-sdk');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-const PAYPAL_CLIENT_ID = defineSecret('PAYPAL_CLIENT_ID');
-const PAYPAL_CLIENT_SECRET = defineSecret('PAYPAL_CLIENT_SECRET');
+const paypalClientId = defineSecret('PAYPAL_CLIENT_ID');
+const paypalClientSecret = defineSecret('PAYPAL_CLIENT_SECRET');
 
 /**
  * Expected in the body the amount
  * Set up the payment information object
  * Initialize the payment and redirect the user to the PayPal payment page
  */
-exports.pay = functions.runWith({secrets: ["PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"]}).https.onRequest((req, res) => {
+exports.pay = functions.runWith({secrets: ["paypalClientId", "paypalClientSecret"]}).https.onRequest((req, res) => {
   // Configure your environment
   paypal.configure({
     mode: 'sandbox', // sandbox or live
-    client_id: PAYPAL_CLIENT_ID.value(),
-    client_secret: PAYPAL_CLIENT_SECRET.value()
+    client_id: paypalClientId.value(),
+    client_secret: paypalClientSecret.value()
   });
   // 1.Set up a payment information object, Build PayPal payment request
   const payReq = JSON.stringify({
@@ -90,12 +90,12 @@ exports.pay = functions.runWith({secrets: ["PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SE
 });
 
 // 3.Complete the payment. Use the payer and payment IDs provided in the query string following the redirect.
-exports.process = functions.runWith({secrets: ["PAYPAL_CLIENT_ID", "PAYPAL_CLIENT_SECRET"]}).https.onRequest(async (req, res) => {
+exports.process = functions.runWith({secrets: ["paypalClientId", "paypalClientSecret"]}).https.onRequest(async (req, res) => {
   // Configure your environment
   paypal.configure({
     mode: 'sandbox', // sandbox or live
-    client_id: PAYPAL_CLIENT_ID.value(),
-    client_secret: PAYPAL_CLIENT_SECRET.value()
+    client_id: paypalClientId.value(),
+    client_secret: paypalClientSecret.value()
   });
   const paymentId = req.query.paymentId;
   const payerId = {

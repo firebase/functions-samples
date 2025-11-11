@@ -31,8 +31,8 @@ admin.initializeApp({
 
 const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
 
-const LINKEDIN_CLIENT_ID = defineSecret('LINKEDIN_CLIENT_ID');
-const LINKEDIN_CLIENT_SECRET = defineSecret('LINKEDIN_CLIENT_SECRET');
+const linkedinClientId = defineSecret('LINKEDIN_CLIENT_ID');
+const linkedinClientSecret = defineSecret('LINKEDIN_CLIENT_SECRET');
 
 /**
  * Creates a configured LinkedIn API Client instance.
@@ -41,8 +41,8 @@ function linkedInClient() {
   // LinkedIn OAuth 2 setup
   // TODO: Configure the `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` secrets.
   return require('node-linkedin')(
-      LINKEDIN_CLIENT_ID.value(),
-      LINKEDIN_CLIENT_SECRET.value(),
+      linkedinClientId.value(),
+      linkedinClientSecret.value(),
       `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
 }
 

@@ -23,8 +23,8 @@ admin.initializeApp();
 // Authenticate to Algolia Database.
 // TODO: Make sure you configure the `ALGOLIA_APP_ID` and `ALGOLIA_API_KEY` secrets.
 const algoliasearch = require('algoliasearch').default;
-const ALGOLIA_APP_ID = defineSecret('ALGOLIA_APP_ID');
-const ALGOLIA_API_KEY = defineSecret('ALGOLIA_API_KEY');
+const algoliaAppId = defineSecret('ALGOLIA_APP_ID');
+const algoliaApiKey = defineSecret('ALGOLIA_API_KEY');
 
 // Name fo the algolia index for Blog posts content.
 const ALGOLIA_POSTS_INDEX_NAME = 'blogposts';
@@ -32,7 +32,7 @@ const ALGOLIA_POSTS_INDEX_NAME = 'blogposts';
 // Updates the search index when new blog entries are created or updated.
 exports.indexentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API_KEY"]}).database.ref('/blog-posts/{blogid}/text').onWrite(
     async (data, context) => {
-      const client = algoliasearch(ALGOLIA_APP_ID.value(), ALGOLIA_API_KEY.value());
+      const client = algoliasearch(algoliaAppId.value(), algoliaApiKey.value());
       const index = client.initIndex(ALGOLIA_POSTS_INDEX_NAME);
       const firebaseObject = {
         text: data.after.val(),
@@ -47,7 +47,7 @@ exports.indexentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API
 // element. Search results are then written under `/search/results`.
 exports.searchentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API_KEY"]}).database.ref('/search/queries/{queryid}').onCreate(
     async (snap, context) => {
-      const client = algoliasearch(ALGOLIA_APP_ID.value(), ALGOLIA_API_KEY.value());
+      const client = algoliasearch(algoliaAppId.value(), algoliaApiKey.value());
       const index = client.initIndex(ALGOLIA_POSTS_INDEX_NAME);
 
       const query = snap.val().query;
