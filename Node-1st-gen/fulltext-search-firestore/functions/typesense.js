@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
 const {defineSecret} = require('firebase-functions/params');
 
 // [START init_typesense]
@@ -22,22 +23,26 @@ const {defineSecret} = require('firebase-functions/params');
 const Typesense = require("typesense");
 
 // Typesense API keys are stored in functions config variables
-const TYPESENSE_ADMIN_API_KEY = defineSecret('TYPESENSE_ADMIN_API_KEY');
-const TYPESENSE_SEARCH_API_KEY = defineSecret('TYPESENSE_SEARCH_API_KEY');
-// [END init_typesense]
+const typesenseAdminApiKey = defineSecret('TYPESENSE_ADMIN_API_KEY');
+const typesenseSearchApiKey = defineSecret('TYPESENSE_SEARCH_API_KEY');
 
-// [START update_index_function_typesense]
-// Update the search index every time a blog post is written.
-exports.onNoteWritten = functions.runWith({secrets: ["TYPESENSE_ADMIN_API_KEY"]}).firestore.document('notes/{noteId}').onWrite(async (snap, context) => {
-  const client = new Typesense.Client({
+let client;
+onInit(() => {
+  client = new Typesense.Client({
     'nodes': [{
       'host': 'xxx.a1.typesense.net', // where xxx is the ClusterID of your Typesense Cloud cluster
       'port': '443',
       'protocol': 'https'
     }],
-    'apiKey': TYPESENSE_ADMIN_API_KEY.value(),
+    'apiKey': typesenseAdminApiKey.value(),
     'connectionTimeoutSeconds': 2
   });
+});
+// [END init_typesense]
+
+// [START update_index_function_typesense]
+// Update the search index every time a blog post is written.
+exports.onNoteWritten = functions.runWith({secrets: [typesenseAdminApiKey]}).firestore.document('notes/{noteId}').onWrite(async (snap, context) => {
   // Use the 'nodeId' path segment as the identifier for Typesense
   const id = context.params.noteId;
 
@@ -58,16 +63,7 @@ exports.onNoteWritten = functions.runWith({secrets: ["TYPESENSE_ADMIN_API_KEY"]}
 // [END update_index_function_typesense]
 
 // [START api_key_function_typesense]
-exports.getScopedApiKey = functions.runWith({secrets: ["TYPESENSE_ADMIN_API_KEY", "TYPESENSE_SEARCH_API_KEY"]}).https.onCall(async (data, context) => {
-  const client = new Typesense.Client({
-    'nodes': [{
-      'host': 'xxx.a1.typesense.net', // where xxx is the ClusterID of your Typesense Cloud cluster
-      'port': '443',
-      'protocol': 'https'
-    }],
-    'apiKey': TYPESENSE_ADMIN_API_KEY.value(),
-    'connectionTimeoutSeconds': 2
-  });
+exports.getScopedApiKey = functions.runWith({secrets: [typesenseAdminApiKey, typesenseSearchApiKey]}).https.onCall(async (data, context) => {
   // Ensure that the user is authenticated with Firebase Auth
   if (!(context.auth && context.auth.uid)) {
     throw new functions.https.HttpsError('permission-denied', 'Must be signed in!');
@@ -76,7 +72,7 @@ exports.getScopedApiKey = functions.runWith({secrets: ["TYPESENSE_ADMIN_API_KEY"
   // Generate a scoped API key which allows the user to search ONLY
   // documents which belong to them (based on the 'owner' field).
   const scopedApiKey = client.keys().generateScopedSearchKey(
-    TYPESENSE_SEARCH_API_KEY.value(),
+    typesenseSearchApiKey.value(),
     { 
       'filter_by': `owner:${context.auth.uid}`
     }

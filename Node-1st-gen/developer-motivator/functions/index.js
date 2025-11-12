@@ -28,7 +28,7 @@ const devMotivatorDeviceToken = defineSecret('DEV_MOTIVATOR_DEVICE_TOKEN');
  *
  * The device model name, the city and the country of the user are sent in the notification message
  */
-exports.appinstalled = functions.runWith({secrets: ["DEV_MOTIVATOR_DEVICE_TOKEN"]}).analytics.event('first_open').onLog((event) => {
+exports.appinstalled = functions.runWith({secrets: [devMotivatorDeviceToken]}).analytics.event('first_open').onLog((event) => {
   const user = event.user;
   const payload = {
     notification: {
@@ -47,7 +47,7 @@ exports.appinstalled = functions.runWith({secrets: ["DEV_MOTIVATOR_DEVICE_TOKEN"
  *
  * The device model name, the city and the country of the user are sent in the notification message
  */
-exports.appremoved = functions.runWith({secrets: ["DEV_MOTIVATOR_DEVICE_TOKEN"]}).analytics.event('app_remove').onLog((event) => {
+exports.appremoved = functions.runWith({secrets: [devMotivatorDeviceToken]}).analytics.event('app_remove').onLog((event) => {
   const user = event.user;
   const payload = {
     notification: {

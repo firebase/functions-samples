@@ -17,7 +17,7 @@
 const functions = require('firebase-functions/v1');
 const {defineSecret} = require('firebase-functions/params');
 
-const SLACK_WEBHOOK_URL = defineSecret('SLACK_WEBHOOK_URL');
+const slackWebhookUrl = defineSecret('SLACK_WEBHOOK_URL');
 
 /**
  * Posts a message to Slack via a Webhook
@@ -26,7 +26,7 @@ const SLACK_WEBHOOK_URL = defineSecret('SLACK_WEBHOOK_URL');
  * @return {Promise<string>}
  */
  async function postToSlack(title, details) {
-  const response = await fetch(SLACK_WEBHOOK_URL.value(), {
+  const response = await fetch(slackWebhookUrl.value(), {
     method: "post",
     body: JSON.stringify({
       blocks: [
@@ -79,7 +79,7 @@ function getSlackmoji(term) {
   }
 }
 
-exports.postTestResultsToSlack = functions.runWith({secrets: ["SLACK_WEBHOOK_URL"]}).testLab
+exports.postTestResultsToSlack = functions.runWith({secrets: [slackWebhookUrl]}).testLab
   .testMatrix()
   .onComplete(async testMatrix => {
     const { testMatrixId, state, outcomeSummary } = testMatrix;

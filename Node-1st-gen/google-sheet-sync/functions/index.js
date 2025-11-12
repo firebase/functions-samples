@@ -18,6 +18,7 @@
 // Sample trigger function that copies new Firebase data to a Google Sheet
 
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
 const {defineString, defineSecret} = require('firebase-functions/params');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -39,13 +40,17 @@ const FUNCTIONS_REDIRECT = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.co
 // setup for authGoogleAPI
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 
+let functionsOauthClient;
+onInit(() => {
+  functionsOauthClient = new OAuth2Client(googleApiClientId.value(), googleApiClientSecret.value(),
+    FUNCTIONS_REDIRECT);
+});
+
 // OAuth token cached locally.
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
-exports.authgoogleapi = functions.runWith({secrets: ["googleApiClientId", "googleApiClientSecret"]}).https.onRequest((req, res) => {
-  const functionsOauthClient = new OAuth2Client(googleApiClientId.value(), googleApiClientSecret.value(),
-    FUNCTIONS_REDIRECT);
+exports.authgoogleapi = functions.runWith({secrets: [googleApiClientId, googleApiClientSecret]}).https.onRequest((req, res) => {
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
@@ -59,9 +64,7 @@ const DB_TOKEN_PATH = '/api_tokens';
 
 // after you grant access, you will be redirected to the URL for this Function
 // this Function stores the tokens to your Firebase database
-exports.oauthcallback = functions.runWith({secrets: ["googleApiClientId", "googleApiClientSecret"]}).https.onRequest(async (req, res) => {
-  const functionsOauthClient = new OAuth2Client(googleApiClientId.value(), googleApiClientSecret.value(),
-    FUNCTIONS_REDIRECT);
+exports.oauthcallback = functions.runWith({secrets: [googleApiClientId, googleApiClientSecret]}).https.onRequest(async (req, res) => {
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   const code = `${req.query.code}`;
   try {
@@ -76,9 +79,9 @@ exports.oauthcallback = functions.runWith({secrets: ["googleApiClientId", "googl
 });
 
 // trigger function to write to Sheet when new data comes in on watchedpathsDataPath
-exports.appendrecordtospreadsheet = functions.runWith({secrets: ["googleApiClientId", "googleApiClientSecret"]}).database.ref('/{ITEM}').onCreate(
+exports.appendrecordtospreadsheet = functions.runWith({secrets: [googleApiClientId, googleApiClientSecret]}).database.ref('/{path}/{ITEM}').onCreate(
     (snap, context) => {
-      if (context.resource.name.split('/')[1] !== watchedpathsDataPath.value()) {
+      if (context.params.path !== watchedpathsDataPath.value()) {
         return null;
       }
       const newRecord = snap.val();
@@ -113,8 +116,6 @@ function appendPromise(requestWithoutAuth) {
 
 // checks if oauthTokens have been loaded into memory, and if not, retrieves them
 async function getAuthorizedClient() {
-  const functionsOauthClient = new OAuth2Client(googleApiClientId.value(), googleApiClientSecret.value(),
-    FUNCTIONS_REDIRECT);
   if (oauthTokens) {
     functionsOauthClient.setCredentials(oauthTokens);
     return functionsOauthClient;

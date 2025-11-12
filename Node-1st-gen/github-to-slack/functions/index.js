@@ -27,7 +27,7 @@ const slackWebhookUrl = defineSecret('SLACK_WEBHOOK_URL');
  * Webhook that will be called each time there is a new GitHub commit and will post a message to
  * Slack.
  */
-exports.githubWebhook = functions.runWith({secrets: ["GITHUB_SECRET", "SLACK_WEBHOOK_URL"]}).https.onRequest(async (req, res) => {
+exports.githubWebhook = functions.runWith({secrets: [githubSecret, slackWebhookUrl]}).https.onRequest(async (req, res) => {
   const cipher = 'sha1';
   const signature = req.headers['x-hub-signature'];
 

@@ -16,6 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
 const {defineString, defineSecret} = require('firebase-functions/params');
 const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
@@ -24,8 +25,19 @@ const nodemailer = require('nodemailer');
 // 2. https://accounts.google.com/DisplayUnlockCaptcha
 // For other types of transports such as Sendgrid see https://nodemailer.com/transports/
 // TODO: Configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
-const GMAIL_EMAIL = defineString('GMAIL_EMAIL');
-const GMAIL_PASSWORD = defineSecret('GMAIL_PASSWORD');
+const gmailEmail = defineString('GMAIL_EMAIL');
+const gmailPassword = defineSecret('GMAIL_PASSWORD');
+
+let mailTransport;
+onInit(() => {
+  mailTransport = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: gmailEmail.value(),
+      pass: gmailPassword.value(),
+    },
+  });
+});
 
 // Your company name to include in the emails
 // TODO: Change this to your app or company name to customize the email sent.
@@ -36,7 +48,7 @@ const APP_NAME = 'Cloud Storage for Firebase quickstart';
  * Sends a welcome email to new user.
  */
 // [START onCreateTrigger]
-exports.sendWelcomeEmail = functions.runWith({secrets: ["GMAIL_PASSWORD"]}).auth.user().onCreate((user) => {
+exports.sendWelcomeEmail = functions.runWith({secrets: [gmailPassword]}).auth.user().onCreate((user) => {
 // [END onCreateTrigger]
   // [START eventAttributes]
   const email = user.email; // The email of the user.
@@ -52,7 +64,7 @@ exports.sendWelcomeEmail = functions.runWith({secrets: ["GMAIL_PASSWORD"]}).auth
  * Send an account deleted email confirmation to users who delete their accounts.
  */
 // [START onDeleteTrigger]
-exports.sendByeEmail = functions.runWith({secrets: ["GMAIL_PASSWORD"]}).auth.user().onDelete((user) => {
+exports.sendByeEmail = functions.runWith({secrets: [gmailPassword]}).auth.user().onDelete((user) => {
 // [END onDeleteTrigger]
   const email = user.email;
   const displayName = user.displayName;
@@ -63,14 +75,6 @@ exports.sendByeEmail = functions.runWith({secrets: ["GMAIL_PASSWORD"]}).auth.use
 
 // Sends a welcome email to the given user.
 async function sendWelcomeEmail(email, displayName) {
-  const mailTransport = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: GMAIL_EMAIL.value(),
-      pass: GMAIL_PASSWORD.value(),
-    },
-  });
-
   const mailOptions = {
     from: `${APP_NAME} <noreply@firebase.com>`,
     to: email,
@@ -86,14 +90,6 @@ async function sendWelcomeEmail(email, displayName) {
 
 // Sends a goodbye email to the given user.
 async function sendGoodbyeEmail(email, displayName) {
-  const mailTransport = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: GMAIL_EMAIL.value(),
-      pass: GMAIL_PASSWORD.value(),
-    },
-  });
-
   const mailOptions = {
     from: `${APP_NAME} <noreply@firebase.com>`,
     to: email,

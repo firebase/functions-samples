@@ -16,6 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
 const {defineString, defineSecret} = require('firebase-functions/params');
 const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
@@ -24,15 +25,19 @@ const nodemailer = require('nodemailer');
 const gmailEmail = defineString('GMAIL_EMAIL');
 const gmailPassword = defineSecret('GMAIL_PASSWORD');
 
-// Sends an email confirmation when a user changes his mailing list subscription.
-exports.sendEmailConfirmation = functions.runWith({secrets: ["GMAIL_PASSWORD"]}).database.ref('/users/{uid}').onWrite(async (change) => {
-  const mailTransport = nodemailer.createTransport({
+let mailTransport;
+onInit(() => {
+  mailTransport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: gmailEmail.value(),
       pass: gmailPassword.value(),
     },
   });
+});
+
+// Sends an email confirmation when a user changes his mailing list subscription.
+exports.sendEmailConfirmation = functions.runWith({secrets: [gmailPassword]}).database.ref('/users/{uid}').onWrite(async (change) => {
   // Early exit if the 'subscribedToMailingList' field has not changed
   if (change.after.child('subscribedToMailingList').val() === change.before.child('subscribedToMailingList').val()) {
     return null;

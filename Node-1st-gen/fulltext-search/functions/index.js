@@ -16,6 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
 const {defineSecret} = require('firebase-functions/params');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -26,13 +27,17 @@ const algoliasearch = require('algoliasearch').default;
 const algoliaAppId = defineSecret('ALGOLIA_APP_ID');
 const algoliaApiKey = defineSecret('ALGOLIA_API_KEY');
 
+let client;
+onInit(() => {
+  client = algoliasearch(algoliaAppId.value(), algoliaApiKey.value());
+});
+
 // Name fo the algolia index for Blog posts content.
 const ALGOLIA_POSTS_INDEX_NAME = 'blogposts';
 
 // Updates the search index when new blog entries are created or updated.
-exports.indexentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API_KEY"]}).database.ref('/blog-posts/{blogid}/text').onWrite(
+exports.indexentry = functions.runWith({secrets: [algoliaAppId, algoliaApiKey]}).database.ref('/blog-posts/{blogid}/text').onWrite(
     async (data, context) => {
-      const client = algoliasearch(algoliaAppId.value(), algoliaApiKey.value());
       const index = client.initIndex(ALGOLIA_POSTS_INDEX_NAME);
       const firebaseObject = {
         text: data.after.val(),
@@ -45,9 +50,8 @@ exports.indexentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API
 
 // Starts a search query whenever a query is requested (by adding one to the `/search/queries`
 // element. Search results are then written under `/search/results`.
-exports.searchentry = functions.runWith({secrets: ["ALGOLIA_APP_ID", "ALGOLIA_API_KEY"]}).database.ref('/search/queries/{queryid}').onCreate(
+exports.searchentry = functions.runWith({secrets: [algoliaAppId, algoliaApiKey]}).database.ref('/search/queries/{queryid}').onCreate(
     async (snap, context) => {
-      const client = algoliasearch(algoliaAppId.value(), algoliaApiKey.value());
       const index = client.initIndex(ALGOLIA_POSTS_INDEX_NAME);
 
       const query = snap.val().query;
