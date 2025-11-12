@@ -18,7 +18,7 @@ The dependencies are listed in [functions/package.json](functions/package.json).
  - Set the sample to use your Firebase project using `firebase use --add` and select your new Firebase project.
  - Set your Bit.ly app's access token on your function by running:
      ```bash
-     firebase functions:config:set bitly.access_token=XXXXXXXXXXXXX
+     firebase functions:secrets:set BITLY_ACCESS_TOKEN
      ```
  - Deploy the function using `firebase deploy`
  - Manually add an object to the Realtime Database following the structure described below.

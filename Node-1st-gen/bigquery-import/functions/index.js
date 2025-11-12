@@ -16,18 +16,22 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {defineString} = require('firebase-functions/params');
 const { BigQuery } = require('@google-cloud/bigquery');
 
 const bigquery = new BigQuery();
+
+const bigqueryDatasetname = defineString('BIGQUERY_DATASETNAME');
+const bigqueryTablename = defineString('BIGQUERY_TABLENAME');
 
 /**
  * Writes all logs from the Realtime Database into bigquery.
  */
 exports.addtobigquery = functions.database.ref('/logs/{logid}').onCreate((snapshot) => {
-  // TODO: Make sure you set the `bigquery.datasetName` Google Cloud environment variable.
-  const dataset = bigquery.dataset(functions.config().bigquery.datasetname);
-  // TODO: Make sure you set the `bigquery.tableName` Google Cloud environment variable.
-  const table = dataset.table(functions.config().bigquery.tablename);
+  // TODO: Make sure you set the `BIGQUERY_DATASETNAME` environment variable.
+  const dataset = bigquery.dataset(bigqueryDatasetname.value());
+  // TODO: Make sure you set the `BIGQUERY_TABLENAME` environment variable.
+  const table = dataset.table(bigqueryTablename.value());
 
   return table.insert({
     ID: snapshot.key,

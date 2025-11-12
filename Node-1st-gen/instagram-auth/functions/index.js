@@ -16,6 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
+const {defineSecret} = require('firebase-functions/params');
 const cookieParser = require('cookie-parser');
 const crypto = require('node:crypto');
 
@@ -31,32 +33,31 @@ admin.initializeApp({
 const OAUTH_REDIRECT_URI = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`;
 const OAUTH_SCOPES = 'basic';
 
-/**
- * Creates a configured simple-oauth2 client for Instagram.
- */
-function instagramOAuth2Client() {
+const instagramClientId = defineSecret('INSTAGRAM_CLIENT_ID');
+const instagramClientSecret = defineSecret('INSTAGRAM_CLIENT_SECRET');
+
+let oauth2;
+onInit(() => {
   // Instagram OAuth 2 setup
-  // TODO: Configure the `instagram.client_id` and `instagram.client_secret` Google Cloud environment variables.
+  // TODO: Configure the `INSTAGRAM_CLIENT_ID` and `INSTAGRAM_CLIENT_SECRET` secrets.
   const credentials = {
     client: {
-      id: functions.config().instagram.client_id,
-      secret: functions.config().instagram.client_secret,
+      id: instagramClientId.value(),
+      secret: instagramClientSecret.value(),
     },
     auth: {
       tokenHost: 'https://api.instagram.com',
       tokenPath: '/oauth/access_token',
     },
   };
-  return require('simple-oauth2').create(credentials);
-}
+  oauth2 = require('simple-oauth2').create(credentials);
+});
 
 /**
  * Redirects the User to the Instagram authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
-  const oauth2 = instagramOAuth2Client();
-
+exports.redirect = functions.runWith({secrets: [instagramClientId, instagramClientSecret]}).https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     functions.logger.log('Setting verification state:', state);
@@ -81,9 +82,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token, display name, photo URL and Instagram acces token are sent back in a JSONP callback
  * function with function name defined by the 'callback' query parameter.
  */
-exports.token = functions.https.onRequest(async (req, res) => {
-  const oauth2 = instagramOAuth2Client();
-
+exports.token = functions.runWith({secrets: [instagramClientId, instagramClientSecret]}).https.onRequest(async (req, res) => {
   try {
     return cookieParser()(req, res, async () => {
       functions.logger.log('Received verification state:', req.cookies.state);

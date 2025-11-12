@@ -30,11 +30,11 @@ The dependencies are listed in [functions/package.json](functions/package.json).
  1. Setup [your Paypal API Client ID and Secret](https://developer.paypal.com/developer/applications/) in your Cloud Function. Run in the command line:
   
     ```sh
-    firebase functions:config:set paypal.client_id="yourPaypalClientID"
+    firebase functions:secrets:set PAYPAL_CLIENT_ID
     ```
 
     ```sh
-    firebase functions:config:set paypal.client_secret="yourPaypalClientSecret"
+    firebase functions:secrets:set PAYPAL_CLIENT_SECRET
     ```
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
 

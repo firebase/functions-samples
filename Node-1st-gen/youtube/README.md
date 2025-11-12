@@ -40,7 +40,7 @@ default it will return information about the
    Firebase CLI, select your Project ID and follow the instructions.
 1. Set the YouTube API key as an environment variable:
     ```bash
-    firebase functions:config:set youtube.key="THE API KEY"
+    firebase functions:secrets:set YOUTUBE_KEY
     ```
 
 ### Run your function locally with the Firebase Emulator Suite
@@ -48,8 +48,6 @@ default it will return information about the
 1. Set up the Firebase emulators with your config ([docs](https://firebase.google.com/docs/functions/local-emulator#set_up_functions_configuration_optional)):
     ```bash
     cd functions
-
-    firebase functions:config:get > .runtimeconfig.json
     ```
 1. Run the following command to start the emulator:
     ```bash

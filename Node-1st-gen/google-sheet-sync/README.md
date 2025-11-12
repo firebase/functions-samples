@@ -33,16 +33,17 @@ To deploy and test the sample:
  1. Using the Google APIs Console [create an OAuth Client ID](https://console.cloud.google.com/apis/credentials/oauthclient?project=_) Click this link, select your project and then choose **Web Application**. In **Authorized redirect URIs**, you’ll need to enter `https://{YOUR-PROJECT-ID}.firebaseapp.com/oauthcallback`.
  1. Configure your Google API client ID and secret by running:
     ```bash
-    firebase functions:config:set googleapi.client_id="YOUR_CLIENT_ID" googleapi.client_secret="YOUR_CLIENT_SECRET"
+    firebase functions:secrets:set GOOGLEAPI_CLIENT_ID
+    firebase functions:secrets:set GOOGLEAPI_CLIENT_SECRET
     ```
  1. Create a new Google Sheet, and copy the long string in the middle of the Sheet URL. This is the Spreadsheet ID.
  1. Configure your Google Spreadsheet ID by running:
     ```bash
-    firebase functions:config:set googleapi.sheet_id="YOUR_SPREADSHEET_ID"
+    Add the following configuration to your `.env` file:
     ```
- 1. Specify the path of the data in the Realtime Database that you want automatically copied to your Spreadsheet:
-    ```bash
-    firebase functions:config:set watchedpaths.data_path="THE_DATA_PATH_YOU_WANT"
+GOOGLEAPI_SHEET_ID="YOUR_SPREADSHEET_ID"
+WATCHEDPATHS_DATA_PATH="THE_DATA_PATH_YOU_WANT"
+```
     ```
  1. Deploy your project using `firebase deploy`
  1. Configure the app once by opening the following URL and going through the auth flow `https://{YOUR-PROJET-ID}.firebaseapp.com/authgoogleapi`

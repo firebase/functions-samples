@@ -20,7 +20,8 @@ Create and setup your Spotify app:
  1. Copy the **Client ID** and **Client Secret** of your Spotify app and use them to set the `spotify.client_id` and `spotify.client_secret` Google Cloud environment variables. For this use:
 
     ```bash
-    firebase functions:config:set spotify.client_id="yourClientID" spotify.client_secret="yourClientSecret"
+    firebase functions:secrets:set SPOTIFY_CLIENT_ID
+    firebase functions:secrets:set SPOTIFY_CLIENT_SECRET
     ```
 
  > Make sure the Spotify Client Secret is always kept secret. For instance do not save this in your version control system.

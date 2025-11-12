@@ -16,6 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
+const {defineSecret} = require('firebase-functions/params');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const { Logging } = require('@google-cloud/logging');
@@ -24,8 +26,13 @@ const logging = new Logging({
 });
 
 const { Stripe } = require('stripe');
-const stripe = new Stripe(functions.config().stripe.secret, {
-  apiVersion: '2020-08-27',
+const stripeSecret = defineSecret('STRIPE_SECRET');
+
+let stripe;
+onInit(() => {
+  stripe = new Stripe(stripeSecret.value(), {
+    apiVersion: '2020-08-27',
+  });
 });
 
 /**
@@ -33,7 +40,7 @@ const stripe = new Stripe(functions.config().stripe.secret, {
  *
  * @see https://stripe.com/docs/payments/save-and-reuse#web-create-customer
  */
-exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
+exports.createStripeCustomer = functions.runWith({secrets: [stripeSecret]}).auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
   const intent = await stripe.setupIntents.create({
     customer: customer.id,
@@ -49,7 +56,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
  * When adding the payment method ID on the client,
  * this function is triggered to retrieve the payment method details.
  */
-exports.addPaymentMethodDetails = functions.firestore
+exports.addPaymentMethodDetails = functions.runWith({secrets: [stripeSecret]}).firestore
   .document('/stripe_customers/{userId}/payment_methods/{pushId}')
   .onCreate(async (snap, context) => {
     try {
@@ -84,7 +91,7 @@ exports.addPaymentMethodDetails = functions.firestore
 
 // [START chargecustomer]
 
-exports.createStripePayment = functions.firestore
+exports.createStripePayment = functions.runWith({secrets: [stripeSecret]}).firestore
   .document('stripe_customers/{userId}/payments/{pushId}')
   .onCreate(async (snap, context) => {
     const { amount, currency, payment_method } = snap.data();
@@ -125,7 +132,7 @@ exports.createStripePayment = functions.firestore
  *
  * @see https://stripe.com/docs/payments/accept-a-payment-synchronously#web-confirm-payment
  */
-exports.confirmStripePayment = functions.firestore
+exports.confirmStripePayment = functions.runWith({secrets: [stripeSecret]}).firestore
   .document('stripe_customers/{userId}/payments/{pushId}')
   .onUpdate(async (change, context) => {
     if (change.after.data().status === 'requires_confirmation') {
@@ -139,7 +146,7 @@ exports.confirmStripePayment = functions.firestore
 /**
  * When a user deletes their account, clean up after them
  */
-exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
+exports.cleanupUser = functions.runWith({secrets: [stripeSecret]}).auth.user().onDelete(async (user) => {
   const dbRef = admin.firestore().collection('stripe_customers');
   const customer = (await dbRef.doc(user.uid).get()).data();
   await stripe.customers.del(customer.customer_id);

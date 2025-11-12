@@ -20,7 +20,8 @@ Create and setup your LinkedIn app:
  1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and use them to set the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables. For this use:
 
     ```bash
-    firebase functions:config:set linkedin.client_id="yourClientID" linkedin.client_secret="yourClientSecret"
+    firebase functions:secrets:set LINKEDIN_CLIENT_ID
+    firebase functions:secrets:set LINKEDIN_CLIENT_SECRET
     ```
 
  > Make sure the LinkedIn Client Secret is always kept secret. For instance do not save this in your version control system.

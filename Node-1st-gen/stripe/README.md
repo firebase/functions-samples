@@ -32,7 +32,7 @@ This sample shows you how to create Stripe customers when your users sign up, se
 - Install dependencies locally by running: `cd functions; npm install; cd -`
 - [Add your Stripe API Secret Key](https://dashboard.stripe.com/account/apikeys) to firebase config:
   ```bash
-  firebase functions:config:set stripe.secret=<YOUR STRIPE SECRET KEY>
+  firebase functions:secrets:set STRIPE_SECRET
   ```
 - Set your [Stripe publishable key](https://dashboard.stripe.com/account/apikeys) for the `STRIPE_PUBLISHABLE_KEY` const in [`/public/javascript/app.js`](./public/javascript/app.js#L16)
 - Deploy your project using `firebase deploy`
@@ -54,7 +54,7 @@ Once you’re ready to go live, you will need to exchange your test keys for you
 
 - Update your Stripe secret config:
   ```bash
-  firebase functions:config:set stripe.secret=<YOUR STRIPE LIVE SECRET KEY>
+  firebase functions:secrets:set STRIPE_SECRET
   ```
 - Set your [live publishable key](https://dashboard.stripe.com/account/apikeys) for the `STRIPE_PUBLISHABLE_KEY` const in [`/public/javascript/app.js`](./public/javascript/app.js#L16).
 - Redeploy both functions and hosting for the changes to take effect `firebase deploy`.

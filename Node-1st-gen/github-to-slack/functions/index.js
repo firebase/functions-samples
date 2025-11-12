@@ -16,19 +16,23 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {defineSecret} = require('firebase-functions/params');
 const crypto = require('node:crypto');
 const secureCompare = require('secure-compare');
+
+const githubSecret = defineSecret('GITHUB_SECRET');
+const slackWebhookUrl = defineSecret('SLACK_WEBHOOK_URL');
 
 /**
  * Webhook that will be called each time there is a new GitHub commit and will post a message to
  * Slack.
  */
-exports.githubWebhook = functions.https.onRequest(async (req, res) => {
+exports.githubWebhook = functions.runWith({secrets: [githubSecret, slackWebhookUrl]}).https.onRequest(async (req, res) => {
   const cipher = 'sha1';
   const signature = req.headers['x-hub-signature'];
 
-  // TODO: Configure the `github.secret` Google Cloud environment variables.
-  const hmac = crypto.createHmac(cipher, functions.config().github.secret)
+  // TODO: Configure the `GITHUB_SECRET` secret.
+  const hmac = crypto.createHmac(cipher, githubSecret.value())
       .update(req.rawBody)
       .digest('hex');
   const expectedSignature = `${cipher}=${hmac}`;
@@ -58,7 +62,7 @@ exports.githubWebhook = functions.https.onRequest(async (req, res) => {
  * Post a message to Slack about the new GitHub commit.
  */
 async function postToSlack(url, commits, repo) {
-  const response = await fetch(functions.config().slack.webhook_url, {
+  const response = await fetch(slackWebhookUrl.value(), {
     method: "POST",
     body: JSON.stringify({
       text: `<${url}|${commits} new commit${
