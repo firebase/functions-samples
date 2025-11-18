@@ -46,7 +46,7 @@ exports.verifyComment = onDocumentWrittenWithAuthContext(
         }
       }
 
-      // add auth medadata to the document
+      // add auth metadata to the document
       return snapshot.ref.set(
           {
             created_by: authId ?? "undefined",
