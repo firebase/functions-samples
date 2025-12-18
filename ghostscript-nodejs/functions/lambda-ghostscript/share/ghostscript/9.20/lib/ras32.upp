@@ -1,0 +1,8 @@
+-supModel="SUN rasterfile, 32 Bit, 6+1 Colors (CMYK-Error-Diffusion)"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceCMYK
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/SunRaster
+

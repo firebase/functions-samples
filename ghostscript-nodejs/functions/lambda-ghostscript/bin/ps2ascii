@@ -1,0 +1,21 @@
+#!/bin/sh
+# Extract ASCII text from a PostScript file.  Usage:
+#	ps2ascii [infile.ps [outfile.txt]]
+# If outfile is omitted, output goes to stdout.
+# If both infile and outfile are omitted, ps2ascii acts as a filter,
+# reading from stdin and writing on stdout.
+
+# This definition is changed on install to match the
+# executable name set in the makefile
+GS_EXECUTABLE=gs
+
+trap "rm -f _temp_.err _temp_.out" 0 1 2 15
+
+OPTIONS="-q -dNODISPLAY -P- -dSAFER -dDELAYBIND -dWRITESYSTEMDICT -dSIMPLE"
+if ( test $# -eq 0 ) then
+	$GS_EXECUTABLE $OPTIONS -c save -f ps2ascii.ps - -c quit
+elif ( test $# -eq 1 ) then
+	$GS_EXECUTABLE $OPTIONS -c save -f ps2ascii.ps "$1" -c quit
+else
+	$GS_EXECUTABLE $OPTIONS -c save -f ps2ascii.ps "$1" -c quit >"$2"
+fi

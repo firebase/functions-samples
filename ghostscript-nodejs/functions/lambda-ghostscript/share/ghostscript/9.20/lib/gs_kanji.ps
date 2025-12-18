@@ -1,0 +1,157 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Scaffolding for Kanji fonts.  This is based on the Wadalab free font
+% from the University of Tokyo; it may not be appropriate for other
+% Kanji fonts.
+
+/currentglobal where
+ { pop currentglobal { setglobal } true setglobal }
+ { { } }
+ifelse
+
+% Define the encoding for the root font.
+
+/KanjiEncoding
+% \x00
+        0	0	0	0	0	0	0	0
+        0	0	0	0	0	0	0	0
+        0	0	0	0	0	0	0	0
+        0	0	0	0	0	0	0	0
+% \x20
+        0	1	2	3	4	5	6	7
+        8	0	0	0	0	0	0	0
+        9	10	11	12	13	14	15	16
+        17	18	19	20	21	22	23	24
+% \x40
+        25	26	27	28	29	30	31	32
+        33	34	35	36	37	38	39	40
+        41	42	43	44	45	46	47	48
+        49	50	51	52	53	54	55	56
+% \x60
+        57	58	59	60	61	62	63	64
+        65	66	67	68	69	70	71	72
+        73	74	75	76	77	0	0	0
+        0	0	0	0	0	0	0	0
+% \x80
+        0	0	0	0	0	0	0	0
+        0	0	0	0	0	0	0	0
+        0	0	0	0	0	0	0	0
+        0	0	0	0	0	0	0	0
+% \xA0
+        0	1	2	3	4	5	6	7
+        8	0	0	0	0	0	0	0
+        9	10	11	12	13	14	15	16
+        17	18	19	20	21	22	23	24
+% \xC0
+        25	26	27	28	29	30	31	32
+        33	34	35	36	37	38	39	40
+        41	42	43	44	45	46	47	48
+        49	50	51	52	53	54	55	56
+% \xE0
+        57	58	59	60	61	62	63	64
+        65	66	67	68	69	70	71	72
+        73	74	75	76	77	0	0	0
+        0	0	0	0	0	0	0	0
+256 packedarray def
+
+% Define a stub for the base font encoding.
+
+  /KanjiSubEncoding { /KanjiSubEncoding .findencoding } bind def
+%% Replace 3 (gs_ksb_e.ps)
+  EncodingDirectory /KanjiSubEncoding
+   { (gs_ksb_e.ps) //systemdict begin runlibfile KanjiSubEncoding end }
+  bind put
+
+% Support procedures and data.
+
+/T1FontInfo 8 dict begin
+  /version (001.001) readonly def
+  /FullName (KanjiBase) readonly def
+  /FamilyName (KanjiBase) readonly def
+  /Weight (Medium) readonly def
+  /ItalicAngle 0 def
+  /isFixedPitch false def
+  /UnderlinePosition 0 def
+  /UnderlineThickness 0 def
+currentdict end readonly def
+
+/T1NF			% <fontname> T1NF <font>
+{
+20 dict begin
+  /FontName exch def
+  /FontType 1 def
+  /FontInfo T1FontInfo def
+  /FontMatrix [.001 0 0 .001 0 0] def
+  /FontBBox [0 0 1000 1000] def
+  /Encoding KanjiSubEncoding def
+  /CharStrings 150 dict def
+  /PaintType 0 def
+  /Private 2 dict def
+  Private begin
+    /BlueValues [] def
+    /password 5839 def
+  end
+FontName currentdict end definefont
+} def
+
+/T0NF			% <fontname> T0NF <font>
+{
+20 dict begin
+  /FontName exch def
+  /FDepVector exch def
+  /FontType 0 def
+  /FontMatrix [1 0 0 1 0 0] def
+  /FMapType 2 def
+  /Encoding KanjiEncoding def
+FontName currentdict end definefont
+} def
+
+% Define the composite font and all the base fonts.
+
+/CompNF			% <fontname> CompNF <font>
+{
+/newname1 exch def
+newname1 dup length string cvs /str exch def
+str length /len exch def
+/fdepvector 78 array def
+/j 1 def
+16#21 1 16#74 {
+/i exch def
+KanjiEncoding i get 0 gt {
+len 4 add string /newstr exch def
+newstr 0 str putinterval
+newstr len (.r) putinterval
+newstr len 2 add  i 16 2 string cvrs putinterval
+newstr cvn /newlit exch def
+newlit T1NF /newfont exch def
+fdepvector j newfont put
+/j j 1 add def
+} if
+} for
+fdepvector 0 fdepvector 1 get put
+/j 0 def
+fdepvector newname1 T0NF
+} def
+
+% Define an individual character in a composite font.
+/CompD			% <charstring> <(HL)> CompD -
+ { currentfont /Encoding get 1 index 0 get get	% FDepVector index
+   currentfont /FDepVector get exch get		% base font
+   dup /Encoding get 3 -1 roll 1 get get	% base font character name
+   exch /CharStrings get exch 3 -1 roll put
+ } bind def
+
+exec
