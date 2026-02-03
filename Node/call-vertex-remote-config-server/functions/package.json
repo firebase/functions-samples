@@ -15,7 +15,7 @@
   "dependencies": {
     "@google-cloud/vertexai": "^1.2.0",
     "cors": "^2.8.5",
-    "eslint": "8",
+    "eslint": "9",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "7.0.0"
   },
