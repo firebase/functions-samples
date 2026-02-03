@@ -2,7 +2,7 @@
   "name": "delete-old-child-nodes",
   "description": "Delete nodes of a Realtime Database collection that are older than a given threshold.",
   "dependencies": {
-    "eslint": "8",
+    "eslint": "9",
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "7.0.0"
