@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions/v1');
+const { defineString, defineSecret } = require('firebase-functions/params');
 
 // [START init_elastic]
 const { Client } = require("@elastic/elasticsearch");
@@ -22,22 +23,34 @@ const { Client } = require("@elastic/elasticsearch");
 // https://github.com/elastic/elasticsearch-js
 //
 // ID, username, and password are stored in functions config variables
-const ELASTIC_ID = functions.config().elastic.id;
-const ELASTIC_USERNAME = functions.config().elastic.username;
-const ELASTIC_PASSWORD = functions.config().elastic.password;
+const elasticId = defineString('ELASTIC_ID', {
+  label: 'Elastic ID',
+  description: 'Elastic ID. Formerly functions.config().elastic.id',
+});
+const elasticUsername = defineString('ELASTIC_USERNAME', {
+  label: 'Elastic Username',
+  description: 'Elastic username. Formerly functions.config().elastic.username',
+});
+const elasticPassword = defineSecret('ELASTIC_PASSWORD', {
+  label: 'Elastic Password',
+  description: 'Elastic password. Formerly functions.config().elastic.password',
+});
 
-const client = new Client({
-  cloud: {
-    id: ELASTIC_ID,
-    username: ELASTIC_USERNAME,
-    password: ELASTIC_PASSWORD,
-  }
+let client;
+functions.onInit(() => {
+  client = new Client({
+    cloud: {
+      id: elasticId.value(),
+      username: elasticUsername.value(),
+      password: elasticPassword.value(),
+    }
+  });
 });
 // [END init_elastic]
 
 // [START update_index_function_elastic]
 // Update the search index every time a blog post is written.
-exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(async (snap, context) => {
+exports.onNoteCreated = functions.runWith({ secrets: [elasticPassword] }).firestore.document('notes/{noteId}').onCreate(async (snap, context) => {
   // Get the note document
   const note = snap.data();
 
@@ -54,7 +67,7 @@ exports.onNoteCreated = functions.firestore.document('notes/{noteId}').onCreate(
 // [END update_index_function_elastic]
 
 // [START search_function_elastic]
-exports.searchNotes = functions.https.onCall(async (data, context) => {
+exports.searchNotes = functions.runWith({ secrets: [elasticPassword] }).https.onCall(async (data, context) => {
   const query = data.query;
 
   // Search for any notes where the text field contains the query text.

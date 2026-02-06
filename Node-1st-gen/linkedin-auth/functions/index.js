@@ -16,6 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const { defineString, defineSecret, projectID } = require('firebase-functions/params');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 
@@ -23,9 +24,21 @@ const crypto = require('crypto');
 const admin = require('firebase-admin');
 // @ts-ignore
 const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
+
+const linkedinClientId = defineString('LINKEDIN_CLIENT_ID', {
+  label: 'LinkedIn Client ID',
+  description: 'LinkedIn Client ID. Formerly functions.config().linkedin.client_id',
+});
+const linkedinClientSecret = defineSecret('LINKEDIN_CLIENT_SECRET', {
+  label: 'LinkedIn Client Secret',
+  description: 'LinkedIn Client Secret. Formerly functions.config().linkedin.client_secret',
+});
+
+functions.onInit(() => {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${projectID.value()}.firebaseio.com`,
+  });
 });
 
 const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
@@ -35,18 +48,17 @@ const OAUTH_SCOPES = ['r_basicprofile', 'r_emailaddress'];
  */
 function linkedInClient() {
   // LinkedIn OAuth 2 setup
-  // TODO: Configure the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables.
   return require('node-linkedin')(
-      functions.config().linkedin.client_id,
-      functions.config().linkedin.client_secret,
-      `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`);
+    linkedinClientId.value(),
+    linkedinClientSecret.value(),
+    `https://${projectID.value()}.firebaseapp.com/popup.html`);
 }
 
 /**
  * Redirects the User to the LinkedIn authentication consent screen. ALso the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
+exports.redirect = functions.runWith({ secrets: [linkedinClientSecret] }).https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   cookieParser()(req, res, () => {
@@ -67,7 +79,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
  * 'callback' query parameter.
  */
-exports.token = functions.https.onRequest((req, res) => {
+exports.token = functions.runWith({ secrets: [linkedinClientSecret] }).https.onRequest((req, res) => {
   const Linkedin = linkedInClient();
 
   try {

@@ -16,15 +16,27 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const { defineString, defineSecret } = require('firebase-functions/params');
 const paypal = require('paypal-rest-sdk');
 // firebase-admin SDK init
 const admin = require('firebase-admin');
 admin.initializeApp();
-// Configure your environment
-paypal.configure({
-  mode: 'sandbox', // sandbox or live
-  client_id: functions.config().paypal.client_id, // run: firebase functions:config:set paypal.client_id="yourPaypalClientID"
-  client_secret: functions.config().paypal.client_secret // run: firebase functions:config:set paypal.client_secret="yourPaypalClientSecret"
+
+const paypalClientId = defineString('PAYPAL_CLIENT_ID', {
+  label: 'Paypal Client ID',
+  description: 'Paypal Client ID. Formerly functions.config().paypal.client_id',
+});
+const paypalClientSecret = defineSecret('PAYPAL_CLIENT_SECRET', {
+  label: 'Paypal Client Secret',
+  description: 'Paypal Client Secret. Formerly functions.config().paypal.client_secret',
+});
+
+functions.onInit(() => {
+  paypal.configure({
+    mode: 'sandbox', // sandbox or live
+    client_id: paypalClientId.value(),
+    client_secret: paypalClientSecret.value()
+  });
 });
 
 /**
@@ -32,7 +44,7 @@ paypal.configure({
  * Set up the payment information object
  * Initialize the payment and redirect the user to the PayPal payment page
  */
-exports.pay = functions.https.onRequest((req, res) => {
+exports.pay = functions.runWith({ secrets: [paypalClientSecret] }).https.onRequest((req, res) => {
   // 1.Set up a payment information object, Build PayPal payment request
   const payReq = JSON.stringify({
     intent: 'sale',
@@ -72,7 +84,7 @@ exports.pay = functions.https.onRequest((req, res) => {
         };
       });
       // If redirect url present, redirect user
-      if ( Object.prototype.hasOwnProperty.call(links, 'approval_url')) {
+      if (Object.prototype.hasOwnProperty.call(links, 'approval_url')) {
         // REDIRECT USER TO links['approval_url'].href
         functions.logger.info(links.approval_url.href);
         // res.json({"approval_url":links.approval_url.href});
@@ -86,7 +98,7 @@ exports.pay = functions.https.onRequest((req, res) => {
 });
 
 // 3.Complete the payment. Use the payer and payment IDs provided in the query string following the redirect.
-exports.process = functions.https.onRequest(async (req, res) => {
+exports.process = functions.runWith({ secrets: [paypalClientSecret] }).https.onRequest(async (req, res) => {
   const paymentId = req.query.paymentId;
   const payerId = {
     payer_id: req.query.PayerID

@@ -16,6 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const { defineString, defineSecret, projectID } = require('firebase-functions/params');
 const cookieParser = require('cookie-parser');
 const crypto = require('node:crypto');
 
@@ -23,12 +24,25 @@ const crypto = require('node:crypto');
 const admin = require('firebase-admin');
 // @ts-ignore
 const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
+
+const instagramClientId = defineString('INSTAGRAM_CLIENT_ID', {
+  label: 'Instagram Client ID',
+  description: 'Instagram Client ID. Formerly functions.config().instagram.client_id',
+});
+const instagramClientSecret = defineSecret('INSTAGRAM_CLIENT_SECRET', {
+  label: 'Instagram Client Secret',
+  description: 'Instagram Client Secret. Formerly functions.config().instagram.client_secret',
 });
 
-const OAUTH_REDIRECT_URI = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`;
+let oauthRedirectUri;
+functions.onInit(() => {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${projectID.value()}.firebaseio.com`,
+  });
+  oauthRedirectUri = `https://${projectID.value()}.firebaseapp.com/popup.html`;
+});
+
 const OAUTH_SCOPES = 'basic';
 
 /**
@@ -36,11 +50,10 @@ const OAUTH_SCOPES = 'basic';
  */
 function instagramOAuth2Client() {
   // Instagram OAuth 2 setup
-  // TODO: Configure the `instagram.client_id` and `instagram.client_secret` Google Cloud environment variables.
   const credentials = {
     client: {
-      id: functions.config().instagram.client_id,
-      secret: functions.config().instagram.client_secret,
+      id: instagramClientId.value(),
+      secret: instagramClientSecret.value(),
     },
     auth: {
       tokenHost: 'https://api.instagram.com',
@@ -54,7 +67,7 @@ function instagramOAuth2Client() {
  * Redirects the User to the Instagram authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
+exports.redirect = functions.runWith({ secrets: [instagramClientSecret] }).https.onRequest((req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   cookieParser()(req, res, () => {
@@ -66,7 +79,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
       httpOnly: true,
     });
     const redirectUri = oauth2.authorizationCode.authorizeURL({
-      redirect_uri: OAUTH_REDIRECT_URI,
+      redirect_uri: oauthRedirectUri,
       scope: OAUTH_SCOPES,
       state: state,
     });
@@ -81,7 +94,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token, display name, photo URL and Instagram acces token are sent back in a JSONP callback
  * function with function name defined by the 'callback' query parameter.
  */
-exports.token = functions.https.onRequest(async (req, res) => {
+exports.token = functions.runWith({ secrets: [instagramClientSecret] }).https.onRequest(async (req, res) => {
   const oauth2 = instagramOAuth2Client();
 
   try {
@@ -96,22 +109,22 @@ exports.token = functions.https.onRequest(async (req, res) => {
       functions.logger.log('Received auth code:', req.query.code);
       const results = await oauth2.authorizationCode.getToken({
         code: req.query.code,
-        redirect_uri: OAUTH_REDIRECT_URI,
+        redirect_uri: oauthRedirectUri,
       });
       functions.logger.log('Auth code exchange result received:', results);
 
-        // We have an Instagram access token and the user identity now.
-        const accessToken = results.access_token;
-        const instagramUserID = results.user.id;
-        const profilePic = results.user.profile_picture;
-        const userName = results.user.full_name;
+      // We have an Instagram access token and the user identity now.
+      const accessToken = results.access_token;
+      const instagramUserID = results.user.id;
+      const profilePic = results.user.profile_picture;
+      const userName = results.user.full_name;
 
       // Create a Firebase account and get the Custom Auth Token.
       const firebaseToken = await createFirebaseAccount(instagramUserID, userName, profilePic, accessToken);
       // Serve an HTML page that signs the user in and updates the user profile.
-      return res.jsonp({ token: firebaseToken});
+      return res.jsonp({ token: firebaseToken });
     });
-  } catch(error) {
+  } catch (error) {
     return res.jsonp({
       error: error.toString(),
     });

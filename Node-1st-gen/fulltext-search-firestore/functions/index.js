@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions/v1');
+const { defineString, defineSecret } = require('firebase-functions/params');
 const algoliasearch = require('algoliasearch').default;
 
 // [START init_algolia]
@@ -21,12 +22,24 @@ const algoliasearch = require('algoliasearch').default;
 // https://www.algolia.com/doc/api-client/javascript/getting-started/#install
 //
 // App ID and API Key are stored in functions config variables
-const ALGOLIA_ID = functions.config().algolia.app_id;
-const ALGOLIA_ADMIN_KEY = functions.config().algolia.api_key;
-const ALGOLIA_SEARCH_KEY = functions.config().algolia.search_key;
+const algoliaAppId = defineString('ALGOLIA_APP_ID', {
+  label: 'Algolia App ID',
+  description: 'Algolia App ID. Formerly functions.config().algolia.app_id',
+});
+const algoliaAdminKey = defineSecret('ALGOLIA_ADMIN_KEY', {
+  label: 'Algolia Admin Key',
+  description: 'Algolia Admin Key. Formerly functions.config().algolia.api_key',
+});
+const algoliaSearchKey = defineSecret('ALGOLIA_SEARCH_KEY', {
+  label: 'Algolia Search Key',
+  description: 'Algolia Search Key. Formerly functions.config().algolia.search_key',
+});
 
 const ALGOLIA_INDEX_NAME = 'notes';
-const client = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY);
+let client;
+functions.onInit(() => {
+  client = algoliasearch(algoliaAppId.value(), algoliaAdminKey.value());
+});
 // [END init_algolia]
 
 // [START update_index_function]
@@ -71,7 +84,7 @@ async function getFirebaseUser(req, res, next) {
     functions.logger.log('ID Token correctly decoded', decodedIdToken);
     req.user = decodedIdToken;
     return next();
-  } catch(error) {
+  } catch (error) {
     functions.logger.error('Error while verifying Firebase ID token:', error);
     return res.status(403).send('Unauthorized');
   }
@@ -85,7 +98,7 @@ const app = require('express')();
 
 // We'll enable CORS support to allow the function to be invoked
 // from our app client-side.
-app.use(require('cors')({origin: true}));
+app.use(require('cors')({ origin: true }));
 
 // Then we'll also use a special 'getFirebaseUser' middleware which
 // verifies the Authorization header and adds a `user` field to the
@@ -108,13 +121,13 @@ app.get('/', (req, res) => {
   };
 
   // Call the Algolia API to generate a unique key based on our search key
-  const key = client.generateSecuredApiKey(ALGOLIA_SEARCH_KEY, params);
+  const key = client.generateSecuredApiKey(algoliaSearchKey.value(), params);
 
   // Then return this key as {key: '...key'}
-  res.json({key});
+  res.json({ key });
 });
 
 // Finally, pass our ExpressJS app to Cloud Functions as a function
 // called 'getSearchKey';
-exports.getSearchKey = functions.https.onRequest(app);
+exports.getSearchKey = functions.runWith({ secrets: [algoliaSearchKey, algoliaAdminKey] }).https.onRequest(app);
 // [END get_algolia_user_token]

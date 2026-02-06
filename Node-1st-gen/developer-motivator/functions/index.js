@@ -17,17 +17,20 @@
 
 const admin = require('firebase-admin');
 const functions = require('firebase-functions/v1');
+const { defineSecret } = require('firebase-functions/params');
 admin.initializeApp();
 
-// TODO: Make sure you configure the 'dev_motivator.device_token' Google Cloud environment variables.
-const deviceToken = functions.config().dev_motivator.device_token;
+const deviceToken = defineSecret('DEVICE_TOKEN', {
+  label: 'Device Token',
+  description: 'Device Token. Formerly functions.config().dev_motivator.device_token',
+});
 
 /**
  * Triggers when the app is opened the first time in a user device and sends a notification to your developer device.
  *
  * The device model name, the city and the country of the user are sent in the notification message
  */
-exports.appinstalled = functions.analytics.event('first_open').onLog((event) => {
+exports.appinstalled = functions.runWith({ secrets: [deviceToken] }).analytics.event('first_open').onLog((event) => {
   const user = event.user;
   const payload = {
     notification: {
@@ -36,7 +39,7 @@ exports.appinstalled = functions.analytics.event('first_open').onLog((event) => 
     }
   };
 
-  return admin.messaging().send({token: deviceToken, notification: payload.notification});
+  return admin.messaging().send({ token: deviceToken.value(), notification: payload.notification });
 });
 
 /**
@@ -46,7 +49,7 @@ exports.appinstalled = functions.analytics.event('first_open').onLog((event) => 
  *
  * The device model name, the city and the country of the user are sent in the notification message
  */
-exports.appremoved = functions.analytics.event('app_remove').onLog((event) => {
+exports.appremoved = functions.runWith({ secrets: [deviceToken] }).analytics.event('app_remove').onLog((event) => {
   const user = event.user;
   const payload = {
     notification: {
@@ -55,5 +58,5 @@ exports.appremoved = functions.analytics.event('app_remove').onLog((event) => {
     }
   };
 
-  return admin.messaging().send({token: deviceToken, notification: payload.notification});
+  return admin.messaging().send({ token: deviceToken.value(), notification: payload.notification });
 });

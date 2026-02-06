@@ -16,16 +16,25 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const { defineString, defineSecret } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const nodemailer = require('nodemailer');
-// Configure the email transport using the default SMTP transport and a GMail account.
-// For other types of transports such as Sendgrid see https://nodemailer.com/transports/
-// TODO: Configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
-const gmailEmail = encodeURIComponent(functions.config().gmail.email);
-const gmailPassword = encodeURIComponent(functions.config().gmail.password);
-const mailTransport = nodemailer.createTransport(
-    `smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com`);
+
+const gmailEmail = defineString('GMAIL_EMAIL', {
+  label: 'Gmail Email',
+  description: 'Gmail email address. Formerly functions.config().gmail.email',
+});
+const gmailPassword = defineSecret('GMAIL_PASSWORD', {
+  label: 'Gmail Password',
+  description: 'Gmail password. Formerly functions.config().gmail.password',
+});
+
+let mailTransport;
+functions.onInit(() => {
+  mailTransport = nodemailer.createTransport(
+    `smtps://${encodeURIComponent(gmailEmail.value())}:${encodeURIComponent(gmailPassword.value())}@smtp.gmail.com`);
+});
 
 // TODO: Create yor own survey.
 const LINK_TO_SURVEY = 'https://goo.gl/forms/IdurnOZ66h3FtlO33';
@@ -34,7 +43,10 @@ const LATEST_VERSION = '2.0';
 /**
  * After a user has updated the app. Send them a survey to compare the app with the old version.
  */
-exports.sendAppUpdateSurvey = functions.analytics.event('app_update').onLog(async (event) => {
+/**
+ * After a user has updated the app. Send them a survey to compare the app with the old version.
+ */
+exports.sendAppUpdateSurvey = functions.runWith({ secrets: [gmailPassword] }).analytics.event('app_update').onLog(async (event) => {
   const uid = event.user.userId;
   const appVerion = event.user.appInfo.appVersion;
 

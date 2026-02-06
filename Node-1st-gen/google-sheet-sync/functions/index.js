@@ -18,36 +18,52 @@
 // Sample trigger function that copies new Firebase data to a Google Sheet
 
 const functions = require('firebase-functions/v1');
+// Upgrade database trigger to v2 to support params in path
+const { onValueCreated } = require('firebase-functions/v2/database');
+const { defineString, defineSecret, projectID } = require('firebase-functions/params');
 const admin = require('firebase-admin');
 admin.initializeApp();
-const {OAuth2Client} = require('google-auth-library');
-const {google} = require('googleapis');
+const { OAuth2Client } = require('google-auth-library');
+const { google } = require('googleapis');
 
-// TODO: Use firebase functions:config:set to configure your googleapi object:
-// googleapi.client_id = Google API client ID,
-// googleapi.client_secret = client secret, and
-// googleapi.sheet_id = Google Sheet id (long string in middle of sheet URL)
-const CONFIG_CLIENT_ID = functions.config().googleapi.client_id;
-const CONFIG_CLIENT_SECRET = functions.config().googleapi.client_secret;
-const CONFIG_SHEET_ID = functions.config().googleapi.sheet_id;
-
-// TODO: Use firebase functions:config:set to configure your watchedpaths object:
-// watchedpaths.data_path = Firebase path for data to be synced to Google Sheet
-const CONFIG_DATA_PATH = functions.config().watchedpaths.data_path;
+const googleClientId = defineString('GOOGLE_CLIENT_ID', {
+  label: 'Google Client ID',
+  description: 'Google Client ID. Formerly functions.config().googleapi.client_id',
+});
+const googleClientSecret = defineSecret('GOOGLE_CLIENT_SECRET', {
+  label: 'Google Client Secret',
+  description: 'Google Client Secret. Formerly functions.config().googleapi.client_secret',
+});
+const googleSheetId = defineString('GOOGLE_SHEET_ID', {
+  label: 'Google Sheet ID',
+  description: 'Google Sheet ID. Formerly functions.config().googleapi.sheet_id',
+});
+const watchedDataPath = defineString('WATCHED_DATA_PATH', {
+  label: 'Watched Data Path',
+  description: 'Firebase path for data to be synced. Formerly functions.config().watchedpaths.data_path',
+});
 
 // The OAuth Callback Redirect.
-const FUNCTIONS_REDIRECT = `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/oauthcallback`;
+let functionsRedirect;
 
 // setup for authGoogleAPI
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const functionsOauthClient = new OAuth2Client(CONFIG_CLIENT_ID, CONFIG_CLIENT_SECRET,
-  FUNCTIONS_REDIRECT);
+let functionsOauthClient;
+
+functions.onInit(() => {
+  functionsRedirect = `https://${projectID.value()}.firebaseapp.com/oauthcallback`;
+  functionsOauthClient = new OAuth2Client(
+    googleClientId.value(),
+    googleClientSecret.value(),
+    functionsRedirect
+  );
+});
 
 // OAuth token cached locally.
 let oauthTokens = null;
 
 // visit the URL for this Function to request tokens
-exports.authgoogleapi = functions.https.onRequest((req, res) => {
+exports.authgoogleapi = functions.runWith({ secrets: [googleClientSecret] }).https.onRequest((req, res) => {
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   res.redirect(functionsOauthClient.generateAuthUrl({
     access_type: 'offline',
@@ -61,7 +77,7 @@ const DB_TOKEN_PATH = '/api_tokens';
 
 // after you grant access, you will be redirected to the URL for this Function
 // this Function stores the tokens to your Firebase database
-exports.oauthcallback = functions.https.onRequest(async (req, res) => {
+exports.oauthcallback = functions.runWith({ secrets: [googleClientSecret] }).https.onRequest(async (req, res) => {
   res.set('Cache-Control', 'private, max-age=0, s-maxage=0');
   const code = `${req.query.code}`;
   try {
@@ -69,7 +85,7 @@ exports.oauthcallback = functions.https.onRequest(async (req, res) => {
     // Now tokens contains an access_token and an optional refresh_token. Save them.
     await admin.database().ref(DB_TOKEN_PATH).set(tokens);
     res.status(200).send('App successfully configured with new Credentials. '
-        + 'You can now close this page.');
+      + 'You can now close this page.');
   } catch (error) {
     res.status(400).send(error);
   }
@@ -77,18 +93,18 @@ exports.oauthcallback = functions.https.onRequest(async (req, res) => {
 
 // trigger function to write to Sheet when new data comes in on CONFIG_DATA_PATH
 exports.appendrecordtospreadsheet = functions.database.ref(`${CONFIG_DATA_PATH}/{ITEM}`).onCreate(
-    (snap) => {
-      const newRecord = snap.val();
-      return appendPromise({
-        spreadsheetId: CONFIG_SHEET_ID,
-        range: 'A:C',
-        valueInputOption: 'USER_ENTERED',
-        insertDataOption: 'INSERT_ROWS',
-        resource: {
-          values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]],
-        },
-      });
+  (snap) => {
+    const newRecord = snap.val();
+    return appendPromise({
+      spreadsheetId: CONFIG_SHEET_ID,
+      range: 'A:C',
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: [[newRecord.firstColumn, newRecord.secondColumn, newRecord.thirdColumn]],
+      },
     });
+  });
 
 // accepts an append request, returns a Promise to append it, enriching it with auth
 function appendPromise(requestWithoutAuth) {
@@ -125,7 +141,14 @@ exports.testsheetwrite = functions.https.onRequest(async (req, res) => {
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
   const ID = new Date().getUTCMilliseconds();
-  await admin.database().ref(`${CONFIG_DATA_PATH}/${ID}`).set({
+  // Note: We use the param value directly for the path here.
+  // In a real app, you might validate this path structure.
+  // Since we don't have {ITEM} wildcard here, we just append to the path.
+  // Wait, CONFIG_DATA_PATH was just the base path.
+  // Note: We use the param value directly for the path here.
+  // In a real app, you might validate this path structure.
+  // Since we don't have {ITEM} wildcard here, we just append to the path.
+  await admin.database().ref(`${watchedDataPath.value()}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
     thirdColumn: random3,

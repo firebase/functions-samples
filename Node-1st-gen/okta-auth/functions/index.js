@@ -28,40 +28,53 @@ const app = express();
 const envCfg = require('dotenv').config();
 if (envCfg.parsed && envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS) {
     process.env.GOOGLE_APPLICATION_CREDENTIALS =
-            envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS;
+        envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS;
 }
 
 const functions = require('firebase-functions/v1');
+const { defineString } = require('firebase-functions/params');
 const firebaseAdmin = require('firebase-admin');
 const firebaseApp = firebaseAdmin.initializeApp();
 
-const OKTA_ORG_URL = functions.config().okta_auth.org_url
-const OktaJwtVerifier = require('@okta/jwt-verifier');
-const oktaJwtVerifier = new OktaJwtVerifier({
-    issuer: `${OKTA_ORG_URL}/oauth2/default`
+const oktaOrgUrl = defineString('OKTA_ORG_URL', {
+    label: 'Okta Org URL',
+    description: 'Okta Org URL. Formerly functions.config().okta_auth.org_url',
+});
+const oktaCorsOrigin = defineString('OKTA_CORS_ORIGIN', {
+    label: 'Okta CORS Origin',
+    description: 'Okta CORS Origin. Formerly functions.config().okta_auth.cors_origin',
 });
 
-// Update CORS_ORIGIN to the base URL of your web client before deploying or
-// using a non-standard emulator configuration.
-const CORS_ORIGIN = functions.config().okta_auth.cors_origin ||
-                    'http://localhost:5000';
-const cors = require('cors')({ origin: CORS_ORIGIN });
+const OktaJwtVerifier = require('@okta/jwt-verifier');
+let oktaJwtVerifier;
+
+functions.onInit(() => {
+    oktaJwtVerifier = new OktaJwtVerifier({
+        issuer: `${oktaOrgUrl.value()}/oauth2/default`
+    });
+});
+
+// Middleware to authenticate requests with an Okta access token.
+const corsMiddleware = (req, res, next) => {
+    const origin = oktaCorsOrigin.value() || 'http://localhost:5000';
+    return require('cors')({ origin })(req, res, next);
+};
 
 // Middleware to authenticate requests with an Okta access token.
 // https://developer.okta.com/docs/guides/protect-your-api/nodeexpress/require-authentication/
 const oktaAuth = async (req, res, next) => {
     const authHeader = req.headers.authorization || '';
     const match = authHeader.match(/Bearer (.+)/);
-  
+
     if (!match) {
         res.status(401);
         return next('Unauthorized');
     }
-  
+
     const accessToken = match[1];
     try {
         const jwt = await oktaJwtVerifier.verifyAccessToken(
-                accessToken, 'api://default');
+            accessToken, 'api://default');
         req.jwt = jwt;
         return next();
     } catch (err) {
@@ -72,11 +85,11 @@ const oktaAuth = async (req, res, next) => {
 }
 
 // Get a Firebase custom auth token for the authenticated Okta user.
-app.get('/firebaseCustomToken', [cors, oktaAuth], async (req, res) => {
+app.get('/firebaseCustomToken', [corsMiddleware, oktaAuth], async (req, res) => {
     const oktaUid = req.jwt.claims.uid;
     try {
         const firebaseToken =
-                await firebaseApp.auth().createCustomToken(oktaUid);
+            await firebaseApp.auth().createCustomToken(oktaUid);
         res.send(firebaseToken);
     } catch (err) {
         functions.logger.error('Error minting token.', err);
@@ -85,6 +98,6 @@ app.get('/firebaseCustomToken', [cors, oktaAuth], async (req, res) => {
 });
 
 // Enable CORS pre-flight requests.
-app.options('/firebaseCustomToken', cors);
+app.options('/firebaseCustomToken', corsMiddleware);
 
 exports.api = functions.https.onRequest(app);

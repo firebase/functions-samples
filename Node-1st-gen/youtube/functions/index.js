@@ -15,16 +15,25 @@
  */
 
 const functions = require('firebase-functions/v1');
+const { defineSecret } = require('firebase-functions/params');
 const { google } = require('googleapis');
 
-const youtube = google.youtube({
-  version: 'v3',
-  auth: functions.config().youtube.key,
+const youtubeKey = defineSecret('YOUTUBE_KEY', {
+  label: 'YouTube API Key',
+  description: 'YouTube API Key. Formerly functions.config().youtube.key',
+});
+
+let youtube;
+functions.onInit(() => {
+  youtube = google.youtube({
+    version: 'v3',
+    auth: youtubeKey.value(),
+  });
 });
 
 const FIREBASE_YOUTUBE_CHANNEL_ID = 'UCP4bf6IHJJQehibu6ai__cg';
 
-exports.getChannelInfo = functions.https.onRequest(
+exports.getChannelInfo = functions.runWith({ secrets: [youtubeKey] }).https.onRequest(
   async (request, response) => {
     const channelId = request.query.channelId || FIREBASE_YOUTUBE_CHANNEL_ID;
 

@@ -16,6 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const { defineString, defineSecret, projectID } = require('firebase-functions/params');
 const cookieParser = require('cookie-parser');
 const crypto = require('node:crypto');
 
@@ -23,18 +24,30 @@ const crypto = require('node:crypto');
 const admin = require('firebase-admin');
 // @ts-ignore
 const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
+
+const spotifyClientId = defineString('SPOTIFY_CLIENT_ID', {
+  label: 'Spotify Client ID',
+  description: 'Spotify Client ID. Formerly functions.config().spotify.client_id',
+});
+const spotifyClientSecret = defineSecret('SPOTIFY_CLIENT_SECRET', {
+  label: 'Spotify Client Secret',
+  description: 'Spotify Client Secret. Formerly functions.config().spotify.client_secret',
 });
 
 // Spotify OAuth 2 setup
-// TODO: Configure the `spotify.client_id` and `spotify.client_secret` Google Cloud environment variables.
 const SpotifyWebApi = require('spotify-web-api-node');
-const Spotify = new SpotifyWebApi({
-  clientId: functions.config().spotify.client_id,
-  clientSecret: functions.config().spotify.client_secret,
-  redirectUri: `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/popup.html`,
+let Spotify;
+
+functions.onInit(() => {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${projectID.value()}.firebaseio.com`,
+  });
+  Spotify = new SpotifyWebApi({
+    clientId: spotifyClientId.value(),
+    clientSecret: spotifyClientSecret.value(),
+    redirectUri: `https://${projectID.value()}.firebaseapp.com/popup.html`,
+  });
 });
 
 // Scopes to request.
@@ -44,11 +57,11 @@ const OAUTH_SCOPES = ['user-read-email'];
  * Redirects the User to the Spotify authentication consent screen. Also the 'state' cookie is set for later state
  * verification.
  */
-exports.redirect = functions.https.onRequest((req, res) => {
+exports.redirect = functions.runWith({ secrets: [spotifyClientSecret] }).https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
     const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
     functions.logger.log('Setting verification state:', state);
-    res.cookie('state', state.toString(), {maxAge: 3600000, secure: true, httpOnly: true});
+    res.cookie('state', state.toString(), { maxAge: 3600000, secure: true, httpOnly: true });
     const authorizeURL = Spotify.createAuthorizeURL(OAUTH_SCOPES, state.toString());
     res.redirect(authorizeURL);
   });
@@ -60,7 +73,7 @@ exports.redirect = functions.https.onRequest((req, res) => {
  * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
  * 'callback' query parameter.
  */
-exports.token = functions.https.onRequest((req, res) => {
+exports.token = functions.runWith({ secrets: [spotifyClientSecret] }).https.onRequest((req, res) => {
   try {
     cookieParser()(req, res, () => {
       functions.logger.log('Received verification state:', req.cookies.state);
@@ -99,12 +112,12 @@ exports.token = functions.https.onRequest((req, res) => {
           // Create a Firebase account and get the Custom Auth Token.
           const firebaseToken = await createFirebaseAccount(spotifyUserID, userName, profilePic, email, accessToken);
           // Serve an HTML page that signs the user in and updates the user profile.
-          res.jsonp({token: firebaseToken});
+          res.jsonp({ token: firebaseToken });
         });
       });
     });
   } catch (error) {
-    res.jsonp({error: error.toString()});
+    res.jsonp({ error: error.toString() });
   }
   return null;
 });
