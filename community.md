@@ -11,3 +11,4 @@ Use Cloud Functions to replace common words with emojis!
 
 **Author:** @jhuleatt
 ```
+ 
