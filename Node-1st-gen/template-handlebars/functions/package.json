@@ -9,7 +9,7 @@
     "express-handlebars": "^3.1.0",
     "firebase-admin": "^13.0.2",
     "firebase-functions": "7.0.0",
-    "handlebars": "^4.7.7"
+    "handlebars": "^4.7.9"
   },
   "devDependencies": {
     "eslint": "^8.57.1"
