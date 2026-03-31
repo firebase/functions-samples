@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         dart-version:
-          - "3.7.0"
+          - "3.11.4"
     steps:
       - uses: actions/checkout@v4
 

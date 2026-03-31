@@ -40,51 +40,44 @@ import 'package:intl/intl.dart';
 void main(List<String> args) async {
   await fireUp(args, (firebase) {
     // [START dartHttpTrigger]
-    firebase.https.onRequest(
-      name: 'date',
-      // ignore: non_const_argument_for_const_parameter
-      options: HttpsOptions(timeoutSeconds: TimeoutSeconds(1200)),
-      (request) async {
-        // [END dartHttpTrigger]
+    firebase.https.onRequest(name: 'date', (request) async {
+      // [END dartHttpTrigger]
 
-        // [START dartHttpSendError]
-        // Forbidding PUT requests.
-        if (request.method == 'PUT') {
-          return Response.forbidden('Forbidden!');
-        }
-        // [END dartHttpSendError]
+      // [START dartHttpSendError]
+      // Forbidding PUT requests.
+      if (request.method == 'PUT') {
+        return Response.forbidden('Forbidden!');
+      }
+      // [END dartHttpSendError]
 
-        // Reading date format from URL query parameter.
-        // [START dartHttpReadQueryParam]
-        var format = request.url.queryParameters['format'];
-        // [END dartHttpReadQueryParam]
+      // Reading date format from URL query parameter.
+      // [START dartHttpReadQueryParam]
+      var format = request.url.queryParameters['format'];
+      // [END dartHttpReadQueryParam]
 
-        // Reading date format from request body query parameter
-        if (format == null) {
-          // [START dartHttpReadBodyParam]
-          final bodyString = await request.readAsString();
-          try {
-            if (bodyString.isNotEmpty) {
-              final body = jsonDecode(bodyString) as Map<String, dynamic>;
-              format = body['format'] as String?;
-            }
-          } catch (e) {
-            // Ignore JSON parsing errors
+      // Reading date format from request body query parameter
+      if (format == null) {
+        // [START dartHttpReadBodyParam]
+        final bodyString = await request.readAsString();
+        try {
+          if (bodyString.isNotEmpty) {
+            final body = jsonDecode(bodyString) as Map<String, dynamic>;
+            format = body['format'] as String?;
           }
-          // [END dartHttpReadBodyParam]
+        } catch (e) {
+          // Ignore JSON parsing errors
         }
+        // [END dartHttpReadBodyParam]
+      }
 
-        if (format == null) {
-          return Response(400, body: 'Format string missing');
-        }
-
-        // [START dartHttpSendResponse]
-        final formattedDate = DateFormat(format).format(DateTime.now());
-        print('Sending formatted date: $formattedDate');
-        return Response.ok(formattedDate);
-        // [END dartHttpSendResponse]
-      },
-    );
+      // [START dartHttpSendResponse]
+      final formattedDate = format != null
+          ? DateFormat(format).format(DateTime.now())
+          : DateTime.now().toString();
+      print('Sending formatted date: $formattedDate');
+      return Response.ok(formattedDate);
+      // [END dartHttpSendResponse]
+    });
   });
 }
 

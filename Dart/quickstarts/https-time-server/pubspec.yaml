@@ -3,7 +3,7 @@ description: HTTPS trigger examples for Firebase Functions for Dart
 publish_to: none
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.11.0
 
 dependencies:
   firebase_functions:
