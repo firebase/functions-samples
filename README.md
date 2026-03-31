@@ -37,6 +37,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 ### HTTPS trigger quickstart: Time Server
 
+- [Dart](/Dart/quickstarts/https-time-server/)
 - [Node 2nd gen](/Node/quickstarts/https-time-server/)
 - [Python](/Python/quickstarts/https-time-server/)
 - [Node 1st gen](/Node-1st-gen/quickstarts/https-time-server/)

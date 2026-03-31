@@ -32,11 +32,11 @@ import 'package:intl/intl.dart';
 ///
 /// Example format: "MMMM d yyyy, h:mm:ss a".
 /// Example request using URL query parameters:
-///   https://us-central1-<project-id>.cloudfunctions.net/date?format=MMMM%20d%20yyyy%2C%20h%3Amm%3Ass%20a
+///   https://date-<random-hash>.<region>.run.app?format=MMMM%20d%20yyyy%2C%20h%3Amm%3Ass%20a
 /// Example request using request body with cURL:
 ///   curl -H 'Content-Type: application/json' /
 ///        -d '{"format": "MMMM d yyyy, h:mm:ss a"}' /
-///        https://us-central1-<project-id>.cloudfunctions.net/date
+///        https://date-<random-hash>.<region>.run.app
 void main(List<String> args) async {
   await fireUp(args, (firebase) {
     // [START dartHttpTrigger]
@@ -65,15 +65,16 @@ void main(List<String> args) async {
             format = body['format'] as String?;
           }
         } catch (e) {
-          // Ignore JSON parsing errors
+          return Response.badRequest(body: 'invalid JSON');
         }
         // [END dartHttpReadBodyParam]
       }
 
+      // Set a default format if none was provided
+      format ??= 'MMMM d yyyy, h:mm:ss a';
+
       // [START dartHttpSendResponse]
-      final formattedDate = format != null
-          ? DateFormat(format).format(DateTime.now())
-          : DateTime.now().toString();
+      final formattedDate = DateFormat(format).format(DateTime.now());
       print('Sending formatted date: $formattedDate');
       return Response.ok(formattedDate);
       // [END dartHttpSendResponse]

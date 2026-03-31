@@ -16,7 +16,7 @@ Further reading:
 
 ### 1. Clone this repo
 
-Clone or download this repo and open the `quickstarts/time-server` directory.
+Clone or download this repo and open the `Dart/quickstarts/https-time-server` directory.
 
 
 ### 2. Create a Firebase project and configure the quickstart
@@ -67,21 +67,21 @@ Alteratively, you can call `firebase emulators:start` to test the functions on t
 
 After deploying the function, check the CLI's output to see the URL for your function.
 
-It will look something like: `https://<function-name>-<random-hash>-<region>.a.run.app`
+It will look something like: `https://<function-name>-<random-hash>.<region>.run.app`
 
 You can also send the format in the request body. For instance using cURL in the command line:
 
 ```bash
 curl -H 'Content-Type: application/json' /
      -d '{"format": "MMMM d yyyy, h:mm:ss a"}' /
-     <function url>/date
+     <function url>
 ```
 Formatted dates should be displayed.
 
 We are responding with a 403 error in case of PUT requests:
 
 ```bash
-curl -X PUT -d '{"format": "MMMM d yyyy, h:mm:ss a"}' <function-url>/date
+curl -X PUT -d '{"format": "MMMM d yyyy, h:mm:ss a"}' <function-url>
 ```
 
 
