@@ -36,10 +36,10 @@ jobs:
         dart-version:
           - "3.7.0"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Dart ${{ matrix.dart-version }}
-        uses: dart-lang/setup-dart@v1
+        uses: dart-lang/setup-dart@v1.6.0
         with:
           sdk: ${{ matrix.dart-version }}
 

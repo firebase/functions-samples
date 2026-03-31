@@ -27,17 +27,13 @@ dev_dependencies:
   lints: ^6.0.0
 
 dependency_overrides:
-  firebase_functions:
-    git:
-      url: https://github.com/firebase/firebase-functions-dart
-      ref: main
   dart_firebase_admin:
-    git:
-      url: https://github.com/firebase/firebase-admin-dart
-      path: packages/dart_firebase_admin
-      ref: main
+      git:
+        url: https://github.com/firebase/firebase-admin-dart
+        path: packages/dart_firebase_admin
+        ref: main
   google_cloud_firestore:
-    git:
-      url: https://github.com/firebase/firebase-admin-dart
-      path: packages/google_cloud_firestore
-      ref: main
+      git:
+        url: https://github.com/firebase/firebase-admin-dart
+        path: packages/google_cloud_firestore
+        ref: main
