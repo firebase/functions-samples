@@ -17,9 +17,11 @@
 const {
   beforeUserCreated,
   beforeUserSignedIn,
+  beforeEmailSent,
+  beforeSmsSent,
   HttpsError,
 } = require("firebase-functions/identity");
-const {admin} = require("firebase-admin");
+const admin = require("firebase-admin");
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -68,3 +70,44 @@ exports.checkforban = beforeUserSignedIn(async (event) => {
   // [END v2bannedHttpsError]
 });
 // [START v2CheckForBan]
+
+// [START v2CheckEmailDomain]
+// [START v2beforeEmailSentFunctionTrigger]
+// Block email sending with any non-acme email address.
+exports.checkemaildomain = beforeEmailSent((event) => {
+  // [END v2beforeEmailSentFunctionTrigger]
+  // [START v2readEmailUser]
+  // Email passed in from the CloudEvent.
+  const email = event.data?.email || event.additionalUserInfo?.email;
+  // [END v2readEmailUser]
+
+  // [START v2emailHttpsError]
+  // Only users of a specific domain can receive emails.
+  if (!email?.includes("@acme.com")) {
+    // Throw an HttpsError so that Firebase Auth rejects the email sending.
+    throw new HttpsError("invalid-argument", "Unauthorized email");
+  }
+  // [END v2emailHttpsError]
+});
+// [END v2CheckEmailDomain]
+
+// [START v2CheckPhoneNumber]
+// [START v2beforeSmsSentFunctionTrigger]
+// Block SMS sending with any non-US phone number.
+exports.checkphonenumber = beforeSmsSent((event) => {
+  // [END v2beforeSmsSentFunctionTrigger]
+  // [START v2readSmsUser]
+  // Phone number passed from the CloudEvent.
+  const phoneNumber = event.data?.phoneNumber ||
+    event.additionalUserInfo?.phoneNumber;
+  // [END v2readSmsUser]
+
+  // [START v2smsHttpsError]
+  // Only users of a specific region can receive SMS.
+  if (!phoneNumber?.startsWith("+1")) {
+    // Throw an HttpsError so that Firebase Auth rejects the SMS sending.
+    throw new HttpsError("invalid-argument", "Unauthorized phone number");
+  }
+  // [END v2smsHttpsError]
+});
+// [END v2CheckPhoneNumber]
