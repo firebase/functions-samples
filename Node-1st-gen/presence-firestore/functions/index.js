@@ -16,6 +16,8 @@
 
 // [START presence_sync_function]
 const functions = require('firebase-functions/v1');
+const { onValueUpdated } = require("firebase-functions/v2/database");
+
 const admin = require('firebase-admin');
 admin.initializeApp();
 
@@ -26,8 +28,8 @@ const firestore = admin.firestore();
 
 // Create a new function which is triggered on changes to /status/{uid}
 // Note: This is a Realtime Database trigger, *not* Firestore.
-exports.onUserStatusChanged = functions.database.ref('/status/{uid}').onUpdate(
-    async (change, context) => {
+exports.onUserStatusChanged = onValueUpdated('/status/{uid}', async ({ change, context }) => {
+
       // Get the data written to Realtime Database
       const eventStatus = change.after.val();
 

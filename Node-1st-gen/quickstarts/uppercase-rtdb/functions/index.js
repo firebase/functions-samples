@@ -19,6 +19,9 @@
 // [START import]
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 const functions = require('firebase-functions/v1');
+const { onRequest } = require("firebase-functions/v2/https");
+const { onValueCreated } = require("firebase-functions/v2/database");
+
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
@@ -29,7 +32,8 @@ admin.initializeApp();
 // Take the text parameter passed to this HTTP endpoint and insert it into the
 // Realtime Database under the path /messages/:pushId/original
 // [START addMessageTrigger]
-exports.addMessage = functions.https.onRequest(async (req, res) => {
+exports.addMessage = onRequest(async (req, res) => {
+
 // [END addMessageTrigger]
   // Grab the text parameter.
   const original = req.query.text;
@@ -45,8 +49,8 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
 // [START makeUppercase]
 // Listens for new messages added to /messages/:pushId/original and creates an
 // uppercase version of the message to /messages/:pushId/uppercase
-exports.makeUppercase = functions.database.ref('/messages/{pushId}/original')
-    .onCreate((snapshot, context) => {
+exports.makeUppercase = onValueCreated('/messages/{pushId}/original', ({ snapshot, context }) => {
+
       // Grab the current value of what was written to the Realtime Database.
       const original = snapshot.val();
       functions.logger.log('Uppercasing', context.params.pushId, original);
