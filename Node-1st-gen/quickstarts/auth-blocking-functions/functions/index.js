@@ -15,6 +15,8 @@
  */
 
 const {functions} = require("firebase-functions/v1");
+const { beforeUserCreated, beforeUserSignedIn } = require("firebase-functions/v2/identity");
+
 const {admin} = require("firebase-admin");
 
 admin.initializeApp();
@@ -23,9 +25,8 @@ const db = admin.firestore();
 // [START v1ValidateNewUser]
 // [START v1beforeCreateFunctionTrigger]
 // Block account creation with any non-acme email address.
-exports.validateNewUser = functions.auth
-    .user()
-    .beforeCreate((user, context) => {
+exports.validateNewUser = beforeUserCreated(({ data: user }) => {
+
     // [END v1beforeCreateFunctionTrigger]
     // [START v1readEmailData]
     // Email passed from the User object.
@@ -48,9 +49,8 @@ exports.validateNewUser = functions.auth
 // [START v1CheckForBan]
 // [START v1beforeSignInFunctionTrigger]
 // Block account sign in with any banned account.
-exports.checkForBan = functions.auth
-    .user()
-    .beforeSignIn(async (user, context) => {
+exports.checkForBan = beforeUserSignedIn(async ({ data: user }) => {
+
     // [END v1beforeSignInFunctionTrigger]
     // [START v1readEmailData]
     // Email passed from the User object.
