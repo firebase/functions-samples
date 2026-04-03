@@ -29,7 +29,7 @@ const db = admin.firestore();
 // [START v2ValidateNewUser]
 // [START v2beforeCreateFunctionTrigger]
 // Block account creation with any non-acme email address.
-exports.validatenewuser = beforeUserCreated((event) => {
+exports.validateNewUser = beforeUserCreated((event) => {
   // [END v2beforeCreateFunctionTrigger]
   // [START v2readUserData]
   // User data passed in from the CloudEvent.
@@ -49,7 +49,7 @@ exports.validatenewuser = beforeUserCreated((event) => {
 // [START v2CheckForBan]
 // [START v2beforeSignInFunctionTrigger]
 // Block account sign in with any banned account.
-exports.checkforban = beforeUserSignedIn(async (event) => {
+exports.checkForBan = beforeUserSignedIn(async (event) => {
   // [END v2beforeSignInFunctionTrigger]
   // [START v2readEmailData]
   // Email passed from the CloudEvent.
@@ -74,7 +74,7 @@ exports.checkforban = beforeUserSignedIn(async (event) => {
 // [START v2CheckEmailDomain]
 // [START v2beforeEmailSentFunctionTrigger]
 // Block email sending with any non-acme email address.
-exports.checkemaildomain = beforeEmailSent((event) => {
+exports.checkEmailDomain = beforeEmailSent((event) => {
   // [END v2beforeEmailSentFunctionTrigger]
   // [START v2readEmailUser]
   // Email passed in from the CloudEvent.
@@ -83,9 +83,12 @@ exports.checkemaildomain = beforeEmailSent((event) => {
 
   // [START v2emailHttpsError]
   // Only users of a specific domain can receive emails.
-  if (!email?.includes("@acme.com")) {
+  if (!email) {
     // Throw an HttpsError so that Firebase Auth rejects the email sending.
-    throw new HttpsError("invalid-argument", "Unauthorized email");
+    throw new HttpsError("invalid-argument", "No email was found in the CloudEvent");
+  }
+  if (!email.endsWith("@acme.com")) {
+    throw new HttpsError("permission-denied", "Only users from the acme.com domain can authenticate");
   }
   // [END v2emailHttpsError]
 });
@@ -93,8 +96,13 @@ exports.checkemaildomain = beforeEmailSent((event) => {
 
 // [START v2CheckPhoneNumber]
 // [START v2beforeSmsSentFunctionTrigger]
+
+const intlPrefixNumber = defineString("INTERNATIONAL_PREFIX_NUMBER", {
+  default: "+1",
+  description: "The country code that we restrict sending too.",
+});
 // Block SMS sending with any non-US phone number.
-exports.checkphonenumber = beforeSmsSent((event) => {
+exports.checkPhoneNumber = beforeSmsSent((event) => {
   // [END v2beforeSmsSentFunctionTrigger]
   // [START v2readSmsUser]
   // Phone number passed from the CloudEvent.
@@ -103,8 +111,13 @@ exports.checkphonenumber = beforeSmsSent((event) => {
   // [END v2readSmsUser]
 
   // [START v2smsHttpsError]
+  if (!phoneNumber) {
+    // Throw an HttpsError so that Firebase Auth rejects the SMS sending.
+    throw new HttpsError("invalid-argument", "No phone number was found in the CloudEvent");
+  }
+  
   // Only users of a specific region can receive SMS.
-  if (!phoneNumber?.startsWith("+1")) {
+  if (!phoneNumber.startsWith(intlPrefixNumber.value())) {
     // Throw an HttpsError so that Firebase Auth rejects the SMS sending.
     throw new HttpsError("invalid-argument", "Unauthorized phone number");
   }
