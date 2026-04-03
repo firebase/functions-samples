@@ -21,6 +21,7 @@ const {
   beforeSmsSent,
   HttpsError,
 } = require("firebase-functions/identity");
+const {defineString} = require('firebase-functions/params');
 const admin = require("firebase-admin");
 
 admin.initializeApp();
@@ -85,10 +86,13 @@ exports.checkEmailDomain = beforeEmailSent((event) => {
   // Only users of a specific domain can receive emails.
   if (!email) {
     // Throw an HttpsError so that Firebase Auth rejects the email sending.
-    throw new HttpsError("invalid-argument", "No email was found in the CloudEvent");
+    throw new HttpsError("invalid-argument",
+                         "No email was found in the CloudEvent");
   }
   if (!email.endsWith("@acme.com")) {
-    throw new HttpsError("permission-denied", "Only users from the acme.com domain can authenticate");
+    throw new HttpsError("permission-denied", 
+                         "Only users from the acme.com domain can " + 
+                         "authenticate");
   }
   // [END v2emailHttpsError]
 });
@@ -113,9 +117,10 @@ exports.checkPhoneNumber = beforeSmsSent((event) => {
   // [START v2smsHttpsError]
   if (!phoneNumber) {
     // Throw an HttpsError so that Firebase Auth rejects the SMS sending.
-    throw new HttpsError("invalid-argument", "No phone number was found in the CloudEvent");
+    throw new HttpsError("invalid-argument",
+                         "No phone number was found in the CloudEvent");
   }
-  
+
   // Only users of a specific region can receive SMS.
   if (!phoneNumber.startsWith(intlPrefixNumber.value())) {
     // Throw an HttpsError so that Firebase Auth rejects the SMS sending.
