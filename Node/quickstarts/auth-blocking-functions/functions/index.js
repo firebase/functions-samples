@@ -103,7 +103,7 @@ exports.checkEmailDomain = beforeEmailSent((event) => {
 
 const intlPrefixNumber = defineString("INTERNATIONAL_PREFIX_NUMBER", {
   default: "+1",
-  description: "The country code that we restrict sending too.",
+  description: "The country code that we restrict sending to.",
 });
 // Block SMS sending with any non-US phone number.
 exports.checkPhoneNumber = beforeSmsSent((event) => {
