@@ -31,9 +31,15 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 ### Quickstart: Add numbers and sanitize text with callable functions
 
+- [Dart](/Dart/quickstarts/callable-functions/)
 - [Node 2nd gen](/Node/quickstarts/callable-functions/)
 - [Python](/Python/quickstarts/callable-functions)
 - [Node 1st gen](/Node-1st-gen/quickstarts/callable-functions/)
+
+### Quickstart: Stream responses with callable functions
+
+- [Dart](/Dart/quickstarts/callable-functions-streaming/)
+- [Node 2nd gen](/Node/quickstarts/callable-functions-streaming/)
 
 ### HTTPS trigger quickstart: Time Server
 
