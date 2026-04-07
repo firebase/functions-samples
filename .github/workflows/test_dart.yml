@@ -43,14 +43,15 @@ jobs:
         with:
           sdk: ${{ matrix.dart-version }}
 
-      - name: HTTPS Time Server - Install dependencies
-        working-directory: ./Dart/quickstarts/https-time-server
-        run: dart pub get
-
-      - name: HTTPS Time Server - Format
-        working-directory: ./Dart/quickstarts/https-time-server
-        run: dart format --set-exit-if-changed .
-
-      - name: HTTPS Time Server - Analyze
-        working-directory: ./Dart/quickstarts/https-time-server
-        run: dart analyze .
+      - name: Test Dart Samples
+        run: |
+          set -e
+          for dir in $(find Dart -name pubspec.yaml -exec dirname {} \;); do
+            echo "::group::Testing $dir"
+            cd "$dir"
+            dart pub get
+            dart format --set-exit-if-changed .
+            dart analyze .
+            cd - > /dev/null
+            echo "::endgroup::"
+          done
