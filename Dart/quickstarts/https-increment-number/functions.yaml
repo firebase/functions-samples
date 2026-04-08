@@ -1,0 +1,23 @@
+specVersion: v1alpha1
+requiredAPIs:
+  - api: cloudfunctions.googleapis.com
+    reason: Required for Cloud Functions
+endpoints:
+  increment-local:
+    platform: gcfv2
+    region:
+      - us-central1
+    httpsTrigger: {}
+    baseImageUri: us-central1-docker.pkg.dev/serverless-runtimes/google-24/runtimes/osonly24
+    command:
+      - ./bin/server
+    entryPoint: increment-local
+  increment-synced:
+    platform: gcfv2
+    region:
+      - us-central1
+    httpsTrigger: {}
+    baseImageUri: us-central1-docker.pkg.dev/serverless-runtimes/google-24/runtimes/osonly24
+    command:
+      - ./bin/server
+    entryPoint: increment-synced
