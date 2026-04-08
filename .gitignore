@@ -3,6 +3,8 @@
 **/.firebase
 **/.firebaserc
 **/.runtimeconfig.json
+**/functions.yaml
+**/firestore-debug.log
 */npm-debug.log
 lerna-debug.log
 *~

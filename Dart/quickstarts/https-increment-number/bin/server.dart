@@ -18,9 +18,6 @@ class IncrementResponse {
 }
 
 void main(List<String> args) async {
-  // Get firestore admin instance
-  final firestore = FirebaseApp.instance.firestore();
-
   await fireUp(args, (firebase) {
     
     // [START dartHttpIncrementLocal]
@@ -58,6 +55,9 @@ void main(List<String> args) async {
     // [START dartHttpIncrementSynced]
     firebase.https.onRequest(name: incrementCallable, (request) async {
       print('Processing synced counter request...');
+
+      // Get firestore admin instance
+      final firestore = FirebaseApp.instance.firestore();
 
       // Get a reference to the counter document
       final counterDoc = firestore.collection('counters').doc('global');

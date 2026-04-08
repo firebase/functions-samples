@@ -2,5 +2,8 @@
   "functions": {
     "source": ".",
     "codebase": "dart-quickstarts-https-increment-number"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   }
 }
