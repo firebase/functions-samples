@@ -3,23 +3,17 @@ import 'package:dart_firebase_admin/dart_firebase_admin.dart';
 import 'package:firebase_functions/firebase_functions.dart';
 import 'package:google_cloud_firestore/google_cloud_firestore.dart';
 
-const incrementCallable = 'incrementSynced';
-
 class IncrementResponse {
   final String message;
   final int newCount;
 
   IncrementResponse({required this.message, required this.newCount});
 
-  Map<String, dynamic> toJson() => {
-        'message': message,
-        'newCount': newCount,
-      };
+  Map<String, dynamic> toJson() => {'message': message, 'newCount': newCount};
 }
 
 void main(List<String> args) async {
   await fireUp(args, (firebase) {
-    
     // [START dartHttpIncrementLocal]
     firebase.https.onRequest(name: 'incrementLocal', (request) async {
       print('Incrementing counter locally...');
@@ -53,7 +47,7 @@ void main(List<String> args) async {
     // [END dartHttpIncrementLocal]
 
     // [START dartHttpIncrementSynced]
-    firebase.https.onRequest(name: incrementCallable, (request) async {
+    firebase.https.onRequest(name: 'incrementSynced', (request) async {
       print('Processing synced counter request...');
 
       // Get firestore admin instance
@@ -62,11 +56,12 @@ void main(List<String> args) async {
       // Get a reference to the counter document
       final counterDoc = firestore.collection('counters').doc('global');
 
-      if (request.method == 'GET') {
-        // Handle GET request to read the current counter
-        final snapshot = await counterDoc.get();
-        final currentCount = snapshot.data()?['count'] as int? ?? 0;
+      // Fetch the current counter value
+      final snapshot = await counterDoc.get();
+      final currentCount = snapshot.data()?['count'] as int? ?? 0;
 
+      if (request.method == 'GET') {
+        // Handle GET request to respond with the current counter
         final response = IncrementResponse(
           message: 'Cloud-sync fetched!',
           newCount: currentCount,
@@ -79,8 +74,6 @@ void main(List<String> args) async {
         );
       } else if (request.method == 'POST') {
         // Handle POST request to increment the counter
-        final snapshot = await counterDoc.get();
-        final currentCount = snapshot.data()?['count'] as int? ?? 0;
 
         // Increment count by one
         await counterDoc.set({
@@ -102,6 +95,5 @@ void main(List<String> args) async {
       }
     });
     // [END dartHttpIncrementSynced]
-
   });
 }
