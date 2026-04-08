@@ -16,6 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+
 const admin = require('firebase-admin');
 admin.initializeApp();
 const PromisePool = require('es6-promise-pool').default;
@@ -26,7 +28,8 @@ const MAX_CONCURRENT = 3;
  * Run once a day at midnight, to cleanup the users
  * Manually run the task here https://console.cloud.google.com/cloudscheduler
  */
-exports.accountcleanup = functions.pubsub.schedule('every day 00:00').onRun(async context => {
+exports.accountcleanup = onSchedule('every day 00:00', async (event) => {
+
   // Fetch all user details.
   const inactiveUsers = await getInactiveUsers();
 

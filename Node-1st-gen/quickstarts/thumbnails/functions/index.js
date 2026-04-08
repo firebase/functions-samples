@@ -17,6 +17,8 @@
 
 // [START import]
 const functions = require('firebase-functions/v1');
+const { onObjectFinalized } = require("firebase-functions/v2/storage");
+
 const admin = require('firebase-admin');
 admin.initializeApp()
 const path = require('path');
@@ -31,7 +33,8 @@ const sharp = require('sharp');
  * generate a thumbnail automatically using sharp.
  */
 // [START generateThumbnailTrigger]
-exports.firstGenGenerateThumbnail = functions.storage.object().onFinalize(async (object) => {
+exports.firstGenGenerateThumbnail = onObjectFinalized(async ({ object, context }) => {
+
 // [END generateThumbnailTrigger]
   // [START eventAttributes]
   const fileBucket = object.bucket; // The Storage bucket that contains the file.
