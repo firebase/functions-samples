@@ -55,7 +55,5 @@ def get_forecast(req: https_fn.CallableRequest) -> Any:
         lng = loc.get("longitude")
         forecast = weather_forecast_api(lat, lng)
         yield {"latitude": lat, "longitude": lng, "forecast": forecast}
-
-
 # [END streaming]
 # [END full]
