@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# [START full-sample]
+# [START full]
 import random
 import time
 from typing import Any
@@ -40,7 +40,7 @@ def weather_forecast_api(lat: float, lng: float) -> dict[str, Any] | str:
     return forecast_resp.json()
 
 
-# [START streaming-callable]
+# [START streaming]
 @https_fn.on_call()
 def get_forecast(req: https_fn.CallableRequest) -> Any:
     locations = req.data.get("locations", [])
@@ -54,11 +54,8 @@ def get_forecast(req: https_fn.CallableRequest) -> Any:
         lat = loc.get("latitude")
         lng = loc.get("longitude")
         forecast = weather_forecast_api(lat, lng)
-        yield {
-            "latitude": lat,
-            "longitude": lng,
-            "forecast": forecast
-        }
+        yield {"latitude": lat, "longitude": lng, "forecast": forecast}
 
-# [END streaming-callable]
-# [END full-sample]
+
+# [END streaming]
+# [END full]
