@@ -7,6 +7,9 @@ on:
 jobs:
   targeted-update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -47,10 +50,26 @@ jobs:
 
       # --- COMMIT & PR SECTION ---
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: targeted update of firebase-functions and firebase-admin"
-          title: "🚀 Targeted Dependency Updates (Firebase)"
-          body: "This PR updates `firebase-functions` and `firebase-admin` to their latest versions across all Node.js and Python subdirectories."
-          branch: "targeted-deps-update"
+        run: |
+          if git diff --quiet; then
+            echo "No dependency updates found."
+          else
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            git checkout -b update-firebase-deps
+            git commit -am "chore: targeted update of firebase-functions and firebase-admin"
+            git push origin update-firebase-deps --force
+
+            # Check if PR already exists before creating
+            if gh pr list --state open --head update-firebase-deps | grep -q "update-firebase-deps"; then
+              echo "Pull request already exists."
+            else
+              gh pr create \
+                --title "🚀 Targeted Dependency Updates (Firebase)" \
+                --body "This PR updates \`firebase-functions\` and \`firebase-admin\` to their latest versions across all Node.js and Python subdirectories." \
+                --base main \
+                --head update-firebase-deps
+            fi
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
