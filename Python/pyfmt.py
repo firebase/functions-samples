@@ -17,8 +17,7 @@
 import difflib
 import pathlib
 import re
-
-from yapf.yapflib import yapf_api
+import subprocess
 
 start_tag_re = re.compile(r"^([ \t]*)#\s*\[START\s+(\w+).*\]\s*\n", flags=re.MULTILINE)
 end_tag_re = re.compile(r"^\s*#\s*\[END\s+(\w+).*\][ \t]*$", flags=re.MULTILINE)
@@ -41,11 +40,14 @@ def check_and_diff(files: list[str]) -> int:
             orig = f.read()
         fmt = format(orig)
         diff = list(
-            difflib.unified_diff(orig.splitlines(),
-                                 fmt.splitlines(),
-                                 fromfile=file,
-                                 tofile=f"{file} (reformatted)",
-                                 lineterm=""))
+            difflib.unified_diff(
+                orig.splitlines(),
+                fmt.splitlines(),
+                fromfile=file,
+                tofile=f"{file} (reformatted)",
+                lineterm="",
+            )
+        )
         if len(diff) > 0:
             diff_count += 1
             print("\n".join(diff), end="\n\n")
@@ -53,7 +55,10 @@ def check_and_diff(files: list[str]) -> int:
 
 
 def format(src: str) -> str:
-    out, _ = yapf_api.FormatCode(src, style_config=pyproject_toml)
+    result = subprocess.run(
+        ["ruff", "format", "-"], input=src.encode("utf-8"), capture_output=True, check=True
+    )
+    out = result.stdout.decode("utf-8")
     out = fix_region_tags(out)
     return out
 
@@ -83,15 +88,19 @@ if __name__ == "__main__":
     import argparse
 
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("--check_only",
-                           "-c",
-                           action="store_true",
-                           help="check files and print diffs, but don't modify files")
-    argparser.add_argument("--exclude",
-                           "-e",
-                           action="append",
-                           default=[],
-                           help="exclude file or glob (can specify multiple times)")
+    argparser.add_argument(
+        "--check_only",
+        "-c",
+        action="store_true",
+        help="check files and print diffs, but don't modify files",
+    )
+    argparser.add_argument(
+        "--exclude",
+        "-e",
+        action="append",
+        default=[],
+        help="exclude file or glob (can specify multiple times)",
+    )
     argparser.add_argument("file_or_glob", nargs="+")
     args = argparser.parse_args()
 

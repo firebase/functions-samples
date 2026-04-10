@@ -44,7 +44,9 @@ jobs:
             python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         working-directory: ./Python
-        run: pip install -r requirements.txt
+        run: |
+          pip install uv
+          uv pip install --system -r requirements.txt
       - name: Lint
         working-directory: ./Python
         run: python pyfmt.py --check_only --exclude "**/venv/**/*.py" **/*.py
