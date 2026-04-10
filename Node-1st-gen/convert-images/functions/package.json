@@ -4,8 +4,8 @@
   "dependencies": {
     "child-process-promise": "^2.2.1",
     "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "7.0.0",
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "7.2.5",
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
