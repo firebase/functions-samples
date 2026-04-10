@@ -6,6 +6,8 @@ environment:
   sdk: ^3.11.0
 
 dependencies:
+  shared:
+    path: ../shared
   firebase_functions:
     git:
       url: https://github.com/firebase/firebase-functions-dart
