@@ -10,8 +10,8 @@ Getting Started
 ---------------
 
 1. Install dependencies with `pip install -r functions/requirements.txt` and deploy with `firebase deploy --only functions`
-1. Set up a client (import the functions client SDK, initializeApp, init the functions sdk)
-2. Call the function
+2. For the client app, you can use the `website` directory from the Node.js sample (`Node/quickstarts/callable-functions/website`). Visit the url of the emulated Hosting site to test the callable functions.
+3. Call the functions from the UI.
 
 
 License

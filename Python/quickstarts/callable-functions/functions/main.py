@@ -15,13 +15,13 @@
 import re
 from typing import Any
 
-# [START imports]
+# [START v2imports]
 # Dependencies for callable functions.
 from firebase_functions import https_fn, options
 
 # Dependencies for writing to Realtime Database.
 from firebase_admin import db, initialize_app
-# [END imports]
+# [END v2imports]
 
 initialize_app()
 
@@ -102,7 +102,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
     # [END v2authIntegration]
 
     try:
-        # [START v2returnMessageAsync]
+        # [START v2returnMessage]
         # Saving the new message to the Realtime Database.
         sanitized_message = sanitize_text(text)  # Sanitize message.
         db.reference("/messages").push({  # type: ignore
@@ -118,7 +118,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
 
         # Returning the sanitized message to the client.
         return {"text": sanitized_message}
-        # [END v2returnMessageAsync]
+        # [END v2returnMessage]
     except Exception as e:
         # Re-throwing the error as an HttpsError so that the client gets
         # the error details.
