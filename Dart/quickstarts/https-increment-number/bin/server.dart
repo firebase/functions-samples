@@ -1,99 +1,65 @@
 import 'dart:convert';
-import 'package:dart_firebase_admin/dart_firebase_admin.dart';
 import 'package:firebase_functions/firebase_functions.dart';
-import 'package:google_cloud_firestore/google_cloud_firestore.dart';
-
-class IncrementResponse {
-  final String message;
-  final int newCount;
-
-  IncrementResponse({required this.message, required this.newCount});
-
-  Map<String, dynamic> toJson() => {'message': message, 'newCount': newCount};
-}
+import 'package:google_cloud_firestore/google_cloud_firestore.dart'
+    show FieldValue;
+import 'package:shared/shared.dart';
 
 void main(List<String> args) async {
   await fireUp(args, (firebase) {
-    // [START dartHttpIncrementLocal]
-    firebase.https.onRequest(name: 'incrementLocal', (request) async {
-      print('Incrementing counter locally...');
+    // Listen for calls to the http request and name defined in the shared package.
+    firebase.https.onRequest(name: incrementCallable, (request) async {
+      // In a production app, verify the user with request.auth?.uid here.
+      print('Incrementing counter on the server...');
 
-      if (request.method != 'POST') {
-        return Response(405, body: 'Method Not Allowed');
-      }
-
-      int currentCount = 0;
-      final bodyString = await request.readAsString();
-      if (bodyString.isNotEmpty) {
-        try {
-          final body = jsonDecode(bodyString) as Map<String, dynamic>;
-          currentCount = body['count'] as int? ?? 0;
-        } catch (e) {
-          return Response.badRequest(body: 'Invalid JSON request');
-        }
-      }
-
-      final response = IncrementResponse(
-        message: 'Local increment complete!',
-        newCount: currentCount + 1,
-      );
-
-      return Response(
-        200,
-        body: jsonEncode(response.toJson()),
-        headers: {'Content-Type': 'application/json'},
-      );
-    });
-    // [END dartHttpIncrementLocal]
-
-    // [START dartHttpIncrementSynced]
-    firebase.https.onRequest(name: 'incrementSynced', (request) async {
-      print('Processing synced counter request...');
-
-      // Get firestore admin instance
-      final firestore = FirebaseApp.instance.firestore();
+      // Get firestore database instance
+      final firestore = firebase.adminApp.firestore();
 
       // Get a reference to the counter document
       final counterDoc = firestore.collection('counters').doc('global');
 
-      // Fetch the current counter value
+      // Get the current snapshot for the count data
       final snapshot = await counterDoc.get();
-      final currentCount = snapshot.data()?['count'] as int? ?? 0;
 
-      if (request.method == 'GET') {
-        // Handle GET request to respond with the current counter
-        final response = IncrementResponse(
-          message: 'Cloud-sync fetched!',
-          newCount: currentCount,
-        );
+      // Increment response we will send back
+      IncrementResponse incrementResponse;
 
-        return Response(
-          200,
-          body: jsonEncode(response.toJson()),
-          headers: {'Content-Type': 'application/json'},
-        );
-      } else if (request.method == 'POST') {
-        // Handle POST request to increment the counter
-
-        // Increment count by one
-        await counterDoc.set({
-          'count': FieldValue.increment(1),
-        }, options: SetOptions.merge());
-
-        final response = IncrementResponse(
-          message: 'Cloud-sync complete!',
-          newCount: currentCount + 1,
-        );
-
-        return Response(
-          200,
-          body: jsonEncode(response.toJson()),
-          headers: {'Content-Type': 'application/json'},
-        );
+      // Check for the current count and if the snapshot exists
+      if (snapshot.data() case {'count': int value} when snapshot.exists) {
+        if (request.method == 'GET') {
+          // Get the current result
+          incrementResponse = IncrementResponse(
+            success: true,
+            message: 'Read-only sync complete',
+            newCount: value,
+          );
+        } else if (request.method == 'POST') {
+          // Increment count by one
+          final step = request.url.queryParameters['step'] as int? ?? 1;
+          await counterDoc.update({'count': FieldValue.increment(step)});
+          incrementResponse = IncrementResponse(
+            success: true,
+            message: 'Atomic increment complete',
+            newCount: value + 1,
+          );
+        } else {
+          return Response(405, body: 'Method Not Allowed');
+        }
       } else {
-        return Response(405, body: 'Method Not Allowed');
+        // Create a new document with a count of 1
+        await counterDoc.set({'count': 1});
+        incrementResponse = const IncrementResponse(
+          success: true,
+          message: 'Cloud-sync complete',
+          newCount: 1,
+        );
       }
+
+      // Return the response as JSON
+      return Response(
+        200,
+        body: jsonEncode(incrementResponse.toJson()),
+        headers: {'Content-Type': 'application/json'},
+      );
     });
-    // [END dartHttpIncrementSynced]
   });
 }
