@@ -15,13 +15,13 @@
 import re
 from typing import Any
 
-# [START v2imports]
+# [START imports]
 # Dependencies for callable functions.
 from firebase_functions import https_fn, options
 
 # Dependencies for writing to Realtime Database.
 from firebase_admin import db, initialize_app
-# [END v2imports]
+# [END imports]
 
 initialize_app()
 
@@ -31,7 +31,7 @@ initialize_app()
 @https_fn.on_call()
 def addnumbers(req: https_fn.CallableRequest) -> Any:
     """Adds two numbers to each other."""
-# [END v2addFunctionTrigger]
+    # [END v2addFunctionTrigger]
     # [START v2addHttpsError]
     # Checking that attributes are present and are numbers.
     try:
@@ -58,6 +58,8 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
         "operationResult": first_number + second_number
     }
     # [END v2returnAddData]
+
+
 # [END v2allAdd]
 
 
@@ -66,7 +68,7 @@ def addnumbers(req: https_fn.CallableRequest) -> Any:
 def addmessage(req: https_fn.CallableRequest) -> Any:
     """Saves a message to the Firebase Realtime Database but sanitizes the text
     by removing swear words."""
-# [END v2messageFunctionTrigger]
+    # [END v2messageFunctionTrigger]
     try:
         # [START v2readMessageData]
         # Message text passed from the client.
@@ -102,7 +104,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
     # [END v2authIntegration]
 
     try:
-        # [START v2returnMessage]
+        # [START v2returnMessageAsync]
         # Saving the new message to the Realtime Database.
         sanitized_message = sanitize_text(text)  # Sanitize message.
         db.reference("/messages").push({  # type: ignore
@@ -118,7 +120,7 @@ def addmessage(req: https_fn.CallableRequest) -> Any:
 
         # Returning the sanitized message to the client.
         return {"text": sanitized_message}
-        # [END v2returnMessage]
+        # [END v2returnMessageAsync]
     except Exception as e:
         # Re-throwing the error as an HttpsError so that the client gets
         # the error details.
