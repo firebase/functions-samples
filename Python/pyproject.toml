@@ -15,8 +15,23 @@
 [project]
 name = "functions_samples"
 version = "1.0.0"
-[tool.yapf]
-based_on_style = "google"
-column_limit = 100
-[tool.mypy]
-python_version = "3.10"
+requires-python = ">=3.10"
+dependencies = [
+    "uv",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # Pyflakes
+    "I",  # isort
+    "C4", # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501", # Line too long, handled by formatter
+]

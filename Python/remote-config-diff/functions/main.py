@@ -15,15 +15,15 @@
 # [START all]
 # [START import]
 # The Cloud Functions for Firebase SDK to set up triggers and logging.
-from firebase_functions import remote_config_fn
-
 # The Firebase Admin SDK to obtain access tokens.
+import deepdiff
 import firebase_admin
+import requests
+from firebase_functions import remote_config_fn
 
 app = firebase_admin.initialize_app()
 
-import deepdiff
-import requests
+
 # [END import]
 
 
@@ -39,17 +39,24 @@ def showconfigdiff(event: remote_config_fn.CloudEvent[remote_config_fn.ConfigUpd
     current_version = int(event.data.version_number)
 
     # Figure out the differences between templates
-    remote_config_api = ("https://firebaseremoteconfig.googleapis.com/v1/"
-                         f"projects/{app.project_id}/remoteConfig")
-    current_template = requests.get(remote_config_api,
-                                    params={"versionNumber": current_version},
-                                    headers={"Authorization": f"Bearer {access_token}"})
-    previous_template = requests.get(remote_config_api,
-                                     params={"versionNumber": current_version - 1},
-                                     headers={"Authorization": f"Bearer {access_token}"})
+    remote_config_api = (
+        f"https://firebaseremoteconfig.googleapis.com/v1/projects/{app.project_id}/remoteConfig"
+    )
+    current_template = requests.get(
+        remote_config_api,
+        params={"versionNumber": current_version},
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    previous_template = requests.get(
+        remote_config_api,
+        params={"versionNumber": current_version - 1},
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
     diff = deepdiff.DeepDiff(previous_template, current_template)
 
     # Log the difference
     print(diff.pretty())
+
+
 # [END showconfigdiff]
 # [END all]

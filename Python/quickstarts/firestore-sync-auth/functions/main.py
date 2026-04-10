@@ -14,15 +14,14 @@
 
 # [START all]
 from firebase_functions import firestore_fn
+from firebase_functions.firestore_fn import Change, DocumentSnapshot, Event
 
 
 # [START verifyComment]
 @firestore_fn.on_document_updated_with_auth_context(document="comments/{comment_id}")
 def verify_comment(event: Event[Change[DocumentSnapshot]]) -> None:
-
     # Get the current and previous document values.
     new_value = event.data.after
-    prev_value = event.data.before
 
     # Get the auth context from the event
     user_auth_type = event.auth_type
@@ -39,5 +38,7 @@ def verify_comment(event: Event[Change[DocumentSnapshot]]) -> None:
 
     # add auth medadata to the document
     new_value.reference.update({"created_by": user_auth_id, "verified": verified})
+
+
 # [END verifyComment]
 # [END all]

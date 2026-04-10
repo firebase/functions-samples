@@ -13,9 +13,9 @@
 # limitations under the License.
 
 # [START httpflaskexample]
-from firebase_admin import initialize_app, db
-from firebase_functions import https_fn
 import flask
+from firebase_admin import db, initialize_app
+from firebase_functions import https_fn
 
 initialize_app()
 app = flask.Flask(__name__)
@@ -46,4 +46,6 @@ def add_widget():
 def httpsflaskexample(req: https_fn.Request) -> https_fn.Response:
     with app.request_context(req.environ):
         return app.full_dispatch_request()
+
+
 # [END httpflaskexample]
