@@ -1,2 +1,2 @@
-firebase-functions
+firebase-functions ~= 0.5.0
 requests
