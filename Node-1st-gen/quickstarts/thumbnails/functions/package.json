@@ -3,8 +3,8 @@
   "description": "Generate Thumbnail Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "7.0.0",
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "7.2.5",
     "sharp": "^0.32.1"
   },
   "devDependencies": {
