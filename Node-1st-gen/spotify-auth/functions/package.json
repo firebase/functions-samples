@@ -1,6 +1,6 @@
 {
   "name": "spotify-auth-functions",
-  "description": "Authenticate with Spotify Firebase Functions sample",
+  "description": "Authenticate with Spotify Cloud Functions for Firebase sample",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "eslint-plugin-promise": "^7.2.1",

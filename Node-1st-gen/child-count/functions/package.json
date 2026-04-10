@@ -1,6 +1,6 @@
 {
   "name": "child-count-functions",
-  "description": "Count Child nodes Firebase Functions sample",
+  "description": "Count Child nodes Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",

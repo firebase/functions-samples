@@ -1,6 +1,6 @@
 {
   "name": "lastmodified-tracking-functions",
-  "description": "Track Lastmodified date of nodes Firebase Functions sample",
+  "description": "Track Lastmodified date of nodes Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",

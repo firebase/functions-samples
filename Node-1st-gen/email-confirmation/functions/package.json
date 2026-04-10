@@ -1,6 +1,6 @@
 {
   "name": "email-confirmation-functions",
-  "description": "Send Email confirmation upon sign up to a Mailing list Firebase Functions sample",
+  "description": "Send Email confirmation upon sign up to a Mailing list Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",

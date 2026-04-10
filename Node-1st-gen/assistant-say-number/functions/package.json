@@ -1,6 +1,6 @@
 {
   "name": "assistant-say-numer-functions",
-  "description": "Firebase Functions",
+  "description": "Cloud Functions for Firebase",
   "dependencies": {
     "actions-on-google": "^2.14.0",
     "firebase-admin": "^13.0.2",

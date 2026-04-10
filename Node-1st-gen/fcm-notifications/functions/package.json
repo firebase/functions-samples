@@ -1,6 +1,6 @@
 {
   "name": "fcm-notifications-functions",
-  "description": "Send FCM notifications Firebase Functions sample",
+  "description": "Send FCM notifications Cloud Functions for Firebase sample",
   "dependencies": {
     "eslint-plugin-promise": "^7.2.1",
     "firebase-admin": "^13.0.2",
