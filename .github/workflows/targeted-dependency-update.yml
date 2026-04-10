@@ -1,0 +1,75 @@
+name: Targeted Dependency Update
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Weekly
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  targeted-update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- NODE SECTION (Using pnpm) ---
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Update specific Node packages
+        run: |
+          # Use the -r (recursive) flag to find all package.json files
+          # and update ONLY the listed packages to the latest version
+          pnpm up -L -r firebase-functions firebase-admin
+
+      # --- PYTHON SECTION (Using a Shell Loop) ---
+      - name: Update specific Python packages
+        run: |
+          # Fetch latest versions from PyPI
+          FF_LATEST=$(curl -s https://pypi.org/pypi/firebase-functions/json | grep -oP '"version":"\K[^"]+')
+          FA_LATEST=$(curl -s https://pypi.org/pypi/firebase-admin/json | grep -oP '"version":"\K[^"]+')
+
+          # Find all requirements.txt files
+          find . -name "requirements.txt" -not -path "*/.venv/*" -type f | while read -r file; do
+            echo "Processing $file..."
+
+            # If firebase-functions is in the file, update its version
+            if grep -q "firebase-functions" "$file"; then
+              # Replace exact version matches like firebase-functions==1.0.0 or just firebase-functions
+              # using sed. We will replace the whole line matching firebase-functions (optionally with version)
+              # and put the memory guideline recommended ~= operator
+              sed -i -E "s/^firebase-functions([=~<>].*)?$/firebase-functions~=$FF_LATEST/" "$file"
+            fi
+
+            # If firebase-admin is in the file, update its version
+            if grep -q "firebase-admin" "$file"; then
+              sed -i -E "s/^firebase-admin([=~<>].*)?$/firebase-admin~=$FA_LATEST/" "$file"
+            fi
+          done
+
+      # --- COMMIT & PR SECTION ---
+      - name: Create Pull Request
+        run: |
+          if git diff --quiet; then
+            echo "No dependency updates found."
+          else
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            git checkout -b update-firebase-deps
+            git commit -am "chore: targeted update of firebase-functions and firebase-admin"
+            git push origin update-firebase-deps --force
+
+            # Check if PR already exists before creating
+            if gh pr list --state open --head update-firebase-deps | grep -q "update-firebase-deps"; then
+              echo "Pull request already exists."
+            else
+              gh pr create \
+                --title "🚀 Targeted Dependency Updates (Firebase)" \
+                --body "This PR updates \`firebase-functions\` and \`firebase-admin\` to their latest versions across all Node.js and Python subdirectories." \
+                --base main \
+                --head update-firebase-deps
+            fi
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
