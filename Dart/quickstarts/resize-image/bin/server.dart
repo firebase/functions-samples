@@ -54,7 +54,7 @@ void main(List<String> args) async {
           bucket,
           cachedFileName,
         );
-        return Response.ok(downloadUrl);
+        return Response.movedPermanently(downloadUrl);
       } on DetailedApiRequestError catch (e) {
         if (e.status != 404) {
           rethrow;
@@ -108,7 +108,7 @@ void main(List<String> args) async {
         bucket,
         cachedFileName,
       );
-      return Response.ok(downloadUrl);
+      return Response.movedPermanently(downloadUrl);
     });
   });
 }
