@@ -32,13 +32,13 @@ void main(List<String> args) async {
 
       final queryParams = request.url.queryParameters;
       final width = queryParams.containsKey('width')
-          ? int.tryParse(queryParams['width']!)
+          ? (int.tryParse(queryParams['width']!) ?? defaultWidth.value())
           : defaultWidth.value();
       final height = queryParams.containsKey('height')
           ? int.tryParse(queryParams['height']!)
           : null;
 
-      if (width == null || width <= 0) {
+      if (width <= 0) {
         return Response(400, body: 'Invalid width parameter.');
       }
 
