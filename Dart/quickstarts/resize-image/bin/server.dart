@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:dart_firebase_admin/dart_firebase_admin.dart';
+import 'package:firebase_admin_sdk/firebase_admin_sdk.dart';
 import 'package:firebase_functions/firebase_functions.dart';
 import 'package:google_cloud_storage/google_cloud_storage.dart';
 import 'package:googleapis/storage/v1.dart';
