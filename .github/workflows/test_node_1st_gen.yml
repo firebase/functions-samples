@@ -45,7 +45,7 @@ jobs:
         node-version:
           # The latest Node version for 1st gen
           # https://cloud.google.com/functions/docs/runtime-support#node.js
-          - 20.x
+          - 22.x
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
