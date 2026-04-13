@@ -1,0 +1,36 @@
+name: resize_image
+description: Image resizer example for Firebase Functions for Dart
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  dart_firebase_admin: ^0.5.0
+  firebase_functions:
+    git:
+      url: https://github.com/firebase/firebase-functions-dart
+      ref: main
+  google_cloud_storage: ^0.6.0
+  image: ^4.8.0
+  path: ^1.9.1
+
+dev_dependencies:
+  build_runner: ^2.10.5
+  lints: ^6.0.0
+
+dependency_overrides:
+  firebase_functions:
+    git:
+      url: https://github.com/firebase/firebase-functions-dart
+      ref: main
+  dart_firebase_admin:
+      git:
+        url: https://github.com/firebase/firebase-admin-dart
+        path: packages/dart_firebase_admin
+        ref: main
+  google_cloud_firestore:
+      git:
+        url: https://github.com/firebase/firebase-admin-dart
+        path: packages/google_cloud_firestore
+        ref: main
