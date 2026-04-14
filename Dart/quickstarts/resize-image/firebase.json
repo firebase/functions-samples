@@ -2,5 +2,17 @@
   "functions": {
     "source": ".",
     "codebase": "dart-quickstarts-resize-image"
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
   }
 }

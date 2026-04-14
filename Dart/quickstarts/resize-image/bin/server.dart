@@ -1,9 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:firebase_admin_sdk/firebase_admin_sdk.dart';
+import 'package:google_cloud_storage/google_cloud_storage.dart'
+    show ObjectMetadata, NotFoundException;
 import 'package:firebase_functions/firebase_functions.dart';
-import 'package:google_cloud_storage/google_cloud_storage.dart';
-import 'package:googleapis/storage/v1.dart';
 import 'package:image/image.dart';
 
 final defaultWidth = defineInt(
@@ -11,54 +10,53 @@ final defaultWidth = defineInt(
   ParamOptions<int>(defaultValue: 300),
 );
 
-// Lazily initialize the default app when needed to avoid duplication.
-FirebaseApp? _app;
-FirebaseApp get app {
-  _app ??= FirebaseApp.initializeApp();
-  return _app!;
-}
-
 void main(List<String> args) async {
   await fireUp(args, (firebase) {
+    /// An https function that resizes images in Cloud Storage.
+    /// It creates a separate Storage folder to cache stored images
+    /// so that it does not need to resize an image twice.
+    ///
+    /// It returns an HTTP redirect to the public Storage download URL.
+    ///
+    /// The query params it accepts are:
+    /// - image: the image file path in Cloud Storage
+    /// - width (optional): the width in pixels to resize to
+    ///
+    /// Example call: https://<function-url>?image=myFile.png&width=400
     firebase.https.onRequest(name: 'imageOptimizer', (request) async {
-      final pathSegments = request.url.pathSegments;
-      if (pathSegments.isEmpty || pathSegments.last.isEmpty) {
-        return Response(
-          400,
-          body: 'Missing storage object ID in the request path.',
+      // Parse arguments from query params in the URL
+      final queryParams = request.url.queryParameters;
+      final imageFileName = queryParams['image'];
+      if (imageFileName == null) {
+        throw InvalidArgumentError(
+          'No image provided. Include the image file name as a query param.',
         );
       }
-      final storageObjectId = pathSegments.join('/');
-
-      final queryParams = request.url.queryParameters;
-      final width = queryParams.containsKey('width')
-          ? (int.tryParse(queryParams['width']!) ?? defaultWidth.value())
-          : defaultWidth.value();
-      final height = queryParams.containsKey('height')
-          ? int.tryParse(queryParams['height']!)
-          : null;
-
-      if (width <= 0) {
-        return Response(400, body: 'Invalid width parameter.');
+      var width = int.tryParse(queryParams['width'] ?? "");
+      if (width == null) {
+        logger.info(
+          'Cloud not parse width from query params. Using default width.',
+        );
+        width = defaultWidth.value();
       }
 
-      final bucket = app.storage().bucket();
+      // Get the storage bucket from the built-in parameter
+      // https://firebase.google.com/docs/functions/config-env#built-in-parameters
+      final bucketName = storageBucket.value();
+      final bucket = firebase.adminApp.storage().bucket(bucketName);
 
-      final cachedFileName = height == null
-          ? 'image-optimizer-cache/${width}w-$storageObjectId'
-          : 'image-optimizer-cache/${width}w-${height}h-$storageObjectId';
-
+      // Return early if the image has been resized before
+      final cachedFileName = 'image-optimizer-cache/${width}w-${imageFileName}';
       try {
-        await bucket.storage.objectMetadata(bucket.name, cachedFileName);
-        final downloadUrl = await app.storage().getDownloadURL(
+        await bucket.storage.objectMetadata(bucketName, cachedFileName);
+        final downloadUrl = await firebase.adminApp.storage().getDownloadURL(
           bucket,
           cachedFileName,
         );
+        logger.log('Cache hit. Using existing resized image.');
         return Response.movedPermanently(downloadUrl);
-      } on DetailedApiRequestError catch (e) {
-        if (e.status != 404) {
-          rethrow;
-        }
+      } on NotFoundException {
+        logger.log('Cache miss. Resizing image to width ${width}');
       }
 
       // Download original image
@@ -66,45 +64,52 @@ void main(List<String> args) async {
       try {
         originalBytes = await bucket.storage.downloadObject(
           bucket.name,
-          storageObjectId,
+          imageFileName,
         );
-      } on DetailedApiRequestError catch (e) {
-        if (e.status == 404) {
-          return Response(404, body: 'Original image not found.');
-        }
-        rethrow;
+      } on NotFoundException {
+        throw InvalidArgumentError(
+          'Image ${imageFileName} does not exist in bucket ${bucketName}.',
+        );
       }
 
       // Decode image
       final originalImage = decodeImage(Uint8List.fromList(originalBytes));
       if (originalImage == null) {
-        return Response(400, body: 'Failed to decode original image.');
+        throw InvalidArgumentError(
+          'Failed to decode image. Are you sure it was an image file?',
+        );
       }
 
-      // Resize image
-      final resizedImage = copyResize(
-        originalImage,
-        width: width,
-        height: height,
-        maintainAspect: true,
-      );
-
-      // Encode image
-      final encodedBytes = encodeNamedImage(storageObjectId, resizedImage);
-      if (encodedBytes == null) {
-        return Response(500, body: 'Failed to encode resized image.');
+      // Resize if needed
+      var encodedBytes;
+      if (originalImage.width >= width) {
+        final resizedImage = copyResize(
+          originalImage,
+          width: width,
+          maintainAspect: true,
+        );
+        encodedBytes = encodeNamedImage(imageFileName, resizedImage);
+        if (encodedBytes == null) {
+          throw InternalError('Failed to encode resized image.');
+        }
+      } else {
+        logger.info(
+          'Image is already smaller than the requested width. No need to resize.',
+        );
+        encodedBytes = originalBytes;
       }
 
-      // Upload resized image
+      // Upload resized image to cache directory
       await bucket.storage.uploadObject(
         bucket.name,
         cachedFileName,
         encodedBytes,
+        // Tell clients to cache the resized image to reduce repeat requests
         metadata: ObjectMetadata(cacheControl: 'public, max-age=86400'),
       );
 
       // Return download URL
-      final downloadUrl = await app.storage().getDownloadURL(
+      final downloadUrl = await firebase.adminApp.storage().getDownloadURL(
         bucket,
         cachedFileName,
       );
