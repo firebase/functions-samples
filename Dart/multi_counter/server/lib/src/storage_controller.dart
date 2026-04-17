@@ -9,7 +9,6 @@ class StorageController {
   Future<void> increment(String userId) async {
     try {
       await _increment(userId);
-      await _updateGlobalCount();
     } catch (e, stack) {
       print('Error incrementing counter for user: $userId');
       print(e);
@@ -20,52 +19,35 @@ class StorageController {
 
   Future<void> _increment(String userId) async {
     await _firestore.runTransaction<void>((transaction) async {
-      final ref = _firestore.collection(usersCollection).doc(userId);
+      final userRef = _firestore.collection(usersCollection).doc(userId);
+      final globalRef = _firestore
+          .collection(globalCollection)
+          .doc(varsDocument);
 
-      final snapshot = await transaction.get(ref);
+      final snapshot = await transaction.get(userRef);
 
       if (!snapshot.exists) {
         // Document doesn't exist, create it with count = 1
-        transaction.set(ref, _saveCount(1));
+        transaction.set(userRef, _saveCount(1));
+        transaction.update(globalRef, {
+          totalCountField: const FieldValue.increment(1),
+          totalUsersField: const FieldValue.increment(1),
+        });
       } else {
         final data = snapshot.data();
         if (data != null && data.containsKey(countField)) {
           // Field exists, increment it
-          transaction.update(ref, {countField: const FieldValue.increment(1)});
+          transaction.update(userRef, {
+            countField: const FieldValue.increment(1),
+          });
         } else {
           // Field doesn't exist, initialize it to 1
-          transaction.update(ref, _saveCount(1));
+          transaction.update(userRef, _saveCount(1));
         }
+        transaction.update(globalRef, {
+          totalCountField: const FieldValue.increment(1),
+        });
       }
-    });
-  }
-
-  Future<void> _updateGlobalCount() async {
-    final globalCountSnapshot = await _firestore
-        .collection(usersCollection)
-        .aggregate(const sum(countField), const count())
-        .get();
-
-    var globalCountRaw = globalCountSnapshot.getSum(countField);
-
-    if (globalCountRaw == null || globalCountRaw < 1) {
-      // TODO: we don't want to crash here, but we should log
-      print('Very weird value for global count: "$globalCountRaw');
-      globalCountRaw = 1;
-    }
-
-    final globalCountValue = globalCountRaw.toInt();
-    final userCountValue = globalCountSnapshot.count;
-
-    final globalVars = _firestore
-        .collection(globalCollection)
-        .doc(varsDocument);
-
-    // TODO: Investigate a more efficient way to do this
-    // Maybe with a trigger?
-    await globalVars.set({
-      totalCountField: globalCountValue,
-      totalUsersField: userCountValue,
     });
   }
 

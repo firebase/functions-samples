@@ -9,14 +9,11 @@ void main(List<String> args) async {
     firebase.https.onCall(
       name: incrementCallable,
 
-      options: const CallableOptions(
-        // TODO: should be explicit here about the supported hosts
-        cors: OptionLiteral(['*']),
-      ),
+      options: const CallableOptions(cors: OptionLiteral(['*'])),
       (request, response) async {
         if (request.auth case AuthData auth?) {
           await storageController.increment(auth.uid);
-          return CallableResult('success');
+          return CallableResult(IncrementResponse.success().toJson());
         } else {
           throw UnauthenticatedError();
         }

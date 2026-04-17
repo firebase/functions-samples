@@ -19,16 +19,5 @@ Future<void> initializeWorld() async {
 
 final _options = HttpsCallableOptions(timeout: const Duration(seconds: 15));
 
-HttpsCallable get incrementHttpsCallable {
-  if (kDebugMode) {
-    return FirebaseFunctions.instance.httpsCallable(
-      incrementCallable,
-      options: _options,
-    );
-  } else {
-    return FirebaseFunctions.instance.httpsCallableFromUrl(
-      'https://increment-138342796561.us-central1.run.app',
-      options: _options,
-    );
-  }
-}
+HttpsCallable get incrementHttpsCallable => FirebaseFunctions.instance
+    .httpsCallable(incrementCallable, options: _options);

@@ -11,7 +11,7 @@ import '../../config_state.dart';
 
 typedef GlobalData = ({int totalUsers, int totalClicks});
 
-class CounterState {
+class CounterState extends ChangeNotifier {
   CounterState() {
     _incrementController.stream
         .switchMap((_) => _callIncrement().asStream())
@@ -20,8 +20,9 @@ class CounterState {
     _initFirestore();
   }
 
-  final ValueNotifier<int> userCounter = ValueNotifier(0);
-  final ValueNotifier<GlobalData?> globalCounter = ValueNotifier(null);
+  int userCounter = 0;
+  GlobalData? globalCounter;
+  bool isLoading = false;
 
   final _incrementController = StreamController<void>.broadcast();
   final _subscriptions = <StreamSubscription>[];
@@ -30,8 +31,6 @@ class CounterState {
   Stream<IncrementResponse> get incrementResponseStream =>
       _responseController.stream;
 
-  // TODO: consider creating shared constants for collection and field names.
-  // ...and putting them in the shared package.
   void _initFirestore() {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
@@ -39,13 +38,16 @@ class CounterState {
         FirebaseFirestore.instance
             .collection(usersCollection)
             .doc(uid)
+            .withConverter<int>(
+              fromFirestore: (snapshot, _) =>
+                  snapshot.data()?[countField] as int? ?? 0,
+              toFirestore: (value, _) => {countField: value},
+            )
             .snapshots()
             .listen((snapshot) {
               if (snapshot.exists) {
-                final data = snapshot.data();
-                if (data != null && data.containsKey(countField)) {
-                  userCounter.value = data[countField] as int;
-                }
+                userCounter = snapshot.data() ?? 0;
+                notifyListeners();
               }
             }),
       );
@@ -54,16 +56,29 @@ class CounterState {
         FirebaseFirestore.instance
             .collection(globalCollection)
             .doc(varsDocument)
+            .withConverter<GlobalData?>(
+              fromFirestore: (snapshot, _) {
+                final data = snapshot.data();
+                if (data != null &&
+                    data.containsKey(totalCountField) &&
+                    data.containsKey(totalUsersField)) {
+                  return (
+                    totalClicks: data[totalCountField] as int,
+                    totalUsers: data[totalUsersField] as int,
+                  );
+                }
+                return null;
+              },
+              toFirestore: (data, _) => {
+                totalCountField: data?.totalClicks,
+                totalUsersField: data?.totalUsers,
+              },
+            )
             .snapshots()
             .listen((snapshot) {
-              if (snapshot.data() case {
-                totalCountField: int totalClicks,
-                totalUsersField: int totalUsers,
-              }) {
-                globalCounter.value = (
-                  totalUsers: totalUsers,
-                  totalClicks: totalClicks,
-                );
+              if (snapshot.exists) {
+                globalCounter = snapshot.data();
+                notifyListeners();
               }
             }),
       );
@@ -72,46 +87,52 @@ class CounterState {
     }
   }
 
-  // TODO: consider making this a nullable-property and disabling
-  // the button when we're waiting for the function to complete.
   void increment() {
+    if (isLoading) return;
+    isLoading = true;
+    notifyListeners();
     _incrementController.add(null);
   }
 
-  Future<void> _callIncrement() async {
+  Future<IncrementResponse?> _callIncrement() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      _responseController.add(
-        IncrementResponse.failure('User is not authenticated.'),
-      );
-      return;
+      return IncrementResponse.failure('User is not authenticated.');
     }
 
     final idToken = await user.getIdToken();
     if (idToken == null) {
-      _responseController.add(
-        IncrementResponse.failure('User is not authenticated.'),
-      );
-      return;
+      return IncrementResponse.failure('User is not authenticated.');
     }
 
     try {
-      await incrementHttpsCallable.call<void>();
+      final result = await incrementHttpsCallable.call<Map<String, dynamic>>();
+      return IncrementResponse.fromJson(result.data);
     } on FirebaseFunctionsException catch (e) {
       print('Error calling increment: ${e.code} ${e.message}');
-      _responseController.add(IncrementResponse.failure('Error: ${e.code}'));
+      return IncrementResponse.failure('Error: ${e.code}');
+    } catch (e) {
+      print('Error calling increment: $e');
+      return IncrementResponse.failure('Unknown error occurred.');
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 
-  void _handleIncrementResult(_) {
-    // TODO: handle the result
+  void _handleIncrementResult(IncrementResponse? result) {
+    if (result != null) {
+      _responseController.add(result);
+    }
   }
 
+  @override
   void dispose() {
     _responseController.close();
     _incrementController.close();
     for (final sub in _subscriptions) {
       sub.cancel();
     }
+    super.dispose();
   }
 }

@@ -17,13 +17,10 @@ class CounterScreen extends StatefulWidget {
 class _CounterScreenState extends State<CounterScreen> {
   final state = CounterState();
   late final StreamSubscription<IncrementResponse> _sub;
-  late final Listenable _merger;
 
   @override
   void initState() {
     super.initState();
-
-    _merger = Listenable.merge([state.userCounter, state.globalCounter]);
 
     ScaffoldFeatureController<SnackBar, SnackBarClosedReason>?
     snackBarController;
@@ -57,9 +54,9 @@ class _CounterScreenState extends State<CounterScreen> {
   @override
   Widget build(BuildContext context) => AppScaffold(
     child: ListenableBuilder(
-      listenable: _merger,
+      listenable: state,
       builder: (context, child) {
-        final globalCount = state.globalCounter.value;
+        final globalCount = state.globalCounter;
         return SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -73,7 +70,7 @@ class _CounterScreenState extends State<CounterScreen> {
               _spacer,
               const Text('You have pushed the button this many times:'),
               Text(
-                '${state.userCounter.value}',
+                '${state.userCounter}',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               _spacer,
@@ -93,9 +90,15 @@ class _CounterScreenState extends State<CounterScreen> {
               ],
               _spacer,
               FloatingActionButton.extended(
-                onPressed: state.increment,
+                onPressed: state.isLoading ? null : state.increment,
                 tooltip: 'Increment',
-                icon: const Icon(Icons.add),
+                icon: state.isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.add),
                 label: const Text('Increment'),
               ),
             ],
