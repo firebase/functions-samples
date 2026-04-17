@@ -48,6 +48,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
       - name: Set up Dart ${{ matrix.dart-version }}
         uses: dart-lang/setup-dart@b64355ae6ca0b5d484f0106a033dd1388965d06d # v1.6.0
         with:
@@ -59,7 +64,11 @@ jobs:
           for dir in $(find Dart -name pubspec.yaml -exec dirname {} \;); do
             echo "::group::Testing $dir"
             cd "$dir"
-            dart pub get
+            if grep -q "sdk: flutter" pubspec.yaml; then
+              flutter pub get
+            else
+              dart pub get
+            fi
             dart format --set-exit-if-changed .
             dart analyze .
             cd - > /dev/null
