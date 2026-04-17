@@ -21,6 +21,12 @@ To learn how to get started with Cloud Functions for Firebase by having a look a
 
 Minimal samples for each Cloud Functions trigger type.
 
+### Multi-counter
+
+- [Dart](/Dart/multi_counter/)
+
+This sample contains a Flutter app, a shared Dart package, and Dart server-side Cloud Functions showcasing how to build a multi-counter application, as featured in a Cloud Next 2026 talk.
+
 ### Quickstart: Uppercaser for Firestore
 
 - [Node 2nd gen](/Node/quickstarts/uppercase-firestore/)
