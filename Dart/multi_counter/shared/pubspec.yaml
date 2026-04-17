@@ -1,0 +1,13 @@
+name: multi_counter_shared
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  json_annotation: ^4.11.0
+
+dev_dependencies:
+  build_runner: ^2.10.5
+  json_serializable: ^6.12.0
