@@ -35,7 +35,7 @@ void main(List<String> args) async {
           );
         } else if (request.method == 'POST') {
           // Increment count by one
-          final step = request.url.queryParameters['step'] as int? ?? 1;
+          final step = int.tryParse(request.url.queryParameters['step'] ?? '') ?? 1;
           await counterDoc.update({'count': FieldValue.increment(step)});
           incrementResponse = IncrementResponse(
             success: true,
