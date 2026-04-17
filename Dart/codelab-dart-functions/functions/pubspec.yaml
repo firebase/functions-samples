@@ -1,0 +1,13 @@
+name: functions
+description: A starting point for Dart Cloud Functions
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  firebase_functions:
+  google_cloud_firestore:
+  shared:
+    path: ../packages/shared
