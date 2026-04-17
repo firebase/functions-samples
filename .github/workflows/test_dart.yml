@@ -50,8 +50,8 @@ jobs:
             echo "::group::Testing $dir"
             cd "$dir"
 
-            if grep -q "sdk: flutter" pubspec.yaml || grep -q "workspace:" pubspec.yaml; then
-              echo "Skipping direct flutter pub get/analyze for workspaces and flutter sub-packages. Workspaces with mixed dependencies may fail dart pub get if Flutter is missing."
+            if grep -q "sdk: flutter" pubspec.yaml || grep -q "workspace:" pubspec.yaml || grep -q "resolution: workspace" pubspec.yaml; then
+              echo "Skipping direct flutter pub get/analyze for workspaces, flutter sub-packages, and workspace members. Workspaces with mixed dependencies may fail dart pub get if Flutter is missing."
             else
               dart pub get
               dart format --set-exit-if-changed .
