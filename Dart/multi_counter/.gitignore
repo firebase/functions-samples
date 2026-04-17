@@ -1,0 +1,9 @@
+.dart_tool
+.firebaserc
+.firebase
+*-debug.log
+
+app/.flutter-plugins-dependencies
+app/build
+
+server/bin/server

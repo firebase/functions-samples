@@ -1,0 +1,31 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Rules for the 'users' collection
+    // Hierarchy: users (collection) -> {userId} (document) -> count (field)
+    match /users/{userId} {
+      // Users can only read their own document
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Writes are handled by the backend (Cloud Functions) 
+      // which bypass these rules via service account privileges.
+      allow write: if false;
+    }
+
+    // Rules for the 'global' collection
+    // Hierarchy: global (collection) -> vars (document) -> totalCount, totalUsers (fields)
+    match /global/vars {
+      // Any authenticated user can read global stats
+      allow read: if request.auth != null;
+      
+      // Writes are handled by the backend
+      allow write: if false;
+    }
+    
+    // Default deny all for any other paths
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
