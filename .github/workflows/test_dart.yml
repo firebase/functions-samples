@@ -49,9 +49,13 @@ jobs:
           for dir in $(find Dart -name pubspec.yaml -exec dirname {} \;); do
             echo "::group::Testing $dir"
             cd "$dir"
-            dart pub get
-            dart format --set-exit-if-changed .
-            dart analyze .
+            if grep -q "sdk: flutter" pubspec.yaml; then
+              echo "Skipping Flutter project..."
+            else
+              dart pub get
+              dart format --set-exit-if-changed .
+              dart analyze .
+            fi
             cd - > /dev/null
             echo "::endgroup::"
           done
