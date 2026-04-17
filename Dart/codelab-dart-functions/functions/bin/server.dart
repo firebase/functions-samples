@@ -6,10 +6,8 @@ import 'package:shared/shared.dart';
 
 void main(List<String> args) async {
   await fireUp(args, (firebase) {
-
     // Listen for calls to the http request and name defined in the shared package.
     firebase.https.onRequest(name: incrementCallable, (request) async {
-
       // In a production app, verify the user with request.auth?.uid here.
       // ignore: avoid_print
       print('Incrementing counter on the server...');
@@ -66,6 +64,5 @@ void main(List<String> args) async {
         headers: {'Content-Type': 'application/json'},
       );
     });
-
   });
 }

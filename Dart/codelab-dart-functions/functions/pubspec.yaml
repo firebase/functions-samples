@@ -11,3 +11,5 @@ dependencies:
   google_cloud_firestore:
   shared:
     path: ../packages/shared
+dev_dependencies:
+  lints: ^6.1.0

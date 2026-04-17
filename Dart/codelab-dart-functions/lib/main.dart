@@ -18,10 +18,10 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
-    home: const CounterPage(),
-  );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+        home: const CounterPage(),
+      );
 }
 
 class CounterPage extends StatefulWidget {
@@ -44,7 +44,7 @@ class _CounterPageState extends State<CounterPage> {
   Future<void> _increment({bool readOnly = false}) async {
     setState(() => _loading = true);
     try {
-       // Call the Dart function.
+      // Call the Dart function.
       final uri = Uri.parse(incrementUrl);
       final response = readOnly ? await http.get(uri) : await http.post(uri);
 
