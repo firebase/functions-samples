@@ -15,21 +15,9 @@ import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     throw UnsupportedError(
       'DefaultFirebaseOptions have not been configured for $defaultTargetPlatform - '
       'you can reconfigure this by running the FlutterFire CLI again.',
     );
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCydY22c_eDHDXWsRe_14-kzGNGSO986jI',
-    appId: '1:138342796561:web:22e80ba7c9119d66d950b0',
-    messagingSenderId: '138342796561',
-    projectId: 'n26-full-stack-dart',
-    authDomain: 'n26-full-stack-dart.firebaseapp.com',
-    storageBucket: 'n26-full-stack-dart.firebasestorage.app',
-  );
 }
