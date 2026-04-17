@@ -25,7 +25,7 @@ Minimal samples for each Cloud Functions trigger type.
 
 - [Dart](/Dart/multi_counter/)
 
-This sample contains both a Flutter app and a Dart server-side Cloud Function showcasing how to build a multi-counter application, as featured in a Cloud Next 2026 talk.
+This sample contains a Flutter app, a shared Dart package, and Dart server-side Cloud Functions showcasing how to build a multi-counter application, as featured in a Cloud Next 2026 talk.
 
 ### Quickstart: Uppercaser for Firestore
 
