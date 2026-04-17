@@ -1,0 +1,16 @@
+name: https_time_server
+description: HTTPS trigger examples for Firebase Functions for Dart
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  firebase_functions: ^0.5.0
+  firebase_admin_sdk: ^0.5.0
+  google_cloud_firestore: ^0.5.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  build_runner: ^2.10.5
+  lints: ^6.0.0

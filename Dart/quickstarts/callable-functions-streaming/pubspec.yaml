@@ -1,0 +1,14 @@
+name: callable_functions_streaming
+description: Streaming callable examples for Firebase Functions for Dart
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  firebase_functions: ^0.5.0
+  http: ^1.2.0
+
+dev_dependencies:
+  build_runner: ^2.10.5
+  lints: ^6.0.0

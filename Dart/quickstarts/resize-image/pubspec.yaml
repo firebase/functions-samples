@@ -1,0 +1,16 @@
+name: resize_image
+description: Image resizer example for Firebase Functions for Dart
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  image: ^4.8.0
+  path: ^1.9.1
+  firebase_functions: ^0.5.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  build_runner: ^2.10.5
+  lints: ^6.0.0

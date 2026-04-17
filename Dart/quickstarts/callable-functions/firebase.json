@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "source": ".",
+    "codebase": "dart-quickstarts-callable-functions"
+  }
+}
