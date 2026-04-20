@@ -24,7 +24,7 @@
     "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
-    "firebase-functions-test": "^3.4.0",
+    "firebase-functions-test": "^3.4.1",
     "typescript": "^5.0.4"
   },
   "private": true
