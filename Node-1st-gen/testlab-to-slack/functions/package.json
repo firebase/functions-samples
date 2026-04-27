@@ -19,7 +19,7 @@
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
-    "firebase-functions-test": "^3.4.0"
+    "firebase-functions-test": "^3.4.1"
   },
   "private": true
 }
