@@ -46,8 +46,8 @@ Future<dynamic> weatherForecastApi(num lat, num lng) async {
   return jsonDecode(forecastResp.body);
 }
 
-void main(List<String> args) async {
-  await fireUp(args, (firebase) {
+void main() {
+  runFunctions((firebase) {
     // [START streaming-callable]
     firebase.https.onCall(name: 'getForecast', (request, response) async {
       final data = request.data as Map<String, Object?>?;

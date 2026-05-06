@@ -17,8 +17,8 @@
 import 'package:firebase_functions/firebase_functions.dart';
 // [END imports]
 
-void main(List<String> args) async {
-  await fireUp(args, (firebase) {
+void main() {
+  runFunctions((firebase) {
     // [START allAdd]
     // [START addFunctionTrigger]
     // Adds two numbers to each other.

@@ -38,8 +38,8 @@ import 'package:intl/intl.dart';
 ///        -d '{"format": "MMMM d yyyy, h:mm:ss a"}' /
 ///        https://date-<random-hash>.<region>.run.app
 // [START dartHttpTrigger]
-void main(List<String> args) async {
-  await fireUp(args, (firebase) {
+void main() {
+  runFunctions((firebase) {
     firebase.https.onRequest(name: 'date', (request) async {
       // [END dartHttpTrigger]
 
