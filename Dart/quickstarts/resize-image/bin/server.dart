@@ -10,8 +10,8 @@ final defaultWidth = defineInt(
   ParamOptions<int>(defaultValue: 300),
 );
 
-void main(List<String> args) async {
-  await fireUp(args, (firebase) {
+void main() {
+  runFunctions((firebase) {
     /// An https function that resizes images in Cloud Storage.
     /// It creates a separate Storage folder to cache stored images
     /// so that it does not need to resize an image twice.
