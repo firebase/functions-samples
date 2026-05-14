@@ -1,0 +1,11 @@
+.dart_tool/
+build/
+*.dart.js
+*.info.json
+*.js
+*.js.map
+*.js.deps
+*.js.symbols
+firebase-debug.log
+firebase-debug.*.log
+*.local
