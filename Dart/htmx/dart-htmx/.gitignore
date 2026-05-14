@@ -67,3 +67,15 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Dart
+.dart_tool/
+build/
+*.dart.js
+*.info.json
+*.js
+*.js.map
+*.js.deps
+*.js.symbols
+pubspec.lock
+functions.yaml

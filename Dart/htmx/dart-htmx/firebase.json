@@ -1,8 +1,8 @@
 {
   "functions": [
     {
-      "source": "functions",
-      "codebase": "default",
+      "source": ".",
+      "codebase": "dart-htmx",
       "disallowLegacyRuntimeConfig": true,
       "ignore": [
         ".dart_tool",
