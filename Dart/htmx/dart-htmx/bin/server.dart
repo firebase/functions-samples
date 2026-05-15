@@ -6,44 +6,26 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import '../lib/src/app_js.dart';
 
-class Contact {
-  String firstName;
-  String lastName;
-  String email;
+class MessageData {
+  String text;
 
-  Contact({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-  });
+  MessageData({required this.text});
 
-  factory Contact.fromJson(Map<String, dynamic> json) {
-    return Contact(
-      firstName: json['firstName'] as String? ?? 'Jane',
-      lastName: json['lastName'] as String? ?? 'Doe',
-      email: json['email'] as String? ?? 'jane.doe@example.com',
-    );
+  factory MessageData.fromJson(Map<String, dynamic> json) {
+    return MessageData(text: json['text'] as String? ?? 'Hello World!');
   }
 
-  Map<String, dynamic> toJson() => {
-    'firstName': firstName,
-    'lastName': lastName,
-    'email': email,
-  };
+  Map<String, dynamic> toJson() => {'text': text};
 }
 
-Future<Contact> getContact(DocumentReference ref) async {
+Future<MessageData> getMessage(DocumentReference ref) async {
   final snapshot = await ref.get();
   if (!snapshot.exists) {
-    final defaultContact = Contact(
-      firstName: 'Jane',
-      lastName: 'Doe',
-      email: 'jane.doe@example.com',
-    );
-    await ref.set(defaultContact.toJson());
-    return defaultContact;
+    final defaultMessage = MessageData(text: 'Hello World!');
+    await ref.set(defaultMessage.toJson());
+    return defaultMessage;
   }
-  return Contact.fromJson(snapshot.data()!);
+  return MessageData.fromJson(snapshot.data()!);
 }
 
 Future<DecodedIdToken?> verifyAuthHeader(
@@ -111,63 +93,41 @@ class BaseDocument extends StatelessComponent {
   }
 }
 
-Component createDisplayView(Contact contact) {
+Component createDisplayView(MessageData msg) {
   return article([
-    header([Component.text('Contact Info')]),
+    header([Component.text('Public Message')]),
     div([
-      div([
-        strong([Component.text('First Name: ')]),
-        Component.text(contact.firstName),
-      ]),
-      div([
-        strong([Component.text('Last Name: ')]),
-        Component.text(contact.lastName),
-      ]),
-      div([
-        strong([Component.text('Email: ')]),
-        Component.text(contact.email),
-      ]),
-    ], classes: 'grid'),
+      blockquote([Component.text(msg.text)]),
+    ]),
     footer([
       button(
         [Component.text('Click To Edit')],
         classes: 'secondary',
         attributes: {
           'hx-get': '?mode=edit',
-          'hx-target': '#contact-card',
+          'hx-target': '#message-card',
           'hx-swap': 'outerHTML',
         },
       ),
     ]),
-  ], id: 'contact-card');
+  ], id: 'message-card');
 }
 
-Component createEditView(Contact contact) {
+Component createEditView(MessageData msg) {
   return article([
     form(
       [
-        header([Component.text('Edit Contact')]),
+        header([Component.text('Edit Message')]),
         div([
           label([
-            Component.text('First Name'),
+            Component.text('Message Text'),
             input(
               type: InputType.text,
-              name: 'firstName',
-              value: contact.firstName,
+              name: 'text',
+              value: msg.text,
+              attributes: {'required': 'true'},
             ),
           ]),
-          label([
-            Component.text('Last Name'),
-            input(
-              type: InputType.text,
-              name: 'lastName',
-              value: contact.lastName,
-            ),
-          ]),
-        ], classes: 'grid'),
-        label([
-          Component.text('Email'),
-          input(type: InputType.email, name: 'email', value: contact.email),
         ]),
         footer([
           button(
@@ -176,7 +136,7 @@ Component createEditView(Contact contact) {
             type: ButtonType.button,
             attributes: {
               'hx-get': '?',
-              'hx-target': '#contact-card',
+              'hx-target': '#message-card',
               'hx-swap': 'outerHTML',
             },
           ),
@@ -185,11 +145,11 @@ Component createEditView(Contact contact) {
       ],
       attributes: {
         'hx-put': '?',
-        'hx-target': '#contact-card',
+        'hx-target': '#message-card',
         'hx-swap': 'outerHTML',
       },
     ),
-  ], id: 'contact-card');
+  ], id: 'message-card');
 }
 
 Component createSignInView() {
@@ -247,8 +207,8 @@ void main() {
     final firestore = Firestore();
 
     firebase.https.onRequest(name: 'contact', (request) async {
-      final docRef = firestore.collection('contacts').doc('1');
-      final contact = await getContact(docRef);
+      final docRef = firestore.collection('messages').doc('message');
+      final msg = await getMessage(docRef);
 
       final mode = request.url.queryParameters['mode'];
       final isHxRequest = request.headers['hx-request'] == 'true';
@@ -282,11 +242,11 @@ void main() {
             }
           }
 
-          final editView = createEditView(contact);
+          final editView = createEditView(msg);
           final result = await renderComponent(
             isHxRequest
                 ? editView
-                : BaseDocument(titleText: 'Edit Contact', child: editView),
+                : BaseDocument(titleText: 'Edit Message', child: editView),
             request: request,
           );
           return Response.ok(
@@ -294,11 +254,11 @@ void main() {
             headers: {'content-type': 'text/html'},
           );
         } else {
-          final displayView = createDisplayView(contact);
+          final displayView = createDisplayView(msg);
           final result = await renderComponent(
             isHxRequest
                 ? displayView
-                : BaseDocument(titleText: 'Contact', child: displayView),
+                : BaseDocument(titleText: 'Public Message', child: displayView),
             request: request,
           );
           return Response.ok(
@@ -319,17 +279,15 @@ void main() {
         final bodyStr = await request.readAsString();
         final formData = Uri.splitQueryString(bodyStr);
 
-        contact.firstName = formData['firstName'] ?? contact.firstName;
-        contact.lastName = formData['lastName'] ?? contact.lastName;
-        contact.email = formData['email'] ?? contact.email;
+        msg.text = formData['text'] ?? msg.text;
 
-        await docRef.set(contact.toJson());
+        await docRef.set(msg.toJson());
 
-        final displayView = createDisplayView(contact);
+        final displayView = createDisplayView(msg);
         final result = await renderComponent(
           isHxRequest
               ? displayView
-              : BaseDocument(titleText: 'Contact', child: displayView),
+              : BaseDocument(titleText: 'Public Message', child: displayView),
           request: request,
         );
         return Response.ok(result.body, headers: {'content-type': 'text/html'});
