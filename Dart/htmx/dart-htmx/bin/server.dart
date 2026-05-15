@@ -99,7 +99,8 @@ class BaseDocument extends StatelessComponent {
                 button(
                   [Component.text('Sign Out')],
                   classes: 'secondary outline',
-                  attributes: {'onclick': 'signOut()'},
+                  id: 'signout-button',
+                  attributes: {'hx-get': '?'},
                 ),
               ]),
           ]),
@@ -201,6 +202,7 @@ Component createSignInView() {
           input(
             type: InputType.email,
             id: 'email',
+            name: 'email',
             attributes: {'required': 'true'},
           ),
         ]),
@@ -209,6 +211,7 @@ Component createSignInView() {
           input(
             type: InputType.password,
             id: 'password',
+            name: 'password',
             attributes: {'required': 'true'},
           ),
         ]),
@@ -223,7 +226,7 @@ Component createSignInView() {
         button([Component.text('Sign In')], type: ButtonType.submit),
       ],
       id: 'signin-form',
-      attributes: {'onsubmit': 'signInWithEmailPassword(event)'},
+      attributes: {'hx-post': '?'},
     ),
     footer([
       small([
