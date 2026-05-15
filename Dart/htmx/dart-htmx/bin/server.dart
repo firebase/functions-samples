@@ -1,6 +1,9 @@
 import 'dart:convert';
-import 'package:firebase_functions/firebase_functions.dart';
+import 'package:firebase_admin_sdk/auth.dart';
+import 'package:firebase_admin_sdk/firebase_admin_sdk.dart';
+import 'package:firebase_functions/firebase_functions.dart' hide DecodedIdToken;
 import 'package:google_cloud_firestore/google_cloud_firestore.dart';
+import '../lib/src/app_js.dart';
 
 class Contact {
   String firstName;
@@ -42,7 +45,27 @@ Future<Contact> getContact(DocumentReference ref) async {
   return Contact.fromJson(snapshot.data()!);
 }
 
-String createBaseDocument(String titleText, String content) =>
+Future<DecodedIdToken?> verifyAuthHeader(
+  Request request,
+  FirebaseApp app,
+) async {
+  final authHeader = request.headers['authorization'];
+  if (authHeader == null || !authHeader.startsWith('Bearer ')) {
+    return null;
+  }
+  final idToken = authHeader.substring(7);
+  try {
+    return await app.auth().verifyIdToken(idToken);
+  } catch (e) {
+    return null;
+  }
+}
+
+String createBaseDocument(
+  String titleText,
+  String content, {
+  bool showSignOut = true,
+}) =>
     '''
 <!DOCTYPE html>
 <html lang="en">
@@ -52,8 +75,19 @@ String createBaseDocument(String titleText, String content) =>
   <title>${const HtmlEscape().convert(titleText)}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
   <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0-beta3" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script>$appJs</script>
 </head>
 <body>
+  <nav class="container-fluid">
+    <ul>
+      <li><strong>Dart HTMX Demo</strong></li>
+    </ul>
+    <ul>
+      ${showSignOut ? '<li><button onclick="signOut()" class="secondary outline">Sign Out</button></li>' : ''}
+    </ul>
+  </nav>
   <main class="container">
     $content
   </main>
@@ -107,7 +141,30 @@ String createEditView(Contact contact) =>
 </article>
 ''';
 
+String createSignInView() => '''
+<article id="signin-card">
+  <header>Sign In Required</header>
+  <form id="signin-form" onsubmit="signInWithEmailPassword(event)">
+    <label>
+      Email
+      <input type="email" id="email" required>
+    </label>
+    <label>
+      Password
+      <input type="password" id="password" required>
+    </label>
+    <div id="login-error" style="color: var(--pico-form-element-invalid-border-color); margin-bottom: 1rem;"></div>
+    <button type="submit">Sign In</button>
+  </form>
+  <footer>
+    <small>Demo account: <code>test@example.com</code> / <code>Test@12345</code></small>
+  </footer>
+</article>
+''';
+
 void main() {
+  final adminApp = FirebaseApp.initializeApp();
+
   runFunctions((firebase) {
     final firestore = Firestore();
 
@@ -119,7 +176,24 @@ void main() {
       final isHxRequest = request.headers['hx-request'] == 'true';
 
       if (request.method == 'GET') {
+        if (mode == 'signin') {
+          final signInView = createSignInView();
+          final htmlStr = isHxRequest
+              ? signInView
+              : createBaseDocument('Sign In', signInView, showSignOut: false);
+          return Response.ok(htmlStr, headers: {'content-type': 'text/html'});
+        }
+
         if (mode == 'edit') {
+          final decodedToken = await verifyAuthHeader(request, adminApp);
+          if (decodedToken == null) {
+            if (isHxRequest) {
+              return Response(401, headers: {'HX-Redirect': '?mode=signin'});
+            } else {
+              return Response.found('?mode=signin');
+            }
+          }
+
           final editView = createEditView(contact);
           final htmlStr = isHxRequest
               ? editView
@@ -133,6 +207,15 @@ void main() {
           return Response.ok(htmlStr, headers: {'content-type': 'text/html'});
         }
       } else if (request.method == 'PUT' || request.method == 'POST') {
+        final decodedToken = await verifyAuthHeader(request, adminApp);
+        if (decodedToken == null) {
+          if (isHxRequest) {
+            return Response(401, headers: {'HX-Redirect': '?mode=signin'});
+          } else {
+            return Response.found('?mode=signin');
+          }
+        }
+
         final bodyStr = await request.readAsString();
         final formData = Uri.splitQueryString(bodyStr);
 
