@@ -18,9 +18,9 @@ class Contact {
 
   factory Contact.fromJson(Map<String, dynamic> json) {
     return Contact(
-      firstName: json['firstName'] as String? ?? 'Joe',
-      lastName: json['lastName'] as String? ?? 'Blow',
-      email: json['email'] as String? ?? 'joe@blow.com',
+      firstName: json['firstName'] as String? ?? 'Jane',
+      lastName: json['lastName'] as String? ?? 'Doe',
+      email: json['email'] as String? ?? 'jane.doe@example.com',
     );
   }
 
@@ -35,9 +35,9 @@ Future<Contact> getContact(DocumentReference ref) async {
   final snapshot = await ref.get();
   if (!snapshot.exists) {
     final defaultContact = Contact(
-      firstName: 'Joe',
-      lastName: 'Blow',
-      email: 'joe@blow.com',
+      firstName: 'Jane',
+      lastName: 'Doe',
+      email: 'jane.doe@example.com',
     );
     await ref.set(defaultContact.toJson());
     return defaultContact;
