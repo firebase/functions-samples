@@ -1,0 +1,17 @@
+{
+  "name": "dart-htmx-client",
+  "private": true,
+  "dependencies": {
+    "firebase": "^10.8.0",
+    "htmx.org": "4.0.0-beta3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.1",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "build": "esbuild app.ts --bundle --outfile=dist/app.bundle.js --format=esm --minify",
+    "format": "prettier --write app.ts"
+  }
+}

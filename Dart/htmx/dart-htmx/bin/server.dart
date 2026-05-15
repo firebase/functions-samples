@@ -1,8 +1,9 @@
-import 'dart:convert';
 import 'package:firebase_admin_sdk/auth.dart';
 import 'package:firebase_admin_sdk/firebase_admin_sdk.dart';
 import 'package:firebase_functions/firebase_functions.dart' hide DecodedIdToken;
 import 'package:google_cloud_firestore/google_cloud_firestore.dart';
+import 'package:jaspr/dom.dart';
+import 'package:jaspr/server.dart';
 import '../lib/src/app_js.dart';
 
 class Contact {
@@ -53,6 +54,7 @@ Future<DecodedIdToken?> verifyAuthHeader(
   if (authHeader == null || !authHeader.startsWith('Bearer ')) {
     return null;
   }
+  // Strip 'Bearer ' prefix (7 characters)
   final idToken = authHeader.substring(7);
   try {
     return await app.auth().verifyIdToken(idToken);
@@ -61,108 +63,181 @@ Future<DecodedIdToken?> verifyAuthHeader(
   }
 }
 
-String createBaseDocument(
-  String titleText,
-  String content, {
-  bool showSignOut = true,
-}) =>
-    '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${const HtmlEscape().convert(titleText)}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0-beta3" crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script>$appJs</script>
-</head>
-<body>
-  <nav class="container-fluid">
-    <ul>
-      <li><strong>Dart HTMX Demo</strong></li>
-    </ul>
-    <ul>
-      ${showSignOut ? '<li><button onclick="signOut()" class="secondary outline">Sign Out</button></li>' : ''}
-    </ul>
-  </nav>
-  <main class="container">
-    $content
-  </main>
-</body>
-</html>
-''';
+class BaseDocument extends StatelessComponent {
+  final String titleText;
+  final Component child;
+  final bool showSignOut;
 
-String createDisplayView(Contact contact) =>
-    '''
-<article id="contact-card">
-  <header>Contact Info</header>
-  <div class="grid">
-    <div><strong>First Name: </strong>${const HtmlEscape().convert(contact.firstName)}</div>
-    <div><strong>Last Name: </strong>${const HtmlEscape().convert(contact.lastName)}</div>
-    <div><strong>Email: </strong>${const HtmlEscape().convert(contact.email)}</div>
-  </div>
-  <footer>
-    <button hx-get="?mode=edit" hx-target="#contact-card" hx-swap="outerHTML" class="secondary">
-      Click To Edit
-    </button>
-  </footer>
-</article>
-''';
+  const BaseDocument({
+    required this.titleText,
+    required this.child,
+    this.showSignOut = true,
+  });
 
-String createEditView(Contact contact) =>
-    '''
-<article id="contact-card">
-  <form hx-put="?" hx-target="#contact-card" hx-swap="outerHTML">
-    <header>Edit Contact</header>
-    <div class="grid">
-      <label>
-        First Name
-        <input type="text" name="firstName" value="${const HtmlEscape().convert(contact.firstName)}">
-      </label>
-      <label>
-        Last Name
-        <input type="text" name="lastName" value="${const HtmlEscape().convert(contact.lastName)}">
-      </label>
-    </div>
-    <label>
-      Email
-      <input type="email" name="email" value="${const HtmlEscape().convert(contact.email)}">
-    </label>
-    <footer class="grid">
-      <button type="button" hx-get="?" hx-target="#contact-card" hx-swap="outerHTML" class="secondary">
-        Cancel
-      </button>
-      <button type="submit">Save</button>
-    </footer>
-  </form>
-</article>
-''';
+  @override
+  Component build(BuildContext context) {
+    return Document(
+      title: titleText,
+      lang: 'en',
+      head: [
+        link(
+          rel: 'stylesheet',
+          href: 'https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css',
+        ),
+        script(content: appJs, attributes: {'type': 'module'}),
+      ],
+      body: Component.fragment([
+        nav([
+          ul([
+            li([
+              strong([Component.text('Dart HTMX Demo')]),
+            ]),
+          ]),
+          ul([
+            if (showSignOut)
+              li([
+                button(
+                  [Component.text('Sign Out')],
+                  classes: 'secondary outline',
+                  attributes: {'onclick': 'signOut()'},
+                ),
+              ]),
+          ]),
+        ], classes: 'container-fluid'),
+        main_([child], classes: 'container'),
+      ]),
+    );
+  }
+}
 
-String createSignInView() => '''
-<article id="signin-card">
-  <header>Sign In Required</header>
-  <form id="signin-form" onsubmit="signInWithEmailPassword(event)">
-    <label>
-      Email
-      <input type="email" id="email" required>
-    </label>
-    <label>
-      Password
-      <input type="password" id="password" required>
-    </label>
-    <div id="login-error" style="color: var(--pico-form-element-invalid-border-color); margin-bottom: 1rem;"></div>
-    <button type="submit">Sign In</button>
-  </form>
-  <footer>
-    <small>Demo account: <code>test@example.com</code> / <code>Test@12345</code></small>
-  </footer>
-</article>
-''';
+Component createDisplayView(Contact contact) {
+  return article([
+    header([Component.text('Contact Info')]),
+    div([
+      div([
+        strong([Component.text('First Name: ')]),
+        Component.text(contact.firstName),
+      ]),
+      div([
+        strong([Component.text('Last Name: ')]),
+        Component.text(contact.lastName),
+      ]),
+      div([
+        strong([Component.text('Email: ')]),
+        Component.text(contact.email),
+      ]),
+    ], classes: 'grid'),
+    footer([
+      button(
+        [Component.text('Click To Edit')],
+        classes: 'secondary',
+        attributes: {
+          'hx-get': '?mode=edit',
+          'hx-target': '#contact-card',
+          'hx-swap': 'outerHTML',
+        },
+      ),
+    ]),
+  ], id: 'contact-card');
+}
+
+Component createEditView(Contact contact) {
+  return article([
+    form(
+      [
+        header([Component.text('Edit Contact')]),
+        div([
+          label([
+            Component.text('First Name'),
+            input(
+              type: InputType.text,
+              name: 'firstName',
+              value: contact.firstName,
+            ),
+          ]),
+          label([
+            Component.text('Last Name'),
+            input(
+              type: InputType.text,
+              name: 'lastName',
+              value: contact.lastName,
+            ),
+          ]),
+        ], classes: 'grid'),
+        label([
+          Component.text('Email'),
+          input(type: InputType.email, name: 'email', value: contact.email),
+        ]),
+        footer([
+          button(
+            [Component.text('Cancel')],
+            classes: 'secondary',
+            type: ButtonType.button,
+            attributes: {
+              'hx-get': '?',
+              'hx-target': '#contact-card',
+              'hx-swap': 'outerHTML',
+            },
+          ),
+          button([Component.text('Save')], type: ButtonType.submit),
+        ], classes: 'grid'),
+      ],
+      attributes: {
+        'hx-put': '?',
+        'hx-target': '#contact-card',
+        'hx-swap': 'outerHTML',
+      },
+    ),
+  ], id: 'contact-card');
+}
+
+Component createSignInView() {
+  return article([
+    header([Component.text('Sign In Required')]),
+    form(
+      [
+        label([
+          Component.text('Email'),
+          input(
+            type: InputType.email,
+            id: 'email',
+            attributes: {'required': 'true'},
+          ),
+        ]),
+        label([
+          Component.text('Password'),
+          input(
+            type: InputType.password,
+            id: 'password',
+            attributes: {'required': 'true'},
+          ),
+        ]),
+        div(
+          [],
+          id: 'login-error',
+          attributes: {
+            'style':
+                'color: var(--pico-form-element-invalid-border-color); margin-bottom: 1rem;',
+          },
+        ),
+        button([Component.text('Sign In')], type: ButtonType.submit),
+      ],
+      id: 'signin-form',
+      attributes: {'onsubmit': 'signInWithEmailPassword(event)'},
+    ),
+    footer([
+      small([
+        Component.text('Demo account: '),
+        code([Component.text('test@example.com')]),
+        Component.text(' / '),
+        code([Component.text('Test@12345')]),
+      ]),
+    ]),
+  ], id: 'signin-card');
+}
 
 void main() {
+  Jaspr.initializeApp();
   final adminApp = FirebaseApp.initializeApp();
 
   runFunctions((firebase) {
@@ -178,10 +253,20 @@ void main() {
       if (request.method == 'GET') {
         if (mode == 'signin') {
           final signInView = createSignInView();
-          final htmlStr = isHxRequest
-              ? signInView
-              : createBaseDocument('Sign In', signInView, showSignOut: false);
-          return Response.ok(htmlStr, headers: {'content-type': 'text/html'});
+          final result = await renderComponent(
+            isHxRequest
+                ? signInView
+                : BaseDocument(
+                    titleText: 'Sign In',
+                    child: signInView,
+                    showSignOut: false,
+                  ),
+            request: request,
+          );
+          return Response.ok(
+            result.body,
+            headers: {'content-type': 'text/html'},
+          );
         }
 
         if (mode == 'edit') {
@@ -195,16 +280,28 @@ void main() {
           }
 
           final editView = createEditView(contact);
-          final htmlStr = isHxRequest
-              ? editView
-              : createBaseDocument('Edit Contact', editView);
-          return Response.ok(htmlStr, headers: {'content-type': 'text/html'});
+          final result = await renderComponent(
+            isHxRequest
+                ? editView
+                : BaseDocument(titleText: 'Edit Contact', child: editView),
+            request: request,
+          );
+          return Response.ok(
+            result.body,
+            headers: {'content-type': 'text/html'},
+          );
         } else {
           final displayView = createDisplayView(contact);
-          final htmlStr = isHxRequest
-              ? displayView
-              : createBaseDocument('Contact', displayView);
-          return Response.ok(htmlStr, headers: {'content-type': 'text/html'});
+          final result = await renderComponent(
+            isHxRequest
+                ? displayView
+                : BaseDocument(titleText: 'Contact', child: displayView),
+            request: request,
+          );
+          return Response.ok(
+            result.body,
+            headers: {'content-type': 'text/html'},
+          );
         }
       } else if (request.method == 'PUT' || request.method == 'POST') {
         final decodedToken = await verifyAuthHeader(request, adminApp);
@@ -226,10 +323,13 @@ void main() {
         await docRef.set(contact.toJson());
 
         final displayView = createDisplayView(contact);
-        final htmlStr = isHxRequest
-            ? displayView
-            : createBaseDocument('Contact', displayView);
-        return Response.ok(htmlStr, headers: {'content-type': 'text/html'});
+        final result = await renderComponent(
+          isHxRequest
+              ? displayView
+              : BaseDocument(titleText: 'Contact', child: displayView),
+          request: request,
+        );
+        return Response.ok(result.body, headers: {'content-type': 'text/html'});
       }
 
       return Response(405, body: 'Method Not Allowed');

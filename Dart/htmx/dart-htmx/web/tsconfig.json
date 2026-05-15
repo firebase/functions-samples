@@ -7,5 +7,5 @@
     "skipLibCheck": true,
     "lib": ["DOM", "ES2020"]
   },
-  "include": ["app.ts"]
+  "include": ["app.ts", "firebase.d.ts"]
 }

@@ -1,66 +1,1420 @@
 // Generated file. Do not edit.
-// Bundled from web/app.js
+// Bundled from web/dist/app.bundle.js
 
 const String appJs = r'''
-"use strict";
-// Initialize Firebase with placeholder config for prod
-firebase.initializeApp({
-    apiKey: "demo-api-key",
-    authDomain: "demo-project.firebaseapp.com",
-    projectId: "demo-project",
-});
-// Connect to Auth Emulator if running locally
-if (window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1") {
-    firebase.auth().useEmulator("http://" + window.location.hostname + ":9099");
-}
-let currentIdToken = "";
-firebase.auth().onIdTokenChanged(async (user) => {
-    if (user) {
-        currentIdToken = await user.getIdToken();
-    }
-    else {
-        currentIdToken = "";
-    }
-});
-// Configure HTMX to attach Authorization header
-document.body.addEventListener("htmx:configRequest", (event) => {
-    if (currentIdToken) {
-        event.detail.headers["Authorization"] = "Bearer " + currentIdToken;
-    }
-});
-// Sign In Logic for HTML Form
-window.signInWithEmailPassword = async (event) => {
-    event.preventDefault();
-    const emailInput = document.getElementById("email");
-    const passInput = document.getElementById("password");
-    const errorDiv = document.getElementById("login-error");
-    const email = emailInput.value;
-    const pass = passInput.value;
-    try {
-        errorDiv.innerText = "";
-        await firebase.auth().signInWithEmailAndPassword(email, pass);
-        window.location.href = "?";
-    }
-    catch (error) {
-        if (error.code === "auth/user-not-found") {
-            try {
-                // Automatically create the demo user in the emulator
-                await firebase.auth().createUserWithEmailAndPassword(email, pass);
-                window.location.href = "?";
-            }
-            catch (createError) {
-                errorDiv.innerText = "Error creating demo user: " + createError.message;
-            }
-        }
-        else {
-            errorDiv.innerText = "Sign in error: " + error.message;
-        }
-    }
-};
-// Sign Out Logic
-window.signOut = async () => {
-    await firebase.auth().signOut();
-    window.location.href = "?mode=signin";
-};
+var hn=(()=>{class r{#r=null;#n=[];issue(t,i){return t.queueStrategy=i,this.#r?i==="replace"||i!=="abort"&&this.#r.queueStrategy==="abort"?(this.#n.forEach(s=>s.status="dropped"),this.#n=[],this.#r.request?.abort?.(),this.#r=t,!0):(i==="queue all"?(this.#n.push(t),t.status="queued"):i==="drop"?t.status="dropped":i==="queue last"?(this.#n.forEach(s=>s.status="dropped"),this.#n=[t],t.status="queued"):this.#n.length===0&&i!=="abort"?(this.#n.push(t),t.status="queued"):t.status="dropped",!1):(this.#r=t,!0)}finish(){this.#r=null}next(){return this.#n.shift()}abort(){this.#r?.request?.abort?.()}more(){return this.#n?.length}}class e{#r=new Map;#n="";#q=new Set;#A;#W=Function;#B=Object.getPrototypeOf(async function(){}).constructor;#O={createHTML:t=>t,createScript:t=>t};#$;#ge="a,form";#z=["get","post","put","patch","delete"];#G;#g;#C;#_;constructor(){this.#_e(),this.#ve(),this.#$=this.#a("[hx-action],[hx-get],[hx-post],[hx-put],[hx-patch],[hx-delete]"),this.#G=new XPathEvaluator().createExpression(`.//*[@*[${this.#P("hx-on").map(i=>`starts-with(name(), "${i}")`).join(" or ")}]]`),this.#A={attributeValue:this.#t.bind(this),parseTriggerSpecs:this.#J.bind(this),determineMethodAndAction:this.#Y.bind(this),createRequestContext:this.#N.bind(this),collectFormData:this.#le.bind(this),getAttributeObject:this.#M.bind(this),insertContent:this.#L.bind(this),morph:this.#H.bind(this),isSoftMatch:this.#ct.bind(this),initSecurity:(i,s,o)=>{i&&(this.#O=i),s&&(this.#W=s),o&&(this.#B=o)},onTrigger:this.#re.bind(this),htmxProp:this.#i.bind(this),triggerHtmxEvent:this.#e.bind(this),executeJavaScript:this.#u.bind(this)};let t=()=>{this.#$e(),this.process(document.body)};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",t):setTimeout(t)}#_e(){this.version="4.0.0-beta3",this.config={logAll:!1,prefix:"data-hx-",transitions:!1,history:!0,mode:"same-origin",defaultSwap:"innerHTML",defaultFocusScroll:!1,indicatorClass:"htmx-indicator",requestClass:"htmx-request",includeIndicatorCSS:!0,defaultTimeout:6e4,extensions:"",morphIgnore:["data-htmx-powered"],morphScanLimit:10,noSwap:[204,304],implicitInheritance:!1,defaultSettleDelay:1};let t=document.querySelector('meta[name="htmx-config"]');t&&this.#y(t.content,this.config),this.#n=this.config.extensions}#ve(){if(this.config.includeIndicatorCSS!==!1){let t=this.config.indicatorClass,i=this.config.requestClass,s=new CSSStyleSheet;s.replaceSync(`.${t}{opacity:0;visibility: hidden} .${i} .${t}, .${i}.${t}{opacity:1;visibility: visible;transition: opacity 200ms ease-in}`),document.adoptedStyleSheets=[...document.adoptedStyleSheets,s]}}registerExtension(t,i){if(this.#n&&!this.#n.split(/,\s*/).includes(t)||this.#q.has(t))return!1;this.#q.add(t),i.init&&i.init(this.#A),Object.entries(i).forEach(([s,o])=>{this.#r.get(s)?.push(o)||this.#r.set(s,[o])})}#R(t){let i=this.config.prefix;return!t.closest||t.closest("[hx-ignore]")!=null||i&&t.closest(`[${i}ignore]`)!=null}#v(t,i){let s=this.config.prefix;return t.getAttribute(i)??(s?t.getAttribute(i.replace("hx-",s)):null)}#k(t,i){let s=this.config.prefix&&i.replace("hx-",this.config.prefix);return t.hasAttribute(i)?i:s&&t.hasAttribute(s)?s:null}#a(t){return this.#P(t).join(",")}#P(t){let i=[t];return this.config.prefix&&i.push(t.replaceAll("hx-",this.config.prefix)),i}#c(t,i){let s=[...t.querySelectorAll?.(i)??[]];return t.matches?.(i)&&s.unshift(t),s}#ye(t){return t==="before"?"beforebegin":t==="after"?"afterend":t==="prepend"?"afterbegin":t==="append"?"beforeend":t}#Ie(t,i){let s=[];return this.#t(t,i,void 0,(o,a)=>{o?.split(/\s*[,:]\s*/).includes("this")&&s.push(a)}),s}#t(t,i,s,o){let a=this.#d(":inherited"),c=this.#d(":append"),l=this.#v(t,i)??this.#v(t,i+a);if(l!=null)return o?o(l,t):l;let d=CSS.escape(this.config.implicitInheritance?i:i+a),h=CSS.escape(i+a+c),u=this.#a(`[${d}],[${h}]`),f=this.#k(t,i+c)??this.#k(t,i+a+c);if(f){let g=t.getAttribute(f),v=t.parentNode?.closest?.(u);if(o&&o(g,t),v){let w=this.#t(v,i,void 0,o);return w?(w+","+g).replace(/[{}]/g,""):g}return g}let m=t.parentNode?.closest?.(u);return m?(l=this.#t(m,i,void 0,o),!o&&l&&this.config.implicitInheritance&&this.#p(t,"htmx:after:implicitInheritance",{elt:t,name:i,parent:m}),l):s}#l(t){if(!t)return{};if(t[0]==="{")return JSON.parse(t);let i=/(?:"([^"]+)"|([^\s,:]+))(?:\s*:\s*(?:"([^"]*)"|'([^']*)'|<([^>]+)\/>|([^\s,]+)))?(?=\s|,|$)/g;return[...t.matchAll(i)].reduce((s,o)=>{let a=(o[1]??o[2]).split("."),c=(o[3]??o[4]??o[5]??o[6]??"true").trim();return c==="true"?c=!0:c==="false"?c=!1:/^\d+$/.test(c)&&(c=parseInt(c)),a.some(l=>this.#K(l))||(a.slice(0,-1).reduce((l,d)=>l[d]??={},s)[a.at(-1)]=c),s},{})}#K(t){return t==="#proto#"||t==="constructor"||t==="prototype"}#y(t,i){let s=this.#l(t);for(let o in s){if(this.#K(o))continue;let a=s[o];a&&typeof a=="object"&&!Array.isArray(a)&&i[o]?Object.assign(i[o],a):i[o]=a}return i}#J(t){return t.split(/,(?![^\[]*\])/).flatMap(i=>{let[,s,o]=i.match(/^\s*(\S+\[[^\]]*\]|\S+)\s*(.*?)\s*$/)??[];if(!s)return[];if(/\[[^\]]*$/.test(s))throw"unterminated:"+s;return[{name:s,...this.#l(o)}]})}#Y(t,i){if(this.#h(t))return this.#Ee(t,i);{let s=this.#t(t,"hx-method")||"GET",o=this.#t(t,"hx-action");if(!o)for(let a of this.#z){let c=this.#t(t,"hx-"+a);if(c!=null){o=c,s=a;break}}return s=s.toUpperCase(),{action:o,method:s}}}#Ee(t,i){if(t.matches("a"))return{action:t.getAttribute("href"),method:"GET"};{let s=i.submitter?.getAttribute?.("formAction")||t.getAttribute("action"),o=i.submitter?.getAttribute?.("formMethod")||t.getAttribute("method")||"GET";return{action:s,method:o.toUpperCase()}}}#i(t){return t._htmx||(t._htmx={listeners:[],triggerSpecs:[]},t.setAttribute("data-htmx-powered","true")),t._htmx}#we(t){if(this.#se(t)&&this.#e(t,"htmx:before:init",{},!0)){let i=this.#i(t);i.initialized=!0,i.eventHandler=this.#X(t),this.#ke(t),this.#ot(t),this.#e(t,"htmx:after:init",{},!0)}}#X(t){return async i=>{try{let s=this.#N(t,i);await this.#Z(s)}catch(s){this.#e(t,"htmx:error",{error:s})}}}#N(t,i){let{action:s,method:o}=this.#Y(t,i),[a,c]=(s||"").split("#"),l=new AbortController,d={sourceElement:t,sourceEvent:i,status:"created",select:this.#t(t,"hx-select"),selectOOB:this.#t(t,"hx-select-oob"),target:this.#t(t,"hx-target"),swap:this.#t(t,"hx-swap")??this.config.defaultSwap,push:this.#t(t,"hx-push-url"),replace:this.#t(t,"hx-replace-url"),transition:this.config.transitions,confirm:this.#t(t,"hx-confirm"),request:{validate:this.#t(t,"hx-validate",t.matches("form")&&!t.noValidate&&!i.submitter?.formNoValidate?"true":"false")==="true",action:a,anchor:c,method:o,headers:this.#be(t),abort:l.abort.bind(l),credentials:"same-origin",signal:l.signal,mode:this.config.mode}};t._htmx?.boosted&&this.#y(t._htmx.boosted,d),d.target=this.#I(t,d.target),d.request.headers["HX-Request-Type"]=d.target===document.body||d.select?"full":"partial",d.target&&(d.request.headers["HX-Target"]=this.#Q(d.target));let h=this.#t(t,"hx-config");return h&&(this.#y(h,d.request),d.request.mode=this.config.mode),d}#Q(t){return`${t.tagName.toLowerCase()}${t.id?"#"+encodeURI(t.id):""}`}#be(t){let i={"HX-Request":"true","HX-Source":this.#Q(t),"HX-Current-URL":location.href,Accept:"text/html"};return this.#h(t)&&(i["HX-Boosted"]="true"),i}#Te(t,i){return this.#M(t,"hx-headers",s=>{for(let o in s)i[o]=String(s[o])})}#I(t,i){return i instanceof Element?i:i!=null?this.#U(t,i,"hx-target"):this.#h(t)?document.body:t}#h(t){return t?._htmx?.boosted}async#Z(t){let i=t.sourceElement,s=t.sourceEvent;if(!i.isConnected||this.#Re(s))return;this.#ne(s)&&s.preventDefault();let o=/GET|DELETE/.test(t.request.method),a=o?i.matches("form")?i:null:i.form||i.closest("form"),c=this.#le(i,a,s.submitter,t.request.validate);if(!c)return;let l=this.#M(i,"hx-vals",u=>{t.vals=u;for(let f in u)c.set(f,u[f])});if(l&&await l,t.values)for(let u in t.values)c.delete(u),c.append(u,t.values[u]);let d=this.#Te(i,t.request.headers);if(d&&await d,Object.assign(t.request,{form:a,submitter:s.submitter,body:c}),!this.#e(i,"htmx:config:request",{ctx:t})||!this.#z.includes(t.request.method.toLowerCase()))return;let h=this.#V(t.request.action);if(h!=null){let u=Object.fromEntries(t.request.body);await this.#u(t.sourceElement,u,h,!1);return}else if(o){let u=new URL(t.request.action,document.baseURI);for(let f of t.request.body.keys())u.searchParams.delete(f);for(let[f,m]of t.request.body)u.searchParams.append(f,m);u.origin===location.origin?t.request.action=u.pathname+u.search:t.request.action=u.href,t.request.body=null}else this.#t(i,"hx-encoding")!=="multipart/form-data"&&(t.request.body=new URLSearchParams(t.request.body));await this.#ee(t)}async#ee(t){let i=t.sourceElement,s=this.#Ce(i),o=this.#te(i);if(!o.issue(t,s))return;t.status="issuing";let a=[],c=[];try{if(t.confirm&&!await new Promise(h=>{let u={ctx:t,issueRequest:()=>h(!0),dropRequest:()=>h(!1)};if(this.#e(i,"htmx:confirm",u)){let f=this.#V(t.confirm);h(f?this.#u(i,{},f,!0):window.confirm(t.confirm))}})||(this.#Oe(t),a=this.#Qe(i),c=this.#et(i),t.fetch||=window.fetch.bind(window),!this.#e(i,"htmx:before:request",{ctx:t})))return;let l=await t.fetch(t.request.action,t.request);if(t.response={raw:l,status:l.status,headers:l.headers},this.#Se(t),!this.#e(i,"htmx:before:response",{ctx:t})||(t.text=await l.text(),!this.#e(i,"htmx:after:request",{ctx:t})))return;if(t.response.status>=400&&this.#e(i,"htmx:response:error",{ctx:t}),this.#Ae(t)){t.keepIndicators=!0;return}t.status==="issuing"&&(t.hx.retarget&&(t.target=t.hx.retarget),t.hx.reswap&&(t.swap=t.hx.reswap),t.hx.reselect&&(t.select=t.hx.reselect),t.status="response received",this.#dt(t),await this.swap(t),t.status="swapped")}catch(l){t.status="error: "+l,this.#e(i,"htmx:error",{ctx:t,error:l})}finally{clearTimeout(t.requestTimeout),this.#e(i,"htmx:finally:request",{ctx:t}),t.keepIndicators||(this.#Ze(a),this.#tt(c)),o.finish(),o.more()&&this.#ee(o.next())}}#Se(t){t.hx={};for(let[i,s]of t.response.raw.headers)i.toLowerCase().startsWith("hx-")&&(t.hx[i.slice(3).toLowerCase().replace(/-/g,"")]=s)}#Ae(t){if(t.hx.trigger&&this.#Ne(t.hx.trigger,t.sourceElement),t.hx.refresh==="true")return location.reload(),!0;if(t.hx.redirect)return location.href=t.hx.redirect,!0;if(t.hx.location){let i=t.hx.location,s={};return(i[0]==="{"||/[\s,]/.test(i))&&(s=this.#l(i),i=s.path,delete s.path),s.push??="true",this.ajax("GET",i,s),!0}}#Oe(t){let i=t.request.timeout!=null?this.parseInterval(t.request.timeout):this.config.defaultTimeout;i&&(t.requestTimeout=setTimeout(()=>t.request?.abort?.(),i))}#Ce(t){let i=this.#t(t,"hx-sync");if(!i)return"queue first";let s=i.split(":").pop().trim();return/^(drop|abort|replace|queue)/.test(s)?s:"queue first"}#te(t){let i=this.#t(t,"hx-sync"),s=t;if(i){let o=i.includes(":")?i.slice(0,i.lastIndexOf(":")).trim():/^(drop|abort|replace|queue)/.test(i)?null:i;o&&(s=this.#U(t,o,"hx-sync")||t)}return this.#i(s).rq||=new r}#Re(t){return t.type==="click"&&(t.ctrlKey||t.metaKey||t.shiftKey)}#ne(t){let i=t.currentTarget;if(t.type==="submit"&&i?.tagName==="FORM")return!0;if(!(t.type==="click"&&t.button===0))return!1;let a=i?.closest?.('button, input[type="submit"], input[type="image"]'),c=a?.form||a?.closest("form");if(a&&!a.disabled&&c&&(a.type==="submit"||a.type==="image"||!a.type&&a.tagName==="BUTTON"))return!0;let d=i?.closest?.("a");if(!d||!d.href)return!1;let h=d.getAttribute("href");return!(h&&h.startsWith("#")&&h.length>1)}#ke(t,i=t._htmx.eventHandler){let s=this.#t(t,"hx-trigger");s||(s=t.matches("form")?"submit":t.matches("input:not([type=button]):not([type=submit]),select,textarea")?"change":"click"),this.#re(t,s,i)}#re(t,i,s){let o=this.#J(i);this.#i(t).triggerSpecs.push(...o);for(let a of o){a.handler=s,a.listeners=[],a.values=new WeakMap;let[c,l]=this.#Pe(a.name);if(a.once){let h=a.handler;a.handler=u=>{h(u);for(let f of a.listeners)f.fromElt.removeEventListener(f.eventName,f.handler)}}if(c==="intersect"||c==="revealed"){let h={};a.root&&(h.root=this.#U(t,a.root)),a.threshold&&(h.threshold=parseFloat(a.threshold));let u=c==="revealed";a.observer=new IntersectionObserver(f=>{for(let m=0;m<f.length;m++)if(f[m].isIntersecting){this.trigger(t,"intersect",{},!1),u&&a.observer.disconnect();break}},h),c="intersect",a.observer.observe(t)}if(a.delay){let h=a.handler;a.handler=u=>{clearTimeout(a.timeout),a.timeout=setTimeout(()=>h(u),this.parseInterval(a.delay))}}if(a.throttle){let h=a.handler;a.handler=u=>{a.throttled?a.throttledEvent=u:(a.throttled=!0,h(u),a.throttleTimeout=setTimeout(()=>{if(a.throttled=!1,a.throttledEvent){let f=a.throttledEvent;a.throttledEvent=null,a.handler(f)}},this.parseInterval(a.throttle)))}}if(a.target){let h=a.handler;a.handler=u=>{u.target?.matches?.(a.target)&&h(u)}}if(c==="every"){let h=Object.keys(a).find(u=>u!=="name");a.interval=setInterval(()=>{t.isConnected?this.#e(t,"every",{},!1):clearInterval(a.interval)},this.parseInterval(h))}if(a.consume){let h=a.handler;a.handler=u=>{u.stopPropagation(),h(u)}}if(l){let h=a.handler;a.handler=u=>{this.#ne(u)&&u.preventDefault();let f={};for(let m in u)f[m]=u[m];this.#u(t,f,l,!0,!1)&&h(u)}}let d=[t];if(a.from&&(d=this.#o(t,a.from)),a.changed){let h=a.handler;a.handler=u=>{let f=!1;for(let m of d)a.values.get(m)!==m.value&&(f=!0,a.values.set(m,m.value));f&&h(u)}}if(c==="load"){a.handler(new CustomEvent("load"));continue}for(let h of d){let u={fromElt:h,eventName:c,handler:a.handler};t._htmx.listeners.push(u),a.listeners.push(u),h.addEventListener(c,a.handler)}}}#Pe(t){let i=t.match(/^([^\[]*)\[([^\]]*)]/);return i?[i[1],i[2]]:[t,null]}#Ne(t,i){if(t[0]==="{"){let s=this.#l(t);for(let o in s){let a=s[o],c=i;a?.target&&(c=this.find(a.target)),this.trigger(c,o,typeof a=="object"?a:{value:a})}}else t.split(",").forEach(s=>this.trigger(i,s.trim(),{}))}#De(t){let i={},s=Object.getPrototypeOf(this);for(let o of Object.getOwnPropertyNames(s))o!=="constructor"&&typeof this[o]=="function"&&(["find","findAll"].includes(o)?i[o]=(a,c)=>c===void 0?this[o](t,a):this[o](a,c):i[o]=this[o].bind(this));return i}#u(t,i,s,o=!0,a=!0){let c={};Object.assign(c,this.#De(t));let l={};this.#p(t,"htmx:scope",{scope:l}),Object.assign(c,l),Object.assign(c,i);let d=Object.keys(c),h=Object.values(c),u=a?this.#B:this.#W;return new u(...d,o?`return (${s})`:s).call(t,...h)}process(t){if(!t)return;if(!(t instanceof Element)){for(let a of t.children||[])this.process(a);return}if(this.#R(t)||!this.#e(t,"htmx:before:process"))return;let i=[t],s=this.#G.evaluate(t),o=null;for(;o=s.iterateNext();)i.push(o);for(let a of i)!this.#R(a)&&this.#e(a,"htmx:before:on:init",{},!0)&&this.#Xe(a);for(let a of this.#c(t,this.#$))this.#we(a);for(let a of this.#c(t,this.#ge))this.#Le(a);this.#e(t,"htmx:after:process")}#Le(t){let i=this.#t(t,"hx-boost");if(i&&i!=="false"&&this.#Me(t)&&this.#e(t,"htmx:before:init",{},!0)){let s=this.#i(t);s.initialized=!0,s.eventHandler=this.#X(t),s.boosted=i;let o=t.matches("a")?"click":"submit";t._htmx.listeners.push({fromElt:t,eventName:o,handler:t._htmx.eventHandler}),t.addEventListener(o,t._htmx.eventHandler),this.#e(t,"htmx:after:init",{},!0)}}#Me(t){if(this.#se(t)){if(t.tagName==="A"){if(t.target===""||t.target==="_self")return!t.getAttribute("href")?.startsWith?.("#")&&this.#ie(t.href)}else if(t.tagName==="FORM")return t.method!=="dialog"&&this.#ie(t.action)}}#ie(t){try{return new URL(t,window.location.href).origin===window.location.origin}catch{return!1}}#se(t){return!t._htmx?.initialized&&!this.#R(t)}#s(t){if(t._htmx){this.#e(t,"htmx:before:cleanup");for(let i of t._htmx.triggerSpecs||[])i.interval&&clearInterval(i.interval),i.timeout&&clearTimeout(i.timeout),i.throttleTimeout&&clearTimeout(i.throttleTimeout),i.observer?.disconnect();for(let i of t._htmx.listeners||[])i.fromElt.removeEventListener(i.eventName,i.handler);this.#e(t,"htmx:after:cleanup")}if(t.firstChild)for(let i of t.querySelectorAll("[data-htmx-powered]"))this.#s(i)}#xe(t){let i=document.createElement("div");i.hidden=!0,document.body.insertAdjacentElement("afterend",i);let s=t.querySelectorAll?.(this.#a("[hx-preserve]"))||[];for(let o of s){let a=document.getElementById(o.id);a&&this.#m(i,a,null)}return i}#Ue(t){for(let i of[...t.children]){let s=document.getElementById(i.id);s&&(this.#m(s.parentNode,i,s),this.#s(s),s.remove())}t.remove()}#D(t){let i=this.#O.createHTML(t);return Document.parseHTMLUnsafe?.(i)||new DOMParser().parseFromString(i,"text/html")}#Fe(t){let i=t.replace(/<hx-([a-z]+)(\s+|>)/gi,'<template hx type="$1"$2').replace(/<\/hx-[a-z]+>/gi,"</template>"),s="";i=i.replace(/<head(\s[^>]*)?>[\s\S]*?<\/head>/i,l=>(s=this.#D(l).title,""));let o=i.match(/<([a-z][^\/>\x20\t\r\n\f]*)/i)?.[1]?.toLowerCase(),a,c;if(o==="html"||o==="body"?(a=this.#D(i),c=document.createDocumentFragment(),c.append(a.body)):(a=this.#D(`<template>${i}</template>`),c=a.querySelector("template").content),!s){let l=c.querySelector("title:not(svg title)");l&&(s=l.textContent,l.remove())}return this.#ce(c),{fragment:c,title:s}}#oe(t,i,s,o){let a=i.id?"#"+CSS.escape(i.id):null;s!=="true"&&s&&!s.includes(" ")&&([s,a=a]=s.split(/:(.*)/)),(s==="true"||!s)&&(s="outerHTML");let c=this.#E(s);if(a=c.target||a,c.strip??=!c.style.startsWith("outer"),!a)return;let l=[...document.querySelectorAll(a)];for(let d of l){let h=document.createDocumentFragment();h.append(i.cloneNode(!0)),t.push({type:"oob",fragment:h,target:d,swapSpec:c,sourceElement:o})}i.remove()}#Ve(t,i,s){let o=[];if(s)for(let a of s.split(",")){let[c,l="true"]=a.split(/:(.*)/);for(let d of t.querySelectorAll(c))this.#oe(o,d,l,i)}for(let a of t.querySelectorAll(this.#a("[hx-swap-oob]"))){let c=this.#k(a,"hx-swap-oob"),l=a.getAttribute(c);a.removeAttribute(c),this.#oe(o,a,l,i)}return o}#f(t,i,s){i?i.before(...s.childNodes):t.append(...s.childNodes)}#E(t){t=t.trim();let i=this.config.defaultSwap;if(t&&!/^\S*:/.test(t)){let s=t.match(/^(\S+)\s*(.*)$/);i=s[1],t=s[2]}return{style:this.#ye(i),...this.#l(t)}}#He(t,i){let s=[];for(let o of t.querySelectorAll("template[hx]")){let a=o.getAttribute("type");if(a==="partial"){let c=this.#v(o,"hx-target")||(o.id?"#"+CSS.escape(o.id):null);if(c){this.#ce(o.content);let l=this.#E(this.#v(o,"hx-swap")||this.config.defaultSwap);for(let d of document.querySelectorAll(c))s.push({type:"partial",fragment:o.content.cloneNode(!0),target:d,swapSpec:l,sourceElement:i.sourceElement})}}else this.#p(o,"htmx:process:"+a,{ctx:i,tasks:s});o.remove()}return s}#ae(t,i,s,o){try{s!=null&&t.setSelectionRange&&t.setSelectionRange(s,o),t.focus(i)}catch{}}#je(t){let i=this.#c(t,"[autofocus]")[0];i&&this.#ae(i)}#qe(t,i){if(t.scroll){let s=t.scrollTarget?this.#F(t.scrollTarget):i;s&&(t.scroll==="top"?s.scrollTop=0:t.scroll==="bottom"&&(s.scrollTop=s.scrollHeight))}(t.show==="top"||t.show==="bottom")&&(t.showTarget?this.#F(t.showTarget):i)?.scrollIntoView(t.show==="top")}#We(t){t.request?.anchor&&document.getElementById(t.request.anchor)?.scrollIntoView({block:"start",behavior:"auto"})}#ce(t){let i=this.#c(t,"script");for(let s of i){let o=document.createElement("script");for(let a of s.attributes)o.setAttribute(a.name,a.value);this.config.inlineScriptNonce&&(o.nonce=this.config.inlineScriptNonce),o.textContent=this.#O.createScript(s.textContent),s.replaceWith(o)}}async swap(t){try{this.#Ye(t);let{fragment:i,title:s}=this.#Fe(t.text);t.title=s;let o=[],a=this.#Ve(i,t.sourceElement,t.selectOOB),c=this.#He(i,t);o.push(...a,...c);let l=this.#Be(t,i,c);if(l&&o.unshift(l),!this.#e(t.sourceElement,"htmx:before:swap",{ctx:t,tasks:o}))return;let d=[],h=[];for(let u of o)u.swapSpec?.transition??l?.transition??t.transition?h.push(u):d.push(this.#L(u));if(h.length>0){let u=async()=>{for(let f of h)await this.#L(f,!1)};d.push(this.#ht(u))}await Promise.all(d),this.#e(t.sourceElement,"htmx:after:swap",{ctx:t}),t.title&&!l?.swapSpec?.ignoreTitle&&(document.title=t.title),this.#We(t)}finally{this.#e(t.sourceElement,"htmx:swap:finally",{ctx:t})}}#Be(t,i,s){let o=this.#E(t.swap||this.config.defaultSwap);if(o.style==="delete"||i.childElementCount>0||/\S/.test(i.textContent)||!s.length){if(t.select){let c=i.querySelectorAll(t.select);i=document.createDocumentFragment(),i.append(...c)}return this.#h(t.sourceElement)&&(o.show||="top"),{type:"main",fragment:i,target:this.#I(t.sourceElement||document.body,o.target||t.target),swapSpec:o,sourceElement:t.sourceElement,transition:t.transition&&o.transition!==!1}}}async#L(t,i=!0){let{target:s,swapSpec:o,fragment:a}=t;if(typeof s=="string"&&(s=document.querySelector(s)),!s)return;typeof o=="string"&&(o=this.#E(o));let c=o.style;if(c==="none")return;if(a.firstElementChild?.tagName==="BODY"&&(c==="outerHTML"?c="outerSync":c.startsWith("outer")||(o.strip=!0)),o.strip&&a.firstElementChild&&(a=document.createDocumentFragment(),a.append(...(t.fragment.firstElementChild.content||t.fragment.firstElementChild).childNodes)),this.#b(s,"htmx-swapping"),i&&t.swapSpec?.swap&&await this.timeout(t.swapSpec?.swap),c==="delete"){s.parentNode&&(this.#s(s),s.parentNode.removeChild(s));return}let l,d=[],h=o.settle??this.config.defaultSettleDelay,u=s.parentNode;if(c==="innerHTML"||c==="outerHTML"&&u){let g=document.activeElement;if(g?.id){let v,w;try{v=g.selectionStart,w=g.selectionEnd}catch{}l={elt:g,start:v,end:w}}d=i&&h?this.#ft(a,s):[]}let f=this.#xe(a),m=[...a.childNodes];try{if(c==="innerHTML"){for(let g of s.children)this.#s(g);s.replaceChildren(...a.childNodes)}else if(c==="textContent"){for(let g of s.querySelectorAll("[data-htmx-powered]"))this.#s(g);s.textContent=a.textContent}else if(c==="outerHTML")u&&(this.#f(u,s,a),this.#s(s),u.removeChild(s),s=m[0]||u);else if(c==="outerSync"){this.#w(s,a.firstElementChild);for(let g of s.children)this.#s(g);s.replaceChildren(...a.firstElementChild.childNodes)}else if(c==="innerMorph")this.#H(s,a,!0),m=[...s.childNodes];else if(c==="outerMorph")this.#H(s,a,!1),m.push(s);else if(c==="beforebegin")u&&this.#f(u,s,a);else if(c==="afterbegin")this.#f(s,s.firstChild,a);else if(c==="beforeend")this.#f(s,null,a);else if(c==="afterend")u&&this.#f(u,s.nextSibling,a);else{let g=this.#r.get("handle_swap")||[],v=!1;for(let w of g){let q=w(c,s,a,o);if(q){v=!0,Array.isArray(q)&&(m=q);break}}if(!v)throw new Error(`Unknown swap style: ${c}`)}}finally{this.#T(s,"htmx-swapping")}if(this.#Ue(f),l&&!l.elt.matches(":focus")){let g=document.getElementById(l.elt.id);if(g){let v={preventScroll:o.focusScroll!==void 0?!o.focusScroll:!this.config.defaultFocusScroll};this.#ae(g,v,l.start,l.end)}}this.#e(s,"htmx:before:settle",{task:t,newContent:m,settleTasks:d});for(let g of m)this.#b(g,"htmx-added");if(i&&d.length>0){this.#b(s,"htmx-settling"),await this.timeout(h);for(let g of d)g();this.#T(s,"htmx-settling")}this.#e(s,"htmx:after:settle",{task:t,newContent:m,settleTasks:d});for(let g of m)this.#T(g,"htmx-added"),this.process(g),this.#je(g);this.#qe(o,s)}#e(t,i,s={},o=!0){if(s.error){let a=`htmx: ${i}: ${s.error.message??s.error}`;s.error instanceof Error?console.error(a,s.error,{elt:t,detail:s}):console.error(a,{elt:t,detail:s})}else s.warn?console.warn(`htmx: ${i}: ${s.warn}`,{elt:t,detail:s}):this.config.logAll&&console.log(`htmx: ${i}`,{elt:t,detail:s});return t=this.#S(t),this.#p(t,i,s),this.trigger(t,this.#d(i),s,o)}#p(t,i,s={}){let o=this.#r.get(i.replace(/:/g,"_"));if(o){s.cancelled=!1;for(let a of o)if(a(t,s)===!1||s.cancelled)return s.cancelled=!0,!1}return!0}timeout(t){if(t=this.parseInterval(t),t>0)return new Promise(i=>setTimeout(i,t))}onLoad(t){this.on(this.#d("htmx:after:process"),i=>{t(i.target)})}on(t,i,s){let o,a=document;return s===void 0?(o=t,s=i):(a=this.#S(t),o=i),a.addEventListener(o,s),s}find(t,i){return this.#F(t,i)}findAll(t,i){return this.#o(t,i)}parseInterval(t){if(typeof t=="number")return t;let i={ms:1,s:1e3,m:6e4},[,s,o]=t?.match(/^([\d.]+)(ms|s|m)?$/)||[],a=parseFloat(s)*(i[o]||1);return isNaN(a)?void 0:a}trigger(t,i,s={},o=!0){t=this.#S(t);let a=new CustomEvent(i,{detail:s,cancelable:!0,bubbles:o,composed:!0}),c=t?.isConnected?t:document;return!s.cancelled&&c.dispatchEvent(a)}ajax(t,i,s){(!s||s instanceof Element||typeof s=="string")&&(s={target:s});let o=typeof s.source=="string"?document.querySelector(s.source):s.source;if(typeof s.source=="string"&&!o)return Promise.reject(new Error("Source not found"));if(s.target){let c=this.#I(document.body,s.target);if(!c)return Promise.reject(new Error("Target not found"));o||=c}o||=document.body;let a=this.#N(o,s.event||{});return Object.assign(a,s),s.target&&(a.target=this.#I(document.body,s.target)),Object.assign(a.request,{action:i,method:t.toUpperCase()}),s.headers&&Object.assign(a.request.headers,s.headers),this.#Z(a)}#$e(){this.config.history&&(history.state||history.replaceState({htmx:!0},"",location.href),window.addEventListener("popstate",t=>{t.state&&t.state.htmx&&(this.#C?.abort(),this.#Ke())}))}#ze(t){this.config.history&&(history.pushState({htmx:!0},"",t),this.#e(document,"htmx:after:history:push",{path:t}))}#Ge(t){this.config.history&&(history.replaceState({htmx:!0},"",t),this.#e(document,"htmx:after:history:replace",{path:t}))}#Ke(t){t=t||location.pathname+location.search;let i=document.querySelector(this.#a("[hx-history-elt]"))||document.body;this.#e(document,"htmx:before:history:restore",{path:t,cacheMiss:!0})&&(this.config.history==="reload"?location.reload():(this.#C=new AbortController,this.ajax("GET",t,{target:i,swap:"outerSync",select:i!==document.body?this.#a("[hx-history-elt]"):void 0,request:{headers:{"HX-History-Restore-Request":"true"},signal:this.#C.signal}})))}#Je(t){let{sourceElement:i,push:s,replace:o,hx:a,response:c}=t;if((a?.pushurl||a?.replaceurl)&&(s=a.pushurl,o=a.replaceurl),s==null&&o==null&&this.#h(i)&&(s="true"),(s==="false"||s===!1)&&(s=null),(o==="false"||o===!1)&&(o=null),!s&&!o)return null;let l=s||o;if(l==="true"){let h=c?.raw?.url||t.request.action,u=new URL(h,location.href);l=u.pathname+u.search+(t.request.anchor?"#"+t.request.anchor:"")}return{type:s?"push":"replace",path:l}}#Ye(t){let i=this.#Je(t);if(!i)return;let s={history:i,sourceElement:t.sourceElement,response:t.response};this.#e(document,"htmx:before:history:update",s)&&(i.type==="push"?this.#ze(i.path):this.#Ge(i.path),this.#e(document,"htmx:after:history:update",s))}#Xe(t){let i=this.#P("hx-on:").map(o=>this.#d(o)),s=this.config.metaCharacter||":";for(let o of t.getAttributeNames()){let a=i.find(v=>o.startsWith(v));if(!a)continue;let[c,...l]=o.substring(a.length).split("."),d=v=>l.includes(v);c.startsWith(s)&&(c="htmx"+c),d("cc")&&(c=c.replace(/-([a-z])/g,(v,w)=>w.toUpperCase()));let h=t.getAttribute(o),u=d("outside")?document:t,f={capture:d("capture"),passive:d("passive")},m=d("halt"),g=async v=>{if(!(d("self")&&v.target!==t)&&!(d("outside")&&t.contains(v.target))){(m||d("prevent"))&&v.preventDefault(),(m||d("stop"))&&v.stopPropagation(),d("once")&&u.removeEventListener(c,g,f);try{await this.#u(t,{event:v},`with(event?.detail||{}){${h}}`,!1)}catch(w){typeof w!="symbol"&&this.#e(t,"htmx:error",{error:w})}}};u.addEventListener(c,g,f),this.#i(t).listeners.push({fromElt:u,eventName:c,handler:g})}}#Qe(t){let i=this.#t(t,"hx-indicator"),s;i?s=this.#o(t,i,"hx-indicator"):s=[t];for(let o of s){let a=this.#i(o);a.rc=(a.rc||0)+1,this.#b(o,this.config.requestClass)}return s}#Ze(t){for(let i of t){let s=this.#i(i);s.rc&&--s.rc<=0&&(this.#T(i,this.config.requestClass),delete s.rc)}}#et(t){let i=this.#t(t,"hx-disable"),s=[];if(i){s=this.#o(t,i,"hx-disable");for(let o of s){let a=this.#i(o);a.dc=(a.dc||0)+1,o.disabled=!0}}return s}#tt(t){for(let i of t){let s=this.#i(i);s.dc&&--s.dc<=0&&(i.disabled=!1,delete s.dc)}}#le(t,i,s,o){if(o&&i&&!i.reportValidity())return;let a=i?new FormData(i):new FormData,c=i?new Set(i.elements):new Set;if(!i&&t.name){if(o&&t.reportValidity&&!t.reportValidity())return;a.append(t.name,t.value),c.add(t)}s&&s.name&&(a.append(s.name,s.value),c.add(s));let l=this.#t(t,"hx-include");if(l)for(let d of this.#o(t,l)){if(o&&d.reportValidity&&!d.reportValidity())return;this.#nt(d,c,a)}return a}#nt(t,i,s){let o=this.#c(t,"input:not([disabled]), select:not([disabled]), textarea:not([disabled])");for(let a of o){if(!a.name||i.has(a))continue;i.add(a);let c=a.type;if(c==="checkbox"||c==="radio")a.checked&&s.append(a.name,a.value);else if(c==="file")for(let l of a.files)s.append(a.name,l);else if(c==="select-multiple")for(let l of a.selectedOptions)s.append(a.name,l.value);else a.matches("select, textarea, input")&&s.append(a.name,a.value)}}#M(t,i,s){let o=this.#t(t,i);if(!o)return null;let a=this.#V(o);if(a)return a.indexOf("{")!==0&&(a="{"+a+"}"),this.#u(t,{},a,!0).then(c=>{s(c)});s(this.#l(o))}#rt(t){let i=t.trim();return i.startsWith("<")&&i.endsWith("/>")?i.slice(1,-2):i}#o(t,i,s,o){let a=i??t,c=i?this.#S(t):document;if(a.startsWith("global "))return this.#o(c,a.slice(7),s,!0);let l=a?a.replace(/<[^>]+\/>/g,u=>u.replace(/,/g,"%2C")).split(",").map(u=>u.replace(/%2C/g,",")):[],d=[],h=[];for(let u of l){let f=this.#rt(u),m;if(f.startsWith("closest "))m=c.closest(f.slice(8));else if(f.startsWith("find "))m=c.querySelector(f.slice(5));else if(f.startsWith("findAll "))d.push(...c.querySelectorAll(f.slice(8)));else if(f==="next"||f==="nextElementSibling")m=c.nextElementSibling;else if(f.startsWith("next "))m=this.#it(c,f.slice(5),!!o);else if(f==="previous"||f==="previousElementSibling")m=c.previousElementSibling;else if(f.startsWith("previous "))m=this.#st(c,f.slice(9),!!o);else if(f==="document")m=document;else if(f==="window")m=window;else if(f==="body")m=document.body;else if(f==="host")m=c.getRootNode().host;else if(f==="this"){if(s){d.push(...this.#Ie(c,s));continue}m=c}else h.push(f);m&&d.push(m)}if(h.length>0){let u=h.join(","),f=this.#x(c,!!o);d.push(...f.querySelectorAll(u))}return[...new Set(d)]}#it(t,i,s){return this.#ue(this.#x(t,s).querySelectorAll(i),t,Node.DOCUMENT_POSITION_PRECEDING)}#st(t,i,s){let o=[...this.#x(t,s).querySelectorAll(i)].reverse();return this.#ue(o,t,Node.DOCUMENT_POSITION_FOLLOWING)}#ue(t,i,s){for(let o of t)if(o.compareDocumentPosition(i)===s)return o}#x(t,i){return t.isConnected&&t.getRootNode?t.getRootNode?.({composed:i}):document}#U(t,i,s){let o=this.#o(t,i,s)[0];return o||console.warn(`htmx: '${i}' on ${s} did not match any element`,{elt:t,selector:i,attr:s}),o}#F(t,i,s){return this.#o(t,i,s)[0]}#V(t){if(t!=null){if(t.startsWith("js:"))return t.substring(3);if(t.startsWith("javascript:"))return t.substring(11)}}#ot(t){let i=()=>{this.#te(t).abort()};t.addEventListener("htmx:abort",i),t._htmx.listeners.push({fromElt:t,eventName:"htmx:abort",handler:i})}#H(t,i,s){let{persistentIds:o,idMap:a}=this.#lt(t,i),c=document.createElement("div");c.hidden=!0,document.body.after(c);let l={target:t,idMap:a,persistentIds:o,pantry:c,futureMatches:new WeakSet};s?this.#j(l,t,i):this.#j(l,t.parentNode,i,t,t.nextSibling),this.#s(c),c.remove()}#j(t,i,s,o=null,a=null){i instanceof HTMLTemplateElement&&s instanceof HTMLTemplateElement&&(i=i.content,s=s.content),o||=i.firstChild;let c=s.firstChild;for(;c;){let l;if(o&&o!=a&&(l=this.#at(t,c,o,a),l&&l!==o)){let h=o;for(;h&&h!==l;){let u=h;h=h.nextSibling,u instanceof Element&&(t.idMap.has(u)||this.#de(t,u,c))?this.#m(i,u,a):this.#he(t,u)}}if(!l&&c instanceof Element&&t.persistentIds.has(c.id)){let h=CSS.escape(c.id);l=t.target.id===c.id&&t.target||t.target.querySelector(`[id="${h}"]`)||t.pantry.querySelector(`[id="${h}"]`);let u=l;for(;u=u.parentNode;){let f=t.idMap.get(u);f&&(f.delete(l.id),f.size||t.idMap.delete(u))}this.#m(i,l,o)}if(l){this.#fe(l,c,t),o=l.nextSibling,c=c.nextSibling;continue}let d=c.nextSibling;if(t.idMap.has(c)){let h=document.createElement(c.tagName);i.insertBefore(h,o),this.#fe(h,c,t),o=h.nextSibling}else i.insertBefore(c,o),o=c.nextSibling;c=d}for(;o&&o!=a;){let l=o;o=o.nextSibling,this.#he(t,l)}}#de(t,i,s){if(t.futureMatches.has(i))return!0;for(let o=s.nextSibling,a=0;o&&a<this.config.morphScanLimit;o=o.nextSibling,a++)if(o instanceof Element&&i.isEqualNode(o))return t.futureMatches.add(i),!0;return!1}#at(t,i,s,o){if(!(i instanceof Element))return null;let a=null,c=0,l=this.config.morphScanLimit,d=t.idMap.get(i),h=d?.size||0;if(i.id&&!d)return null;let u=s;for(;u&&u!=o;){let f=t.idMap.get(u);if(this.#A.isSoftMatch(u,i)){if(f&&d&&[...f].some(m=>d.has(m)))return u;if(!f){if(l>0&&u.isEqualNode(i))return u;a||(a=u)}}if(c+=f?.size||0,c>h||u.contains(document.activeElement)||--l<1&&h===0)break;u=u.nextSibling}return a&&this.#de(t,a,i)?null:a}#ct(t,i){return!(t instanceof Element)||t.tagName!==i.tagName||t.tagName==="SCRIPT"&&!t.isEqualNode(i)?!1:t._x_bindings?.id&&i.matches?.("[\\:id], [x-bind\\:id]")?!0:!t.id||t.id===i.id}#he(t,i){t.idMap.has(i)?this.#m(t.pantry,i,null):(this.#s(i),i.remove())}#m(t,i,s){if(t.moveBefore)try{t.moveBefore(i,s);return}catch{}t.insertBefore(i,s)}#fe(t,i,s){if(this.config.morphSkip&&t.matches?.(this.config.morphSkip)||!this.#p(t,"htmx:before:morph:node",{oldNode:t,newNode:i}))return;this.#w(t,i),t instanceof HTMLTextAreaElement&&t.defaultValue!=i.defaultValue&&(t.value=i.value),!(this.config.morphSkipChildren&&t.matches?.(this.config.morphSkipChildren))&&(!t.isEqualNode(i)||i.tagName==="TEMPLATE"||i.querySelector?.("template"))&&this.#j(s,t,i)}#w(t,i){let s=this.config.morphIgnore||[];for(let o of i.attributes)!s.includes(o.name)&&t.getAttribute(o.name)!==o.value&&(t.setAttribute(o.name,o.value),o.name==="value"&&t instanceof HTMLInputElement&&t.type!=="file"&&(t.value=o.value));for(let o=t.attributes.length-1;o>=0;o--){let a=t.attributes[o];a&&!i.hasAttribute(a.name)&&!s.includes(a.name)&&t.removeAttribute(a.name)}}#pe(t,i,s,o){for(let a of o)if(i.has(a.id)){let c=a;for(;c&&c!==s;){let l=t.get(c);l==null&&(l=new Set,t.set(c,l)),l.add(a.id),c=c.parentElement}}}#lt(t,i){let s=this.#c(t,"[id]"),o=i.querySelectorAll("[id]"),a=this.#ut(s,o),c=new Map;return this.#pe(c,a,t.parentElement,s),this.#pe(c,a,i,o),{persistentIds:a,idMap:c}}#ut(t,i){let s=new Set,o=new Map;for(let{id:c,tagName:l}of t)o.has(c)?s.add(c):c&&o.set(c,l);let a=new Set;for(let{id:c,tagName:l}of i)a.has(c)?s.add(c):o.get(c)===l&&a.add(c);for(let c of s)a.delete(c);return a}#dt(t){let i=t.response.raw.status,s=this.config.noSwap.map(a=>a+""),o=i+"";for(let a of[o,o.slice(0,2)+"x",o[0]+"xx"]){if(s.includes(a)){t.swap="none";return}let c=this.#t(t.sourceElement,this.#d("hx-status:")+a);if(c){this.#y(c,t);return}}}#ht(t){return new Promise(i=>{this.#g||=[],this.#g.push({task:t,resolve:i}),this.#_||this.#me()})}async#me(){if(this.#g.length===0||this.#_)return;this.#_=!0;let{task:t,resolve:i}=this.#g.shift();try{document.startViewTransition?(this.#e(document,"htmx:before:viewTransition",{task:t}),await document.startViewTransition(t).finished,this.#e(document,"htmx:after:viewTransition",{task:t})):await t()}catch{}finally{this.#_=!1,i(),this.#me()}}#ft(t,i){let s=i.querySelectorAll("[id]"),o=Object.fromEntries([...s].map(l=>[l.id,l])),a=t.querySelectorAll("[id]"),c=[];for(let l of a){let d=o[l.id];if(d?.tagName===l.tagName){let h=l.cloneNode(!1);this.#w(l,d),c.push(()=>{this.#w(l,h)})}}return c}#b(t,i){t?.classList?.add?.(i)}#T(t,i){t?.classList?.remove?.(i),t?.classList?.length===0&&t.removeAttribute("class")}#S(t){return typeof t=="string"?this.find(t):t}#d(t){return this.config.metaCharacter?t.replace(/:/g,this.config.metaCharacter):t}}return new e})();typeof window<"u"&&(window.htmx=hn);var fn=hn;var mn=function(r){let e=[],n=0;for(let t=0;t<r.length;t++){let i=r.charCodeAt(t);i<128?e[n++]=i:i<2048?(e[n++]=i>>6|192,e[n++]=i&63|128):(i&64512)===55296&&t+1<r.length&&(r.charCodeAt(t+1)&64512)===56320?(i=65536+((i&1023)<<10)+(r.charCodeAt(++t)&1023),e[n++]=i>>18|240,e[n++]=i>>12&63|128,e[n++]=i>>6&63|128,e[n++]=i&63|128):(e[n++]=i>>12|224,e[n++]=i>>6&63|128,e[n++]=i&63|128)}return e},jr=function(r){let e=[],n=0,t=0;for(;n<r.length;){let i=r[n++];if(i<128)e[t++]=String.fromCharCode(i);else if(i>191&&i<224){let s=r[n++];e[t++]=String.fromCharCode((i&31)<<6|s&63)}else if(i>239&&i<365){let s=r[n++],o=r[n++],a=r[n++],c=((i&7)<<18|(s&63)<<12|(o&63)<<6|a&63)-65536;e[t++]=String.fromCharCode(55296+(c>>10)),e[t++]=String.fromCharCode(56320+(c&1023))}else{let s=r[n++],o=r[n++];e[t++]=String.fromCharCode((i&15)<<12|(s&63)<<6|o&63)}}return e.join("")},gn={byteToCharMap_:null,charToByteMap_:null,byteToCharMapWebSafe_:null,charToByteMapWebSafe_:null,ENCODED_VALS_BASE:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",get ENCODED_VALS(){return this.ENCODED_VALS_BASE+"+/="},get ENCODED_VALS_WEBSAFE(){return this.ENCODED_VALS_BASE+"-_."},HAS_NATIVE_SUPPORT:typeof atob=="function",encodeByteArray(r,e){if(!Array.isArray(r))throw Error("encodeByteArray takes an array as a parameter");this.init_();let n=e?this.byteToCharMapWebSafe_:this.byteToCharMap_,t=[];for(let i=0;i<r.length;i+=3){let s=r[i],o=i+1<r.length,a=o?r[i+1]:0,c=i+2<r.length,l=c?r[i+2]:0,d=s>>2,h=(s&3)<<4|a>>4,u=(a&15)<<2|l>>6,f=l&63;c||(f=64,o||(u=64)),t.push(n[d],n[h],n[u],n[f])}return t.join("")},encodeString(r,e){return this.HAS_NATIVE_SUPPORT&&!e?btoa(r):this.encodeByteArray(mn(r),e)},decodeString(r,e){return this.HAS_NATIVE_SUPPORT&&!e?atob(r):jr(this.decodeStringToByteArray(r,e))},decodeStringToByteArray(r,e){this.init_();let n=e?this.charToByteMapWebSafe_:this.charToByteMap_,t=[];for(let i=0;i<r.length;){let s=n[r.charAt(i++)],a=i<r.length?n[r.charAt(i)]:0;++i;let l=i<r.length?n[r.charAt(i)]:64;++i;let h=i<r.length?n[r.charAt(i)]:64;if(++i,s==null||a==null||l==null||h==null)throw new ct;let u=s<<2|a>>4;if(t.push(u),l!==64){let f=a<<4&240|l>>2;if(t.push(f),h!==64){let m=l<<6&192|h;t.push(m)}}}return t},init_(){if(!this.byteToCharMap_){this.byteToCharMap_={},this.charToByteMap_={},this.byteToCharMapWebSafe_={},this.charToByteMapWebSafe_={};for(let r=0;r<this.ENCODED_VALS.length;r++)this.byteToCharMap_[r]=this.ENCODED_VALS.charAt(r),this.charToByteMap_[this.byteToCharMap_[r]]=r,this.byteToCharMapWebSafe_[r]=this.ENCODED_VALS_WEBSAFE.charAt(r),this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[r]]=r,r>=this.ENCODED_VALS_BASE.length&&(this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(r)]=r,this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(r)]=r)}}},ct=class extends Error{constructor(){super(...arguments),this.name="DecodeBase64StringError"}},qr=function(r){let e=mn(r);return gn.encodeByteArray(e,!0)},ut=function(r){return qr(r).replace(/\./g,"")},dt=function(r){try{return gn.decodeString(r,!0)}catch(e){console.error("base64Decode failed: ",e)}return null};function Wr(){if(typeof self<"u")return self;if(typeof window<"u")return window;if(typeof global<"u")return global;throw new Error("Unable to locate global object.")}var Br=()=>Wr().__FIREBASE_DEFAULTS__,$r=()=>{if(typeof process>"u"||typeof process.env>"u")return;let r=process.env.__FIREBASE_DEFAULTS__;if(r)return JSON.parse(r)},zr=()=>{if(typeof document>"u")return;let r;try{r=document.cookie.match(/__FIREBASE_DEFAULTS__=([^;]+)/)}catch{return}let e=r&&dt(r[1]);return e&&JSON.parse(e)},ht=()=>{try{return Br()||$r()||zr()}catch(r){console.info(`Unable to get __FIREBASE_DEFAULTS__ due to: ${r}`);return}},_n=r=>{var e,n;return(n=(e=ht())===null||e===void 0?void 0:e.emulatorHosts)===null||n===void 0?void 0:n[r]};var ft=()=>{var r;return(r=ht())===null||r===void 0?void 0:r.config},pt=r=>{var e;return(e=ht())===null||e===void 0?void 0:e[`_${r}`]};var Ee=class{constructor(){this.reject=()=>{},this.resolve=()=>{},this.promise=new Promise((e,n)=>{this.resolve=e,this.reject=n})}wrapCallback(e){return(n,t)=>{n?this.reject(n):this.resolve(t),typeof e=="function"&&(this.promise.catch(()=>{}),e.length===1?e(n):e(n,t))}}};function I(){return typeof navigator<"u"&&typeof navigator.userAgent=="string"?navigator.userAgent:""}function vn(){return typeof window<"u"&&!!(window.cordova||window.phonegap||window.PhoneGap)&&/ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(I())}function yn(){return typeof navigator<"u"&&navigator.userAgent==="Cloudflare-Workers"}function In(){let r=typeof chrome=="object"?chrome.runtime:typeof browser=="object"?browser.runtime:void 0;return typeof r=="object"&&r.id!==void 0}function En(){return typeof navigator=="object"&&navigator.product==="ReactNative"}function wn(){let r=I();return r.indexOf("MSIE ")>=0||r.indexOf("Trident/")>=0}function bn(){try{return typeof indexedDB=="object"}catch{return!1}}function Tn(){return new Promise((r,e)=>{try{let n=!0,t="validate-browser-context-for-indexeddb-analytics-module",i=self.indexedDB.open(t);i.onsuccess=()=>{i.result.close(),n||self.indexedDB.deleteDatabase(t),r(!0)},i.onupgradeneeded=()=>{n=!1},i.onerror=()=>{var s;e(((s=i.error)===null||s===void 0?void 0:s.message)||"")}}catch(n){e(n)}})}var Gr="FirebaseError",b=class r extends Error{constructor(e,n,t){super(n),this.code=e,this.customData=t,this.name=Gr,Object.setPrototypeOf(this,r.prototype),Error.captureStackTrace&&Error.captureStackTrace(this,N.prototype.create)}},N=class{constructor(e,n,t){this.service=e,this.serviceName=n,this.errors=t}create(e,...n){let t=n[0]||{},i=`${this.service}/${e}`,s=this.errors[e],o=s?Kr(s,t):"Error",a=`${this.serviceName}: ${o} (${i}).`;return new b(i,a,t)}};function Kr(r,e){return r.replace(Jr,(n,t)=>{let i=e[t];return i!=null?String(i):`<${t}?>`})}var Jr=/\{\$([^}]+)}/g;function Sn(r){for(let e in r)if(Object.prototype.hasOwnProperty.call(r,e))return!1;return!0}function Y(r,e){if(r===e)return!0;let n=Object.keys(r),t=Object.keys(e);for(let i of n){if(!t.includes(i))return!1;let s=r[i],o=e[i];if(pn(s)&&pn(o)){if(!Y(s,o))return!1}else if(s!==o)return!1}for(let i of t)if(!n.includes(i))return!1;return!0}function pn(r){return r!==null&&typeof r=="object"}function X(r){let e=[];for(let[n,t]of Object.entries(r))Array.isArray(t)?t.forEach(i=>{e.push(encodeURIComponent(n)+"="+encodeURIComponent(i))}):e.push(encodeURIComponent(n)+"="+encodeURIComponent(t));return e.length?"&"+e.join("&"):""}function Q(r){let e={};return r.replace(/^\?/,"").split("&").forEach(t=>{if(t){let[i,s]=t.split("=");e[decodeURIComponent(i)]=decodeURIComponent(s)}}),e}function Z(r){let e=r.indexOf("?");if(!e)return"";let n=r.indexOf("#",e);return r.substring(e,n>0?n:void 0)}function An(r,e){let n=new lt(r,e);return n.subscribe.bind(n)}var lt=class{constructor(e,n){this.observers=[],this.unsubscribes=[],this.observerCount=0,this.task=Promise.resolve(),this.finalized=!1,this.onNoObservers=n,this.task.then(()=>{e(this)}).catch(t=>{this.error(t)})}next(e){this.forEachObserver(n=>{n.next(e)})}error(e){this.forEachObserver(n=>{n.error(e)}),this.close(e)}complete(){this.forEachObserver(e=>{e.complete()}),this.close()}subscribe(e,n,t){let i;if(e===void 0&&n===void 0&&t===void 0)throw new Error("Missing Observer.");Yr(e,["next","error","complete"])?i=e:i={next:e,error:n,complete:t},i.next===void 0&&(i.next=at),i.error===void 0&&(i.error=at),i.complete===void 0&&(i.complete=at);let s=this.unsubscribeOne.bind(this,this.observers.length);return this.finalized&&this.task.then(()=>{try{this.finalError?i.error(this.finalError):i.complete()}catch{}}),this.observers.push(i),s}unsubscribeOne(e){this.observers===void 0||this.observers[e]===void 0||(delete this.observers[e],this.observerCount-=1,this.observerCount===0&&this.onNoObservers!==void 0&&this.onNoObservers(this))}forEachObserver(e){if(!this.finalized)for(let n=0;n<this.observers.length;n++)this.sendOne(n,e)}sendOne(e,n){this.task.then(()=>{if(this.observers!==void 0&&this.observers[e]!==void 0)try{n(this.observers[e])}catch(t){typeof console<"u"&&console.error&&console.error(t)}})}close(e){this.finalized||(this.finalized=!0,e!==void 0&&(this.finalError=e),this.task.then(()=>{this.observers=void 0,this.onNoObservers=void 0}))}};function Yr(r,e){if(typeof r!="object"||r===null)return!1;for(let n of e)if(n in r&&typeof r[n]=="function")return!0;return!1}function at(){}var ea=4*60*60*1e3;function A(r){return r&&r._delegate?r._delegate:r}var O=class{constructor(e,n,t){this.name=e,this.instanceFactory=n,this.type=t,this.multipleInstances=!1,this.serviceProps={},this.instantiationMode="LAZY",this.onInstanceCreated=null}setInstantiationMode(e){return this.instantiationMode=e,this}setMultipleInstances(e){return this.multipleInstances=e,this}setServiceProps(e){return this.serviceProps=e,this}setInstanceCreatedCallback(e){return this.onInstanceCreated=e,this}};var W="[DEFAULT]";var mt=class{constructor(e,n){this.name=e,this.container=n,this.component=null,this.instances=new Map,this.instancesDeferred=new Map,this.instancesOptions=new Map,this.onInitCallbacks=new Map}get(e){let n=this.normalizeInstanceIdentifier(e);if(!this.instancesDeferred.has(n)){let t=new Ee;if(this.instancesDeferred.set(n,t),this.isInitialized(n)||this.shouldAutoInitialize())try{let i=this.getOrInitializeService({instanceIdentifier:n});i&&t.resolve(i)}catch{}}return this.instancesDeferred.get(n).promise}getImmediate(e){var n;let t=this.normalizeInstanceIdentifier(e?.identifier),i=(n=e?.optional)!==null&&n!==void 0?n:!1;if(this.isInitialized(t)||this.shouldAutoInitialize())try{return this.getOrInitializeService({instanceIdentifier:t})}catch(s){if(i)return null;throw s}else{if(i)return null;throw Error(`Service ${this.name} is not available`)}}getComponent(){return this.component}setComponent(e){if(e.name!==this.name)throw Error(`Mismatching Component ${e.name} for Provider ${this.name}.`);if(this.component)throw Error(`Component for ${this.name} has already been provided`);if(this.component=e,!!this.shouldAutoInitialize()){if(Qr(e))try{this.getOrInitializeService({instanceIdentifier:W})}catch{}for(let[n,t]of this.instancesDeferred.entries()){let i=this.normalizeInstanceIdentifier(n);try{let s=this.getOrInitializeService({instanceIdentifier:i});t.resolve(s)}catch{}}}}clearInstance(e=W){this.instancesDeferred.delete(e),this.instancesOptions.delete(e),this.instances.delete(e)}async delete(){let e=Array.from(this.instances.values());await Promise.all([...e.filter(n=>"INTERNAL"in n).map(n=>n.INTERNAL.delete()),...e.filter(n=>"_delete"in n).map(n=>n._delete())])}isComponentSet(){return this.component!=null}isInitialized(e=W){return this.instances.has(e)}getOptions(e=W){return this.instancesOptions.get(e)||{}}initialize(e={}){let{options:n={}}=e,t=this.normalizeInstanceIdentifier(e.instanceIdentifier);if(this.isInitialized(t))throw Error(`${this.name}(${t}) has already been initialized`);if(!this.isComponentSet())throw Error(`Component ${this.name} has not been registered yet`);let i=this.getOrInitializeService({instanceIdentifier:t,options:n});for(let[s,o]of this.instancesDeferred.entries()){let a=this.normalizeInstanceIdentifier(s);t===a&&o.resolve(i)}return i}onInit(e,n){var t;let i=this.normalizeInstanceIdentifier(n),s=(t=this.onInitCallbacks.get(i))!==null&&t!==void 0?t:new Set;s.add(e),this.onInitCallbacks.set(i,s);let o=this.instances.get(i);return o&&e(o,i),()=>{s.delete(e)}}invokeOnInitCallbacks(e,n){let t=this.onInitCallbacks.get(n);if(t)for(let i of t)try{i(e,n)}catch{}}getOrInitializeService({instanceIdentifier:e,options:n={}}){let t=this.instances.get(e);if(!t&&this.component&&(t=this.component.instanceFactory(this.container,{instanceIdentifier:Xr(e),options:n}),this.instances.set(e,t),this.instancesOptions.set(e,n),this.invokeOnInitCallbacks(t,e),this.component.onInstanceCreated))try{this.component.onInstanceCreated(this.container,e,t)}catch{}return t||null}normalizeInstanceIdentifier(e=W){return this.component?this.component.multipleInstances?e:W:e}shouldAutoInitialize(){return!!this.component&&this.component.instantiationMode!=="EXPLICIT"}};function Xr(r){return r===W?void 0:r}function Qr(r){return r.instantiationMode==="EAGER"}var we=class{constructor(e){this.name=e,this.providers=new Map}addComponent(e){let n=this.getProvider(e.name);if(n.isComponentSet())throw new Error(`Component ${e.name} has already been registered with ${this.name}`);n.setComponent(e)}addOrOverwriteComponent(e){this.getProvider(e.name).isComponentSet()&&this.providers.delete(e.name),this.addComponent(e)}getProvider(e){if(this.providers.has(e))return this.providers.get(e);let n=new mt(e,this);return this.providers.set(e,n),n}getProviders(){return Array.from(this.providers.values())}};var Zr=[],_;(function(r){r[r.DEBUG=0]="DEBUG",r[r.VERBOSE=1]="VERBOSE",r[r.INFO=2]="INFO",r[r.WARN=3]="WARN",r[r.ERROR=4]="ERROR",r[r.SILENT=5]="SILENT"})(_||(_={}));var ei={debug:_.DEBUG,verbose:_.VERBOSE,info:_.INFO,warn:_.WARN,error:_.ERROR,silent:_.SILENT},ti=_.INFO,ni={[_.DEBUG]:"log",[_.VERBOSE]:"log",[_.INFO]:"info",[_.WARN]:"warn",[_.ERROR]:"error"},ri=(r,e,...n)=>{if(e<r.logLevel)return;let t=new Date().toISOString(),i=ni[e];if(i)console[i](`[${t}]  ${r.name}:`,...n);else throw new Error(`Attempted to log a message with an invalid logType (value: ${e})`)},ee=class{constructor(e){this.name=e,this._logLevel=ti,this._logHandler=ri,this._userLogHandler=null,Zr.push(this)}get logLevel(){return this._logLevel}set logLevel(e){if(!(e in _))throw new TypeError(`Invalid value "${e}" assigned to \`logLevel\``);this._logLevel=e}setLogLevel(e){this._logLevel=typeof e=="string"?ei[e]:e}get logHandler(){return this._logHandler}set logHandler(e){if(typeof e!="function")throw new TypeError("Value assigned to `logHandler` must be a function");this._logHandler=e}get userLogHandler(){return this._userLogHandler}set userLogHandler(e){this._userLogHandler=e}debug(...e){this._userLogHandler&&this._userLogHandler(this,_.DEBUG,...e),this._logHandler(this,_.DEBUG,...e)}log(...e){this._userLogHandler&&this._userLogHandler(this,_.VERBOSE,...e),this._logHandler(this,_.VERBOSE,...e)}info(...e){this._userLogHandler&&this._userLogHandler(this,_.INFO,...e),this._logHandler(this,_.INFO,...e)}warn(...e){this._userLogHandler&&this._userLogHandler(this,_.WARN,...e),this._logHandler(this,_.WARN,...e)}error(...e){this._userLogHandler&&this._userLogHandler(this,_.ERROR,...e),this._logHandler(this,_.ERROR,...e)}};var ii=(r,e)=>e.some(n=>r instanceof n),On,Cn;function si(){return On||(On=[IDBDatabase,IDBObjectStore,IDBIndex,IDBCursor,IDBTransaction])}function oi(){return Cn||(Cn=[IDBCursor.prototype.advance,IDBCursor.prototype.continue,IDBCursor.prototype.continuePrimaryKey])}var Rn=new WeakMap,_t=new WeakMap,kn=new WeakMap,gt=new WeakMap,yt=new WeakMap;function ai(r){let e=new Promise((n,t)=>{let i=()=>{r.removeEventListener("success",s),r.removeEventListener("error",o)},s=()=>{n(C(r.result)),i()},o=()=>{t(r.error),i()};r.addEventListener("success",s),r.addEventListener("error",o)});return e.then(n=>{n instanceof IDBCursor&&Rn.set(n,r)}).catch(()=>{}),yt.set(e,r),e}function ci(r){if(_t.has(r))return;let e=new Promise((n,t)=>{let i=()=>{r.removeEventListener("complete",s),r.removeEventListener("error",o),r.removeEventListener("abort",o)},s=()=>{n(),i()},o=()=>{t(r.error||new DOMException("AbortError","AbortError")),i()};r.addEventListener("complete",s),r.addEventListener("error",o),r.addEventListener("abort",o)});_t.set(r,e)}var vt={get(r,e,n){if(r instanceof IDBTransaction){if(e==="done")return _t.get(r);if(e==="objectStoreNames")return r.objectStoreNames||kn.get(r);if(e==="store")return n.objectStoreNames[1]?void 0:n.objectStore(n.objectStoreNames[0])}return C(r[e])},set(r,e,n){return r[e]=n,!0},has(r,e){return r instanceof IDBTransaction&&(e==="done"||e==="store")?!0:e in r}};function Pn(r){vt=r(vt)}function li(r){return r===IDBDatabase.prototype.transaction&&!("objectStoreNames"in IDBTransaction.prototype)?function(e,...n){let t=r.call(be(this),e,...n);return kn.set(t,e.sort?e.sort():[e]),C(t)}:oi().includes(r)?function(...e){return r.apply(be(this),e),C(Rn.get(this))}:function(...e){return C(r.apply(be(this),e))}}function ui(r){return typeof r=="function"?li(r):(r instanceof IDBTransaction&&ci(r),ii(r,si())?new Proxy(r,vt):r)}function C(r){if(r instanceof IDBRequest)return ai(r);if(gt.has(r))return gt.get(r);let e=ui(r);return e!==r&&(gt.set(r,e),yt.set(e,r)),e}var be=r=>yt.get(r);function Dn(r,e,{blocked:n,upgrade:t,blocking:i,terminated:s}={}){let o=indexedDB.open(r,e),a=C(o);return t&&o.addEventListener("upgradeneeded",c=>{t(C(o.result),c.oldVersion,c.newVersion,C(o.transaction),c)}),n&&o.addEventListener("blocked",c=>n(c.oldVersion,c.newVersion,c)),a.then(c=>{s&&c.addEventListener("close",()=>s()),i&&c.addEventListener("versionchange",l=>i(l.oldVersion,l.newVersion,l))}).catch(()=>{}),a}var di=["get","getKey","getAll","getAllKeys","count"],hi=["put","add","delete","clear"],It=new Map;function Nn(r,e){if(!(r instanceof IDBDatabase&&!(e in r)&&typeof e=="string"))return;if(It.get(e))return It.get(e);let n=e.replace(/FromIndex$/,""),t=e!==n,i=hi.includes(n);if(!(n in(t?IDBIndex:IDBObjectStore).prototype)||!(i||di.includes(n)))return;let s=async function(o,...a){let c=this.transaction(o,i?"readwrite":"readonly"),l=c.store;return t&&(l=l.index(a.shift())),(await Promise.all([l[n](...a),i&&c.done]))[0]};return It.set(e,s),s}Pn(r=>({...r,get:(e,n,t)=>Nn(e,n)||r.get(e,n,t),has:(e,n)=>!!Nn(e,n)||r.has(e,n)}));var wt=class{constructor(e){this.container=e}getPlatformInfoString(){return this.container.getProviders().map(n=>{if(fi(n)){let t=n.getImmediate();return`${t.library}/${t.version}`}else return null}).filter(n=>n).join(" ")}};function fi(r){let e=r.getComponent();return e?.type==="VERSION"}var bt="@firebase/app",Ln="0.10.13";var D=new ee("@firebase/app"),pi="@firebase/app-compat",mi="@firebase/analytics-compat",gi="@firebase/analytics",_i="@firebase/app-check-compat",vi="@firebase/app-check",yi="@firebase/auth",Ii="@firebase/auth-compat",Ei="@firebase/database",wi="@firebase/data-connect",bi="@firebase/database-compat",Ti="@firebase/functions",Si="@firebase/functions-compat",Ai="@firebase/installations",Oi="@firebase/installations-compat",Ci="@firebase/messaging",Ri="@firebase/messaging-compat",ki="@firebase/performance",Pi="@firebase/performance-compat",Ni="@firebase/remote-config",Di="@firebase/remote-config-compat",Li="@firebase/storage",Mi="@firebase/storage-compat",xi="@firebase/firestore",Ui="@firebase/vertexai-preview",Fi="@firebase/firestore-compat",Vi="firebase",Hi="10.14.1";var Tt="[DEFAULT]",ji={[bt]:"fire-core",[pi]:"fire-core-compat",[gi]:"fire-analytics",[mi]:"fire-analytics-compat",[vi]:"fire-app-check",[_i]:"fire-app-check-compat",[yi]:"fire-auth",[Ii]:"fire-auth-compat",[Ei]:"fire-rtdb",[wi]:"fire-data-connect",[bi]:"fire-rtdb-compat",[Ti]:"fire-fn",[Si]:"fire-fn-compat",[Ai]:"fire-iid",[Oi]:"fire-iid-compat",[Ci]:"fire-fcm",[Ri]:"fire-fcm-compat",[ki]:"fire-perf",[Pi]:"fire-perf-compat",[Ni]:"fire-rc",[Di]:"fire-rc-compat",[Li]:"fire-gcs",[Mi]:"fire-gcs-compat",[xi]:"fire-fst",[Fi]:"fire-fst-compat",[Ui]:"fire-vertex","fire-js":"fire-js",[Vi]:"fire-js-all"};var Te=new Map,qi=new Map,St=new Map;function Mn(r,e){try{r.container.addComponent(e)}catch(n){D.debug(`Component ${e.name} failed to register with FirebaseApp ${r.name}`,n)}}function te(r){let e=r.name;if(St.has(e))return D.debug(`There were multiple attempts to register component ${e}.`),!1;St.set(e,r);for(let n of Te.values())Mn(n,r);for(let n of qi.values())Mn(n,r);return!0}function Rt(r,e){let n=r.container.getProvider("heartbeat").getImmediate({optional:!0});return n&&n.triggerHeartbeat(),r.container.getProvider(e)}function T(r){return r.settings!==void 0}var Wi={"no-app":"No Firebase App '{$appName}' has been created - call initializeApp() first","bad-app-name":"Illegal App name: '{$appName}'","duplicate-app":"Firebase App named '{$appName}' already exists with different options or config","app-deleted":"Firebase App named '{$appName}' already deleted","server-app-deleted":"Firebase Server App has been deleted","no-options":"Need to provide options, when not being deployed to hosting via source.","invalid-app-argument":"firebase.{$appName}() takes either no argument or a Firebase App instance.","invalid-log-argument":"First argument to `onLog` must be null or a function.","idb-open":"Error thrown when opening IndexedDB. Original error: {$originalErrorMessage}.","idb-get":"Error thrown when reading from IndexedDB. Original error: {$originalErrorMessage}.","idb-set":"Error thrown when writing to IndexedDB. Original error: {$originalErrorMessage}.","idb-delete":"Error thrown when deleting from IndexedDB. Original error: {$originalErrorMessage}.","finalization-registry-not-supported":"FirebaseServerApp deleteOnDeref field defined but the JS runtime does not support FinalizationRegistry.","invalid-server-app-environment":"FirebaseServerApp is not for use in browser environments."},U=new N("app","Firebase",Wi);var At=class{constructor(e,n,t){this._isDeleted=!1,this._options=Object.assign({},e),this._config=Object.assign({},n),this._name=n.name,this._automaticDataCollectionEnabled=n.automaticDataCollectionEnabled,this._container=t,this.container.addComponent(new O("app",()=>this,"PUBLIC"))}get automaticDataCollectionEnabled(){return this.checkDestroyed(),this._automaticDataCollectionEnabled}set automaticDataCollectionEnabled(e){this.checkDestroyed(),this._automaticDataCollectionEnabled=e}get name(){return this.checkDestroyed(),this._name}get options(){return this.checkDestroyed(),this._options}get config(){return this.checkDestroyed(),this._config}get container(){return this._container}get isDeleted(){return this._isDeleted}set isDeleted(e){this._isDeleted=e}checkDestroyed(){if(this.isDeleted)throw U.create("app-deleted",{appName:this._name})}};var ne=Hi;function kt(r,e={}){let n=r;typeof e!="object"&&(e={name:e});let t=Object.assign({name:Tt,automaticDataCollectionEnabled:!1},e),i=t.name;if(typeof i!="string"||!i)throw U.create("bad-app-name",{appName:String(i)});if(n||(n=ft()),!n)throw U.create("no-options");let s=Te.get(i);if(s){if(Y(n,s.options)&&Y(t,s.config))return s;throw U.create("duplicate-app",{appName:i})}let o=new we(i);for(let c of St.values())o.addComponent(c);let a=new At(n,t,o);return Te.set(i,a),a}function Vn(r=Tt){let e=Te.get(r);if(!e&&r===Tt&&ft())return kt();if(!e)throw U.create("no-app",{appName:r});return e}function F(r,e,n){var t;let i=(t=ji[r])!==null&&t!==void 0?t:r;n&&(i+=`-${n}`);let s=i.match(/\s|\//),o=e.match(/\s|\//);if(s||o){let a=[`Unable to register library "${i}" with version "${e}":`];s&&a.push(`library name "${i}" contains illegal characters (whitespace or "/")`),s&&o&&a.push("and"),o&&a.push(`version name "${e}" contains illegal characters (whitespace or "/")`),D.warn(a.join(" "));return}te(new O(`${i}-version`,()=>({library:i,version:e}),"VERSION"))}var Bi="firebase-heartbeat-database",$i=1,oe="firebase-heartbeat-store",Et=null;function Hn(){return Et||(Et=Dn(Bi,$i,{upgrade:(r,e)=>{switch(e){case 0:try{r.createObjectStore(oe)}catch(n){console.warn(n)}}}}).catch(r=>{throw U.create("idb-open",{originalErrorMessage:r.message})})),Et}async function zi(r){try{let n=(await Hn()).transaction(oe),t=await n.objectStore(oe).get(jn(r));return await n.done,t}catch(e){if(e instanceof b)D.warn(e.message);else{let n=U.create("idb-get",{originalErrorMessage:e?.message});D.warn(n.message)}}}async function xn(r,e){try{let t=(await Hn()).transaction(oe,"readwrite");await t.objectStore(oe).put(e,jn(r)),await t.done}catch(n){if(n instanceof b)D.warn(n.message);else{let t=U.create("idb-set",{originalErrorMessage:n?.message});D.warn(t.message)}}}function jn(r){return`${r.name}!${r.options.appId}`}var Gi=1024,Ki=30*24*60*60*1e3,Ot=class{constructor(e){this.container=e,this._heartbeatsCache=null;let n=this.container.getProvider("app").getImmediate();this._storage=new Ct(n),this._heartbeatsCachePromise=this._storage.read().then(t=>(this._heartbeatsCache=t,t))}async triggerHeartbeat(){var e,n;try{let i=this.container.getProvider("platform-logger").getImmediate().getPlatformInfoString(),s=Un();return((e=this._heartbeatsCache)===null||e===void 0?void 0:e.heartbeats)==null&&(this._heartbeatsCache=await this._heartbeatsCachePromise,((n=this._heartbeatsCache)===null||n===void 0?void 0:n.heartbeats)==null)||this._heartbeatsCache.lastSentHeartbeatDate===s||this._heartbeatsCache.heartbeats.some(o=>o.date===s)?void 0:(this._heartbeatsCache.heartbeats.push({date:s,agent:i}),this._heartbeatsCache.heartbeats=this._heartbeatsCache.heartbeats.filter(o=>{let a=new Date(o.date).valueOf();return Date.now()-a<=Ki}),this._storage.overwrite(this._heartbeatsCache))}catch(t){D.warn(t)}}async getHeartbeatsHeader(){var e;try{if(this._heartbeatsCache===null&&await this._heartbeatsCachePromise,((e=this._heartbeatsCache)===null||e===void 0?void 0:e.heartbeats)==null||this._heartbeatsCache.heartbeats.length===0)return"";let n=Un(),{heartbeatsToSend:t,unsentEntries:i}=Ji(this._heartbeatsCache.heartbeats),s=ut(JSON.stringify({version:2,heartbeats:t}));return this._heartbeatsCache.lastSentHeartbeatDate=n,i.length>0?(this._heartbeatsCache.heartbeats=i,await this._storage.overwrite(this._heartbeatsCache)):(this._heartbeatsCache.heartbeats=[],this._storage.overwrite(this._heartbeatsCache)),s}catch(n){return D.warn(n),""}}};function Un(){return new Date().toISOString().substring(0,10)}function Ji(r,e=Gi){let n=[],t=r.slice();for(let i of r){let s=n.find(o=>o.agent===i.agent);if(s){if(s.dates.push(i.date),Fn(n)>e){s.dates.pop();break}}else if(n.push({agent:i.agent,dates:[i.date]}),Fn(n)>e){n.pop();break}t=t.slice(1)}return{heartbeatsToSend:n,unsentEntries:t}}var Ct=class{constructor(e){this.app=e,this._canUseIndexedDBPromise=this.runIndexedDBEnvironmentCheck()}async runIndexedDBEnvironmentCheck(){return bn()?Tn().then(()=>!0).catch(()=>!1):!1}async read(){if(await this._canUseIndexedDBPromise){let n=await zi(this.app);return n?.heartbeats?n:{heartbeats:[]}}else return{heartbeats:[]}}async overwrite(e){var n;if(await this._canUseIndexedDBPromise){let i=await this.read();return xn(this.app,{lastSentHeartbeatDate:(n=e.lastSentHeartbeatDate)!==null&&n!==void 0?n:i.lastSentHeartbeatDate,heartbeats:e.heartbeats})}else return}async add(e){var n;if(await this._canUseIndexedDBPromise){let i=await this.read();return xn(this.app,{lastSentHeartbeatDate:(n=e.lastSentHeartbeatDate)!==null&&n!==void 0?n:i.lastSentHeartbeatDate,heartbeats:[...i.heartbeats,...e.heartbeats]})}else return}};function Fn(r){return ut(JSON.stringify({version:2,heartbeats:r})).length}function Yi(r){te(new O("platform-logger",e=>new wt(e),"PRIVATE")),te(new O("heartbeat",e=>new Ot(e),"PRIVATE")),F(bt,Ln,r),F(bt,Ln,"esm2017"),F("fire-js","")}Yi("");var Xi="firebase",Qi="10.14.1";F(Xi,Qi,"app");function Se(r,e){var n={};for(var t in r)Object.prototype.hasOwnProperty.call(r,t)&&e.indexOf(t)<0&&(n[t]=r[t]);if(r!=null&&typeof Object.getOwnPropertySymbols=="function")for(var i=0,t=Object.getOwnPropertySymbols(r);i<t.length;i++)e.indexOf(t[i])<0&&Object.prototype.propertyIsEnumerable.call(r,t[i])&&(n[t[i]]=r[t[i]]);return n}function ir(){return{"dependent-sdk-initialized-before-auth":"Another Firebase SDK was initialized and is trying to use Auth before Auth is initialized. Please be sure to call `initializeAuth` or `getAuth` before starting any other Firebase SDK."}}var sr=ir,or=new N("auth","Firebase",ir());var Pe=new ee("@firebase/auth");function Zi(r,...e){Pe.logLevel<=_.WARN&&Pe.warn(`Auth (${ne}): ${r}`,...e)}function Oe(r,...e){Pe.logLevel<=_.ERROR&&Pe.error(`Auth (${ne}): ${r}`,...e)}function S(r,...e){throw Qt(r,...e)}function k(r,...e){return Qt(r,...e)}function ar(r,e,n){let t=Object.assign(Object.assign({},sr()),{[e]:n});return new N("auth","Firebase",t).create(e,{appName:r.name})}function M(r){return ar(r,"operation-not-supported-in-this-environment","Operations that alter the current user are not supported in conjunction with FirebaseServerApp")}function Qt(r,...e){if(typeof r!="string"){let n=e[0],t=[...e.slice(1)];return t[0]&&(t[0].appName=r.name),r._errorFactory.create(n,...t)}return or.create(r,...e)}function p(r,e,...n){if(!r)throw Qt(e,...n)}function R(r){let e="INTERNAL ASSERTION FAILED: "+r;throw Oe(e),new Error(e)}function x(r,e){r||R(e)}function Dt(){var r;return typeof self<"u"&&((r=self.location)===null||r===void 0?void 0:r.href)||""}function es(){return qn()==="http:"||qn()==="https:"}function qn(){var r;return typeof self<"u"&&((r=self.location)===null||r===void 0?void 0:r.protocol)||null}function ts(){return typeof navigator<"u"&&navigator&&"onLine"in navigator&&typeof navigator.onLine=="boolean"&&(es()||In()||"connection"in navigator)?navigator.onLine:!0}function ns(){if(typeof navigator>"u")return null;let r=navigator;return r.languages&&r.languages[0]||r.language||null}var B=class{constructor(e,n){this.shortDelay=e,this.longDelay=n,x(n>e,"Short delay should be less than long delay!"),this.isMobile=vn()||En()}get(){return ts()?this.isMobile?this.longDelay:this.shortDelay:Math.min(5e3,this.shortDelay)}};function Zt(r,e){x(r.emulator,"Emulator should always be set here");let{url:n}=r.emulator;return e?`${n}${e.startsWith("/")?e.slice(1):e}`:n}var Ne=class{static initialize(e,n,t){this.fetchImpl=e,n&&(this.headersImpl=n),t&&(this.responseImpl=t)}static fetch(){if(this.fetchImpl)return this.fetchImpl;if(typeof self<"u"&&"fetch"in self)return self.fetch;if(typeof globalThis<"u"&&globalThis.fetch)return globalThis.fetch;if(typeof fetch<"u")return fetch;R("Could not find fetch implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static headers(){if(this.headersImpl)return this.headersImpl;if(typeof self<"u"&&"Headers"in self)return self.Headers;if(typeof globalThis<"u"&&globalThis.Headers)return globalThis.Headers;if(typeof Headers<"u")return Headers;R("Could not find Headers implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}static response(){if(this.responseImpl)return this.responseImpl;if(typeof self<"u"&&"Response"in self)return self.Response;if(typeof globalThis<"u"&&globalThis.Response)return globalThis.Response;if(typeof Response<"u")return Response;R("Could not find Response implementation, make sure you call FetchProvider.initialize() with an appropriate polyfill")}};var rs={CREDENTIAL_MISMATCH:"custom-token-mismatch",MISSING_CUSTOM_TOKEN:"internal-error",INVALID_IDENTIFIER:"invalid-email",MISSING_CONTINUE_URI:"internal-error",INVALID_PASSWORD:"wrong-password",MISSING_PASSWORD:"missing-password",INVALID_LOGIN_CREDENTIALS:"invalid-credential",EMAIL_EXISTS:"email-already-in-use",PASSWORD_LOGIN_DISABLED:"operation-not-allowed",INVALID_IDP_RESPONSE:"invalid-credential",INVALID_PENDING_TOKEN:"invalid-credential",FEDERATED_USER_ID_ALREADY_LINKED:"credential-already-in-use",MISSING_REQ_TYPE:"internal-error",EMAIL_NOT_FOUND:"user-not-found",RESET_PASSWORD_EXCEED_LIMIT:"too-many-requests",EXPIRED_OOB_CODE:"expired-action-code",INVALID_OOB_CODE:"invalid-action-code",MISSING_OOB_CODE:"internal-error",CREDENTIAL_TOO_OLD_LOGIN_AGAIN:"requires-recent-login",INVALID_ID_TOKEN:"invalid-user-token",TOKEN_EXPIRED:"user-token-expired",USER_NOT_FOUND:"user-token-expired",TOO_MANY_ATTEMPTS_TRY_LATER:"too-many-requests",PASSWORD_DOES_NOT_MEET_REQUIREMENTS:"password-does-not-meet-requirements",INVALID_CODE:"invalid-verification-code",INVALID_SESSION_INFO:"invalid-verification-id",INVALID_TEMPORARY_PROOF:"invalid-credential",MISSING_SESSION_INFO:"missing-verification-id",SESSION_EXPIRED:"code-expired",MISSING_ANDROID_PACKAGE_NAME:"missing-android-pkg-name",UNAUTHORIZED_DOMAIN:"unauthorized-continue-uri",INVALID_OAUTH_CLIENT_ID:"invalid-oauth-client-id",ADMIN_ONLY_OPERATION:"admin-restricted-operation",INVALID_MFA_PENDING_CREDENTIAL:"invalid-multi-factor-session",MFA_ENROLLMENT_NOT_FOUND:"multi-factor-info-not-found",MISSING_MFA_ENROLLMENT_ID:"missing-multi-factor-info",MISSING_MFA_PENDING_CREDENTIAL:"missing-multi-factor-session",SECOND_FACTOR_EXISTS:"second-factor-already-in-use",SECOND_FACTOR_LIMIT_EXCEEDED:"maximum-second-factor-count-exceeded",BLOCKING_FUNCTION_ERROR_RESPONSE:"internal-error",RECAPTCHA_NOT_ENABLED:"recaptcha-not-enabled",MISSING_RECAPTCHA_TOKEN:"missing-recaptcha-token",INVALID_RECAPTCHA_TOKEN:"invalid-recaptcha-token",INVALID_RECAPTCHA_ACTION:"invalid-recaptcha-action",MISSING_CLIENT_TYPE:"missing-client-type",MISSING_RECAPTCHA_VERSION:"missing-recaptcha-version",INVALID_RECAPTCHA_VERSION:"invalid-recaptcha-version",INVALID_REQ_TYPE:"invalid-req-type"};var is=new B(3e4,6e4);function y(r,e){return r.tenantId&&!e.tenantId?Object.assign(Object.assign({},e),{tenantId:r.tenantId}):e}async function E(r,e,n,t,i={}){return cr(r,i,async()=>{let s={},o={};t&&(e==="GET"?o=t:s={body:JSON.stringify(t)});let a=X(Object.assign({key:r.config.apiKey},o)).slice(1),c=await r._getAdditionalHeaders();c["Content-Type"]="application/json",r.languageCode&&(c["X-Firebase-Locale"]=r.languageCode);let l=Object.assign({method:e,headers:c},s);return yn()||(l.referrerPolicy="no-referrer"),Ne.fetch()(lr(r,r.config.apiHost,n,a),l)})}async function cr(r,e,n){r._canInitEmulator=!1;let t=Object.assign(Object.assign({},rs),e);try{let i=new Lt(r),s=await Promise.race([n(),i.promise]);i.clearNetworkTimeout();let o=await s.json();if("needConfirmation"in o)throw ae(r,"account-exists-with-different-credential",o);if(s.ok&&!("errorMessage"in o))return o;{let a=s.ok?o.errorMessage:o.error.message,[c,l]=a.split(" : ");if(c==="FEDERATED_USER_ID_ALREADY_LINKED")throw ae(r,"credential-already-in-use",o);if(c==="EMAIL_EXISTS")throw ae(r,"email-already-in-use",o);if(c==="USER_DISABLED")throw ae(r,"user-disabled",o);let d=t[c]||c.toLowerCase().replace(/[_\s]+/g,"-");if(l)throw ar(r,d,l);S(r,d)}}catch(i){if(i instanceof b)throw i;S(r,"network-request-failed",{message:String(i)})}}async function H(r,e,n,t,i={}){let s=await E(r,e,n,t,i);return"mfaPendingCredential"in s&&S(r,"multi-factor-auth-required",{_serverResponse:s}),s}function lr(r,e,n,t){let i=`${e}${n}?${t}`;return r.config.emulator?Zt(r.config,i):`${r.config.apiScheme}://${i}`}function ss(r){switch(r){case"ENFORCE":return"ENFORCE";case"AUDIT":return"AUDIT";case"OFF":return"OFF";default:return"ENFORCEMENT_STATE_UNSPECIFIED"}}var Lt=class{constructor(e){this.auth=e,this.timer=null,this.promise=new Promise((n,t)=>{this.timer=setTimeout(()=>t(k(this.auth,"network-request-failed")),is.get())})}clearNetworkTimeout(){clearTimeout(this.timer)}};function ae(r,e,n){let t={appName:r.name};n.email&&(t.email=n.email),n.phoneNumber&&(t.phoneNumber=n.phoneNumber);let i=k(r,e,t);return i.customData._tokenResponse=n,i}function Wn(r){return r!==void 0&&r.enterprise!==void 0}var Mt=class{constructor(e){if(this.siteKey="",this.recaptchaEnforcementState=[],e.recaptchaKey===void 0)throw new Error("recaptchaKey undefined");this.siteKey=e.recaptchaKey.split("/")[3],this.recaptchaEnforcementState=e.recaptchaEnforcementState}getProviderEnforcementState(e){if(!this.recaptchaEnforcementState||this.recaptchaEnforcementState.length===0)return null;for(let n of this.recaptchaEnforcementState)if(n.provider&&n.provider===e)return ss(n.enforcementState);return null}isProviderEnabled(e){return this.getProviderEnforcementState(e)==="ENFORCE"||this.getProviderEnforcementState(e)==="AUDIT"}};async function os(r,e){return E(r,"GET","/v2/recaptchaConfig",y(r,e))}async function as(r,e){return E(r,"POST","/v1/accounts:delete",e)}async function ur(r,e){return E(r,"POST","/v1/accounts:lookup",e)}function ce(r){if(r)try{let e=new Date(Number(r));if(!isNaN(e.getTime()))return e.toUTCString()}catch{}}async function dr(r,e=!1){let n=A(r),t=await n.getIdToken(e),i=en(t);p(i&&i.exp&&i.auth_time&&i.iat,n.auth,"internal-error");let s=typeof i.firebase=="object"?i.firebase:void 0,o=s?.sign_in_provider;return{claims:i,token:t,authTime:ce(Pt(i.auth_time)),issuedAtTime:ce(Pt(i.iat)),expirationTime:ce(Pt(i.exp)),signInProvider:o||null,signInSecondFactor:s?.sign_in_second_factor||null}}function Pt(r){return Number(r)*1e3}function en(r){let[e,n,t]=r.split(".");if(e===void 0||n===void 0||t===void 0)return Oe("JWT malformed, contained fewer than 3 sections"),null;try{let i=dt(n);return i?JSON.parse(i):(Oe("Failed to decode base64 JWT payload"),null)}catch(i){return Oe("Caught error parsing JWT payload as JSON",i?.toString()),null}}function Bn(r){let e=en(r);return p(e,"internal-error"),p(typeof e.exp<"u","internal-error"),p(typeof e.iat<"u","internal-error"),Number(e.exp)-Number(e.iat)}async function ue(r,e,n=!1){if(n)return e;try{return await e}catch(t){throw t instanceof b&&cs(t)&&r.auth.currentUser===r&&await r.auth.signOut(),t}}function cs({code:r}){return r==="auth/user-disabled"||r==="auth/user-token-expired"}var xt=class{constructor(e){this.user=e,this.isRunning=!1,this.timerId=null,this.errorBackoff=3e4}_start(){this.isRunning||(this.isRunning=!0,this.schedule())}_stop(){this.isRunning&&(this.isRunning=!1,this.timerId!==null&&clearTimeout(this.timerId))}getInterval(e){var n;if(e){let t=this.errorBackoff;return this.errorBackoff=Math.min(this.errorBackoff*2,96e4),t}else{this.errorBackoff=3e4;let i=((n=this.user.stsTokenManager.expirationTime)!==null&&n!==void 0?n:0)-Date.now()-3e5;return Math.max(0,i)}}schedule(e=!1){if(!this.isRunning)return;let n=this.getInterval(e);this.timerId=setTimeout(async()=>{await this.iteration()},n)}async iteration(){try{await this.user.getIdToken(!0)}catch(e){e?.code==="auth/network-request-failed"&&this.schedule(!0);return}this.schedule()}};var de=class{constructor(e,n){this.createdAt=e,this.lastLoginAt=n,this._initializeTime()}_initializeTime(){this.lastSignInTime=ce(this.lastLoginAt),this.creationTime=ce(this.createdAt)}_copy(e){this.createdAt=e.createdAt,this.lastLoginAt=e.lastLoginAt,this._initializeTime()}toJSON(){return{createdAt:this.createdAt,lastLoginAt:this.lastLoginAt}}};async function De(r){var e;let n=r.auth,t=await r.getIdToken(),i=await ue(r,ur(n,{idToken:t}));p(i?.users.length,n,"internal-error");let s=i.users[0];r._notifyReloadListener(s);let o=!((e=s.providerUserInfo)===null||e===void 0)&&e.length?fr(s.providerUserInfo):[],a=ls(r.providerData,o),c=r.isAnonymous,l=!(r.email&&s.passwordHash)&&!a?.length,d=c?l:!1,h={uid:s.localId,displayName:s.displayName||null,photoURL:s.photoUrl||null,email:s.email||null,emailVerified:s.emailVerified||!1,phoneNumber:s.phoneNumber||null,tenantId:s.tenantId||null,providerData:a,metadata:new de(s.createdAt,s.lastLoginAt),isAnonymous:d};Object.assign(r,h)}async function hr(r){let e=A(r);await De(e),await e.auth._persistUserIfCurrent(e),e.auth._notifyListenersIfCurrent(e)}function ls(r,e){return[...r.filter(t=>!e.some(i=>i.providerId===t.providerId)),...e]}function fr(r){return r.map(e=>{var{providerId:n}=e,t=Se(e,["providerId"]);return{providerId:n,uid:t.rawId||"",displayName:t.displayName||null,email:t.email||null,phoneNumber:t.phoneNumber||null,photoURL:t.photoUrl||null}})}async function us(r,e){let n=await cr(r,{},async()=>{let t=X({grant_type:"refresh_token",refresh_token:e}).slice(1),{tokenApiHost:i,apiKey:s}=r.config,o=lr(r,i,"/v1/token",`key=${s}`),a=await r._getAdditionalHeaders();return a["Content-Type"]="application/x-www-form-urlencoded",Ne.fetch()(o,{method:"POST",headers:a,body:t})});return{accessToken:n.access_token,expiresIn:n.expires_in,refreshToken:n.refresh_token}}async function ds(r,e){return E(r,"POST","/v2/accounts:revokeToken",y(r,e))}var le=class r{constructor(){this.refreshToken=null,this.accessToken=null,this.expirationTime=null}get isExpired(){return!this.expirationTime||Date.now()>this.expirationTime-3e4}updateFromServerResponse(e){p(e.idToken,"internal-error"),p(typeof e.idToken<"u","internal-error"),p(typeof e.refreshToken<"u","internal-error");let n="expiresIn"in e&&typeof e.expiresIn<"u"?Number(e.expiresIn):Bn(e.idToken);this.updateTokensAndExpiration(e.idToken,e.refreshToken,n)}updateFromIdToken(e){p(e.length!==0,"internal-error");let n=Bn(e);this.updateTokensAndExpiration(e,null,n)}async getToken(e,n=!1){return!n&&this.accessToken&&!this.isExpired?this.accessToken:(p(this.refreshToken,e,"user-token-expired"),this.refreshToken?(await this.refresh(e,this.refreshToken),this.accessToken):null)}clearRefreshToken(){this.refreshToken=null}async refresh(e,n){let{accessToken:t,refreshToken:i,expiresIn:s}=await us(e,n);this.updateTokensAndExpiration(t,i,Number(s))}updateTokensAndExpiration(e,n,t){this.refreshToken=n||null,this.accessToken=e||null,this.expirationTime=Date.now()+t*1e3}static fromJSON(e,n){let{refreshToken:t,accessToken:i,expirationTime:s}=n,o=new r;return t&&(p(typeof t=="string","internal-error",{appName:e}),o.refreshToken=t),i&&(p(typeof i=="string","internal-error",{appName:e}),o.accessToken=i),s&&(p(typeof s=="number","internal-error",{appName:e}),o.expirationTime=s),o}toJSON(){return{refreshToken:this.refreshToken,accessToken:this.accessToken,expirationTime:this.expirationTime}}_assign(e){this.accessToken=e.accessToken,this.refreshToken=e.refreshToken,this.expirationTime=e.expirationTime}_clone(){return Object.assign(new r,this.toJSON())}_performRefresh(){return R("not implemented")}};function V(r,e){p(typeof r=="string"||typeof r>"u","internal-error",{appName:e})}var ie=class r{constructor(e){var{uid:n,auth:t,stsTokenManager:i}=e,s=Se(e,["uid","auth","stsTokenManager"]);this.providerId="firebase",this.proactiveRefresh=new xt(this),this.reloadUserInfo=null,this.reloadListener=null,this.uid=n,this.auth=t,this.stsTokenManager=i,this.accessToken=i.accessToken,this.displayName=s.displayName||null,this.email=s.email||null,this.emailVerified=s.emailVerified||!1,this.phoneNumber=s.phoneNumber||null,this.photoURL=s.photoURL||null,this.isAnonymous=s.isAnonymous||!1,this.tenantId=s.tenantId||null,this.providerData=s.providerData?[...s.providerData]:[],this.metadata=new de(s.createdAt||void 0,s.lastLoginAt||void 0)}async getIdToken(e){let n=await ue(this,this.stsTokenManager.getToken(this.auth,e));return p(n,this.auth,"internal-error"),this.accessToken!==n&&(this.accessToken=n,await this.auth._persistUserIfCurrent(this),this.auth._notifyListenersIfCurrent(this)),n}getIdTokenResult(e){return dr(this,e)}reload(){return hr(this)}_assign(e){this!==e&&(p(this.uid===e.uid,this.auth,"internal-error"),this.displayName=e.displayName,this.photoURL=e.photoURL,this.email=e.email,this.emailVerified=e.emailVerified,this.phoneNumber=e.phoneNumber,this.isAnonymous=e.isAnonymous,this.tenantId=e.tenantId,this.providerData=e.providerData.map(n=>Object.assign({},n)),this.metadata._copy(e.metadata),this.stsTokenManager._assign(e.stsTokenManager))}_clone(e){let n=new r(Object.assign(Object.assign({},this),{auth:e,stsTokenManager:this.stsTokenManager._clone()}));return n.metadata._copy(this.metadata),n}_onReload(e){p(!this.reloadListener,this.auth,"internal-error"),this.reloadListener=e,this.reloadUserInfo&&(this._notifyReloadListener(this.reloadUserInfo),this.reloadUserInfo=null)}_notifyReloadListener(e){this.reloadListener?this.reloadListener(e):this.reloadUserInfo=e}_startProactiveRefresh(){this.proactiveRefresh._start()}_stopProactiveRefresh(){this.proactiveRefresh._stop()}async _updateTokensIfNecessary(e,n=!1){let t=!1;e.idToken&&e.idToken!==this.stsTokenManager.accessToken&&(this.stsTokenManager.updateFromServerResponse(e),t=!0),n&&await De(this),await this.auth._persistUserIfCurrent(this),t&&this.auth._notifyListenersIfCurrent(this)}async delete(){if(T(this.auth.app))return Promise.reject(M(this.auth));let e=await this.getIdToken();return await ue(this,as(this.auth,{idToken:e})),this.stsTokenManager.clearRefreshToken(),this.auth.signOut()}toJSON(){return Object.assign(Object.assign({uid:this.uid,email:this.email||void 0,emailVerified:this.emailVerified,displayName:this.displayName||void 0,isAnonymous:this.isAnonymous,photoURL:this.photoURL||void 0,phoneNumber:this.phoneNumber||void 0,tenantId:this.tenantId||void 0,providerData:this.providerData.map(e=>Object.assign({},e)),stsTokenManager:this.stsTokenManager.toJSON(),_redirectEventId:this._redirectEventId},this.metadata.toJSON()),{apiKey:this.auth.config.apiKey,appName:this.auth.name})}get refreshToken(){return this.stsTokenManager.refreshToken||""}static _fromJSON(e,n){var t,i,s,o,a,c,l,d;let h=(t=n.displayName)!==null&&t!==void 0?t:void 0,u=(i=n.email)!==null&&i!==void 0?i:void 0,f=(s=n.phoneNumber)!==null&&s!==void 0?s:void 0,m=(o=n.photoURL)!==null&&o!==void 0?o:void 0,g=(a=n.tenantId)!==null&&a!==void 0?a:void 0,v=(c=n._redirectEventId)!==null&&c!==void 0?c:void 0,w=(l=n.createdAt)!==null&&l!==void 0?l:void 0,q=(d=n.lastLoginAt)!==null&&d!==void 0?d:void 0,{uid:it,emailVerified:ln,isAnonymous:un,providerData:st,stsTokenManager:dn}=n;p(it&&dn,e,"internal-error");let Vr=le.fromJSON(this.name,dn);p(typeof it=="string",e,"internal-error"),V(h,e.name),V(u,e.name),p(typeof ln=="boolean",e,"internal-error"),p(typeof un=="boolean",e,"internal-error"),V(f,e.name),V(m,e.name),V(g,e.name),V(v,e.name),V(w,e.name),V(q,e.name);let ot=new r({uid:it,auth:e,email:u,emailVerified:ln,displayName:h,isAnonymous:un,photoURL:m,phoneNumber:f,tenantId:g,stsTokenManager:Vr,createdAt:w,lastLoginAt:q});return st&&Array.isArray(st)&&(ot.providerData=st.map(Hr=>Object.assign({},Hr))),v&&(ot._redirectEventId=v),ot}static async _fromIdTokenResponse(e,n,t=!1){let i=new le;i.updateFromServerResponse(n);let s=new r({uid:n.localId,auth:e,stsTokenManager:i,isAnonymous:t});return await De(s),s}static async _fromGetAccountInfoResponse(e,n,t){let i=n.users[0];p(i.localId!==void 0,"internal-error");let s=i.providerUserInfo!==void 0?fr(i.providerUserInfo):[],o=!(i.email&&i.passwordHash)&&!s?.length,a=new le;a.updateFromIdToken(t);let c=new r({uid:i.localId,auth:e,stsTokenManager:a,isAnonymous:o}),l={uid:i.localId,displayName:i.displayName||null,photoURL:i.photoUrl||null,email:i.email||null,emailVerified:i.emailVerified||!1,phoneNumber:i.phoneNumber||null,tenantId:i.tenantId||null,providerData:s,metadata:new de(i.createdAt,i.lastLoginAt),isAnonymous:!(i.email&&i.passwordHash)&&!s?.length};return Object.assign(c,l),c}};var $n=new Map;function L(r){x(r instanceof Function,"Expected a class definition");let e=$n.get(r);return e?(x(e instanceof r,"Instance stored in cache mismatched with class"),e):(e=new r,$n.set(r,e),e)}var Le=class{constructor(){this.type="NONE",this.storage={}}async _isAvailable(){return!0}async _set(e,n){this.storage[e]=n}async _get(e){let n=this.storage[e];return n===void 0?null:n}async _remove(e){delete this.storage[e]}_addListener(e,n){}_removeListener(e,n){}};Le.type="NONE";var Ut=Le;function Ce(r,e,n){return`firebase:${r}:${e}:${n}`}var Me=class r{constructor(e,n,t){this.persistence=e,this.auth=n,this.userKey=t;let{config:i,name:s}=this.auth;this.fullUserKey=Ce(this.userKey,i.apiKey,s),this.fullPersistenceKey=Ce("persistence",i.apiKey,s),this.boundEventHandler=n._onStorageEvent.bind(n),this.persistence._addListener(this.fullUserKey,this.boundEventHandler)}setCurrentUser(e){return this.persistence._set(this.fullUserKey,e.toJSON())}async getCurrentUser(){let e=await this.persistence._get(this.fullUserKey);return e?ie._fromJSON(this.auth,e):null}removeCurrentUser(){return this.persistence._remove(this.fullUserKey)}savePersistenceForRedirect(){return this.persistence._set(this.fullPersistenceKey,this.persistence.type)}async setPersistence(e){if(this.persistence===e)return;let n=await this.getCurrentUser();if(await this.removeCurrentUser(),this.persistence=e,n)return this.setCurrentUser(n)}delete(){this.persistence._removeListener(this.fullUserKey,this.boundEventHandler)}static async create(e,n,t="authUser"){if(!n.length)return new r(L(Ut),e,t);let i=(await Promise.all(n.map(async l=>{if(await l._isAvailable())return l}))).filter(l=>l),s=i[0]||L(Ut),o=Ce(t,e.config.apiKey,e.name),a=null;for(let l of n)try{let d=await l._get(o);if(d){let h=ie._fromJSON(e,d);l!==s&&(a=h),s=l;break}}catch{}let c=i.filter(l=>l._shouldAllowMigration);return!s._shouldAllowMigration||!c.length?new r(s,e,t):(s=c[0],a&&await s._set(o,a.toJSON()),await Promise.all(n.map(async l=>{if(l!==s)try{await l._remove(o)}catch{}})),new r(s,e,t))}};function zn(r){let e=r.toLowerCase();if(e.includes("opera/")||e.includes("opr/")||e.includes("opios/"))return"Opera";if(_r(e))return"IEMobile";if(e.includes("msie")||e.includes("trident/"))return"IE";if(e.includes("edge/"))return"Edge";if(pr(e))return"Firefox";if(e.includes("silk/"))return"Silk";if(yr(e))return"Blackberry";if(Ir(e))return"Webos";if(mr(e))return"Safari";if((e.includes("chrome/")||gr(e))&&!e.includes("edge/"))return"Chrome";if(vr(e))return"Android";{let n=/([a-zA-Z\d\.]+)\/[a-zA-Z\d\.]*$/,t=r.match(n);if(t?.length===2)return t[1]}return"Other"}function pr(r=I()){return/firefox\//i.test(r)}function mr(r=I()){let e=r.toLowerCase();return e.includes("safari/")&&!e.includes("chrome/")&&!e.includes("crios/")&&!e.includes("android")}function gr(r=I()){return/crios\//i.test(r)}function _r(r=I()){return/iemobile/i.test(r)}function vr(r=I()){return/android/i.test(r)}function yr(r=I()){return/blackberry/i.test(r)}function Ir(r=I()){return/webos/i.test(r)}function tn(r=I()){return/iphone|ipad|ipod/i.test(r)||/macintosh/i.test(r)&&/mobile/i.test(r)}function hs(r=I()){var e;return tn(r)&&!!(!((e=window.navigator)===null||e===void 0)&&e.standalone)}function fs(){return wn()&&document.documentMode===10}function Er(r=I()){return tn(r)||vr(r)||Ir(r)||yr(r)||/windows phone/i.test(r)||_r(r)}function wr(r,e=[]){let n;switch(r){case"Browser":n=zn(I());break;case"Worker":n=`${zn(I())}-${r}`;break;default:n=r}let t=e.length?e.join(","):"FirebaseCore-web";return`${n}/JsCore/${ne}/${t}`}var Ft=class{constructor(e){this.auth=e,this.queue=[]}pushCallback(e,n){let t=s=>new Promise((o,a)=>{try{let c=e(s);o(c)}catch(c){a(c)}});t.onAbort=n,this.queue.push(t);let i=this.queue.length-1;return()=>{this.queue[i]=()=>Promise.resolve()}}async runMiddleware(e){if(this.auth.currentUser===e)return;let n=[];try{for(let t of this.queue)await t(e),t.onAbort&&n.push(t.onAbort)}catch(t){n.reverse();for(let i of n)try{i()}catch{}throw this.auth._errorFactory.create("login-blocked",{originalMessage:t?.message})}}};async function ps(r,e={}){return E(r,"GET","/v2/passwordPolicy",y(r,e))}var ms=6,Vt=class{constructor(e){var n,t,i,s;let o=e.customStrengthOptions;this.customStrengthOptions={},this.customStrengthOptions.minPasswordLength=(n=o.minPasswordLength)!==null&&n!==void 0?n:ms,o.maxPasswordLength&&(this.customStrengthOptions.maxPasswordLength=o.maxPasswordLength),o.containsLowercaseCharacter!==void 0&&(this.customStrengthOptions.containsLowercaseLetter=o.containsLowercaseCharacter),o.containsUppercaseCharacter!==void 0&&(this.customStrengthOptions.containsUppercaseLetter=o.containsUppercaseCharacter),o.containsNumericCharacter!==void 0&&(this.customStrengthOptions.containsNumericCharacter=o.containsNumericCharacter),o.containsNonAlphanumericCharacter!==void 0&&(this.customStrengthOptions.containsNonAlphanumericCharacter=o.containsNonAlphanumericCharacter),this.enforcementState=e.enforcementState,this.enforcementState==="ENFORCEMENT_STATE_UNSPECIFIED"&&(this.enforcementState="OFF"),this.allowedNonAlphanumericCharacters=(i=(t=e.allowedNonAlphanumericCharacters)===null||t===void 0?void 0:t.join(""))!==null&&i!==void 0?i:"",this.forceUpgradeOnSignin=(s=e.forceUpgradeOnSignin)!==null&&s!==void 0?s:!1,this.schemaVersion=e.schemaVersion}validatePassword(e){var n,t,i,s,o,a;let c={isValid:!0,passwordPolicy:this};return this.validatePasswordLengthOptions(e,c),this.validatePasswordCharacterOptions(e,c),c.isValid&&(c.isValid=(n=c.meetsMinPasswordLength)!==null&&n!==void 0?n:!0),c.isValid&&(c.isValid=(t=c.meetsMaxPasswordLength)!==null&&t!==void 0?t:!0),c.isValid&&(c.isValid=(i=c.containsLowercaseLetter)!==null&&i!==void 0?i:!0),c.isValid&&(c.isValid=(s=c.containsUppercaseLetter)!==null&&s!==void 0?s:!0),c.isValid&&(c.isValid=(o=c.containsNumericCharacter)!==null&&o!==void 0?o:!0),c.isValid&&(c.isValid=(a=c.containsNonAlphanumericCharacter)!==null&&a!==void 0?a:!0),c}validatePasswordLengthOptions(e,n){let t=this.customStrengthOptions.minPasswordLength,i=this.customStrengthOptions.maxPasswordLength;t&&(n.meetsMinPasswordLength=e.length>=t),i&&(n.meetsMaxPasswordLength=e.length<=i)}validatePasswordCharacterOptions(e,n){this.updatePasswordCharacterOptionsStatuses(n,!1,!1,!1,!1);let t;for(let i=0;i<e.length;i++)t=e.charAt(i),this.updatePasswordCharacterOptionsStatuses(n,t>="a"&&t<="z",t>="A"&&t<="Z",t>="0"&&t<="9",this.allowedNonAlphanumericCharacters.includes(t))}updatePasswordCharacterOptionsStatuses(e,n,t,i,s){this.customStrengthOptions.containsLowercaseLetter&&(e.containsLowercaseLetter||(e.containsLowercaseLetter=n)),this.customStrengthOptions.containsUppercaseLetter&&(e.containsUppercaseLetter||(e.containsUppercaseLetter=t)),this.customStrengthOptions.containsNumericCharacter&&(e.containsNumericCharacter||(e.containsNumericCharacter=i)),this.customStrengthOptions.containsNonAlphanumericCharacter&&(e.containsNonAlphanumericCharacter||(e.containsNonAlphanumericCharacter=s))}};var Ht=class{constructor(e,n,t,i){this.app=e,this.heartbeatServiceProvider=n,this.appCheckServiceProvider=t,this.config=i,this.currentUser=null,this.emulatorConfig=null,this.operations=Promise.resolve(),this.authStateSubscription=new xe(this),this.idTokenSubscription=new xe(this),this.beforeStateQueue=new Ft(this),this.redirectUser=null,this.isProactiveRefreshEnabled=!1,this.EXPECTED_PASSWORD_POLICY_SCHEMA_VERSION=1,this._canInitEmulator=!0,this._isInitialized=!1,this._deleted=!1,this._initializationPromise=null,this._popupRedirectResolver=null,this._errorFactory=or,this._agentRecaptchaConfig=null,this._tenantRecaptchaConfigs={},this._projectPasswordPolicy=null,this._tenantPasswordPolicies={},this.lastNotifiedUid=void 0,this.languageCode=null,this.tenantId=null,this.settings={appVerificationDisabledForTesting:!1},this.frameworks=[],this.name=e.name,this.clientVersion=i.sdkClientVersion}_initializeWithPersistence(e,n){return n&&(this._popupRedirectResolver=L(n)),this._initializationPromise=this.queue(async()=>{var t,i;if(!this._deleted&&(this.persistenceManager=await Me.create(this,e),!this._deleted)){if(!((t=this._popupRedirectResolver)===null||t===void 0)&&t._shouldInitProactively)try{await this._popupRedirectResolver._initialize(this)}catch{}await this.initializeCurrentUser(n),this.lastNotifiedUid=((i=this.currentUser)===null||i===void 0?void 0:i.uid)||null,!this._deleted&&(this._isInitialized=!0)}}),this._initializationPromise}async _onStorageEvent(){if(this._deleted)return;let e=await this.assertedPersistence.getCurrentUser();if(!(!this.currentUser&&!e)){if(this.currentUser&&e&&this.currentUser.uid===e.uid){this._currentUser._assign(e),await this.currentUser.getIdToken();return}await this._updateCurrentUser(e,!0)}}async initializeCurrentUserFromIdToken(e){try{let n=await ur(this,{idToken:e}),t=await ie._fromGetAccountInfoResponse(this,n,e);await this.directlySetCurrentUser(t)}catch(n){console.warn("FirebaseServerApp could not login user with provided authIdToken: ",n),await this.directlySetCurrentUser(null)}}async initializeCurrentUser(e){var n;if(T(this.app)){let o=this.app.settings.authIdToken;return o?new Promise(a=>{setTimeout(()=>this.initializeCurrentUserFromIdToken(o).then(a,a))}):this.directlySetCurrentUser(null)}let t=await this.assertedPersistence.getCurrentUser(),i=t,s=!1;if(e&&this.config.authDomain){await this.getOrInitRedirectPersistenceManager();let o=(n=this.redirectUser)===null||n===void 0?void 0:n._redirectEventId,a=i?._redirectEventId,c=await this.tryRedirectSignIn(e);(!o||o===a)&&c?.user&&(i=c.user,s=!0)}if(!i)return this.directlySetCurrentUser(null);if(!i._redirectEventId){if(s)try{await this.beforeStateQueue.runMiddleware(i)}catch(o){i=t,this._popupRedirectResolver._overrideRedirectResult(this,()=>Promise.reject(o))}return i?this.reloadAndSetCurrentUserOrClear(i):this.directlySetCurrentUser(null)}return p(this._popupRedirectResolver,this,"argument-error"),await this.getOrInitRedirectPersistenceManager(),this.redirectUser&&this.redirectUser._redirectEventId===i._redirectEventId?this.directlySetCurrentUser(i):this.reloadAndSetCurrentUserOrClear(i)}async tryRedirectSignIn(e){let n=null;try{n=await this._popupRedirectResolver._completeRedirectFn(this,e,!0)}catch{await this._setRedirectUser(null)}return n}async reloadAndSetCurrentUserOrClear(e){try{await De(e)}catch(n){if(n?.code!=="auth/network-request-failed")return this.directlySetCurrentUser(null)}return this.directlySetCurrentUser(e)}useDeviceLanguage(){this.languageCode=ns()}async _delete(){this._deleted=!0}async updateCurrentUser(e){if(T(this.app))return Promise.reject(M(this));let n=e?A(e):null;return n&&p(n.auth.config.apiKey===this.config.apiKey,this,"invalid-user-token"),this._updateCurrentUser(n&&n._clone(this))}async _updateCurrentUser(e,n=!1){if(!this._deleted)return e&&p(this.tenantId===e.tenantId,this,"tenant-id-mismatch"),n||await this.beforeStateQueue.runMiddleware(e),this.queue(async()=>{await this.directlySetCurrentUser(e),this.notifyAuthListeners()})}async signOut(){return T(this.app)?Promise.reject(M(this)):(await this.beforeStateQueue.runMiddleware(null),(this.redirectPersistenceManager||this._popupRedirectResolver)&&await this._setRedirectUser(null),this._updateCurrentUser(null,!0))}setPersistence(e){return T(this.app)?Promise.reject(M(this)):this.queue(async()=>{await this.assertedPersistence.setPersistence(L(e))})}_getRecaptchaConfig(){return this.tenantId==null?this._agentRecaptchaConfig:this._tenantRecaptchaConfigs[this.tenantId]}async validatePassword(e){this._getPasswordPolicyInternal()||await this._updatePasswordPolicy();let n=this._getPasswordPolicyInternal();return n.schemaVersion!==this.EXPECTED_PASSWORD_POLICY_SCHEMA_VERSION?Promise.reject(this._errorFactory.create("unsupported-password-policy-schema-version",{})):n.validatePassword(e)}_getPasswordPolicyInternal(){return this.tenantId===null?this._projectPasswordPolicy:this._tenantPasswordPolicies[this.tenantId]}async _updatePasswordPolicy(){let e=await ps(this),n=new Vt(e);this.tenantId===null?this._projectPasswordPolicy=n:this._tenantPasswordPolicies[this.tenantId]=n}_getPersistence(){return this.assertedPersistence.persistence.type}_updateErrorMap(e){this._errorFactory=new N("auth","Firebase",e())}onAuthStateChanged(e,n,t){return this.registerStateListener(this.authStateSubscription,e,n,t)}beforeAuthStateChanged(e,n){return this.beforeStateQueue.pushCallback(e,n)}onIdTokenChanged(e,n,t){return this.registerStateListener(this.idTokenSubscription,e,n,t)}authStateReady(){return new Promise((e,n)=>{if(this.currentUser)e();else{let t=this.onAuthStateChanged(()=>{t(),e()},n)}})}async revokeAccessToken(e){if(this.currentUser){let n=await this.currentUser.getIdToken(),t={providerId:"apple.com",tokenType:"ACCESS_TOKEN",token:e,idToken:n};this.tenantId!=null&&(t.tenantId=this.tenantId),await ds(this,t)}}toJSON(){var e;return{apiKey:this.config.apiKey,authDomain:this.config.authDomain,appName:this.name,currentUser:(e=this._currentUser)===null||e===void 0?void 0:e.toJSON()}}async _setRedirectUser(e,n){let t=await this.getOrInitRedirectPersistenceManager(n);return e===null?t.removeCurrentUser():t.setCurrentUser(e)}async getOrInitRedirectPersistenceManager(e){if(!this.redirectPersistenceManager){let n=e&&L(e)||this._popupRedirectResolver;p(n,this,"argument-error"),this.redirectPersistenceManager=await Me.create(this,[L(n._redirectPersistence)],"redirectUser"),this.redirectUser=await this.redirectPersistenceManager.getCurrentUser()}return this.redirectPersistenceManager}async _redirectUserForId(e){var n,t;return this._isInitialized&&await this.queue(async()=>{}),((n=this._currentUser)===null||n===void 0?void 0:n._redirectEventId)===e?this._currentUser:((t=this.redirectUser)===null||t===void 0?void 0:t._redirectEventId)===e?this.redirectUser:null}async _persistUserIfCurrent(e){if(e===this.currentUser)return this.queue(async()=>this.directlySetCurrentUser(e))}_notifyListenersIfCurrent(e){e===this.currentUser&&this.notifyAuthListeners()}_key(){return`${this.config.authDomain}:${this.config.apiKey}:${this.name}`}_startProactiveRefresh(){this.isProactiveRefreshEnabled=!0,this.currentUser&&this._currentUser._startProactiveRefresh()}_stopProactiveRefresh(){this.isProactiveRefreshEnabled=!1,this.currentUser&&this._currentUser._stopProactiveRefresh()}get _currentUser(){return this.currentUser}notifyAuthListeners(){var e,n;if(!this._isInitialized)return;this.idTokenSubscription.next(this.currentUser);let t=(n=(e=this.currentUser)===null||e===void 0?void 0:e.uid)!==null&&n!==void 0?n:null;this.lastNotifiedUid!==t&&(this.lastNotifiedUid=t,this.authStateSubscription.next(this.currentUser))}registerStateListener(e,n,t,i){if(this._deleted)return()=>{};let s=typeof n=="function"?n:n.next.bind(n),o=!1,a=this._isInitialized?Promise.resolve():this._initializationPromise;if(p(a,this,"internal-error"),a.then(()=>{o||s(this.currentUser)}),typeof n=="function"){let c=e.addObserver(n,t,i);return()=>{o=!0,c()}}else{let c=e.addObserver(n);return()=>{o=!0,c()}}}async directlySetCurrentUser(e){this.currentUser&&this.currentUser!==e&&this._currentUser._stopProactiveRefresh(),e&&this.isProactiveRefreshEnabled&&e._startProactiveRefresh(),this.currentUser=e,e?await this.assertedPersistence.setCurrentUser(e):await this.assertedPersistence.removeCurrentUser()}queue(e){return this.operations=this.operations.then(e,e),this.operations}get assertedPersistence(){return p(this.persistenceManager,this,"internal-error"),this.persistenceManager}_logFramework(e){!e||this.frameworks.includes(e)||(this.frameworks.push(e),this.frameworks.sort(),this.clientVersion=wr(this.config.clientPlatform,this._getFrameworks()))}_getFrameworks(){return this.frameworks}async _getAdditionalHeaders(){var e;let n={"X-Client-Version":this.clientVersion};this.app.options.appId&&(n["X-Firebase-gmpid"]=this.app.options.appId);let t=await((e=this.heartbeatServiceProvider.getImmediate({optional:!0}))===null||e===void 0?void 0:e.getHeartbeatsHeader());t&&(n["X-Firebase-Client"]=t);let i=await this._getAppCheckToken();return i&&(n["X-Firebase-AppCheck"]=i),n}async _getAppCheckToken(){var e;let n=await((e=this.appCheckServiceProvider.getImmediate({optional:!0}))===null||e===void 0?void 0:e.getToken());return n?.error&&Zi(`Error while retrieving App Check token: ${n.error}`),n?.token}};function j(r){return A(r)}var xe=class{constructor(e){this.auth=e,this.observer=null,this.addObserver=An(n=>this.observer=n)}get next(){return p(this.observer,this.auth,"internal-error"),this.observer.next.bind(this.observer)}};var Ze={async loadJS(){throw new Error("Unable to load external scripts")},recaptchaV2Script:"",recaptchaEnterpriseScript:"",gapiScript:""};function gs(r){Ze=r}function br(r){return Ze.loadJS(r)}function _s(){return Ze.recaptchaEnterpriseScript}function vs(){return Ze.gapiScript}function Tr(r){return`__${r}${Math.floor(Math.random()*1e6)}`}var ys="recaptcha-enterprise",Is="NO_RECAPTCHA",jt=class{constructor(e){this.type=ys,this.auth=j(e)}async verify(e="verify",n=!1){async function t(s){if(!n){if(s.tenantId==null&&s._agentRecaptchaConfig!=null)return s._agentRecaptchaConfig.siteKey;if(s.tenantId!=null&&s._tenantRecaptchaConfigs[s.tenantId]!==void 0)return s._tenantRecaptchaConfigs[s.tenantId].siteKey}return new Promise(async(o,a)=>{os(s,{clientType:"CLIENT_TYPE_WEB",version:"RECAPTCHA_ENTERPRISE"}).then(c=>{if(c.recaptchaKey===void 0)a(new Error("recaptcha Enterprise site key undefined"));else{let l=new Mt(c);return s.tenantId==null?s._agentRecaptchaConfig=l:s._tenantRecaptchaConfigs[s.tenantId]=l,o(l.siteKey)}}).catch(c=>{a(c)})})}function i(s,o,a){let c=window.grecaptcha;Wn(c)?c.enterprise.ready(()=>{c.enterprise.execute(s,{action:e}).then(l=>{o(l)}).catch(()=>{o(Is)})}):a(Error("No reCAPTCHA enterprise script loaded."))}return new Promise((s,o)=>{t(this.auth).then(a=>{if(!n&&Wn(window.grecaptcha))i(a,s,o);else{if(typeof window>"u"){o(new Error("RecaptchaVerifier is only supported in browser"));return}let c=_s();c.length!==0&&(c+=a),br(c).then(()=>{i(a,s,o)}).catch(l=>{o(l)})}}).catch(a=>{o(a)})})}};async function Gn(r,e,n,t=!1){let i=new jt(r),s;try{s=await i.verify(n)}catch{s=await i.verify(n,!0)}let o=Object.assign({},e);return t?Object.assign(o,{captchaResp:s}):Object.assign(o,{captchaResponse:s}),Object.assign(o,{clientType:"CLIENT_TYPE_WEB"}),Object.assign(o,{recaptchaVersion:"RECAPTCHA_ENTERPRISE"}),o}async function qt(r,e,n,t){var i;if(!((i=r._getRecaptchaConfig())===null||i===void 0)&&i.isProviderEnabled("EMAIL_PASSWORD_PROVIDER")){let s=await Gn(r,e,n,n==="getOobCode");return t(r,s)}else return t(r,e).catch(async s=>{if(s.code==="auth/missing-recaptcha-token"){console.log(`${n} is protected by reCAPTCHA Enterprise for this project. Automatically triggering the reCAPTCHA flow and restarting the flow.`);let o=await Gn(r,e,n,n==="getOobCode");return t(r,o)}else return Promise.reject(s)})}function Sr(r,e){let n=Rt(r,"auth");if(n.isInitialized()){let i=n.getImmediate(),s=n.getOptions();if(Y(s,e??{}))return i;S(i,"already-initialized")}return n.initialize({options:e})}function Es(r,e){let n=e?.persistence||[],t=(Array.isArray(n)?n:[n]).map(L);e?.errorMap&&r._updateErrorMap(e.errorMap),r._initializeWithPersistence(t,e?.popupRedirectResolver)}function et(r,e,n){let t=j(r);p(t._canInitEmulator,t,"emulator-config-failed"),p(/^https?:\/\//.test(e),t,"invalid-emulator-scheme");let i=!!n?.disableWarnings,s=Ar(e),{host:o,port:a}=ws(e),c=a===null?"":`:${a}`;t.config.emulator={url:`${s}//${o}${c}/`},t.settings.appVerificationDisabledForTesting=!0,t.emulatorConfig=Object.freeze({host:o,port:a,protocol:s.replace(":",""),options:Object.freeze({disableWarnings:i})}),i||bs()}function Ar(r){let e=r.indexOf(":");return e<0?"":r.substr(0,e+1)}function ws(r){let e=Ar(r),n=/(\/\/)?([^?#/]+)/.exec(r.substr(e.length));if(!n)return{host:"",port:null};let t=n[2].split("@").pop()||"",i=/^(\[[^\]]+\])(:|$)/.exec(t);if(i){let s=i[1];return{host:s,port:Kn(t.substr(s.length+1))}}else{let[s,o]=t.split(":");return{host:s,port:Kn(o)}}}function Kn(r){if(!r)return null;let e=Number(r);return isNaN(e)?null:e}function bs(){function r(){let e=document.createElement("p"),n=e.style;e.innerText="Running in emulator mode. Do not use with production credentials.",n.position="fixed",n.width="100%",n.backgroundColor="#ffffff",n.border=".1em solid #000000",n.color="#b50000",n.bottom="0px",n.left="0px",n.margin="0px",n.zIndex="10000",n.textAlign="center",e.classList.add("firebase-emulator-warning"),document.body.appendChild(e)}typeof console<"u"&&typeof console.info=="function"&&console.info("WARNING: You are using the Auth Emulator, which is intended for local testing only.  Do not use with production credentials."),typeof window<"u"&&typeof document<"u"&&(document.readyState==="loading"?window.addEventListener("DOMContentLoaded",r):r())}var $=class{constructor(e,n){this.providerId=e,this.signInMethod=n}toJSON(){return R("not implemented")}_getIdTokenResponse(e){return R("not implemented")}_linkToIdToken(e,n){return R("not implemented")}_getReauthenticationResolver(e){return R("not implemented")}};async function Ts(r,e){return E(r,"POST","/v1/accounts:signUp",e)}async function Ss(r,e){return H(r,"POST","/v1/accounts:signInWithPassword",y(r,e))}async function As(r,e){return H(r,"POST","/v1/accounts:signInWithEmailLink",y(r,e))}async function Os(r,e){return H(r,"POST","/v1/accounts:signInWithEmailLink",y(r,e))}var he=class r extends ${constructor(e,n,t,i=null){super("password",t),this._email=e,this._password=n,this._tenantId=i}static _fromEmailAndPassword(e,n){return new r(e,n,"password")}static _fromEmailAndCode(e,n,t=null){return new r(e,n,"emailLink",t)}toJSON(){return{email:this._email,password:this._password,signInMethod:this.signInMethod,tenantId:this._tenantId}}static fromJSON(e){let n=typeof e=="string"?JSON.parse(e):e;if(n?.email&&n?.password){if(n.signInMethod==="password")return this._fromEmailAndPassword(n.email,n.password);if(n.signInMethod==="emailLink")return this._fromEmailAndCode(n.email,n.password,n.tenantId)}return null}async _getIdTokenResponse(e){switch(this.signInMethod){case"password":let n={returnSecureToken:!0,email:this._email,password:this._password,clientType:"CLIENT_TYPE_WEB"};return qt(e,n,"signInWithPassword",Ss);case"emailLink":return As(e,{email:this._email,oobCode:this._password});default:S(e,"internal-error")}}async _linkToIdToken(e,n){switch(this.signInMethod){case"password":let t={idToken:n,returnSecureToken:!0,email:this._email,password:this._password,clientType:"CLIENT_TYPE_WEB"};return qt(e,t,"signUpPassword",Ts);case"emailLink":return Os(e,{idToken:n,email:this._email,oobCode:this._password});default:S(e,"internal-error")}}_getReauthenticationResolver(e){return this._getIdTokenResponse(e)}};async function re(r,e){return H(r,"POST","/v1/accounts:signInWithIdp",y(r,e))}var Cs="http://localhost",z=class r extends ${constructor(){super(...arguments),this.pendingToken=null}static _fromParams(e){let n=new r(e.providerId,e.signInMethod);return e.idToken||e.accessToken?(e.idToken&&(n.idToken=e.idToken),e.accessToken&&(n.accessToken=e.accessToken),e.nonce&&!e.pendingToken&&(n.nonce=e.nonce),e.pendingToken&&(n.pendingToken=e.pendingToken)):e.oauthToken&&e.oauthTokenSecret?(n.accessToken=e.oauthToken,n.secret=e.oauthTokenSecret):S("argument-error"),n}toJSON(){return{idToken:this.idToken,accessToken:this.accessToken,secret:this.secret,nonce:this.nonce,pendingToken:this.pendingToken,providerId:this.providerId,signInMethod:this.signInMethod}}static fromJSON(e){let n=typeof e=="string"?JSON.parse(e):e,{providerId:t,signInMethod:i}=n,s=Se(n,["providerId","signInMethod"]);if(!t||!i)return null;let o=new r(t,i);return o.idToken=s.idToken||void 0,o.accessToken=s.accessToken||void 0,o.secret=s.secret,o.nonce=s.nonce,o.pendingToken=s.pendingToken||null,o}_getIdTokenResponse(e){let n=this.buildRequest();return re(e,n)}_linkToIdToken(e,n){let t=this.buildRequest();return t.idToken=n,re(e,t)}_getReauthenticationResolver(e){let n=this.buildRequest();return n.autoCreate=!1,re(e,n)}buildRequest(){let e={requestUri:Cs,returnSecureToken:!0};if(this.pendingToken)e.pendingToken=this.pendingToken;else{let n={};this.idToken&&(n.id_token=this.idToken),this.accessToken&&(n.access_token=this.accessToken),this.secret&&(n.oauth_token_secret=this.secret),n.providerId=this.providerId,this.nonce&&!this.pendingToken&&(n.nonce=this.nonce),e.postBody=X(n)}return e}};async function Rs(r,e){return E(r,"POST","/v1/accounts:sendVerificationCode",y(r,e))}async function ks(r,e){return H(r,"POST","/v1/accounts:signInWithPhoneNumber",y(r,e))}async function Ps(r,e){let n=await H(r,"POST","/v1/accounts:signInWithPhoneNumber",y(r,e));if(n.temporaryProof)throw ae(r,"account-exists-with-different-credential",n);return n}var Ns={USER_NOT_FOUND:"user-not-found"};async function Ds(r,e){let n=Object.assign(Object.assign({},e),{operation:"REAUTH"});return H(r,"POST","/v1/accounts:signInWithPhoneNumber",y(r,n),Ns)}var fe=class r extends ${constructor(e){super("phone","phone"),this.params=e}static _fromVerification(e,n){return new r({verificationId:e,verificationCode:n})}static _fromTokenResponse(e,n){return new r({phoneNumber:e,temporaryProof:n})}_getIdTokenResponse(e){return ks(e,this._makeVerificationRequest())}_linkToIdToken(e,n){return Ps(e,Object.assign({idToken:n},this._makeVerificationRequest()))}_getReauthenticationResolver(e){return Ds(e,this._makeVerificationRequest())}_makeVerificationRequest(){let{temporaryProof:e,phoneNumber:n,verificationId:t,verificationCode:i}=this.params;return e&&n?{temporaryProof:e,phoneNumber:n}:{sessionInfo:t,code:i}}toJSON(){let e={providerId:this.providerId};return this.params.phoneNumber&&(e.phoneNumber=this.params.phoneNumber),this.params.temporaryProof&&(e.temporaryProof=this.params.temporaryProof),this.params.verificationCode&&(e.verificationCode=this.params.verificationCode),this.params.verificationId&&(e.verificationId=this.params.verificationId),e}static fromJSON(e){typeof e=="string"&&(e=JSON.parse(e));let{verificationId:n,verificationCode:t,phoneNumber:i,temporaryProof:s}=e;return!t&&!n&&!i&&!s?null:new r({verificationId:n,verificationCode:t,phoneNumber:i,temporaryProof:s})}};function Ls(r){switch(r){case"recoverEmail":return"RECOVER_EMAIL";case"resetPassword":return"PASSWORD_RESET";case"signIn":return"EMAIL_SIGNIN";case"verifyEmail":return"VERIFY_EMAIL";case"verifyAndChangeEmail":return"VERIFY_AND_CHANGE_EMAIL";case"revertSecondFactorAddition":return"REVERT_SECOND_FACTOR_ADDITION";default:return null}}function Ms(r){let e=Q(Z(r)).link,n=e?Q(Z(e)).deep_link_id:null,t=Q(Z(r)).deep_link_id;return(t?Q(Z(t)).link:null)||t||n||e||r}var Ue=class r{constructor(e){var n,t,i,s,o,a;let c=Q(Z(e)),l=(n=c.apiKey)!==null&&n!==void 0?n:null,d=(t=c.oobCode)!==null&&t!==void 0?t:null,h=Ls((i=c.mode)!==null&&i!==void 0?i:null);p(l&&d&&h,"argument-error"),this.apiKey=l,this.operation=h,this.code=d,this.continueUrl=(s=c.continueUrl)!==null&&s!==void 0?s:null,this.languageCode=(o=c.languageCode)!==null&&o!==void 0?o:null,this.tenantId=(a=c.tenantId)!==null&&a!==void 0?a:null}static parseLink(e){let n=Ms(e);try{return new r(n)}catch{return null}}};var G=class r{constructor(){this.providerId=r.PROVIDER_ID}static credential(e,n){return he._fromEmailAndPassword(e,n)}static credentialWithLink(e,n){let t=Ue.parseLink(n);return p(t,"argument-error"),he._fromEmailAndCode(e,t.code,t.tenantId)}};G.PROVIDER_ID="password";G.EMAIL_PASSWORD_SIGN_IN_METHOD="password";G.EMAIL_LINK_SIGN_IN_METHOD="emailLink";var Fe=class{constructor(e){this.providerId=e,this.defaultLanguageCode=null,this.customParameters={}}setDefaultLanguage(e){this.defaultLanguageCode=e}setCustomParameters(e){return this.customParameters=e,this}getCustomParameters(){return this.customParameters}};var K=class extends Fe{constructor(){super(...arguments),this.scopes=[]}addScope(e){return this.scopes.includes(e)||this.scopes.push(e),this}getScopes(){return[...this.scopes]}};var pe=class r extends K{constructor(){super("facebook.com")}static credential(e){return z._fromParams({providerId:r.PROVIDER_ID,signInMethod:r.FACEBOOK_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return r.credentialFromTaggedObject(e)}static credentialFromError(e){return r.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)||!e.oauthAccessToken)return null;try{return r.credential(e.oauthAccessToken)}catch{return null}}};pe.FACEBOOK_SIGN_IN_METHOD="facebook.com";pe.PROVIDER_ID="facebook.com";var me=class r extends K{constructor(){super("google.com"),this.addScope("profile")}static credential(e,n){return z._fromParams({providerId:r.PROVIDER_ID,signInMethod:r.GOOGLE_SIGN_IN_METHOD,idToken:e,accessToken:n})}static credentialFromResult(e){return r.credentialFromTaggedObject(e)}static credentialFromError(e){return r.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e)return null;let{oauthIdToken:n,oauthAccessToken:t}=e;if(!n&&!t)return null;try{return r.credential(n,t)}catch{return null}}};me.GOOGLE_SIGN_IN_METHOD="google.com";me.PROVIDER_ID="google.com";var ge=class r extends K{constructor(){super("github.com")}static credential(e){return z._fromParams({providerId:r.PROVIDER_ID,signInMethod:r.GITHUB_SIGN_IN_METHOD,accessToken:e})}static credentialFromResult(e){return r.credentialFromTaggedObject(e)}static credentialFromError(e){return r.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e||!("oauthAccessToken"in e)||!e.oauthAccessToken)return null;try{return r.credential(e.oauthAccessToken)}catch{return null}}};ge.GITHUB_SIGN_IN_METHOD="github.com";ge.PROVIDER_ID="github.com";var _e=class r extends K{constructor(){super("twitter.com")}static credential(e,n){return z._fromParams({providerId:r.PROVIDER_ID,signInMethod:r.TWITTER_SIGN_IN_METHOD,oauthToken:e,oauthTokenSecret:n})}static credentialFromResult(e){return r.credentialFromTaggedObject(e)}static credentialFromError(e){return r.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e)return null;let{oauthAccessToken:n,oauthTokenSecret:t}=e;if(!n||!t)return null;try{return r.credential(n,t)}catch{return null}}};_e.TWITTER_SIGN_IN_METHOD="twitter.com";_e.PROVIDER_ID="twitter.com";async function xs(r,e){return H(r,"POST","/v1/accounts:signUp",y(r,e))}var se=class r{constructor(e){this.user=e.user,this.providerId=e.providerId,this._tokenResponse=e._tokenResponse,this.operationType=e.operationType}static async _fromIdTokenResponse(e,n,t,i=!1){let s=await ie._fromIdTokenResponse(e,t,i),o=Jn(t);return new r({user:s,providerId:o,_tokenResponse:t,operationType:n})}static async _forOperation(e,n,t){await e._updateTokensIfNecessary(t,!0);let i=Jn(t);return new r({user:e,providerId:i,_tokenResponse:t,operationType:n})}};function Jn(r){return r.providerId?r.providerId:"phoneNumber"in r?"phone":null}var Wt=class r extends b{constructor(e,n,t,i){var s;super(n.code,n.message),this.operationType=t,this.user=i,Object.setPrototypeOf(this,r.prototype),this.customData={appName:e.name,tenantId:(s=e.tenantId)!==null&&s!==void 0?s:void 0,_serverResponse:n.customData._serverResponse,operationType:t}}static _fromErrorAndOperation(e,n,t,i){return new r(e,n,t,i)}};function Or(r,e,n,t){return(e==="reauthenticate"?n._getReauthenticationResolver(r):n._getIdTokenResponse(r)).catch(s=>{throw s.code==="auth/multi-factor-auth-required"?Wt._fromErrorAndOperation(r,s,e,t):s})}async function Us(r,e,n=!1){let t=await ue(r,e._linkToIdToken(r.auth,await r.getIdToken()),n);return se._forOperation(r,"link",t)}async function Fs(r,e,n=!1){let{auth:t}=r;if(T(t.app))return Promise.reject(M(t));let i="reauthenticate";try{let s=await ue(r,Or(t,i,e,r),n);p(s.idToken,t,"internal-error");let o=en(s.idToken);p(o,t,"internal-error");let{sub:a}=o;return p(r.uid===a,t,"user-mismatch"),se._forOperation(r,i,s)}catch(s){throw s?.code==="auth/user-not-found"&&S(t,"user-mismatch"),s}}async function Cr(r,e,n=!1){if(T(r.app))return Promise.reject(M(r));let t="signIn",i=await Or(r,t,e),s=await se._fromIdTokenResponse(r,t,i);return n||await r._updateCurrentUser(s.user),s}async function Rr(r,e){return Cr(j(r),e)}async function kr(r){let e=j(r);e._getPasswordPolicyInternal()&&await e._updatePasswordPolicy()}async function nn(r,e,n){if(T(r.app))return Promise.reject(M(r));let t=j(r),o=await qt(t,{returnSecureToken:!0,email:e,password:n,clientType:"CLIENT_TYPE_WEB"},"signUpPassword",xs).catch(c=>{throw c.code==="auth/password-does-not-meet-requirements"&&kr(r),c}),a=await se._fromIdTokenResponse(t,"signIn",o);return await t._updateCurrentUser(a.user),a}function rn(r,e,n){return T(r.app)?Promise.reject(M(r)):Rr(A(r),G.credential(e,n)).catch(async t=>{throw t.code==="auth/password-does-not-meet-requirements"&&kr(r),t})}function tt(r,e,n,t){return A(r).onIdTokenChanged(e,n,t)}function Pr(r,e,n){return A(r).beforeAuthStateChanged(e,n)}function sn(r){return A(r).signOut()}function Vs(r,e){return E(r,"POST","/v2/accounts/mfaEnrollment:start",y(r,e))}function Hs(r,e){return E(r,"POST","/v2/accounts/mfaEnrollment:finalize",y(r,e))}function js(r,e){return E(r,"POST","/v2/accounts/mfaEnrollment:start",y(r,e))}function qs(r,e){return E(r,"POST","/v2/accounts/mfaEnrollment:finalize",y(r,e))}var Ve="__sak";var He=class{constructor(e,n){this.storageRetriever=e,this.type=n}_isAvailable(){try{return this.storage?(this.storage.setItem(Ve,"1"),this.storage.removeItem(Ve),Promise.resolve(!0)):Promise.resolve(!1)}catch{return Promise.resolve(!1)}}_set(e,n){return this.storage.setItem(e,JSON.stringify(n)),Promise.resolve()}_get(e){let n=this.storage.getItem(e);return Promise.resolve(n?JSON.parse(n):null)}_remove(e){return this.storage.removeItem(e),Promise.resolve()}get storage(){return this.storageRetriever()}};var Ws=1e3,Bs=10,je=class extends He{constructor(){super(()=>window.localStorage,"LOCAL"),this.boundEventHandler=(e,n)=>this.onStorageEvent(e,n),this.listeners={},this.localCache={},this.pollTimer=null,this.fallbackToPolling=Er(),this._shouldAllowMigration=!0}forAllChangedKeys(e){for(let n of Object.keys(this.listeners)){let t=this.storage.getItem(n),i=this.localCache[n];t!==i&&e(n,i,t)}}onStorageEvent(e,n=!1){if(!e.key){this.forAllChangedKeys((o,a,c)=>{this.notifyListeners(o,c)});return}let t=e.key;n?this.detachListener():this.stopPolling();let i=()=>{let o=this.storage.getItem(t);!n&&this.localCache[t]===o||this.notifyListeners(t,o)},s=this.storage.getItem(t);fs()&&s!==e.newValue&&e.newValue!==e.oldValue?setTimeout(i,Bs):i()}notifyListeners(e,n){this.localCache[e]=n;let t=this.listeners[e];if(t)for(let i of Array.from(t))i(n&&JSON.parse(n))}startPolling(){this.stopPolling(),this.pollTimer=setInterval(()=>{this.forAllChangedKeys((e,n,t)=>{this.onStorageEvent(new StorageEvent("storage",{key:e,oldValue:n,newValue:t}),!0)})},Ws)}stopPolling(){this.pollTimer&&(clearInterval(this.pollTimer),this.pollTimer=null)}attachListener(){window.addEventListener("storage",this.boundEventHandler)}detachListener(){window.removeEventListener("storage",this.boundEventHandler)}_addListener(e,n){Object.keys(this.listeners).length===0&&(this.fallbackToPolling?this.startPolling():this.attachListener()),this.listeners[e]||(this.listeners[e]=new Set,this.localCache[e]=this.storage.getItem(e)),this.listeners[e].add(n)}_removeListener(e,n){this.listeners[e]&&(this.listeners[e].delete(n),this.listeners[e].size===0&&delete this.listeners[e]),Object.keys(this.listeners).length===0&&(this.detachListener(),this.stopPolling())}async _set(e,n){await super._set(e,n),this.localCache[e]=JSON.stringify(n)}async _get(e){let n=await super._get(e);return this.localCache[e]=JSON.stringify(n),n}async _remove(e){await super._remove(e),delete this.localCache[e]}};je.type="LOCAL";var Nr=je;var qe=class extends He{constructor(){super(()=>window.sessionStorage,"SESSION")}_addListener(e,n){}_removeListener(e,n){}};qe.type="SESSION";var on=qe;function $s(r){return Promise.all(r.map(async e=>{try{return{fulfilled:!0,value:await e}}catch(n){return{fulfilled:!1,reason:n}}}))}var We=class r{constructor(e){this.eventTarget=e,this.handlersMap={},this.boundEventHandler=this.handleEvent.bind(this)}static _getInstance(e){let n=this.receivers.find(i=>i.isListeningto(e));if(n)return n;let t=new r(e);return this.receivers.push(t),t}isListeningto(e){return this.eventTarget===e}async handleEvent(e){let n=e,{eventId:t,eventType:i,data:s}=n.data,o=this.handlersMap[i];if(!o?.size)return;n.ports[0].postMessage({status:"ack",eventId:t,eventType:i});let a=Array.from(o).map(async l=>l(n.origin,s)),c=await $s(a);n.ports[0].postMessage({status:"done",eventId:t,eventType:i,response:c})}_subscribe(e,n){Object.keys(this.handlersMap).length===0&&this.eventTarget.addEventListener("message",this.boundEventHandler),this.handlersMap[e]||(this.handlersMap[e]=new Set),this.handlersMap[e].add(n)}_unsubscribe(e,n){this.handlersMap[e]&&n&&this.handlersMap[e].delete(n),(!n||this.handlersMap[e].size===0)&&delete this.handlersMap[e],Object.keys(this.handlersMap).length===0&&this.eventTarget.removeEventListener("message",this.boundEventHandler)}};We.receivers=[];function an(r="",e=10){let n="";for(let t=0;t<e;t++)n+=Math.floor(Math.random()*10);return r+n}var Bt=class{constructor(e){this.target=e,this.handlers=new Set}removeMessageHandler(e){e.messageChannel&&(e.messageChannel.port1.removeEventListener("message",e.onMessage),e.messageChannel.port1.close()),this.handlers.delete(e)}async _send(e,n,t=50){let i=typeof MessageChannel<"u"?new MessageChannel:null;if(!i)throw new Error("connection_unavailable");let s,o;return new Promise((a,c)=>{let l=an("",20);i.port1.start();let d=setTimeout(()=>{c(new Error("unsupported_event"))},t);o={messageChannel:i,onMessage(h){let u=h;if(u.data.eventId===l)switch(u.data.status){case"ack":clearTimeout(d),s=setTimeout(()=>{c(new Error("timeout"))},3e3);break;case"done":clearTimeout(s),a(u.data.response);break;default:clearTimeout(d),clearTimeout(s),c(new Error("invalid_response"));break}}},this.handlers.add(o),i.port1.addEventListener("message",o.onMessage),this.target.postMessage({eventType:e,eventId:l,data:n},[i.port2])}).finally(()=>{o&&this.removeMessageHandler(o)})}};function P(){return window}function zs(r){P().location.href=r}function Dr(){return typeof P().WorkerGlobalScope<"u"&&typeof P().importScripts=="function"}async function Gs(){if(!navigator?.serviceWorker)return null;try{return(await navigator.serviceWorker.ready).active}catch{return null}}function Ks(){var r;return((r=navigator?.serviceWorker)===null||r===void 0?void 0:r.controller)||null}function Js(){return Dr()?self:null}var Lr="firebaseLocalStorageDb",Ys=1,Be="firebaseLocalStorage",Mr="fbase_key",J=class{constructor(e){this.request=e}toPromise(){return new Promise((e,n)=>{this.request.addEventListener("success",()=>{e(this.request.result)}),this.request.addEventListener("error",()=>{n(this.request.error)})})}};function nt(r,e){return r.transaction([Be],e?"readwrite":"readonly").objectStore(Be)}function Xs(){let r=indexedDB.deleteDatabase(Lr);return new J(r).toPromise()}function $t(){let r=indexedDB.open(Lr,Ys);return new Promise((e,n)=>{r.addEventListener("error",()=>{n(r.error)}),r.addEventListener("upgradeneeded",()=>{let t=r.result;try{t.createObjectStore(Be,{keyPath:Mr})}catch(i){n(i)}}),r.addEventListener("success",async()=>{let t=r.result;t.objectStoreNames.contains(Be)?e(t):(t.close(),await Xs(),e(await $t()))})})}async function Yn(r,e,n){let t=nt(r,!0).put({[Mr]:e,value:n});return new J(t).toPromise()}async function Qs(r,e){let n=nt(r,!1).get(e),t=await new J(n).toPromise();return t===void 0?null:t.value}function Xn(r,e){let n=nt(r,!0).delete(e);return new J(n).toPromise()}var Zs=800,eo=3,$e=class{constructor(){this.type="LOCAL",this._shouldAllowMigration=!0,this.listeners={},this.localCache={},this.pollTimer=null,this.pendingWrites=0,this.receiver=null,this.sender=null,this.serviceWorkerReceiverAvailable=!1,this.activeServiceWorker=null,this._workerInitializationPromise=this.initializeServiceWorkerMessaging().then(()=>{},()=>{})}async _openDb(){return this.db?this.db:(this.db=await $t(),this.db)}async _withRetries(e){let n=0;for(;;)try{let t=await this._openDb();return await e(t)}catch(t){if(n++>eo)throw t;this.db&&(this.db.close(),this.db=void 0)}}async initializeServiceWorkerMessaging(){return Dr()?this.initializeReceiver():this.initializeSender()}async initializeReceiver(){this.receiver=We._getInstance(Js()),this.receiver._subscribe("keyChanged",async(e,n)=>({keyProcessed:(await this._poll()).includes(n.key)})),this.receiver._subscribe("ping",async(e,n)=>["keyChanged"])}async initializeSender(){var e,n;if(this.activeServiceWorker=await Gs(),!this.activeServiceWorker)return;this.sender=new Bt(this.activeServiceWorker);let t=await this.sender._send("ping",{},800);t&&!((e=t[0])===null||e===void 0)&&e.fulfilled&&!((n=t[0])===null||n===void 0)&&n.value.includes("keyChanged")&&(this.serviceWorkerReceiverAvailable=!0)}async notifyServiceWorker(e){if(!(!this.sender||!this.activeServiceWorker||Ks()!==this.activeServiceWorker))try{await this.sender._send("keyChanged",{key:e},this.serviceWorkerReceiverAvailable?800:50)}catch{}}async _isAvailable(){try{if(!indexedDB)return!1;let e=await $t();return await Yn(e,Ve,"1"),await Xn(e,Ve),!0}catch{}return!1}async _withPendingWrite(e){this.pendingWrites++;try{await e()}finally{this.pendingWrites--}}async _set(e,n){return this._withPendingWrite(async()=>(await this._withRetries(t=>Yn(t,e,n)),this.localCache[e]=n,this.notifyServiceWorker(e)))}async _get(e){let n=await this._withRetries(t=>Qs(t,e));return this.localCache[e]=n,n}async _remove(e){return this._withPendingWrite(async()=>(await this._withRetries(n=>Xn(n,e)),delete this.localCache[e],this.notifyServiceWorker(e)))}async _poll(){let e=await this._withRetries(i=>{let s=nt(i,!1).getAll();return new J(s).toPromise()});if(!e)return[];if(this.pendingWrites!==0)return[];let n=[],t=new Set;if(e.length!==0)for(let{fbase_key:i,value:s}of e)t.add(i),JSON.stringify(this.localCache[i])!==JSON.stringify(s)&&(this.notifyListeners(i,s),n.push(i));for(let i of Object.keys(this.localCache))this.localCache[i]&&!t.has(i)&&(this.notifyListeners(i,null),n.push(i));return n}notifyListeners(e,n){this.localCache[e]=n;let t=this.listeners[e];if(t)for(let i of Array.from(t))i(n)}startPolling(){this.stopPolling(),this.pollTimer=setInterval(async()=>this._poll(),Zs)}stopPolling(){this.pollTimer&&(clearInterval(this.pollTimer),this.pollTimer=null)}_addListener(e,n){Object.keys(this.listeners).length===0&&this.startPolling(),this.listeners[e]||(this.listeners[e]=new Set,this._get(e)),this.listeners[e].add(n)}_removeListener(e,n){this.listeners[e]&&(this.listeners[e].delete(n),this.listeners[e].size===0&&delete this.listeners[e]),Object.keys(this.listeners).length===0&&this.stopPolling()}};$e.type="LOCAL";var xr=$e;function to(r,e){return E(r,"POST","/v2/accounts/mfaSignIn:start",y(r,e))}function no(r,e){return E(r,"POST","/v2/accounts/mfaSignIn:finalize",y(r,e))}function ro(r,e){return E(r,"POST","/v2/accounts/mfaSignIn:finalize",y(r,e))}var Ca=Tr("rcb"),Ra=new B(3e4,6e4);var io="recaptcha";async function so(r,e,n){var t;let i=await n.verify();try{p(typeof i=="string",r,"argument-error"),p(n.type===io,r,"argument-error");let s;if(typeof e=="string"?s={phoneNumber:e}:s=e,"session"in s){let o=s.session;if("phoneNumber"in s)return p(o.type==="enroll",r,"internal-error"),(await Vs(r,{idToken:o.credential,phoneEnrollmentInfo:{phoneNumber:s.phoneNumber,recaptchaToken:i}})).phoneSessionInfo.sessionInfo;{p(o.type==="signin",r,"internal-error");let a=((t=s.multiFactorHint)===null||t===void 0?void 0:t.uid)||s.multiFactorUid;return p(a,r,"missing-multi-factor-info"),(await to(r,{mfaPendingCredential:o.credential,mfaEnrollmentId:a,phoneSignInInfo:{recaptchaToken:i}})).phoneResponseInfo.sessionInfo}}else{let{sessionInfo:o}=await Rs(r,{phoneNumber:s.phoneNumber,recaptchaToken:i});return o}}finally{n._reset()}}var ve=class r{constructor(e){this.providerId=r.PROVIDER_ID,this.auth=j(e)}verifyPhoneNumber(e,n){return so(this.auth,e,A(n))}static credential(e,n){return fe._fromVerification(e,n)}static credentialFromResult(e){let n=e;return r.credentialFromTaggedObject(n)}static credentialFromError(e){return r.credentialFromTaggedObject(e.customData||{})}static credentialFromTaggedObject({_tokenResponse:e}){if(!e)return null;let{phoneNumber:n,temporaryProof:t}=e;return n&&t?fe._fromTokenResponse(n,t):null}};ve.PROVIDER_ID="phone";ve.PHONE_SIGN_IN_METHOD="phone";function oo(r,e){return e?L(e):(p(r._popupRedirectResolver,r,"argument-error"),r._popupRedirectResolver)}var ye=class extends ${constructor(e){super("custom","custom"),this.params=e}_getIdTokenResponse(e){return re(e,this._buildIdpRequest())}_linkToIdToken(e,n){return re(e,this._buildIdpRequest(n))}_getReauthenticationResolver(e){return re(e,this._buildIdpRequest())}_buildIdpRequest(e){let n={requestUri:this.params.requestUri,sessionId:this.params.sessionId,postBody:this.params.postBody,tenantId:this.params.tenantId,pendingToken:this.params.pendingToken,returnSecureToken:!0,returnIdpCredential:!0};return e&&(n.idToken=e),n}};function ao(r){return Cr(r.auth,new ye(r),r.bypassAuthState)}function co(r){let{auth:e,user:n}=r;return p(n,e,"internal-error"),Fs(n,new ye(r),r.bypassAuthState)}async function lo(r){let{auth:e,user:n}=r;return p(n,e,"internal-error"),Us(n,new ye(r),r.bypassAuthState)}var ze=class{constructor(e,n,t,i,s=!1){this.auth=e,this.resolver=t,this.user=i,this.bypassAuthState=s,this.pendingPromise=null,this.eventManager=null,this.filter=Array.isArray(n)?n:[n]}execute(){return new Promise(async(e,n)=>{this.pendingPromise={resolve:e,reject:n};try{this.eventManager=await this.resolver._initialize(this.auth),await this.onExecution(),this.eventManager.registerConsumer(this)}catch(t){this.reject(t)}})}async onAuthEvent(e){let{urlResponse:n,sessionId:t,postBody:i,tenantId:s,error:o,type:a}=e;if(o){this.reject(o);return}let c={auth:this.auth,requestUri:n,sessionId:t,tenantId:s||void 0,postBody:i||void 0,user:this.user,bypassAuthState:this.bypassAuthState};try{this.resolve(await this.getIdpTask(a)(c))}catch(l){this.reject(l)}}onError(e){this.reject(e)}getIdpTask(e){switch(e){case"signInViaPopup":case"signInViaRedirect":return ao;case"linkViaPopup":case"linkViaRedirect":return lo;case"reauthViaPopup":case"reauthViaRedirect":return co;default:S(this.auth,"internal-error")}}resolve(e){x(this.pendingPromise,"Pending promise was never set"),this.pendingPromise.resolve(e),this.unregisterAndCleanUp()}reject(e){x(this.pendingPromise,"Pending promise was never set"),this.pendingPromise.reject(e),this.unregisterAndCleanUp()}unregisterAndCleanUp(){this.eventManager&&this.eventManager.unregisterConsumer(this),this.pendingPromise=null,this.cleanUp()}};var uo=new B(2e3,1e4);var zt=class r extends ze{constructor(e,n,t,i,s){super(e,n,i,s),this.provider=t,this.authWindow=null,this.pollId=null,r.currentPopupAction&&r.currentPopupAction.cancel(),r.currentPopupAction=this}async executeNotNull(){let e=await this.execute();return p(e,this.auth,"internal-error"),e}async onExecution(){x(this.filter.length===1,"Popup operations only handle one event");let e=an();this.authWindow=await this.resolver._openPopup(this.auth,this.provider,this.filter[0],e),this.authWindow.associatedEvent=e,this.resolver._originValidation(this.auth).catch(n=>{this.reject(n)}),this.resolver._isIframeWebStorageSupported(this.auth,n=>{n||this.reject(k(this.auth,"web-storage-unsupported"))}),this.pollUserCancellation()}get eventId(){var e;return((e=this.authWindow)===null||e===void 0?void 0:e.associatedEvent)||null}cancel(){this.reject(k(this.auth,"cancelled-popup-request"))}cleanUp(){this.authWindow&&this.authWindow.close(),this.pollId&&window.clearTimeout(this.pollId),this.authWindow=null,this.pollId=null,r.currentPopupAction=null}pollUserCancellation(){let e=()=>{var n,t;if(!((t=(n=this.authWindow)===null||n===void 0?void 0:n.window)===null||t===void 0)&&t.closed){this.pollId=window.setTimeout(()=>{this.pollId=null,this.reject(k(this.auth,"popup-closed-by-user"))},8e3);return}this.pollId=window.setTimeout(e,uo.get())};e()}};zt.currentPopupAction=null;var ho="pendingRedirect",Re=new Map,Gt=class extends ze{constructor(e,n,t=!1){super(e,["signInViaRedirect","linkViaRedirect","reauthViaRedirect","unknown"],n,void 0,t),this.eventId=null}async execute(){let e=Re.get(this.auth._key());if(!e){try{let t=await fo(this.resolver,this.auth)?await super.execute():null;e=()=>Promise.resolve(t)}catch(n){e=()=>Promise.reject(n)}Re.set(this.auth._key(),e)}return this.bypassAuthState||Re.set(this.auth._key(),()=>Promise.resolve(null)),e()}async onAuthEvent(e){if(e.type==="signInViaRedirect")return super.onAuthEvent(e);if(e.type==="unknown"){this.resolve(null);return}if(e.eventId){let n=await this.auth._redirectUserForId(e.eventId);if(n)return this.user=n,super.onAuthEvent(e);this.resolve(null)}}async onExecution(){}cleanUp(){}};async function fo(r,e){let n=go(e),t=mo(r);if(!await t._isAvailable())return!1;let i=await t._get(n)==="true";return await t._remove(n),i}function po(r,e){Re.set(r._key(),e)}function mo(r){return L(r._redirectPersistence)}function go(r){return Ce(ho,r.config.apiKey,r.name)}async function _o(r,e,n=!1){if(T(r.app))return Promise.reject(M(r));let t=j(r),i=oo(t,e),o=await new Gt(t,i,n).execute();return o&&!n&&(delete o.user._redirectEventId,await t._persistUserIfCurrent(o.user),await t._setRedirectUser(null,e)),o}var vo=10*60*1e3,Kt=class{constructor(e){this.auth=e,this.cachedEventUids=new Set,this.consumers=new Set,this.queuedRedirectEvent=null,this.hasHandledPotentialRedirect=!1,this.lastProcessedEventTime=Date.now()}registerConsumer(e){this.consumers.add(e),this.queuedRedirectEvent&&this.isEventForConsumer(this.queuedRedirectEvent,e)&&(this.sendToConsumer(this.queuedRedirectEvent,e),this.saveEventToCache(this.queuedRedirectEvent),this.queuedRedirectEvent=null)}unregisterConsumer(e){this.consumers.delete(e)}onEvent(e){if(this.hasEventBeenHandled(e))return!1;let n=!1;return this.consumers.forEach(t=>{this.isEventForConsumer(e,t)&&(n=!0,this.sendToConsumer(e,t),this.saveEventToCache(e))}),this.hasHandledPotentialRedirect||!yo(e)||(this.hasHandledPotentialRedirect=!0,n||(this.queuedRedirectEvent=e,n=!0)),n}sendToConsumer(e,n){var t;if(e.error&&!Ur(e)){let i=((t=e.error.code)===null||t===void 0?void 0:t.split("auth/")[1])||"internal-error";n.onError(k(this.auth,i))}else n.onAuthEvent(e)}isEventForConsumer(e,n){let t=n.eventId===null||!!e.eventId&&e.eventId===n.eventId;return n.filter.includes(e.type)&&t}hasEventBeenHandled(e){return Date.now()-this.lastProcessedEventTime>=vo&&this.cachedEventUids.clear(),this.cachedEventUids.has(Qn(e))}saveEventToCache(e){this.cachedEventUids.add(Qn(e)),this.lastProcessedEventTime=Date.now()}};function Qn(r){return[r.type,r.eventId,r.sessionId,r.tenantId].filter(e=>e).join("-")}function Ur({type:r,error:e}){return r==="unknown"&&e?.code==="auth/no-auth-event"}function yo(r){switch(r.type){case"signInViaRedirect":case"linkViaRedirect":case"reauthViaRedirect":return!0;case"unknown":return Ur(r);default:return!1}}async function Io(r,e={}){return E(r,"GET","/v1/projects",e)}var Eo=/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,wo=/^https?/;async function bo(r){if(r.config.emulator)return;let{authorizedDomains:e}=await Io(r);for(let n of e)try{if(To(n))return}catch{}S(r,"unauthorized-domain")}function To(r){let e=Dt(),{protocol:n,hostname:t}=new URL(e);if(r.startsWith("chrome-extension://")){let o=new URL(r);return o.hostname===""&&t===""?n==="chrome-extension:"&&r.replace("chrome-extension://","")===e.replace("chrome-extension://",""):n==="chrome-extension:"&&o.hostname===t}if(!wo.test(n))return!1;if(Eo.test(r))return t===r;let i=r.replace(/\./g,"\\.");return new RegExp("^(.+\\."+i+"|"+i+")$","i").test(t)}var So=new B(3e4,6e4);function Zn(){let r=P().___jsl;if(r?.H){for(let e of Object.keys(r.H))if(r.H[e].r=r.H[e].r||[],r.H[e].L=r.H[e].L||[],r.H[e].r=[...r.H[e].L],r.CP)for(let n=0;n<r.CP.length;n++)r.CP[n]=null}}function Ao(r){return new Promise((e,n)=>{var t,i,s;function o(){Zn(),gapi.load("gapi.iframes",{callback:()=>{e(gapi.iframes.getContext())},ontimeout:()=>{Zn(),n(k(r,"network-request-failed"))},timeout:So.get()})}if(!((i=(t=P().gapi)===null||t===void 0?void 0:t.iframes)===null||i===void 0)&&i.Iframe)e(gapi.iframes.getContext());else if(!((s=P().gapi)===null||s===void 0)&&s.load)o();else{let a=Tr("iframefcb");return P()[a]=()=>{gapi.load?o():n(k(r,"network-request-failed"))},br(`${vs()}?onload=${a}`).catch(c=>n(c))}}).catch(e=>{throw ke=null,e})}var ke=null;function Oo(r){return ke=ke||Ao(r),ke}var Co=new B(5e3,15e3),Ro="__/auth/iframe",ko="emulator/auth/iframe",Po={style:{position:"absolute",top:"-100px",width:"1px",height:"1px"},"aria-hidden":"true",tabindex:"-1"},No=new Map([["identitytoolkit.googleapis.com","p"],["staging-identitytoolkit.sandbox.googleapis.com","s"],["test-identitytoolkit.sandbox.googleapis.com","t"]]);function Do(r){let e=r.config;p(e.authDomain,r,"auth-domain-config-required");let n=e.emulator?Zt(e,ko):`https://${r.config.authDomain}/${Ro}`,t={apiKey:e.apiKey,appName:r.name,v:ne},i=No.get(r.config.apiHost);i&&(t.eid=i);let s=r._getFrameworks();return s.length&&(t.fw=s.join(",")),`${n}?${X(t).slice(1)}`}async function Lo(r){let e=await Oo(r),n=P().gapi;return p(n,r,"internal-error"),e.open({where:document.body,url:Do(r),messageHandlersFilter:n.iframes.CROSS_ORIGIN_IFRAMES_FILTER,attributes:Po,dontclear:!0},t=>new Promise(async(i,s)=>{await t.restyle({setHideOnLeave:!1});let o=k(r,"network-request-failed"),a=P().setTimeout(()=>{s(o)},Co.get());function c(){P().clearTimeout(a),i(t)}t.ping(c).then(c,()=>{s(o)})}))}var Mo={location:"yes",resizable:"yes",statusbar:"yes",toolbar:"no"},xo=500,Uo=600,Fo="_blank",Vo="http://localhost",Ge=class{constructor(e){this.window=e,this.associatedEvent=null}close(){if(this.window)try{this.window.close()}catch{}}};function Ho(r,e,n,t=xo,i=Uo){let s=Math.max((window.screen.availHeight-i)/2,0).toString(),o=Math.max((window.screen.availWidth-t)/2,0).toString(),a="",c=Object.assign(Object.assign({},Mo),{width:t.toString(),height:i.toString(),top:s,left:o}),l=I().toLowerCase();n&&(a=gr(l)?Fo:n),pr(l)&&(e=e||Vo,c.scrollbars="yes");let d=Object.entries(c).reduce((u,[f,m])=>`${u}${f}=${m},`,"");if(hs(l)&&a!=="_self")return jo(e||"",a),new Ge(null);let h=window.open(e||"",a,d);p(h,r,"popup-blocked");try{h.focus()}catch{}return new Ge(h)}function jo(r,e){let n=document.createElement("a");n.href=r,n.target=e;let t=document.createEvent("MouseEvent");t.initMouseEvent("click",!0,!0,window,1,0,0,0,0,!1,!1,!1,!1,1,null),n.dispatchEvent(t)}var qo="__/auth/handler",Wo="emulator/auth/handler",Bo=encodeURIComponent("fac");async function er(r,e,n,t,i,s){p(r.config.authDomain,r,"auth-domain-config-required"),p(r.config.apiKey,r,"invalid-api-key");let o={apiKey:r.config.apiKey,appName:r.name,authType:n,redirectUrl:t,v:ne,eventId:i};if(e instanceof Fe){e.setDefaultLanguage(r.languageCode),o.providerId=e.providerId||"",Sn(e.getCustomParameters())||(o.customParameters=JSON.stringify(e.getCustomParameters()));for(let[d,h]of Object.entries(s||{}))o[d]=h}if(e instanceof K){let d=e.getScopes().filter(h=>h!=="");d.length>0&&(o.scopes=d.join(","))}r.tenantId&&(o.tid=r.tenantId);let a=o;for(let d of Object.keys(a))a[d]===void 0&&delete a[d];let c=await r._getAppCheckToken(),l=c?`#${Bo}=${encodeURIComponent(c)}`:"";return`${$o(r)}?${X(a).slice(1)}${l}`}function $o({config:r}){return r.emulator?Zt(r,Wo):`https://${r.authDomain}/${qo}`}var Nt="webStorageSupport",Jt=class{constructor(){this.eventManagers={},this.iframes={},this.originValidationPromises={},this._redirectPersistence=on,this._completeRedirectFn=_o,this._overrideRedirectResult=po}async _openPopup(e,n,t,i){var s;x((s=this.eventManagers[e._key()])===null||s===void 0?void 0:s.manager,"_initialize() not called before _openPopup()");let o=await er(e,n,t,Dt(),i);return Ho(e,o,an())}async _openRedirect(e,n,t,i){await this._originValidation(e);let s=await er(e,n,t,Dt(),i);return zs(s),new Promise(()=>{})}_initialize(e){let n=e._key();if(this.eventManagers[n]){let{manager:i,promise:s}=this.eventManagers[n];return i?Promise.resolve(i):(x(s,"If manager is not set, promise should be"),s)}let t=this.initAndGetManager(e);return this.eventManagers[n]={promise:t},t.catch(()=>{delete this.eventManagers[n]}),t}async initAndGetManager(e){let n=await Lo(e),t=new Kt(e);return n.register("authEvent",i=>(p(i?.authEvent,e,"invalid-auth-event"),{status:t.onEvent(i.authEvent)?"ACK":"ERROR"}),gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER),this.eventManagers[e._key()]={manager:t},this.iframes[e._key()]=n,t}_isIframeWebStorageSupported(e,n){this.iframes[e._key()].send(Nt,{type:Nt},i=>{var s;let o=(s=i?.[0])===null||s===void 0?void 0:s[Nt];o!==void 0&&n(!!o),S(e,"internal-error")},gapi.iframes.CROSS_ORIGIN_IFRAMES_FILTER)}_originValidation(e){let n=e._key();return this.originValidationPromises[n]||(this.originValidationPromises[n]=bo(e)),this.originValidationPromises[n]}get _shouldInitProactively(){return Er()||mr()||tn()}},Fr=Jt,Ke=class{constructor(e){this.factorId=e}_process(e,n,t){switch(n.type){case"enroll":return this._finalizeEnroll(e,n.credential,t);case"signin":return this._finalizeSignIn(e,n.credential);default:return R("unexpected MultiFactorSessionType")}}},Yt=class r extends Ke{constructor(e){super("phone"),this.credential=e}static _fromCredential(e){return new r(e)}_finalizeEnroll(e,n,t){return Hs(e,{idToken:n,displayName:t,phoneVerificationInfo:this.credential._makeVerificationRequest()})}_finalizeSignIn(e,n){return no(e,{mfaPendingCredential:n,phoneVerificationInfo:this.credential._makeVerificationRequest()})}},Je=class{constructor(){}static assertion(e){return Yt._fromCredential(e)}};Je.FACTOR_ID="phone";var Ye=class{static assertionForEnrollment(e,n){return Xe._fromSecret(e,n)}static assertionForSignIn(e,n){return Xe._fromEnrollmentId(e,n)}static async generateSecret(e){var n;let t=e;p(typeof((n=t.user)===null||n===void 0?void 0:n.auth)<"u","internal-error");let i=await js(t.user.auth,{idToken:t.credential,totpEnrollmentInfo:{}});return Qe._fromStartTotpMfaEnrollmentResponse(i,t.user.auth)}};Ye.FACTOR_ID="totp";var Xe=class r extends Ke{constructor(e,n,t){super("totp"),this.otp=e,this.enrollmentId=n,this.secret=t}static _fromSecret(e,n){return new r(n,void 0,e)}static _fromEnrollmentId(e,n){return new r(n,e)}async _finalizeEnroll(e,n,t){return p(typeof this.secret<"u",e,"argument-error"),qs(e,{idToken:n,displayName:t,totpVerificationInfo:this.secret._makeTotpVerificationInfo(this.otp)})}async _finalizeSignIn(e,n){p(this.enrollmentId!==void 0&&this.otp!==void 0,e,"argument-error");let t={verificationCode:this.otp};return ro(e,{mfaPendingCredential:n,mfaEnrollmentId:this.enrollmentId,totpVerificationInfo:t})}},Qe=class r{constructor(e,n,t,i,s,o,a){this.sessionInfo=o,this.auth=a,this.secretKey=e,this.hashingAlgorithm=n,this.codeLength=t,this.codeIntervalSeconds=i,this.enrollmentCompletionDeadline=s}static _fromStartTotpMfaEnrollmentResponse(e,n){return new r(e.totpSessionInfo.sharedSecretKey,e.totpSessionInfo.hashingAlgorithm,e.totpSessionInfo.verificationCodeLength,e.totpSessionInfo.periodSec,new Date(e.totpSessionInfo.finalizeEnrollmentTime).toUTCString(),e.totpSessionInfo.sessionInfo,n)}_makeTotpVerificationInfo(e){return{sessionInfo:this.sessionInfo,verificationCode:e}}generateQrCodeUrl(e,n){var t;let i=!1;return(Ae(e)||Ae(n))&&(i=!0),i&&(Ae(e)&&(e=((t=this.auth.currentUser)===null||t===void 0?void 0:t.email)||"unknownuser"),Ae(n)&&(n=this.auth.name)),`otpauth://totp/${n}:${e}?secret=${this.secretKey}&issuer=${n}&algorithm=${this.hashingAlgorithm}&digits=${this.codeLength}`}};function Ae(r){return typeof r>"u"||r?.length===0}var tr="@firebase/auth",nr="1.7.9";var Xt=class{constructor(e){this.auth=e,this.internalListeners=new Map}getUid(){var e;return this.assertAuthConfigured(),((e=this.auth.currentUser)===null||e===void 0?void 0:e.uid)||null}async getToken(e){return this.assertAuthConfigured(),await this.auth._initializationPromise,this.auth.currentUser?{accessToken:await this.auth.currentUser.getIdToken(e)}:null}addAuthTokenListener(e){if(this.assertAuthConfigured(),this.internalListeners.has(e))return;let n=this.auth.onIdTokenChanged(t=>{e(t?.stsTokenManager.accessToken||null)});this.internalListeners.set(e,n),this.updateProactiveRefresh()}removeAuthTokenListener(e){this.assertAuthConfigured();let n=this.internalListeners.get(e);n&&(this.internalListeners.delete(e),n(),this.updateProactiveRefresh())}assertAuthConfigured(){p(this.auth._initializationPromise,"dependent-sdk-initialized-before-auth")}updateProactiveRefresh(){this.internalListeners.size>0?this.auth._startProactiveRefresh():this.auth._stopProactiveRefresh()}};function zo(r){switch(r){case"Node":return"node";case"ReactNative":return"rn";case"Worker":return"webworker";case"Cordova":return"cordova";case"WebExtension":return"web-extension";default:return}}function Go(r){te(new O("auth",(e,{options:n})=>{let t=e.getProvider("app").getImmediate(),i=e.getProvider("heartbeat"),s=e.getProvider("app-check-internal"),{apiKey:o,authDomain:a}=t.options;p(o&&!o.includes(":"),"invalid-api-key",{appName:t.name});let c={apiKey:o,authDomain:a,clientPlatform:r,apiHost:"identitytoolkit.googleapis.com",tokenApiHost:"securetoken.googleapis.com",apiScheme:"https",sdkClientVersion:wr(r)},l=new Ht(t,i,s,c);return Es(l,n),l},"PUBLIC").setInstantiationMode("EXPLICIT").setInstanceCreatedCallback((e,n,t)=>{e.getProvider("auth-internal").initialize()})),te(new O("auth-internal",e=>{let n=j(e.getProvider("auth").getImmediate());return(t=>new Xt(t))(n)},"PRIVATE").setInstantiationMode("EXPLICIT")),F(tr,nr,zo(r)),F(tr,nr,"esm2017")}var Ko=5*60,Jo=pt("authIdTokenMaxAge")||Ko,rr=null,Yo=r=>async e=>{let n=e&&await e.getIdTokenResult(),t=n&&(new Date().getTime()-Date.parse(n.issuedAtTime))/1e3;if(t&&t>Jo)return;let i=n?.token;rr!==i&&(rr=i,await fetch(r,{method:i?"POST":"DELETE",headers:i?{Authorization:`Bearer ${i}`}:{}}))};function cn(r=Vn()){let e=Rt(r,"auth");if(e.isInitialized())return e.getImmediate();let n=Sr(r,{popupRedirectResolver:Fr,persistence:[xr,Nr,on]}),t=pt("authTokenSyncURL");if(t&&typeof isSecureContext=="boolean"&&isSecureContext){let s=new URL(t,location.origin);if(location.origin===s.origin){let o=Yo(s.toString());Pr(n,o,()=>o(n.currentUser)),tt(n,a=>o(a))}}let i=_n("auth");return i&&et(n,`http://${i}`),n}function Xo(){var r,e;return(e=(r=document.getElementsByTagName("head"))===null||r===void 0?void 0:r[0])!==null&&e!==void 0?e:document}gs({loadJS(r){return new Promise((e,n)=>{let t=document.createElement("script");t.setAttribute("src",r),t.onload=e,t.onerror=i=>{let s=k("internal-error");s.customData=i,n(s)},t.type="text/javascript",t.charset="UTF-8",Xo().appendChild(t)})},gapiScript:"https://apis.google.com/js/api.js",recaptchaV2Script:"https://www.google.com/recaptcha/api.js",recaptchaEnterpriseScript:"https://www.google.com/recaptcha/enterprise.js?render="});Go("Browser");var Qo=kt({apiKey:"demo-api-key",authDomain:"demo-project.firebaseapp.com",projectId:"demo-project"}),Ie=cn(Qo);(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1")&&et(Ie,"http://"+window.location.hostname+":9099");var rt="";tt(Ie,async r=>{r?rt=await r.getIdToken():rt=""});fn.on("htmx:config:request",r=>{rt&&(r.detail.headers.Authorization="Bearer "+rt)});window.signInWithEmailPassword=async r=>{r.preventDefault();let e=document.getElementById("email"),n=document.getElementById("password"),t=document.getElementById("login-error"),i=e.value,s=n.value;try{t.innerText="",await rn(Ie,i,s),window.location.href="?"}catch(o){if(o.code==="auth/user-not-found")try{await nn(Ie,i,s),window.location.href="?"}catch(a){t.innerText="Error creating demo user: "+a.message}else t.innerText="Sign in error: "+o.message}};window.signOut=async()=>{await sn(Ie),window.location.href="?mode=signin"};
+/*! Bundled license information:
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2022 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2021 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2022 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2022 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/util/dist/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2021 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/component/dist/esm/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/logger/dist/esm/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2017 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/app/dist/esm/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/app/dist/esm/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2023 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/app/dist/esm/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/app/dist/esm/index.esm2017.js:
+  (**
+   * @license
+   * Copyright 2021 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+firebase/app/dist/esm/index.esm.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2021 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2022 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2023 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2020 Google LLC.
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2021 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2019 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+
+@firebase/auth/dist/esm2017/index-68602d24.js:
+  (**
+   * @license
+   * Copyright 2020 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2020 Google LLC.
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+  (**
+   * @license
+   * Copyright 2021 Google LLC
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   *   http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *)
+*/
 ''';
