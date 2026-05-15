@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
+  User,
 } from 'firebase/auth';
 
 // Initialize Firebase with placeholder config for prod
@@ -25,12 +26,8 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
 
 let currentIdToken = '';
 
-onIdTokenChanged(auth, async (user: any) => {
-  if (user) {
-    currentIdToken = await user.getIdToken();
-  } else {
-    currentIdToken = '';
-  }
+onIdTokenChanged(auth, async (user: User | null) => {
+  currentIdToken = (await user?.getIdToken()) ?? '';
 });
 
 // Configure HTMX to attach Authorization header
