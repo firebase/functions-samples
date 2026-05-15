@@ -40,15 +40,14 @@ htmx.on('htmx:config:request', (event: any) => {
   }
 });
 
-// Sign In Logic for HTML Form
-(window as any).signInWithEmailPassword = async (event: Event) => {
+// Sign In Logic via HTMX Event
+htmx.on('#signin-form', 'htmx:confirm', async (event: any) => {
   event.preventDefault();
-  const emailInput = document.getElementById('email') as HTMLInputElement;
-  const passInput = document.getElementById('password') as HTMLInputElement;
+  const form = event.target as HTMLFormElement;
+  const formData = new FormData(form);
+  const email = formData.get('email') as string;
+  const pass = formData.get('password') as string;
   const errorDiv = document.getElementById('login-error') as HTMLDivElement;
-
-  const email = emailInput.value;
-  const pass = passInput.value;
 
   try {
     errorDiv.innerText = '';
@@ -67,10 +66,11 @@ htmx.on('htmx:config:request', (event: any) => {
       errorDiv.innerText = 'Sign in error: ' + error.message;
     }
   }
-};
+});
 
-// Sign Out Logic
-(window as any).signOut = async () => {
+// Sign Out Logic via HTMX Event
+htmx.on('#signout-button', 'htmx:confirm', async (event: any) => {
+  event.preventDefault();
   await firebaseSignOut(auth);
   window.location.href = '?mode=signin';
-};
+});
