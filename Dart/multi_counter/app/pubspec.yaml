@@ -1,0 +1,30 @@
+name: multi_counter_app
+publish_to: 'none'
+
+version: 1.0.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  cloud_firestore: ^6.1.2
+  cloud_functions: ^6.0.0
+  firebase_auth: ^6.1.4
+  firebase_core: ^4.4.0
+  flutter:
+    sdk: flutter
+  go_router: ^17.0.1
+  google_sign_in: any
+  http: ^1.6.0
+  multi_counter_shared: any
+  stream_transform: ^2.1.1
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  build_runner: 
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

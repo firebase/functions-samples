@@ -1,0 +1,8 @@
+include: package:dart_flutter_team_lints/analysis_options.yaml
+
+linter:
+  rules:
+    - avoid_redundant_argument_values
+    - prefer_expression_function_bodies
+    - unnecessary_breaks
+    - unnecessary_ignore
