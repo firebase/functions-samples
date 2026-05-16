@@ -49,6 +49,15 @@ jobs:
           for dir in $(find Dart -name pubspec.yaml -exec dirname {} \;); do
             echo "::group::Testing $dir"
             cd "$dir"
+
+            # Check if this is a Flutter project
+            if grep -q "sdk: flutter" pubspec.yaml; then
+              echo "Skipping Flutter project as only Dart SDK is available in CI"
+              cd - > /dev/null
+              echo "::endgroup::"
+              continue
+            fi
+
             dart pub get
             dart format --set-exit-if-changed .
             dart analyze .
