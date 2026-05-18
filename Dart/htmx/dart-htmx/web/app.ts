@@ -30,6 +30,8 @@ onIdTokenChanged(auth, async (user: User | null) => {
   currentIdToken = (await user?.getIdToken()) ?? '';
 });
 
+htmx.config.logAll = true;
+
 // Configure HTMX to attach Authorization header (HTMX v4 context API)
 // NOTE: This manual header injection could potentially be replaced with native browser cookies
 // using `browserCookiePersistence` once it graduates from Beta/Public Preview.
