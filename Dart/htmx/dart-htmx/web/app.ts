@@ -1,4 +1,8 @@
 import htmx from 'htmx.org';
+
+// Enable verbose HTMX logging to the browser console (HTMX v4 syntax)
+htmx.config.logAll = true;
+
 import { initializeApp } from 'firebase/app';
 import {
   getAuth,
@@ -29,8 +33,6 @@ let currentIdToken = '';
 onIdTokenChanged(auth, async (user: User | null) => {
   currentIdToken = (await user?.getIdToken()) ?? '';
 });
-
-htmx.config.logAll = true;
 
 // Configure HTMX to attach Authorization header (HTMX v4 context API)
 // NOTE: This manual header injection could potentially be replaced with native browser cookies

@@ -54,12 +54,10 @@ class BaseDocument extends StatelessComponent {
   final String titleText;
   final Component child;
   final bool showSignOut;
-  final String basePath;
 
   const BaseDocument({
     required this.titleText,
     required this.child,
-    required this.basePath,
     this.showSignOut = true,
   });
 
@@ -104,7 +102,7 @@ class BaseDocument extends StatelessComponent {
   }
 }
 
-Component createDisplayView(MessageData msg, String basePath) {
+Component createDisplayView(MessageData msg) {
   return article([
     header([Component.text('Public Message')]),
     div([
@@ -115,7 +113,7 @@ Component createDisplayView(MessageData msg, String basePath) {
         [Component.text('Click To Edit')],
         classes: 'secondary',
         attributes: {
-          'hx-get': '$basePath?mode=edit',
+          'hx-get': '?mode=edit',
           'hx-target': '#message-card',
           'hx-swap': 'outerHTML',
         },
@@ -124,7 +122,7 @@ Component createDisplayView(MessageData msg, String basePath) {
   ], id: 'message-card');
 }
 
-Component createEditView(MessageData msg, String basePath) {
+Component createEditView(MessageData msg) {
   return article([
     form(
       [
@@ -146,7 +144,7 @@ Component createEditView(MessageData msg, String basePath) {
             classes: 'secondary',
             type: ButtonType.button,
             attributes: {
-              'hx-get': basePath,
+              'hx-get': '?',
               'hx-target': '#message-card',
               'hx-swap': 'outerHTML',
             },
@@ -155,7 +153,7 @@ Component createEditView(MessageData msg, String basePath) {
         ], classes: 'grid'),
       ],
       attributes: {
-        'hx-put': basePath,
+        'hx-put': '?',
         'hx-target': '#message-card',
         'hx-swap': 'outerHTML',
       },
@@ -163,7 +161,7 @@ Component createEditView(MessageData msg, String basePath) {
   ], id: 'message-card');
 }
 
-Component createSignInView(String basePath) {
+Component createSignInView() {
   return article([
     header([Component.text('Sign In Required')]),
     form(
@@ -227,20 +225,18 @@ void main() {
       final docRef = firestore.collection('messages').doc('message');
       final msg = await getMessage(docRef);
 
-      final basePath = request.requestedUri.path;
       final mode = request.url.queryParameters['mode'];
       final isHxRequest = request.headers['hx-request'] == 'true';
 
       if (request.method == 'GET') {
         if (mode == 'signin') {
-          final signInView = createSignInView(basePath);
+          final signInView = createSignInView();
           final result = await renderComponent(
             isHxRequest
                 ? signInView
                 : BaseDocument(
                     titleText: 'Sign In',
                     child: signInView,
-                    basePath: basePath,
                     showSignOut: false,
                   ),
             request: request,
@@ -255,24 +251,17 @@ void main() {
           final decodedToken = await verifyAuthHeader(request, adminApp);
           if (decodedToken == null) {
             if (isHxRequest) {
-              return Response(
-                401,
-                headers: {'HX-Redirect': '$basePath?mode=signin'},
-              );
+              return Response(401, headers: {'HX-Redirect': '?mode=signin'});
             } else {
-              return Response.found('$basePath?mode=signin');
+              return Response.found('?mode=signin');
             }
           }
 
-          final editView = createEditView(msg, basePath);
+          final editView = createEditView(msg);
           final result = await renderComponent(
             isHxRequest
                 ? editView
-                : BaseDocument(
-                    titleText: 'Edit Message',
-                    child: editView,
-                    basePath: basePath,
-                  ),
+                : BaseDocument(titleText: 'Edit Message', child: editView),
             request: request,
           );
           return Response.ok(
@@ -280,15 +269,11 @@ void main() {
             headers: {'content-type': 'text/html'},
           );
         } else {
-          final displayView = createDisplayView(msg, basePath);
+          final displayView = createDisplayView(msg);
           final result = await renderComponent(
             isHxRequest
                 ? displayView
-                : BaseDocument(
-                    titleText: 'Public Message',
-                    child: displayView,
-                    basePath: basePath,
-                  ),
+                : BaseDocument(titleText: 'Public Message', child: displayView),
             request: request,
           );
           return Response.ok(
@@ -300,12 +285,9 @@ void main() {
         final decodedToken = await verifyAuthHeader(request, adminApp);
         if (decodedToken == null) {
           if (isHxRequest) {
-            return Response(
-              401,
-              headers: {'HX-Redirect': '$basePath?mode=signin'},
-            );
+            return Response(401, headers: {'HX-Redirect': '?mode=signin'});
           } else {
-            return Response.found('$basePath?mode=signin');
+            return Response.found('?mode=signin');
           }
         }
 
@@ -316,15 +298,11 @@ void main() {
 
         await docRef.set(msg.toJson());
 
-        final displayView = createDisplayView(msg, basePath);
+        final displayView = createDisplayView(msg);
         final result = await renderComponent(
           isHxRequest
               ? displayView
-              : BaseDocument(
-                  titleText: 'Public Message',
-                  child: displayView,
-                  basePath: basePath,
-                ),
+              : BaseDocument(titleText: 'Public Message', child: displayView),
           request: request,
         );
         return Response.ok(result.body, headers: {'content-type': 'text/html'});
