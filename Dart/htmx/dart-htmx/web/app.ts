@@ -51,13 +51,13 @@ htmx.on('#signin-form', 'htmx:confirm', async (event: any) => {
   try {
     errorDiv.innerText = '';
     await signInWithEmailAndPassword(auth, email, pass);
-    window.location.href = '/contact';
+    window.location.href = '?';
   } catch (error: any) {
     if (error.code === 'auth/user-not-found') {
       try {
         // Automatically create the demo user in the emulator
         await createUserWithEmailAndPassword(auth, email, pass);
-        window.location.href = '/contact';
+        window.location.href = '?';
       } catch (createError: any) {
         errorDiv.innerText = 'Error creating demo user: ' + createError.message;
       }
@@ -71,5 +71,5 @@ htmx.on('#signin-form', 'htmx:confirm', async (event: any) => {
 htmx.on('#signout-button', 'htmx:confirm', async (event: any) => {
   event.preventDefault();
   await firebaseSignOut(auth);
-  window.location.href = '/contact?mode=signin';
+  window.location.href = '?mode=signin';
 });
