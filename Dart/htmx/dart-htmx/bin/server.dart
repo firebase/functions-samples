@@ -87,7 +87,7 @@ class BaseDocument extends StatelessComponent {
                   [Component.text('Sign Out')],
                   classes: 'secondary outline',
                   id: 'signout-button',
-                  attributes: {'hx-get': '?'},
+                  attributes: {'hx-get': '/contact'},
                 ),
               ]),
           ]),
@@ -109,7 +109,7 @@ Component createDisplayView(MessageData msg) {
         [Component.text('Click To Edit')],
         classes: 'secondary',
         attributes: {
-          'hx-get': '?mode=edit',
+          'hx-get': '/contact?mode=edit',
           'hx-target': '#message-card',
           'hx-swap': 'outerHTML',
         },
@@ -140,7 +140,7 @@ Component createEditView(MessageData msg) {
             classes: 'secondary',
             type: ButtonType.button,
             attributes: {
-              'hx-get': '?',
+              'hx-get': '/contact',
               'hx-target': '#message-card',
               'hx-swap': 'outerHTML',
             },
@@ -149,7 +149,7 @@ Component createEditView(MessageData msg) {
         ], classes: 'grid'),
       ],
       attributes: {
-        'hx-put': '?',
+        'hx-put': '/contact',
         'hx-target': '#message-card',
         'hx-swap': 'outerHTML',
       },
@@ -191,7 +191,7 @@ Component createSignInView() {
         button([Component.text('Sign In')], type: ButtonType.submit),
       ],
       id: 'signin-form',
-      attributes: {'hx-post': '?'},
+      attributes: {'hx-post': '/contact'},
     ),
     footer([
       small([
@@ -241,9 +241,12 @@ void main() {
           final decodedToken = await verifyAuthHeader(request, adminApp);
           if (decodedToken == null) {
             if (isHxRequest) {
-              return Response(401, headers: {'HX-Redirect': '?mode=signin'});
+              return Response(
+                401,
+                headers: {'HX-Redirect': '/contact?mode=signin'},
+              );
             } else {
-              return Response.found('?mode=signin');
+              return Response.found('/contact?mode=signin');
             }
           }
 
@@ -275,9 +278,12 @@ void main() {
         final decodedToken = await verifyAuthHeader(request, adminApp);
         if (decodedToken == null) {
           if (isHxRequest) {
-            return Response(401, headers: {'HX-Redirect': '?mode=signin'});
+            return Response(
+              401,
+              headers: {'HX-Redirect': '/contact?mode=signin'},
+            );
           } else {
-            return Response.found('?mode=signin');
+            return Response.found('/contact?mode=signin');
           }
         }
 
