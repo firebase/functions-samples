@@ -39,13 +39,12 @@ htmx.on('htmx:config:request', (event: any) => {
   }
 });
 
-// Global HTMX Event Delegation for Sign In and Sign Out
-htmx.on('htmx:confirm', async (event: any) => {
+// Intercept Sign In Form Submission (Native Event Delegation)
+document.addEventListener('submit', async (event: Event) => {
   const target = event.target as HTMLElement;
 
-  // Intercept Sign In Form
   if (target.id === 'signin-form') {
-    event.preventDefault();
+    event.preventDefault(); // Halt native browser form submission and page reload
     const formData = new FormData(target as HTMLFormElement);
     const email = formData.get('email') as string;
     const pass = formData.get('password') as string;
@@ -69,10 +68,14 @@ htmx.on('htmx:confirm', async (event: any) => {
       }
     }
   }
+});
 
-  // Intercept Sign Out Button
+// Intercept Sign Out Button Click (Native Event Delegation)
+document.addEventListener('click', async (event: Event) => {
+  const target = event.target as HTMLElement;
+
   if (target.id === 'signout-button') {
-    event.preventDefault();
+    event.preventDefault(); // Prevent HTMX Ajax request from firing
     await firebaseSignOut(auth);
     window.location.href = '?mode=signin';
   }
