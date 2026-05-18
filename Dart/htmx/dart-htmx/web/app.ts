@@ -31,6 +31,8 @@ onIdTokenChanged(auth, async (user: User | null) => {
 });
 
 // Configure HTMX to attach Authorization header
+// NOTE: This manual header injection could potentially be replaced with native browser cookies
+// using `browserCookiePersistence` once it graduates from Beta/Public Preview.
 htmx.on('htmx:config:request', (event: any) => {
   if (currentIdToken) {
     event.detail.headers['Authorization'] = 'Bearer ' + currentIdToken;
