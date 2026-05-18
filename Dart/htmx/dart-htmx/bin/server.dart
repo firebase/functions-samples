@@ -66,6 +66,7 @@ class BaseDocument extends StatelessComponent {
     return Document(
       title: titleText,
       lang: 'en',
+      base: null,
       head: [
         link(
           rel: 'stylesheet',
