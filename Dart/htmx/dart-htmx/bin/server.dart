@@ -28,6 +28,11 @@ Future<MessageData> getMessage(DocumentReference ref) async {
   return MessageData.fromJson(snapshot.data()!);
 }
 
+/// Extracts and verifies the `Authorization: Bearer <idToken>` header.
+///
+/// NOTE: This header-based authentication could potentially be replaced with native
+/// cookie-based authentication using Firebase's `browserCookiePersistence` once that
+/// graduates from Beta/Public Preview.
 Future<DecodedIdToken?> verifyAuthHeader(
   Request request,
   FirebaseApp app,
