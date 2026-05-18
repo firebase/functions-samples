@@ -30,7 +30,7 @@ onIdTokenChanged(auth, async (user: User | null) => {
   currentIdToken = (await user?.getIdToken()) ?? '';
 });
 
-// Configure HTMX to attach Authorization header
+// Configure HTMX to attach Authorization header (HTMX v4 context API)
 // NOTE: This manual header injection could potentially be replaced with native browser cookies
 // using `browserCookiePersistence` once it graduates from Beta/Public Preview.
 htmx.on('htmx:config:request', (event: any) => {
@@ -39,44 +39,36 @@ htmx.on('htmx:config:request', (event: any) => {
   }
 });
 
-// Intercept Sign In Form Submission (Native Event Delegation)
-document.addEventListener('submit', async (event: Event) => {
-  const target = event.target as HTMLElement;
+// Expose clean global helpers on window for Locality of Behavior (LoB) inline event handlers
+declare global {
+  interface Window {
+    firebaseSignIn: (email: string, pass: string, errorDivId: string) => Promise<void>;
+    firebaseSignOut: () => Promise<void>;
+  }
+}
 
-  if (target.id === 'signin-form') {
-    event.preventDefault(); // Halt native browser form submission and page reload
-    const formData = new FormData(target as HTMLFormElement);
-    const email = formData.get('email') as string;
-    const pass = formData.get('password') as string;
-    const errorDiv = document.getElementById('login-error') as HTMLDivElement;
-
-    try {
-      errorDiv.innerText = '';
-      await signInWithEmailAndPassword(auth, email, pass);
-      window.location.href = '?';
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
-        try {
-          // Automatically create the demo user in the emulator
-          await createUserWithEmailAndPassword(auth, email, pass);
-          window.location.href = '?';
-        } catch (createError: any) {
-          errorDiv.innerText = 'Error creating demo user: ' + createError.message;
-        }
-      } else {
-        errorDiv.innerText = 'Sign in error: ' + error.message;
+window.firebaseSignIn = async (email: string, pass: string, errorDivId: string) => {
+  const errorDiv = document.getElementById(errorDivId) as HTMLDivElement;
+  try {
+    if (errorDiv) errorDiv.innerText = '';
+    await signInWithEmailAndPassword(auth, email, pass);
+    window.location.href = '?';
+  } catch (error: any) {
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+      try {
+        // Automatically create the demo user in the emulator
+        await createUserWithEmailAndPassword(auth, email, pass);
+        window.location.href = '?';
+      } catch (createError: any) {
+        if (errorDiv) errorDiv.innerText = 'Error creating demo user: ' + createError.message;
       }
+    } else {
+      if (errorDiv) errorDiv.innerText = 'Sign in error: ' + error.message;
     }
   }
-});
+};
 
-// Intercept Sign Out Button Click (Native Event Delegation)
-document.addEventListener('click', async (event: Event) => {
-  const target = event.target as HTMLElement;
-
-  if (target.id === 'signout-button') {
-    event.preventDefault(); // Prevent HTMX Ajax request from firing
-    await firebaseSignOut(auth);
-    window.location.href = '?mode=signin';
-  }
-});
+window.firebaseSignOut = async () => {
+  await firebaseSignOut(auth);
+  window.location.href = '?mode=signin';
+};

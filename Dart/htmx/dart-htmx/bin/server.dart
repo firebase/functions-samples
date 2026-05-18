@@ -88,7 +88,10 @@ class BaseDocument extends StatelessComponent {
                   [Component.text('Sign Out')],
                   classes: 'secondary outline',
                   id: 'signout-button',
-                  attributes: {'hx-get': '?'},
+                  attributes: {
+                    'onclick':
+                        'event.preventDefault(); window.firebaseSignOut();',
+                  },
                 ),
               ]),
           ]),
@@ -192,7 +195,10 @@ Component createSignInView() {
         button([Component.text('Sign In')], type: ButtonType.submit),
       ],
       id: 'signin-form',
-      attributes: {'hx-post': '?'},
+      attributes: {
+        'onsubmit':
+            "event.preventDefault(); window.firebaseSignIn(this.email.value, this.password.value, 'login-error');",
+      },
     ),
     footer([
       small([
@@ -213,6 +219,9 @@ void main() {
     final firestore = Firestore();
 
     firebase.https.onRequest(name: 'contact', (request) async {
+      print(
+        'GCF Request: ${request.method} ${request.requestedUri.path} - Headers: ${request.headers}',
+      );
       final docRef = firestore.collection('messages').doc('message');
       final msg = await getMessage(docRef);
 
