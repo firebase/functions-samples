@@ -35,7 +35,7 @@ onIdTokenChanged(auth, async (user: User | null) => {
 // using `browserCookiePersistence` once it graduates from Beta/Public Preview.
 htmx.on('htmx:config:request', (event: any) => {
   if (currentIdToken) {
-    event.detail.headers['Authorization'] = 'Bearer ' + currentIdToken;
+    event.detail.ctx.request.headers['Authorization'] = 'Bearer ' + currentIdToken;
   }
 });
 
