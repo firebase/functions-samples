@@ -7,11 +7,7 @@
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
-    "chai": "^6.2.2",
-    "chai-as-promised": "^8.0.2",
-    "eslint": "^10.5.0",
-    "mocha": "^11.7.6",
-    "sinon": "^22.0.0"
+    "eslint": "^10.5.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
