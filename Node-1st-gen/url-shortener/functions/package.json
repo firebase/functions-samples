@@ -2,13 +2,13 @@
   "name": "url-shortener-functions",
   "description": "URL Shortener Cloud Functions for Firebase sample",
   "dependencies": {
-    "bitly": "^6.1.0",
-    "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.9.0",
+    "bitly": "^7.1.2",
+    "eslint-plugin-promise": "^7.3.0",
+    "firebase-admin": "^14.0.0",
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "eslint": "^10.5.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
@@ -20,7 +20,7 @@
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "20"
+    "node": "24"
   },
   "private": true
 }

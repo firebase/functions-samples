@@ -13,13 +13,13 @@
   },
   "engines": {
     "npm": ">=9.0.0 <10.0.0",
-    "node": ">=18.0.0 <=20.0.0"
+    "node": "24"
   },
   "homepage": "https://github.com/firebase/functions-samples#readme",
   "devDependencies": {
     "eslint-config-google": "^0.14.0",
-    "typescript": "^5.1.6",
-    "vite": "^6.4.2"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
   },
   "scripts": {
     "dev": "vite",
@@ -27,9 +27,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@firebase/functions": "^0.11.5",
-    "eslint": "9",
-    "firebase": "^10.12.1",
+    "@firebase/functions": "^0.13.5",
+    "eslint": "10",
+    "firebase": "^12.14.0",
     "showdown": "^2.1.0"
   }
 }
