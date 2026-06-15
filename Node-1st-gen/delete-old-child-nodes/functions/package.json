@@ -8,7 +8,7 @@
     "firebase-functions": "7.2.5"
   },
   "engines": {
-    "node": "24"
+    "node": "22"
   },
   "scripts": {
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
