@@ -16,11 +16,16 @@
 
 const {logger} = require("firebase-functions");
 const test = require("firebase-functions-test");
-const {assert} = require("chai");
 const {spy} = require("sinon");
 const {logstore} = require("./index");
 
 const {wrap} = test();
+
+let assert;
+before(async () => {
+  const chai = await import("chai");
+  assert = chai.assert;
+});
 
 describe("firebase-functions-test", () => {
   describe("#logstore", () => {

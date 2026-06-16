@@ -18,10 +18,6 @@
 // Visit https://firebase.google.com/docs/functions/unit-testing to learn more
 // about using the `firebase-functions-test` SDK.
 
-// Chai is a commonly used library for creating unit test suites. It is easily extended with plugins.
-const chai = require('chai');
-const assert = chai.assert;
-
 // Sinon is a library used for mocking or verifying function calls in JavaScript.
 const sinon = require('sinon');
 
@@ -33,9 +29,11 @@ const admin = require('firebase-admin');
 const test = require('firebase-functions-test')();
 
 describe('Cloud Functions', () => {
-  let myFunctions, adminInitStub;
+  let myFunctions, adminInitStub, assert;
 
-  before(() => {
+  before(async () => {
+    const chai = await import('chai');
+    assert = chai.assert;
     // [START stubAdminInit]
     // If index.js calls admin.initializeApp at the top of the file,
     // we need to stub it out before requiring index.js. This is because the
