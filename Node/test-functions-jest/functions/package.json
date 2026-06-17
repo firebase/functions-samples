@@ -1,7 +1,7 @@
 {
   "name": "test-functions",
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint .",
     "build": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "eslint": "^10.5.0",
+    "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
     "firebase-functions-test": "^3.5.0",
     "jest": "^30.4.2"

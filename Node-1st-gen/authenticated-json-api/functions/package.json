@@ -8,7 +8,7 @@
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
-    "eslint": "^10.5.0",
+    "eslint": "^8.57.1",
     "eslint-plugin-promise": "^7.3.0"
   },
   "scripts": {

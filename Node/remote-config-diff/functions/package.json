@@ -16,7 +16,7 @@
     "json-diff": "^1.0.6"
   },
   "devDependencies": {
-    "eslint": "^10.5.0",
+    "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0"
   },
   "engines": {

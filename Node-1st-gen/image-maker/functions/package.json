@@ -10,7 +10,7 @@
     "lodash": "^4.18.1"
   },
   "devDependencies": {
-    "eslint": "^10.5.0"
+    "eslint": "^8.57.1"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
