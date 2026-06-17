@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
+    "ignoreDeprecations": "5.0",
     "noEmit": true,
     "sourceMap": true,
     "strict": true,
@@ -11,6 +11,7 @@
     "index.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "eslint.config.*"
   ]
 }
