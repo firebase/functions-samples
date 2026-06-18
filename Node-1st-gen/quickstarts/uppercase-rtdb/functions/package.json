@@ -2,24 +2,20 @@
   "name": "uppercase-quickstart-functions",
   "description": "Uppercaser Cloud Functions for Firebase Quickstart sample",
   "dependencies": {
-    "eslint": "8",
-    "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.9.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-promise": "^7.3.0",
+    "firebase-admin": "^14.0.0",
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
-    "@types/mocha": "^8.2.3",
-    "chai": "^4.3.6",
-    "chai-as-promised": "^7.1.1",
-    "firebase-functions-test": "3.4.0",
-    "mocha": "^7.2.0",
-    "sinon": "^9.2.4"
+    "firebase-functions-test": "3.5.0",
+    "jest": "^30.4.2"
   },
   "scripts": {
     "ci-test": "npm install && npm run test",
-    "test": "npm run test-offline",
-    "test-online": "mocha --reporter spec test/test.online.js --exit",
-    "test-offline": "mocha --reporter spec test/test.offline.js --exit",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest test/test.offline.test.js",
+    "test-online": "NODE_OPTIONS=--experimental-vm-modules jest test/test.online.test.js",
+    "test-offline": "NODE_OPTIONS=--experimental-vm-modules jest test/test.offline.test.js",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
@@ -28,7 +24,7 @@
     "compile": "cp ../../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "private": true
 }

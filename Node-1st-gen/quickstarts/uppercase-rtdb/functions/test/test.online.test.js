@@ -1,3 +1,5 @@
+// @ts-nocheck
+// Disable strict type-checking on this legacy JavaScript file against Admin SDK v14 modular definitions when evaluated under monorepo root tsc checkJs.
 /**
  * Copyright 2016 Google Inc. All Rights Reserved.
  *
@@ -18,12 +20,8 @@
 // Visit https://firebase.google.com/docs/functions/unit-testing to learn more
 // about using the `firebase-functions-test` SDK.
 
-// Chai is a commonly used library for creating unit test suites. It is easily extended with plugins.
-const chai = require('chai');
-const assert = chai.assert;
-
-// Sinon is a library used for mocking or verifying function calls in JavaScript.
-const sinon = require('sinon');
+jest.mock("jose", () => ({}));
+jest.mock("jwks-rsa", () => ({}));
 
 const admin = require('firebase-admin');
 // Require and initialize firebase-functions-test in "online mode" with your project's
@@ -37,14 +35,14 @@ const test = require('firebase-functions-test')(projectConfig, './service-accoun
 describe('Cloud Functions', () => {
   let myFunctions;
 
-  before(() => {
+  beforeAll(() => {
     // Require index.js and save the exports inside a namespace called myFunctions.
     // This includes our cloud functions, which can now be accessed at myFunctions.makeUppercase
     // and myFunctions.addMessage
     myFunctions = require('../index');
   });
 
-  after(() => {
+  afterAll(() => {
     // Do cleanup tasks.
     test.cleanup();
     // Reset the database.
@@ -58,21 +56,19 @@ describe('Cloud Functions', () => {
       // [START assertOnline]
       // Create a DataSnapshot with the value 'input' and the reference path 'messages/11111/original'.
       const snap = test.database.makeDataSnapshot('input', 'messages/11111/original');
-
       // Wrap the makeUppercase function
       const wrapped = test.wrap(myFunctions.makeUppercase);
       // Call the wrapped function with the snapshot you constructed.
       return wrapped(snap).then(() => {
         // Read the value of the data at messages/11111/uppercase. Because `admin.initializeApp()` is
-        // called in functions/index.js, there's already a Firebase app initialized. Otherwise, add
-        // `admin.initializeApp()` before this line.
+        // called in functions/index.js, there's already a Firebase app initialized.
         return admin.database().ref('messages/11111/uppercase').once('value').then((createdSnap) => {
           // Assert that the value is the uppercased version of our input.
-          assert.equal(createdSnap.val(), 'INPUT');
+          expect(createdSnap.val()).toBe('INPUT');
         });
       });
       // [END assertOnline]
-    })
+    });
   });
 
   describe('addMessage', () => {
@@ -83,10 +79,10 @@ describe('Cloud Functions', () => {
       const res = {
         redirect: (code, url) => {
           // Assert code is 303
-          assert.equal(code, 303);
+          expect(code).toBe(303);
           // If the database push is successful, then the URL sent back will have the following format:
           const expectedRef = new RegExp(projectConfig.databaseURL + '/messages/');
-          assert.isTrue(expectedRef.test(url));
+          expect(expectedRef.test(url)).toBe(true);
           done();
         }
       };
@@ -96,4 +92,4 @@ describe('Cloud Functions', () => {
       myFunctions.addMessage(req, res);
     });
   });
-})
+});
