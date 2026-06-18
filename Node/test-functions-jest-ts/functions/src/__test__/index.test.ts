@@ -16,6 +16,10 @@
 
 import {logger} from "firebase-functions";
 import {expect, jest, test} from "@jest/globals";
+
+jest.mock("jose", () => ({}));
+jest.mock("jwks-rsa", () => ({}));
+
 import firebaseFunctionsTest from "firebase-functions-test";
 import {logstore} from "../index";
 
