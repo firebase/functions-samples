@@ -2,11 +2,10 @@
   "name": "linkedin-auth-functions",
   "description": "Authenticate with LinkedIn Cloud Functions for Firebase sample",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
-    "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.9.0",
-    "firebase-functions": "7.2.5",
-    "node-linkedin": "^0.5.6"
+    "cookie-parser": "^1.4.7",
+    "eslint-plugin-promise": "^7.3.0",
+    "firebase-admin": "^14.0.0",
+    "firebase-functions": "7.2.5"
   },
   "devDependencies": {
     "eslint": "^8.57.1"
@@ -21,7 +20,7 @@
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "private": true
 }
