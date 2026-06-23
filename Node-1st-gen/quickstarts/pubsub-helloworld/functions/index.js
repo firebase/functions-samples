@@ -17,6 +17,8 @@
 
 // [START import]
 const functions = require('firebase-functions/v1');
+const { onMessagePublished } = require("firebase-functions/v2/pubsub");
+
 // [END import]
 
 // [START helloWorld]
@@ -25,7 +27,8 @@ const functions = require('firebase-functions/v1');
  * topic.
  */
 // [START trigger]
-exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish((message) => {
+exports.helloPubSub = onMessagePublished('topic-name', ({ message, context }) => {
+
 // [END trigger]
   // [START readBase64]
   // Decode the PubSub Message body.
@@ -41,7 +44,8 @@ exports.helloPubSub = functions.pubsub.topic('topic-name').onPublish((message) =
  * Cloud Function to be triggered by Pub/Sub that logs a message using the data published to the
  * topic as JSON.
  */
-exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish((message) => {
+exports.helloPubSubJson = onMessagePublished('another-topic-name', ({ message, context }) => {
+
   // [START readJson]
   // Get the `name` attribute of the PubSub message JSON body.
   let name = null;
@@ -60,7 +64,8 @@ exports.helloPubSubJson = functions.pubsub.topic('another-topic-name').onPublish
  * Cloud Function to be triggered by Pub/Sub that logs a message using the data attributes
  * published to the topic.
  */
-exports.helloPubSubAttributes = functions.pubsub.topic('yet-another-topic-name').onPublish((message) => {
+exports.helloPubSubAttributes = onMessagePublished('yet-another-topic-name', ({ message, context }) => {
+
   // [START readAttributes]
   // Get the `name` attribute of the message.
   const name = message.attributes.name;
