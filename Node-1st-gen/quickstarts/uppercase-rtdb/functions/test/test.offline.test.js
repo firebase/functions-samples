@@ -83,7 +83,7 @@ describe('Cloud Functions', () => {
 
       // The following line overrides the behavior of admin.database().ref('/messages')
       // .push({ original: 'input' }) to return a promise that resolves with { ref: 'new_ref' }.
-      jest.spyOn(admin, 'database', 'get').mockReturnValue(databaseStub);
+      admin.database = jest.fn().mockReturnValue(databaseStub);
 
       // [START assertHTTP]
       // A fake request object, with req.query.text set to 'input'
