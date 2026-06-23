@@ -19,7 +19,8 @@
   "devDependencies": {
     "eslint-config-google": "^0.14.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "@types/marked": "^5.0.2"
   },
   "scripts": {
     "dev": "vite",
@@ -28,8 +29,8 @@
   },
   "dependencies": {
     "@firebase/functions": "^0.13.5",
-    "eslint": "10",
+    "eslint": "^10.5.0",
     "firebase": "^12.14.0",
-    "showdown": "^2.1.0"
+    "marked": "^12.0.2"
   }
 }
