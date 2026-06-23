@@ -36,7 +36,7 @@ const OAUTH_SCOPES = 'basic';
 const instagramClientId = defineSecret('INSTAGRAM_CLIENT_ID');
 const instagramClientSecret = defineSecret('INSTAGRAM_CLIENT_SECRET');
 
-let oauth2;
+const { AuthorizationCode } = require('simple-oauth2');
 onInit(() => {
   // Instagram OAuth 2 setup
   // TODO: Configure the `INSTAGRAM_CLIENT_ID` and `INSTAGRAM_CLIENT_SECRET` secrets.
@@ -50,7 +50,7 @@ onInit(() => {
       tokenPath: '/oauth/access_token',
     },
   };
-  oauth2 = require('simple-oauth2').create(credentials);
+  oauth2 = new AuthorizationCode(credentials);
 });
 
 /**
@@ -66,7 +66,7 @@ exports.redirect = functions.runWith({secrets: [instagramClientId, instagramClie
       secure: true,
       httpOnly: true,
     });
-    const redirectUri = oauth2.authorizationCode.authorizeURL({
+    const redirectUri = oauth2.authorizeURL({
       redirect_uri: OAUTH_REDIRECT_URI,
       scope: OAUTH_SCOPES,
       state: state,
@@ -93,17 +93,17 @@ exports.token = functions.runWith({secrets: [instagramClientId, instagramClientS
         throw new Error('State validation failed');
       }
       functions.logger.log('Received auth code:', req.query.code);
-      const results = await oauth2.authorizationCode.getToken({
+      const results = await oauth2.getToken({
         code: req.query.code,
         redirect_uri: OAUTH_REDIRECT_URI,
       });
       functions.logger.log('Auth code exchange result received:', results);
 
         // We have an Instagram access token and the user identity now.
-        const accessToken = results.access_token;
-        const instagramUserID = results.user.id;
-        const profilePic = results.user.profile_picture;
-        const userName = results.user.full_name;
+        const accessToken = results.token.access_token;
+        const instagramUserID = results.token.user.id;
+        const profilePic = results.token.user.profile_picture;
+        const userName = results.token.user.full_name;
 
       // Create a Firebase account and get the Custom Auth Token.
       const firebaseToken = await createFirebaseAccount(instagramUserID, userName, profilePic, accessToken);

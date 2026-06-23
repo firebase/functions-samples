@@ -1,15 +1,21 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "rootDir": "./src"
   },
   "compileOnSave": true,
   "include": [
     "src"
+  ],
+  "exclude": [
+    "eslint.config.*",
+    "node_modules"
   ]
 }
