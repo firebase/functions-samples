@@ -1,0 +1,794 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% stcinfo.ps
+% Epson Stylus-Color Printer-Driver
+
+% The purpose of this file is to print & show Parameters of the
+% stcolor-driver. If not run on ghostscript/stcolor, it prints
+% something like a color-chart.
+
+% use either existing STCinfo-dictionary, retrieve new one or create dummy
+
+statusdict begin product end
+dup (Ghostscript) eq 1 index (Artifex Ghostscript) eq or
+exch (AFPL Ghostscript) eq or{
+
+  currentdevice getdeviceprops .dicttomark
+  dup /Name get (stcolor) eq /STCi_onstc exch def
+  /STCinfo where {/STCinfo get exch pop} if
+  /STCinfo exch def
+
+}{
+
+  /STCinfo 10 dict def
+  STCinfo begin /Name (unknown) def end
+  /STCi_onstc false def
+
+}ifelse
+
+% Next Block are procedures to generate the color-triangles.
+% you may wish to separate them, just look ahead for the name
+% given in the next line to achieve that.
+% Begin: colortri_procedures
+
+% Plot the CIE-XY-triangle (or something like that)
+
+% /colortri_mat   Conversion matrix RGB -> XYZ
+% /colortri_bg    procedure, that takes X/Y-Values and delivers the
+%                 "background color" as RGB-Values, default is:
+%                 {pop pop 0.85 dup dup}
+
+% The default matrix was taken from:
+%             Color spaces FAQ - David Bourgin
+%             Date: 15/6/94 (items 5.3 and 6 updated)
+%             Last update: 29/6/94
+
+   /colortri_mat [ % RGB -> CIE XYZitu601-1 (D65)
+         0.4306 0.3415 0.1784
+         0.2220 0.7067 0.0713
+         0.0202 0.1295 0.9394
+   ] def
+
+   /colortri_bg {pop pop 0.85 dup dup} bind def
+
+% +---------------------------------------------------------------------+
+% | Besides from fixing bugs, nothing should be changed below this line |
+% +---------------------------------------------------------------------+
+
+%  Arbitrary operation on a pair of vectors, *CHANGES* 1st.
+%  invoke: Vaccu Vop op vop
+   /vop {
+      bind 0 1 3 index length 1 sub {
+       3 index 1 index get 3 index 2 index get 3 index exec 4 index 3 1 roll put
+      } for pop pop
+   } bind def
+
+   /vsub { {sub} vop } bind def % subtract two vectors
+   /vmul { {mul} vop } bind def % multiply two vectors
+
+%  Compute sum of vectors elements
+   /vsum {0.0 exch{add}forall} bind def
+
+%  Sum up products of elements
+   /veqn { [ 3 -1 roll {} forall ] exch vmul vsum } bind def
+
+%  Find index of |maximum| in array
+   /imax {
+      dup 0 get abs 0 exch % array i v[i]
+      1 1 4 index length 1 sub {
+         3 index 1 index get abs dup 3 index gt {4 2 roll}if pop pop
+      } for
+      3 -1 roll pop
+   } bind def
+
+%  Procedure to *CHANGE*  RGB-Values into XYZ-Values
+   /rgb2xyz {
+      0 3 6 { colortri_mat exch 3 getinterval 1 index veqn exch } for astore
+   } bind def
+
+% Procedure to *CHANGE* transform rgb->xy
+   /rgb2xy {
+      rgb2xyz
+      dup 0 get 1 index 1 get 2 index vsum % XYZ X Y sum
+      dup 0 ne {
+        exch 1 index div 3 1 roll div      % XYZ y x
+        2 index exch 0 exch put            % xYZ y
+        1 index exch 1 exch put            % xyZ
+      }{
+        pop pop pop dup 0 0 put dup 0 1 put
+      } ifelse
+      0 2 getinterval
+   } bind def
+
+% So here we go with our procedure
+
+/colortri { %Usage: box #pixels
+   save
+   1 index type /arraytype eq {exch 8}{3 1 roll} ifelse % Default scale
+   /colortri_scale exch def
+   /colortri_box   exch def
+
+%  Prepare some useful constants for xy -> RGB conversion
+
+   /colsum [                              % Array with column-sums
+     0 1 2{0 exch 3 1 index 6 add{colortri_mat exch get add}for}for
+   ] def
+
+   /Xrow colortri_mat 0 3 getinterval def % two rows from colortri_mat
+   /Yrow colortri_mat 3 3 getinterval def
+
+%  Avoid allocating new arrays
+   /xcoeff 3 array def
+   /ycoeff 3 array def
+
+% Procedure to derive RGB-Values form X,Y
+   /xy2rgb{ aload pop
+      dup     dup dup ycoeff astore colsum vmul Yrow vsub imax
+      3 index dup dup xcoeff astore colsum vmul Xrow vsub imax
+      3 -1 roll 1 index 1 index gt{
+         xcoeff ycoeff /xcoeff exch def /ycoeff exch def pop 3 -1 roll pop
+      }{
+        3 1 roll pop pop
+      } ifelse
+      1e-6 lt { % No Pivot ?
+         pop colortri_bg xcoeff astore pop
+      }{        % Have a Pivot
+         dup ycoeff exch get neg
+         0 1 2 { dup ycoeff exch get 2 index div ycoeff 3 1 roll put} for
+         pop ycoeff 1 index 0 put
+
+         xcoeff 1 index get
+         0 1 2 {
+            ycoeff 1 index get 2 index mul xcoeff 2 index get add
+            xcoeff 3 1 roll put
+         } for
+         pop xcoeff 1 index 0 put
+         xcoeff imax 1e-6 lt { % no Pivot ?
+           pop pop colortri_bg xcoeff astore pop
+         }{
+           dup 2 index or 3 exch sub
+           xcoeff 1 index get xcoeff 3 index get div neg
+           xcoeff exch 3 index exch put
+           xcoeff 1 index 1 put
+           ycoeff exch get ycoeff 2 index get xcoeff 4 -1 roll get mul add
+           xcoeff 3 1 roll put
+           0 1 2 {
+               xcoeff exch get dup -0.0015 lt exch 1.0015 gt or {
+                 colortri_bg xcoeff astore dup exit
+               } if
+           } for
+           pop pop xcoeff
+         } ifelse
+      } ifelse
+   } bind def
+
+% Compute the displayed range
+   [ 1 1 1 ] rgb2xy
+   dup 0 get /colortri_x0 exch def /colortri_dx colortri_x0 def
+   1 get     /colortri_y0 exch def /colortri_dy colortri_y0 def
+   [[0 0 1][0 1 0][0 1 1][1 0 0][1 0 1][1 1 0]] {
+      rgb2xy
+      dup 0 get
+      dup colortri_x0 lt {/colortri_x0 1 index def}if
+      dup colortri_dx gt {/colortri_dx 1 index def}if
+      pop 1 get
+      dup colortri_y0 lt {/colortri_y0 1 index def}if
+      dup colortri_dy gt {/colortri_dy 1 index def}if
+      pop
+   } forall
+   colortri_dx colortri_x0 sub /colortri_dx exch def
+   colortri_dy colortri_y0 sub /colortri_dy exch def
+%
+
+% determine the scale
+   colortri_box 2 get colortri_box 0 get sub colortri_dx div % fx
+   colortri_box 3 get colortri_box 1 get sub colortri_dy div % fx fy
+   gt { % fy limits
+      colortri_box 3 get colortri_box 1 get sub
+      dup colortri_dx mul colortri_dy div exch
+   }{   % fx limits
+      colortri_box 2 get colortri_box 0 get sub
+      dup colortri_dy mul colortri_dx div
+   } ifelse
+   dtransform abs colortri_scale div cvi /colortri_ny exch def
+              abs colortri_scale div cvi /colortri_nx exch def
+   colortri_nx colortri_scale mul colortri_ny colortri_scale mul
+   idtransform abs exch abs exch
+   colortri_box 0 get colortri_box 2 get 1 index sub 3 index sub 2 div add
+   colortri_box 1 get colortri_box 3 get 1 index sub 3 index sub 2 div add
+   transform .5 add cvi exch .5 add cvi exch itransform
+   translate scale
+
+%  String & indices
+   /colortri_tmp colortri_nx 3 mul string def
+   /colortri_dx colortri_dx colortri_nx 1 sub div def
+   /colortri_dy colortri_dy colortri_ny 1 sub div def
+   /colortri_xy [ colortri_x0 colortri_y0 ] def
+   /colortri_ie colortri_tmp length 3 sub def
+
+   colortri_nx colortri_ny 8 [ colortri_nx 0 0 colortri_ny 0 0 ]
+   {
+     colortri_xy 0 colortri_x0 put
+     0 3 colortri_ie {
+         colortri_tmp exch   % buf ir
+         colortri_xy xy2rgb  % buf ir rgb buf ib
+         2 index 2 index 2 add 2 index 2 get 255 mul cvi put
+         2 index 2 index 1 add 2 index 1 get 255 mul cvi put
+         0     get 255 mul cvi put
+         colortri_xy dup 0 exch 0 get colortri_dx add put
+     }for
+     colortri_xy dup 1 exch 1 get colortri_dy add put
+     colortri_tmp
+   } bind
+   false 3 colorimage
+   restore
+} bind def
+
+% [ newpath clippath pathbbox ]  colortri showpage % standalone usage
+
+% End:   colortri_procedures
+
+% The next section is a group of procedures, that I for myself
+% do no more fully understand, but they do the Job.
+
+% Begin: stcinfo_procedures_1
+
+% fetch a parameter from the dictionary
+/STCiget { STCinfo exch get } bind def
+
+% action upon ProcessColorModel
+/STCimode {
+   /ProcessColorModel STCiget dup
+   /DeviceCMYK eq{pop 2}{/DeviceRGB eq{1}{0}ifelse}ifelse get exec
+} bind def
+
+% print given number of blanks
+/STCipspace {
+   dup 0 gt{ 1 exch 1 exch { pop ( ) print}for }{ pop } ifelse
+} bind def
+
+% print right or left-justified text
+/STCiprint {
+   dup 0 gt { dup 2 index length sub STCipspace } if
+   1 index print
+   dup 0 lt { neg dup 2 index length sub STCipspace } if
+   pop pop
+} bind def
+
+% floating-point to fixed-length-string conversion
+
+/STCicvs { % number -> string
+
+% Prepare the result
+   8 string dup 0 (        ) putinterval
+   exch
+
+% Make it unsigned
+   dup 0 lt {neg(-)}{( )}ifelse 0 get exch
+
+   dup 1000 lt 1 index 0 eq 2 index 0.001 ge or and { % floating point
+     (e+) 0
+   }{                                                 % engineering
+      0 {
+        1 index 1000.0 ge
+          {3 add exch 1000 div exch}
+          {1 index 1 lt {3 sub exch 1000 mul exch}{exit}ifelse}
+        ifelse
+      }loop
+      dup 0 lt {neg(e-)}{(e+)}ifelse exch
+  }ifelse
+
+% string sign num esig e
+
+% always up to three Integer Digits plus sign
+   2 index cvi 3 { % string sign num esig e int ind
+      1 index 10 div cvi dup 10 mul 3 index exch sub cvi
+      (0123456789) exch get 8 index exch 3 index exch put
+      3 -2 roll 1 sub exch pop dup 0 eq 2 index 0 eq or {exit} if
+   } loop exch pop % string sign num esig e ind
+   5 index exch 6 -1 roll put % string num esig e
+
+% print either fraction or exponent
+   dup 0 eq { pop pop dup cvi sub % String fraction
+
+      dup 0.0 ne { % Fraction present
+         0.0005 add 1 index 4 (.) putinterval
+         5 1 7 { % string frac ind
+           exch 10 mul dup cvi exch 1 index sub % string ind ic nfrac
+           exch (0123456789) exch get 3 -1 roll % string nfrac chr ind
+           exch 3 index 3 1 roll put
+         } for
+      } if
+      pop
+
+   }{ 3 -1 roll pop % string esig e
+
+      exch 2 index exch 4 exch putinterval
+      7 -1 6 { % string n i
+         1 index 10 div cvi dup 10 mul 3 index exch sub cvi % string n i n/10
+         (0123456789) exch get 4 index exch 3 index exch put
+         exch pop exch pop
+      } for
+      pop
+   } ifelse
+
+} bind def
+
+% compute colorvalue-steps from transfer & coding
+/STCisteps { % xfer, coding => X-values, Y-Values
+% 2^nbits
+   2 /BitsPerComponent STCiget dup 11 gt { pop 11 } if exp cvi
+
+% X & Y - Arrays (stack: xv:4  yv:3 xfer:2  coding:1 2^ni:0)
+   dup 1 add array 1 index array 5 2 roll
+
+% compute GS-Color-Value according to the coding-array
+
+   1 index null eq { % no coding present
+
+      0 1 2 index 1 sub {
+         dup 6 index exch dup 4 index div put
+         4 index exch dup 3 index 1 sub div put
+      } for
+
+   }{                % coding-array given
+
+      1.0 1 index 1 sub div % y step
+      0                     % current index
+      0 1 4 index 1 sub { % over indices
+         dup 3 index mul
+         {
+            dup 3 index 1 add dup 8 index length ge {pop pop exit} if % i y
+            7 index exch get le {exit} if
+            2 index 1 add 3 1 roll 4 -1 roll pop
+         } loop
+         5 index 3 index get sub
+         5 index 3 index 1 add get 6 index 4 index get sub div
+         2 index add 5 index length 1 sub div
+         2 copy exch dup 0 eq {
+            10 index exch 0.0 put pop
+         }{
+            dup 10 index exch 1 sub get 3 -1 roll add 2 div
+            10 index 3 1 roll put
+         }ifelse
+         7 index 3 1 roll put
+     } for               % over indices
+     pop pop
+   } ifelse
+   4 index 1 index 1.0 put
+
+% Replace the raw y-values by those computed from the transfer-array
+
+   0 1 2 index 1 sub { % over indices, 2nd
+      dup 5 index exch get
+      dup 5 index length 1 sub mul cvi % -> iy
+      5 index 1 index get
+      1 index 1 add 7 index length lt {
+        dup 7 index 3 index 1 add get exch sub
+        3 index 3 index 9 index length 1 sub div sub mul
+        7 index length 1 sub mul add
+      } if
+      exch pop exch pop 5 index 3 1 roll put
+   } for               % over indices, 2nd
+
+   pop pop pop
+} bind def
+
+/STCibar { % Window X-Values proc => Window
+   0 1 3 index length 2 sub {
+     dup 3 index exch get exch
+     1 add 3 index exch get
+     dup 2 index add 2 div 3 index exec % Color to average
+     4 index 2 get 5 index 0 get sub exch 1 index mul 5 index 0 get add 3 1 roll
+     mul 4 index 0 get add 4 index 3 get 5 index 1 get
+     newpath
+     2 index 1 index moveto
+     3 index 1 index lineto
+     3 index 2 index lineto
+     2 index 2 index lineto
+     closepath fill
+     pop pop pop pop
+   } for
+   pop pop
+   0 setgray
+   newpath
+   dup 0 get 1 index 1 get moveto
+   dup 2 get 1 index 1 get lineto
+   dup 2 get 1 index 3 get lineto
+   dup 0 get 1 index 3 get lineto
+   closepath stroke
+   pop
+} bind def
+
+% End:   stcinfo_procedures_1
+
+% Begin: stcinfo_preparation
+
+% Compute used area from clippath
+
+/STCi_clip [
+  newpath clippath pathbbox
+  2 sub 4 1 roll 2 sub 4 1 roll 2 add 4 1 roll 2 add 4 1 roll
+] def
+
+%
+% Perpare the texual messages, assume no stcolor if this fails
+%
+{
+   /STCi_stopped % A Special Mark
+
+% Textual Parameters (an array of pairs of strings)
+   /STCi_l1 0 def
+   /STCi_l2 0 def
+   /STCi_text [
+% Driver-Name & Version
+      (Parameters of)
+         /Name STCiget length /Version STCiget length add 1 add string
+         dup 0 /Name STCiget putinterval dup /Name STCiget length (-)putinterval
+         dup /Name STCiget length 1 add /Version STCiget putinterval
+% Dithering-Algorithm
+      (Dithering)
+         /Dithering STCiget
+         [{( \(Monochrome\))}{( \(RGB\))}{( \(CMYK\))}] STCimode
+         dup length 2 index length add string exch 1 index exch
+         3 index length exch putinterval dup 3 1 roll exch 0 exch putinterval
+% Flags for the algorithm
+      (Flag4-0) 5 string
+         dup 0 /Flag4 STCiget {(T)}{(f)} ifelse putinterval
+         dup 1 /Flag3 STCiget {(T)}{(f)} ifelse putinterval
+         dup 2 /Flag2 STCiget {(T)}{(f)} ifelse putinterval
+         dup 3 /Flag1 STCiget {(T)}{(f)} ifelse putinterval
+         dup 4 /Flag0 STCiget {(T)}{(f)} ifelse putinterval
+
+% Bits Per Pixel & Bits Per Component
+      (BitsPerPixel) 10 string % (nn -> nxnn)
+         /BitsPerPixel STCiget 1 index cvs length % string used
+         dup 2 index exch ( -> ) putinterval 4 add dup 2 add exch 2 index exch
+         [{(1x)}{(3x)}{(4x)}] STCimode putinterval % String used
+         /BitsPerComponent STCiget 2 index 2 index 2 getinterval cvs length add
+         0 exch getinterval
+
+      () ()
+% ColorAdjustMatrix
+      (ColorAdjustMatrix)
+         /ColorAdjustMatrix STCiget dup null eq {
+            pop (default)
+         }{
+            { STCicvs } forall
+            [{ % Monochrome
+               26 string
+               dup  0 6 -1 roll putinterval dup  8 ( ) putinterval
+               dup  9 5 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18 4 -1 roll putinterval
+             }{ % RGB
+               26 string
+               dup  0 12 -1 roll putinterval dup  8 ( ) putinterval
+               dup  9 11 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18 10 -1 roll putinterval
+
+               () 26 string
+               dup  0 11 -1 roll putinterval dup  8 ( ) putinterval
+               dup  9 10 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18  9 -1 roll putinterval
+
+               () 26 string
+               dup  0 10 -1 roll putinterval dup  8 ( ) putinterval
+               dup  9  9 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18  8 -1 roll putinterval
+             }{
+               35 string
+               dup  0 19 -1 roll  putinterval dup  8 ( ) putinterval
+               dup  9 18 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18 17 -1 roll putinterval dup 26 ( ) putinterval
+               dup 27 16 -1 roll putinterval
+
+               () 35 string
+               dup  0 17 -1 roll putinterval dup  8 ( ) putinterval
+               dup  9 16 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18 15 -1 roll putinterval dup 26 ( ) putinterval
+               dup 27 14 -1 roll putinterval
+
+               () 35 string
+               dup  0 15 -1 roll putinterval dup  8 ( ) putinterval
+               dup  9 14 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18 13 -1 roll putinterval dup 26 ( ) putinterval
+               dup 27 12 -1 roll putinterval
+
+               () 35 string
+               dup  0 13 -1 roll putinterval dup  8 ( ) putinterval
+               dup  9 12 -1 roll putinterval dup 17 ( ) putinterval
+               dup 18 11 -1 roll putinterval dup 26 ( ) putinterval
+               dup 27 10 -1 roll putinterval
+
+             }
+            ] STCimode
+         } ifelse
+      () ()
+
+% Printer Model
+      (Printer-Model)  /Model STCiget
+
+% Resolution
+      (Resolution) 15 string % (nnnnnxnnnnn DpI)
+         /HWResolution STCiget 0 get cvi 1 index cvs length
+         dup 2 index exch (x) putinterval 1 add dup 2 index exch 5 getinterval
+         /HWResolution STCiget 1 get cvi exch cvs length add dup 2 index
+         exch ( DpI) putinterval 4 add 0 exch getinterval
+
+% HWsize holds entire Page in Pixels,
+% .HWMargins is [left,bottom,right,top] in Points
+      (Printed Area)   18 string % (nnnnnxnnnnn Pixel)
+         /HWSize STCiget 0 get /.HWMargins STCiget dup 0 get exch 2 get add
+         /HWResolution STCiget 0 get mul 72.0 div sub cvi 1 index cvs length
+         dup 2 index exch (x) putinterval 1 add dup 2 index exch 5 getinterval
+         /HWSize STCiget 1 get /.HWMargins STCiget dup 1 get exch 3 get add
+         /HWResolution STCiget 1 get mul 72.0 div sub cvi exch cvs length add
+         dup 2 index exch ( Pixel) putinterval 6 add 0 exch getinterval
+
+      () ()
+% WeaveMode
+      (Weave-Mode)
+         /noWeave STCiget {
+           (noWeave)
+         }{
+           /Microweave STCiget {(Microweave)}{(Softweave)}ifelse
+         }ifelse
+% Unidirectional
+      (Unidirectional) /Unidirectional STCiget {(ON)}{(off)} ifelse
+% Output coding
+      (OutputCode)     /OutputCode STCiget
+% number of heads
+      (escp_Band)   /escp_Band   STCiget 3 string cvs
+      (escp_Width)  /escp_Width  STCiget 5 string cvs
+      (escp_Height) /escp_Height STCiget 5 string cvs
+      (escp_Top)    /escp_Top    STCiget 5 string cvs
+      (escp_Bottom) /escp_Bottom STCiget 5 string cvs
+   ] def
+
+%
+% compute the Proper X & Y-Arrays
+%
+   [{  % Monochrome
+     /Ktransfer STCiget /Kcoding STCiget STCisteps
+     /STCi_yv   [ 3 -1 roll ] def
+     /STCi_xv   [ 3 -1 roll ] def
+     /STCi_col  [[0 0 0]] def
+     /STCi_set  [{1.0 exch sub setgray}] def
+    }{ % RGB
+     /Rtransfer STCiget /Rcoding STCiget STCisteps
+     /Gtransfer STCiget /Gcoding STCiget STCisteps
+     /Btransfer STCiget /Bcoding STCiget STCisteps
+     exch 4 -1 roll 6 -1 roll exch 3 -1 roll
+     /STCi_xv [ 5 2 roll ] def
+     /STCi_yv [ 5 2 roll ] def
+     /STCi_col  [[1 0 0] [0 1 0] [0 0 1]] def
+     /STCi_set [
+      {1.0 exch sub 1 exch dup setrgbcolor}
+      {1.0 exch sub dup 1 exch setrgbcolor}
+      {1.0 exch sub dup 1      setrgbcolor}
+      ] def
+    }{ % CMYK
+     /Ctransfer STCiget /Ccoding STCiget STCisteps
+     /Mtransfer STCiget /Mcoding STCiget STCisteps exch 3 1 roll
+     /Ytransfer STCiget /Ycoding STCiget STCisteps exch 4 1 roll
+     /Ktransfer STCiget /Kcoding STCiget STCisteps exch 5 1 roll
+     /STCi_yv  [ 6 2 roll ] def
+     /STCi_xv  [ 6 2 roll ] def
+     /STCi_col [[0 1 1] [1 0 1] [1.0 0.5 0.0] [0 0 0]] def
+     /STCi_set [
+       { 0 0 0 setcmykcolor }
+       { 0 exch 0 0 setcmykcolor }
+       { 0 exch 0 exch 0 setcmykcolor }
+       { 0 exch 0 exch 0 exch setcmykcolor }
+     ] def
+    }
+   ]STCimode
+
+} stopped
+
+{ {/STCi_stopped eq {exit}if}loop true}
+{ {/STCi_stopped eq {exit}if}loop false} ifelse
+
+% End:   stcinfo_preparation
+
+% The Next section does the real job
+
+% Begin: stcinfo_execution
+{
+   (%%[ stcinfo.ps: currentdevice is not supported -> colortri ]%%\n) print
+   STCi_clip  colortri % The default action
+
+}{
+%
+% Print the text
+%
+   0 2 STCi_text length 2 sub { dup 1 add exch
+     STCi_text exch get length dup STCi_l1 gt{/STCi_l1 exch def}{pop}ifelse
+     STCi_text exch get length dup STCi_l2 gt{/STCi_l2 exch def}{pop}ifelse
+   } for
+   /STCi_l2 STCi_l2 neg def
+   0 2 STCi_text length 2 sub {
+     dup 1 add STCi_text exch get exch STCi_text exch get
+     1 index length 0 gt {
+       dup STCi_l1 STCiprint length 0 gt {(: )}{(  )}ifelse print print
+     }{
+       pop pop
+     } ifelse
+     (\n) print
+   } for
+%
+% Deactivate a present ColorAdjust Matrix, if any
+%
+   /ColorAdjustMatrix STCiget null ne STCi_onstc and {
+       mark
+       /ColorAdjustMatrix null
+       currentdevice putdeviceprops pop
+   } if
+%
+% "Show" the text
+%
+   /Times-Roman findfont 10 scalefont setfont
+   /STCi_l1 0 def
+   0 2 STCi_text length 2 sub {
+       STCi_text exch get stringwidth pop dup STCi_l1 gt {
+          /STCi_l1 exch def
+       }{
+          pop
+       } ifelse
+   } for
+   STCi_l1 STCi_clip 0 get add /STCi_l1 exch def
+
+   STCi_clip 3 get 12 sub
+   0 2 STCi_text length 2 sub {
+       STCi_text exch get dup length 0 gt {
+         dup stringwidth pop STCi_l1 exch sub 2 index moveto show
+       }{
+          pop
+       } ifelse
+       12 sub
+   } for
+   pop
+
+   /Courier findfont 10 scalefont setfont
+   /STCi_l2 0 def
+   1 2 STCi_text length 1 sub {
+       STCi_text exch get stringwidth pop dup STCi_l2 gt {
+          /STCi_l2 exch def
+       }{
+          pop
+       } ifelse
+   } for
+
+   STCi_clip 3 get 12 sub
+   1 2 STCi_text length 1 sub {
+       STCi_text exch get dup length 0 gt {
+          STCi_l1 12 add 2 index moveto show
+       }{
+         pop
+       } ifelse
+       12 sub
+   } for
+   pop
+
+%
+%  compute the space for the graph-window
+%
+   STCi_l1 12 add STCi_l2 add 12 add dup STCi_clip 2 get exch sub % Extend
+   [ 3 -1 roll dup 3 index add STCi_clip 3 get dup 5 index sub 3 1 roll ]
+   /STCi_win exch def /STCi_l1 exch def
+
+% The "Axis"
+   newpath
+   STCi_win 0 get STCi_win 1 get 14 add moveto
+   STCi_win 2 get STCi_win 1 get 14 add lineto stroke
+
+   STCi_win 0 get 14 add STCi_win 1 get moveto
+   STCi_win 0 get 14 add STCi_win 3 get lineto stroke
+
+% The Labels
+   /Times-Roman findfont 10 scalefont setfont
+   (Postscript-color) dup stringwidth pop
+   STCi_win 2 get STCi_win 0 get sub 14 sub 1 index sub 2 div exch pop
+   STCi_win 0 get add 14 add STCi_win 1 get 4 add moveto show
+
+   gsave
+     STCi_win 0 get 10 add STCi_win 1 get 14 add translate 90 rotate
+     (Device-color) dup stringwidth pop
+     STCi_win 3 get STCi_win 1 get sub 14 sub 1 index sub 2 div exch pop
+     0 moveto show
+   grestore
+
+% The Graphs
+  gsave
+     STCi_win 0 get 14 add STCi_win 1 get 14 add
+     STCi_win 2 get 2 index sub STCi_win 3 get 2 index sub
+     4 2 roll translate
+     STCi_col 0 1 2 index length 1 sub {
+       1 index 1 index get aload pop setrgbcolor
+       STCi_xv 1 index get STCi_yv 3 -1 roll get
+       newpath
+       1 index 0 get 5 index mul 1 index 0 get 5 index mul moveto
+       1 index 1 get 5 index mul 1 index 0 get 5 index mul lineto
+       1 1 2 index length 1 sub {
+         2 index 1 index       get 6 index mul
+         2 index 2 index       get 6 index mul lineto
+         2 index 1 index 1 add get 6 index mul
+         2 index 2 index       get 6 index mul lineto
+         pop
+       } for
+       stroke pop pop
+     } for
+     pop pop pop
+  grestore
+
+%
+% Find lowest Y from Text or graph
+%
+   STCi_win 1 get  STCi_clip 3 get STCi_text length 2 div 12 mul sub
+   dup 2 index gt { pop } { exch pop } ifelse 12 sub
+
+%
+%  compute the upper bar-window
+%
+   /STCi_win [
+      STCi_clip 0 get 4 -1 roll 36 sub STCi_clip 2 get 1 index 36 add
+   ] def
+
+%
+% Draw the required number of graphs
+%
+   [{  % Monochrome
+      STCi_win STCi_xv 0 get {setgray} STCibar
+    }{ % RGB
+      STCi_win STCi_xv 0 get {0 0 setrgbcolor} STCibar
+      STCi_win dup 1 exch 1 get 47 sub put
+      STCi_win dup 3 exch 3 get 47 sub put
+      STCi_win STCi_xv 1 get {0 0 3 1 roll setrgbcolor} STCibar
+      STCi_win dup 1 exch 1 get 47 sub put
+      STCi_win dup 3 exch 3 get 47 sub put
+      STCi_win STCi_xv 2 get {0 0 3 2 roll setrgbcolor} STCibar
+    }{ % CMYK
+      STCi_win STCi_xv 0 get {0 0 0          setcmykcolor} STCibar
+      STCi_win dup 1 exch 1 get 47 sub put
+      STCi_win dup 3 exch 3 get 47 sub put
+      STCi_win STCi_xv 1 get {0 0 0 4 1 roll setcmykcolor} STCibar
+      STCi_win dup 1 exch 1 get 47 sub put
+      STCi_win dup 3 exch 3 get 47 sub put
+      STCi_win STCi_xv 2 get {0 0 0 4 2 roll setcmykcolor} STCibar
+      STCi_win dup 1 exch 1 get 47 sub put
+      STCi_win dup 3 exch 3 get 47 sub put
+      STCi_win STCi_xv 3 get {0 0 0 4 3 roll setcmykcolor} STCibar
+    }
+   ] STCimode
+
+   STCi_win 1 STCi_clip 1 get put
+   STCi_win dup 3 exch 3 get 47 sub put
+
+%
+% Plot either one or two Color-Triangles
+%
+   /ColorAdjustMatrix STCiget null ne STCi_onstc and {
+     STCi_win 0 get STCi_win 2 get add 2 div
+     [STCi_win 0 get STCi_win 1 get 3 index STCi_win 3 get ] colortri
+     mark /ColorAdjustMatrix dup STCiget currentdevice putdeviceprops pop
+     [1 index STCi_win 1 get STCi_win 2 get STCi_win 3 get ] colortri
+     pop
+   }{
+     STCi_win colortri
+   } ifelse
+   newpath clippath stroke
+} ifelse
+showpage

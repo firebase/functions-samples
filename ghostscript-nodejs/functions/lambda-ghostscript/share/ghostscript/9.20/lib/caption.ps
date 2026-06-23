@@ -1,0 +1,58 @@
+%!
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Add a "caption" to the bottom of each page.
+/captionsize 20 def
+/caption
+ { /Helvetica //captionsize selectfont
+   (Printed by Artifex's XXYYZZ) show
+   /Symbol //captionsize selectfont
+   (\324) show		% trademarkserif
+   /Helvetica //captionsize selectfont
+   ( product) show
+ } bind def
+
+10 dict begin
+gsave
+  initgraphics
+  clippath pathbbox
+  pop exch 36 add /by exch def
+                % We can't use stringwidth, so we have to show and measure.
+  gsave
+    0 0 0 0 rectclip
+    0 0 moveto caption currentpoint pop /bw exch def
+  grestore
+  add bw sub 2 div /bx exch def
+                % We don't have the font bbox available, so we guess.
+  /bh captionsize 1.05 mul def
+grestore
+/showcaption
+ { gsave
+     initgraphics
+     //bx 9 sub //by 9 sub //bw 18 add //bh 18 add
+     1 setgray 4 copy rectfill 0 setgray 1.5 setlinewidth rectstroke
+     //bx //by moveto //caption exec
+   grestore
+ } bind def
+<< /EndPage [
+   %%
+   %% Only print the caption if 'reason' is not 2 (device deactivation)
+   %%
+   /dup load /exec load 2 /ne load /exec load [ /showcaption load /exec load ] cvx /if load /exec load
+   currentpagedevice /EndPage get /exec load
+   ] cvx
+>> setpagedevice
+end

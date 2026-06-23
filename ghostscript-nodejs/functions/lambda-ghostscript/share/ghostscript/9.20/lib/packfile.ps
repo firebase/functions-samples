@@ -1,0 +1,332 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% packfile.ps
+% Pack groups of files together, with compression, for use in
+% storage-scarce environments.
+
+% ****** NOTE: This file must be kept consistent with gs_pfile.ps.
+
+% ---------------- Huffman coding utilities ---------------- %
+
+% We count runs of zeros, and individual byte frequencies separately
+% depending on whether they follow or do not follow a run of zeros.
+/zruns 256 array def
+/zfreq 256 array def
+/nzfreq 256 array def
+/maxcode 13 def		% max code length, must be between 10 and 16
+/maxzrun 100 def	% max length of zero run, must be <= 100
+/statbuf 10000 string def
+
+% Initialize statistics.
+/initstats		% - initstats -
+ { 0 1 255 { zruns exch 0 put } for
+   0 1 255 { zfreq exch 0 put } for
+   0 1 255 { nzfreq exch 0 put } for
+ } bind def
+
+% Accumulate statistics from an individual file.
+/addstats		% <file> addstats -
+ { 0
+    { 1 index //statbuf readstring 3 1 roll
+        % Stack: file eof numzeros data
+       { dup 0 eq
+          { pop 1 add
+          }
+          { 1 index 0 ne
+             { exch 255 .min
+               //zruns exch 2 copy get 1 add put
+               0 exch //zfreq
+             }
+             { //nzfreq
+             }
+            ifelse
+            exch 2 copy get 1 add put
+          }
+         ifelse
+       } forall
+      exch not { exit } if (.) print flush
+    } loop
+   pop closefile
+ } bind def
+
+% Compute the Huffman codes from the statistics.
+/statcodes		% - statcodes <array>
+ { maxcode 1 add 256 add maxzrun 2 sub add 1 add array	% full array
+   dup maxcode 1 add dup 2 index length exch sub getinterval	% data
+        % Put statistics into array
+   dup 0 1 255
+    { zfreq 1 index get nzfreq 2 index get add put dup
+    } for
+   0 zruns 1 get put
+   256 zruns 2 maxzrun 2 sub getinterval putinterval
+   dup dup length 1 sub 1 put	% EOD
+   maxcode .computecodes
+ } bind def
+
+% ---------------- File handling ---------------- %
+
+% Copy one file to another.
+% Close the input file, but not the output file.
+/copyfile		% <infile> <outfile> copyfile <outfile> <length>
+ { 0 mark statbuf
+    { 4 index 1 index readstring
+      exch 5 index 1 index writestring
+      length 5 -1 roll add 4 1 roll
+      not { exit } if (.) print flush
+    } loop
+   cleartomark 3 -1 roll closefile dup == flush
+ } bind def
+
+% Represent a Type 1 font in its most compressed format.
+% Requires -dWRITESYSTEMDICT to run.
+% Does not close the output file.
+(wrfont.ps) runlibfile
+/compressfont		% <fontname> <outfile> compressfont <outfile>
+ { exch save
+   systemdict /executeonly /readonly load put
+   systemdict /noaccess /readonly load put
+   systemdict readonly pop
+   wrfont_dict begin
+     /binary_CharStrings true def
+     /binary_tokens true def
+     /encrypt_CharStrings false def
+     /standard_only false def
+     /use_lenIV 0 def
+     /smallest_output true def
+   end
+   exch findfont setfont
+   1 index writefont
+   restore
+ } bind def
+
+% ---------------- Main program ---------------- %
+
+% Find the length of a file.
+/filelength		% <filename> filelength <length>
+ { status { pop pop exch pop } { -1 } ifelse
+ } bind def
+
+% Define the header string for a compressed file.
+/beginfilestring
+({dup token pop exch[/MaxCodeLength 2 index token pop/Tables 4 index token pop
+/EndOfData true/EncodeZeroRuns 256 .dicttomark
+/BoundedHuffmanDecode filter/MoveToFrontDecode filter
+[/BlockSize 4 -1 roll .dicttomark/BWBlockSortDecode filter
+}) readonly def
+
+% Write a 16-bit big-endian non-negative integer on a file.
+/write16		% <file> <int> write16 -
+ { 2 copy -8 bitshift write 255 and write
+ } bind def
+
+% Compress a group of files together.
+% Return a dictionary in which the keys are the input file names
+% and the values are [startpos length] in the uncompressed concatenation.
+% Does not open or close the output file.
+/tempname (t.em) def
+/packfiles		% <filenames> <outfile> packfiles <outfile> <posdict>
+ {	% Concatenate files to a temporary file.
+   tempname (w) file
+   dup /MoveToFrontEncode filter
+   dup <<
+        /BlockSize 1000000
+   >> /BWBlockSortEncode filter
+                % Stack: filenames outfile tempfile mtfe bwe
+   5 -1 roll dup length dict 0 6 2 roll
+    {		% Stack: outfile posdict pos tempfile mtfe bwe infilename
+      dup ==only dup (r) file 2 index copyfile exch pop
+      dup 7 index 4 2 roll 7 index exch 2 array astore put
+      5 -1 roll add 4 1 roll
+    } forall
+   closefile closefile closefile pop exch
+                % Stack: posdict outfile
+        % Compute an optimal Huffman code.
+   initstats
+   tempname (r) file addstats
+        % Actually compress the file.
+        % Write the decompression information on the output first.
+   dup tempname filelength write==
+   dup maxcode write==
+        % Write the code table as a homogenous number array.
+   statcodes exch
+     dup 149 write dup 32 write dup 2 index length write16
+     exch { 2 copy write16 pop } forall
+   dup <<
+        /MaxCodeLength maxcode
+        /EndOfData true
+        /EncodeZeroRuns 256
+        /Tables statcodes
+   >> /BoundedHuffmanEncode filter
+   tempname (r) file exch copyfile pop closefile
+   exch
+ } bind def
+
+% Squeeze a font to a .cpf file in anticipation of compression.
+/squeezefont		% <fontname> squeezefont <filename.cpf>
+ { dup type /nametype ne { cvn } if
+   dup
+    { dup type /stringtype eq { exit } if
+      Fontmap exch get
+    }
+   loop
+                % Stack: fontname filename
+   dup dup
+    { (.) search not { exit } if
+      exch pop exch 3 -1 roll pop
+    }
+   loop
+                % Stack: fontname filename noextname extension
+   exch
+    { (/) search not { (\\) search not { exit } if } if
+      pop pop
+    }
+   loop
+                % If the font extension is anything other than
+                % .pfa or .pfb, we assume it can't be rewritten
+                % using compressfont.
+                % Stack: fontname filename extension basename
+   (.cpf) concatstrings dup 5 1 roll (w) file
+                % Stack: outfilename fontname filename extension outfile
+   exch dup (pfa) eq exch (pfb) eq or
+                % Stack: outfilename fontname filename outfile bool
+    { exch pop compressfont
+    }
+    { 3 -1 roll pop
+      exch findlibfile pop exch pop
+      exch copyfile pop
+    }
+   ifelse closefile
+ } bind def
+
+% ---------------- Production code ---------------- %
+
+% The following code constructs a packed version of the commercial-quality
+% fonts available from Artifex Software Inc.  To use this code:
+%	- If desired, change the output file names below.
+%	- Make sure you have the synthetic font data (fontmap.shs and the
+%	  *.ps files for the commercial fonts) in a directory that is on
+%	  Ghostscript's search path.
+%	- Construct the packed fonts by running
+%		gs -dNODISPLAY -dWRITESYSTEMDICT packfile.ps
+%	- If desired, move the output files to the directory that will be
+%	  used at run time.  You no longer need the *.pfb or *.ps files
+%	  for the original fonts; however, you do still need the Fontmap
+%	  for these fonts, because it defines the font name aliases.
+%	- Add the following line to the end of gs_fonts.ps:
+%		(ALL.cmp) run
+%	  (substituting the definition of allmapname if you changed it).
+
+% Define the output file names.  The extensions are arbitrary;
+% any legal file name is allowed.
+/allname (ALL.cff) def		% the compressed font file
+/allmapname (ALL.cmp) def	% the Fontmap override file
+
+% Load an alternate Fontmap that references the synthetic oblique and
+% narrow fonts.
+true .setglobal
+(fontmap.shs) findlibfile pop exch pop .loadFontmap
+false .setglobal
+
+% Define the packaging of fonts into font groups.
+% Fewer larger groups compress better, but make decompression slower.
+/Lists [
+[	% The oblique and narrow fonts are synthetic,
+        % and take very little space.
+  /AvantGarde-BookOblique /AvantGarde-DemiOblique
+  /Courier-Oblique /Courier-BoldOblique
+  /Helvetica-Oblique /Helvetica-BoldOblique
+  /Helvetica-Narrow /Helvetica-Narrow-Oblique
+  /Helvetica-Narrow-Bold /Helvetica-Narrow-BoldOblique
+]
+[/AvantGarde-Book /AvantGarde-Demi
+ /Bookman-Light] [/Bookman-LightItalic
+ /Bookman-Demi /Bookman-DemiItalic
+ /Courier] [/Courier-Bold
+ /Helvetica /Helvetica-Bold]
+[/NewCenturySchlbk-Roman /NewCenturySchlbk-Italic
+ /NewCenturySchlbk-Bold /NewCenturySchlbk-BoldItalic]
+[/Palatino-Roman /Palatino-Italic
+ /Palatino-Bold /Palatino-BoldItalic]
+[/Times-Roman /Times-Italic
+ /Times-Bold /Times-BoldItalic]
+[/Symbol
+ /ZapfChancery-MediumItalic
+ /ZapfDingbats]
+] def
+
+% We need to register the fonts under their true names, not aliases.
+/Lists Lists mark exch
+ { mark exch
+    {  { Fontmap 1 index get dup type /nametype ne { pop exit } if
+         exch pop
+       }
+      loop
+    }
+   forall ]
+ }
+forall ] def
+
+% Squeeze the fonts to their .cpf format.
+(Squeezing... ) print flush
+/fdict mark
+Lists
+ { { dup squeezefont } forall } forall
+.dicttomark def
+(done.\n) print flush
+
+% Invert fdict.
+/f2dict fdict length dict def
+fdict { exch f2dict 3 1 roll put } forall
+
+% Construct the compressed font file.
+(Creating ) print allname print (... ) print flush
+/posdict fdict length dict def
+/all allname (w) file def
+all beginfilestring writestring
+Lists
+ { dup == flush
+   /fbegin all fileposition def
+   mark exch { fdict exch get } forall ]
+   all packfiles exch pop
+   /flength all fileposition fbegin sub def
+    { fbegin flength 3 -1 roll aload pop 4 packedarray
+      exch f2dict exch get exch posdict 3 1 roll put
+    }
+   forall
+ }
+forall
+all closefile
+(done.\n) print flush
+
+% Write the Fontmap addendum for accessing compressed fonts.
+(Writing ) print allmapname print (... ) print flush
+allmapname (w) file
+dup (%!
+/.runpackedlibfile where{pop}{(gs_pfile.ps)runlibfile}ifelse
+.currentglobal true .setglobal
+) writestring
+posdict
+ { exch 2 index exch write==only exch dup ({) writestring
+   dup allname write==only
+   exch { 1 index dup ( ) writestring exch write==only } forall
+   dup ( .runpackedlibfile}bind .definefontmap
+) writestring
+ }
+forall
+dup (.setglobal
+) writestring
+closefile
+(done.\n) print flush

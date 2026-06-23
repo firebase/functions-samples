@@ -1,0 +1,8 @@
+-supModel="SUN rasterfile, 8 Bit, 2 Colors (Error-Diffusion)"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceGray
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/SunRaster
+-dupComponentBits={8}

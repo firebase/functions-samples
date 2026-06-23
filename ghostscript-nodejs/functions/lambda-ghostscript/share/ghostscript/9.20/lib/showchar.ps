@@ -1,0 +1,92 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% showchar.ps
+% Show the outline and rasterized forms of a character.
+
+/F where { pop } { /F /Times-Roman def } ifelse
+/P where { pop } { /P 16 def } ifelse
+/Rx where { pop } { /Rx 100 def } ifelse
+/Ry where { pop } { /Ry 100 def } ifelse
+/Cs where { pop } { /Cs (M) def } ifelse
+/Pr where { pop } { /Pr false def } ifelse
+/Delay where { pop } { /Delay 0 def } ifelse
+
+0 setgray
+(markpath.ps) runlibfile
+(markhint.ps) runlibfile
+/mmx [1 0 0 1 0 0] def
+/getpath		% - getpath <pathproc>
+ { [
+    { /moveto cvx } { /lineto cvx } { /curveto cvx } { /closepath cvx }
+   pathforall
+   ] cvx
+ } def
+/bitselectfont		% <fontname> <scale> bitselectfont -
+ { exch findfont exch scalefont setfont
+        % Compute the bounding box in device coordinates.
+   gsave [Rx 72 div 0 0 Ry 72 div 0 0] setmatrix
+   currentfont /FontMatrix get concat
+   currentfont /FontBBox get aload pop
+   transform ceiling cvi /ury exch def ceiling cvi /urx exch def
+   transform floor cvi /lly exch def floor cvi /llx exch def
+   /bbx urx llx sub def /bby ury lly sub def
+   grestore
+ } def
+/bitshow		% <string> bitshow -
+ { /S exch def gsave
+   /W bbx 8 add 7 or 1 add def
+   /H bby 8 add def
+   /buf W 8 idiv string def
+   /M [Rx 72 div 0 0 Ry -72 div 4 llx sub H 4 sub] def
+   M W H <ff 00> makeimagedevice
+   /dev exch def
+   gsave dev setdevice
+   newpath 0 lly idtransform moveto
+   0 setgray
+   gsave
+     /hpath S false charpath getpath def
+   grestore
+   S show grestore
+   20 20 translate
+   50000 Rx Ry .max P mul div dup scale
+   0.7 setgray
+   0 W H true M
+    { dup 1 add exch dev exch buf copyscanlines
+    } imagemask pop
+   0 setlinewidth
+   gsave 0.5 1 0.5 setrgbcolor hpath exec mmx markpath grestore
+   0 0.5 1 setrgbcolor hpath exec stroke
+        % Show the hints for Type 1 fonts also.
+   currentfont /FontType get 1 eq
+    { gsave 1 0 0 setrgbcolor
+      0 lly M idtransform translate
+      currentfont /FontMatrix get
+      dup Pr markfonthints
+      currentfont /Encoding get S 0 get get exch Pr markcharhints
+      grestore
+    }
+   if
+ } def
+F P bitselectfont
+/S1 1 string def
+Cs
+ { /C exch def
+   currentfont /Encoding get C get /.notdef ne
+    { save S1 0 C put S1 bitshow
+      showpage restore
+    } if
+ } forall
+quit

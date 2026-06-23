@@ -1,0 +1,179 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Parse and execute the command line.
+% C code handles the following switches: -h/-? -I -M -v
+
+/cmddict 50 dict def
+cmddict begin
+
+% ---------------- Utility procedures ---------------- %
+
+% Get the next argument from the parsed argument list.
+/nextarg		% - nextarg <arg> true
+                        % - nextarg false
+ { argv length 0 eq
+    { false }
+    { argv dup 0 get exch dup length 1 sub 1 exch getinterval /argv exch def }
+   ifelse
+ } bind def
+
+% Run a file, under job control if implemented.
+/runjob			% <file> runjob -
+ { end		% cmddict
+   /startjob where { pop false () startjob pop }
+   run
+   //cmddict begin
+ } bind def
+/runfilejob		% <filename> runfilejob -
+ { findlibfile { exch pop } { (r) file } runjob
+ } bind def
+
+% Expand arguments.  Free variables: expand@.
+/expandarg		% <string> expandarg <args...>
+ { dup () eq
+    { pop
+    }
+    { dup dup (--) eq exch (-+) eq or
+       { pop /expand@ false def
+       }
+       { expand@ { (@) anchorsearch } { false } ifelse
+          { pop findlibfile
+             { exch pop }
+             { (r) file }		% let the error happen
+            expandargfile
+          }
+         if
+       }
+      ifelse
+    }
+ } bind def
+/expandargfile		% <file> expandargfile <args...>
+ { [ exch cvlit
+    { token not { exit } if
+      dup type /stringtype ne { =string cvs dup length string copy } if
+      expandarg
+    }
+   /exec cvx
+   ] cvx loop
+ } bind def
+
+% ---------------- Recognized switches ---------------- %
+
+% Switches with arguments are defined as <x>;
+% switches without arguments are defined as -<x>.
+
+% Switches without arguments
+/--
+ { nextarg not
+    { (-- and -+ require a file name.) = flush }
+    { //systemdict /ARGUMENTS argv put /argv [] def runjob }
+   ifelse
+ } bind def
+/-+ /-- load def
+/-@ /-- load def
+/-A { (@) Z } bind def
+/-c
+ {  { argv length 0 eq { exit } if
+      argv 0 get (-) anchorsearch { pop pop exit } if
+      pop nextarg token
+       { exch pop			% Probably should check for empty.
+         end exec //cmddict begin
+       }
+      if
+    }
+   loop
+ } bind def
+/-e { (#) Z } bind def
+/-E /-e load def
+/-f { } def
+/-q { //systemdict /QUIET true put } bind def
+
+% Switches with arguments
+/d
+ { (=) search not { (#) search not { () exch dup } if } if
+   exch pop cvn dup where
+    { pop (Redefining ) print print ( is not allowed.) = flush pop }
+    { exch token
+       { exch pop }		% Probably should check for empty.
+       { true }
+      ifelse
+      //systemdict 3 1 roll put
+    }
+   ifelse
+ } bind def
+/D /d load def
+/f { dup length 0 ne { runfilejob } if } bind def
+/g
+ { (x) search { cvi pop exch cvi } { cvi dup } ifelse
+   //systemdict begin /DEVICEHEIGHT exch def /DEVICEWIDTH exch def end
+ } bind def
+/r
+ { (x) search { cvr pop exch cvr } { cvr dup } ifelse
+   //systemdict begin /DEVICEYRESOLUTION exch def /DEVICEXRESOLUTION exch def end
+ } bind def
+/s
+ { (=) search not { (#) search not { () exch dup } if } if
+   exch pop cvn dup where { pop dup load } { () } ifelse
+   type /stringtype ne
+    { (Redefining ) print print ( is not allowed.) = flush pop }
+    { exch //systemdict 3 1 roll put }
+   ifelse
+ } bind def
+/S /s load def
+/Z { true .setdebug } bind def
+
+% ---------------- Main program ---------------- %
+
+% We process the command line in two passes.  In the first pass,
+% we read and expand any @-files as necessary.  The second pass
+% does the real work.
+
+/cmdstart
+ { //cmddict begin
+   /expand@ true def
+   [
+                % Process the GS_OPTIONS environment variable.
+   (GS_OPTIONS) getenv { 0 () /SubFileDecode filter expandargfile } if
+                % Process the actual command line.
+   .getargv { expandarg } forall
+   ] readonly /argv exch def
+                % Now interpret the commands.
+    { nextarg not { exit } if
+      dup 0 get (-) 0 get eq
+       { dup length 1 eq
+          { pop (%stdin) (r) file runjob
+          }
+          { dup length 2 gt
+             { dup dup length 2 sub 2 exch getinterval exch 1 1 getinterval }
+            if currentdict .knownget
+             { exec
+             }
+             { (Ignoring unknown switch ) print
+               dup length 1 eq { (-) print print } if print
+               () = flush
+             }
+            ifelse
+          }
+         ifelse
+       }
+       { runfilejob
+       }
+      ifelse
+    }
+   loop end
+ } bind def
+
+end		% cmddict

@@ -1,0 +1,62 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% viewcmyk.ps
+% Display a raw CMYK file.
+% Requires the colorimage operator.
+% If SCALE is defined, maps input pixels to output pixels with that scale;
+% if SCALE is undefined, scales the image to fit the page.
+% If BITS is defined, it is the number of bits per sample (1,2,4,8,12);
+% if BITS is undefined, its default value is 1.
+
+/viewcmyk {			% <filename> <width> viewcmyk -
+  20 dict begin
+  /w exch def
+  /fname exch def
+  /bpc /BITS where { pop BITS } { 1 } ifelse def
+  /f fname (r) file def
+  mark fname status pop pop pop /flen exch def cleartomark
+  /h flen w bpc 4 mul mul 7 add 8 idiv idiv def
+  (Dimensions: ) print [w h] == flush
+                % Set up scaling.
+  /SCALE where {
+    pop
+        % Map pixels SCALE-for-1.  Assume orthogonal transformation.
+    SCALE 1 0 dtransform add abs div
+    SCALE 0 1 dtransform add abs div
+  } {
+        % Scale the image (uniformly) to fit the page.
+    clippath pathbbox pop pop translate
+    pathbbox 3 -1 roll sub h div
+    3 1 roll exch sub w div .min dup
+  } ifelse scale
+  w h bpc [1 0 0 -1 0 h] f false 4 colorimage
+  showpage
+  f closefile
+  end
+} bind def
+
+% If the program was invoked from the command line, run it now.
+[ shellarguments {
+  counttomark 2 eq {
+    cvi viewcmyk
+  } {
+    cleartomark
+    (Usage: gs -- viewcmyk.ps filename.cmyk width\n) print
+    ( e.g.: gs -- viewcmyk.ps my.cmyk 2550\n) print flush
+  } ifelse
+} {
+  pop
+} ifelse

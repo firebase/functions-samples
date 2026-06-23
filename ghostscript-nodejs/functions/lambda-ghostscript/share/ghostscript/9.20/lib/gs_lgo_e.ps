@@ -1,0 +1,90 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Define the Adobe "original" Latin glyph set.
+% This is not an Encoding strictly speaking, but we treat it like one.
+/currentglobal where
+ { pop currentglobal { setglobal } true setglobal }
+ { { } }
+ifelse
+/AdobeLatinOriginalGlyphEncoding mark
+
+/.notdef
+/A /AE /Aacute /Acircumflex /Adieresis /Agrave /Aring /Atilde
+/B
+/C /Ccedilla
+/D
+/E /Eacute /Ecircumflex /Edieresis /Egrave /Eth
+/F
+/G
+/H
+/I /Iacute /Icircumflex /Idieresis /Igrave
+/J
+/K
+/L /Lslash
+/M
+/N /Ntilde
+/O /OE /Oacute /Ocircumflex /Odieresis /Ograve /Oslash /Otilde
+/P
+/Q
+/R
+/S /Scaron
+/T /Thorn
+/U /Uacute /Ucircumflex /Udieresis /Ugrave
+/V
+/W
+/X
+/Y /Yacute /Ydieresis
+/Z /Zcaron
+/a /aacute /acircumflex /acute /adieresis /ae /agrave /ampersand /aring
+ /asciicircum /asciitilde /asterisk /at /atilde
+/b /backslash /bar /braceleft /braceright /bracketleft /bracketright /breve
+ /brokenbar /bullet
+/c /caron /ccedilla /cedilla /cent /circumflex /colon /comma /copyright
+ /currency
+/d /dagger /daggerdbl /degree /dieresis /divide /dollar /dotaccent /dotlessi
+/e /eacute /ecircumflex /edieresis /egrave /eight /ellipsis /emdash /endash
+ /equal /eth /exclam /exclamdown
+/f /fi /five /fl /florin /four /fraction
+/g /germandbls /grave /greater /guillemotleft /guillemotright /guilsinglleft
+ /guilsinglright
+/h /hungarumlaut /hyphen
+/i /iacute /icircumflex /idieresis /igrave
+/j
+/k
+/l /less /logicalnot /lslash
+/m /macron /minus /mu /multiply
+/n /nine /ntilde /numbersign
+/o /oacute /ocircumflex /odieresis /oe /ogonek /ograve /one /onehalf
+ /onequarter /onesuperior /ordfeminine /ordmasculine /oslash /otilde
+/p /paragraph /parenleft /parenright /percent /period /periodcentered
+ /perthousand /plus /plusminus
+/q /question /questiondown /quotedbl /quotedblbase /quotedblleft
+ /quotedblright /quoteleft /quoteright /quotesinglbase /quotesingle
+/r /registered /ring
+/s /scaron /section /semicolon /seven /six /slash /space /sterling
+/t /thorn /three /threequarters /threesuperior /tilde /trademark /two
+ /twosuperior
+/u /uacute /ucircumflex /udieresis /ugrave /underscore
+/v
+/w
+/x
+/y /yacute /ydieresis /yen
+/z /zcaron /zero
+
+counttomark packedarray exch pop
+8 1 index .registerencoding
+.defineencoding
+exec

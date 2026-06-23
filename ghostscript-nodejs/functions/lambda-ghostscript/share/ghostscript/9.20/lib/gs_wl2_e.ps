@@ -1,0 +1,65 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Define the Windows 3.1 Latin 2 encoding vector (H-P Symbol set 9E).
+/currentglobal where
+ { pop currentglobal { setglobal } true setglobal }
+ { { } }
+ifelse
+/Win32Latin2Encoding
+ISOLatin1Encoding 0 39 getinterval aload pop
+    /quotesingle
+ISOLatin1Encoding 40 5 getinterval aload pop
+    /hyphen
+ISOLatin1Encoding 46 50 getinterval aload pop
+    /grave
+ISOLatin1Encoding 97 30 getinterval aload pop
+    /graybox
+% \20x
+    /.notdef /.notdef /quotesinglbase /.notdef
+        /quotedblbase /ellipsis /dagger /daggerdbl
+    /.notdef /perthousand /Scaron /guilsinglleft
+        /Sacute /Tcaron /Zcaron /Zacute
+    /.notdef /quoteleft /quoteright /quotedblleft
+        /quotedblright /bullet /endash /emdash
+    /.notdef /trademark /scaron /guilsinglright
+        /sacute /tcaron /zcaron /zacute
+    /.notdef /caron /breve /Lslash
+        /currency /Aogonek /brokenbar /section
+    /dieresis /copyright /Scedilla /guillemotleft
+        /logicalnot /softhyphen /registered /Zdotaccent
+    /degree /plusminus /ogonek /lslash
+        /acute /mu /paragraph /periodcentered
+    /cedilla /aogonek /scedilla /guillemotright
+        /Lcaron /hungarumlaut /lcaron /zdotaccent
+% \30x
+    /Racute /Aacute /Acircumflex /Abreve
+        /Adieresis /Lacute /Cacute /Ccedilla
+    /Ccaron /Eacute /Eogonek /Edieresis
+        /Ecaron /Iacute /Icircumflex /Dcaron
+    /Dcroat /Nacute /Ncaron /Oacute
+        /Ocircumflex /Ohungarumlaut /Odieresis /multiply
+    /Rcaron /Uring /Uacute /Uhungarumlaut
+        /Udieresis /Yacute /Tcommaaccent /germandbls
+    /racute /aacute /acircumflex /abreve
+        /adieresis /lacute /cacute /ccedilla
+    /ccaron /eacute /eogonek /edieresis
+        /ecaron /iacute /icircumflex /dcaron
+    /dcroat /nacute /ncaron /oacute
+        /ocircumflex /ohungarumlaut /odieresis /divide
+    /rcaron /uring /uacute /uhungarumlaut
+        /udieresis /yacute /tcommaaccent /dotaccent
+256 packedarray .defineencoding
+exec

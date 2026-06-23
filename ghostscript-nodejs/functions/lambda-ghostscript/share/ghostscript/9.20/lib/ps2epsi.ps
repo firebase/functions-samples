@@ -1,0 +1,243 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Convert an arbitrary PostScript file to an EPSI file.
+%
+% Please do not contact these users if you have questions.  They no longer
+% have the time, interest, or current expertise to keep this code working.
+% If you find bugs, please send proposed fixes to bug-gs@ghostscript.com.
+%
+% Bug fix 2002-04-20 by rayjj: Bounding box was incorrect since it depended
+%   on the dither pattern and gray shade at the boundary. Changed to use
+%   8-bit grayscale preview image to allow correct bounding box (at the
+%   expense of a 8x larger preview image). Also moved .setsafe until after
+%   the device and file operations are complete (but still before the input
+%   file is processed.
+% Bug fix 2000-04-11 by lpd: if a font didn't have a FontName (which is the
+%   case for bitmap fonts produced by recent versions of dvips), setfont
+%   caused an error.
+% Bug fix 8/21/99 by lpd: many of the margin and width computations were
+%   wrong (off by 1).  The code only "worked" because the bugs were
+%   (mostly) in conservative directions.
+% Modified 3/17/98 by lpd to make it possible to run this file without
+%   running the ps2epsi script first, for debugging.
+% Bug fix 9/29/97 by lpd <ghost@aladdin.com>: if the page size wasn't an
+%   exact multiple of 8 bits, an incorrect bounding box (or a rangecheck
+%   error) could occur.
+% Patched 7/26/95 by
+%	Greg P. Kochanski <gpk@bell-labs.com>
+%   to add many new DSC comments and make the comments conforming.
+% Original version contributed by
+%	George Cameron <george@bio-medical-physics.aberdeen.ac.uk>
+%
+
+% Initialize, and redefine copypage and showpage.
+
+% ps2edict is normally defined in the pre-loaded code created by the
+% ps2epsi script.
+/ps2edict where { pop } { /ps2edict 25 dict def } ifelse
+ps2edict begin
+
+                                % The main procedure
+  /ps2epsi
+   {
+        % bbox written to outfile by bbox device from ps2epsi command file
+        outfile (r) file /epsifile exch def
+        /BBoxString epsifile 256 string readline pop def
+        /HiresBBoxString epsifile 256 string readline pop def
+        epsifile closefile
+                        % Open the file
+     outfile (w) file /epsifile exch def
+                                        % Get the device parameters
+     currentdevice getdeviceprops .dicttomark
+     /HWSize get aload pop
+       /devheight exch def
+       /devwidth exch def
+     matrix defaultmatrix
+       /devmatrix exch def
+                                % Make a corresponding 8-bit deep memory device
+     devmatrix devwidth devheight
+     256 string 0 1 255 { 1 index exch dup 255 exch sub put } for
+     makeimagedevice
+     /arraydevice exch def
+     arraydevice
+     % Turn on anti-aliasing
+     mark /TextAlphaBits 4 /GraphicsAlphaBits 4 6 -1 roll
+     putdeviceprops
+     setdevice	% (does an erasepage)
+     /rowwidth devwidth def
+     /row rowwidth string def
+     /zerorow rowwidth string def	% all zero
+                                % Replace the definition of showpage
+     userdict /showpage { ps2edict begin epsipage end } bind put
+     userdict /setfont { ps2edict begin epsisetfont end } bind put
+     userdict /setpagedevice /pop load put
+     //systemdict /.setsafe known { .setsafe } if
+   } bind def
+
+ /epsifontdict 100 dict def
+
+ /epsisetfont
+ {
+ % code here keeps a list of font names in dictionary epsifontdict
+ /tmpfont exch def
+ tmpfont /FontName known {
+   /tmpfontname tmpfont /FontName get def
+   epsifontdict tmpfontname known not { epsifontdict tmpfontname 0 put } if
+   epsifontdict tmpfontname 2 copy get 1 add put
+ } if
+ tmpfont setfont
+ } bind def
+
+% Get a scan line from the memory device, zeroing any bits beyond
+% the device width.
+/getscanline {		% <device> <y> <string> getscanline <string>
+  dup 4 1 roll copyscanlines pop
+  16#ff00 devwidth 7 and neg bitshift 255 and
+  dup 0 ne {
+    1 index dup length 1 sub 2 copy get 4 -1 roll and put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/margintest {		% <y-start> <step> <y-limit> margintest <y-non-blank>
+                        % <y-start> <step> <y-limit> margintest -
+  { dup arraydevice exch row getscanline
+    zerorow ne { exit } if pop
+  } for
+} bind def
+
+  /epsiNameStr 200 string def
+  /epsiNpages 0 def
+  /epsiNpageStr 20 string def
+  /epsipage
+   {
+     /epsiNpages epsiNpages 1 add def
+     /loopcount devheight 1 sub def
+
+     % Find top margin -- minimum Y of non-blank scan line.
+     -1 0 1 loopcount margintest
+     dup -1 eq { (blank page!!\n) print quit }{ exch pop } ifelse
+     /tm exch def
+
+     % Find bottom margin -- maximum Y of non-blank scan line.
+     loopcount -1 0 margintest
+     /bm exch def
+
+     % Initialise limit variables
+     /loopcount rowwidth 1 sub def
+     /lm loopcount def
+     /rm 0 def
+
+     % Find left and right boundaries of image
+     tm 1 bm
+      { % Get more data
+        arraydevice exch row getscanline pop
+        % Scan from left to find first non-zero element
+        % We save first the element, then the index
+        -1 0 1 loopcount
+        { dup row exch get 0 ne { exch pop exit }{ pop } ifelse
+        } for
+        % If we found -1, row is blank ..
+        dup -1 ne
+        { % Find the leftmost index
+          dup lm lt
+          % If the new index is less, we save index and element
+          { /lm exch def } { pop } ifelse
+          % Now find the rightmost index
+          loopcount -1 0
+          { dup row exch get 0 ne { exit }{ pop } ifelse
+          } for
+          dup rm gt
+          % If the new index is greater, we save index and element
+          { /rm exch def } { pop } ifelse
+        } if
+      } for
+
+    % Write out the magic string and bounding box information
+     epsifile (%!PS-Adobe-2.0 EPSF-1.2\n) writestring
+         /epsititle where { pop epsifile epsititle writestring } if
+         /epsicreator where { pop epsifile epsicreator writestring } if
+         /epsicrdt where { pop epsifile epsicrdt writestring } if
+         /epsifor where { pop epsifile epsifor writestring } if
+     epsifile flushfile
+
+        % Write out the page count:
+         epsifile (%%Pages: ) writestring
+         epsifile epsiNpages epsiNpageStr cvs writestring
+         epsifile (\n) writestring
+     epsifile flushfile
+
+        % Write out the list of used fonts:
+         epsifile (%%DocumentFonts:) writestring
+         epsifontdict {
+                                        epsifile ( ) writestring
+                                        pop epsiNameStr cvs epsifile exch writestring
+                                        } forall
+         epsifile (\n) writestring
+     epsifile flushfile
+
+        epsifile BBoxString writestring epsifile (\n) writestring
+        epsifile HiresBBoxString writestring epsifile (\n) writestring
+
+    % Define character and bit widths for the output line buffer:
+     /cwidth rm lm sub 1 add def
+     /out cwidth string def
+
+     epsifile (%%EndComments\n\n) writestring
+     epsifile (%%BeginProlog\n) writestring
+     epsifile (%%BeginPreview: ) writestring
+     epsifile cwidth write==only epsifile ( ) writestring
+     epsifile bm tm sub 1 add write==only epsifile ( 8 ) writestring
+     epsifile bm tm sub 1 add
+     cwidth 39 add 40 idiv mul write==
+     epsifile flushfile
+
+     gsave
+
+     tm 1 bm
+      { % Get a scan line interval from the array device
+        arraydevice exch row copyscanlines lm cwidth getinterval
+        % Write out the hex data as 40 bytes per line (82 chars)
+        0 40 cwidth
+         { epsifile (% ) writestring
+           epsifile exch 2 index exch
+           dup cwidth exch sub 40 .min getinterval writehexstring
+           epsifile (\n) writestring
+         } for
+        pop
+      } for
+
+     epsifile (%%EndImage\n) writestring
+     epsifile (%%EndPreview\n) writestring
+     epsifile flushfile
+     grestore
+     erasepage initgraphics
+
+     DonePage 0 1 put
+   } bind def
+
+(outfile) getenv
+  { /outfile exch def
+    ps2epsi
+
+    /DonePage 1 string def
+    (%stdin) (r) file cvx execute0
+    DonePage 0 get 0 eq { showpage } if
+  } if
+
+end
+quit

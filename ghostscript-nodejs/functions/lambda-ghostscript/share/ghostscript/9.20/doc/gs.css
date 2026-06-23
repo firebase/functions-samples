@@ -1,0 +1,85 @@
+/* This is the default Ghostscript stylesheet */
+
+body
+{
+  color: black;
+  background-color: white;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* This needs a patched html file else you have it all over the place */
+/* we only want this for the "visual header" at the page top */
+h1
+{
+  text-align: center;
+  background-color: #CCCC00;
+}
+
+/* Number the h2/h3 -- doesn't work on v4/5 browsers */
+h2
+{
+   counter-increment: h2-count;
+   counter-reset:     h3-count;
+}
+
+h2:before
+{
+   content: counter(h2-count) " ";
+}
+
+h3
+{
+   counter-increment: h3-count;
+}
+
+h3:before
+{
+   content: counter(h2-count) "." counter(h3-count) " ";
+   
+}
+  
+tt
+{
+  color: rgb(40%,24%,24%);
+}
+
+code
+{
+  color: rgb(40%,24%,24%);
+  font-weight: bold;
+}
+
+a > tt, a > b > tt
+{
+  color: blue;
+}
+
+a
+{
+  color: blue;
+}
+
+a.offsite
+{
+  font-style: oblique;
+}
+
+a:visited
+{
+  color: rgb(60%,0%,30%);
+}
+
+a:hover, a:active, a:focus
+{
+  background: #FFFFAA;
+}
+
+/* table formatting hints */
+td
+{
+  vertical-align: top;
+}

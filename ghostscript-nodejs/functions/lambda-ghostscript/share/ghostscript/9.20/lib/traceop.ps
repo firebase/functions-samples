@@ -1,0 +1,82 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Trace individual operators or procedures.
+% <opref> is <opname> or <opname> <dict>
+%    (dict defaults to dict where op is currently defined, if writable;
+%    otherwise uses userdict)
+% <opref> traceop prints vmem usage before;
+% <opref> <numargs|preproc> prints arguments or runs proc before;
+% <opref> <numargs|preproc> <numresults|postproc>
+%    also prints results or runs proc after.
+% If traceflush is true, flush the output after each printout.
+/traceflush true def
+
+currentpacking true setpacking
+.currentglobal true .setglobal
+
+% Define the default "before" action
+/tracebefore { vmstatus 3 traceprint pop pop pop } def
+
+% Define the default "after" action
+/traceafter { } def
+
+/traceprint {
+  dup type /integertype eq {
+    1 sub -1 0 { ( ) print index ==only } for
+  } {
+    exec
+  } ifelse
+} bind def
+/traceend {
+  traceflush { flush } if
+} bind def
+/traceop {
+  userdict begin
+  dup type dup /nametype eq exch /dicttype eq or { { tracebefore } } if
+  1 index type dup /nametype eq exch /dicttype eq or { { traceafter } } if
+  /.tpost exch def /.tpre exch def
+  dup type /dicttype ne {
+    dup where not { userdict 1 index {} put userdict } if
+  } if
+  dup dup wcheck not {
+    (Warning: substituting userdict for non-writable dictionary.) =
+    pop userdict
+  } if
+  /.tddict exch def   /.tdict exch def   /.tname exch cvlit def
+  .currentglobal [
+  .tname /=only cvx ( ) /print cvx
+    /.tpre load /traceprint cvx /traceend cvx
+    .tdict .tname get /.tdef 1 index cvlit def
+    dup xcheck {
+      dup type dup /arraytype eq exch /packedarraytype eq or {
+        /exec cvx
+      } if
+    } if
+    /.tpost load /traceprint cvx () /= cvx /traceend cvx
+  .tdef gcheck /.tpre load gcheck and /.tpost load gcheck and .setglobal
+  ] cvx
+  .tdef type /operatortype eq {
+    .tname exch .makeoperator
+  } if
+  exch .setglobal
+  .tddict exch .tname exch put
+  end		% userdict
+} bind def
+/tracebind /bind load def	% in case someone wants to put it back
+/bind { } def		% disable
+
+.setglobal
+setpacking

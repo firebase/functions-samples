@@ -1,0 +1,664 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% wrfont.ps
+% Write out a Type 1 font in readable, reloadable form.
+% Note that this does NOT work on protected fonts, such as Adobe fonts
+% (unless you have loaded unprot.ps first, in which case you may be
+% violating the Adobe license).
+
+% ****** NOTE: This file must be kept consistent with gs_pfile.ps.
+
+/wrfont_dict 100 dict def
+wrfont_dict begin
+
+% ------ Options ------ %
+
+% Define whether to use eexec encryption for the font.
+% eexec encryption is only useful for compatibility with Adobe Type Manager
+% and other programs; it only slows Ghostscript down.
+   /eexec_encrypt false def
+
+% Define whether to write out the CharStrings in binary or in hex.
+% Binary takes less space on the file, but isn't guaranteed portable.
+   /binary_CharStrings false def
+
+% Define whether to use binary token encodings when possible.
+% Binary tokens are smaller and load faster, but are a Level 2 feature.
+   /binary_tokens false def
+
+% Define whether to encrypt the CharStrings on the file.  (CharStrings
+% are always encrypted in memory.)  Unencrypted CharStrings load about
+% 20% slower, but make the files compress much better for transport.
+   /encrypt_CharStrings true def
+
+% Define whether the font must provide standard PostScript language
+% equivalents for any facilities it uses that are provided in Ghostscript
+% but are not part of the standard PostScript language.
+   /standard_only true def
+
+% Define the value of lenIV to use in writing out the font.
+% use_lenIV = 0 produces the smallest output, but this may not be
+% compatible with old Adobe interpreters.  use_lenIV = -1 means
+% use the value of lenIV from the font.
+   /use_lenIV -1 def
+
+% Define whether to produce the smallest possible output, relying
+% as much as possible on Ghostscript-specific support code.
+% Taking full advantage of this requires the following settings:
+% binary_CharStrings = true, binary_tokens = true, standard_only = false.
+   /smallest_output false def
+
+% Define whether to write out all currently known Encodings by name,
+% or only StandardEncoding and ISOLatin1Encoding.
+   /name_all_Encodings false def
+
+% ---------------- Runtime support ---------------- %
+
+/.packedfilefilter where
+ { pop }
+ { (gs_pfile.ps) runlibfile }
+ifelse
+
+% ------ Output utilities ------ %
+
+% By convention, the output file is named psfile.
+
+% Define some utilities for writing the output file.
+   /wtstring 2000 string def
+   /wb {psfile exch write} bind def
+   /wnb {/wb load repeat} bind def
+   /w1 {psfile exch write} bind def
+   /ws {psfile exch writestring} bind def
+   /wl {ws (\n) ws} bind def
+   /wt {wtstring cvs ws ( ) ws} bind def
+   /wd		% Write a dictionary.
+    { dup length wo {dict dup begin} wol { we } forall
+      {end} wol
+    } bind def
+   /wld		% Write a large dictionary more efficiently.
+                % Ignore the readonly attributes.
+    { dup length wo {dict dup begin} wol
+      0 exch
+       { exch wo wo () wl
+         1 add dup 200 eq
+          { wo ({def} repeat) wl 0 }
+         if
+       }
+      forall
+      dup 0 ne
+       { wo ({def} repeat) wl }
+       { pop }
+      ifelse
+      (end) ws
+    } bind def
+   /we		% Write a dictionary entry.
+    { exch wo wo /def cvx wo (\n) ws
+    } bind def
+   /wcs		% Write a CharString (or Subrs entry)
+    { dup type /stringtype eq
+       { 4330 exch changelenIV 0 ge
+          {	% Add some leading garbage bytes.
+            wtstring changelenIV 2 index length getinterval
+            .type1decrypt exch pop
+            wtstring exch 0 exch length changelenIV add getinterval
+          }
+          {	% Drop some leading garbage bytes.
+            wtstring .type1decrypt exch pop
+            changelenIV neg 1 index length 1 index sub getinterval
+          }
+         ifelse
+         binary_tokens encrypt_CharStrings and
+          { % Suppress recognizing the readonly status of the string.
+            4330 exch dup .type1encrypt exch pop wo
+          }
+          { encrypt_CharStrings
+             { 4330 exch dup .type1encrypt exch pop
+             } if
+            smallest_output
+             { wo
+             }
+             { readonly dup length wo
+               binary_tokens not { ( ) ws } if
+               readproc ws wx
+             }
+            ifelse
+          }
+         ifelse
+       }
+       { wo		% PostScript procedure
+       }
+      ifelse
+    } bind def
+
+% Construct the inversion of the system name table.
+  (\210\001) token pop exch pop 1 eq {	% i.e., do we have binary tokens?
+    /snit 256 dict def
+    0 1 255 {
+      (\221 ) dup 1 3 index put
+      { token } stopped {
+        pop pop
+      } {
+                % Stack: char () token true
+        pop exch pop exch snit 3 1 roll put
+      } ifelse
+    } for
+  } {
+    /snit 1 dict def
+  } ifelse
+
+% Write an object, using binary tokens if requested and possible.
+   /woa		% write in ascii
+    { psfile exch write==only
+    } bind def
+
+                        % Lookup table for ASCII output.
+
+   /intbytes	% int nbytes -> byte*
+    { { dup 255 and exch -8 bitshift } repeat pop
+    } bind def
+   /wotta 10 dict dup begin
+      { /booleantype /integertype }
+      { { ( ) ws woa } def }
+     forall
+                % Iterate over arrays so we can print operators.
+     /arraytype
+      { dup xcheck {(}) ({)} {(]) ([)} ifelse ws exch dup wol exch ws wop
+      } bind def
+     /dicttype
+      { ( ) ws wd } def
+     /nametype
+      { dup xcheck { ( ) ws } if woa
+      } bind def
+                % Map back operators to their names,
+                % so we can write procedures.
+     /nulltype
+      { pop ( null) ws
+      } bind def
+     /operatortype
+      { wtstring cvs cvn cvx wo
+      } bind def
+                % Convert reals to integers if possible.
+     /realtype
+      { dup cvi 1 index eq { cvi wo } { ( ) ws woa } ifelse
+      } bind def
+                % == truncates strings longer than 200 characters!
+     /stringtype
+      { (\() ws dup
+         { dup dup 32 lt exch 127 ge or
+            { (\\) ws dup -6 bitshift 48 add w1
+              dup -3 bitshift 7 and 48 add w1
+              7 and 48 add
+            }
+            { dup dup -2 and 40 eq exch 92 eq or {(\\) ws} if
+            }
+           ifelse w1
+         }
+        forall
+        (\)) ws wop
+      } bind def
+     /packedarraytype
+      { ([) ws dup { wo } forall
+        encodingnames 1 index known
+                % This is an encoding, but not one of the standard ones.
+                % Use the built-in encoding only if it is available.
+         { encodingnames exch get wo
+           ({findencoding}stopped{pop) ws
+           (}{counttomark 1 add 1 roll cleartomark}ifelse)
+         }
+         { pop ()
+         }
+        ifelse
+        (/packedarray where{pop counttomark packedarray exch pop}{]readonly}ifelse) ws
+        wl
+      }
+     def
+   end def
+
+                        % Lookup table for binary output.
+
+   /wottb 8 dict dup begin
+   wotta currentdict copy pop
+     /integertype
+      { dup dup 127 le exch -128 ge and
+         { 136 wb 255 and wb }
+         { dup dup 32767 le exch -32768 ge and
+            { 134 wb 2 intbytes wb wb }
+            { 132 wb 4 intbytes wb wb wb wb }
+           ifelse
+         }
+        ifelse
+      } bind def
+     /nametype
+      { dup snit exch known
+         { dup xcheck { 146 } { 145 } ifelse wb
+           snit exch get wb
+         }
+         { wotta /nametype get exec
+         }
+        ifelse
+      } bind def
+     /stringtype
+      { dup dup length dup 255 le { 142 2 } { 2 intbytes 143 3 } ifelse wnb
+        ws wop
+      } bind def
+   end def
+
+   /wop		% Write object protection
+     { wcheck not { /readonly cvx wo } if
+     } bind def
+   /wo		% Write an object.
+     { dup type binary_tokens { wottb } { wotta } ifelse
+       exch get exec
+     } bind def
+   /wol		% Write a list of objects.
+     { { wo } forall
+     } bind def
+
+% Write a hex string for Subrs or CharStrings.
+   /wx		% string ->
+    { binary_CharStrings
+       { ws
+       }
+       { % Some systems choke on very long lines, so
+         % we break up the hexstring into chunks of 50 characters.
+          { dup length 25 le {exit} if
+            dup 0 25 getinterval psfile exch writehexstring (\n) ws
+            dup length 25 sub 25 exch getinterval
+          } loop
+         psfile exch writehexstring
+       } ifelse
+    } bind def
+
+% ------ CharString encryption utilities ------ %
+
+/enc_dict 20 dict def
+1 dict begin
+/bind { } def		% make sure we can print out the procedures
+enc_dict begin
+
+(type1enc.ps) runlibfile
+enc_dict /.type1decrypt undef		% we don't need this
+
+end end
+
+enc_dict { 1 index where { pop pop pop } { def } ifelse } forall
+
+% ------ Other utilities ------ %
+
+% Test whether two values are equal (for default dictionary entries).
+   /valueeq		% <obj1> <obj2> valueeq <bool>
+    { 2 copy eq
+       { pop pop true }
+       {	% Special hack for comparing FontMatrix values
+         dup type /arraytype eq 2 index type /arraytype eq and
+          { dup length 2 index length eq
+             { true 0 1 3 index length 1 sub
+                {	% Stack: arr1 arr2 true index
+                  3 index 1 index get 3 index 3 -1 roll get eq not
+                   { pop false exit }
+                  if
+                }
+               for 3 1 roll pop pop
+             }
+             { pop pop false
+             }
+            ifelse
+          }
+          { pop pop false
+          }
+         ifelse
+       }
+      ifelse
+    } bind def
+
+% ------ The main program ------ %
+
+% Define the dictionary of keys to skip because they are treated specially.
+/.fontskipkeys mark
+  /CharStrings dup
+  /Encoding dup
+  /FDepVector dup
+  /FID dup
+  /FontInfo dup
+  /Metrics dup
+  /Metrics2 dup
+  /Private dup
+.dicttomark def
+/.minfontskipkeys mark
+  .fontskipkeys { } forall
+  /FontName dup
+  /UniqueID dup
+.dicttomark def
+/.privateskipkeys mark
+  /ND dup
+  /NP dup
+  /RD dup
+  /Subrs dup
+.dicttomark def
+/.minprivateskipkeys mark
+  .privateskipkeys { } forall
+  /MinFeature dup
+  /Password dup
+  /UniqueID dup
+.dicttomark def
+
+% Define the procedures for the Private dictionary.
+% These must be defined without `bind',
+% for the sake of the DISKFONTS feature.
+4 dict begin
+ /-! {string currentfile exch readhexstring pop} def
+ /-| {string currentfile exch readstring pop} def
+ /|- {readonly def} def
+ /| {readonly put} def
+currentdict end /encrypted_procs exch def
+4 dict begin
+ /-! {string currentfile exch readhexstring pop
+   4330 exch dup .type1encrypt exch pop} def
+ /-| {string currentfile exch readstring pop
+   4330 exch dup .type1encrypt exch pop} def
+ /|- {readonly def} def
+ /| {readonly put} def
+currentdict end /unencrypted_procs exch def
+
+% Construct an inverse dictionary of encodings.
+/encodingnames mark
+ StandardEncoding /StandardEncoding
+ ISOLatin1Encoding /ISOLatin1Encoding
+ SymbolEncoding /SymbolEncoding
+ DingbatsEncoding /DingbatsEncoding
+ /resourceforall where
+  { pop (*) { cvn dup findencoding exch } 100 string /Encoding resourceforall }
+ if
+.dicttomark def
+
+% Invert the standard encodings.
+.knownEncodings length 256 mul dict begin
+  0 .knownEncodings
+   {  { currentdict 1 index known { pop } { 1 index def } ifelse
+        1 add
+      }
+     forall
+   }
+  forall pop
+currentdict end /inverseencodings exch def
+
+/writefont		% <psfile> writefont - (writes the current font)
+ { /psfile exch def
+   /Font currentfont def
+   /FontInfo Font /FontInfo .knownget not { 0 dict } if def
+   /FontType Font /FontType get def
+   /hasPrivate Font /Private known def
+   /Private hasPrivate { Font /Private get } { 0 dict } ifelse def
+   /readproc binary_CharStrings { (-| ) } { (-! ) } ifelse def
+   /privateprocs
+     encrypt_CharStrings binary_tokens not and
+      { encrypted_procs } { unencrypted_procs } ifelse
+     def
+   /addlenIV false def
+   /changelenIV use_lenIV 0 lt
+    { 0 }
+    { use_lenIV Private /lenIV .knownget not
+       { 4 /addlenIV use_lenIV 4 ne def } if sub }
+   ifelse def
+   /minimize
+     smallest_output
+     FontType 1 eq and
+     Font /UniqueID known and
+   def
+   (%!FontType) ws FontType wtstring cvs ws (-1.0: ) ws
+     currentfont /FontName get wt
+     FontInfo /version .knownget not { (001.001) } if wl
+   FontInfo /CreationDate .knownget { (%%Creation Date: ) ws wl } if
+   FontInfo /VMusage .knownget
+    { (%%VMusage: ) ws dup wt wtstring cvs wl }
+   if
+   (systemdict begin) wl
+
+% If we're going to use eexec, create the filters now.
+   /realpsfile psfile def
+   eexec_encrypt
+    { /eexecfilter psfile binary_CharStrings not
+       { pop /bxstring 35 string def
+          { pop dup length 0 ne
+             { realpsfile exch writehexstring realpsfile (\n) writestring }
+             { pop }
+            ifelse bxstring
+          }
+         /NullEncode filter dup /hexfilter exch def
+       }
+      if 55665 /eexecEncode filter def
+    }
+   if
+
+% Turn on binary tokens if relevant.
+   binary_tokens { (currentobjectformat 1 setobjectformat) wl } if
+
+% If the file has a UniqueID, write out a check against loading it twice.
+   minimize
+    { Font /FontName get wo
+      Font /UniqueID get wo
+      Private length addlenIV { 1 add } if wo
+      Font length 1 add wo		% +1 for FontFile
+      ( .checkexistingfont) wl
+    }
+    { Font /UniqueID known
+       { ({} FontDirectory) ws Font /FontName get dup wo ( known) wl
+         ( {) ws wo ( findfont dup /UniqueID known) wl
+         (    { dup /UniqueID get) ws Font /UniqueID get wo ( eq exch /FontType get 1 eq and }) wl
+         (    { pop false } ifelse) wl
+         (    { pop save /restore load } if) wl
+         ( } if) wl
+       }
+      if
+    }
+   ifelse
+
+% If we are writing unencrypted CharStrings for a standard environment,
+% write out the encryption procedures.
+   privateprocs unencrypted_procs eq standard_only and
+    { (systemdict /.type1encrypt known) wl
+      ( { save /restore load } { { } } ifelse) wl
+      (userdict begin) wl
+      enc_dict { we } forall
+      (end exec) wl
+    }
+   if
+
+% Write out the creation of the font dictionary and FontInfo.
+   minimize not
+    { Font length 1 add wo {dict begin} wol		% +1 for FontFile
+    }
+   if
+   (/FontInfo ) ws FontInfo wd {readonly def} wol
+
+% Write out the other fixed entries in the font dictionary.
+   Font begin
+   Font
+    { minimize
+       { .minfontskipkeys 2 index known
+          { pop pop
+          }
+          { //.compactfontdefault 2 index .knownget
+             { 1 index valueeq { pop pop } { we } ifelse }
+             { we }
+            ifelse
+          }
+         ifelse
+       }
+       { .fontskipkeys 2 index known { pop pop } { we } ifelse
+       }
+      ifelse
+    } forall
+   /Encoding
+   encodingnames Encoding known
+   name_all_Encodings
+   Encoding StandardEncoding eq or
+   Encoding ISOLatin1Encoding eq or and
+    { encodingnames Encoding get cvx }
+    { Encoding }
+   ifelse
+   dup /StandardEncoding cvx eq minimize and
+    { pop pop }
+    { we }
+   ifelse
+
+% Write the FDepVector, if any.
+   Font /FDepVector .knownget
+    { {/FDepVector [} wol
+       { /FontName get wo {findfont} wol () wl } forall
+      {] readonly def} wol
+    }
+   if
+
+% Write out the Metrics, if any.
+   Font /Metrics .knownget
+    { (/Metrics ) ws wld {readonly def} wol
+    }
+   if
+   Font /Metrics2 .knownget
+    { (/Metrics2 ) ws wld {readonly def} wol
+    }
+   if
+
+% Start the eexec-encrypted section, if applicable.
+  eexec_encrypt
+   { {currentdict currentfile eexec} wol () wl
+     /psfile eexecfilter store
+     (\000\000\000\000) ws {begin} wol
+   }
+  if
+
+% Create and initialize the Private dictionary, if any.
+   hasPrivate
+{
+   Private
+   minimize
+    { begin {Private dup begin}
+    }
+    {  dup length privateprocs length add dict copy begin
+       privateprocs { readonly def } forall
+       /Private wo
+       currentdict length 1 add wo {dict dup begin}
+    }
+   ifelse wol () wl
+   currentdict
+    { 1 index minimize { .minprivateskipkeys } { .privateskipkeys } ifelse
+      exch known
+       { pop pop }
+       { 1 index /lenIV eq use_lenIV 0 ge and { pop use_lenIV } if we }
+      ifelse
+    } forall
+   addlenIV { /lenIV use_lenIV we } if
+}
+if
+
+% Write the Subrs entries, if any.
+   currentdict /Subrs known
+    { (/Subrs[) wl
+      Subrs
+       { dup null ne
+          { wcs minimize not { () wl } if }
+          { pop /null cvx wo }
+         ifelse
+       } forall
+      {] dup {readonly pop} forall readonly def} wol () wl
+    }
+   if
+
+% Wrap up the Private dictionary.
+   hasPrivate
+    { end			% Private
+      minimize
+       { {end readonly pop} }	% Private
+       { {end readonly def} }	% Private in font
+      ifelse wol
+    }
+   if
+
+% Write the CharStrings entries.
+% Detect identical (eq) entries, which bdftops produces.
+   currentdict /CharStrings known
+{
+   /CharStrings wo CharStrings length wo
+   minimize
+    { encrypt_CharStrings not wo ( .readCharStrings) wl
+      CharStrings length dict
+      CharStrings
+       { exch inverseencodings 1 index .knownget not { dup } if wo
+                % Stack: vdict value key
+         3 copy pop .knownget { wo pop pop } { 3 copy put pop wcs } ifelse
+       } forall
+    }
+    { {dict dup Private begin begin} wol () wl
+      CharStrings length dict
+      CharStrings
+       { 2 index 1 index known
+          { exch wo 1 index exch get wo {load def} wol () wl
+          }
+          { 2 index 1 index 3 index put
+            exch wo wcs ( |-) wl
+          }
+         ifelse
+       } forall
+      {end end} wol
+    }
+   ifelse
+   pop
+    { readonly def }	% CharStrings in font
+   wol
+}
+if
+
+% Terminate the output.
+   end			% Font
+   eexec_encrypt
+    { {end mark currentfile closefile} wol () wl
+      eexecfilter dup flushfile closefile	% psfile is eexecfilter
+      binary_CharStrings not { hexfilter dup flushfile closefile } if
+      /psfile realpsfile store
+      8
+       { (0000000000000000000000000000000000000000000000000000000000000000)
+         wl
+       }
+      repeat {cleartomark} wol
+    }
+   if
+    { FontName currentdict end definefont pop
+    }
+   wol
+   Font /UniqueID known { /exec cvx wo } if
+   binary_tokens { /setobjectformat cvx wo } if
+   ( end) wl		% systemdict
+
+ } bind def
+
+% ------ Other utilities ------ %
+
+% Prune garbage characters and OtherSubrs out of the current font,
+% if the relevant dictionaries are writable.
+/prunefont
+ { currentfont /CharStrings get wcheck
+    { currentfont /CharStrings get dup [ exch
+       { pop dup (S????00?) .stringmatch not { pop } if
+       } forall
+      ] { 2 copy undef pop } forall pop
+    }
+   if
+ } bind def
+
+end			% wrfont_dict
+
+/writefont { wrfont_dict begin writefont end } def

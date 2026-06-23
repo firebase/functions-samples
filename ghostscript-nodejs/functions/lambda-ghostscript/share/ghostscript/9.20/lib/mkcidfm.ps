@@ -1,0 +1,771 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+
+% Generate a cidfmap file for substituting CID fonts with TrueType
+% fonts, based on fonts found in the directory FONTDIR.
+%
+% The directory FONTDIR is searched for fonts whose filename
+% matches a Path in the cidsubs dictionary.
+% Any matches are written out as a CID font substitution.
+%
+% For each fontname and alias in the fontaliases dictionary,
+% write out each alias that matches a substituted font.
+% Where multiple aliases are possible, use the first match.
+%
+% Note that the substitutions and aliases in this file were created
+% by someone who doesn't understand Chinese, Japanese or Korean.
+% The initial list contains only font files found in Windows XP.
+% Please submit corrections and additions.
+%
+% See the end of file for references and further information.
+%
+% Font filenames must match case.
+% All font filenames are currently lower case.
+%
+% Usage: gswin32c -q -dBATCH -sFONTDIR=c:/windows/fonts
+%                -sCIDFMAP=c:/gs/cidfmap mkcidfm.ps
+
+systemdict /FONTDIR known not { /FONTDIR (c:/windows/fonts) def } if
+
+systemdict /CIDFMAP known { CIDFMAP } { (%stdout) } ifelse
+/cidfmap exch (w) file def
+
+% Directory separator as used by filenameforall
+/dirsep (/) def
+
+% This dictionary contains a list of font substitutions.
+% The first matching substitution in the array will be used.
+/fontaliases
+<<
+  % otf's /AdobeMingStd-Light /AdobeHeitiStd-Regular /AdobeSongStd-Light
+  % /KozMinPr6N-Regular /AdobeMyungjoStd-Medium came with Acroread 9 unix CJK pack.
+
+  % ArialUnicode and a common font are used as a last-resort catch-all
+  % in most cases.
+
+  % Traditional Chinese
+  % Mingliu and Kaiu are known to use patented TT instructions
+  /MSung-Light [ /MingLiU /ArialUnicodeMS-CNS ]
+  /MSung-Medium [ /MingLiU /ArialUnicodeMS-CNS ]
+  /MHei-Medium [ /MicrosoftJhengHeiRegular /ArialUnicodeMS-CNS /MingLiU ]
+  /MKai-Medium [ /DFKaiShu-SB-Estd-BF /Arial-Unicode-MS /MingLiU /ArialUnicodeMS-CNS ]
+  /AdobeMingStd-Light [ /MingLiU /ArialUnicodeMS-CNS ]
+
+  % Simplified Chinese
+  /STSong-Light [ /SimSun /SimSun-18030 /ArialUnicodeMS-GB ]
+  /STFangsong-Light [ /FangSong /SimSun /ArialUnicodeMS-GB ]
+  /STHeiti-Regular [ /MicrosoftYaHei /SimHei /ArialUnicodeMS-GB ]
+  /STKaiti-Regular [ /KaiTi /SimHei /ArialUnicodeMS-GB ]
+  /AdobeHeitiStd-Regular [ /MicrosoftYaHei /SimHei /ArialUnicodeMS-GB ]
+  /AdobeSongStd-Light [ /SimSun /ArialUnicodeMS-GB ]
+
+  % Japanese
+  /Ryumin-Light [ /MS-Mincho04 /MS-Mincho /ArialUnicodeMS-JP ]
+  /Ryumin-Medium [ /MS-Mincho04 /MS-Mincho /ArialUnicodeMS-JP ]
+  /GothicBBB-Medium [ /MS-Gothic04 /MS-Gothic /Meiryo /ArialUnicodeMS-JP ]
+  /HeiseiMin-W3 [ /MS-Mincho04 /MS-Mincho /ArialUnicodeMS-JP ]
+  /HeiseiKakuGo-W5 [ /MS-Gothic04 /MS-Gothic /Meiryo /ArialUnicodeMS-JP ]
+  /KozMinPr6N-Regular [ /MS-Mincho04 /MS-Mincho /ArialUnicodeMS-JP ]
+
+  % Korean
+  % Malgun seems to have a full set of Hangu but not much of Kanji glyphs
+  % "Gulim Old Hangul Jamo" has Hangu but no Kanji, and PMmy has Kanji but
+  % no Hangu. Neither are useful for Korean users.
+  /HYSMyeongJo-Medium [ /Batang /NewBatang /GulimChe /ArialUnicodeMS-KR /MalgunGothicRegular ]
+  /HYRGoThic-Medium [ /Gulim /NewGulim /GulimChe /ArialUnicodeMS-KR /MalgunGothicRegular ]
+  /HYGoThic-Medium [ /Dotum /NewGulim /GulimChe /ArialUnicodeMS-KR /MalgunGothicRegular ]
+  /AdobeMyungjoStd-Medium [ /Batang /NewBatang /GulimChe /ArialUnicodeMS-KR /MalgunGothicRegular ]
+>>
+def
+
+% This dictionary contains a list of CID substitutions
+%  Many ttc's have an older ttf version - be sure to put the ttf entries later.
+/cidsubs
+<<
+  % Simplified Chinese
+  /SimHei
+  <<
+   /FileType /TrueType
+   /Path (simhei.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /SimSun
+  <<
+   /FileType /TrueType
+   /Path (simsun.ttc)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /NSimSun
+  <<
+   /FileType /TrueType
+   /Path (simsun.ttc)
+   /SubfontID 1
+   /CSI [(GB1) 2]
+  >>
+
+  /SimSun-oldttf
+  <<
+   /FileType /TrueType
+   /Path (simsun.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /KaiTi
+  <<
+   /FileType /TrueType
+   /Path (simkai.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /LiSu
+  <<
+   /FileType /TrueType
+   /Path (simli.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /SimSun-18030
+  <<
+   /FileType /TrueType
+   /Path (simsun18030.ttc)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /NSimSun-18030
+  <<
+   /FileType /TrueType
+   /Path (simsun18030.ttc)
+   /SubfontID 1
+   /CSI [(GB1) 2]
+  >>
+
+  /YouYuan
+  <<
+   /FileType /TrueType
+   /Path (simyou.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /FangSong
+  <<
+   /FileType /TrueType
+   /Path (simfang.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /MicrosoftYaHei
+  <<
+   /FileType /TrueType
+   /Path (msyh.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /MicrosoftYaHeiBold
+  <<
+   /FileType /TrueType
+   /Path (msyhbd.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /MS-Song
+  <<
+   /FileType /TrueType
+   /Path (mssong.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /MS-Hei
+  <<
+   /FileType /TrueType
+   /Path (mshei.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  /ArialUnicodeMS-GB
+  <<
+   /FileType /TrueType
+   /Path (arialuni.ttf)
+   /SubfontID 0
+   /CSI [(GB1) 2]
+  >>
+
+  % Traditional Chinese
+  /MingLiU
+  <<
+   /FileType /TrueType
+   /Path (mingliu.ttc)
+   /SubfontID 0
+   /CSI [(CNS1) 2]
+  >>
+
+  /PMingLiU
+  <<
+   /FileType /TrueType
+   /Path (mingliu.ttc)
+   /SubfontID 1
+   /CSI [(CNS1) 2]
+  >>
+
+  % It probably should be ttf (ttc a typo), but we'll keep this entry just in case.
+  /Arial-Unicode-MS
+  <<
+   /FileType /TrueType
+   /Path (arialuni.ttc)
+   /SubfontID 0
+   /CSI [(CNS1) 2]
+  >>
+
+  /MicrosoftJhengHeiRegular
+  <<
+   /FileType /TrueType
+   /Path (msjh.ttf)
+   /SubfontID 0
+   /CSI [(CNS1) 2]
+  >>
+
+  /MicrosoftJhengHeiBold
+  <<
+   /FileType /TrueType
+   /Path (msjhbd.ttf)
+   /SubfontID 0
+   /CSI [(CNS1) 2]
+  >>
+
+  /MingLiU-oldttf
+  <<
+   /FileType /TrueType
+   /Path (mingliu.ttf)
+   /SubfontID 0
+   /CSI [(CNS1) 2]
+  >>
+
+  /DFKaiShu-SB-Estd-BF
+  <<
+   /FileType /TrueType
+   /Path (kaiu.ttf)
+   /SubfontID 0
+   /CSI [(CNS1) 2]
+  >>
+
+  /ArialUnicodeMS-CNS
+  <<
+    /FileType /TrueType
+    /Path (arialuni.ttf)
+    /SubfontID 0
+    /CSI [(CNS1) 2]
+  >>
+
+  % Japanese
+  /MS-Gothic
+  <<
+   /FileType /TrueType
+   /Path (msgothic.ttc)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-PGothic
+  <<
+   /FileType /TrueType
+   /Path (msgothic.ttc)
+   /SubfontID 1
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-UI-Gothic
+  <<
+   /FileType /TrueType
+   /Path (msgothic.ttc)
+   /SubfontID 2
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-Mincho
+  <<
+   /FileType /TrueType
+   /Path (msmincho.ttc)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-PMincho
+  <<
+   /FileType /TrueType
+   /Path (msmincho.ttc)
+   /SubfontID 1
+   /CSI [(Japan1) 3]
+  >>
+
+  % An XP update ships the Vista (JIS2004) version of msgothic.ttc/msmincho.ttc renamed
+  /MS-Gothic04
+  <<
+   /FileType /TrueType
+   /Path (msgoth04.ttc)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-PGothic04
+  <<
+   /FileType /TrueType
+   /Path (msgoth04.ttc)
+   /SubfontID 1
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-UI-Gothic04
+  <<
+   /FileType /TrueType
+   /Path (msgoth04.ttc)
+   /SubfontID 2
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-Mincho04
+  <<
+   /FileType /TrueType
+   /Path (msmin04.ttc)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-PMincho04
+  <<
+   /FileType /TrueType
+   /Path (msmin04.ttc)
+   /SubfontID 1
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-Mincho-oldttf
+  <<
+   /FileType /TrueType
+   /Path (msmincho.ttf)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  /MS-Gothic-oldttf
+  <<
+   /FileType /TrueType
+   /Path (msgothic.ttf)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  % Newer meiryo.ttc and meiryob.ttc have subfont 2,3. Leave those out for the time being
+  /Meiryo
+  <<
+   /FileType /TrueType
+   /Path (meiryo.ttc)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  /Meiryo-Italic
+  <<
+   /FileType /TrueType
+   /Path (meiryo.ttc)
+   /SubfontID 1
+   /CSI [(Japan1) 3]
+  >>
+
+  /Meiryo-Bold
+  <<
+   /FileType /TrueType
+   /Path (meiryob.ttc)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  /Meiryo-BoldItalic
+  <<
+   /FileType /TrueType
+   /Path (meiryob.ttc)
+   /SubfontID 1
+   /CSI [(Japan1) 3]
+  >>
+
+  /ArialUnicodeMS-JP
+  <<
+   /FileType /TrueType
+   /Path (arialuni.ttf)
+   /SubfontID 0
+   /CSI [(Japan1) 3]
+  >>
+
+  % Korean
+  /Batang
+  <<
+   /FileType /TrueType
+   /Path (batang.ttc)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+
+  /BatangChe
+  <<
+   /FileType /TrueType
+   /Path (batang.ttc)
+   /SubfontID 1
+   /CSI [(Korea1) 3]
+  >>
+
+  /Gungsuh
+  <<
+   /FileType /TrueType
+   /Path (batang.ttc)
+   /SubfontID 2
+   /CSI [(Korea1) 3]
+  >>
+
+  /GungsuhChe
+  <<
+   /FileType /TrueType
+   /Path (batang.ttc)
+   /SubfontID 3
+   /CSI [(Korea1) 3]
+  >>
+
+  /Gulim
+  <<
+   /FileType /TrueType
+   /Path (gulim.ttc)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+
+  /GulimChe
+  <<
+   /FileType /TrueType
+   /Path (gulim.ttc)
+   /SubfontID 1
+   /CSI [(Korea1) 3]
+  >>
+
+  /Dotum
+  <<
+   /FileType /TrueType
+   /Path (gulim.ttc)
+   /SubfontID 2
+   /CSI [(Korea1) 3]
+  >>
+
+  /DotumChe
+  <<
+   /FileType /TrueType
+   /Path (gulim.ttc)
+   /SubfontID 3
+   /CSI [(Korea1) 3]
+  >>
+
+  /MalgunGothicRegular
+  <<
+   /FileType /TrueType
+   /Path (malgun.ttf)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+
+  /MalgunGothicBold
+  <<
+   /FileType /TrueType
+   /Path (malgunbd.ttf)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+
+  /NewBatang
+  <<
+   /FileType /TrueType
+   /Path (nbatang.ttf)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+
+  /NewGulim
+  <<
+   /FileType /TrueType
+   /Path (ngulim.ttf)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+
+  /GulimChe-oldttf
+  <<
+   /FileType /TrueType
+   /Path (gulimche.ttf)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+
+  /ArialUnicodeMS-KR
+  <<
+   /FileType /TrueType
+   /Path (arialuni.ttf)
+   /SubfontID 0
+   /CSI [(Korea1) 3]
+  >>
+>>
+def
+
+% A dictionary for storing the names and paths of found fonts
+/foundfonts 50 dict def
+
+% Get the basename of a path
+% For example, (c:/windows/fonts/msmincho.ps) --> (msmincho.ps)
+/basename { % path -- subpath
+  { dirsep search
+    {pop pop}
+    {exit}
+    ifelse
+  } loop
+} def
+
+% Convert string (font file name) to lowercase, take care not to touch
+% non-upper case letters. There are a few similiar routines elsewhere
+% for reference:
+%   /.ToLower in lib/pdf2dsc.ps
+%   /toupper in lib/printafm.ps
+%   /.lowerstring in Resource/Init/gs_fonts.ps
+/lowercase {
+  dup length 1 sub  -1 0 {
+      1 index exch 2 copy
+      get
+      dup dup 65 ge exch 90 le and {
+          2#00100000 or
+          } if
+      put
+      } for
+} def
+
+% Check if a font basename matches one of the possible cid substitutions.
+% If it does, add the font and full path to the foundfonts dictionary
+/checkfont {
+  dup basename
+  lowercase
+  cidsubs
+  {
+    /Path get
+    2 index eq  % Match case only
+    {
+      foundfonts exch
+      3 index dup length string copy put
+    }
+    {
+      pop
+    }
+    ifelse
+  }
+  forall
+  pop pop
+} def
+
+% Add all matching fonts to foundfonts dictionary
+/findfonts { % path --
+  dup length 2 add string dup 3 1 roll copy pop
+  dup dup length 2 sub dirsep 0 get put
+  dup dup length 1 sub (*) 0 get put
+  /checkfont load 256 string filenameforall
+} def
+
+% Write out a cid substition, using the full font path
+% name is the font name, e.g. /MS-Mincho
+% path is the full path to the font file, e.g. (c:\windows\fonts\msmincho.ttc)
+% subs is the dictionary for CID font substition, from cidsubs
+/emitsubs { % name path subs --
+  3 -1 roll cidfmap exch write==only % name
+  cidfmap ( << ) writestring
+  % path subs
+  {
+   1 index /Path eq {pop 1 index} if % use full path, not basename
+   exch cidfmap exch write==only cidfmap ( ) writestring
+   cidfmap exch write==only cidfmap ( ) writestring
+  } forall
+  cidfmap (>> ;\n) writestring
+  pop
+} def
+
+% Write out all known cid substitutions.
+/writesubs { % ---
+  cidfmap (% Substitutions\n) writestring
+  foundfonts
+  {
+    1 index cidsubs exch known
+    {
+      1 index cidsubs exch get % name path subs
+      emitsubs
+    }
+    {
+      pop pop
+    }
+    ifelse
+  }
+  forall
+} def
+
+% Write out aliases for which the cid substituted font exists.
+/writealiases { % --
+  cidfmap (\n% Aliases\n) writestring
+  fontaliases
+  {
+    % name aliasarray
+    {
+      % name alias
+      foundfonts 1 index known
+      {
+        1 index cidfmap exch write==only cidfmap ( ) writestring
+        cidfmap exch write==only cidfmap ( ;\n) writestring
+        exit % after first match
+      }
+      {
+        pop % didn't find this name
+      }
+      ifelse
+    } forall
+    % name
+    pop
+  }
+  forall
+} def
+
+% Write out a new cidfmap file to stdout
+/writecidfmap { % path --
+  cidfmap (%!\n% cidfmap generated automatically by mkcidfm.ps from fonts found in\n) writestring
+  cidfmap (%   ) writestring
+  dup cidfmap exch writestring cidfmap (\n\n) writestring
+  findfonts
+  writesubs
+  writealiases
+} def
+
+FONTDIR writecidfmap
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% For what fonts ship with which microsoft product, see:
+% http://www.microsoft.com/typography/Fonts/product.aspx
+%
+% A reasonably clean Vista box comes with:
+%  ARIALUNI.TTF  meiryob.ttc   msjh.ttf      simhei.ttf
+%  batang.ttc    meiryo.ttc    msmincho.ttc  simkai.ttf
+%  gulim.ttc     mingliub.ttc  MSMINCHO.TTF  simsunb.ttf
+%  kaiu.ttf      mingliu.ttc   msyhbd.ttf    simsun.ttc
+%  malgunbd.ttf  msgothic.ttc  msyh.ttf
+%  malgun.ttf    msjhbd.ttf    simfang.ttf
+%
+% Here is a non-exhaustive list of CJK fonts found on various MS systems for reference:
+% File            Size         Version    Glyphs     Charmaps          Postscript Name                          Codepage
+% ======================================================================================================================
+% arialuni.ttf    24172892     0.86       51180      (1,0)(3,1)        ArialUnicodeMS
+% arialuni.ttf    23275812     1.01       50377      (3,1)             ArialUnicodeMS                           932,936,949,950
+% batang.ttc      16258580     2.21       39680      (3,1)             Batang/BatangChe/Gungsuh/GungsuhChe
+% batang.ttc      16265128     2.21       39680      (3,1)             Batang/BatangChe/Gungsuh/GungsuhChe
+% batang.ttc      16264732     5.00       39680      (3,1)             Batang/BatangChe/Gungsuh/GungsuhChe      949
+% gulimche.ttf    5512432      1.00       20792      (3,1)             GulimChe
+% gulim.ttc       13518660     2.21       40194      (3,1)             Gulim/GulimChe/Dotum/DotumChe
+% gulim.ttc       13525204     2.21       40194      (3,1)             Gulim/GulimChe/Dotum/DotumChe
+% gulim.ttc       13524720     5.00       40194      (3,1)             Gulim/GulimChe/Dotum/DotumChe            949
+% kaiu.ttf        4282984      2.00       18193      (1,0)(3,1)        DFKaiShu-SB-Estd-BF
+% kaiu.ttf        4279576      2.10       18193      (1,0)(3,1)        DFKaiShu-SB-Estd-BF
+% kaiu.ttf        5172084      3.00       22134      (1,0)(3,1)        DFKaiShu-SB-Estd-BF
+% kaiu.ttf        5178844      5.00       22134      (1,0)(3,1)        DFKaiShu-SB-Estd-BF                      950
+% malgun.ttf      4337480      0.85       12747      (0,3)(3,1)        MalgunGothicRegular
+% malgun.ttf      4337080      1.00       12747      (0,3)(3,1)        MalgunGothicRegular
+% malgun.ttf      4337104      5.00       12747      (0,3)(3,1)        MalgunGothicRegular
+% malgun.ttf      4337296      6.11       12747      (0,3)(3,1)        MalgunGothicRegular                      949
+% malgunbd.ttf    4514980      0.85       12740      (0,3)(3,1)        MalgunGothicBold
+% malgunbd.ttf    4513504      1.00       12740      (0,3)(3,1)        MalgunGothicBold
+% malgunbd.ttf    4513520      5.00       12740      (0,3)(3,1)        MalgunGothicBold
+% malgunbd.ttf    4515044      6.00       12740      (0,3)(3,1)        MalgunGothicBold
+% meiryo.ttc      7682568      0.97       20682      (0,3)(3,1)(3,10)  Meiryo/Meiryo-Italic                     932
+% meiryo.ttc      7815292      5.00       20684      (0,3)(3,1)(3,10)  Meiryo/Meiryo-Italic
+% meiryo.ttc      9533888      6.02       23942      (0,3)(3,1)(3,10)  Meiryo/Meiryo-Italic/MeiryoUI/MeiryoUI-Italic
+% meiryob.ttc     7924644      0.97       20682      (0,3)(3,1)(3,10)  Meiryo-Bold/Meiryo-BoldItalic
+% meiryob.ttc     8054096      5.00       20684      (0,3)(3,1)(3,10)  Meiryo-Bold/Meiryo-BoldItalic
+% meiryob.ttc     9749256      6.02       23942      (0,3)(3,1)(3,10)  Meiryo-Bold/Meiryo-BoldItalic/MeiryoUI-Bold/MeiryoUI-BoldItalic
+% mingliu.ttf     6272080      2.00       18362      (1,0)(3,1)        MingLiU
+% mingliu.ttc     8823308      3.21       22753      (1,0)(3,1)        MingLiU/PMingLiU
+% mingliu.ttc     8829856      3.21       22753      (1,0)(3,1)        MingLiU/PMingLiU
+% mingliu.ttc     27496184     6.02       33987      (3,1)             MingLiU/PMingLiU/Ming-Lt-HKSCS-UNI-H
+% mingliu.ttc     32217124     7.00       34046      (3,1)             MingLiU/PMingLiU/Ming-Lt-HKSCS-UNI-H     950
+% mingliub.ttc    33791880     5.00       44857      (3,1)(3,10)       MingLiU-ExtB/PMingLiU-ExtB/Ming-Lt-HKSCS-ExtB
+% mingliub.ttc    33805700     7.00       44875      (3,1)(3,10)       MingLiU-ExtB/PMingLiU-ExtB/Ming-Lt-HKSCS-ExtB
+% msgothic.ttf    4170144      2.00       13104      (1,0)(3,1)        MS-Gothic
+% msgothic.ttc    8272028      2.30       20458      (1,0)(3,1)        MS-Gothic/MS-PGothic/MS-UIGothic
+% msgothic.ttc    8278584      2.30       20458      (1,0)(3,1)        MS-Gothic/MS-PGothic/MS-UIGothic
+% msgothic.ttc    9165480      5.00       22213      (3,1)(3,10)       MS-Gothic/MS-PGothic/MS-UIGothic
+% msgothic.ttc    9176636      5.01       22213      (3,1)(3,10)       MS-Gothic/MS-PGothic/MS-UIGothic         932
+% mshei.ttf       1902464      1.00       26272      (1,0)(3,1)        MS Hei
+% mshei.ttf       1902556      1.00       26272      (1,0)(3,1)        MS Hei
+% msjh.ttf        14698792     0.71       28969      (0,3)(3,1)        MicrosoftJhengHeiRegular                 950
+% msjh.ttf        14713712     0.75       28969      (0,3)(3,1)        MicrosoftJhengHeiRegular
+% msjh.ttf        14713760     5.00       28969      (0,3)(3,1)        MicrosoftJhengHeiRegular
+% msjh.ttf        21663376     6.02       29220      (0,3)(3,1)        MicrosoftJhengHeiRegular
+% msjhbd.ttf      14498048     0.71       28961      (0,3)(3.1)        MicrosoftJhengHeiBold
+% msjhbd.ttf      14509708     0.75       28961      (0,3)(3.1)        MicrosoftJhengHeiBold
+% msjhbd.ttf      14509756     5.00       28961      (0,3)(3.1)        MicrosoftJhengHeiBold
+% msmincho.ttf    5151192      2.00       13104      (1,0)(3,1)        MS-Mincho
+% msmincho.ttc    9136456      2.30       17807      (1,0)(3,1)        MS-Mincho/MS-PMincho
+% msmincho.ttc    9135960      2.31       17807      (1,0)(3,1)        MS-Mincho/MS-PMincho
+% msmincho.ttc    9142516      2.31       17807      (1,0)(3,1)        MS-Mincho/MS-PMincho
+% msmincho.ttc    10056872     5.00       19321      (3,1)(3,10)       MS-Mincho/MS-PMincho
+% msmincho.ttc    10057108     5.01       19321      (3,1)(3,10)       MS-Mincho/MS-PMincho                     932
+% mssong.ttf      2569040      1.00       26304      (1,0)(3,1)        MS Song
+% mssong.ttf      2569116      1.00       26304      (1,0)(3,1)        MS Song
+% msyh.ttf        12263452     6.01       22562      (0,3)(3,1)(3,10)  MSYH
+% msyh.ttf        15067744     0.71       29207      (0,3)(3,1)(3,10)  MicrosoftYaHei
+% msyh.ttf        15043584     0.75       29126      (0,3)(3,1)(3,10)  MicrosoftYaHei
+% msyh.ttf        15044440     5.00       29126      (0,3)(3,1)(3,10)  MicrosoftYaHei
+% msyh.ttf        21767952     6.02       29354      (0,3)(3,1)        MicrosoftYaHei                           936
+% msyhbd.ttf      14707012     0.71       29240      (0,3)(3,1)(3,10)  MicrosoftYaHei
+% msyhbd.ttf      14685876     5.00       29126      (0,3)(3,1)(3,10)  MicrosoftYaHei
+% nbatang.ttf     32472240     3.00       49636      (3,1)             New Batang
+% ngulim.ttf      8862844      2.00       23181      (3,1)             New Gulim
+% ngulim.ttf      25719724     3.10       49284      (3,1)             New Gulim
+% ogulim.ttf      830340       1.00       2921       (3,1)             Gulim Old Hangul Jamo
+% palmm.ttf       13816928     001.003    27560      (3,1)             PMmy
+% simfang.ttf     3996872      2.00       7580       (1,0)(3,1)        FangSong_GB2312
+% simfang.ttf     10576012     5.01       28562      (3,1)             FangSong                                 936
+% simhei.ttf      10044356     3.02       22021      (1,0)(3,1)        SimHei
+% simhei.ttf      10050868     3.02       22021      (1,0)(3,1)        SimHei
+% simhei.ttf      9751960      5.01       28562      (3,1)             SimHei                                   936
+% simkai.ttf      4135804      2.00       7580       (1,0)(3,1)        KaiTi_GB2312
+% simkai.ttf      11785184     5.01       28562      (3,1)             KaiTi                                    936
+% simli.ttf       9317908      3.00       21992      (1,0)(3,1)        LiSu
+% simsun.ttc      10500792     3.03       22141      (1,0)(3,1)        SimSun/NSimSun
+% simsun.ttc      10507340     3.03       22141      (1,0)(3,1)        SimSun/NSimSun
+% simsun.ttc      13747080     5.00       28762      (1,0)(3,1)        SimSun/NSimSun
+% simsun.ttc      15323200     5.03       28762      (1,0)(3,1)        SimSun/NSimSun                           936
+% simsun18030.ttc 12642204     2.06       30533      (1,0)(3,1)        SimSun-18030/NSimSun-18030
+% simsunb.ttf     15406216     0.90       42809      (1,0)(3,1)(3,10)  SimSun-ExtB
+% simsunb.ttf     15406288     5.00       42809      (1,0)(3,1)(3,10)  SimSun-ExtB
+% simyou.ttf      6794984      3.00       21991      (1,0)(3,1)        YouYuan
+% simyou.ttf      6788204      3.00       21991      (1,0)(3,1)        YouYuan

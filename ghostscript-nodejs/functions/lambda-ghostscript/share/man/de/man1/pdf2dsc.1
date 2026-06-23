@@ -1,0 +1,33 @@
+.TH PDF2DSC 1 "6. Januar 2008" 8.61 "Ghostscript-Werkzeuge" \" -*- nroff -*-
+.SH NAME
+pdf2dsc \- erzeugt eine PostScript-Seitenliste aus einem PDF-Dokument
+.SH SYNTAX
+\fBpdf2dsc\fR \fIEingabe.pdf\fR [ \fIAusgabe.dsc\fR ]
+.SH BESCHREIBUNG
+\fBpdf2dsc\fR benutzt \fBgs\fR(1), um das Dokument "Eingabe.pdf" zu lesen, das
+Adobes \fBPortable Document Format\fR (PDF) entspricht, und erstellt ein
+\fBPostScript\fR(tm)-Dokument "Ausgabe.dsc", das den Anforderungen von Adobes
+\fBDocument Structuring Conventions\fR (DSC) entspricht.
+.PP
+Das neue Dokument sagt Ghostscript einfach nur, die PDF-Datei zu lesen und sie
+seitenweise darzustellen. Das erzeugte Dokument kann mit jedem PostScript-Anzeigeprogramm,
+das auf Ghostscript basiert, dargestellt werden, wie \fBghostview\fR(1)
+unter Unix oder \fBGSview\fR unter Windows, mit dem der Benutzer sich das
+PDF-Dokument in beliebiger Reihenfolge ansehen kann.
+.PP
+Falls keine Ausgabedatei in der Befehlszeile angegeben ist, wird der Name der Eingangsdatei benutzt, 
+wobei die Dateiendung entfernt und durch "\.dsc" ersetzt wird.
+.SH VORBEHALTE
+Das DSC-Dokument benutzt Ghostscript-spezifische Prozeduren. Zudem muss das Original-PDF-
+Dokument 
+verf\[:u]gbar sein, w\[:a]hrend das DSC-Dokument verarbeitet wird.
+.PP
+Sie ben\[:o]tigen die Datei "pdf2dsc.ps" (urspr\[:u]nglich von Russell Lang), die seit
+Version 3.53 bei Ghostscript enthalten ist.
+.SH SIEHE AUCH
+gs(1), ghostview(1)
+.SH VERSION
+Dies Dokument wurde zuletzt f\[:u]r Ghostscript Version 8.61 durchgesehen.
+.SH AUTHOR
+Yves Arrouye <yves.arrouye@usa.net> und Russell Lang gsview at ghostgum.com.au
+

@@ -1,0 +1,31 @@
+%!PS
+%   Postscript that uses Ghostscript extensions to do simple transparency
+
+<< /CompatibilityLevel 1.4
+   /PageSpotColors 0>> setpagedevice % in case we are going to pdfwrite
+
+% work around rectfill mapping directly to device fill_rectangle
+/rectfill {
+  gsave 4 2 roll moveto 1 index 0 rlineto
+  0 exch rlineto neg 0 rlineto closepath fill grestore
+} bind def
+
+0 .pushpdf14devicefilter % depth .pushpdf14devicefilter -
+.5 .9 .2 setrgbcolor
+0 0 300 700 rectfill
+
+.2 .5 .9 setrgbcolor
+200 100 400 400 rectfill
+
+     << >> clippath pathbbox newpath .begintransparencygroup
+
+     .5 .setopacityalpha 1 .setshapealpha
+
+     .9 .3 .1 setrgbcolor
+
+     100 200 500 500 rectfill
+
+     .endtransparencygroup
+.poppdf14devicefilter
+showpage
+quit

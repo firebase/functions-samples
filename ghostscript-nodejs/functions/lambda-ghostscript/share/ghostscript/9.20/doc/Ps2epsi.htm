@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Convert PostScript to Encapsulated PostScript Interchange format</title>
+<!-- Originally: ps2epsi.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Convert PostScript to Encapsulated PostScript Interchange
+format</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Overview">Overview</a>
+<li><a href="#Framemaker">Framemaker can use EPSI</a>
+<li><a href="#Usage">Usage</a>
+<ul>
+<li><a href="#MSDOS_usage">MS-DOS</a>
+<li><a href="#Unix_usage">Unix</a>
+</ul>
+<li><a href="#Limitations">Limitations</a>
+<li><a href="#Files">Files</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>
+The information in this document was contributed by George Cameron
+&lt;<a href="mailto:george@bio-medical-physics.aberdeen.ac.uk">george@bio-medical-physics.aberdeen.ac.uk</a>&gt;;
+please direct to him any questions about it.  Because the software
+described here is no longer being maintained, this document may be
+obsolete, or inconsistent with <code>ps2epsi.1</code>.
+
+<p>
+For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Overview"></a>Overview</h2>
+
+<p>
+<code>ps2epsi</code> is a utility based on Ghostscript, which takes as
+input a PostScript file and generates as output a new file which conforms
+to Adobe's Encapsulated PostScript Interchange (EPSI) format, a special
+form of
+<a href="http://partners.adobe.com/public/developer/en/ps/5002.EPSF_Spec.pdf" 
+class="offsite">Encapsulated PostScript</a>
+(EPS) which adds to the beginning of the file, as PostScript comments, a
+low-resolution monochrome bitmap image of the final displayed page.
+Programs which understand EPSI can use this bitmap as a preview on screen
+of the full PostScript page. The displayed quality is often not very good,
+but the final printed version uses the "real" PostScript, and thus has the
+normal full PostScript quality.
+
+<h2><a name="Framemaker"></a>Framemaker can use EPSI</h2>
+
+<p>
+The <a href="http://www.adobe.com/products/framemaker/main.html"
+class="offsite">Adobe Framemaker</a> DTP system is one application which 
+understands EPSI files, and <code>ps2epsi</code> has been tested using 
+Framemaker 3.0 on a Sun workstation with a number of PostScript diagrams 
+from a variety of sources. Framemaker on other platforms may also be able 
+to use files made with <code>ps2epsi</code>, although this has not been 
+tested.
+
+<hr>
+
+<h2><a name="Usage"></a>Usage</h2>
+
+<h3><a name="MSDOS_usage"></a>MS-DOS</h3>
+
+<p>
+Using the supplied batch file <code>ps2epsi.bat</code>, the command is
+
+<blockquote>
+<code>ps2epsi</code> <b><em>infile.ps</em></b> <b><em>outfile.epi</em></b>
+</blockquote>
+
+<p>
+where <b><em>infile.ps</em></b> is the original PostScript file, and
+<b><em>outfile.epi</em></b> is the output EPSI file to be created.
+
+<h3><a name="Unix_usage"></a>Unix</h3>
+
+<p>
+Using the supplied shell script <code>ps2epsi</code>, the command is
+
+<blockquote>
+<code>ps2epsi</code> <b><em>infile.ps</em></b> <b><em>[outfile.epsi]</em></b>
+</blockquote>
+
+<p>
+where <b><em>infile.ps</em></b> is the input file and
+<b><em>outfile.epsi</em></b> is the output EPSI file to be created. If the
+output filename is omitted, <code>ps2epsi</code> generates one from the
+input filename; and any standard extension (<code>.ps</code>,
+<code>.cps</code>, <code>.eps</code> or <code>.epsf</code>) of the
+input file is replaced in the output file with the extension
+<code>.epsi</code>.
+
+<hr>
+
+<h2><a name="Limitations"></a>Limitations</h2>
+
+<p>
+Not all PostScript files can be encapsulated, because there are
+restrictions in what is permitted in a PostScript file for it to be
+properly encapsulated.  <code>ps2epsi</code> does a little extra work to
+try to help encapsulation, and it automatically calculates the bounding box
+required for all encapsulated PostScript files, so most of the time it does
+a pretty good job.  There are certain to be cases, however, when
+encapsulation fails because of the nature of the original PostScript file.
+
+<hr>
+
+<h2><a name="Files"></a>Files</h2>
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=3 bgcolor="#CCCC00"><hr><font size="+1"><code>ps2epsi</code> files</font><hr>
+<tr valign=bottom>
+	<th align=left>File
+	<td>&nbsp;&nbsp;&nbsp;
+	<th align=left>Contents
+<tr>	<td colspan=3><hr>
+<tr valign=top>	<td><code>ps2epsi.htm</code>
+	<td>&nbsp;
+	<td>This document
+<tr valign=top>	<td><code>ps2epsi.bat</code>
+	<td>&nbsp;
+	<td>MS-DOS batch file
+<tr valign=top>	<td><code>ps2epsi</code>
+	<td>&nbsp;
+	<td>Unix shell script
+<tr valign=top>	<td><code>ps2epsi.ps</code>
+	<td>&nbsp;
+	<td>Ghostscript program which does the work
+</table></blockquote>
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

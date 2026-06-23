@@ -1,0 +1,41 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% traceimg.ps
+% Trace the data supplied to the 'image' operator.
+
+% This code currently handles only the (Level 2) dictionary form of image,
+% with a single data source and 8-bit pixels.
+
+/traceimage			% <dict> traceimage -
+ { currentcolorspace == (setcolorspace\n) print
+   (<<) print
+   dup { (\t) print exch ==only ( ) print == } forall
+   (>>\n) print flush
+   begin /i_left Width Height mul store /i_dict currentdict store end
+    { i_left 0 le { exit } if
+      i_dict /DataSource get exec
+      dup type /filetype eq
+       { i_buf 0 i_left 32 .min getinterval readstring pop
+       } if
+      dup (%stdout) (w) file exch writehexstring (\n) print flush
+      i_left exch length sub /i_left exch def
+    } loop
+ } bind odef
+
+/image /traceimage load def
+/i_left 0 def
+/i_dict null def
+/i_buf 32 string def

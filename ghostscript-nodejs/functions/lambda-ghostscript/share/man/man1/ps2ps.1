@@ -1,0 +1,28 @@
+.TH PS2PS 1 "26 September 2016" 9.20 "Ghostscript Tools" \" -*- nroff -*-
+.SH NAME
+ps2ps, eps2eps \- Ghostscript PostScript "distiller"
+.SH SYNOPSIS
+\fBps2ps\fR [ \fIoptions\fR ] \fIinput output.ps\fR
+.br
+\fBeps2eps\fR [ \fIoptions\fR ] \fIinput output.eps\fR
+.SH DESCRIPTION
+\fBps2ps\fR uses \fIgs\fR(1) to convert \fBPostScript\fR(tm) or \fBPDF\fR(tm) file
+"input" to simpler, normalized and (usually) faster PostScript in
+"output.ps".  The output is level 2 DSC 3.0 conforming PostScript.
+.PP
+\fBeps2eps\fR performs the equivalent optimization, creating Encapsulated
+PostScript (EPS) files. NB, despite the name, the input need not be an
+EPS file, PostScript or indeed PDF files are equally acceptable.
+.PP
+Both accept any general Ghostscript command line options, and
+options specific to the ps2write and eps2write devices.
+.SH FILES
+Run "\fBgs -h\fR" to find the location of Ghostscript documentation on your
+system, from which you can get more details.
+.SH SEE ALSO
+ps2pdf(1), ps2ascii(1), ps2epsi(1)
+.SH VERSION
+This document was last revised for Ghostscript version 9.20.
+.SH AUTHOR
+Artifex Software, Inc. are the 
+primary maintainers of Ghostscript.
