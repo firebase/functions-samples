@@ -1,0 +1,27 @@
+{
+  "name": "dialogflow-sample",
+  "description": "Use Dialogflow API with firebase to generate response application UI",
+  "dependencies": {
+    "dialogflow": "^0.10.3",
+    "firebase-admin": "^8.5.0",
+    "firebase-functions": "^3.2.0",
+    "firebase-tools": "^7.3.1",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-promise": "^3.6.0"
+  },
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+    "serve": "firebase serve --only functions",
+    "shell": "firebase experimental:functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "private": true
+}
