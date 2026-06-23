@@ -17,3 +17,4 @@ service-account-credentials.json
 **/tsconfig-compile.json
 yarn.lock
 **/.DS_Store
+**/.editorconfig
