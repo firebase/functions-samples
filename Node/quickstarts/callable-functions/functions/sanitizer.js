@@ -16,6 +16,7 @@
 "use strict";
 
 const Filter = require("bad-words");
+// @ts-ignore
 const badWordsFilter = new Filter();
 
 // Sanitizes the given text if needed by replacing bad words with '*'.

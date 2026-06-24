@@ -2,15 +2,15 @@
   "name": "authorized-https-endpoint-functions",
   "description": "restrict HTTPS functions to Firebase users",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "firebase-admin": "^13.9.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "firebase-admin": "^14.0.0",
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
-    "eslint-plugin-promise": "^7.2.1"
+    "eslint-plugin-promise": "^7.3.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
@@ -22,7 +22,7 @@
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "private": true
 }

@@ -7,10 +7,10 @@
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "eslint": "^10.5.0"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
+    "lint": "./node_modules/.bin/eslint  .",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",

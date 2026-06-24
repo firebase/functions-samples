@@ -42,8 +42,6 @@ describe('Cloud Functions', () => {
     myFunctions = require('../index');
   });
 
-  afterAll(() => {
-    // Do cleanup tasks.
   afterAll(async () => {
     await admin.database().ref('messages').remove();
     test.cleanup();

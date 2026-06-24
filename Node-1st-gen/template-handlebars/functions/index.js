@@ -20,11 +20,11 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 
 const express = require('express');
-const exphbs = require('express-handlebars');
+const { engine } = require('express-handlebars');
 const app = express();
 const firebaseUser = require('./firebaseUser');
 
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', engine({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.use(firebaseUser.validateFirebaseIdToken);
 
