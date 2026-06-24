@@ -44,9 +44,9 @@ describe('Cloud Functions', () => {
 
   afterAll(() => {
     // Do cleanup tasks.
+  afterAll(async () => {
+    await admin.database().ref('messages').remove();
     test.cleanup();
-    // Reset the database.
-    admin.database().ref('messages').remove();
   });
 
   describe('makeUpperCase', () => {
