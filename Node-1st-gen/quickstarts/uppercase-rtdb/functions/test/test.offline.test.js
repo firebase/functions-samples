@@ -79,11 +79,10 @@ describe('Cloud Functions', () => {
       
       const pushStub = jest.fn().mockImplementation((val) => val.original === pushParam.original ? Promise.resolve({ ref: 'new_ref' }) : undefined);
       const refStub = jest.fn().mockImplementation((path) => path === refParam ? { push: pushStub } : undefined);
-      const databaseStub = jest.fn().mockReturnValue({ ref: refStub });
 
       // The following line overrides the behavior of admin.database().ref('/messages')
       // .push({ original: 'input' }) to return a promise that resolves with { ref: 'new_ref' }.
-      admin.database = jest.fn().mockReturnValue(databaseStub);
+      admin.database = jest.fn().mockReturnValue({ ref: refStub });
 
       // [START assertHTTP]
       // A fake request object, with req.query.text set to 'input'
