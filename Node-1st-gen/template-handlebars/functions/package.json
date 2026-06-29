@@ -7,7 +7,7 @@
     "eslint-plugin-promise": "^7.3.0",
     "express": "^5.2.1",
     "express-handlebars": "^9.0.1",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^14.1.0",
     "firebase-functions": "7.2.5",
     "handlebars": "^4.7.9"
   },

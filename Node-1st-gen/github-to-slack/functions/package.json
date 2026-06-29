@@ -3,7 +3,7 @@
   "description": "Cloud Functions for Firebase that posts new GitHub commits to a Slack channel.",
   "dependencies": {
     "eslint-plugin-promise": "^7.3.0",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^14.1.0",
     "firebase-functions": "7.2.5",
     "secure-compare": "^3.0.1"
   },

@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "eslint-plugin-promise": "^7.3.0",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^14.1.0",
     "firebase-functions": "7.2.5",
     "json-diff": "^1.0.6",
     "request": "^2.88.2",
