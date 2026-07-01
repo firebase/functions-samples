@@ -8,18 +8,14 @@
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.10",
-    "chai": "^6.2.2",
-    "chai-as-promised": "^8.0.2",
     "firebase-functions-test": "3.5.0",
-    "mocha": "^11.7.6",
-    "sinon": "^22.0.0"
+    "jest": "^30.4.2"
   },
   "scripts": {
     "ci-test": "npm install && npm run test",
-    "test": "npm run test-offline",
-    "test-online": "mocha --reporter spec test/test.online.js --exit",
-    "test-offline": "mocha --reporter spec test/test.offline.js --exit",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest test/test.offline.test.js",
+    "test-online": "NODE_OPTIONS=--experimental-vm-modules jest test/test.online.test.js",
+    "test-offline": "NODE_OPTIONS=--experimental-vm-modules jest test/test.offline.test.js",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
