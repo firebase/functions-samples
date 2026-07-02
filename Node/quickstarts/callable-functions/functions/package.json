@@ -17,7 +17,7 @@
   "main": "index.js",
   "dependencies": {
     "bad-words": "^4.0.0",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^14.1.0",
     "firebase-functions": "7.2.5"
   },
   "devDependencies": {

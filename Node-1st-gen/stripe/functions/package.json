@@ -4,7 +4,7 @@
   "dependencies": {
     "@google-cloud/logging": "^11.2.2",
     "eslint-plugin-promise": "^7.3.0",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^14.1.0",
     "firebase-functions": "7.2.5",
     "stripe": "^22.2.1"
   },
