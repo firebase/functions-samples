@@ -30,7 +30,7 @@
   "dependencies": {
     "@firebase/functions": "^0.13.5",
     "eslint": "^10.5.0",
-    "firebase": "^12.14.0",
+    "firebase": "^12.15.0",
     "marked": "^12.0.2"
   }
 }

@@ -3,7 +3,7 @@
   "description": "Syncs new Firebase data to a Google Sheet",
   "dependencies": {
     "eslint-plugin-promise": "^7.3.0",
-    "firebase-admin": "^14.0.0",
+    "firebase-admin": "^14.1.0",
     "firebase-functions": "7.2.5",
     "google-auth-library": "^10.7.0",
     "googleapis": "^173.0.0"
