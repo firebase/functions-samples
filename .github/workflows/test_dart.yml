@@ -28,6 +28,9 @@ on:
 env:
   CI: true
 
+permissions:
+  contents: read
+
 jobs:
   unit:
     runs-on: ubuntu-latest
