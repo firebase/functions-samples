@@ -1,0 +1,71 @@
+{
+  "firestore": {
+    "rules": "server/firestore.rules"
+  },
+  "functions": [
+    {
+      "source": "server",
+      "codebase": "default",
+      "runtime": "dart3"
+    }
+  ],
+  "hosting": {
+    "predeploy": "cd app && flutter build web --wasm --no-strip-wasm --source-maps",
+    "public": "app/build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Cross-Origin-Opener-Policy",
+            "value": "same-origin-allow-popups"
+          }
+        ]
+      }
+    ]
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "auth": {
+      "port": 9099
+    },
+    "pubsub": {
+      "port": 8085
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "database": {
+      "port": 9000
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    },
+    "singleProjectMode": true
+  },
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "app/lib/firebase_options.dart": {
+          "projectId": "n26-full-stack-dart",
+          "configurations": {
+            "web": "1:138342796561:web:22e80ba7c9119d66d950b0"
+          }
+        }
+      }
+    }
+  }
+}
