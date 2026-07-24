@@ -1,0 +1,19 @@
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "dart-codelab-dart-functions",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "dart pub get --directory=\"$RESOURCE_DIR\"",
+        "dart run build_runner build --delete-conflicting-outputs --directory=\"$RESOURCE_DIR\""
+      ]
+    }
+  ]
+}
