@@ -5,8 +5,8 @@
     "canvas": "^3.2.3",
     "eslint-plugin-promise": "^7.3.0",
     "express": "^5.2.1",
-    "firebase-admin": "^14.0.0",
-    "firebase-functions": "7.2.5",
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "7.3.0",
     "lodash": "^4.18.1"
   },
   "devDependencies": {
