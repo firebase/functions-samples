@@ -16,15 +16,15 @@
   "main": "lib/index.js",
   "dependencies": {
     "@google-cloud/vision": "^5.3.7",
-    "firebase-admin": "^14.0.0",
-    "firebase-functions": "7.2.5"
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^8.57.1",
     "firebase-functions-test": "^3.5.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.0"
+    "typescript-eslint": "^8.65.0"
   },
   "private": true
 }

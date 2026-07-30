@@ -17,16 +17,14 @@
 const functions = require('firebase-functions/v1');
 const app = require('express')();
 const { Canvas } = require('canvas');
-const _ = require('lodash');
-
 const clock = require('./clock');
 const spark = require('./sparkline');
 const ray = require('./ray');
 
 app.get('/api/ray', (req, res) => {
   const tracers = JSON.parse(`${req.query.tracers}`);
-  if (!_.isArray(tracers) ||
-    !_.every(tracers, (depth) => typeof depth === 'number')) {
+  if (!Array.isArray(tracers) ||
+    !tracers.every((depth) => typeof depth === 'number')) {
     // invalid format
     res.status(422);
     res.end();
@@ -54,7 +52,7 @@ app.get('/api/clock', (req, res) => {
 app.get('/api/spark', (req, res) => {
   const dataSeries = JSON.parse(`${req.query.series}`);
   const colorOpts = req.query.colorOpts || {};
-  if (!_.isArray(dataSeries) || !_.every(dataSeries, (num) => typeof num === 'number')) {
+  if (!Array.isArray(dataSeries) || !dataSeries.every((num) => typeof num === 'number')) {
     // invalid format
     res.status(422);
     res.end();

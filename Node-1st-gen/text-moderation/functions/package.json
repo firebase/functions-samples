@@ -2,13 +2,13 @@
   "name": "text-moderation-functions",
   "description": "Moderate text using Cloud Functions for Firebase",
   "dependencies": {
-    "bad-words": "^4.0.0",
-    "eslint-plugin-promise": "^7.3.0",
-    "firebase-admin": "^14.0.0",
-    "firebase-functions": "7.2.5"
+    "bad-words": "^4.1.5",
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "eslint": "^8.57.1",
+    "eslint-plugin-promise": "^7.3.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
