@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/firebase/functions-samples#readme",
   "devDependencies": {
+    "@types/marked": "^5.0.2",
     "eslint-config-google": "^0.14.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16",
-    "@types/marked": "^5.0.2"
+    "vite": "^8.1.5"
   },
   "scripts": {
     "dev": "vite",
@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@firebase/functions": "^0.13.5",
-    "eslint": "^10.5.0",
-    "firebase": "^12.14.0",
+    "eslint": "^10.8.0",
+    "firebase": "^12.16.0",
     "marked": "^12.0.2"
   }
 }
