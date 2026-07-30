@@ -4,12 +4,19 @@ on:
     - cron: '0 0 * * 1' # Weekly
   workflow_dispatch: # Manual trigger
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
 jobs:
   targeted-update:
+    name: Targeted Update
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # To push dependency update branch to the repository
+      pull-requests: write # To create pull requests for dependency updates
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
