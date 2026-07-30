@@ -2,12 +2,12 @@
   "name": "url-shortener-functions",
   "description": "URL Shortener Cloud Functions for Firebase sample",
   "dependencies": {
-    "eslint-plugin-promise": "^7.3.0",
-    "firebase-admin": "^14.0.0",
-    "firebase-functions": "7.2.5"
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2"
   },
   "devDependencies": {
-    "eslint": "^10.5.0"
+    "eslint": "^10.8.0",
+    "eslint-plugin-promise": "^7.3.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint  .",

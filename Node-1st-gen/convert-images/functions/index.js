@@ -17,7 +17,6 @@
 
 const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
-const { mkdirp } = require('mkdirp');
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
@@ -55,7 +54,7 @@ exports.imageToJPG = functions.storage.object().onFinalize(async (object) => {
 
   const bucket = admin.storage().bucket(object.bucket);
   // Create the temp directory where the storage file will be downloaded.
-  await mkdirp(tempLocalDir);
+  await fs.promises.mkdir(tempLocalDir, { recursive: true });
   // Download file from bucket.
   await bucket.file(filePath).download({destination: tempLocalFile});
   functions.logger.log('The file has been downloaded to', tempLocalFile);

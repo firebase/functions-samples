@@ -2,13 +2,13 @@
   "name": "fulltext-search-functions",
   "description": "Full Text Search with Algolia Cloud Functions for Firebase sample",
   "dependencies": {
-    "algoliasearch": "^5.54.0",
-    "eslint-plugin-promise": "^7.3.0",
-    "firebase-admin": "^14.0.0",
-    "firebase-functions": "7.2.5"
+    "algoliasearch": "^5.56.0",
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "eslint": "^8.57.1",
+    "eslint-plugin-promise": "^7.3.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
