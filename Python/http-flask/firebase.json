@@ -1,5 +1,5 @@
 {
   "functions": {
-    "codebase": "http-flask"
+    "codebase": "functions"
   }
 }
