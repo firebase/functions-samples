@@ -19,7 +19,8 @@ Create and setup your Instagram app:
  1. Copy the **Client ID** and **Client Secret** of your Instagram app and use them to set the `instagram.client_id` and `instagram.client_secret` Google Cloud environment variables. For this use:
 
     ```bash
-    firebase functions:config:set instagram.client_id="yourClientID" instagram.client_secret="yourClientSecret"
+    firebase functions:secrets:set INSTAGRAM_CLIENT_ID
+    firebase functions:secrets:set INSTAGRAM_CLIENT_SECRET
     ```
 
  > Make sure the Instagram Client Secret is always kept secret. For instance do not save it in your version control system.

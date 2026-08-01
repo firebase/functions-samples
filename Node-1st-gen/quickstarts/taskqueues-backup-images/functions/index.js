@@ -15,7 +15,6 @@
  */
 "use strict";
 const path = require("path");
-const fetch = require("node-fetch");
 const functions = require('firebase-functions/v1');
 const {initializeApp} = require("firebase-admin/app");
 const {getFunctions} = require("firebase-admin/functions");
@@ -80,16 +79,13 @@ exports.backupApod = functions
       logger.info(`Fetched ${picUrl} from NASA API for date ${date}.`);
 
       const picResp = await fetch(picUrl);
+      const imageBuffer = await picResp.arrayBuffer();
+      const buffer = Buffer.from(imageBuffer);
       const dest = getStorage()
           .bucket(BACKUP_BUCKET)
           .file(`apod/${date}${path.extname(picUrl)}`);
       try {
-        await new Promise((resolve, reject) => {
-          const stream = dest.createWriteStream();
-          picResp.body.pipe(stream);
-          picResp.body.on("end", resolve);
-          stream.on("error", reject);
-        });
+        await dest.save(buffer);
       } catch (err) {
         logger.error(`Failed to upload ${picUrl} to ${dest.name}`, err);
         throw new HttpsError("internal", "Uh-oh. Something broke.");

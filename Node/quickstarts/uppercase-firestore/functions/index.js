@@ -19,8 +19,8 @@
 // [START import]
 // The Cloud Functions for Firebase SDK to create Cloud Functions and triggers.
 const {logger} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/v2/https");
-const {onDocumentCreated} = require("firebase-functions/v2/firestore");
+const {onRequest} = require("firebase-functions/https");
+const {onDocumentCreated} = require("firebase-functions/firestore");
 
 // The Firebase Admin SDK to access Firestore.
 const {initializeApp} = require("firebase-admin/app");

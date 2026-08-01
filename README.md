@@ -2,7 +2,7 @@
 
 This repository contains a collection of samples showcasing some typical uses of [Cloud Functions for Firebase](https://firebase.google.com/features/functions).
 
-Samples are available for the **Node** (2nd gen), **Python** (2nd gen), and Node (1st gen). 
+Samples are available for **Node** (1st and 2nd gen) and **Python** (2nd gen).
 
 > Note: Python support in Cloud Functions for Firebase is a public preview. This means that the functionality might change in backward-incompatible ways. A preview release is not subject to any SLA or deprecation policy and may receive limited or no support.
 
@@ -31,12 +31,19 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 ### Quickstart: Add numbers and sanitize text with callable functions
 
+- [Dart](/Dart/quickstarts/callable-functions/)
 - [Node 2nd gen](/Node/quickstarts/callable-functions/)
 - [Python](/Python/quickstarts/callable-functions)
 - [Node 1st gen](/Node-1st-gen/quickstarts/callable-functions/)
 
+### Quickstart: Stream responses with callable functions
+
+- [Dart](/Dart/quickstarts/callable-functions-streaming/)
+- [Node 2nd gen](/Node/quickstarts/callable-functions-streaming/)
+
 ### HTTPS trigger quickstart: Time Server
 
+- [Dart](/Dart/quickstarts/https-time-server/)
 - [Node 2nd gen](/Node/quickstarts/https-time-server/)
 - [Python](/Python/quickstarts/https-time-server/)
 - [Node 1st gen](/Node-1st-gen/quickstarts/https-time-server/)
@@ -55,13 +62,13 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Rea
 
 - [Node 1st gen](/Node-1st-gen/quickstarts/big-ben/)
 
-This quickstart demonstrates using **Cloud Functions** with an HTTPS trigger that's triggered through a Firebase Hosting URL. The function will display a repeated number of "BONG"s depending on the hour of the day.
+This quickstart demonstrates using **Cloud Functions** with an HTTPS trigger that's triggered by a Firebase Hosting URL. The function will display a repeated number of "BONG"s depending on the hour of the day.
 
 ### Cloud Storage trigger quickstart: Thumbnail generator
 
-- [Node 2nd gen](/Node/quickstarts/https-time-server/)
-- [Python](/Python/quickstarts/https-time-server/)
-- [Node 1st gen](/Node-1st-gen/quickstarts/https-time-server/)
+- [Node 2nd gen](/Node/quickstarts/thumbnails/)
+- [Python](/Python/quickstarts/thumbnails/)
+- [Node 1st gen](/Node-1st-gen/quickstarts/thumbnails/)
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Storage events**. The function generates a thumbnail of uploaded images.
 
@@ -92,9 +99,9 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Pub
 ### Test Lab trigger quickstart: Log when a matrix completes
 
 - [Node 2nd gen](/Node/quickstarts/testlab-matrix-completed/)
-- [Python](/Python/quickstarts/testlab-matrix-completed/)
+- [Python](/Python/quickstarts/testlab-matrix-completed)
 
-### Firebase Alerts trigger quickstart: Send crash reports to Discord](/2nd-gen/alerts-to-discord/)
+### Firebase Alerts trigger quickstart: Send crash reports to Discord
 
 - [Node 2nd gen](/Node/alerts-to-discord/)
 - [Python](/Python/alerts-to-discord/)

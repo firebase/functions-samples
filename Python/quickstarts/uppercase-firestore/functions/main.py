@@ -76,7 +76,7 @@ def makeuppercase(event: firestore_fn.Event[firestore_fn.DocumentSnapshot | None
 # [START makeUppercase2]
 @firestore_fn.on_document_written(document="messages/{pushId}")
 def makeuppercase2(
-        event: firestore_fn.Event[firestore_fn.Change[firestore_fn.DocumentSnapshot | None]]
+    event: firestore_fn.Event[firestore_fn.Change[firestore_fn.DocumentSnapshot | None]],
 ) -> None:
     """Listens for new documents to be added to /messages. If the document has
     an "original" field, creates an "uppercase" field containg the contents of

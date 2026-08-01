@@ -16,6 +16,10 @@
 
 import {logger} from "firebase-functions";
 import {expect, jest, test} from "@jest/globals";
+
+jest.mock("jose", () => ({}));
+jest.mock("jwks-rsa", () => ({}));
+
 import firebaseFunctionsTest from "firebase-functions-test";
 import {logstore} from "../index";
 
@@ -29,12 +33,12 @@ test("logstore", () => {
    * Invoke the function once using default {@link CloudEvent}.
    */
   wrappedLogStore();
-  expect(mockLog).toBeCalledTimes(1);
+  expect(mockLog).toHaveBeenCalledTimes(1);
 
   /**
    * Invoke the function once using {@link Partial<CloudEvent>}.
    */
   const cloudEventPartial = {data: {bucket: "my-other-bucket"}};
   wrappedLogStore(cloudEventPartial);
-  expect(mockLog).toBeCalledTimes(2);
+  expect(mockLog).toHaveBeenCalledTimes(2);
 });

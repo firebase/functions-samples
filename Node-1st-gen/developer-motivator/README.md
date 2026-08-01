@@ -33,7 +33,7 @@ To deploy and test the sample:
  - Set the `dev_motivator.device_token` Google Cloud environment variables. For this use:
 
     ```bash
-    firebase functions:config:set dev_motivator.device_token="your_developer_device_token"
+    firebase functions:secrets:set DEV_MOTIVATOR_DEVICE_TOKEN
     ```
  - Deploy your project's code using `firebase deploy`
  - You'll now get a notification on your mobile when a user opens your app for the first time and when they uninstall your app.

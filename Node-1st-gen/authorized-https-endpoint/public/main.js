@@ -63,7 +63,7 @@ Demo.prototype.signOut = function() {
   document.cookie = '__session=';
 };
 
-// Does an authenticated request to a Firebase Functions endpoint using an Authorization header.
+// Does an authenticated request to a Cloud Functions for Firebase endpoint using an Authorization header.
 Demo.prototype.startFunctionsRequest = function() {
   firebase.auth().currentUser.getIdToken().then(function(token) {
     console.log('Sending request to', this.helloUserUrl, 'with ID token in Authorization header.');
@@ -80,7 +80,7 @@ Demo.prototype.startFunctionsRequest = function() {
   }.bind(this));
 };
 
-// Does an authenticated request to a Firebase Functions endpoint using a __session cookie.
+// Does an authenticated request to a Cloud Functions for Firebase endpoint using a __session cookie.
 Demo.prototype.startFunctionsCookieRequest = function() {
   // Set the __session cookie.
   firebase.auth().currentUser.getIdToken(true).then(function(token) {

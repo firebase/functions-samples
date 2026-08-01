@@ -19,7 +19,7 @@ import {getAuth} from "firebase-admin/auth";
 import {getDatabase} from "firebase-admin/database";
 import {getMessaging} from "firebase-admin/messaging";
 import {log, warn} from "firebase-functions/logger";
-import {onValueWritten} from "firebase-functions/v2/database";
+import {onValueWritten} from "firebase-functions/database";
 
 initializeApp();
 const auth = getAuth();

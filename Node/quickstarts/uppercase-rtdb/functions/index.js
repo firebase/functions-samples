@@ -18,8 +18,8 @@
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to setup triggers and logging.
-const {onRequest} = require("firebase-functions/v2/https");
-const {onValueCreated} = require("firebase-functions/v2/database");
+const {onRequest} = require("firebase-functions/https");
+const {onValueCreated} = require("firebase-functions/database");
 const {logger} = require("firebase-functions");
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.

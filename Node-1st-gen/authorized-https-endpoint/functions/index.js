@@ -57,8 +57,10 @@ const validateFirebaseIdToken = async (req, res, next) => {
     return;
   }
 
+const { getAuth } = require('firebase-admin/auth');
+
   try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
+    const decodedIdToken = await getAuth().verifyIdToken(idToken);
     functions.logger.log('ID Token correctly decoded', decodedIdToken);
     req.user = decodedIdToken;
     next();

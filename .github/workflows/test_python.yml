@@ -28,8 +28,16 @@ on:
 env:
   CI: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   unit:
+    name: Python Unit Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,14 +45,18 @@ jobs:
           - "3.10"
           - "3.11"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
             python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         working-directory: ./Python
-        run: pip install -r requirements.txt
+        run: |
+          pip install uv
+          uv pip install --system -r requirements.txt
       - name: Lint
         working-directory: ./Python
         run: python pyfmt.py --check_only --exclude "**/venv/**/*.py" **/*.py

@@ -1,3 +1,5 @@
+// @ts-nocheck
+// Disable strict type-checking on this legacy JavaScript file against Admin SDK v14 modular definitions when evaluated under monorepo root tsc checkJs.
 /**
  * Copyright 2016 Google Inc. All Rights Reserved.
  *

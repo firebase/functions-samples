@@ -2,14 +2,14 @@
   "name": "time-server-functions",
   "description": "A simple time server using HTTPS Cloud Function",
   "dependencies": {
-    "cors": "^2.8.5",
-    "eslint-plugin-promise": "^7.2.1",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0",
-    "moment": "^2.29.4"
+    "cors": "^2.8.6",
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2",
+    "moment": "^2.30.1"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "eslint": "^8.57.1",
+    "eslint-plugin-promise": "^7.3.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
@@ -21,7 +21,7 @@
     "compile": "cp ../../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "private": true
 }

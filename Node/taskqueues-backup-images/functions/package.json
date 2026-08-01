@@ -12,14 +12,13 @@
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "22"
+    "node": "24"
   },
   "main": "index.js",
   "dependencies": {
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0",
-    "google-auth-library": "^8.6.0",
-    "node-fetch": "^2.6.7"
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2",
+    "google-auth-library": "^10.9.1"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

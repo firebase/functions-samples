@@ -18,7 +18,7 @@
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
-const {onTestMatrixCompleted} = require("firebase-functions/v2/testLab");
+const {onTestMatrixCompleted} = require("firebase-functions/testLab");
 const {logger} = require("firebase-functions");
 // [END import]
 

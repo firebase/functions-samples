@@ -15,9 +15,9 @@
  */
 
 const functions = require('firebase-functions/v1');
+const {defineSecret} = require('firebase-functions/params');
 
-// The node-fetch library to send web requests to Slack.
-const fetch = require("node-fetch");
+const slackWebhookUrl = defineSecret('SLACK_WEBHOOK_URL');
 
 /**
  * Posts a message to Slack via a Webhook
@@ -26,7 +26,7 @@ const fetch = require("node-fetch");
  * @return {Promise<string>}
  */
  async function postToSlack(title, details) {
-  const response = await fetch(process.env.SLACK_WEBHOOK_URL, {
+  const response = await fetch(slackWebhookUrl.value(), {
     method: "post",
     body: JSON.stringify({
       blocks: [
@@ -79,7 +79,7 @@ function getSlackmoji(term) {
   }
 }
 
-exports.postTestResultsToSlack = functions.testLab
+exports.postTestResultsToSlack = functions.runWith({secrets: [slackWebhookUrl]}).testLab
   .testMatrix()
   .onComplete(async testMatrix => {
     const { testMatrixId, state, outcomeSummary } = testMatrix;

@@ -16,7 +16,6 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const capitalizeSentence = require('capitalize-sentence');
 const Filter = require('bad-words');
 const badWordsFilter = new Filter();
 
@@ -81,5 +80,11 @@ function isShouting(message) {
 // Correctly capitalize the string as a sentence (e.g. uppercase after dots)
 // and remove exclamation points.
 function stopShouting(message) {
-  return capitalizeSentence(message.toLowerCase()).replace(/!+/g, '.');
+  const sentenceCaseRegex = /(:?\.\s?|^)([A-Za-z\u00C0-\u1FFF\u2800-\uFFFD])/gi;
+  const noExclamationsRegex = /!+/g;
+
+  return message
+    .toLowerCase()
+    .replace(sentenceCaseRegex, (match) => match.toUpperCase())
+    .replace(noExclamationsRegex, ".");
 }

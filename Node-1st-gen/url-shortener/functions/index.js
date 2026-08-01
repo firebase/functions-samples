@@ -16,19 +16,33 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const { BitlyClient } = require('bitly');
-// TODO: Make sure to set the bitly.access_token cloud functions config using the CLI.
-const bitly = new BitlyClient(functions.config().bitly.access_token);
+const {defineSecret} = require('firebase-functions/params');
+// TODO: Make sure to set the `BITLY_ACCESS_TOKEN` secret using the CLI.
+const bitlyAccessToken = defineSecret('BITLY_ACCESS_TOKEN');
+
+async function shortenBitly(url, token) {
+  const res = await fetch('https://api-ssl.bitly.com/v4/shorten', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ long_url: url })
+  });
+  if (!res.ok) {
+    throw new Error(`Bitly API failed: ${res.status} ${await res.text()}`);
+  }
+  const data = await res.json();
+  return data.link;
+}
 
 // Shorten URL written to /links/{linkID}.
-exports.shortenUrl = functions.database.ref('/links/{linkID}').onCreate(async (snap) => {
+exports.shortenUrl = functions.runWith({secrets: [bitlyAccessToken]}).database.ref('/links/{linkID}').onCreate(async (snap) => {
   const originalUrl = snap.val();
-  const response = await bitly.shorten(originalUrl);
-  // @ts-ignore
-  const shortUrl = response.url;
+  const shortUrl = await shortenBitly(originalUrl, bitlyAccessToken.value());
 
   return snap.ref.set({
     original: originalUrl,
     short: shortUrl,
-  })
+  });
 });

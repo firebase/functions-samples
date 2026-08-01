@@ -26,8 +26,12 @@ def hello_world(req: https_fn.Request) -> https_fn.Response:
 def get_inspirational_quote(req: https_fn.Request) -> https_fn.Response:
     firestore_client = firestore.client()
     today = datetime.date.today()
-    quote_of_the_month_ref = (firestore_client.collection("quotes").doc(str(
-        today.year)).collection("months").doc(str(today.month)))
+    quote_of_the_month_ref = (
+        firestore_client.collection("quotes")
+        .doc(str(today.year))
+        .collection("months")
+        .doc(str(today.month))
+    )
 
     default_quote = "Python has been an important part of Google since the beginning, and remains so as the system grows and evolves."
 

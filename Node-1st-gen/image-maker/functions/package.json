@@ -2,15 +2,14 @@
   "name": "functions-image-maker",
   "description": "Sample functions that generate images on the backend",
   "dependencies": {
-    "canvas": "^3.0.1",
-    "eslint-plugin-promise": "^7.2.1",
-    "express": "^4.18.2",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.3.0",
-    "lodash": "^4.17.21"
+    "canvas": "^3.2.3",
+    "express": "^5.2.1",
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "eslint": "^8.57.1",
+    "eslint-plugin-promise": "^7.3.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint --max-warnings=0 .",
@@ -22,7 +21,7 @@
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json"
   },
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "private": true
 }

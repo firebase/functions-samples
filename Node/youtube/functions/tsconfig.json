@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "noEmit": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "index.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "eslint.config.*"
+  ]
+}

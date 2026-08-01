@@ -15,8 +15,8 @@
  */
 "use strict";
 
-const capitalizeSentence = require("capitalize-sentence");
 const Filter = require("bad-words");
+// @ts-ignore
 const badWordsFilter = new Filter();
 
 // Sanitizes the given text if needed by replacing bad words with '*'.
@@ -72,5 +72,11 @@ function isShouting(message) {
  * @return {string} capitalized string
  */
 function stopShouting(message) {
-  return capitalizeSentence(message.toLowerCase()).replace(/!+/g, ".");
+  const sentenceCaseRegex = /(:?\.\s?|^)([A-Za-z\u00C0-\u1FFF\u2800-\uFFFD])/gi;
+  const noExclamationsRegex = /!+/g;
+
+  return message
+      .toLowerCase()
+      .replace(sentenceCaseRegex, (match) => match.toUpperCase())
+      .replace(noExclamationsRegex, ".");
 }

@@ -1,6 +1,6 @@
-# Accept PayPal payment in functions firebase
+# Accept PayPal payment in Cloud Functions for Firebase
 
-This sample demonstrates how to use the Paypal-rest-sdk with a Google Cloud Functions.
+This sample demonstrates how to use the Paypal-rest-sdk with Google Cloud Functions.
 
 
 ## Functions Code
@@ -30,11 +30,11 @@ The dependencies are listed in [functions/package.json](functions/package.json).
  1. Setup [your Paypal API Client ID and Secret](https://developer.paypal.com/developer/applications/) in your Cloud Function. Run in the command line:
   
     ```sh
-    firebase functions:config:set paypal.client_id="yourPaypalClientID"
+    firebase functions:secrets:set PAYPAL_CLIENT_ID
     ```
 
     ```sh
-    firebase functions:config:set paypal.client_secret="yourPaypalClientSecret"
+    firebase functions:secrets:set PAYPAL_CLIENT_SECRET
     ```
  1. Install dependencies locally by running: `cd functions; npm install; cd -`
 
@@ -55,10 +55,9 @@ To deploy and test on prod do:
 
 ## Contributing
 
-We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../CONTRIBUTING.md).
+We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../../CONTRIBUTING.md).
 
 
 ## License
 
-© Google, 2017. Licensed under an [Apache-2](../LICENSE) license.
-
+© Google, 2017. Licensed under an [Apache-2](../../LICENSE) license.

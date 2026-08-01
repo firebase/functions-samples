@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+jest.mock("jose", () => ({}));
+jest.mock("jwks-rsa", () => ({}));
+
 const {logger} = require("firebase-functions");
 const test = require("firebase-functions-test");
 const {logstore} = require("./index");

@@ -16,6 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
+const {onInit} = require('firebase-functions/v1/init');
+const {defineString, defineSecret} = require('firebase-functions/params');
 const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
 // For Gmail, enable these:
@@ -23,14 +25,18 @@ const nodemailer = require('nodemailer');
 // 2. https://accounts.google.com/DisplayUnlockCaptcha
 // For other types of transports such as Sendgrid see https://nodemailer.com/transports/
 // TODO: Configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
-const gmailEmail = functions.config().gmail.email;
-const gmailPassword = functions.config().gmail.password;
-const mailTransport = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: gmailEmail,
-    pass: gmailPassword,
-  },
+const gmailEmail = defineString('GMAIL_EMAIL');
+const gmailPassword = defineSecret('GMAIL_PASSWORD');
+
+let mailTransport;
+onInit(() => {
+  mailTransport = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: gmailEmail.value(),
+      pass: gmailPassword.value(),
+    },
+  });
 });
 
 // Your company name to include in the emails
@@ -42,7 +48,7 @@ const APP_NAME = 'Cloud Storage for Firebase quickstart';
  * Sends a welcome email to new user.
  */
 // [START onCreateTrigger]
-exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
+exports.sendWelcomeEmail = functions.runWith({secrets: [gmailPassword]}).auth.user().onCreate((user) => {
 // [END onCreateTrigger]
   // [START eventAttributes]
   const email = user.email; // The email of the user.
@@ -58,7 +64,7 @@ exports.sendWelcomeEmail = functions.auth.user().onCreate((user) => {
  * Send an account deleted email confirmation to users who delete their accounts.
  */
 // [START onDeleteTrigger]
-exports.sendByeEmail = functions.auth.user().onDelete((user) => {
+exports.sendByeEmail = functions.runWith({secrets: [gmailPassword]}).auth.user().onDelete((user) => {
 // [END onDeleteTrigger]
   const email = user.email;
   const displayName = user.displayName;

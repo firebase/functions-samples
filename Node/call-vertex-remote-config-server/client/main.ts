@@ -30,9 +30,8 @@ import {
 // Set to true to test in emulator.
 const testMode = true;
 
-// Use showdown to convert Gemini-provided Markdown to HTML
-import { Converter } from "showdown";
-const converter = new Converter();
+// Use marked to convert Gemini-provided Markdown to HTML
+import { marked } from "marked";
 
 // Set up output elements.
 const outputDiv = document.createElement("div");
@@ -100,7 +99,7 @@ promptForm.addEventListener("submit", async (event) => {
   try {
     const { data } = await callVertexWithRC({ prompt });
     const generatedTextElement = document.getElementById("generatedText"); // Access the element
-    const htmlContent = converter.makeHtml(data);
+    const htmlContent = await marked.parse(data);
     if (!generatedTextElement) {
       throw new Error("Missing generated text.");
     }

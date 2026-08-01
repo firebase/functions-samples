@@ -44,11 +44,13 @@ def addmessage(req: https_fn.Request) -> https_fn.Response:
 
     # Redirect with 303 SEE OTHER to the URL of the pushed object.
     scheme, location, path, query, fragment = (
-        b.decode() for b in urllib_parse.urlsplit(app.options.get("databaseURL")))
+        b.decode() for b in urllib_parse.urlsplit(app.options.get("databaseURL"))
+    )
     path = f"{ref.path}.json"
     return https_fn.Response(
         status=303,
-        headers={"Location": urllib_parse.urlunsplit((scheme, location, path, query, fragment))})
+        headers={"Location": urllib_parse.urlunsplit((scheme, location, path, query, fragment))},
+    )
     # [END adminSdkPush]
 # [END addMessage]
 
