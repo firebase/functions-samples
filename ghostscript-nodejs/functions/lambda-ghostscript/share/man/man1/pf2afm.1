@@ -1,0 +1,22 @@
+.TH PF2AFM 1 "26 September 2016" 9.20 Ghostscript \" -*- nroff -*-
+.SH NAME
+pf2afm \- Make an AFM file from Postscript (PFB/PFA/PFM) font files using ghostscript
+.SH SYNOPSIS
+\fBpf2afm\fR  \fIfontfilename\fR
+.SH DESCRIPTION
+This script invokes
+.BR gs (1)
+to make an AFM file from PFB / PFA and (optionally) PFM files.
+Output goes to
+.IR fontfilename.afm ,
+which must not already exist.
+.SH SEE ALSO
+gs(1)
+.br
+pf2afm.ps in the Ghostscript lib directory.
+.SH VERSION
+This document was last revised for Ghostscript version 9.20.
+.SH AUTHOR
+Artifex Software, Inc. are the
+primary maintainers of Ghostscript.
+This manpage by George Ferguson.

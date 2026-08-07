@@ -1,0 +1,30 @@
+%!
+%  landscap.ps
+%
+% This file can be prepended to most PostScript pages to force
+% rotation to "landscape" mode.
+%
+% There are (at least) four possible ways to reasonably position a
+% page after rotation.  Any of the four old corners (llx,lly e.g.)
+% can be moved to match the corresonding new corner.
+% By uncommmenting the appropriate line below (i.e., remove the
+% leading '%'), any such positioning can be chosen for positive or
+% negative rotation.  The comments at the end of each "rotate" line
+% indicate the ORIGINAL corner to be aligned. For example, as given
+% below, the lower left hand corner is aligned.  When viewed, this
+% corner will have moved to the urx,lly corner.
+%
+%  originally by James E. Burns, 3/8/93, burns@nova.bellcore.com
+%
+gsave clippath pathbbox grestore
+4 dict begin
+/ury exch def /urx exch def /lly exch def /llx exch def
+%90 rotate  llx neg               ury neg              translate  % llx,ury
+90 rotate  llx neg               llx urx sub lly sub  translate  % llx,lly
+%90 rotate  ury lly sub urx sub   ury neg              translate  % urx,ury
+%90 rotate  ury lly sub urx sub   llx urx sub lly sub  translate  % urx,lly
+%-90 rotate urx neg               lly neg              translate  % urx,lly
+%-90 rotate urx neg               urx llx sub ury sub  translate  % urx,ury
+%-90 rotate llx lly add ury sub   urx llx sub ury sub  translate  % llx,ury
+%-90 rotate llx lly add ury sub   lly neg              translate  % llx,lly
+end

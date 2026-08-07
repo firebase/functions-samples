@@ -1,0 +1,99 @@
+%!
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% zeroline.ps
+% Test file to determine how other PostScript implementations handle
+% filling zero-width lines under a variety of conditions.
+
+% Add a small "fan" of zero-width lines at different angles to the path.
+/fan
+ { currentpoint 100 0 rlineto
+   2 copy moveto 100 20 rlineto
+   2 copy moveto 100 100 rlineto
+   2 copy moveto 20 100 rlineto
+   moveto 0 100 rlineto
+ } def
+
+% Append a rectangle to the current path.
+/rectappend
+ { 4 -2 roll moveto 1 index 0 rlineto 0 exch rlineto
+   neg 0 rlineto closepath
+ } def
+% Fill a rectangle.
+/rectfill
+ { gsave newpath rectappend fill grestore
+ } def
+% Stroke a rectangle.
+/rectstroke
+ { gsave newpath rectappend stroke grestore
+ } def
+% Clip to a rectangle.  Unlike the real rectclip,
+% this clear the current path.
+/rectclip
+ { newpath rectappend clip newpath
+ } def
+
+40 40 translate
+
+% Display fans of different colors on different backgrounds.
+gsave
+0 setgray
+0 0 120 120 rectstroke
+10 10 moveto fan fill
+140 0 translate
+0 setgray
+0 0 120 120 rectstroke
+0.8 setgray
+10 10 moveto fan fill
+140 0 translate
+0 setgray
+0 0 120 120 rectfill
+1 setgray
+10 10 moveto fan fill
+grestore
+0 140 translate
+
+% Display rectangles with two edges coincident.
+gsave
+newpath
+0 setgray
+0 0 40 40 rectappend
+0 0 20 20 rectappend
+eofill
+60 0 translate
+0 0 40 40 rectappend
+40 0 -20 20 rectappend
+fill
+grestore
+0 60 translate
+
+% Display superimposed lines.
+gsave
+/super
+ { currentpoint fan
+   2 copy moveto 20 0 rmoveto 50 0 rlineto
+   2 copy moveto 20 4 rmoveto 50 10 rlineto
+   2 copy moveto 20 20 rmoveto 50 50 rlineto
+   2 copy moveto 4 20 rmoveto 10 50 rlineto
+   moveto 0 20 rmoveto 0 50 rlineto
+ } def
+0 setgray
+0 0 moveto super fill
+140 0 translate 0 0 moveto super eofill
+grestore
+0 140 translate
+
+showpage

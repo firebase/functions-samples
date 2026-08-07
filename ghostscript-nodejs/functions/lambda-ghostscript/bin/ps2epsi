@@ -1,0 +1,118 @@
+#!/bin/sh
+
+# This definition is changed on install to match the
+# executable name set in the makefile
+GS_EXECUTABLE=gs
+gs="`dirname \"$0\"`/$GS_EXECUTABLE"
+if test ! -x "$gs"; then
+	gs="$GS_EXECUTABLE"
+fi
+GS_EXECUTABLE="$gs"
+
+# try to create a temporary file securely
+if test -z "$TMPDIR"; then
+	TMPDIR=/tmp
+fi
+if which mktemp >/dev/null 2>/dev/null; then
+	tmpfile="`mktemp $TMPDIR/ps2epsi.XXXXXX`"
+else
+	tmpdir=$TMPDIR/ps2epsi.$$
+	(umask 077 && mkdir "$tmpdir")
+	if test ! -d "$tmpdir"; then
+		echo "failed: could not create temporary file"
+		exit 1
+	fi
+	tmpfile="$tmpdir"/ps2epsi$$
+fi
+trap "rm -rf \"$tmpfile\"" 0 1 2 3 7 13 15
+
+export outfile
+
+if [ $# -lt 1 -o $# -gt 2 ]; then
+	echo "Usage: `basename \"$0\"` file.ps [file.epsi]" 1>&2
+	exit 1
+fi
+
+infile=$1;
+
+if [ $# -eq 1 ]
+then
+	case "${infile}" in
+	  *.ps)		base=`basename "${infile}" .ps` ;;
+	  *.cps)	base=`basename "${infile}" .cps` ;;
+	  *.eps)	base=`basename "${infile}" .eps` ;;
+	  *.epsf)	base=`basename "${infile}" .epsf` ;;
+	  *)		base=`basename "${infile}"` ;;
+	esac
+	outfile=${base}.epsi
+else
+	outfile=$2
+fi
+
+"$GS_EXECUTABLE" -q -dBATCH -dNOPAUSE -P- -dSAFER -dDELAYSAFER -sDEVICE=bbox -sOutputFile=/dev/null "${infile}" 2>${outfile}
+
+ls -l "${infile}" |
+awk 'F==1	{
+		cd="%%CreationDate: " $6 " " $7 " " $8;
+		t="%%Title: " $9;
+		f="%%For:" U " " $3;
+		c="%%Creator: Ghostscript ps2epsi from " $9;
+		next;
+		}
+	/^%!/	{next;}
+	/^%%Title:/	{t=$0; next;}
+	/^%%Creator:/	{c=$0; next;}
+	/^%%CreationDate:/	{cd=$0; next;}
+	/^%%For:/	{f=$0; next;}
+	!/^%/	{
+		print "/ps2edict 30 dict def";
+		print "ps2edict begin";
+		print "/epsititle (" t "\\n) def";
+		print "/epsicreator (" c "\\n) def";
+		print "/epsicrdt (" cd "\\n) def";
+		print "/epsifor (" f "\\n) def";
+		exit(0);
+		}
+	' U="$USERNAME$LOGNAME"  F=1 - F=2 "${infile}" >"$tmpfile"
+
+ls -l "${outfile}" |
+awk 'F==1	{
+		b="%%BoundingBox: 0 0 0 0\\n";
+		}
+		/^%%BoundingBox:/	{b=$0; next;}
+		/^%%HiResBoundingBox:/	{ 
+		hb=$0;
+		print "ps2edict where {pop} {/ps2edict 30 dict def} ifelse";
+		print "ps2edict begin";
+		print "/BBoxString (" b "\\n) def";
+		print "/HiresBBoxString (" hb "\\n) def";
+		print "end";
+		exit(0);
+		}
+	' F=1 - F=2 "${outfile}" >>"$tmpfile"
+
+"$GS_EXECUTABLE" -q -dNOPAUSE -P- -dSAFER -dDELAYSAFER -r72 -sDEVICE=bit -sOutputFile=/dev/null "$tmpfile" ps2epsi.ps "$tmpfile" <"${infile}" 1>&2
+rm -f "$tmpfile"
+rm -rf "$tmpdir"
+
+(
+cat << BEGINEPS
+save countdictstack mark newpath /showpage {} def /setpagedevice /pop load def
+%%EndProlog
+%%Page 1 1
+BEGINEPS
+
+cat "${infile}" |
+LC_ALL=C \
+sed -e '/^%%BeginPreview:/,/^%%EndPreview[^!-\~]*$/d' -e '/^%!PS-Adobe/d'\
+	-e '/^%%[A-Za-z][A-Za-z]*[^!-\~]*$/d' -e '/^%%[A-Za-z][A-Za-z]*: /d'
+
+cat << ENDEPS
+%%Trailer
+cleartomark countdictstack exch sub { end } repeat restore
+%%EOF
+ENDEPS
+
+) >> "${outfile}"
+
+exit 0

@@ -1,0 +1,1256 @@
+%!PS-Adobe-3.0
+%%Creator: tops by Taiji Yamada <taiji@aihara.co.jp>
+%%Copyright: 2001 Taiji Yamada <taiji@aihara.co.jp> and gs-cjk project
+%%+ This script is part of GNU Ghostscript and is distributed under
+%%+ the terms of the GNU Affero GPL. See the file COPYING for more information.
+%%+ It is also part of tops, a text filter into PostScript for various
+%%+ languages. To get it, visit http://www.aihara.co.jp/~taiji/tops/#tops
+%%DocumentData: Clean7Bit
+%%DocumentMedia: A4 595 842 0 white ()
+%%Extensions: Composite
+%%Orientation: Portrait
+%%Title: iso-2022-7bit - Emacs/Mule editable PostScript file
+%%Version: 1.0
+%
+% Usage:
+%   gs [-dverttext] iso2022.ps
+%
+%%EndComments
+%%BeginProlog
+
+/*gs-cjk (\
+------------------------------------------------------------------------\n\
+This is a script to test CJK fonts such as CID-keyed fonts.\n\
+If you have not done CID-keyed fonts installation and definitions at\n\
+/Resource/CMap and CIDFnmap or /Resource/CIDFont of ghostscript, then\n\
+this script can't work correctly.\n\
+For details, please see README at http://www.gyve.org/gs-cjk/supplement.\n\
+
+If you throw this script into a printer, it requires PostScript 3\n\
+printer and CID-keyed fonts specified in this script.\n\
+------------------------------------------------------------------------\n) def
+
+/notice*stdout 4 dict begin
+  /*open {} def /*echo-n { =only } def /*echo { = } def /*close { flush } def
+  currentdict
+end def
+
+/notice*page 5 dict begin
+  /*y 750 def
+  /*open {
+    gsave initmatrix /Courier findfont 11 scalefont setfont 50 *y moveto
+    *y 750 eq {
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+    } if
+  } def
+  /*echo-n { dup type /stringtype ne { dup length string cvs } if show } def
+  /*echo { *echo-n /*y *y 11 sub def 50 *y moveto } def
+  /*close { grestore } def
+  currentdict
+end def
+
+/greeting*gs-cjk {
+  product (Ghostscript) search not { pop } { pop pop pop QUIET not {
+    notice*stdout begin
+      *open
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+      *close
+    end
+  } if } ifelse
+} bind def
+greeting*gs-cjk
+
+/*findfont {
+  dup /Font resourcestatus { pop pop findfont } {
+    notice*page begin
+      *open
+      (Error in findfont: ) *echo-n dup *echo
+      *close
+    end
+    findfont
+  } ifelse
+} bind def
+
+/orighandleerror errordict /handleerror get def
+errordict begin
+  /handleerror {
+    notice*page begin errordict begin $error begin
+      *open
+      (Error of ) *echo-n errorname dup length string cvs *echo
+      *close
+      showpage
+    end end end
+    orighandleerror
+  } bind def
+end
+
+/unknowndef { exch dup where { pop pop pop } { exch def } ifelse } bind def
+
+/ISOLatin1Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin1Encoding)
+%%EndComments
+/ISOLatin1Encoding [ % iso-8859-1
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/exclamdown/cent/sterling/currency/yen/brokenbar/section
+/dieresis/copyright/ordfeminine/guillemotleft/logicalnot/hyphen/registered/macron
+/degree/plusminus/twosuperior/threesuperior/acute/mu/paragraph/periodcentered
+/cedilla/onesuperior/ordmasculine/guillemotright/onequarter/onehalf/threequarters/questiondown
+% 0xc0
+/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex/Idieresis
+/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis/multiply
+/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn/germandbls
+% 0xe0
+/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide
+/oslash/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOLatin2Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin2Encoding)
+%%EndComments
+/ISOLatin2Encoding [ % iso-8859-2
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/Aogonek/breve/Lslash/currency/Lcaron/Sacute/section
+/dieresis/Scaron/Scedilla/Tcaron/Zacute/hyphen/Zcaron/Zdotaccent
+/degree/aogonek/ogonek/lslash/acute/lcaron/sacute/caron
+/cedilla/scaron/scedilla/tcaron/zacute/hungarumlaut/zcaron/zdotaccent
+% 0xc0
+/Racute/Aacute/Acircumflex/Abreve/Adieresis/Lacute/Cacute/Ccedilla
+/Ccaron/Eacute/Eogonek/Edieresis/Ecaron/Iacute/Icircumflex/Dcaron
+/Dcroat/Nacute/Ncaron/Oacute/Ocircumflex/Ohungarumlaut/Odieresis/multiply
+/Rcaron/Uring/Uacute/Uhungarumlaut/Udieresis/Yacute/Tcommaaccent/germandbls
+% 0xe0
+/racute/aacute/acircumflex/abreve/adieresis/lacute/cacute/ccedilla
+/ccaron/eacute/eogonek/edieresis/ecaron/iacute/icircumflex/dcaron
+/dcroat/nacute/ncaron/oacute/ocircumflex/ohungarumlaut/odieresis/divide
+/rcaron/uring/uacute/uhungarumlaut/udieresis/yacute/tcommaaccent/dotaccent
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOLatin3Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin3Encoding)
+%%EndComments
+/ISOLatin3Encoding [ % iso-8859-3
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/Hbar/breve/sterling/currency/.notdef/Hcircumflex/section
+/dieresis/Idotaccent/Scedilla/Gbreve/Jcircumflex/hyphen/.notdef/Zdotaccent
+/degree/hbar/twosuperior/threesuperior/acute/mu/hcircumflex/periodcentered
+/cedilla/dotlessi/scedilla/gbreve/jcircumflex/onehalf/.notdef/zdotaccent
+% 0xc0
+/Agrave/Aacute/Acircumflex/.notdef/Adieresis/Cdotaccent/Ccircumflex/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex/Idieresis
+/.notdef/Ntilde/Ograve/Oacute/Ocircumflex/Gdotaccent/Odieresis/multiply
+/Gcircumflex/Ugrave/Uacute/Ucircumflex/Udieresis/Ubreve/Scircumflex/germandbls
+% 0xe0
+/agrave/aacute/acircumflex/.notdef/adieresis/cdotaccent/ccircumflex/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/.notdef/ntilde/ograve/oacute/ocircumflex/gdotaccent/odieresis/divide
+/gcircumflex/ugrave/uacute/ucircumflex/udieresis/ubreve/scircumflex/dotaccent
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOLatin4Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin4Encoding)
+%%EndComments
+/ISOLatin4Encoding [ % iso-8859-4
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/Aogonek/kgreenlandic/Rcommaaccent/currency/Itilde/Lcommaaccent/section
+/dieresis/Scaron/Emacron/Gcommaaccent/Tbar/hyphen/Zcaron/macron
+/degree/aogonek/ogonek/rcommaaccent/acute/itilde/lcommaaccent/caron
+/cedilla/scaron/emacron/gcommaaccent/tbar/Eng/zcaron/eng
+% 0xc0
+/Amacron/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Iogonek
+/Ccaron/Eacute/Eogonek/Edieresis/Edotaccent/Iacute/Icircumflex/Imacron
+/Dcroat/Ncommaaccent/Omacron/Kcommaaccent/Ocircumflex/Otilde/Odieresis/multiply
+/Oslash/Uogonek/Uacute/Ucircumflex/Udieresis/Utilde/Umacron/germandbls
+% 0xe0
+/amacron/aacute/acircumflex/atilde/adieresis/aring/ae/iogonek
+/ccaron/eacute/eogonek/edieresis/edotaccent/iacute/icircumflex/imacron
+/dcroat/ncommaaccent/omacron/kcommaaccent/ocircumflex/otilde/odieresis/divide
+/oslash/uogonek/uacute/ucircumflex/udieresis/utilde/umacron/dotaccent
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOCyrillicEncoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOCyrillicEncoding)
+%%EndComments
+/ISOCyrillicEncoding [ % iso-8859-5
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/afii10023/afii10051/afii10052/afii10053/afii10054/afii10055/afii10056
+/afii10057/afii10058/afii10059/afii10060/afii10061/hyphen/afii10062/afii10145
+/afii10017/afii10018/afii10019/afii10020/afii10021/afii10022/afii10024/afii10025
+/afii10026/afii10027/afii10028/afii10029/afii10030/afii10031/afii10032/afii10033
+% 0xc0
+/afii10034/afii10035/afii10036/afii10037/afii10038/afii10039/afii10040/afii10041
+/afii10042/afii10043/afii10044/afii10045/afii10046/afii10047/afii10048/afii10049
+/afii10065/afii10066/afii10067/afii10068/afii10069/afii10070/afii10072/afii10073
+/afii10074/afii10075/afii10076/afii10077/afii10078/afii10079/afii10080/afii10081
+% 0xe0
+/afii10082/afii10083/afii10084/afii10085/afii10086/afii10087/afii10088/afii10089
+/afii10090/afii10091/afii10092/afii10093/afii10094/afii10095/afii10096/afii10097
+/afii61352/afii10071/afii10099/afii10100/afii10101/afii10102/afii10103/afii10104
+/afii10105/afii10106/afii10107/afii10108/afii10109/section/afii10110/afii10193
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOGreekEncoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOGreekEncoding)
+%%EndComments
+/ISOGreekEncoding [ % iso-8859-7
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/quoteleft/quoteright/sterling/.notdef/.notdef/brokenbar/section
+/dieresis/copyright/.notdef/guillemotleft/logicalnot/hyphen/.notdef/afii00208
+/degree/plusminus/twosuperior/threesuperior/tonos/dieresistonos/Alphatonos/periodcentered
+/Epsilontonos/Etatonos/Iotatonos/guillemotright/Omicrontonos/onehalf/Upsilontonos/Omegatonos
+% 0xc0
+/iotadieresistonos/Alpha/Beta/Gamma/Delta/Epsilon/Zeta/Eta
+/Theta/Iota/Kappa/Lambda/Mu/Nu/Xi/Omicron
+/Pi/Rho/.notdef/Sigma/Tau/Upsilon/Phi/Chi
+/Psi/Omega/Iotadieresis/Upsilondieresis/alphatonos/epsilontonos/etatonos/iotatonos
+% 0xe0
+/upsilondieresistonos/alpha/beta/gamma/delta/epsilon/zeta/eta
+/theta/iota/kappa/lambda/mu/nu/xi/omicron
+/pi/rho/sigma1/sigma/tau/upsilon/phi/chi
+/psi/omega/iotadieresis/upsilondieresis/omicrontonos/upsilontonos/omegatonos/.notdef
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOLatin5Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin5Encoding)
+%%EndComments
+/ISOLatin5Encoding [ % iso-8859-9
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/exclamdown/cent/sterling/currency/yen/brokenbar/section
+/dieresis/copyright/ordfeminine/guillemotleft/logicalnot/hyphen/registered/macron
+/degree/plusminus/twosuperior/threesuperior/acute/mu/paragraph/periodcentered
+/cedilla/onesuperior/ordmasculine/guillemotright/onequarter/onehalf/threequarters/questiondown
+% 0xc0
+/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex/Idieresis
+/Gbreve/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis/multiply
+/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Idotaccent/Scedilla/germandbls
+% 0xe0
+/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/gbreve/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide
+/oslash/ugrave/uacute/ucircumflex/udieresis/dotlessi/scedilla/ydieresis
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOLatin6Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin6Encoding)
+%%EndComments
+/ISOLatin6Encoding [ % iso-8859-10
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/Aogonek/Emacron/Gcommaaccent/Imacron/Itilde/Kcommaaccent/section
+/Lcommaaccent/Dcroat/Scaron/Tbar/Zcaron/hyphen/Umacron/Eng
+/degree/aogonek/emacron/gcommaaccent/imacron/itilde/kcommaaccent/periodcentered
+/lcommaaccent/dcroat/scaron/tbar/zcaron/afii00208/umacron/eng
+% 0xc0
+/Amacron/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Iogonek
+/Ccaron/Eacute/Eogonek/Edieresis/Edotaccent/Iacute/Icircumflex/Idieresis
+/Eth/Ncommaaccent/Omacron/Oacute/Ocircumflex/Otilde/Odieresis/Utilde
+/Oslash/Uogonek/Uacute/Ucircumflex/Udieresis/Yacute/Thorn/germandbls
+% 0xe0
+/amacron/aacute/acircumflex/atilde/adieresis/aring/ae/iogonek
+/ccaron/eacute/eogonek/edieresis/edotaccent/iacute/icircumflex/idieresis
+/eth/ncommaaccent/omacron/oacute/ocircumflex/otilde/odieresis/utilde
+/oslash/uogonek/uacute/ucircumflex/udieresis/yacute/thorn/kgreenlandic
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOLatin7Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin7Encoding)
+%%EndComments
+/ISOLatin7Encoding [ % iso-8859-13
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/quotedblright/cent/sterling/currency/quotedblbase/brokenbar/section
+/Oslash/copyright/Rcommaaccent/guillemotleft/logicalnot/hyphen/registered/AE
+/degree/plusminus/twosuperior/threesuperior/quotedblleft/mu/paragraph/periodcentered
+/oslash/onesuperior/rcommaaccent/guillemotright/onequarter/onehalf/threequarters/ae
+% 0xc0
+/Aogonek/Iogonek/Amacron/Cacute/Adieresis/Aring/Eogonek/Emacron
+/Ccaron/Eacute/Zacute/Edotaccent/Gcommaaccent/Kcommaaccent/Imacron/Lcommaaccent
+/Scaron/Nacute/Ncommaaccent/Oacute/Omacron/Otilde/Odieresis/multiply
+/Uogonek/Lslash/Sacute/Umacron/Udieresis/Zdotaccent/Zcaron/germandbls
+% 0xe0
+/aogonek/iogonek/amacron/cacute/adieresis/aring/eogonek/emacron
+/ccaron/eacute/zacute/edotaccent/gcommaaccent/kcommaaccent/imacron/lcommaaccent
+/scaron/nacute/ncommaaccent/oacute/omacron/otilde/odieresis/divide
+/uogonek/lslash/sacute/umacron/udieresis/zdotaccent/zcaron/quoteright
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/ISOLatin9Encoding /Encoding resourcestatus { pop pop } {
+%!PS-Adobe-3.0 Resource-Encoding
+%%BeginResource: Encoding (ISOLatin9Encoding)
+%%EndComments
+/ISOLatin9Encoding [ % iso-8859-15
+% 0x00
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0x20
+/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesingle
+/parenleft/parenright/asterisk/plus/comma/minus/period/slash
+/zero/one/two/three/four/five/six/seven
+/eight/nine/colon/semicolon/less/equal/greater/question
+% 0x40
+/at/A/B/C/D/E/F/G
+/H/I/J/K/L/M/N/O
+/P/Q/R/S/T/U/V/W
+/X/Y/Z/bracketleft/backslash/bracketright/asciicircum/underscore
+% 0x60
+/grave/a/b/c/d/e/f/g
+/h/i/j/k/l/m/n/o
+/p/q/r/s/t/u/v/w
+/x/y/z/braceleft/bar/braceright/asciitilde/.notdef
+% 0x80
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef
+% 0xa0
+/space/exclamdown/cent/sterling/Euro/yen/Scaron/section
+/scaron/copyright/ordfeminine/guillemotleft/logicalnot/hyphen/registered/macron
+/degree/plusminus/twosuperior/threesuperior/Zcaron/mu/paragraph/periodcentered
+/zcaron/onesuperior/ordmasculine/guillemotright/OE/oe/Ydieresis/questiondown
+% 0xc0
+/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
+/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex/Idieresis
+/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis/multiply
+/Oslash/Ugrave/Uacute/Ucircumflex/Udieresis/Yacute/Thorn/germandbls
+% 0xe0
+/agrave/aacute/acircumflex/atilde/adieresis/aring/ae/ccedilla
+/egrave/eacute/ecircumflex/edieresis/igrave/iacute/icircumflex/idieresis
+/eth/ntilde/ograve/oacute/ocircumflex/otilde/odieresis/divide
+/oslash/ugrave/uacute/ucircumflex/udieresis/yacute/thorn/ydieresis
+] /Encoding defineresource pop
+%%EndResource
+} ifelse
+
+/reencode-font { % fontname font encoding reencode-font font
+  exch dup type dup /nametype eq exch /stringtype eq or { findfont } if
+  dup length dict begin
+    {
+      1 index /FID ne 2 index /UniqueID ne and { def } { pop pop } ifelse
+    } forall
+    /Encoding exch dup type /nametype eq { /Encoding findresource } if def
+    dup /FontName exch def
+    currentdict
+  end
+  definefont
+} bind def
+
+/vertical-font { % fontname font vertical-font font
+  dup type dup /nametype eq exch /stringtype eq or { *findfont } if
+  dup length 1 add dict begin {
+    1 index /FontName eq { pop 1 index def } {
+      1 index /FID ne 2 index /UniqueID ne and { def } { pop pop } ifelse
+    } ifelse
+  } forall /WMode 1 def currentdict end
+  definefont
+} bind def
+
+%
+% fontname [font ...] compose-fontset font
+%
+% References:
+% [1] kanno@jn1jdz.ymt.prug.or.jp, ``jisfont.ps,''
+% in Japanesized Tgif(Tgif-3.0J-p17 JIS patch version), 7 1997.
+%
+/compose-fontset {
+  12 dict begin
+    /FontType 0 def
+    /FontMatrix matrix def
+    /FontBBox { 0 0 0 0 } def
+    /FMapType 3 def
+    %/EscChar 255 def
+    /FDepVector [
+      2 index {
+        dup type dup /nametype eq exch /stringtype eq or { *findfont } if
+        dup /WMode known {
+          dup /WMode get /WMode exch def
+          WMode 1 eq {
+            [ 0 1 -1 0 0 .3 ] makefont
+          } if
+        } if
+      } forall
+    ] def
+    /Encoding [ 0 1 4 index length 1 sub {} for ] def
+    pop
+    dup /FontName exch def
+    currentdict
+  end
+  definefont
+} bind def
+
+/decode-mule-big5 { % R1 R2 1|2 decode-mule-big5 R1 R2
+  2 dict begin
+    3 1 roll
+    /r2 exch def
+    /r1 exch def
+    /r2 r1 16#21 sub 94 mul r2 add 16#21 sub def
+    2 eq { /r2 r2 6280 add def } if
+    /r1 r2 157 idiv 16#a1 add def
+    /r2 r2 157 mod def
+    /r2 r2 r2 16#3f lt { 16#40 } { 16#62 } ifelse add def
+    r1 r2
+  end
+} bind def
+/decode-mule-big5-l1 { % str idx decode-mule-big5-l1 str idx
+  2 copy get exch 1 add exch 2 index 2 index get
+  1 decode-mule-big5
+  buffer size 4 -1 roll put /size size 1 add store
+  buffer size 3 -1 roll put /size size 1 add store 
+} bind def
+/decode-mule-big5-l2 { % str idx decode-mule-big5-l2 str idx
+  2 copy get exch 1 add exch 2 index 2 index get
+  2 decode-mule-big5
+  buffer size 4 -1 roll put /size size 1 add store
+  buffer size 3 -1 roll put /size size 1 add store 
+} bind def
+/decode-gl { % str idx decode-gl str idx
+  2 copy get buffer size 3 -1 roll put
+  /size size 1 add store
+} bind def
+/decode-gr { % str idx decode-gr str idx
+  2 copy get 16#80 add buffer size 3 -1 roll put
+  /size size 1 add store
+} bind def
+/iso-2022-set [
+  [ (\033\(B)	{decode-gl}		] % iso-2022:ascii
+  [ (\033,A)	{decode-gr}		] % iso-2022:iso-8859-1,iso-latin1
+  [ (\033,B)	{decode-gr}		] % iso-2022:iso-8859-2,iso-latin2
+% [ (\033,C)	{decode-gr}		] % iso-2022:iso-8859-3,iso-latin3
+% [ (\033,D)	{decode-gr}		] % iso-2022:iso-8859-4,iso-latin4
+% [ (\033,F)	{decode-gr}		] % iso-2022:iso-8859-7,iso-greek
+% [ (\033,G)	{decode-gr}		] % iso-2022:iso-8859-6,iso-arabic
+% [ (\033,H)	{decode-gr}		] % iso-2022:iso-8859-8,iso-hebrew
+% [ (\033,L)	{decode-gr}		] % iso-2022:iso-8859-5,iso-cyrillic
+  [ (\033,M)	{decode-gr}		] % iso-2022:iso-8859-9,iso-latin5
+% [ (\033,T)	{decode-gr}		] % iso-2022:iso-8859-11,iso-thai
+% [ (\033,V)	{decode-gr}		] % iso-2022:iso-8859-10,iso-latin6
+  [ (\033\(I)	{decode-gl}		] % iso-2022:jis-x-0201-kana
+  [ (\033\(J)	{decode-gl}		] % iso-2022:jis-x-0201-roman
+% [ (\033\(T)	{decode-gl}		] % iso-2022:gb-1988-roman
+  [ (\033$@)	{decode-gl}		] % iso-2022:jis-x-0208-1978
+  [ [ (\033$A) (\033$\(A) ]			{decode-gl}	] % iso-2022:gb-2312-1980
+  [ [ (\033$B) (\033$\(B) (\033&@\033$B) ]	{decode-gl}	] % iso-2022:jis-x-0208-1983&1990
+  [ (\033$\(C)	{decode-gl}		] % iso-2022:ks-x-1001-1992
+  [ (\033$\(D)	{decode-gl}		] % iso-2022:jis-x-0212-1990
+  [ (\033$\(?)	{decode-gl}		] % iso-2022:gbt-12345-1990,private-iso-gbt
+  [ (\033$\(G)	{decode-gl}		] % iso-2022:cns-11643-1992-p1
+  [ (\033$\(H)	{decode-gl}		] % iso-2022:cns-11643-1992-p2
+  [ (\033$\(0)	{decode-mule-big5-l1}	] % iso-2022:big5,mule-big5
+  [ (\033$\(1)	{decode-mule-big5-l2}	] % iso-2022:big5,mule-big5
+] def
+/iso-2022-translate { % str idx iso-2022-translate str idx
+  2 copy get 16#20 lt {
+    iso-2022-set length 1 sub 0 1 3 -1 roll {	% str idx j
+      iso-2022-set 1 index get 0 get dup	% str idx j ()|[] ()|[]
+      dup type /stringtype eq {			% str idx j () ()
+        dup length 5 index 5 index 3 -1 roll 7 index length 7 index sub
+        2 copy lt { pop } { exch pop } ifelse
+        getinterval eq				% str idx j () true|false
+      } {					% str idx j [] []
+        pop () false 3 -1 roll {
+          dup 4 -1 roll pop 3 1 roll
+          dup length 6 index 6 index 3 -1 roll 8 index length 8 index sub
+          2 copy lt { pop } { exch pop } ifelse
+          getinterval eq or dup { exit } if	% str idx j () true|false
+        } forall
+      } ifelse
+      { exch /iso-2022-state exch store length 1 sub add exit } { pop } ifelse
+      pop
+    } for
+  } if
+} bind def
+/iso-2022-show { % str iso-2022-show -
+  10 dict begin
+    /iso-6429-state null def
+    /iso-2022-state 0 def
+    /iso-2022-current iso-2022-state def
+    /buffer 65535 string def
+    /size 0 def
+    /width 0 def
+    /BoldFont false def /Underscore false def /BackColor 1 def
+    /foldline dup where { pop foldline } { false } ifelse def
+    0 { % idx {} loop
+      dup 2 index length lt {
+        iso-2022-translate
+        iso-2022-state iso-2022-current ne {
+          buffer size 8#377 put
+          /size size 1 add store
+          buffer size iso-2022-state put
+          /size size 1 add store
+        } {
+          iso-6429-translate
+          iso-6429-state null ne {
+            iso-6429-set iso-6429-state get 1 get exec
+          } {
+            iso-2022-set iso-2022-current get 1 get exec
+          } ifelse
+        } ifelse
+      } {
+        exit
+      } ifelse
+      /iso-2022-current iso-2022-state store
+      1 add
+    } loop
+    pop pop
+    iflush
+  end
+} bind def
+/ichop {	% required for some Adobe-official PostScript interpreters
+  dup length dup 2 sub -2 0 {		% str len len-2 -2 0 {} for
+    2 index 1 index get 8#377 eq	% str len idx c(str idx get) 8#377 eq
+    { exch pop } { pop exit } ifelse	% str len|idx
+  } for 0 exch getinterval		% str'(str 0 len|idx getinterval)
+} bind def
+
+/iso-6429-set [
+  [ (\t)
+    { buffer 0 size getinterval ichop	% ``ichop'' is not required for GS
+      stringwidth pop ( ) stringwidth pop div round cvi width add
+      8 dup 3 1 roll mod sub {
+      buffer size ( ) putinterval /size size 1 add store
+    } repeat } bind
+  ]
+  [ (\f)	{ iflush margin 0 get margin 3 get moveto } bind ]
+  [ [ (\033[m) (\033[0m) ]
+    { iflush
+      /BoldFont false	textfont
+      /Underscore false	textfont
+      0			textcolor
+      1			backcolor
+    } bind
+  ] % All Off
+  [ (\033[1m)	{ iflush /BoldFont true		textfont } bind ]
+  [ (\033[4m)	{ iflush /Underscore true	textfont } bind ]
+  [ (\033[22m)	{ iflush /BoldFont false	textfont } bind ]
+  [ (\033[24m)	{ iflush /Underscore false	textfont } bind ]
+  [ (\033[30m)	{ iflush 0		textcolor } bind ]
+  [ (\033[31m)	{ iflush [ 1 0 0 ]	textcolor } bind ]
+  [ (\033[32m)	{ iflush [ 0 1 0 ]	textcolor } bind ]
+  [ (\033[33m)	{ iflush [ 1 1 0 ]	textcolor } bind ]
+  [ (\033[34m)	{ iflush [ 0 0 1 ]	textcolor } bind ]
+  [ (\033[35m)	{ iflush [ 1 0 1 ]	textcolor } bind ]
+  [ (\033[36m)	{ iflush [ 0 1 1 ]	textcolor } bind ]
+  [ (\033[37m)	{ iflush 1		textcolor } bind ]
+  [ (\033[39m)	{ iflush 0		textcolor } bind ]
+  [ (\033[40m)	{ iflush 0		backcolor } bind ]
+  [ (\033[41m)	{ iflush [ 1 0 0 ]	backcolor } bind ]
+  [ (\033[42m)	{ iflush [ 0 1 0 ]	backcolor } bind ]
+  [ (\033[43m)	{ iflush [ 1 1 0 ]	backcolor } bind ]
+  [ (\033[44m)	{ iflush [ 0 0 1 ]	backcolor } bind ]
+  [ (\033[45m)	{ iflush [ 1 0 1 ]	backcolor } bind ]
+  [ (\033[46m)	{ iflush [ 0 1 1 ]	backcolor } bind ]
+  [ (\033[47m)	{ iflush 1		backcolor } bind ]
+  [ (\033[49m)	{ iflush 1		backcolor } bind ]
+] def
+/iso-6429-translate { % str idx iso-6429-translate str idx
+  /iso-6429-state null store
+  2 copy get 16#20 lt {
+    iso-6429-set length 1 sub 0 1 3 -1 roll {	% str idx j
+      iso-6429-set 1 index get 0 get dup	% str idx j ()|[] ()|[]
+      dup type /stringtype eq {			% str idx j () ()
+        dup length 5 index 5 index 3 -1 roll 7 index length 7 index sub
+        2 copy lt { pop } { exch pop } ifelse
+        getinterval eq				% str idx j () true|false
+      } {					% str idx j [] []
+        pop () false 3 -1 roll {
+          dup 4 -1 roll pop 3 1 roll
+          dup length 6 index 6 index 3 -1 roll 8 index length 8 index sub
+          2 copy lt { pop } { exch pop } ifelse
+          getinterval eq or dup { exit } if	% str idx j () true|false
+        } forall
+      } ifelse
+      { exch /iso-6429-state exch store length 1 sub add exit } { pop } ifelse
+      pop
+    } for
+  } if
+} bind def
+/show-attribute {
+  BackColor dup type dup /integertype eq exch /realtype eq or {
+    dup 1 eq { pop } {
+      gsave setgray BoldFont { setboldfont } if textfill grestore
+    } ifelse
+  } {
+    gsave cvx exec setrgbcolor BoldFont { setboldfont } if textfill grestore
+  } ifelse
+  Underscore {
+    gsave .2 setlinewidth currentpoint fontsize .1 mul sub moveto
+    BoldFont { setboldfont } if dup stringwidth pop 0 rlineto stroke grestore
+  } if
+  BoldFont {
+    gsave setboldfont show currentpoint grestore moveto
+  } {
+    show
+  } ifelse
+} bind def
+/cshow-attribute {
+  pop currentpoint pop add pagesize 0 get margin 2 get sub lt {
+    1 string dup 0 4 -1 roll put show-attribute
+  } {
+    currentpoint exch pop fontsize sub round margin 3 get lt {
+      gsave
+      nextpage preparepage
+      currentpoint matrix currentmatrix grestore setmatrix moveto
+    } {
+      origin 0 get currentpoint exch pop fontsize sub moveto
+    } ifelse
+    1 string dup 0 4 -1 roll put show-attribute
+  } ifelse
+} bind def
+/iflush {
+  size 0 gt {
+    buffer 0 size getinterval ichop	% ``ichop'' is not required for GS
+    dup stringwidth pop ( ) stringwidth pop div round cvi /width exch store
+    foldline not {
+      show-attribute
+    } {
+      dup stringwidth
+      pop currentpoint pop add pagesize 0 get margin 2 get sub lt {
+        show-attribute
+      } {
+        BoldFont { /BoldFont false store
+          gsave setboldfont
+	  { cshow-attribute } exch cshow
+	  currentpoint grestore moveto
+        } {
+          { cshow-attribute } exch cshow
+        } ifelse
+      } ifelse      
+    } ifelse
+    /size 0 store
+  } if
+} bind def
+/textfont { % /BoldFont|/Underscore any textfont -
+  store
+} bind def
+/textcolor {
+  dup type dup /integertype eq exch /realtype eq or { setgray }
+  { cvx exec setrgbcolor } ifelse
+} bind def
+/backcolor {
+  /BackColor exch store
+} bind def
+/textfill {
+  currentpoint fontsize .2 mul sub 2 index stringwidth pop fontsize
+  4 -2 roll moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto
+  closepath fill
+} bind def
+/setboldfont {
+  currentfont /FontName get dup length string cvs (-Bold)
+  exch dup length 2 index length add string
+  dup dup 4 2 roll copy length 4 -1 roll putinterval cvn
+  findfont [fontwidth 0 0 fontsize 0 0] makefont setfont
+} bind def
+/iso-6429-show { % str iso-6429-show -
+  8 dict begin
+    /iso-6429-state null def
+    /buffer 65535 string def
+    /size 0 def
+    /width 0 def
+    /BoldFont false def /Underscore false def /BackColor 1 def
+    /foldline dup where { pop foldline } { false } ifelse def
+    0 { % idx {} loop
+      dup 2 index length lt {
+        iso-6429-translate
+        iso-6429-state null ne {
+          iso-6429-set iso-6429-state get 1 get exec
+        } {
+          2 copy get buffer size 3 -1 roll put
+          /size size 1 add store
+        } ifelse
+      } {
+        exit
+      } ifelse
+      1 add
+    } loop
+    pop pop
+    iflush
+  end
+} bind def
+/shown-init {
+  /inshow exch def
+  /mediasize [ 595 842 ] def
+  /mediamargin [ 30 30 30 30 ] def
+  /pagesize [
+    mediasize cvx exec mediamargin cvx exec
+    3 -1 roll add 3 1 roll add 3 1 roll sub 3 1 roll sub exch
+  ] def
+  /margin [ 20 28 20 28 ] def
+  /division [ 1 1 ] def
+  /landscape false def
+  /landscale false def
+  /evenscale true def
+  /pagescale false def
+  pagescale not {
+    /pagesize [
+      pagesize 0 get division 0 get div pagesize 1 get division 1 get div
+    ] store
+  } if
+  landscape {
+    /pagesize [ pagesize cvx exec exch ] store
+    /margin [ margin cvx exec 4 1 roll ] store
+  } if
+  /verttext dup where { pop verttext } { false } ifelse def
+  /foldline true def
+  /header true def /footer true def /border true def
+  /origin [ margin 0 get pagesize 1 get margin 1 get sub fontsize sub ] def
+  /position [ 0 0 ] def
+  /preparepage { initmatrix
+    landscape landscale xor not {
+      mediasize cvx exec exch mediamargin 0 get mediamargin 2 get add sub
+      division 0 get div position 0 get mul mediamargin 0 get add
+      exch dup mediamargin 1 get mediamargin 3 get add sub
+      division 1 get div position 1 get 1 add mul sub mediamargin 1 get sub
+      translate
+      pagescale { landscale not { 1 } { pagesize cvx exec div } ifelse
+        division 1 get div evenscale { dup } {
+          landscale not { 1 } { pagesize cvx exec exch div } ifelse
+          division 0 get div exch
+        } ifelse scale
+      } if
+    } {
+      verttext {
+        180 rotate mediasize { neg } forall translate
+      } if
+      mediasize cvx exec exch mediamargin 0 get mediamargin 2 get add sub
+      division 0 get div position 0 get mul mediamargin 0 get add
+      exch mediamargin 1 get mediamargin 3 get add sub
+      division 1 get div position 1 get mul mediamargin 3 get add
+      translate
+      pagescale { landscale not { 1 } { pagesize cvx exec div } ifelse
+        division 0 get div evenscale { dup } {
+          landscale not { 1 } { pagesize cvx exec exch div } ifelse
+          division 1 get div
+        } ifelse scale
+      } if
+      90 rotate 0 pagesize 1 get neg translate
+    } ifelse
+    origin cvx exec moveto
+  } bind def
+  /gssafe false def	% GS-safe but not always perfect at decoratepage
+  /nextpage { gssafe { /decorated false store } { decoratepage } ifelse
+    position landscape landscale or not { 0 } { 1 } ifelse 2 copy get 1 add
+    dup 4 1 roll put
+    division landscape landscale or not { 0 } { 1 } ifelse get eq {
+      position landscape landscale or not { 0 } { 1 } ifelse 0 put
+      position landscape landscale or not { 1 } { 0 } ifelse 2 copy get 1 add
+      dup 4 1 roll put
+      division landscape landscale or not { 1 } { 0 } ifelse get eq {
+        position landscape landscale or not { 1 } { 0 } ifelse 0 put
+        showpage
+      } if
+    } if
+  } bind def
+  /lastpage { gssafe {} { decoratepage } ifelse showpage } bind def
+  /nextline {
+    currentpoint exch pop fontsize sub round margin 3 get lt {
+      nextpage preparepage /empty true store
+    } {
+      origin 0 get currentpoint exch pop fontsize sub moveto
+    } ifelse
+  } bind def
+  %
+  /page 0 def
+  /infofont /Helvetica findfont [fontwidth 0 0 fontsize 0 0] makefont def
+  /head (gs-cjk project: [1miso-2022-7bit - Emacs/Mule editable PostScript file[22m) def
+  /showheader {
+    header {
+      gsave
+      verttext not {
+        margin 0 get pagesize 1 get margin 1 get sub fontsize add moveto
+      } {
+        margin 0 get fontsize sub margin 3 get translate 90 rotate
+        fontsize fontwidth div fontwidth fontsize div scale 0 0 moveto
+      } ifelse
+      1 dict dup /foldline false put begin
+        infofont setfont head inshow
+      end
+      grestore
+    } if
+  } bind def
+  /foot 64 string def
+  /showfooter {
+    /page page 1 add store
+    footer {
+      gsave
+      verttext not {
+        pagesize 0 get margin 2 get sub margin 3 get fontsize 2 mul sub moveto
+      } {
+        pagesize 0 get margin 2 get sub fontsize 2 mul add
+        pagesize 1 get margin 1 get sub translate 90 rotate
+        fontsize fontwidth div fontwidth fontsize div scale 0 0 moveto
+      } ifelse
+      1 dict dup /foldline false put begin
+        infofont setfont page foot cvs dup stringwidth pop neg 0 rmoveto inshow
+      end
+      grestore
+    } if
+  } bind def
+  /bord {
+    pagesize cvx exec margin { fontsize 2 div sub } forall
+    3 1 roll exch 5 -1 roll exch sub exch 5 -1 roll exch sub exch
+    4 copy 3 1 roll exch 8 -2 roll moveto lineto 4 2 roll lineto lineto
+    closepath
+  } bind def
+  /showborder {
+    border {
+      gsave .25 setlinewidth bord stroke grestore
+    } if
+  } bind def
+  /decoratepage { showheader showfooter showborder } bind def
+  %
+  preparepage /empty true def
+  gssafe { /decorated false def } if
+} bind def
+/shown {
+  gssafe { decorated not { decoratepage /decorated true store } if } if
+  inshow /empty false store nextline
+} bind def
+/shown-close { empty not { lastpage } if } bind def
+/shown-readlines {
+  /shown-buffer 65535 string def
+  shown-init
+  {
+    currentfile shown-buffer readline not { pop exit } if
+    shown
+  } loop
+  shown-close
+} bind def
+/shown-readhexstrings {
+  /shown-buffer 65535 string def
+  /shown-size 0 def
+  /previous-char (\000) def
+  shown-init
+  {
+    currentfile 1 string readhexstring not { pop exit } if
+    dup (\n) ne {
+      dup (\r) ne {
+        shown-buffer shown-size 2 index putinterval
+        /shown-size shown-size 1 add store
+      } { % mac
+        shown-buffer 0 shown-size getinterval shown
+        /shown-size 0 store
+      } ifelse
+    } { % unix
+      previous-char (\r) ne {
+        shown-buffer 0 shown-size getinterval shown
+      } { % dos
+      } ifelse
+      /shown-size 0 store
+    } ifelse
+    previous-char 0 3 -1 roll putinterval
+  } loop
+  shown-close
+} bind def
+
+/fitfont { [ .8335276 0 0 .8335276 0 .1 ] makefont } bind def
+
+/verttext false unknowndef
+/iso-2022-fontset [
+  /Courier			findfont fitfont	% iso-2022:ascii
+  /Courier-Latin1		/Courier /ISOLatin1Encoding	reencode-font fitfont	% iso-2022:iso-8859-1,iso-latin1
+  /Courier-Latin2		/Courier /ISOLatin2Encoding	reencode-font fitfont	% iso-2022:iso-8859-2,iso-latin2
+% /CourierNewLatin3		findfont fitfont	% iso-2022:iso-8859-3,iso-latin3
+% /CourierNewLatin4		findfont fitfont	% iso-2022:iso-8859-4,iso-latin4
+% /CourierNewGreek		findfont fitfont	% iso-2022:iso-8859-7,iso-greek
+% /CourierNewArabic		findfont fitfont	% iso-2022:iso-8859-6,iso-arabic
+% /CourierNewHebrew		findfont fitfont	% iso-2022:iso-8859-8,iso-hebrew
+% /Courier-Cyrillic		/CourierNewCyrillic /ISOCyrillicEncoding	reencode-font fitfont	% iso-2022:iso-8859-5,iso-cyrillic
+  /Courier-Latin5		/Courier /ISOLatin5Encoding	reencode-font fitfont	% iso-2022:iso-8859-9,iso-latin5
+% /CourierNewThai		findfont fitfont	% iso-2022:iso-8859-11,iso-thai
+% /CourierNewLatin6		findfont fitfont	% iso-2022:iso-8859-10,iso-latin6
+  verttext not {
+  /Ryumin-Light.Katakana	% iso-2022:jis-x-0201-kana
+  /Ryumin-Light.Roman		% iso-2022:jis-x-0201-roman
+% /STSong-Light-GBK-EUC-H	% iso-2022:gb-1988-roman
+  /Ryumin-Light-78-H		% iso-2022:jis-x-0208-1978
+  /STSong-Light-GB-H		% iso-2022:gb-2312-1980
+  /Ryumin-Light-H		% iso-2022:jis-x-0208-1983&1990
+  /HYSMyeongJo-Medium-KSC-H	% iso-2022:ks-x-1001-1992
+  /HeiseiMin-W3H-Hojo-H		% iso-2022:jis-x-0212-1990
+  /STSong-Light-GBT-H		% iso-2022:gbt-12345-1990,private-iso-gbt
+  /MSung-Light-CNS1-H		% iso-2022:cns-11643-1992-p1
+  /MSung-Light-CNS2-H		% iso-2022:cns-11643-1992-p2
+  /MSung-Light-ETen-B5-H	% iso-2022:big5,mule-big5
+  /MSung-Light-ETen-B5-H	% iso-2022:big5,mule-big5
+  } {
+  /Ryumin-Light.Katakana-V	/Ryumin-Light.Katakana	vertical-font	% iso-2022:jis-x-0201-kana
+  /Ryumin-Light.Roman-V		/Ryumin-Light.Roman	vertical-font	% iso-2022:jis-x-0201-roman
+% /STSong-Light-GBK-EUC-V	% iso-2022:gb-1988-roman
+  /Ryumin-Light-78-V		% iso-2022:jis-x-0208-1978
+  /STSong-Light-GB-V		% iso-2022:gb-2312-1980
+  /Ryumin-Light-V		% iso-2022:jis-x-0208-1983&1990
+  /HYSMyeongJo-Medium-KSC-V	% iso-2022:ks-x-1001-1992
+  /HeiseiMin-W3H-Hojo-V		% iso-2022:jis-x-0212-1990
+  /STSong-Light-GBT-V		% iso-2022:gbt-12345-1990,private-iso-gbt
+  /MSung-Light-CNS1-V		% iso-2022:cns-11643-1992-p1
+  /MSung-Light-CNS2-V		% iso-2022:cns-11643-1992-p2
+  /MSung-Light-ETen-B5-V	% iso-2022:big5,mule-big5
+  /MSung-Light-ETen-B5-V	% iso-2022:big5,mule-big5
+  } ifelse
+] def
+/iso-2022-bold-fontset [
+  /Courier-Bold			findfont fitfont	% iso-2022:ascii
+  /Courier-Bold-Latin1		/Courier-Bold /ISOLatin1Encoding	reencode-font fitfont	% iso-2022:iso-8859-1,iso-latin1
+  /Courier-Bold-Latin2		/Courier-Bold /ISOLatin2Encoding	reencode-font fitfont	% iso-2022:iso-8859-2,iso-latin2
+% /CourierNewLatin3-Bold	findfont fitfont	% iso-2022:iso-8859-3,iso-latin3
+% /CourierNewLatin4-Bold	findfont fitfont	% iso-2022:iso-8859-4,iso-latin4
+% /CourierNewGreek-Bold		findfont fitfont	% iso-2022:iso-8859-7,iso-greek
+% /CourierNewArabic-Bold	findfont fitfont	% iso-2022:iso-8859-6,iso-arabic
+% /CourierNewHebrew-Bold	findfont fitfont	% iso-2022:iso-8859-8,iso-hebrew
+% /Courier-Bold-Cyrillic	/CourierNewCyrillic-Bold /ISOCyrillicEncoding	reencode-font fitfont	% iso-2022:iso-8859-5,iso-cyrillic
+  /Courier-Bold-Latin5		/Courier-Bold /ISOLatin5Encoding	reencode-font fitfont	% iso-2022:iso-8859-9,iso-latin5
+% /CourierNewThai-Bold		findfont fitfont	% iso-2022:iso-8859-11,iso-thai
+% /CourierNewLatin6-Bold	findfont fitfont	% iso-2022:iso-8859-10,iso-latin6
+  verttext not {
+  /GothicBBB-Medium.Katakana	% iso-2022:jis-x-0201-kana
+  /GothicBBB-Medium.Roman	% iso-2022:jis-x-0201-roman
+% /STHeiti-Regular-GBK-EUC-H	% iso-2022:gb-1988-roman
+  /GothicBBB-Medium-78-H	% iso-2022:jis-x-0208-1978
+  /STHeiti-Regular-GB-H		% iso-2022:gb-2312-1980
+  /GothicBBB-Medium-H		% iso-2022:jis-x-0208-1983&1990
+  /HYGoThic-Medium-KSC-H	% iso-2022:ks-x-1001-1992
+  /HeiseiKakuGo-W5H-Hojo-H	% iso-2022:jis-x-0212-1990
+  /STHeiti-Regular-GBT-H	% iso-2022:gbt-12345-1990,private-iso-gbt
+  /MHei-Medium-CNS1-H		% iso-2022:cns-11643-1992-p1
+  /MHei-Medium-CNS2-H		% iso-2022:cns-11643-1992-p2
+  /MHei-Medium-ETen-B5-H	% iso-2022:big5,mule-big5
+  /MHei-Medium-ETen-B5-H	% iso-2022:big5,mule-big5
+  } {
+  /GothicBBB-Medium.Katakana-V	/GothicBBB-Medium.Katakana	vertical-font	% iso-2022:jis-x-0201-kana
+  /GothicBBB-Medium.Roman-V	/GothicBBB-Medium.Roman		vertical-font	% iso-2022:jis-x-0201-roman
+% /STHeiti-Regular-GBK-EUC-V	% iso-2022:gb-1988-roman
+  /GothicBBB-Medium-78-V	% iso-2022:jis-x-0208-1978
+  /STHeiti-Regular-GB-V		% iso-2022:gb-2312-1980
+  /GothicBBB-Medium-V		% iso-2022:jis-x-0208-1983&1990
+  /HYGoThic-Medium-KSC-V	% iso-2022:ks-x-1001-1992
+  /HeiseiKakuGo-W5H-Hojo-V	% iso-2022:jis-x-0212-1990
+  /STHeiti-Regular-GBT-V	% iso-2022:gbt-12345-1990,private-iso-gbt
+  /MHei-Medium-CNS1-V		% iso-2022:cns-11643-1992-p1
+  /MHei-Medium-CNS2-V		% iso-2022:cns-11643-1992-p2
+  /MHei-Medium-ETen-B5-V	% iso-2022:big5,mule-big5
+  /MHei-Medium-ETen-B5-V	% iso-2022:big5,mule-big5
+  } ifelse
+] def
+/fontset-iso-2022 iso-2022-fontset compose-fontset pop
+/fontset-iso-2022-Bold iso-2022-bold-fontset compose-fontset pop
+%%EndProlog
+/fontsize 11 def /fontwidth 11 def
+/fontset-iso-2022 findfont [fontwidth 0 0 fontsize 0 0] makefont setfont
+{ iso-2022-show } shown-readlines
+A list of ways to say hello in various languages.
+
+Czech (,Bh(Besky)		Dobr,B}(B den
+Danish (Dansk)		Hej, Goddag
+English			Hello
+Esperanto		Saluton
+Estonian		Tere, Tervist
+PostScript		(Hello) =
+Finnish (Suomi)		Hei
+French (Fran,Ag(Bais)	Bonjour, Salut
+German (Deutsch Nord)	Guten Tag
+
+Italiano		Ciao, Buon giorno
+
+Maltese			Ciao
+Nederlands, Vlaams	Hallo, Dag
+Norwegian (Norsk)	Hei, God dag
+Polish			Dzie,Bq(B dobry, Hej
+
+Slovak			Dobr,B}(B de,Br(B
+Spanish (Espa,Aq(Bol)	,A!(BHola!
+Swedish (Svenska)	Hej, Goddag
+
+Turkish (T,M|(Brk,Mg(Be)	Merhaba
+
+Chinese  ($(GDcEF$(0!.$(GiGk#$(0!.Vn^V)t(B)		$(0<@)p$(G!$I#Go!$$(0'*)y!$(B
+Chinese  ($AVPND#,::So#,<rLeWV(B)		$ADz:C!#Dc:C!#(B
+Japanese ($BF|K\8l!"4A;z!"J?2>L>!"JR2>L>(B)	$B$3$s$K$A$O!#(I:]FAJ(B.
+Korean   ($(CGQ1[#,ySm.(B)			$(C>H3gGO=J4O1n#.>H3gGO<<?d#.(B
+
+Difference among chinese characters in GB, JIS, KSC, BIG5:
+	GB	-- $AT*Fx(B  $A?*7"(B
+	JIS	-- $B855$(B  $B3+H/(B
+	KSC	-- $(Cj*Q((B  $(CKR[!(B
+	BIG5	-- $(0&x86(B  $(0DeBv(B
+
+Just for a test of JISX0212: $BqV$(DiQ(B (the second character is of JISX0212)
+
+Just for a test of JISX0201: (I123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\&]_^(B
+
+Difference between JISX0208.1978 and 1983:
+
+	\x1b$@	$@032)3B3I3v4C4R6F7[979\<I?YA(D[EWEnEsFvGhI0KjKyLyMZO6(B
+	\x1b$B	$B032)3B3I3v4C4R6F7[979\<I?YA(D[EWEnEsFvGhI0KjKyLyMZO6(B
+
+Difference between GB2312.1980 and GBT12345.1990
+
+	\x1b$A	$AMrLuP4;-8v:s<8;z@oTS@kRuQt4SQyJ&8IO0?*Fx5g9X6T;6<&Gl(B
+		$A1_9};9=xT6Ub;*0.HHME4&RURdRZSJ(B
+		$AJiN*3$J1S&6+35K-8xAeR{CE<dNJM7BrBt(B
+	\x1b$(?	$(?MrLuP4;-8v:s<8;z@oTS@kRuQt4SQyJ&8IO0?*Fx5g9X6T;6<&Gl(B
+		$(?1_9};9=xT6Ub;*0.HHME4&RURdRZSJ(B
+		$(?JiN*3$J1S&6+35K-8xAeR{CE<dNJM7BrBt(B
+
+Color names:
+	[1mBLACK	[30m$(0E**d(B	$A:ZI+(B	$B9u?'(B	$(C0KA$;v(B	[30m[22m
+	[1mRED	[31m$(04y*d(B	$A:lI+(B	$B@V?'(B	$(C;!0-;v(B	[30m[22m
+	[1mGREEN	[32m$(0L;*d(B	$ABLI+(B	$BNP?'(B	$(C3k6{;v(B	[30m[22m
+	[1mYELLOW	[33m$(0E(Yn*d(B	$A;FI+(B	$B2+?'(B	$(CH2;v(B	[30m[22m
+	[1mBLUE	[34m$(0Y1*d(B	$A@6I+(B	$B@D?'(B	$(CFD6{;v(B	[30m[22m
+	[1mMAGENTA	[35m$(0C<*d(B	$AWOI+(B	$B;g?'(B	$(C:86s;v(B	[30m[22m
+	[1mCYAN	[36m$(0LJL;*d(B	$A4dBLI+(B	$B@DNP?'(B	$(CC;7O;v(B	[30m[22m
+	[1mWHITE	[37m[40m$(0(v*d(B	$A0WI+(B	$BGr?'(B	$(CGO>a;v(B	[47m[30m[22m

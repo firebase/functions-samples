@@ -1,0 +1,384 @@
+%!
+% If you're concerned that the cpu in your PostScript printer will atrophy
+% from disuse, here is another Escher-like contribution to to keep it busy
+% for a while.  It uses PostScript color commands, but will still work on
+% a monochrome printer (but isn't very pretty in black & white).
+% 
+% The butterflies are arranged in a hexagonal grid (wallpaper group p6),
+% and the moveto, lineto, curveto commands used to render the tesselation
+% are redefined so as to impose a nonlinear transform that shrinks the
+% infinite plane to an ellipse.  This is a sleazy way to mimic Escher's
+% "circle limit" sorts of things. 
+%
+% The butterfly permimeter was made by imposing all the symmetry constraints
+% on a path, and then that path was filled in using Adobe Illustrator
+%
+% The routines Xform and next_color are easy to change if you want to hack
+% with them. The code was written to sacrifice efficiency for readability.
+%
+% Bob Wallis
+%
+% UUCP {sun,pyramid,cae780,apple}!weitek!wallis
+
+/eschersave save def		% prevent left over side effects
+
+%statusdict begin waittimeout 6000 lt	% if you have a slow printer, you
+%   {0 60 6000 setdefaulttimeouts}	% might need to uncomment this
+%if end
+
+/nlayers 1 def		% 1 takes about 10 minutes on a LW+; 2 takes 4x longer
+/warp 1 def		% 1 -> ellipsoidal distortion; 0 -> flat Euclidean
+/inch {72 mul} def 
+
+/x4 152 def /y4 205.6 def		% 6 fold rotation center of bfly
+/x12 387.20 def /y12 403.84 def		% 3 fold center of bfly
+
+/dx x4 x12 sub def			% [dx,dy] = distance between the
+/dy y4 y12 sub def			% two fixed points above
+
+/Dm dx dup mul  dy dup mul 		% magnitude of basis vectors of
+    add sqrt 3 sqrt mul 		% parallelogram lattice
+def					% = |dx,dy| * sqrt(3)
+
+/Da dy dx atan 30 add def
+/D1x Dm Da cos mul def			% [D1x, D1y] = basis vector vector #1
+/D1y Dm Da sin mul def			% = [Dm,0] exp(j30)
+
+/Da dy dx atan 30 sub def
+/D2x Dm Da cos mul def			% [D2x, D2y] = basis vector vector #2
+/D2y Dm Da sin mul def			% = [Dm,0] exp(-j30)
+ 
+/m { moveto} def
+/L {lineto} def
+/S {stroke} def
+/c {curveto} def
+/f {closepath fill} def
+/F {closepath fill} def
+/g { setgray} def
+
+/FillStroke {				% fill interior & stroke black border
+	closepath gsave fill grestore 0 setgray stroke
+} def
+
+%
+% Description of 1 butterfly
+%
+/body {
+	314.96 280.19 m
+	383.4 261.71 445.11 243.23 513.52 224.68 c
+	463.68 256.59 490.26 328.83 446.99 360.76 c
+	423.71 347.32 397.08 339.7 367.07 337.9 c
+	388.93 358.28 414.14 372.84 442.73 381.58 c
+	426.68 398.18 394.07 389.7 387.2 403.84 c
+	371.52 404.96 362.56 372.48 340.16 366.88 c
+	346.88 396.01 346.88 425.12 340.16 454.24 c
+	326.72 427.35 320 400.48 320 373.6 c
+	270.71 352.1 221.44 411.23 168.88 384.02 c
+	189.04 388.03 202.48 380.4 212.57 366.95 c
+	216.72 350.85 209.23 341.46 190.1 338.79 c
+	177.34 343.57 167.94 354.17 161.9 370.59 c
+	176.06 305.52 132.02 274.05 152 205.6 c
+	201.29 257.12 250.56 234.72 299.84 279.52 c
+	288.64 266.08 284.16 252.64 286.4 239.2 c
+	298.27 223.97 310.15 222.18 322.02 233.82 c
+	328.62 249.28 328.51 264.74 314.96 280.19 c
+	FillStroke
+} def
+
+/eyes {
+	294.8125 238.3246 m
+	296.9115 238.3246 298.6132 242.7964 298.6132 248.3125 c
+	298.6132 253.8286 296.9115 258.3004 294.8125 258.3004 c
+	292.7135 258.3004 291.0118 253.8286 291.0118 248.3125 c
+	291.0118 242.7964 292.7135 238.3246 294.8125 238.3246 c
+	closepath gsave 1 g fill grestore 0 g S
+	
+	319.5 241.1782 m
+	321.7455 241.1782 323.5659 245.4917 323.5659 250.8125 c
+	323.5659 256.1333 321.7455 260.4468 319.5 260.4468 c
+	317.2545 260.4468 315.4341 256.1333 315.4341 250.8125 c
+	315.4341 245.4917 317.2545 241.1782 319.5 241.1782 c
+	closepath gsave 1 g fill grestore 0 g S
+	0 g
+	296.875 242.0939 m
+	297.4608 242.0939 297.9356 243.479 297.9356 245.1875 c
+	297.9356 246.896 297.4608 248.2811 296.875 248.2811 c
+	296.2892 248.2811 295.8143 246.896 295.8143 245.1875 c
+	295.8143 243.479 296.2892 242.0939 296.875 242.0939 c
+	f
+	0 g
+	318.5 243.7707 m
+	319.281 243.7707 319.9142 245.0766 319.9142 246.6875 c
+	319.9142 248.2984 319.281 249.6043 318.5 249.6043 c
+	317.719 249.6043 317.0858 248.2984 317.0858 246.6875 c
+	317.0858 245.0766 317.719 243.7707 318.5 243.7707 c
+	f
+} def	
+
+/stripes {
+	292 289 m
+	252 294 241 295 213 279 c
+	185 263 175 252 159 222 c
+	S
+	285 313 m
+	239 326 226 325 206 315 c
+	186 305 164 278 161 267 c
+	S
+	298 353 m
+	262 342 251 339 237 355 c
+	223 371 213 380 201 383 c
+	S
+	330 288 m
+	384 293 385 292 418 280 c
+	451 268 452 264 473 247 c
+	S
+	342 306 m
+	381 311 386 317 410 311 c
+	434 305 460 287 474 262 c
+	S
+	345 321 m
+	352 357 359 367 379 377 c
+	399 387 409 385 426 382 c
+	S
+	327.75 367.75 m
+	336.5 392.25 333.682 403.348 335.25 415.5 c
+	S
+	320 364.75 m
+	322 361.75 323.5 360.5 326.25 360 c
+	329 359.5 332 360.5 334 362.75 c
+	S
+	316.25 356.5 m
+	318.75 353.25 320 353 323.25 352.25 c
+	326.5 351.5 329 352 331.5 353.25 c
+	S
+	312.5 349 m
+	316.75 345.5 318.25 344.5 321.25 343.75 c
+	324.25 343 327 344 329.75 346 c
+	S
+	310.75 340.75 m
+	314.25 336.5 316.25 335.25 320 335.25 c
+	323.75 335.25 327 336.5 329.25 338 c
+	S
+	308.5 332 m
+	311.75 328.5 312.5 327.25 317 327 c
+	321.5 326.75 325.75 328.25 327.75 329.75 c
+	S
+	305 322 m
+	309.5 317.75 310.75 317 315 316.5 c
+	319.25 316 322.25 318 324.75 320 c
+	S
+	302.25 311 m
+	307 307.5 307.75 306.25 312.75 306 c
+	317.75 305.75 320 307.25 323.75 309.5 c
+	S
+	301.25 298.25 m
+	304.5 292.75 305.25 292 308.25 292 c
+	311.25 292 313.75 293.75 315.75 295.75 c
+	S
+} def
+/nostrils {
+	0 g
+	304.062 227.775 m
+	304.599 227.775 305.034 228.883 305.034 230.25 c
+	305.034 231.616 304.599 232.724 304.062 232.724 c
+	303.525 232.724 303.09 231.616 303.09 230.25 c
+	303.09 228.883 303.525 227.775 304.062 227.775 c
+	f
+	304.062 230.25 m
+	F
+	309.562 228.275 m
+	310.099 228.275 310.534 229.383 310.534 230.75 c
+	310.534 232.116 310.099 233.224 309.562 233.224 c
+	309.025 233.224 308.59 232.116 308.59 230.75 c
+	308.59 229.383 309.025 228.275 309.562 228.275 c
+	f
+} def
+/thorax
+{
+	327.5 300 m
+	316.5 283 315.5 275.5 308 277.5 c
+	294 311.5 299 313.5 304 334 c
+	309 354.5 315.5 362 322.5 372 c
+	329.5 382 327.5 376.5 331 376 c
+	334.5 375.5 339.1367 379.1109 339 369 c
+	338.5 332 333.4999 324.5 330.5 311.5 c
+	0 g S
+} def
+/spots {
+	next_color
+	192 242.201 m
+	202.1535 242.201 210.3848 251.0655 210.3848 262 c
+	210.3848 272.9345 202.1535 281.799 192 281.799 c
+	181.8465 281.799 173.6152 272.9345 173.6152 262 c
+	173.6152 251.0655 181.8465 242.201 192 242.201 c
+	FillStroke
+	next_color
+	447.5 250.2365 m
+	459.6061 250.2365 469.4203 257.5181 469.4203 266.5 c
+	469.4203 275.4819 459.6061 282.7635 447.5 282.7635 c
+	435.3939 282.7635 425.5797 275.4819 425.5797 266.5 c
+	425.5797 257.5181 435.3939 250.2365 447.5 250.2365 c
+	FillStroke
+	next_color
+	401 369.1005 m
+	409.5914 369.1005 416.5563 373.5327 416.5563 379 c
+	416.5563 384.4673 409.5914 388.8995 401 388.8995 c
+	392.4086 388.8995 385.4436 384.4673 385.4436 379 c
+	385.4436 373.5327 392.4086 369.1005 401 369.1005 c
+	FillStroke
+	next_color
+	249 348.2721 m
+	261.4966 348.2721 271.6274 353.9707 271.6274 361 c
+	271.6274 368.0293 261.4966 373.7279 249 373.7279 c
+	236.5034 373.7279 226.3726 368.0293 226.3726 361 c
+	226.3726 353.9707 236.5034 348.2721 249 348.2721 c
+	FillStroke
+} def				
+
+/ncolor 6 def
+/cidx 0 def
+
+/next_color {
+	cidx ncolor div		% hue
+	.75			% saturation (change these if you like)
+	.8			% lightness
+	sethsbcolor
+	/cidx cidx 1 add ncolor mod def
+} def
+
+/cidx 0 def
+
+/max_r2 	 	% radius^2 for center of outermost ring of butterflies
+ Dm nlayers mul 1.05 mul dup mul 
+def
+
+/max_radius max_r2 sqrt def
+/max_radius_inv 1 max_radius div def
+/Dm_inv 1 Dm div def
+
+%
+% Ellipsoidal distortion, maps "nlayers" concentric rings of cells into
+% an ellipse centered on page
+
+% D  			length of 1 basis vector separating hexagonal cells
+% z0			center of 6-fold rotation = origin of shrink xform
+% z' = (z - z0)/D 				new coord system
+% |z'| = sqrt(x^2 + [(8.5/11)*y]^2)		aspect ratio of paper
+% z" = z' * a/M(|z'|)	shrink by "a/M(|z|)" 	as fcn of radius
+
+% At the max radius, we want the shrunk ellipse to be "W" units wide so it
+% just fits our output format - solve for scale factor "a"
+
+% zmax = n+0.5  		for n layers of cells
+% zmax * [a/M(zmax)] = W	1/2 width of output on paper
+% a = M(zmax)*W/zmax		solve for "a"
+
+%/M{dup mul 1 add sqrt}bind def	% M(u) = sqrt(1+|u|^2) = one possible shrink
+/M { 1.5 add } bind def		% M(u) = (1.5+|u|)     = another possible one
+/W 3.8 inch def 		% 1/2 width of ellipse
+/zmax 0.5 nlayers add def	% radius at last layer of hexagons
+/a zmax M W mul zmax div def	% a = M(zmax)*W/zmax
+
+/Xform {						% [x0,y0] = ctr ellipse
+	Matrix transform
+	/y exch def
+	/x exch def
+	/z x dup mul y .773 mul dup mul add sqrt def	% ellipse radius
+	/Scale a z M div def				% z=a/M(|z|)
+	x Scale mul x0 add 				% magnify back up
+	y Scale mul y0 add 				% [x0+x*s, y0+y*s]
+} def
+
+
+/Helvetica findfont 8 scalefont setfont 
+4.25 inch 0.5 inch moveto 
+(RHW) stringwidth pop -0.5 mul 0 rmoveto
+(RHW) show				% autograph
+
+warp 1 eq {				% redefine commands to use Xform
+	/moveto { Xform //moveto} def
+	/lineto { Xform //lineto} def
+	/curveto { 
+		Xform 6 -2 roll
+		Xform 6 -2 roll
+		Xform 6 -2 roll
+		//curveto 
+	} def
+}if
+
+
+/bfly {				% paint 1 butterfly
+	next_color body
+	1 setgray eyes
+	stripes
+	0 setgray nostrils
+	0.5 setgray thorax next_color
+	spots
+}  def
+
+/x0 x4 def		% center
+/y0 y4 def
+
+/T1matrix 			% xlate to center of image
+  x0 neg  y0 neg  matrix translate 
+def
+
+/Smatrix 			% scale so that 1 basis vector = 1.0
+  Dm_inv dup matrix scale 
+def
+
+/HexCell {			% 6 butterflys rotated about center of
+	/cidx 0 def		% 6 fold symmetry
+	/color 0 def
+	/T2matrix dx dy matrix translate def
+	0 60 300 {
+		/angle exch def
+		/Rmatrix angle matrix rotate def
+		/Matrix 	% translate, rotate, scale - used by Xform
+		  T1matrix Rmatrix matrix concatmatrix
+		  T2matrix matrix concatmatrix 
+		  Smatrix matrix concatmatrix 
+		def
+		gsave 
+		warp 0 eq 	% then may use usual PostScript machinery
+		{		% else using Xform
+			x0 y0 translate angle rotate 
+			.5 dup scale
+			dx x0 sub dy y0 sub translate
+		} if		
+		bfly 
+		next_color
+		grestore
+	} for
+} def
+
+
+%320 x4 sub 240 y4 sub translate 
+4.25 inch x4 sub 5.5 inch y4 sub translate
+
+
+0 setlinewidth
+/N 2 def
+N neg 1 N {
+	/i exch def					% translate to
+	N neg 1 N {					% i*D1 + j*D2
+		/j exch def				% and draw HexCell
+		gsave
+		/dx i D1x mul j D2x mul add def		% translate HexCell by
+		/dy i D1y mul j D2y mul add def		% [dx,dy]
+		/r2 dx dup mul dy dup mul add def	% r^2 = |dx,dy|^2
+		r2 max_r2 lt				% inside radius?
+		{ 					% yes
+		1 r2 max_r2 div sub sqrt 2 div 
+		setlinewidth				% make skinnier lines
+		HexCell					% 6 butterflies
+		}
+		if
+		grestore
+	} for
+} for
+
+showpage
+
+clear cleardictstack
+eschersave restore

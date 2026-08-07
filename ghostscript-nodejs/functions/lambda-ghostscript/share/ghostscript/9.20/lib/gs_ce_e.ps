@@ -1,0 +1,46 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Define the Adobe CE (Central European) encoding vector.
+% We define it by differences from the ISOLatin1Encoding vector.
+/CEEncoding
+ISOLatin1Encoding 0 39 getinterval aload pop
+% 047
+    /quotesingle
+ISOLatin1Encoding 40 56 getinterval aload pop
+% 140
+    /grave
+ISOLatin1Encoding 97 31 getinterval aload pop
+% 20x
+  /.notdef /.notdef /quotesinglbase /.notdef /quotedblbase /ellipsis /dagger /daggerdbl
+  /.notdef /perthousand /Scaron /guilsinglleft /Sacute /Tcaron /Zcaron /Zacute
+  /.notdef /grave /acute /circumflex /tilde /bullet /endash /emdash
+  /.notdef /trademark /scaron /guilsinglright /sacute /tcaron /zcaron /zacute
+% 24x
+  /space /caron /breve /Lslash /currency /Aogonek /brokenbar /section
+  /dieresis /copyright /Scommaaccent /guillemotleft /logicalnot /hyphen /registered /Zdotaccent
+  /degree /plusminus /ogonek /lslash /acute /mu /paragraph /periodcentered
+  /cedilla /aogonek /scommaaccent /guillemotright /Lcaron /hungarumlaut /lcaron /zdotaccent
+% 30x
+  /Racute /Aacute /Acircumflex /Abreve /Adieresis /Lacute /Cacute /Ccedilla
+  /Ccaron /Eacute /Eogonek /Edieresis /Ecaron /Iacute /Icircumflex /Dcaron
+  /Dcroat /Nacute /Ncaron /Oacute /Ocircumflex /Ohungarumlaut /Odieresis /multiply
+  /Rcaron /Uring /Uacute /Uhungarumlaut /Udieresis /Yacute /Tcommaaccent /germandbls
+% 34x
+  /racute /aacute /acircumflex /abreve /adieresis /lacute /cacute /ccedilla
+  /ccaron /eacute /eogonek /edieresis /ecaron /iacute /icircumflex /dcaron
+  /dcroat /nacute /ncaron /oacute /ocircumflex /ohungarumlaut /odieresis /divide
+  /rcaron /uring /uacute /uhungarumlaut /udieresis /yacute /tcommaaccent /dotaccent
+256 packedarray .defineencoding

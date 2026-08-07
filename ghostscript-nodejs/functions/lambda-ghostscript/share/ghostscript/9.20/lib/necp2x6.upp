@@ -1,0 +1,35 @@
+-supModel="NEC Prinwriter 2X, 360x360DpI, Plain Paper"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceGray
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/Epson
+-r360x360
+-dupMargins="{ 9.0 9.0 9.0 67.0}"
+-dupWhiteTransfer="{
+ 0.40000 0.36253 0.32747 0.29475 
+ 0.26428 0.23599 0.20979 0.18561
+ 0.16336 0.14297 0.12435 0.10741
+ 0.09209 0.07831 0.06597 0.05500
+ 0.04532 0.03684 0.02950 0.02320
+ 0.01787 0.01343 0.00979 0.00687
+ 0.00461 0.00290 0.00168 0.00086
+ 0.00036 0.00011 0.00001 0.00000
+}"
+-dupWeaveXPasses=3
+-dupWeaveYPasses=2
+-dupOutputPins=24
+-dupWeaveYFeeds="{        7  9  7  9  7  9}"
+-dupWeaveInitialYFeeds="{ 0  0  1  0  0  9}"
+-dupWeaveInitialPins="{   5 21 13 16  8 24}"
+-dupFormatXabsolute
+-dupBeginPageCommand="<
+1b40 1b40 1b7401 1b5200 1b50  1b54 1b7200 1b32 1b4306 1b5500 0d 1c242000
+>"
+-dupAdjustPageLengthCommand
+-dupEndPageCommand="(\014)"
+-dupAbortCommand="(\034F\034\063\044\15\12\12\12    Printout-Aborted\15\014)"
+-dupXMoveCommand="(\015\034$)"
+-dupSetLineFeedCommand="(\034F\034\063)"
+-dupWriteComponentCommands="{(\033*\041)}"

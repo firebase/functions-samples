@@ -1,0 +1,8 @@
+-supModel="SUN rasterfile, 24 Bit, 7 Colors (RGB-Error-Diffusion)"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceRGB
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/SunRaster
+-dupComponentBits="{8 8 8}"

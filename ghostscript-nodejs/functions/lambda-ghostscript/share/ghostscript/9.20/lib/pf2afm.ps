@@ -1,0 +1,535 @@
+%!
+% This is a PostScript program for making an AFM file from
+% PFB / PFA and (optionally) PFM files.
+%
+% Written in BOP s.c., Gda\'nsk, Poland
+% e-mail contact: B.Jackowski@GUST.ORG.PL
+% version 0.5 (18 XII 1997)
+% version 0.55 (11 III 1998) -- unlimited number of chars in a font
+% version 1.00 (27 III 1998) -- scanning PFM subdirectory added,
+%                               code improved; version sent to LPD
+% version 1.01 (1 II 2000)   -- message changed
+
+% Usage:
+%   gs [-dNODISPLAY] -- pf2afm.ps disk_font_name
+%
+% The result is written to the file disk_font_name.afm, provided such
+% a file does not exist; otherwise program quits.
+%
+% The font can be either *.pfa or *.pfb; if no extension is supplied,
+% first disk_font_name.pfb is examined, then disk_font_name.pfa.
+% Moreover, if there is a *.pfm file in the same directory or in the
+% subdirectory PFM, i.e., disk_font_name.pfm or PFM/disk_font_name.pfm,
+% kern pairs from it are extracted, as well as additional font
+% parameters, usually absent from Type 1 fonts.
+
+% Tribute:
+% The program is based on James Clark's <jjc@jclark.uucp> printafm.ps
+% (with alterations by d.love@dl.ac.uk and L. Peter Deutsch) from
+% Ghostscript 5.10 distribution.
+
+/onechar 1 string def
+/edef {exch def} def
+/WinAnsiEncoding dup /Encoding findresource def
+
+% charnumber print-charname -
+% prints the name of the encoded character
+/print-charname {
+  PFMCharSet 0 eq {
+    WinAnsiEncoding
+  } {
+    PFBencoding
+  } ifelse
+  exch get =string cvs dup
+  (.notdef) eq {
+    /was.notdef true def
+  } if
+  print.to.ofi ( ) print.to.ofi
+} def
+
+/printquit {print flush quit} def
+
+% redirecting GS output to ``ofi'' file
+/eolch (\r\n) def
+/=only.to.ofi {ofi exch write=only} def          % replaces GS's `=only'
+/print.to.ofi  {ofi exch writestring} def        % replaces `print'
+/=to.ofi { =only.to.ofi eolch print.to.ofi } def % replaces `='
+
+% read and skip: byte, short, word, double and long
+/readb-p {currPFMfile read not {(Unexpected EOF\n) printquit} if} def
+/readw-p {readb-p readb-p 256 mul add} def
+/reads-p {readw-p dup 32768 ge {65536 sub} if} def
+/readd-p {readb-p readb-p readb-p readb-p 256 mul add 256 mul add 256 mul add} def
+/readl-p /readd-p load def % double word is, in fact, long integer in GS
+/skipb-p {readb-p pop} def
+/skipw-p {skipb-p skipb-p} def
+/skips-p /skipw-p load def
+/skipd-p {skipb-p skipb-p skipb-p skipb-p} def
+/skipl-p /skipd-p load def
+/skipa-p { {skipb-p} repeat} def
+
+% PFMfile readPFMheader -
+% defines currPFMfile, PFMExtMetricOffset, PFMPairKernTableOffset
+
+/readPFMheader {
+  currPFMfile bytesavailable
+  % ---------------
+  % PFM MAIN HEADER
+  % ---------------
+  skipw-p % PFM: version
+  readd-p % PFM: size (size is dword, not word as the documentation says)
+  ne {(Wrong file size\n) printquit} if
+  60 skipa-p  % PFM: copyright
+  skipw-p % PFM: Type
+  skipw-p % PFM: Points
+  skipw-p % PFM: VertRes
+  skipw-p % PFM: HorizRes
+  skipw-p % PFM: Ascent
+  skipw-p % PFM: InternalLeading
+  skipw-p % PFM: ExternalLeading
+  skipb-p % PFM: Italic
+  skipb-p % PFM: Underline
+  skipb-p % PFM: Stikeout
+  skipw-p % PFM: Weight
+  readb-p % PFM: CharSet
+    /PFMCharSet edef
+  skipw-p % PFM: PixWidth
+  skipw-p % PFM: PixHeight
+  skipb-p % PFM: PitchAndFamily
+  skipw-p % PFM: AvgWidth
+  skipw-p % PFM: MaxWidth
+  skipb-p % PFM: FirstChar
+  skipb-p % PFM: LastChar
+  skipb-p % PFM: DefaultChar
+  skipb-p % PFM: BreakChar
+  skipw-p % PFM: WidthBytes
+  skipd-p % PFM: Device
+  skipd-p % PFM: Face
+  skipd-p % PFM: BitsPointer
+  skipd-p % PFM: BitsOffset
+  % here we assume that it is a PostScript font, i.e., it always uses
+  % the extended width table, therefore the normal width table is empty
+  % -------------
+  % PFM EXTENSION
+  % -------------
+  skipw-p % PFMEX: SizeFields
+  readd-p % PFMEX: ExtMetricOffset
+    /PFMExtMetricOffset edef
+  skipd-p % PFMEX: ExtentTable
+  skipd-p % PFMEX: OriginTable
+  readd-p % PFMEX: PairKernTable
+    /PFMPairKernTableOffset edef
+  skipd-p % PFMEX: TrackKernTable
+  skipd-p % PFMEX: DriverInfo
+  skipd-p % PFMEX: Reserved
+} def
+
+% requires that currPFMfile, PFMExtMetricOffset are defined
+% readPFMExtMetric -
+% defines PFMNumberofKernPairs
+
+/readPFMExtMetric {
+  currPFMfile PFMExtMetricOffset setfileposition
+  skips-p % EXTT: Size
+  skips-p % EXTT: PointSize
+  skips-p % EXTT: Orientation
+  skips-p % EXTT: MasterHeight
+  skips-p % EXTT: MinScale
+  skips-p % EXTT: MaxScale
+  skips-p % EXTT: MasterUnit
+  reads-p % EXTT: CapHeight
+   /PFMCapHeight edef
+  reads-p % EXTT: XHeight
+   /PFMXHeight edef
+  reads-p % EXTT: LowerCaseAscent
+   /PFMLowerCaseAscent edef
+  reads-p % EXTT: LowerCaseDescent
+   neg /PFMLowerCaseDescent edef
+  skips-p % EXTT: Slant
+  skips-p % EXTT: SuperScript
+  skips-p % EXTT: SubScript
+  skips-p % EXTT: SuperScriptSize
+  skips-p % EXTT: SubScriptSize
+  skips-p % EXTT: UnderlineOffset
+  skips-p % EXTT: UnderlineWidth
+  skips-p % EXTT: DoubleUpperUnderlineOffset
+  skips-p % EXTT: DoubleLowerUnderlineOffset
+  skips-p % EXTT: DoubleUpperUnderlineWidth
+  skips-p % EXTT: DoubleLowerUnderlineWidth
+  skips-p % EXTT: StrikeOutOffset
+  skips-p % EXTT: StrikeOutWidth
+  readw-p % EXTT: KernPairs
+    /PFMNumberofKernPairs edef
+  skipw-p % EXTT: KernTracks
+} def
+
+% requires that currPFMfile, PFMPairKernTableOffset, PFMNumberofKernPairs are defined
+% readPFMExtMetric -
+% prints kern pairs table in the AFM format
+
+/readPFMKernPairs {
+  currPFMfile () ne {
+    PFMdict begin
+    PFMPairKernTableOffset 0 ne {
+      currPFMfile PFMPairKernTableOffset setfileposition
+      readw-p % undocumented kern count (although all remaining structures are
+              % explicitly preceded by their sizes); if it were a stable
+             % feature, EXTTEXTMETRICS could be skipped
+      PFMNumberofKernPairs
+%     2 copy = =
+      ne {
+        (Inconsistent number of kern pairs\n) printquit
+      } if
+      (StartKernData) =to.ofi
+      (StartKernPairs ) print.to.ofi
+      PFMNumberofKernPairs =to.ofi
+      % ---------
+      % MAIN LOOP
+      % ---------
+      /was.notdef false def
+      PFMNumberofKernPairs {
+        (KPX ) print.to.ofi
+        readb-p  % first  char
+        print-charname
+        readb-p  % second char
+        print-charname
+        reads-p  % kern amount
+        =to.ofi
+      } repeat
+      was.notdef {
+        (.notdef character ocurred among kern pairs) =
+        (you'd better check the resulting AFM file.) =
+      } if
+      (EndKernPairs) =to.ofi
+      (EndKernData)  =to.ofi
+    } if
+    end
+  } if
+} def
+
+% alias (for ``compatibility'' with J. Clark):
+/printkernpairs /readPFMKernPairs load def
+
+% printcharmetrics -
+
+/printcharmetrics {
+  (StartCharMetrics ) print.to.ofi
+  /PFBencoding currfont /Encoding get dup length array copy def
+  /PFBcharstrings currfont /CharStrings get def
+  PFBcharstrings length
+  PFBcharstrings /.notdef known { 1 sub } if =to.ofi
+  currfont 1000 scalefont setfont
+  % checking Encoding array and CharStrings dictionary for
+  % the consistency of names
+  /was.inconsitent false def
+  0 1 255 {
+    dup PFBencoding exch get
+    PFBcharstrings exch known {
+      pop
+    }{
+%     dup PFBencoding exch get =
+      PFBencoding exch /.notdef put % fix Encoding array
+      /was.inconsitent true def
+    } ifelse
+  } for
+  was.inconsitent {
+    (Encoding array contains name(s) absent from CharStrings dictionary) =
+  } if
+  % print metric data for each character in PFB encoding vector
+  0 1 255 {
+    dup PFBencoding exch get
+    dup /.notdef ne {
+      exch dup printmetric
+    }{
+      pop pop
+    } ifelse
+  } for
+  % xPFBencoding contains an entry for each name in the original
+  % encoding vector
+  /xPFBencoding PFBcharstrings length dict def
+  PFBencoding {
+    xPFBencoding exch true put
+  } forall
+
+  /fontiter 0 def
+  /TMPFontTemplate (TMP_FONT#000) def
+  {
+    % NewPFBencoding is the new encoding vector
+    /NewPFBencoding 256 array def
+    0 1 255 {
+      NewPFBencoding exch /.notdef put
+    } for
+    % fill up NewPFBencoding with names from CharStrings dictionary that
+    % are not encoded so far
+    /i 0 def
+    PFBcharstrings {
+      pop
+      i 255 le {
+        dup xPFBencoding exch known not {
+          dup xPFBencoding exch true put
+          NewPFBencoding i 3 -1 roll put
+          /i i 1 add def
+        }{
+          pop
+        } ifelse
+      }{
+        pop exit
+      } ifelse
+    } forall
+    i 0 eq {exit} if
+    % define a new font with NewPFBencoding as its encoding vector
+    currfont maxlength dict /NewTMPfont edef
+    currfont {
+      exch dup dup /FID ne exch /Encoding ne and {
+        exch NewTMPfont 3 1 roll put
+      }{
+        pop pop
+      } ifelse
+    } forall
+    % compute a unique name for a font to be registered
+    /fontiter fontiter 1 add def
+    TMPFontTemplate fontiter (000) cvs
+    dup length TMPFontTemplate length exch sub exch putinterval
+    /TMPFontName TMPFontTemplate cvn def
+    NewTMPfont /FontName TMPFontName put
+    NewTMPfont /Encoding NewPFBencoding put
+    % make this new font the current font
+    TMPFontName NewTMPfont definefont 1000 scalefont setfont
+    % print metric data for each character in the newly created encoding vector
+    0 1 255 {
+      dup NewPFBencoding exch get
+      dup /.notdef ne {
+        exch -1 printmetric
+      }{
+        pop pop exit
+      } ifelse
+    } for
+  i 255 lt {exit} if
+  } loop
+  (EndCharMetrics) =to.ofi
+} def
+
+% name actual_code normal_code printmetric -
+
+/printmetric {
+  (C ) print.to.ofi =only.to.ofi
+  ( ; WX ) print.to.ofi
+  onechar 0 3 -1 roll put
+  onechar stringwidth pop round cvi =only.to.ofi
+  ( ; N ) print.to.ofi =only.to.ofi
+  ( ; B ) print.to.ofi
+  newpath 0 0 moveto
+  onechar false charpath flattenpath pathbbox
+  newpath
+  round cvi /ury edef round cvi /urx edef
+  round cvi /lly edef round cvi /llx edef
+  ury lly eq {/ury 0 def /lly 0 def} if % normalize degenrated BB
+  urx llx eq {/urx 0 def /llx 0 def} if %
+  llx =only.to.ofi ( ) print.to.ofi lly =only.to.ofi ( ) print.to.ofi
+  urx =only.to.ofi ( ) print.to.ofi ury =only.to.ofi ( ) print.to.ofi
+  (;) =to.ofi
+} def
+
+/printinfoitem {
+  3 1 roll 2 copy known {
+    get dup type /stringtype ne { =string cvs } if exch
+    print.to.ofi ( ) print.to.ofi =to.ofi
+  }{
+    pop pop pop
+  } ifelse
+} def
+
+/printfontinfo {
+  (Comment AFM Generated by Ghostscript/pf2afm) =to.ofi
+  currfont /FontName  (FontName) printinfoitem
+  %
+  currfont /FontInfo get
+  dup /FullName           (FullName)           printinfoitem
+  dup /FamilyName         (FamilyName)         printinfoitem
+  dup /Weight             (Weight)             printinfoitem
+  dup /Notice             (Notice)             printinfoitem
+  dup /ItalicAngle        (ItalicAngle)        printinfoitem
+  dup /isFixedPitch       (IsFixedPitch)       printinfoitem
+  dup /UnderlinePosition  (UnderlinePosition)  printinfoitem
+  dup /UnderlineThickness (UnderlineThickness) printinfoitem
+      /version            (Version)            printinfoitem
+  %
+  (EncodingScheme FontSpecific) =to.ofi
+  %
+  (FontBBox) print.to.ofi
+  currfont /FontBBox get {
+    ( ) print.to.ofi round cvi =only.to.ofi
+  } forall
+  eolch print.to.ofi
+  %
+  currPFMfile () ne {
+    PFMdict
+    dup /PFMCapHeight        (CapHeight) printinfoitem
+    dup /PFMXHeight          (XHeight)   printinfoitem
+    dup /PFMLowerCaseDescent (Descender) printinfoitem
+        /PFMLowerCaseAscent  (Ascender)  printinfoitem
+  } if
+} def
+
+/readPFBfile {
+  % make a shot of the actual font directory:
+  /oldFontDirectory FontDirectory dup length dict copy def
+  isPFB {% defined in `makeafm'
+    (r) file true /PFBDecode filter cvx % true is better (see gs_type1.ps)
+    mark exch exec
+  }{
+    (r) file mark exch run
+  } ifelse
+  cleartomark
+  % make a shot of the updated font directory:
+  /newFontDirectory FontDirectory dup length dict copy def
+  % spot the added font:
+  oldFontDirectory  {pop newFontDirectory exch undef} forall
+  newFontDirectory length 1 ne {
+    newFontDirectory length =
+    (Weird PFB file?\n) printquit
+  } if
+  newFontDirectory {pop} forall
+  findfont /currfont edef
+} def
+
+/readPFMfile {
+  dup () ne {
+    (r) file /currPFMfile edef
+    10 dict dup /PFMdict edef begin
+    readPFMheader
+    readPFMExtMetric
+    end
+  }{
+    pop /currPFMfile () def
+  } ifelse
+} def
+
+% pfmfilename pf[ba]filename filetype printafm -
+% where filetype=(a) or (b)
+
+/printafm {
+  readPFBfile
+  readPFMfile
+  (StartFontMetrics 2.0) =to.ofi
+  printfontinfo
+  printcharmetrics
+  printkernpairs
+  (EndFontMetrics) =to.ofi
+} def
+
+/pfa_pfb_dict <<
+  /.pfb /pfbn
+  /.pfB /pfbn
+  /.pFb /pfbn
+  /.pFB /pfbn
+  /.Pfb /pfbn
+  /.PfB /pfbn
+  /.PFb /pfbn
+  /.PFB /pfbn
+
+  /.pfa /pfan
+  /.pfA /pfan
+  /.pFa /pfan
+  /.pFA /pfan
+  /.Pfa /pfan
+  /.PfA /pfan
+  /.PFa /pfan
+  /.PFA /pfan
+>> readonly def
+
+% Check whether the file name has pfa or pfb extension.
+/pfa_or_pfb? {      % s -> false   |    /name true
+  dup length 4 lt {
+    pop //false
+  } {
+    dup length 4 sub 4 getinterval //pfa_pfb_dict exch .knownget
+  } ifelse
+} bind def
+
+% pf[ba]filename makeafm -
+/makeafm {
+  count 0 eq {(Missing font file name\n) printquit} if
+  /ifn edef
+  ifn length 0 eq {(Empty font file name\n) printquit} if
+% the following piece of the code does, in fact, the job of a system shell,
+% i.e., it analyses the supplied names, appends extensions if needed,
+% and check files:
+  /pfbn () def /pfan () def /pfmn () def % initialisation
+  [ t1_glyph_equivalence { pop } forall ] { % disable glyph substitution
+    t1_glyph_equivalence exch undef
+  } forall
+  ifn pfa_or_pfb? {
+      ifn dup length string copy def
+      ifn dup length 4 sub 0 exch getinterval /ifn edef
+  } if
+  pfbn () eq pfan () eq and dup {% no extension was supplied, try ".pfb"
+    /pfbn ifn (.pfb) concatstrings def
+  } if
+  pfbn () ne {% check whether "filename.pfb" exists
+    pfbn status {pop pop pop pop /isPFB true def}{/pfbn () def} ifelse
+  } if
+  pfbn () eq and {% checking "filename.pfb" unsuccessful, try ".pfa"
+    /pfan ifn (.pfa) concatstrings def
+  } if
+  pfan () ne {% check whether "filename.pfa" exists
+    pfan status {pop pop pop pop /isPFB false def}{/pfan () def} ifelse
+  } if
+
+  pfbn () eq pfan () eq and {
+    (Neither pfa nor pfb found\n) printquit
+  } if
+
+  /ofn ifn (.afm) concatstrings def
+  ofn status {
+    pop pop pop pop (Resulting file exists\n) printquit
+  } if
+  /ofi ofn (w) file def
+
+  /pfmn ifn (.pfm) concatstrings def
+  pfmn status {
+    pop pop pop pop
+  }{
+    () pfmn {
+      (/) search dup not { pop (\\) search } if {
+        4 -1 roll exch concatstrings exch concatstrings exch
+      }{
+        exit
+      } ifelse
+    } loop
+    (pfm/) exch concatstrings concatstrings
+    dup status {
+      pop pop pop pop /pfmn edef
+    }{
+      pop /pfmn () def (pfm file not found -- ignored\n) print
+    } ifelse
+  } ifelse
+  //systemdict /.setsafe known {
+    <<
+      /PermitFileReading
+        [ pfmn dup length 0 eq { pop } if
+          isPFB {pfbn}{pfan} ifelse
+        ]
+      /PermitFileWriting [ ]
+      /PermitFileControl [ ]
+    >> setuserparams
+    .locksafe
+  } if
+
+  pfmn
+  isPFB {pfbn}{pfan} ifelse
+  printafm
+
+} def
+
+% Check for command line arguments.
+[ shellarguments
+  { ] dup length 1 eq {
+       0 get makeafm
+     }{
+       (This is PF2AFM -- AFM generator \(ver. 1.00\)\n) print
+       (Usage: gs [-dNODISPLAY] -- pf2afm.ps disk_font_name\n) printquit
+     } ifelse
+  }
+  {pop}
+ifelse

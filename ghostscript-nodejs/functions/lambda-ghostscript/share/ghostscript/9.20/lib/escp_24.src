@@ -1,0 +1,12 @@
+name               : ESC/P 24 pin
+pins               : 24
+minimal_unit       : 1
+maximal_unit       : 180
+dpi                : 180
+upper_position     : HIGH_BIT
+bit_image_mode     : \e 3 \x18 \e ?Z'
+send_bit_image     : \e Z \b2,d
+line_feed          : \r \n
+form_feed          : \r \f
+normal_mode        : \r \f \e 2
+skip_spaces        : \e \  \b2,d

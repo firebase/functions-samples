@@ -1,0 +1,302 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% wftopfa.ps
+% Convert a Wadalab base font to .PFA (or .PFB) format.
+
+(gs_ksb_e.ps) runlibfile
+(wrfont.ps) runlibfile
+
+/wftopfa_dict 100 dict def
+wftopfa_dict begin
+
+/KanjiSubEncoding dup .findencoding def
+
+% Initialize parameters.
+/init			% - init -
+ { /chars 256 dict def
+   /version (001.001) def
+   /highcode 0 def
+   /StdHW [32] def
+   /StdVW [32] def
+   /UniqueID 20000000 def
+   /FontBase (Wadalab) def
+   /StdEncMode false def
+   /CustomEncMode false def
+   /Binary false def
+   /Encrypt true def
+ } bind def
+
+% Read definitions.
+/rdstring 5000 string def
+/readdefs		% <filename> readdefs -
+ { (r) file
+    { dup rdstring readline not { pop exit } if
+      dup length 15 ge
+       { dup dup length 7 sub 7 getinterval (> CompD) eq
+          { token pop exch token pop exch pop
+            dup 0 get /highcode exch def
+            exch chars 3 1 roll put
+          }
+          { pop
+          }
+         ifelse
+       }
+       { pop
+       }
+      ifelse
+    }
+   loop closefile
+ } bind def
+
+% Write out the final font.
+/writepfa
+ { 4 string highcode 16#1000 add 16 2 index cvrs 0 (.r) putinterval
+     FontBase exch concatstrings /fullname exch def
+   UniqueID 20000000 eq { /UniqueID 4990000 highcode add def } if
+   /encoding CustomEncMode
+    { KanjiSubEncoding }
+    { StdEncMode { StandardEncoding } { ISOLatin1Encoding } ifelse }
+   ifelse def
+
+   /Font 30 dict def
+   Font begin
+   /FontInfo 20 dict def
+   FontInfo begin
+
+                % Write the clear text part.
+
+   /CreationDate (%Calendar%) currentdevparams
+     dup /Weekday get {(Sun )(Mon )(Tue )(Wed )(Thu )(Fri )(Sat )} exch get
+     1 index /Month get 1 sub
+       {(Jan)(Feb)(Mar)(Apr)(May)(Jun)(Jul)(Aug)(Sep)(Oct)(Nov)(Dec)} exch get
+     concatstrings
+      {{/Day ( )} {/Hour ( )} {/Minute (:)} {/Second (:)} {/Year ( )}}
+      { dup 1 get 3 -1 roll exch concatstrings exch
+        0 get 2 index exch get
+        dup 10 lt { =string cvs (0) exch concatstrings } { =string cvs } ifelse
+        concatstrings
+      }
+     forall exch pop readonly def
+   /VMusage 100000 def
+   /version version readonly def
+   /Notice (No copyright on this font. Original available from moe.ipl.t.u-tokyo.ac.jp:/Font. Converted by wftopfa.ps (Artifex Software Inc).) readonly def
+   /FullName fullname readonly def
+   /FamilyName FontBase readonly def
+   /Weight (Regular) readonly def
+   /ItalicAngle 0 def
+   /isFixedPitch true def
+   /UnderlinePosition 0 def
+   /UnderlineThickness 0 def
+
+   end			% FontInfo
+
+   /FontName fullname cvn def
+   /Encoding encoding def
+   /PaintType 0 def
+   /FontType 1 def
+   /FontMatrix [.001 0 0 .001 0 -0.16] readonly def
+   /UniqueID UniqueID def
+   /FontBBox [0 0 1000 1000] readonly def
+
+   /Private 20 dict def
+   Private begin
+
+   /-| {string currentfile exch readstring pop} readonly def
+   /|- {readonly def} readonly def
+   /| {readonly put} readonly def
+   /BlueValues [] readonly def
+   /OtherBlues [] readonly def
+   /MinFeature {16 16} readonly def
+   /StdHW StdHW def
+   /StdVW StdVW def
+   /ForceBold false def
+   /password 5839 def
+   /UniqueID UniqueID def
+   /OtherSubrs [] readonly def
+   /Subrs [
+     (\020\2771p|\020\024\020=-\223D\\\342R) readonly
+     (\020\2771py\274\366Uz) readonly
+     (\020\2771py\275\304\236i) readonly
+     (\020\2771p\371) readonly
+     (\020\2771p~\266+6\034\3446z) readonly
+   ] readonly def
+
+   end			% Private
+
+   /CharStrings 256 dict def
+   chars
+    { exch =string cvs
+      dup 0 get highcode eq
+       { 1 get encoding exch get exch CharStrings 3 1 roll put }
+       { pop pop }
+      ifelse
+    }
+   forall
+
+   end			% Font
+
+   Font /FontName get Font definefont setfont
+   (%stdout) (w) file writefont
+ } bind def
+
+% Scan the command line and process files.
+/options mark
+  /version { 2 copy get /version exch def 1 add } bind
+  /StdHW { 2 copy get cvx exec /StdHW exch def 1 add } bind
+  /StdVW { 2 copy get cvx exec /StdVW exch def 1 add } bind
+  /UniqueId { 2 copy get cvi /UniqueID exch def 1 add } bind
+  /UniqueID 1 index
+  /FontBase { 2 copy get /FontBase exch def 1 add } bind
+  /StdEnc { /StdEncMode true def } bind
+  /CustomEnc { /CustomEncMode true def } bind
+  /Binary { /Binary true def } bind
+  /noEncrypt { /Encrypt false def } bind
+.dicttomark def
+/wftopfa		% [(arg1) ...] wftopfa -
+ { init dup 0
+    { dup 2 index length ge { exit } if
+      2 copy get exch 1 add exch
+      options 1 index .knownget { exch pop exec } { readdefs } ifelse
+    }
+   loop pop pop
+   wrfont_dict /binary_CharStrings Binary put
+   wrfont_dict /eexec_encrypt Encrypt put
+   wrfont_dict /name_all_Encodings CustomEncMode put
+   writepfa
+ } bind def
+
+end				% wftopfa_dict
+
+/wftopfa
+ { mark exch wftopfa_dict begin /saved save def { wftopfa } exec false%stopped
+    { cleartomark true } { cleartomark false } ifelse
+   saved end restore { stop } if
+ } bind def
+
+[ shellarguments
+ { ] wftopfa }
+ { pop }
+ifelse
+
+% ---------------- Root font ---------------- %
+
+% Define the Encoding for the root font.
+/wfrootencoding
+% \x00-\x3F
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  1  2  3  4  5  6  7  8  0  0  0  0  0  0  0
+  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+% \x40-\x7F
+ 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40
+ 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56
+ 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72
+ 73 74 75 76 77  0  0  0  0  0  0  0  0  0  0  0
+% \x80-\xFF
+128 copy
+256 packedarray def
+
+% Define the template for the root font dictionary.
+/wfrootfontdict mark
+  /FontType 0
+  /FontMatrix [1 0 0 1 0 0]
+  /FMapType 2
+  /Encoding wfrootencoding
+.dicttomark def
+
+% Define a dummy (placeholder) Type 1 font for the FDepVector.
+/type1dummyfont		% <fontname> type1dummyfont <font>
+ { mark /FontName 3 -1 roll
+   /FontType 1
+   /FontMatrix [.001 0 0 .001 0 0]
+   /FontBBox [0 0 1000 1000]
+   /Encoding /KanjiSubEncoding findencoding
+   /CharStrings 0 dict
+   /Private mark /BlueValues [] /password 5839 .dicttomark
+   .dicttomark dup /FontName get exch definefont
+ } bind def
+
+% Write a root font.  Again, wrfont.ps does most of the work.
+/makerootfont		% <rootname> makerootfont <font>
+ { wfrootfontdict dup length 4 add	% FontName, FDepVector, PrefEnc, FID
+   dict copy begin
+   cvlit /FontName exch def
+   4 dict begin
+   /len FontName length def
+   /str len 4 add string def
+   FontName str cvs pop
+   str len (.r) putinterval
+   /FDepVector [ 16#21 1 16#74
+    { dup wfrootencoding exch get 0 eq
+       { pop
+       }
+       { 16 str len 2 add 2 getinterval cvrs pop
+         str cvn type1dummyfont
+       }
+      ifelse
+    }
+   for end counttomark -1 roll dup counttomark 2 roll
+   ] def
+   FontName currentdict end definefont
+ } bind def
+/writerootfont		% <rootname> writerootfont -
+ { save exch makerootfont setfont (%stdout) (w) file writefont restore
+ } bind def
+
+% ---------------- Converting entire fonts ---------------- %
+
+% Define the directory where the Wadalab fonts are stored.
+/wfdir (/home/ghost/kanji/w) def
+
+% Convert an entire Wadalab font.
+/writeentirefont	% <fontname> <template*> writeentirefont -
+ { 2 dict begin
+   /templates exch def
+   /fontname exch def
+   [ templates
+      { wfdir (/) concatstrings exch concatstrings { copystring }
+        8192 string filenameforall
+      }
+     forall
+     wfdir (/wadalab-sym/*.ps) concatstrings { copystring }
+       8192 string filenameforall
+   ]
+   (%!\n) print
+    { /currentuserparams where
+       { pop currentuserparams /VMReclaim get -2 vmreclaim { vmreclaim } }
+       { { } }
+      ifelse
+    } == (exec\n) print
+   (/KanjiSubEncoding ) print /KanjiSubEncoding findencoding ==
+     (readonly def\n) print
+    { (%stderr) (w) file dup 2 index write== flushfile
+       mark exch (CustomEnc) (Binary) (noEncrypt)
+       (FontBase) fontname counttomark -1 roll ] wftopfa
+    }
+   forall
+   fontname cvn writerootfont
+   (exec\n) print
+   end
+ } def			% don't bind, so we can print the procedure
+
+% Convert the Wadalab JIS 1&2 SaiMincho font.
+% To invoke this from the command line,
+%	gs -dNODISPLAY -q wftopfa.ps -c writeSaiMincho0 flush quit >wmin0.ps
+% To make the resulting font loadable on demand, add to the Fontmap file:
+%	/Wadalab-SaiMincho (wmin0.ps) ;
+/writeSaiMincho0
+ { (Wadalab-SaiMincho) [ (wadalab-mincho-0-8/*.ps) ] writeentirefont
+ } bind def

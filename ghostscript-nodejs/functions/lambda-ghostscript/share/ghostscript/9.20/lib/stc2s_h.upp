@@ -1,0 +1,60 @@
+-supModel="Epson Stylus Color IIs, 720x720DpI, Special Paper"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceCMYK
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/EscP2XY
+-r720x720
+-dupMargins="{ 9.0 39.96 9.0 9.0}"
+-dupBlackTransfer="{
+     0.0000     0.0003  0.0027  0.0056  0.0085  0.0120  0.0156  0.0196
+     0.0227     0.0260  0.0292  0.0323  0.0354  0.0386  0.0416  0.0450
+     0.0503     0.0564  0.0630  0.0711  0.0799  0.0905  0.1038  0.1169
+     0.1321     0.1522  0.1761  0.2011  0.2285  0.2678  0.3102  0.3637
+}"
+-dupCyanTransfer="{
+     0.0000     0.0008  0.0055  0.0106  0.0152  0.0201  0.0248  0.0298
+     0.0344     0.0393  0.0443  0.0490  0.0536  0.0585  0.0630  0.0683
+     0.0738     0.0803  0.0870  0.0955  0.1042  0.1149  0.1283  0.1408
+     0.1552     0.1744  0.1970  0.2197  0.2441  0.2797  0.3169  0.3637
+}"
+-dupMagentaTransfer="{
+     0.0000     0.0008  0.0055  0.0106  0.0152  0.0201  0.0248  0.0298
+     0.0344     0.0393  0.0443  0.0490  0.0536  0.0585  0.0630  0.0683
+     0.0738     0.0803  0.0870  0.0955  0.1042  0.1149  0.1283  0.1408
+     0.1552     0.1744  0.1970  0.2197  0.2441  0.2797  0.3169  0.3637
+}"
+-dupYellowTransfer="{
+     0.0000     0.0008  0.0055  0.0106  0.0152  0.0201  0.0248  0.0298
+     0.0344     0.0393  0.0443  0.0490  0.0536  0.0585  0.0630  0.0683
+     0.0738     0.0803  0.0870  0.0955  0.1042  0.1149  0.1283  0.1408
+     0.1552     0.1744  0.1970  0.2197  0.2441  0.2797  0.3169  0.3637
+}"
+-dupFormatYabsolute
+-dupWeaveYPasses=6
+-dupWeaveXPasses=2
+-dupOutputPins=20
+-dupWeaveYFeeds="{10 10 10 10 10 11 10 10 10 10 10  9}"
+-dupWeaveXStarts="{0  1  0  1  0  1  0  1  0  1  0  1}"
+-dupWeaveInitialYFeeds="{ 1  1  1  1  1  1  1  1  1  1  1  1}"
+-dupWeaveInitialXStarts="{0  1  0  1  0  1  1  0  1  0  1  0}"
+-dupWeaveInitialPins="{   2 17  5 20  8 13  6 11  9 14  2 17}"
+-dupBeginPageCommand="<
+   00 00 00 
+   1b01 40 45 4a 4c 20 31 32 38 34 2e 34 0a 
+   40 45 4a 4c 20 20 20 20 20 0a 
+   1b40   1b40
+   1b2847 0100 01
+   1b2869 0100 00
+   1b2855 0100 05
+   1b5500
+   1b2843 0200 0000
+   1b2863 0400 0000 0000
+>"
+-dupAdjustPageLengthCommand
+-dupAdjustTopMarginCommand
+-dupAdjustBottomMarginCommand
+-dupEndPageCommand="(\033@\014)"
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"
+

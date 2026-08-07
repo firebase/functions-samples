@@ -1,0 +1,23 @@
+-supModel="SiPix A6 Pocket Printer"
+-sDEVICE=uniprint
+-dNOPAUSE
+-dSAFER
+-dupColorModel=/DeviceGray
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/Epson
+-r360x360
+-dupMargins="{ 20 0 20 0}"
+-dupWhiteTransfer="{
+1.0         0.0
+}"
+-dupOutputPins=48
+-dupWeaveYPasses=1
+-dupFormatXabsolute
+-dupBeginPageCommand="<
+1b40 0d
+>"
+-dupEndPageCommand"<0d 0a>"
+-dupEndJobCommand"<0a 0a 0a>"
+-dupAbortCommand="(\033\100\15\12\12\12    Printout-Aborted\15\12\12\12)"
+-dupSetLineFeedCommand="<1b2b>"
+-dupWriteComponentCommands="{(\033*\111)}"

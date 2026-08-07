@@ -1,0 +1,5415 @@
+# Report of Ghostscript's conformance against the Quality Logic CET suite
+#
+Test	 Status	Comments
+
+08-04-	 AOK	This test is intentionally printer specific and is for information
+		only. Ghostscript completes all pages properly.
+
+09-01-1  OK	Fixed with gs_cet.ps initialization file
+		Default initial condition differs for currentblackgeneration and the
+		type and global of the default procedure differ.
+
+09-01-2  OK	Verified visually against Tek hardcopy. RJJ
+		matches CPSI.
+
+09-02-1  OK	Fixed rev 7102. RJJ
+
+09-02-2  OK	Colors corrected by rev 7172, fixed by rev. 7201
+
+09-02-3  OK	Corrected by 7152 and 7162.  ADC
+
+09-02-4  OK	Corrected by 7152 and 7162.  ADC
+
+09-02-5  OK	
+
+09-03-1  OK	Fixed rev 7102. RJJ
+		cpsi/09-03-1 is bogus. Acrobat 7 output obtained.
+
+09-03-2  OK	Fixed rev 7102. RJJ
+		cpsi/09-03-2  missing. Acrobat 7 output obtained.
+
+09-03-3  OK	Fixed by rev. 7202
+
+09-03-4  OK	Fixed rev 7102. RJJ
+		cpsi/09-03-4  missing. Acrobat 7 output obtained.
+
+09-03-5  OK	Verified visually against Tek hardcopy. RJJ
+		cpsi/09-03-5  missing. Acrobat 7 output obtained.
+
+09-03-6  OK	Verified visually against Tek hardcopy. RJJ
+		cpsi/09-03-6  missing. Acrobat 7 output obtained.
+
+09-03-7  OK	Verified visually against Tek hardcopy. RJJ
+		cpsi/09-03-7  missing. Acrobat 7 output obtained.
+
+09-03-8  OK	Fixed rev 7159.
+		cpsi/09-03-8  missing. Acrobat 7 output obtained.
+
+09-03-9  OK	
+		cpsi/09-03-9  missing. Acrobat 7 output obtained.
+
+09-04-1	 OK	
+
+09-04-2  OK	
+
+09-05-1  DIFF	Device Dependent: GS, CPSI and Tek hardcopy all different.
+		probably can be made "closer" using gs_cet.ps assign Ray.
+
+09-05-2  OK	Device Dependent: GS matches Tek hardcopy. RJJ
+
+09-05-3  OK	Device Dependent: GS matches Tek hardcopy. RJJ
+
+09-05-4  OK	Device Dependent: GS matches Tek hardcopy. RJJ
+
+09-05-5  OK	Device Dependent: GS matches Tek hardcopy. RJJ
+
+09-05-6  OK	Device Dependent: GS matches Tek hardcopy after fixed by rev. 7203
+		(CPSI much different)
+
+09-05-7  OK	Device Dependent: GS matches Tek hardcopy. RJJ
+
+09-05-8  OK	
+
+09-06-1  OK  	Fixed in rev. 7162. - Alex and RJJ
+
+09-06-2	 OK  	Fixed in rev. 7162. - Alex and RJJ
+
+09-06-3	 OK  	Fixed rev. 7159 and 7162. - Alex and RJJ
+
+09-06-4  OK	Fixed in rev. 7162. - Alex and RJJ
+
+09-06-5	 OK  	Fixed in rev. 7162. - Alex and RJJ
+
+09-07-1  OK 	Rev. 7207 changes Ghostscript to match Tek. 
+                The attributes of the arrays returned by currentcolortransfer
+                vary between PS interpreters. PLRM doesn't require any
+                particular attributes. Initial graphic state is created by an OEM,
+                not Adobe.
+
+09-07-2  OK	
+
+09-07-3  OK	
+
+09-07-4  OK	
+
+09-08-1  OK  	Fixed in rev. 7207
+
+09-08-2  OK	
+
+09-08-3  OK	
+
+09-09-1  OK	Device Dependent: GS matches Tek hardcopy. CPSI always uses setflat == 1.
+		GS clamps setflat value minimum as 0.2 and maximum at 100.0 same as Tek.
+
+09-09-2  OK	Device Dependent: GS matches Tek hardcopy. CPSI always uses setflat == 1.
+		GS clamps setflat value minimum as 0.2 and maximum at 100.0 same as Tek.
+
+09-09-3  OK	
+
+09-10-1  OK	Fixed rev 7102. RJJ
+
+09-10-2  OK	"0" vs. "0.0" is fixed in rev. 7186.
+
+09-10-3  OK	Fixed rev 7102. RJJ
+
+09-10-4  OK	Colors corrected by rev 7172.
+
+09-10-5  OK	
+
+09-11-1  AOK	GS has different small numbers near zero (e-5) than CPSI Tek has 0.0
+
+09-11-2  OK	Corrected by revision 7162 (Alex). - ADC
+
+09-11-3  OK	Minor differences visually reviewed by RJJ
+
+09-11-4  OK	
+
+09-11-5  AOK	Implementation dependent: Tek and CPSI and GS all different. GS does
+		match 09-11-7 (Test B3) as the test comments state.
+
+09-11-6  OK	
+
+09-11-7  AOK	Implementation dependent: Tek and CPSI and GS all different. GS does
+		match 09-11-5 (Test B1) as the test comments state.
+
+09-11-8  OK	
+
+09-11-9  OK	
+
+09-12-1  AOK	Device Dependent. Every device has its own initial halftone. 
+		Rev. 7208 makes currenthalftone return a read-only dictionary.
+		Adding a HalftoneType 9 as the Default entry to Resource/Halftone
+		path allows us to match Tek. Halftone isn't used with contone anyway.
+
+09-12-2  AOK	Device Dependent, Resolution dependent. Tek and CPSI differ
+		GS matches Tek hardcopy for SYNTAX 1 at 300dpi, SYNTAX 2
+		GS prints /Angle = 0, Tek shows /Angle = 0.0
+
+09-12-3  OK	GS matches Tek hardcopy. CPSI much different.
+
+09-12-4  OK	Resolution and Orientation dependent: GS matches Tek hardcopy at 300
+		dpi landscape.
+
+09-12-5  OK	GS at 300 dpi matches Tek hardcopy and checksum. Resolution dependent. 
+
+09-12-6  OK	Resolution and Orientation dependent: GS matches Tek hardcopy at 300
+		dpi landscape.
+
+09-12-7  OK	Resolution and Orientation dependent: GS matches Tek hardcopy at 300
+		dpi landscape.
+
+09-12-8  OK	GS matches Tek hardcopy. CPSI much different.
+
+09-12-9  OK	
+
+09-13-1  OK	Fixed rev 7102. RJJ
+
+09-13-2  OK	Fixed again by rev 7215 after rev 7124 caused problem. Matches Tek
+		harcopy.
+
+09-13-3  OK	Fixed rev 7102. RJJ
+
+09-13-4  OK	
+
+09-13-5  OK	
+
+09-14-1  OK	Minor differences visually reviewed by RJJ
+
+09-14-2  OK	
+
+09-15-1  OK	Minor differences visually reviewed by RJJ
+
+09-15-2  OK	
+
+09-16-1  OK	
+
+09-16-2  OK	
+
+09-16-3  OK	
+
+09-17-1  OK	
+
+09-17-2  OK	
+
+09-17-3  OK	
+
+09-18-1  OK	
+
+09-18-2  OK	
+
+09-19-1	 OK	Fixed rev 7102. RJJ
+
+09-19-2	 OK  	GS matches Tek hardcopy. CPSI gives 0.63 'B' value on first line of
+		third group -- Tek is probably correct. "0" vs. "0.0" is fixed in rev. 7186.
+
+09-19-3	 OK	Fixed rev 7102. RJJ
+
+09-19-4	 OK	
+
+09-19-4	 OK	
+
+09-19-5	 OK	
+
+09-20-1  AOK	Device Dependent: different default screen (OK)
+		GS matches Tek on the rest.
+
+09-20-2  OK	Device Dependent: Matches Tek hardcopy and checksum. RJJ
+
+09-20-3  OK	Device Dependent: Matches Tek hardcopy and checksum. RJJ
+
+09-20-4  DIFF	Device Dependent, Resolution dependent. Tek and CPSI differ
+		GS almost matches Tek hardcopy except "Actual Angle" when
+		AccurateScreens=true is 100.6 for GS (100.0 for Tek) and
+		GS shows "100 27" instead of "100.0 27.0" Assign: Ray
+
+09-20-5  OK	
+
+09-21-1  OK	
+
+09-21-2  OK	
+
+09-21-3  OK	
+
+09-22-1  OK  	Rev. 7207 changes Ghostscript to match Tek. 
+                See 09-07-01 for details.
+
+09-22-2  OK	
+
+09-22-3  OK	
+
+09-22-4  OK	
+
+09-23-1  OK	Fixed by gs_cet.ps RJJ
+
+09-23-2  OK	
+
+09-24-1  OK	
+
+09-24-2  OK	Fixed by rev 7617.
+
+09-24-3  OK	Fixed by r7123.
+
+09-24-4  OK	
+
+09-25-1  OK	
+
+09-25-2  OK	Fixed by rev 7617.
+
+09-25-3  OK	Fixed by r7123.
+
+09-25-4  OK	
+
+09-26-1  OK	Minor differences visually reviewed by RJJ
+
+09-26-2  OK	Fixed by rev 7617.
+
+09-26-3  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-26-4  OK	
+
+09-27-1  AOK	GS has different small numbers near zero (e-5) than CPSI Tek has 0.0
+		Device Dependent.
+
+09-27-2  OK	Minor differences visually reviewed by RJJ
+
+09-27-3  OK	Fixed by rev 7617.
+
+09-27-4  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-27-5  OK	
+
+09-28-1	 AOK 	Ghostscript is different from both Tek and PhotoPrint but
+		matches Distiller 5. Tek doesn't reset the dash array at
+                initgraphics. PhotoPrint redefines halftone operators as no-op,
+                which affects the test results.  Fixed by rev. 7792. - Alex
+
+09-28-2  OK	Fixed as of rev. 7211
+
+09-28-3  OK	Fixed by rev 7617.
+
+09-28-4  OK	Imagemask -- Fixed by r7123. Tek and AD7 output differ.
+
+09-28-5	 OK	Matches Tek hardcopy output. RJJ
+
+09-29-1  AOK	Device Dependent: GS has ProcessColorModel /DeviceRGB, Tek has non-standard
+		/DeviceCMY. GS matches Tek if BG, UCR set the same and ProcessColorModel is
+		forced to /DeviceCMY. CPSI shows ProcessColorModel /DeviceN.  DeviceRGB
+		values fixed in rev. 7216
+
+09-29-2  OK	Fixed by rev 7617.
+
+09-29-3  OK	Imagemask -- Fixed by r7123. Tek and AD7 output differ.
+
+09-29-4  OK	
+
+09-30-1  OK	Colors corrected by rev 7172.
+
+09-30-2  OK  	Error reports are fixed in rev. 7138. - Alex
+
+09-30-3  OK	Colors corrected by rev 7172.	Fixed by rev 7617.
+
+09-30-4  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-30-5  OK	
+
+09-31-1  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-31-1  bogus. Acrobat 7 output obtained.
+
+09-31-10  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-31-10  missing. Acrobat 7 output obtained.
+
+09-31-2  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-31-2  missing. Acrobat 7 output obtained.
+
+09-31-3  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-31-3  missing. Acrobat 7 output obtained.
+
+09-31-4  AOK	GS Matches Acrobat 7 output. Tek output has small dark rectangles
+		that are not correct.
+		cpsi/09-31-4  missing. Acrobat 7 output obtained.
+
+09-31-5  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-31-5  missing. Acrobat 7 output obtained.
+
+09-31-6  OK	Fixed revs 7159 and 7187.
+		NOTE: AD7 gets limitcheck as pre-7159 GS and matches that GS output.
+		cpsi/09-31-6  missing. Acrobat 7 output obtained.
+
+09-31-7  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-31-7  missing. Acrobat 7 output obtained.
+
+09-31-8  OK	Fixed by rev 7617.
+		cpsi/09-31-8  missing. Acrobat 7 output obtained.
+
+09-31-9  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-31-9  missing. Acrobat 7 output obtained.
+
+09-32-1	 OK	Verified visually against Tek hardcopy by Sabrina / RJJ
+		cpsi/09-32-1  missing. Acrobat 7 output obtained.
+
+09-32-2  OK  	Error codes are adjusted to match the checksum. rev. 7167 - Alex
+		cpsi/09-32-2  missing. Acrobat 7 output obtained.
+
+09-32-3	 OK	Fixed by rev 7617.
+		cpsi/09-32-3  missing. Acrobat 7 output obtained.
+
+09-32-4  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-32-4  missing. Acrobat 7 output obtained.
+
+09-32-5	 OK	Verified visually against Tek hardcopy by Sabrina / RJJ
+		cpsi/09-32-5  missing. Acrobat 7 output obtained (but differs).
+
+09-33-1  OK	
+
+09-33-2  OK	Matches Tek hardcopy output. RJJ
+
+09-33-3  OK	Fixed by rev 7617.
+
+09-33-4  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-33-5  OK	Fixed rev. 7217
+
+09-34-1  OK	Matches Tek hardcopy output. RJJ
+
+09-34-10  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-10  missing
+
+09-34-11  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-11  missing
+
+09-34-12  AOK	GS has smooth gradients, Tek hardcopy has dark gray stripe up
+		middle of gradients. GS matches AD7
+		I found that once I set embedded an sRGB colorrendering
+		dictionary, which is what AD7 uses for RGB matching,
+		GS and AD7 were nearly a perfect match. There was only
+		one relatively small rectangle area pointed out by cmpi in a
+		single ramp ( the CIEDefg [ffff] row). It appears that the TEK
+		output is the one that is incorrect. TIM
+		cpsi/09-34-12  missing
+
+09-34-13  OK	Fixed revs 7159 and 7187.
+		cpsi/09-34-13  missing
+
+09-34-14  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-14  missing
+
+09-34-15 AOK	Mostly matches Tek hardcopy output. GS has smooth gradients, Tek
+		has dark gray stripe in middle of 8th row. GS matched AD7
+		--
+		In my tests with GS, AD5 as well as the AD7 output, none show
+		the dark gray stripe mentioned. It is my opinion that TEK is the
+		one that is failing. TIM
+		cpsi/09-34-15  missing
+
+09-34-16  AOK	GS missing some graphics seen on Tek hardcopy. 
+		Probably RGB vs. CMYK device color - RJJ.
+		I do not understand Ray's comment.  Using the ppmraw device, I
+		see all of the graphics at the right side of the page.  Please
+		note that the appearance of this page depends upon the process
+		color model of the output device.  The page uses spot colors.
+		Thus the appearance of the page depends upon how the device
+		treats spot colors.  One of the spot color is called C1 and it
+		is white.  The C1 spot color is printed on top of the lower four
+		graphics.  Thus if the output device supports spot colors then
+		this results in a white appearance for this section of the page.
+		The GS tiffsep device (which supports spot colors) shows this
+		section of the page as being white.  The tiffsep device also
+		produces a separation for the C1 spot color which shows the area
+		covered by this ink.  Devices which do not support spot colors
+		use the tint transform function to convert the spot colors into
+		process colors.  Logically the tint tranform functions should
+		produced the same appearance as the spot colors.  However this is
+		not the case with this page.  Thus devices which do not support
+		spot colors such as the ppmraw (process color model = DeviceRGB)
+		or the tiff32nc (device process color = DeviceCMYK only) use the
+		tint transform functions are producing different appearances.
+		The same effect can be seen with Distiller/Acrobat 7.0.  The
+		presence of the spot colors can be examined with the 'Output
+		Preview' feature.  Disabling the 'Overprint Preview' changes
+		the process color model of Acrobat to DeviceRGB.  This forces
+		the use of the tint transform functions by Acrobat.  The
+		'missing' graphics then appear.
+		cpsi/09-34-16  missing
+
+09-34-17  OK	Fixed by rev 7617.
+		cpsi/09-34-17  missing
+
+09-34-18  OK	Fixed by r7123.
+		cpsi/09-34-18  missing
+
+09-34-19  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-19  missing
+
+09-34-2  AOK	GS has Yellow graphic, Tek shows Red for 'SeparateUnBlue setcolorspace'
+		(right of "1.0" text). Probably RGB vs. CMYK device color
+		NOTE: AD7 and Tek hardcopy output differ in same areas. - RJJ
+		Distiller/Acrobat 7.0 differ on four graphics.  These are the five below
+		the text that says "( /HIVAL 4095 def )".  Distiller/Acrobat shows the
+		first four of these as a grayish shade.  The fifth is a paler shade of
+		gray.  GS shows these as black, gray, burgandy, brown, and red respectively.
+		- ADC. 
+		From what I can see the yellow graphic that GS creates is
+		correct. The color space is aptly named "SeparateUnblue" (see
+		further below), since "un-blue" is yellow, this lead me to
+		believe yellow is what should be produced. Upon further digging
+		into the color space and putting some debug messages in the
+		tintTransform procedure, it also seems to be correct. From what
+		I can see the tint tintTransform procedure takes the blue value
+		and does some math on it to vary it in the range of 0.0 to 1.0.
+		It also places two ones on the stack just ahead of this blue
+		value so that all values passed to the /DeviceRGB are in the
+		range 1,1,0 to 1,1,1, which are various shades of yellow.
+		--
+		When I first did this I didn't know about the AD7 output... This
+		further verifies that the yellow is correct as AD7 matches GS
+		for this part of the job.
+		--
+		There is a second unresolved issue below the section that says
+		"/HIVAL 4095 def". I believe again that the four non-matching
+		graphics produced by GS are correct. For example...
+		--
+		The burgandy and brown are produced by the following code, respectively:
+		/HIVAL 4095 def
+		...
+		(gs Indexed_RGB_Proc setcolorspace 2048 setcolor Q)
+		(gs Indexed_RGB_Proc setcolorspace 3072 setcolor Q)
+		With the following colorspace definition:
+		/Indexed_RGB_Proc
+		{
+			[
+				/Indexed
+				/DeviceRGB
+				HIVAL
+				{
+					dup
+					HIVAL
+					div
+					exch
+					HIVAL
+					2
+					idiv
+					dup
+					2
+					index
+					exch
+					mod
+					exch
+					div
+					exch
+					HIVAL
+					3
+					idiv
+					dup
+					3
+					-1
+					roll
+					exch
+					mod
+					exch
+					div
+				}
+			]
+		}
+		def
+		--
+		Basically this space produces as output RGB values where the B's
+		that are split into 3 ranges by B_out= ( Value_in mod (HIVAL/3)
+		) / (HIVAL/3), G's that are split into 2 ranges by G_out =
+		(Value_in mod (HIVAL/2) ) / (HIVAL/ 2) and the R's are in one
+		range by R_out = Value_in / HIVAL. So a input value of 1/2 of
+		the input range (determined by HIVAL) produces an output of
+		roughly R=0.5, G=0, B=0.5. An input value of .75 of the input
+		range produces and output of roughly R=.74,G=.5,B=.25
+		--
+		I modified the colorspace to dump the stack at the end of its
+		number crunching tintTransform procedure. I printed out the
+		values for the burgandy and brown graphic sections and here is
+		what I got back.
+		--
+		2048 setcolor
+		0.500366	// B
+		0.00048852	// G
+		0.500122	// R
+		Which is the burgandy color mentioned.
+		--
+		3072 setcolor
+		0.250549	// B
+		0.500733	// G
+		0.750183	// R
+		Which is the brown color mentioned.
+		This verified to me that GS is doing the right thing. TIM
+		cps/09-34-2  missing
+
+09-34-3  AOK	GS RGB has missing graphic, Tek shows Cyan for 'SeparateUncyan setcolorspace'
+		(right of "1.0" text). GS matches Tek if Cyan, Magenta, Yellow and Black
+		Separation colorspaces are known, as with the 'tiffsep' device. A printer
+		that is CMYK will usually have the Separations available for overprint
+		effects. RJJ
+		-
+		NOTE: AD7 and Tek hardcopy output differ in same areas. RJJ
+		GS produces output matching Tektronix if 'tiffsep' device since this
+		device does not use the tint transform on /Cyan separation used in the
+		SeparationUncyan section.
+		-
+		The 'SeparateUncyan' issue is another example of a separation color space
+		which (intentionally ?) has a tint transform function which produces different
+		colors when it is used.  Thus the output depends upon whether or not the tint
+		transform function is used.  This can be seen by disabling the 'Overprint
+		Preview' feature in Acrobat 7.0.  GS produces results which are consistent with
+		Acrobat for both cases. (this is expected). ADC
+		cpsi/09-34-3  missing
+
+09-34-4  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-4  missing
+
+09-34-5  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-5  missing
+
+09-34-6  AOK 	GS matches graphics colors, but the code equivalent to
+		/Pattern setcolorspace 16 16 true matrix { (jihad) } imagemask
+                leaves imagemask operands on the stack on Adobe interpreters.
+                This is an obvious bug that we don't want in Ghostscript.
+		cpsi/09-34-6  missing
+
+09-34-7  AOK	GS has different 'currentcolor' results and different color graphics
+		Probably RGB vs. CMYK device color
+		NOTE: AD7 and Tek hardcopy output differ in same areas. - RJJ
+		There are two issues with this page.  The first issue is the colors of
+		of the various graphics on the page.   The page has spot colors.  It
+		also has tint transform functions which do not provide logically
+		consistent results.  Thus the appearance of the graphics depend upon
+		if the tint transform functions are being used.  The results with GS
+		match the results from Acrobat 7.0 as expected.
+		The second issue (which is a problem) is that the currentcolor value
+		for the CIEBasedDEFG differs.  The graphic for the same line is also
+		missing (which is probably related.) - ADC
+		--
+		The differences were releated to the colorrendering dictionary
+		in use. When I embedded an sRGB CRD the output matched AD5/AD7. TIM
+		cpsi/09-34-7  missing
+
+09-34-8  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-8  missing
+
+09-34-9  OK	Matches Tek hardcopy output. RJJ
+		cpsi/09-34-9  missing
+
+09-35-1  OK	Matches Tek hardcopy output. RJJ
+
+09-35-2  OK	Color difference (cmpi -c25 is OK, -c24 detects all pixels differ), 
+		otherwise fixed by rev 7617.
+		Presumed to match Tek (different inks, etc.) since this test uses
+		'setcolortransfer' which is ignored by CPSI. RJJ
+
+09-35-3  OK	Fixed by r7123.
+
+09-35-4  OK	Minor color difference.
+
+09-36-1  OK	Minor differences visually reviewed by RJJ
+
+09-36-2  OK	Minor differences visually reviewed by RJJ
+
+09-36-3  OK	Fixed by rev. 7226
+
+09-36-4  NF	Dash pattern differences with GS.
+		Analyzed by Igor. 
+                -
+                GS rounds coordinates to 1/256th of a pixel.
+		Due to that, when a curve is converted into a polygon,
+		its vertices are rounded, and therefore the length
+		of the polygon becomes few bigger than the ideal polygon.
+		Then applying the dash, it covers a smaller part
+		of the polygon than with CPSI.
+		-
+		One possible solution is :
+		Add floating coordinates to path segments.
+		The floating coordinates duplicate fixed ones,
+		and used only for computing the segment length.
+		The old fixed coordinated are used for anything else
+		as they do now.
+
+09-36-5  DIFF	In "Technical Paths", Ghostscript differs a lot, combination
+		of 09-24-2 linecap linejoin issues and dash issues. Defer 
+		this until after 09-24-2 is addressed.  
+		Need CPSI for investigations.
+		Assign: Ray
+
+09-36-6  OK	Fixed by r7123.
+
+09-36-7  OK	Fixed as of r7500.
+
+09-37-1  AOK	GS similar to Tek, but the value at which polygon edges changes from
+		16 to 8 differs (GS at 53, Tek at 19). Also Tek changes from 'smooth'
+		to 16 at 5, GS at 13. CPSI fixed to implement setflat changes from
+		smooth to 16 sides at 9 (GS at 13), CPSI never has less than 16 sides.
+		Resolution dependent (spec is 'output device pixels') and PLRM 3rd ed
+		states "If the flatness parameter is large enough to cause visible
+		straight line segments to appear, the result is unpredictable."
+		When GS is run at 300 dpi (same resolution as Tek), the transition
+		from smooth to 16 sides is at 7 (vs. 5 on the Tek) and from 16 to 8
+		sides at 27 (vs. 19 on the Tek).
+		-
+		Since Tek and CPSI differ, and GS generally uses more line segments,
+		the GS output conforms and is superior to the Tek output.
+
+09-37-10  OK	GS matches Tek and CPSI output now matches Tek (12/04/06).
+		Imagemask turkey fixed by r7123.
+
+09-37-11  OK	Matches Tek hardcopy output. RJJ
+
+09-37-2  OK	Matches Tek hardcopy output. RJJ
+
+09-37-3  OK	Matches Tek hardcopy output. RJJ
+
+09-37-4  AOK	GS similar to Tek, but the value at which polygon edges changes to
+		very coarse differs (GS at 73, Tek at 23). Also Tek changes from 'smooth'
+		to bumpy at 5, GS at 19. When GS is run at 300 dpi, the transitions
+		from smooth to bumpy is at 11, and from bumpy to very coarse at 39.
+		Resolution dependent (spec is 'output device pixels'). CPSI fixed to
+		implement setflat transitions to bumpy at 13 and to coarse at 33.
+		-
+		Since Tek and CPSI differ, and GS generally uses more line segments,
+		the GS output conforms and is superior to the Tek output.
+
+09-37-5  OK	Matches Tek hardcopy output. RJJ
+
+09-37-6  OK	Very small fill differences. RJJ
+
+09-37-7  OK	Very small fill differences. RJJ (CPSI ignores setflat, GS
+		similar to Tek hardcopy)
+
+09-37-8  DIFF	GS similar to Tek, but GS differs in the exact polygon shapes.
+		Resolution dependent (spec is 'output device pixels'). GS at 300
+		dpi has less edges on large outline in top two images. CPSI (at
+		600 dpi) also smoother than GS on top two outlines.
+		assign: Ray
+
+09-37-9  DIFF	"Stroked_Objects" and "Filled_Objects" differ slightly with
+		number of polygonal edges. Tek shows strokepath of "Technical
+		Paths" IS subject to setflat -- GS has smoother round cap/join.
+		Resolution dependent (spec is 'output device pixels'). CPSI fixed
+		to implement setflat matches Tek ouptut for "Technical paths".
+		Assign: Ray
+
+09-38-1  OK	Minor differences visually reviewed by RJJ
+
+09-38-2  OK	Fixed by rev 7617.
+
+09-38-3  OK	Fixed by r7123.
+
+09-38-4  OK	
+
+09-39-1  OK	Matches Tek hardcopy output. RJJ
+
+09-39-2  OK	matches CPSI
+
+09-39-3  OK	matches CPSI. Imagemask fixed by r7123.
+
+09-39-4  OK	
+
+09-40-1  AOK	Matches Tek hardcopy output. RJJ (CPSI ignores settransfer)
+		GS is contone, Tek is dithered
+
+09-40-10  OK	
+
+09-40-11  OK	
+
+09-40-12  OK	
+
+09-40-13  OK	
+
+09-40-14  OK	
+
+09-40-15  OK	
+
+09-40-16  OK	
+
+09-40-17  OK	
+
+09-40-18  OK	
+
+09-40-19  OK	Matches Tek hardcopy output. RJJ (CPSI ignores settransfer)
+
+09-40-2   AOK	GS is contone, Tek is dithered, otherwise GS matches Tek.
+		CPSI ignores transfer function.
+
+09-40-20  OK	Minor differences visually reviewed by RJJ
+
+09-40-21  AOK	GS and Tek give 'rangecheck' for last three "Test I". GS
+		matches Tek except GS is contone, Tek is dithered.
+
+09-40-22  OK	
+
+09-40-23  OK	Fixed by rev 7617.
+
+09-40-24  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-40-25  OK	
+
+09-40-3  OK	
+
+09-40-4  OK	
+
+09-40-5  OK	
+
+09-40-6  OK	
+
+09-40-7  OK	
+
+09-40-8  OK	GS matches Tek since rev. 7168 - Alex
+
+09-40-9  OK	
+
+09-41-1  OK	
+
+09-41-2  OK	Fixed by rev 7617.
+
+09-41-3  OK	Fixed by r7123.
+
+09-41-4  OK	Fixed by r7124.
+
+09-42-1  OK	
+
+09-42-2  OK	
+
+09-42-3  OK	Minor differences visually reviewed by RJJ
+
+09-42-4  OK	
+
+09-42-5  OK	Fixed by rev 7617.
+
+09-42-6  OK	Fixed by r7123.
+
+09-42-7  OK	
+
+09-43-1  OK	
+
+09-43-2  OK	
+
+09-43-3  OK	Minor differences visually reviewed by RJJ
+
+09-43-4  OK	
+
+09-43-5  OK	Fixed by rev 7617.
+
+09-43-6  OK	Fixed by r7123.
+
+09-43-7  OK	
+
+09-44-1  OK	Minor differences visually reviewed by RJJ
+
+09-44-2  OK	
+
+09-44-3  OK	Minor differences visually reviewed by RJJ
+
+09-44-4  OK	
+
+09-44-5  OK	Fixed by rev 7617.
+
+09-44-6  OK	Fixed by r7123.
+
+09-44-7  OK	
+
+09-45-1  OK
+
+09-45-2  OK
+
+09-45-3  OK	
+
+09-45-4  OK	
+
+09-45-5  DIFF	Partly fixed by rev 7617. Remaining diff is width of miter
+		extension in "Stroked Objects". Assign: Ray
+
+09-45-6  OK	Fixed by r7123.
+
+09-45-7  OK	
+
+09-46-1  OK	Minor differences visually reviewed by RJJ
+
+09-46-2  OK	
+
+09-47A-1  OK	Matches Tek hardcopy output. RJJ
+
+09-47A-2  OK	Matches Tek hardcopy output. Minor color differences. RJJ
+
+09-47A-3  OK	Minor differences visually reviewed by RJJ
+
+09-47A-4  OK	Matches Tek hardcopy output. RJJ
+
+09-47A-5  OK	Matches Tek hardcopy output. RJJ
+
+09-47A-6  OK	Matches Tek hardcopy output. RJJ
+
+09-47A-7  OK	Matches Tek hardcopy output. RJJ
+
+09-47A-8  DIFF	Resolution dependent: GS 'pattern' has double line joined, Tek
+		and CPSI do not although Tek and CPSI differ with pattern phase.
+		Assign: Ray
+
+09-47A-9  OK	Fixed by rev 7169.
+
+09-47B-1  DIFF	GS has different pattern phase. Tek and CPSI appear to be the same.
+		Assign: Ray
+
+09-47B-10  DIFF	Test01 : aok
+		CPSI problem. The tensor patch has corner colors like this :
+		00 55
+		ff aa
+		Thus it must have a horizontal line of a constant color 80
+		near the middle. The line is observable with GS and it is not with CPSI.
+		Analyzed by Igor. 
+		-
+		Test09 - a color mapping problem.
+		Analyzed by Igor. 
+		CIEBasedDEF colors are given with a sampled 
+		(2 args, 2 results) function like this :
+		000000   ff0000 
+                00ff00   ffffff
+		With GS the brightness of magenta is asame as cyan.
+		CPSI paints a lighter magenta. 
+		I guess something is wrong with WhitePoint in GS,
+		because an assimmetry red|blue must come from it.
+		The assymmetry is observing with CPSI and not with GS.
+		Assign to Tim
+		-
+		Test10: AOK
+		Match when using common CRD.
+		-
+		Test11: AOK
+		Match when using common CRD.
+
+09-47B-11  DIFF	Test02, Test03 : aok. Same as 09-47B-10 Test11.
+		-
+                Test04: aok
+                Analyzed by Igor.
+                Likely CPSI problem.
+                The test is buggy - insufficient data for function.
+                It needs 16 samples, but 12 are only provided.
+                GS adds zeros at end.
+                000000ff 000000ff 
+                00ffffff 00000000
+                Thus the right end is Magenta+Yellow+Black =
+                (1-green + 1-blue)*(1-black) =
+                (1 + red)*(1-black).
+                It is observing with GS.
+                CPSI likely due to occasional data added at stream end.
+                See also Test11.
+                -
+                Test05: AOK
+                Analyzed by Igor.
+                A bad color CMYK=[1 1 1 1] in the test.
+                GPSI and GS differently convert [v v v v] CMYK colors to RGB.
+                Matches fine in 7736 with CPSI_mode = true.
+                Tim
+                -
+                Test06: AOK
+                Analyzed by Igor.
+                A bad color CMYK=[0.7 0.7 0.7 0.7] in the test.
+                GPSI and GS differently convert [v v v v] CMYK colors to RGB.
+                Matches fine in 7736 with CPSI_mode = true.
+                Tim
+                -
+                Test11: AOK
+                This is the same problem as Test04. Bug in test.
+                Insufficient data for function.
+                /CIEBasedDEFG as /DeviceCMYK in Test04 needs 16 samples,
+                and only 12 are provided.
+                Tim
+                -
+                Test12:
+                CIEBasedDEFG shading does not match CPSI.
+                Assign to Igor
+
+09-47B-12  AOK	GS has wrong color Test06 GS not smooth Test07, Test08.
+		NOTE: Tek gets rangecheck error on Test03 Test10, CPSI and GS do not.
+		.
+		According to my reading of the spec, test6 should rangecheck,
+		but CPSI returns garbage data instead. r7130 improves match to
+		Tek output, but ultimately rendering of this page will be
+		device dependent, hence aok. - Raph
+
+09-47B-2  DIFF	GS has different pattern phase. Tek and CPSI appear to be the same.
+		Assign: Ray
+
+09-47B-3  DIFF	GS has different pattern phase. Tek and CPSI appear to be the same.
+		Assign: Ray
+
+09-47B-4  OK	
+
+09-47B-5  OK	Minor color difference, reviewed visually. RJJ
+
+09-47B-6  OK	Fixed by rev 7169.
+
+09-47B-7  AOK	Test01, Test02 :
+		Briefly analyzed by Igor.
+		Resolved by using common CRD. Tim 
+		-
+		Test10: aok
+		CPSI problem : a non-monotonic color space is rendered as monotonic.
+
+09-47B-8  AOK	Test01, Test02, Test03, Test05, Test08, Test09, Test10 : aok
+		Analized by Igor.
+		CPSI problem : a non-monotonic color is rendered as monotonic.
+		-
+		Test04, Test11: aok
+		Analized by Igor.
+		CPSI problem same as 09-47B-10 Test01.
+
+09-47B-9  AOK	Test03, Test04, test05, Test06, Test07, Test10, Test11: aok
+		Analized by Igor.
+		CPSI problem : a non-monotonic color is rendered as monotonic.
+		-
+		Test08 : aok
+		Analized by Igor.
+		CPSI has a worse smoothness.
+		-
+		Test12 : aok
+		Analized by Igor.
+		CPSI problem same as 09-47B-10 Test01.
+
+09-47C-1  OK  	Fixed by rev 7221.
+
+09-47C-2  DIFF  Rev. 7740 adds 'null' to the message.
+                Adobe shows: 'F --show-- rangecheck null'
+		At 144 dpi GS shows 'F --.type1execchar-- rangecheck null'.
+                At 72 dpi GS shows the same message as Adobe. assign: Peter
+
+09-47D-1  OK	Fixed by rev 7169.
+
+09-47D-2  OK	Fixed by rev. 7149.
+
+09-47D-3  OK	Fixed by rev 7169.
+
+09-47D-4  OK	Fixed by rev 7169.
+
+09-47D-5  OK	Fixed by rev 7169.
+
+09-47D-6  OK	Fixed by rev. 7149.
+
+09-47E-1  OK	Fixed by rev 7169.
+
+09-47E-2  OK	Fixed by rev 7149.
+
+09-47E-3  OK	Fixed by rev 7169.
+
+09-47F-1  OK	Fixed by rev 7169.
+
+09-47G-1  AOK	Test06: ok.
+		rev. 7176 now properly sets errorinfo.
+		-
+		Test07: aok
+		Analyzed by Igor.
+		The test is buggy : insufficient stream data,
+		the effect does not correspond to the comment in the test.
+		Due to insufficient data GS adds zeros at end,
+		and the function becomes like this :
+		000000 ff000000            ff00ff ffff0000
+		000000 00000000            000000 00000000
+		The DeviceN maps it to DeviceRGB with dropping the last 4 components,
+		so we've got corner colors :
+		black     magenta
+		black     black
+		That's what we observe with GS.
+		There is a comment in gsdsrc.c ln 47 :
+		/* Access data from a string or a byte object. */
+		/* Does check bounds, and returns 0 data oob. Spec calls for rangecheck,
+		   but CPSI implementation silently gives (bogus) data. */
+		Tek paints       black   magenta
+		                 black   red       - likely an occasional data at stream end.
+		-
+		Test10: aok
+		Analyzed by Igor.
+		A bug in the test : excessive stream data,
+		the effect does not correspond to the comment in the test.
+		The real effect is a linear sampled function like this :
+		Cyan:    00 00
+		         00 ff
+		Magenta: 00 00
+		         00 ff
+		Yellow:  00 00
+		         00 ff
+		Black:   00 00
+		         00 ff
+		Thus it paints bad CMYK colors [v v v v] for various v.
+		Same as 09-47B-11 Test05.
+		I believe that [1 1 1 1] is very black, right ?
+		Thus CPSI looks wrong.
+		GS looks close to Tek.
+
+09-47G-2  AOK	Test01: ok
+                Fixed with rev 7199.
+                -
+                Test10: aok
+                Analyzed by Igor.
+                The linear sampled function is :
+		000000 ff0000 
+		00ff00 ffffff
+                The function's domain by the 2nd argument
+                is twice bigger than the shading domain.
+                Therefore the function linear is cropped to this :
+                007700 ff7777
+                00ff00 ffffff
+                With CPSI it looks like this (wrong) :
+                000000 ff0000 
+                00ff00 ffff77
+                With GS it looks like this (correct) :
+                007700 FF7777
+                00ff00 777777
+                CPSI appears wrong, GS appears correct.
+		-
+		Test11: aok
+		The function domain is cropped by both coordinates.
+		First convert to 3x3 :
+		000000 770000 ff0000 
+		007700 777733 ff7777
+		00ff00 77ff77 ffffff
+		Then crop with the "positive" quadrant :
+		777733 ff7777
+		77ff77 ffffff
+		It looks close to what GS paints.
+		CPSI paints something like this :
+		770000 ff0000
+		ffff77 7777ff
+                CPSI appears wrong, GS appears correct.
+
+09-47G-3  AOK	Test01: aok
+		The function 000000 ff0000       black red
+			     00ff00 ffffff       green white
+		It is truncated with BBox/Matrix = 0.909, 0.933
+		So by theory we get:
+		000000 e70000
+		e60000 d1d1d1
+		It looks so with GS.
+		Don't know why CPSI misses green.
+		-
+		Test02 : Same as 09-47G-2 Test11.
+
+09-47H-1  OK	Fixed by rev 7149.
+
+09-47H-2  OK	Fixed by rev 7149.
+
+09-47H-3  OK    Partially fixed by rev. 7169, finished by rev. 7176.
+
+09-47H-4  OK	Fixed by rev 7206
+
+09-47I-1  OK	Fixed by rev 7149.
+
+09-47I-2  OK	Fixed by rev 7175.
+
+09-47I-3  OK	Test01, Test02, Test03, Test04, Test05, Test06, Test07: ok
+		Fixed by rev 7175.
+		-
+		Test11: OK. Looks fine in rev 7718. Tim.
+
+09-47I-4  OK	Fixed as of rev 7211.
+
+09-47I-5  OK	Fixed by rev 7175.
+
+09-47I-6  OK	Fixed by rev 7175.
+
+09-47I-7  OK	Test02, Test03, Test04: ok	Fixed by rev 7175.
+		Test11: ok 	Fixed with rev 7179.
+
+09-47I-8  OK	Test02, Test04: ok Fixed with rev 7179.
+		-
+		Test07, Test11: ok Fixed by rev 7175.
+		-
+		Test06, Test08: ok Fixed with rev 7218.
+		-		- 
+		Test12: ok	Fixed by rev 7175.
+
+09-47J-1  DIFF	Graphic differences in Test01 (partly drawn) and Test12
+		(green line across the shading). Assign: Igor
+                
+09-47J-10 OK	
+
+09-47J-2  OK	
+
+09-47J-3  AOK	Test01 CPSI misses an imagemask with a shading color.
+
+09-47J-4  OK	
+
+09-47J-5  OK	
+
+09-47J-6  OK	
+
+09-47J-7  OK	
+
+09-47J-8  AOK	Test01 CPSI misses an imagemask with a shading color.
+
+09-47J-9  OK	
+
+09-47K-1  AOK	Test01 CPSI yields a rangecheck while rendering 
+                an imagemask or a character with a shading color.
+                and misses the rest of graphics.
+                I don't see any legal reason for rangecheck. 
+
+09-47K-2  OK	
+
+09-47K-3  OK	
+
+09-47K-4  OK	
+
+09-47K-5  OK   
+
+09-47K-6  OK	
+
+09-47K-7  AOK	Test01 CPSI yields a rangecheck while rendering 
+                an imagemask or a character with a shading color.
+                I don't see any legal reason for rangecheck. 
+		Graphics appearance matches CPSI visually.
+
+09-47K-8  OK	
+
+09-47L-1  AOK	Test01 CPSI misses the character and imagemask with
+		a shading color.
+
+09-47L-2  OK	
+
+09-47L-3  OK	
+
+09-47L-4  OK	
+
+09-47L-5  DIFF	Test01 CPSI misses the character and imagemask with
+		a shading color.
+		Test07, Test08 -- GS missing 'wedges' in center region
+		of shading. 
+
+09-47M-1  AOK	Test01: The corner colors are :      black   red
+                                                     green white	
+                GS paints entire shading.
+                CPSI misses for imagemask and character. AD7 paints character,
+		but misses imagemask.
+                Analyzed by Igor.
+
+09-47M-2  OK	Fixed by rev 7149.
+
+09-47M-3  OK	Fixed by rev 7169.
+
+09-47M-4  AOK	Test01 : ok, similar to 09-47M-1. (CPSI misses imagemask and
+		character, AD7 misses imagemask).
+		-
+		Test04: ok - Fixed with rev 7210.
+                Note: AD7 gets "drawing error" on the PDF it creates from this
+		as it is drawing Test04. GS is able to display entire Page and
+		output matches GS rendering of 09-47M.PS. Bug in Acrobat 7
+		Reader!
+		-
+		Test09: ok - Fixed with rev 7210.
+		-
+		Test10, Test11, Test12: ok - Fixed by rev 7206
+
+09-47M-5  AOK	GS has smoother shadings (CPSI has triangle 'glitches' 
+		with self-intersectint tensor: Test05, 06
+		Test10-12). NOTE: Tek shapes and colors differ greatly. 
+
+09-47N-1  DIFF	A different flattening. Assign: Ray
+
+09-47N-2  OK	Fixed by r7123.
+
+09-47N-3  AOK	Really minor phase difference in pattern. RJJ 
+
+09-48-1  OK  	Fixed in rev. 7138 - Alex
+
+09-48-2  OK	Fixed by rev 7617.
+
+09-48-3  OK	Fixed by r7123.
+
+09-48-4  OK	
+
+09-49A-1  OK	
+
+09-49B-1  OK	
+
+09-49B-2  AOK   Wrong value of AccurateScreens is fixed by rev. 7741.
+                CPSI-based PhotoPrint product ignores all attempts to change
+                the halftone and cannot be used as a reference.
+              	GS is close to Tek Special Test B except for resolution
+                dependent numbers for ActualFrequency. Test C ActualFrequency is
+                also Device Dependent. - Alex
+
+09-49C-1  OK	Matches Tek hardcopy and checksum. RJJ (CPSI differs because it
+		ignores setscreen).
+
+09-49D-1  OK	Fixed by rev 7617.
+
+09-49D-2  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-49D-3  OK	Fixed by r7450
+
+09-50-1  DIFF	GS has different line spacing. CPSI and Tek agree. GS gets same
+		results for "false setstrokeadjust" "true setstrokeadjust".
+		Assign: Ray
+
+09-50-2  OK	
+
+09-50-3  DIFF	GS missing radial lines filling arcs. Tek and CPSI agree. May
+		be related to 09-24-2. Assign: Ray
+
+09-50-4  OK	Fixed by r7123.
+
+09-50-5  OK	
+
+09-51-1  OK	Matches Tek hardcopy. RJJ (CPSI ignores settransfer).
+
+09-51-2  OK	Fiexd by rev 7617. GS matches colors of Tek hardcopy, CPSI
+		shows MUCH different colors.
+
+09-51-3  OK	Fixed by r7123.  GS matches colors of Tek hardcopy, CPSI
+		shows MUCH different colors.
+
+09-51-4  OK	Minor color difference (looks black to me). USE_ADOBE_CMYK_RGB issue
+		assign: Ray
+
+09-52-1  AOK	Device Dependent: GS has default ProcessColorModel /DeviceRGB
+		CPSI has /DeviceN, Tek has /DeviceCMY (not a standard one??)
+
+09-52-2  OK	Fixed by rev 7617.
+
+09-52-3  OK	Fixed by r7123.
+
+09-52-4  OK	Fixed by gs_cet.ps RJJ
+
+09-53-1  OK	Fixed by r7155 - Raph
+
+09-53-2  OK	Fixed by r7155 - Raph
+
+09-53-3  OK	Minor differences visually reviewed by RJJ
+
+09-53-4  OK	GS has different numbers (off by 1.0 or 2.0 out of ~120.0). Related
+		to cliprestore.
+	 Fixed by r7155 - Raph
+
+09-53-5  OK	Fixed by rev 7617.
+
+09-53-6  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-53-7  OK	
+
+09-54-1  AOK	GS has > 1000 limit on clipsave. Tek and CPSI limit at 34.
+		Device Dependent.
+
+09-54-2  OK	Fixed in r7155 - Raph
+
+09-54-3  OK	Fixed in r7155 - Raph
+
+09-54-4  OK	Fixed in r7155 - Raph
+
+09-54-5  OK	Fixed in r7155 - Raph
+
+09-54-6  OK	Fixed by rev 7617.
+		assign: Ray
+
+09-54-7  OK	Fixed by r7123. Color corrected by rev 7172.
+
+09-54-8  OK	Matches Tek hardcopy and CPSI. RJJ
+
+09-55-1  AOK	Implementation dependent: GS allows small smoothness values,
+		Tek clamps lower value to 0.005, CPSI to 0.002.
+
+09-55-2  OK	
+
+09-56-1  AOK 	Device Dependent: Tek and Adobe show '/findcolorrendering'
+                instead of '--findcolorrendering--' with errors. I've checked
+                in a fix for the setcolorrendering issue. /GenericImagesetter
+                and /AppleMonitor are CRD's provided by Adobe to OEM as
+                examples. They must be removed from the final product but
+                Scanvec-Amiable forgot.
+                -
+                The checksum depends on the order of resource enumeration,
+                which depends on the order of dictionary enumeration and
+                directory enumeration for external halftones.
+
+09-56-2  OK	revisin 7234 (peter)
+
+09-56-3  OK     Ghostscript matches the checksum for Tek360 version of the test.
+		PhotoPrint has extra '1' in GRAY33 that tests that whether the
+                change in colorspace affects CRD. Surprisingly, it does.
+                Tek scan and Distillier 5 have '1' in MEMO 03 and 04, i.e.
+                have different default CRD and a CRD returned by /Saturation
+                findcolorrendering. CRD selection is implementation dependent
+                and is normally left to OEM.
+
+09-57-1  AOK	Fixed by rev 7169.; GS has a better smoothing.
+
+09-57-10  OK	Fixed by rev 7169.
+		NOTE: Tek is MUCH different (wrong??)
+
+09-57-11  OK	Fixed by rev 7169.
+		NOTE: Tek is all blank graphics (wrong??)
+
+09-57-12  OK	Matches Tek hardcopy. RJJ (CPSI differs)
+
+09-57-13  AOK	Test 09-12: With bad smoothness CPSI shadings are worse.
+		Analyzed by Igor.
+
+09-57-14  OK	Fixed by rev 7617.
+
+09-57-15  OK	Fixed by r7123.
+
+09-57-16  OK	
+
+09-57-2  AOK	Fixed by rev 7169.; GS has a better smoothing.
+
+09-57-3  AOK	Fixed by rev 7169.; GS has a better smoothing.
+
+09-57-4  AOK	Fixed by rev 7169.; GS has a better smoothing.
+
+09-57-5  AOK	Fixed by rev 7169.; GS has a better smoothing.
+
+09-57-6  AOK	Test04: With bad smoothness CPSI shadings are worse. 
+
+09-57-7  OK	
+
+09-57-8  OK	Reviewed by RJJ. (something must have fixed this)
+
+09-57-9  OK	Fixed by rev 7169.
+
+09-58-1  AOK	Device Dependent: GS returns /none (4th line), Tek and CPSI return
+		/DefaultHalftone. GS matches Tek for some lines, CPSI for others.
+
+09-59-1  AOK	Device Dependent: CPSI and Tek hardcopy differ.
+
+09-60-1  OK	
+
+10-01-1  OK	
+
+10-01-2  OK	
+
+10-01-3  OK	
+
+10-01-4  OK	Minor differences in positions and character shapes - ADC
+
+10-01-5  OK	Minor differences visually reviewed by RJJ
+
+10-01-6  AOK	GS matches Tek hardcopy. CPSI differs in gradient in section
+		labeled 'Fountain_image' in the upper left.GS also
+		matches the appearance of of Distiller/Acrobat 7.0 - ADC
+
+10-01-7  OK	Color corrected by rev 7172.
+
+10-02-1  OK	
+
+10-02-2  OK	
+
+10-02-3  OK	
+
+10-02-4  OK	
+
+10-02-5  OK	
+
+10-02-6  OK	Minor differences in positions and character shapes - ADC
+
+10-02-7  OK	Minor differences visually reviewed by RJJ
+
+10-02-8  AOK	Differences between CPSI and GS in gradient in section
+		labeled 'Fountain_image' in the upper right.  However GS
+		matches the appearance of of Distiller/Acrobat 7.0.  See
+		10-01 page 6. - ADC
+
+10-02-9  OK	
+
+10-03-1  AOK	First section contains values dependent upon the initial CTM.
+		Different initial matrices for all three interpreters.
+		Notes:  Acrobat and CPSI are rotated 180 degrees relative to
+		each other.   Ghostscript changes the initial CTM based upon
+		the output device.
+		Distiller 7.0 reports:  [ 8.333 0.0 0.0 -8.333 -2550.0 3301.0 ]
+		CPSI reports:           [ -8.333 0.0 0.0 8.333 2550.0 -3301.0 ]
+		Ghostscript reports:    [ 8.333 0.0 0.0 -8.333 0.0 6600.0 ]
+
+10-03-2  OK	
+
+10-03-3  OK	
+
+10-04-1  OK	
+
+10-04-2  OK	
+
+10-05-1  OK	
+
+10-05-2  OK	
+
+10-06-1  OK	
+
+10-06-2  OK	
+
+10-07-1  OK	
+
+10-07-2  OK	
+
+10-08-1  OK	Minor differences in positions and character shapes - ADC
+
+10-08-2  OK	Minor differences in positions and character shapes - ADC
+
+10-09-1  OK	
+
+10-09-2  OK	
+
+10-09-3  OK	
+
+10-09-4  OK	
+
+10-10-1  OK	
+
+10-10-2  AOK	Checksum 63395 does not match CPSI or Distiller/Acrobat 7.0.
+		The pages (and checksums) match Distiller 7.0 and CPSI except
+		for the 'much22' test.  This test is specified by:
+		(/much22{ xy-t {0 -3 6 3 setbbox 3 0 1 0 360 arc 3 0 2 0 360 arc} ineofill not iff xyt })
+		The operation {10 100 itransform} is run before and after
+		running the test.  The results should match.  However Distiller
+		7.0 shows a -3.05176e-05 difference in the x value (307.2).
+		This appears to be a minor math problem in Distiller 7.0.  CPSI
+		also shows an 'error' with this test.  I do not have a copy of
+		CPSI to verify its values.  Ghostscript produces matching values
+		(which is mathematically correct). - ADC
+
+10-11-1  OK	
+
+10-11-2  OK	
+
+10-12-1  OK	
+
+10-12-2  OK	
+
+10-12-3  OK	Minor differences visually reviewed by RJJ
+
+10-12-4  AOK	Differences between CPSI and GS in gradient in section
+		labeled 'Fountain_image' in the upper right.  However GS
+		matches the appearance of of Distiller/Acrobat 7.0.  See
+		10-01 page 6. - ADC
+
+10-12-5  AOK	Checksum 0 matches Distiller/Acrobat 7.0, CPSI 18736 matches
+		CET expected value. - ADC
+
+10-13-1  OK	
+
+10-13-2  OK	
+
+10-13-3  OK	Minor differences in positions and character shapes - ADC
+
+10-13-4  OK	Minor differences visually reviewed by RJJ
+
+10-13-5  AOK	Differences between CPSI and GS in gradient in section
+		labeled 'Fountain_image' in the upper right.  However GS
+		matches the appearance of of Distiller/Acrobat 7.0.  See
+		10-01 page 6. - ADC
+
+10-13-6  OK	Color corrected by rev 7172.
+
+10-14-1  OK	
+
+10-14-2  OK	
+
+10-14-3  OK	
+
+10-14-4  AOK	Difference between CPSI and GS with several objects:
+		1)  The location of rectangles in items 13 and 14 in the
+		column labeled 'LOOK'.  2)  The shape/locations of hooked
+		shape features in items 15, 16, and 18 in the same column.
+		3)  The length of a diagonal line in item 19 in the same
+		column.  4)  The position of line and arc in items 22 and
+		23 in the same column.  5)  The position of diamond shaped
+		gradient at position 36 in the same column.  6)  The position
+		of triangles at items 3 and 4 of a column labeled 'MEMO'.
+		7)  The positions of rectangles at items 22, 23, and 24, in
+		the column labeled 'CASH'.  8)  The position of a larger
+		triangle at item 5 in the column labeled 'MUCH'.  9) The
+		position of trangles at items 8, 9, and 27 in the same column.
+		10)  The size of an 'angled' shaped objects at items 15 and
+		30 in the same column.  11) The position of the triangle
+		at item 27 in the column labeled 'MORE'.  12) The location
+		of shaded squares in item 27 of the column labeled 'GRAY'.
+		13) The location of rectangles in item 28 in the same column.
+		14) The location of a trangle in item 32 in the same column.
+		For all of the above objects, the positions match between GS
+		and Distiller/Acrobat 7.0.
+		The one item that has some question, item 31 in the column
+		labeled 'GRAY'  This is a triangle outline apparently drawn
+		with a pattern.  All three intpreters differ.  The GS output
+		looks like CPSI except that the pattern is mirrored about a
+		45 degree diagonal.  (Note:  The pattern is only visible in
+		the lines that make up the lines of the triangle.  Thus there
+		is very little information.  The differences may be a minor
+		position shift.)  Distiller/Acrobat differs from both. - ADC
+
+10-15-1  OK	
+
+10-15-2  AOK	The diffs in items 'much22' and 'much24' (user paths / insideness testing)
+                Analyzed by Igor.
+                This is a CPSI problem : the insideness testing operators
+                slightly disturb CTM.ty .
+                A simplified test case is placed to
+                peeves:/home/igor/pscet/mytests/10-15-2-Igor01.PS . 
+                .
+                With this test CPSI prints :
+			GlobInterProc1=2467.17
+			GIFBoundProc1=false
+			{749.8 1433.41 749.8 1433.41 setbbox 749.8 1433.41 moveto}
+			false
+			iff in : gif_assertion=true
+			iff out : gif_assertion=true
+			GifProcInstance=false
+			1
+			GlobInterProc2=2467.17
+			GlobInterProc2=false
+		.
+		Note the value 2467.17 looks same due to rounding,
+		but the equality test fails (GlobInterProc2=false).
+		The effect is resolution dependent and the page size dependent.
+
+10-16-1  OK	
+
+10-16-2  OK	
+
+10-16-3  OK	
+
+10-16-4  OK	Minor differences visually reviewed by RJJ
+
+10-16-5  OK	GS matches Tek hardcopy. CPSI differs in gradient in section
+		labeled 'Fountain_image' in the upper right.  GS also
+		matches the appearance of of Distiller/Acrobat 7.0.  See
+		10-01 page 6. - ADC
+
+10-16-6  OK	Minor differences in positions and character shapes - ADC
+
+11-01-1  AOK	Matches Tek. CPSI slightly differs in few coordinates.
+
+11-01-2  OK	
+
+11-01-3  OK	
+
+11-01-4  OK	
+
+11-01-5  OK	
+
+11-01-6  AOK	rev 7617 : look30, much34 look like a saw due to "strokepath stroke".
+		CPSI and GS rev 7617 generate individual contours for line joins,
+		which look like a quadrangle with a very acute corner.
+		Then it's a subject of miter limit, which depends on the angle,
+		which depends on the flattening factor of the original curve.
+		With CPSI look30 has a smaller number of peaks.
+
+11-02-1  AOK	Same as 11-01-1
+
+11-02-2  OK	Minor differences visually reviewed by RJJ
+
+11-02-3  OK	
+
+11-02-4  OK	
+
+11-02-5  OK	
+
+11-02-6  AOK	Same as 11-01-6. 
+
+11-03-1  OK	Minor differences visually reviewed by RJJ
+
+11-03-2  OK	
+
+11-03-3  OK  	Rev. 7171 works for me. - Alex
+
+11-03-4  OK  	Fixed in rev. 7171. - Alex
+
+11-03-5  OK	Minor differences visually reviewed by RJJ
+
+11-03-6  OK	Minor differences visually reviewed by RJJ
+
+11-03-7  OK	Fixed as of rev 7618.
+
+11-04-1  OK	Minor differences visually reviewed by RJJ
+
+11-04-2  OK	
+
+11-04-3  OK  	Fixed iv rev. 7154. - Alex.
+
+11-04-4  OK	
+
+11-04-5  OK	Minor differences visually reviewed by RJJ
+
+11-04-6  OK	Minor differences visually reviewed by RJJ
+
+11-04-7  OK	Fixed as of rev 7618.
+
+11-05-1  OK	Minor differences visually reviewed by RJJ
+
+11-05-2  OK	Minor differences visually reviewed by RJJ
+
+11-05-3  OK	Minor differences visually reviewed by RJJ
+
+11-05-4  OK	
+
+11-05-5  OK	Minor differences visually reviewed by RJJ
+
+11-05-6  OK	fixed in r7228 - Raph
+
+11-05-7  AOK	Same as 11-01-6. Color corrected by rev 7172.
+
+11-06-1  OK	Minor differences visually reviewed by RJJ
+
+11-06-2  OK	Fixed in r7155 - Raph
+
+11-06-3  OK	Minor differences visually reviewed by RJJ
+
+11-06-4  OK	Minor differences visually reviewed by RJJ
+
+11-06-5  AOK	CPSI problem.
+		GS has extra line: MUCH 15, 30, 31. Tek and CPSI do not.
+		Analyzed by Igor.
+		The following test discovers a problem in CPSI :
+		.
+		72 72 moveto 72 72 rlineto clip
+		0 0 200 200 rectfill
+		showpage
+		72 72 moveto 72 72 rlineto clip
+		0 0 200 200 rectclip
+		clippath currentpoint
+		showpage
+		.
+		The test installs aclipping path from a single line.
+		The first page paints a line, so
+		the clipping is not empty.
+		The second page first installs same clipping,
+		and then applies rectclip over it.
+		The intersection isn't empty by theory,
+		but with CPSI it appears empty and 
+		"clippath currentpoint" fails with nocurrentpoint.
+
+11-07-1  OK
+
+11-07-2  OK	Minor differences visually reviewed by RJJ
+
+11-07-3  OK	Minor differences visually reviewed by RJJ
+
+11-07-4  OK	Minor differences visually reviewed by RJJ
+
+11-07-5  OK	Fixed by rev 7617.
+
+11-08-1  OK	Minor differences visually reviewed by RJJ
+
+11-08-2  OK	Minor differences visually reviewed by RJJ
+
+11-08-3  OK	Minor differences visually reviewed by RJJ
+
+11-08-4  OK	Minor differences visually reviewed by RJJ
+
+11-08-5  OK	Fixed as of rev. 7531. 
+
+11-09-1  AOK	a better stroke adjustment; not important. Analyzed by Igor.
+
+11-09-2  OK	
+
+11-09-3  OK	
+
+11-09-4  AOK	linewidth different.
+                Analyzed by Igor.
+		GS paints a "thin line" whenever the line wdth is lesser than 1 pixel.
+		The decision is taken in gxstroke.c ln 453, 468, 482
+		with the threshold half width smaller than half pixel.
+		Well I can set a smaller threshold for CPSI compatibility,
+		but I need CPSI to measure its constant.
+
+11-09-5  OK	Minor differences visually reviewed by RJJ
+
+11-09-6  OK	
+
+11-09-7  OK	
+
+11-09-8  AOK	look30, much34 : AOK same as 11-01-6.
+		-
+		more21: aok - CPSI appears ignoring the bad flattening precision.
+		May be related to 11-09-4 assign: Ray.
+
+11-10-1  AOK	Test measures number of subdivisions with different values of
+	 setflat. Differences are expected (resolution dependent). -Raph
+
+11-10-2  OK	Minor differences visually reviewed by RJJ
+
+11-10-3  OK	Minor differences visually reviewed by RJJ
+
+11-10-4  DIFF	setflat problem maybe - curves smooth in cpsi assign: Raph.
+	 We have very coarse flattenpath results. - Raph
+
+11-10-5  DIFF	same as 11-10-4 assign: Raph.
+	 Same as 11-10-4
+
+11-10-6  OK	Fixed as of rev 7618.
+
+11-11-1  OK	Fixed with rev 7212.
+
+11-11-2  OK	
+
+11-11-3  OK	
+
+11-11-4  OK	Minor differences visually reviewed by RJJ
+
+11-11-5  OK	Minor differences visually reviewed by RJJ
+
+11-11-6  OK	Fixed as of rev 7534.
+
+11-12-1  OK	
+
+11-12-2  OK	
+
+11-12-3  OK	
+
+11-12-4  OK	Minor differences visually reviewed by RJJ
+
+11-12-5  OK	Minor differences visually reviewed by RJJ
+
+11-12-6  OK	Minor differences visually reviewed by RJJ
+
+11-13-1  OK	Minor differences visually reviewed by RJJ
+
+11-13-2  OK	
+
+11-13-3  OK	
+
+11-13-4  OK  	Works in rev. 7527.
+
+11-14-1  OK	Fixed with rev 7213.
+
+11-14-2  OK	
+
+11-14-3  OK	Minor differences visually reviewed by RJJ
+
+11-14-4  OK	Minor differences visually reviewed by RJJ
+
+11-14-5  OK	fixed in r7228 - Raph
+
+11-14-6  OK	Color corrected as of rev 7172.
+
+11-15-1  OK	Fixed as of rev 7534.
+
+11-15-2  OK	Minor differences visually reviewed by RJJ
+
+11-15-3  OK	Minor differences visually reviewed by RJJ
+
+11-15-4  OK	
+
+11-15-5  OK	Minor differences visually reviewed by RJJ
+
+11-15-6  OK	Minor differences visually reviewed by RJJ
+
+11-15-7  OK     Minor differences visually reviewed by HAS
+
+11-16-1  OK	Minor differences visually reviewed by HAS
+
+11-16-2  OK	
+
+11-16-3  OK	
+
+11-16-4  OK	Minor differences visually reviewed by HAS
+
+11-16-5  OK	
+
+11-16-6  OK	
+
+11-16-7  OK	
+
+11-16-8  AOK
+
+11-17-1  OK	Fixed as of rev 7598.
+
+11-17-2  OK	Fixed as of rev 7598.
+
+11-17-3  OK	Minor differences visually reviewed by RJJ
+
+11-17-4  OK	Minor differences visually reviewed by RJJ
+
+11-17-5  OK	fixed in r7228 - Raph
+
+11-17-6  AOK	GS has small square in upper right of border line, CPSI has
+		similar square in lower right. Tek has small square in lower
+		right. Device Dependent: Uses device coordinates, GS, Tek
+		and CPSI all have different default CTM. RJJ
+
+11-18-1  OK	Fixed with rev 7212.
+
+11-18-2  OK	
+
+11-18-3  OK	
+
+11-18-4  OK	Minor differences visually reviewed by RJJ
+
+11-18-5  OK	Minor differences visually reviewed by RJJ
+
+11-18-6  AOK 	Adobe interpreters (CPSI, Tek, Distiller 5) have obvious
+		rendering problems, which are hard to simulate in GS.
+                1. The long diagonal line is caused by "clippath 0 0 rlineto
+                   stroke showpage". Different Adobe interpreters draw it
+                   fron the center of the page to different corners.
+                2. The line drawn by "10 0 rlineto" is not horizontal in
+                   LOOK 30 and MUCH 34 cases. This bug can be demonstrated
+                   by this short program "300 300 moveto 10 10 rlineto 8 8
+                   rlineto strokepath 10 0 rlineto stroke showpage". - Alex
+
+11-19-1  OK	
+
+11-19-2  OK	
+
+11-19-3  OK	
+
+11-19-4  OK	Minor differences visually reviewed by RJJ
+
+11-19-5  OK	Minor differences visually reviewed by RJJ
+
+11-19-6  AOK	cash21, look30 : ustrokepath ending point, Analyzed by Igor.
+		I believe it is CPSI problem.
+		I placed some tests to peeves:/home/igor/pscet/mytests/11-19-Igor01.zip .
+		The ZIP contains 2 PS files, which are made from 11-19.PS
+		with removing unrelated things and inserting a debug printing.
+		The 2 files differ in a small thing : wheter it access
+		currentpoint after ustrokepath, or not.
+		The rasters (included into the ZIP) appear to be different !
+		The log files (included into the ZIP) tell us that no error happen,
+		because the currenpoint coordinates are successfully printed
+		(in the order Y X).
+		The position of the 2nd cross depends on the
+		currentpoint after ustrokepath,
+		but 'currentpoint' appears to cnahge it !
+		I believe that CPSI actually didn't pass the "interference" test,
+		which 1-19-6 is designed for.
+		As we noticed from other 20 tests (unpublished), this behavior 
+		appears pretty occasional, so we're unable to analyze it completely 
+		and to reproduce it in Ghostscript.
+		Tek matches CPSI though - I can't know why.
+		Welcome anybody who can improve this analyzis.
+
+11-20-1  OK	Minor differences visually reviewed by HAS
+
+11-20-2  OK	Differences resolved as of rev 7531.
+
+11-20-3  OK	Minor differences visually reviewed by RJJ
+
+11-20-4  OK
+
+11-20-5  DIFF	Analyzed by Igor.
+		I believe it is CPSI problem.
+		A simplified test is stored into peeves/home/igor/pscet/mytests/11-20-5-Igor01.ps .
+		It prints the pathbbox before and after "3 3 rlineto",
+		as well as the current point before and after it :
+		bbb0
+		711.0
+		289.037
+		691.0
+		80.3225
+		xxx0
+		691.0
+		85.535
+		bbb1
+		711.0
+		289.037
+		691.0
+		39.5
+		xxx1
+		694.0
+		88.535
+		11-20 GSTATE = 31293 Graphic 0 ms  
+		.
+		Note: pathbbox and currentpoint are printed in the reverse order.
+		The starting and the ending point of the line appear
+		within the initial pathbbox.
+		In same time the lower X of pathbbox changes from 80.3225 to 39.5
+		without a visible reason. With GS it doesn't change.
+		Note: my copy of CPSI probably is some older,
+		but it renders same 11-20-5.ppm as one on peeves.
+		Passing to Ray for further processing.
+		assign: Ray.
+
+11-20-6  DIFF	In special test B, Adobe has rangechecks, we don't. In
+		special test A, we have one rangecheck they don't.
+                The test is about interaction of setbbox with save,
+                gsave and other operators. - assign Raph
+
+11-20-7  OK	
+
+11-20-8  OK	Minor differences visually reviewed by RJJ
+
+11-20-9  DIFF	'4's and '1's added in gs output.
+                The problem (at least partly) is caused by a small bounding box
+                set by setbbox operator that cannot accomodate long strings of text.
+                Adobe appears to extend path bounding box on demand instead of
+                enforcingwhen the limits when the current point comes from a
+                different gstate, for instance:
+                "0 0 moveto gsave 0 0 5 5 setbbox 10 10 lineto stroke showpage"
+                assign Alex
+
+11-21-1  OK	Fixed as of rev 7598.
+
+11-21-10  AOK	Differences in look20, look30, look33 are caused by CPSI problem :
+		rlineto, rcurveto count wrong coordinates after strokepath.
+		It looks as the starting point for relative coordinate is not equal to
+		the current point. CPSI paints a self-intersecting curve with
+		"9 0 9 -9 0 -9 rcurveto stroke", which must not self-intersect.
+		A simplified test is placed to 
+		peeves:/home/igor/pscet/mytests/11-21-10-Igor01.ps 
+
+11-21-2  OK	Minor differences visually reviewed by RJJ
+
+11-21-3  OK	Fixed by rev 7617.
+
+11-21-4  DIFF	Analyzed by Igor.
+		There are several stroking problems.
+		1. linewidth - same as 11-09-4.
+		2. setflat - same as 09-09-1.
+		3. CPSI doesn't roll a dash pattern at some corners.
+		An example is at the lower right corner of the page.
+		The dash at one corner looks longer than the distance to the corner.
+		IMO it's another CPSI bug.
+		Passing to Ray do decide what to to with it.
+		assign: Ray.
+
+11-21-5  OK	Minor differences visually reviewed by HAS
+
+11-21-6  AOK	Resolution dependent: GS gives pathbox exact (not enlarged
+		slightly). Tek and CPSI differ.
+		-
+		curve saw : AOK - same as 11-01-6.
+
+11-21-7  OK  	Fixed by rev. 7701 - Alex
+
+11-21-8  AOK	Device Dependent / Resolution Dependent. CPSI ignores setflat
+		Tek and CPSI differ.
+
+11-21-9  AOK	flattness differ. Tek and CPSI differ.
+
+11-22-1  OK
+
+11-22-2  OK	Minor differences visually reviewed by RJJ
+
+11-22-3  AOK	CPSI is wrong with the invalid test "User path must start with absolute point".
+
+11-22-4  OK
+
+11-22-5  DIFF	GS has different number. Although this is resolution dependent,
+		the test comment indicates what should happen. Tek has 0.12
+		values, CPSI has 0.06 (approx.). Assign: alex
+
+11-22-6  OK	shape has a small 'point' with CPSI, Ghostscript matches Tek
+		hardcopy [2nd row down, right side, upper curve.]
+
+11-22-7  OK	fixed in r7228 - Raph
+
+11-22-8  OK	Fixed as of rev 7618.
+
+11-23-1  AOK	GS (apparently) does not implement upath caching. Tek and CPSI
+		do, but differ. Device Dependent (as comment says).
+
+11-23-2  OK	Minor differences visually reviewed by RJJ
+
+11-23-3  OK	ucache typecheck error in gs not seen in cpsi.
+	 fixed in r7229 - Raph
+
+11-23-4  OK	
+
+11-24-1  OK	
+
+11-24-2  OK	
+
+11-24-3  AOK	user path :
+		CPSI doesn't follow PLRM page 199 about user paths :
+                "the first operator after setbbox must be an absolute positioning operator 
+                (moveto, arc, or arcn)." 
+                "All coordinates specified as operands must fall within the bounds 
+                specified by setbbox".
+                When an user path starts with rmoveto, CPSI looks using current point 
+                from the graphic state when it is set, and probably the setbbox lower coordinates
+                when current point is not set. However arc, arcn in the user path
+                do not paint a line from the graphic state current point.
+                Also painting outside setbbox somethimes throws error, sometimes not -
+                we could not figure out what does it depend on.
+                Due to all that CPSI's algorithm isn't clear and we're unable to reproduce it.
+                Will follow PLRM instead.
+
+11-24-4  OK	
+
+11-24-5  OK	
+
+11-24-6  OK	
+
+11-24-7  OK	Minor differences visually reviewed by RJJ
+
+11-24-8  OK	
+
+11-25-1  OK	
+
+11-25-2  OK	
+
+11-25-3  AOK	user paths : same as 11-24-3.
+
+11-25-4  OK	
+
+11-25-5  OK	
+
+11-25-6  OK	
+
+11-25-7  OK	Minor differences visually reviewed by RJJ
+
+11-25-8  OK	
+
+11-26A-1  OK	Minor differences visually reviewed by HAS
+
+11-26A-2  OK	Minor differences visually reviewed by RJJ
+
+11-26A-3  OK	Fixed as of rev 7598.
+
+11-26B-1  OK	Minor differences visually reviewed by RJJ
+
+11-26B-2  DIFF	precision discrepancies assign Alex
+
+11-26C-1  OK	Minor differences visually reviewed by RJJ
+
+11-26C-2  OK	Minor differences visually reviewed by RJJ
+
+11-26C-3  OK	Minor differences visually reviewed by RJJ
+
+11-26D-1  OK	Minor differences visually reviewed by RJJ
+
+11-26D-2  OK	fixed in rev 7228 - Raph
+
+11-26D-3  OK	Minor differences visually reviewed by HAS
+
+11-27-1  OK	Minor differences visually reviewed by RJJ
+
+11-27-2  OK	
+
+11-27-3  AOK	user paths : same as 11-24-3.
+
+11-27-4  OK	
+
+11-27-5  OK	
+
+11-27-6  OK	
+
+11-27-7  OK	Minor differences visually reviewed by RJJ
+
+11-27-8  OK	
+
+11-28-1  DIFF	GS has much different stroke pattern in circles/wedges. Tek
+		and CPSI agree. May be setflat issue. Assign: Ray
+
+11-28-10  AOK	same as 11-21-8.
+
+11-28-11  AOK	same as 11-21-9.
+
+11-28-12  AOK	same as 11-21-10.
+
+11-28-2  OK	Fixed by rev 7617.
+
+11-28-3  AOK	curve saw : AOK - same as 11-01-6.
+
+11-28-4  AOK	CPSI stroking problem. CPSI and Tek differ.
+
+11-28-5  OK  	Fixed as of r7231.
+
+11-28-6  OK	Minor differences visually reviewed by RJJ
+
+11-28-7  OK	Minor differences visually reviewed by HAS
+
+11-28-8  DIFF	same as 11-21-4 assign: Ray.
+
+11-28-9  OK  	Fixed by rev. 7701 - Alex
+
+12-01-1  OK	Minor text outline differences - ADC
+
+12-01-2  OK	Minor differences visually reviewed by RJJ
+
+12-01-3  OK	Minor differences versus CPSI- ADC.  PDF produced by Distiller 7.0
+		shows teal colored circles.  (GS and CPSI render sea foam green.)
+
+12-01-4  OK	Minor differences visually reviewed by RJJ.
+
+12-01-5  DIFF	Magenta in pattern in lower right corner of GS output.  Not seen in
+		CPSI output.  Strange result in Distiller 7.0 output.  Acrobat 7.0
+		reports incorrect number of values for setcolor operator.  Page is
+		blank.
+		See also 18-02G-1.
+                Partial analysis from Jan (11/29/2006)
+                1. An uncolored pattern is created, and used to draw the region on       
+                   the left.  The pattern consists of a 9 unit x 9 unit tile, in the     
+                   center of which is a 7 unit x 7 unit colored square.  The pattern     
+                   receives its color at the time the setpattern operator is invoked.    
+                   For this test, that color is black.                                   
+                --                                                                         
+                2. Next, a colored pattern is created, and used to draw the figure       
+                   on the right.  This pattern also consists of a 9 unit x 9 unit tile,  
+                   whose PaintProc operates as follows:                                  
+                     - create a path consisting of a 5 unit x 5 unit square centered     
+                       in the 9 unit x 9 unit tile                                       
+                     - save graphic state                                                
+                     - set an approximately magenta color and fill the square            
+                     - restore the graphic state                                         
+                     - outline the same square with an approximately 4 unit wide line;   
+                       this line obscures all but a 1/2 unit x 1/2 unit square of the    
+                       magenta region                                                    
+                   The key step is the last one, because the PaintProc does not set a    
+                   color for drawing the line.  In this case it inherits the color       
+                   from the graphic state in effect when the makepattern operator was    
+                   invoked, which is the uncolored pattern created in Step (1).          
+                --                                                                         
+                3. Ghostscript renders the uncolored pattern into a gx_color_tile        
+                   structure when drawing the left region, and caches that strcuture.    
+                   When the second region is to be rendered, another gx_color_tile       
+                   is created, and the cached tile of the uncolored pattern is used      
+                   (in part) to render this new tile.  The caching accumulator           
+                   device is used for this purpose.                                      
+                --                                                                         
+                4. The problem arises because the cached gx_color_tile for the           
+                   uncolored pattern has its phase information set for the original      
+                   device, not the accumulator device being used to create the tile      
+                   for the colored pattern.                                              
+                   --                                                                      
+                   As we noted earlier, Ghostscript renders patterns to                  
+                   gx_color_tile structures of minimum size.  Such a mechanism           
+                   cannot handle the general case in which one pattern makes use of      
+                   another pattern.  Either the tile size must be increased to the       
+                   least common multiple of the patterns' step sizes, or some more       
+                   elaborate compositing technique must be used for final rendering.     
+                   --                                                                      
+                   However, in this case both patterns have the same step sizes (and     
+                   the same tile size), so Ghostscript should be able to handle the      
+                   situation correctly.  We thought the problem was that the             
+                   uncolored pattern was already cached, and so we modified the code     
+                   to discard cached patterns just before executing a pattern            
+                   PaintProc.  That resolves the phase issue, but the "inner"            
+                   pattern (the uncolored pattern in this case) is rendered using        
+                   the wrong transformation matrix.  We haven't yet had time to go       
+                   back and determine why this is happening.                             
+                   Assign: Tim                                                  
+
+12-01-6  OK	Minor differences in positions and character shapes - ADC
+
+12-02-1  OK	Minor differences in positions and character shapes - ADC
+
+12-02-10  OK	Minor differences in positions and character shapes - ADC
+
+12-02-11  OK	Minor differences visually reviewed by RJJ
+
+12-02-12  OK	Minor differences, colors more vibrant in shadings in GS.
+
+12-02-13  OK	Minor differences in positions and character shapes - ADC
+
+12-02-14  OK	Corrected by 7152 and 7162.  ADC
+
+12-02-15  OK	Minor differences in positions and character shapes - ADC
+
+12-02-16  OK	Minor differences in positions and character shapes - ADC
+
+12-02-17  OK	Minor differences in positions and character shapes - ADC
+
+12-02-18  AOK	Squares in the top row are darker in GS vs CPSI.
+		This is exactly the same issue as 12-07B-10. After embedding
+		CPSI's default CRD into the job, the output matches. TIM	
+
+12-02-19  OK	Minor differences in positions and character shapes - ADC
+
+12-02-2  OK	Minor differences in positions and character shapes - ADC
+
+12-02-3  OK	Minor differences in positions and character shapes - ADC
+
+12-02-4  OK	Minor differences in positions and character shapes - ADC
+
+12-02-5  OK	Minor differences in positions and character shapes - ADC
+
+12-02-6  OK	Corrected by 7152 and 7162.  ADC
+
+12-02-7  OK	Minor differences in positions and character shapes - ADC
+
+12-02-8  OK	Minor differences in positions and character shapes - ADC
+
+12-02-9  OK	Minor differences in positions and character shapes - ADC
+
+12-03-1  OK	Corrected by 7152 and 7162.  ADC
+
+12-03-2  OK	Minor differences visually reviewed by RJJ
+
+12-03-3  OK	Minor differences in positions and character shapes - ADC
+
+12-03-4  OK	Minor differences visually reviewed by RJJ
+
+12-03-5  DIFF	Magenta in pattern at lower right in GS.  Not present in CPSI.
+		See 12-01-5.  Assign Tim
+
+12-03-6  OK	Minor differences in positions and character shapes - ADC
+
+12-04-1  OK	Verified by ADC
+
+12-04-2  OK	Corrected by 7152 and 7162.  ADC
+
+12-04-3  OK	Minor differences visually reviewed by RJJ
+
+12-04-4  DIFF	Magenta in pattern at lower right in GS.  Not present in CPSI.
+		See 12-01-5. Assign: Tim
+
+12-04-5  AOK	GS has extra center line on symbols: LOOK 3, 12 , MUCH 9, MORE 19
+		Analyzed by Igor :
+		I believe it is a CPSI problem.
+		eofill is applied to two overlapping horizontal lines.
+		In most cases CPSI paints them, and sometimes doesn't.
+		Tek paints always.
+		GS matches Tek.
+
+12-05-1  OK	Minor differences in positions and character shapes - ADC
+
+12-05-2  OK	
+
+12-05-3  AOK	Page is gray in GS.  White in CPSI.
+		This "{.75 mul} settransfer erasepage showpage" gives
+		a gray page in GS.
+		--
+		I ran this job through Acrobat Distiller 5.0 as well as Apple's
+		Preview, they match the GS output. The Red Book states that
+		erasepage is influenced "if an atypical transfer function has
+		been defined"... Since the transfer function is {.75 mul} a gray
+		value of R=191,G=191,B=191 should be expected from all that I
+		can see and reproduce here. I noticed it is noted several times
+		that "CPSI ignores settransfer". I believe this is another case
+		where whatever version of CPSI is used to generated these
+		PPM's, settransfer looks to be ignored. TIM
+
+12-06-1  OK	Minor differences in positions and character shapes - ADC
+
+12-06-2  OK	Corrected by 7152 and 7162.  ADC
+
+12-06-3  OK	
+
+12-06-4  DIFF	Magenta in pattern at lower right in GS.  Not present in CPSI.
+		See 12-01-5. Assign: Tim
+
+12-06-5  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-1  DIFF?	Different blurring in squares in 7th column compared to CPSI.
+		GS blurring matches appearance of Distiller/Acrobat 7.0
+                assign: Tim
+
+12-07A-10  OK	Minor differences visually reviewed by RJJ
+
+12-07A-11  OK	Minor differences visually reviewed by RJJ
+
+12-07A-12  OK  	Adobe acceptts images in the pattern color space.
+		Since rev. 7597 we do the same in the compatibility mode. - Alex
+
+12-07A-13  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-14  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-15  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-2  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-3  DIFF	Squares are blurred in GS.  No blurring in CPSI.  Distiller/Acrobat
+		7.0 shows blurring similar to GS.
+                assign: Tim
+
+12-07A-4  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-5  DIFF	Page consists of blurred squares.  GS position shifted down slight
+		at the top of the page vs CPSI and Distiller/Acrobat 7.0. - ADC
+                assign: Tim
+
+12-07A-6  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-7  OK	Minor differences in positions and character shapes - ADC
+
+12-07A-8  OK	Minor differences visually reviewed by RJJ
+
+12-07A-9  OK	Minor differences visually reviewed by RJJ
+
+12-07B-1  OK	Minor differences in positions and character shapes - ADC
+
+12-07B-10  AOK	Some grays in the top row are lighter in GS versus CPSI
+		(after 7152). - ADC
+		This is exactly the same issue as 12-02-18. After embedding
+		CPSI's default CRD into the job, the gray rectangles in the top
+		row match. TIM
+
+12-07B-11  DIFF	Some grays in the top row are lighter in GS versus CPSI
+		(after 7152). - ADC Assign Tim
+
+12-07B-12  DIFF	Blurred images render a slight position shift relative to CPSI and
+		Distiller/Acrobat 7.0 - ADC assign: Tim
+
+12-07B-13  DIFF	Several differences.  Color squares are missing in GS.  The
+		Distiller/Acrobat 7.0 shows these squares blurred.  They are not
+		in both GS and CPSI. - ADC assign: Tim
+
+12-07B-14  DIFF	Several differences.  Color squares are missing in GS.  The
+		Distiller/Acrobat 7.0 shows these squares blurred.  They are not
+		in both GS and CPSI. - ADC assign: Tim
+
+12-07B-15  DIFF	Several differences.  Dark squares are missing in GS.  There are
+		dfferences in the blurring between Distiller/Acrobat 7.0 vs GS
+		and CPSI. - ADC assign: Tim
+
+12-07B-2  OK	Minor differences in positions and character shapes - ADC
+
+12-07B-3  OK	Minor differences in positions and character shapes - ADC
+
+12-07B-4  OK	Minor differences in positions and character shapes - ADC
+
+12-07B-5  OK	Minor differences in positions and character shapes.  Some
+		minor differences in shades of gray. - ADC
+
+12-07B-6  OK	Minor differences in positions and character shapes.  Some
+		minor differences in shades of gray. - ADC
+
+12-07B-7  OK	Minor differences in positions and character shapes - ADC
+
+12-07B-8  OK	Minor differences in positions and character shapes - ADC
+
+12-07B-9  OK	Minor differences in positions and character shapes.  Some
+		minor differences in shades of gray. - ADC
+
+12-07C-1  OK	Minor differences in positions and character shapes - ADC
+
+12-07C-10  DIFF	White and black rectangles missing in GS.  Differences between
+		CPSi and Distiller/Acrobat 7.0 - ADC assign Tim
+
+12-07C-11  DIFF	White and black rectangles missing in GS.  Differences between
+		CPSi and Distiller/Acrobat 7.0 - ADC assign Tim
+
+12-07C-12  DIFF	White and black rectangles missing in GS.  Differences between
+		CPSi and Distiller/Acrobat 7.0 - ADC assign Tim
+
+12-07C-13  DIFF	White, black, and cyan rectangles missing in GS.  Differences
+		between CPSi and Distiller/Acrobat 7.0 - ADC assign Tim
+
+12-07C-14  OK	Minor differences in positions and character shapes - ADC
+
+12-07C-15  OK
+
+12-07C-16  OK
+
+12-07C-17  OK
+
+12-07C-2  OK	Minor differences in positions and character shapes - ADC
+
+12-07C-3  OK	Minor differences in positions and character shapes - ADC
+
+12-07C-4  OK	Minor differences visually reviewed by RJJ
+
+12-07C-5  OK	Minor differences visually reviewed by RJJ
+
+12-07C-6  OK	Minor differences in positions and character shapes - ADC
+
+12-07C-7  OK	GS matches Tek -- no thin vertical lines.
+
+12-07C-8  DIFF	GS missing leftmost vertical column of shaded data in the
+		test block at the lower right of the page - ADC.  assign Tim
+
+12-07C-9  OK	Color corrected by rev 7172. Something fixed the error message.
+
+12-07D-1  OK	Minor differences in positions and character shapes - ADC
+
+12-07D-2  OK	Minor differences in positions and character shapes - ADC
+
+12-07D-3  OK	Minor differences visually reviewed by RJJ
+
+12-08A-1  DIFF	Differences in the second and third test pattern in the rightmost
+		column.  GS pattern matches Distiller/Acrobat.  CPSI is different.
+		Adobe shows these a blurred.  Both CPSI and GS are crisp. - ADC
+                assign Tim
+
+12-08A-2  OK	Minor differences in positions and character shapes - ADC
+
+12-08A-3  DIFF	Different pattern between GS and CPSI.  Distiller/Acrobat shows
+		the same pattern as GS.  Adobe shows the image blurred.  Both
+		CPSI and GS shows a crisp image.  (The page says interpolate
+		true in the upper left corner.) - ADC
+                assign Tim
+
+12-08A-4  OK	Color corrected by rev 7172.
+
+12-08A-5  AOK	Minor differences in positions and character shapes.
+
+12-08A-6  AOK	Minor differences in positions and character shapes.
+
+12-08A-7  OK	Color corrected by rev 7172.
+
+12-08A-8  OK	Color corrected by rev 7172.
+
+12-08B-1  OK	Minor differences in positions and character shapes - ADC
+
+12-08B-2  OK  	Accept multiple data sources in imagemask by rev. 7181.
+
+12-08B-3  OK	Minor differences in positions and character shapes - ADC
+
+12-08C-1  OK	Minor differences in positions and character shapes - ADC
+
+12-08C-2  OK	Color corrected by rev 7172.
+
+12-08C-3  OK	Minor differences in positions and character shapes - ADC
+
+12-08C-4  OK	Minor differences in positions and character shapes - ADC
+		Color corrected by rev 7172.
+
+12-08D-1  OK	Minor differences visually reviewed by RJJ
+
+12-08D-2  DIFF	Magenta in pattern at lower right in GS.  Not present in CPSI.
+		See 12-01-5. Assign: Tim
+
+12-08D-3  OK	Minor differences in positions and character shapes - ADC
+
+12-09-1  OK	Minor differences in positions and character shapes - ADC
+
+12-09-2  OK	Minor differences in positions and character shapes - ADC
+
+12-09-3  OK	Minor differences in positions and character shapes - ADC
+
+12-09-4  OK	Minor differences in positions and character shapes - ADC
+
+12-10-1  OK	Minor differences in positions and character shapes - ADC
+
+12-10-2  OK	Color corrected by rev 7172.
+
+12-10-3  OK	Minor differences visually reviewed by RJJ
+
+12-10-4  OK	Color corrected by rev 7172.
+
+12-10-5  OK	Minor differences visually reviewed by RJJ
+
+12-10-6  OK	Minor differences in positions and character shapes - ADC
+
+12-10-7  OK	Minor differences in positions and character shapes - ADC
+
+12-10-8  DIFF	Magenta in pattern at lower right in GS.  Not present in CPSI.
+		See 12-01-5. Assign: Tim
+
+12-10-9  OK	Minor differences in positions and character shapes - ADC
+
+12-11-1  OK	Minor differences in positions and character shapes - ADC
+
+12-11-2  OK	Color corrected by rev 7172.
+
+12-11-3  OK	Minor differences in positions and character shapes - ADC
+
+12-11-4  OK	reviewed by RJJ.
+
+12-11-5  OK	Minor differences in positions and character shapes - ADC
+
+12-11-6  OK	Minor differences visually reviewed by RJJ
+
+12-11-7  DIFF	Magenta in pattern at lower right in GS.  Not present in CPSI.
+		See 12-01-5. Assign: Tim
+
+12-11-8  OK	Minor differences in positions and character shapes - ADC
+
+12-12-1  OK	Minor differences in positions and character shapes - ADC
+
+12-12-10  OK	
+
+12-12-2  OK	Minor differences in positions and character shapes - ADC
+
+12-12-3  OK	Minor differences in positions and character shapes - ADC
+
+12-12-4  OK	Color corrected by rev 7172.
+
+12-12-5  OK	Color corrected by rev 7172.
+
+12-12-6  OK	Minor differences in positions and character shapes - ADC
+
+12-12-7  OK	Color corrected by rev 7172.
+
+12-12-8  OK	
+
+12-12-9  DIFF	A pattern phase difference. assign: Tim
+
+12-13-1  OK	Minor differences in positions and character shapes - ADC
+
+12-13-2  OK
+
+12-13-3  OK	Minor differences visually reviewed by RJJ
+
+12-13-4  DIFF	Magenta in pattern at lower right in GS.  Not present in CPSI.
+		See 12-01-5. Assign: Tim
+
+12-13-5  OK  	Works for me in rev. 7579. There's no differences around 30
+		and 31 in left column. The checksum matches too. - Alex.
+
+12-14A-1  OK	Test03: ok - fixed.
+		rangecheck error is fixed - Alex.
+
+12-14A-10  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14A-11  DIFF	Analyzed by Igor.
+		Test03: diff - same as 09-47B-11 Test05. Assign: Tim
+		-
+		Test04: aok. Similar to 09-47B-10 test11.
+		-
+		Test05, Test12: aok
+		A bug in the test : insufficient data.
+		The stream interpretes like this :
+		000000ff 000000ff                black         black
+	 	00ffffff 00000000                black-red     white
+		CPSI renders :
+		black green
+		black black  -- looks wrong.
+		GS renders :
+		black red white
+		black black black   --- looks correct.
+		-
+		Test08, Test09: ?
+		same as 09-47B-11 Test05. Assign: Tim
+		Please pay attention to the vertical diagonal of the rhombus.
+		With CPSI it looks as a linear gradient, and does not with GS.
+		Looks that CMYK colors [v v v v] differently convert to RGB.
+		Not sure who is wrong, but CPSI looks more pleasant.
+
+12-14A-12  DIFF	Test03, 04, 10,11 :
+		same as 09-47B-11 Test05. Assign: Tim
+		-
+		Test07: aok - same as 12-14A-11 Test05.
+
+12-14A-13  DIFF	Test02:aok -  same as 12-14A-11 Test05.
+		-
+		Test03: aok. same as 09-47B-10 Test11.
+		-
+		Test04:
+		GS problem with non-contigous function.
+		A fix is possible but isn't simple.
+		A suggestion was posted to 'teco' on November 8
+		and then dismissed. Now it arises anew.
+		.
+		First we need gs_function_evaluate to return a new bit.
+		which tells that the function has a discontinuty at
+		the point. Fortunately poly-argument PS finctions are
+		always contigous (otherwise the topology of discontinuty
+		would be a hell).
+		.
+		There are 20 calls to patch_interpolate_color,
+		which deal with it. It must return a bit,
+		which tells whether the function
+		isn't contiguous at the point.
+		If so, it must be called at second 
+		time for computing another limit to this point.
+		.
+		The change should look like this :
+		.
+		+ typedef enum {left, right} function_limit_direction;
+		.
+		  { 
+		- patch_color_t c;
+		+ patch_color_t *C;
+		+ function_limit_direction discontinuty;
+		-  patch_interpolate_color(&c, c0, c1, pfs, 0.5);
+		+  discontinuty = patch_interpolate_color(&c, c0, c1, pfs, 0.5, left);
+		+   if (discontinuty) 
+		+      patch_interpolate_color(&C, c0, c1, pfs, 0.5, right);
+		+   else 
+		+       C = &c;
+		  // Then a half of occurances 'c' to be replaced with 'C'.
+		  }
+		.
+		Assign: igor.
+		-
+		Test05, 06, 07, 08, 12 : same as 09-47B-11 Test05. Assign: Tim
+		-
+		Test09: aok - same as 09-47B-11 Test04.
+                Likely CPSI problem.
+                The test is buggy - insufficient data for function.
+		The data are interpreter like this :
+		000000ff000000 ff00ffffffxxxx
+		xxxxxxxxxxxxxx xxxxxxxxxxxxxx
+		where x is an insufficient data. GS pads it with zeros,
+		CPSI is indeterministic.
+		After tintTransform we get CMYK colors :
+		000000ff ff00ffff       
+		xxxxxxxx xxxxxxxx       
+		GS should paint :      black     black*green
+		                       white     white
+		It's what we observe.
+		CPSI appears wrong.
+
+12-14A-14  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14A-2  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14A-3  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14A-4  OK  	GS error reports are changed to match CPSI. - Alex
+
+12-14A-5  AOK	GS error reports are changed to match CPSI. - Alex
+		-
+		Test07, 10, 11, 12 : aok
+		CPSI problem : a non-monotonic color space is rendered as monotonic.
+		Same as 09-47B-7 Test10.
+
+12-14A-6  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients.  GS gradients are smoother
+		in tests 3 and 4. - ADC
+
+12-14A-7  AOK	Test01, 02, 03, 04, 07, 08, 09, 10 : aok
+		CPSI problem : a non-monotonic color space is rendered as monotonic.
+		Same as 09-47B-7 Test10.
+
+12-14A-8  AOK	CPSI reports 7 typechecks in shfill.  GS reports none.  There
+		are 7 gradients missing in test 6 to 12 in CPSI. - ADC
+		-
+		Analyzed by Igor :
+		CPSI misses the gradients due to the typecheck mentioned above.
+		PLRM doesn't allow packedarray as 'names' element of the color space.
+		GS appears tolerant to it.
+		IMO it should be aok.
+
+12-14A-9  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14B-1  OK	All test report errors now match CPSI and the test. - Alex
+
+12-14C-1  OK  	Fixed - Alex.
+
+12-14D-1  OK  	Fixed in rev. 7209. - Alex
+
+12-14E-1  OK  	All test report errors now match CPSI and the test. - Alex
+
+12-14F-1  OK  	All test report errors now match CPSI and the test. - Alex
+
+12-14G-1  OK  	All test report errors now match CPSI and the test. - Alex
+
+12-14H-1  OK	Minor differences visually reviewed by RJJ
+
+12-14H-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14H-3  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14I-1  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14I-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14I-3  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14I-4  OK	Minor differences visually reviewed by RJJ
+
+12-14J-1  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14J-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14J-3  OK	Minor differences in positions and character shapes and minor
+		differences in shading gradients. - ADC
+
+12-14K-1  AOK	Test04: aok - CPSI is wrong, GS is correct.
+		The test is buggy : it contains a wrong comment about colors
+		and excessive data for the function.
+		There is nothing special about diagonals in the function,
+		so CPSI paints them inaccurately.
+		-
+		Test06: aok
+		The test is buggy : it contains a wrong comment about colors
+		and insufficient data for the function.
+		As we know CPSI is indeterministic with insufficient function data.
+		There is nothing special about diagonals in the function,
+		so CPSI paints them inaccurately.
+		The colors must be : 
+		000000ff 000000ff 
+		00ffffff xxxxxxxx   (x = insufficient)
+		black     black
+		blackred  white
+		GS appears correct.
+		-
+		test07: aok
+		The test is buggy : it contains a wrong comment about colors
+		and insufficient data for the function.
+		As we know CPSI is indeterministic with insufficient function data.
+		There is nothing special about diagonals in the function,
+		so CPSI paints them inaccurately.
+		The colors must be : 
+		000000ff000000 ff00ffffffxxxx
+		xxxxxxxxxxxxxx xxxxxxxxxxxxxx   (x = insufficient)
+		After tintTransfer :
+		000000 ff00ff
+		xxxxxx xxxxxx   (x = insufficient)
+		white   magenta
+		black   black
+		GS appears correct.
+		-
+		Test08, Test09: Test10: test1: aok - same as test04.
+
+12-14K-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14K-3  AOK	Test06 : aok. The function cropping, same as 09-47G-2 Test10.
+		-
+		Test07 : aok. The function cropping 
+		(a few different cropping than test06), same as 09-47G-2 Test10.
+		-
+		Test09 : aok. The function cropping 
+		(a few different cropping than previous), same as 09-47G-2 Test10.
+		-
+		Test10 : aok. The function cropping 
+		(a few different cropping than previous), same as 09-47G-2 Test10.
+
+12-14L-1  OK	Minor differences in positions and character shapes - ADC
+
+12-14L-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14L-3  OK	fixed.
+
+12-14L-4  OK	Fixed by rev 7206
+
+12-14M-1  OK	fixed.
+
+12-14M-2  OK	fixed.
+
+12-14M-3  OK	fixed.
+
+12-14M-4  DIFF	Test05: Tek has top half of cone solid dark gray, GS has light
+		gray (as in Test06). Assign: Igor
+		-
+		Test06: ok - fixed.
+		-
+		Test04, Test07: ok - Fixed by rev 7206
+		Note: CPSI gets rangecheck errors on Test06, 07, 08.
+
+12-14M-5  OK	fixed.
+
+12-14M-6  OK	fixed.
+
+12-14M-7  OK	fixed.
+
+12-14M-8  OK	fixed.
+
+12-14N-1  OK	Minor differences visually reviewed by RJJ
+
+12-14N-10  OK	Minor differences in positions and character shapes - ADC
+
+12-14N-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14N-3  OK	Minor differences in positions and character shapes - ADC
+
+12-14N-4  OK	Minor differences in positions and character shapes - ADC
+
+12-14N-5  OK	Fixed by rev 7206
+
+12-14N-6  OK	Fixed by rev 7206
+
+12-14N-7  OK	Minor differences visually reviewed by RJJ
+
+12-14N-8  OK	Minor differences in positions and character shapes - ADC
+
+12-14N-9  OK	fixed.
+
+12-14O-1  OK	Minor differences in positions and character shapes - ADC
+
+12-14O-2  OK
+
+12-14O-3  OK	Fixed with rev 7211.
+
+12-14O-4  OK	Fixed as of rev.  7174
+		Note: Tek tests 9-12 blank.
+
+12-14O-5  OK	Fixed by rev 7206
+
+12-14O-6  OK	Minor differences in positions and character shapes - ADC
+
+12-14O-7  OK	Minor differences in positions and character shapes - ADC
+
+12-14O-8  OK	Minor differences in positions and character shapes - ADC
+
+12-14P-1  OK	Minor differences in positions and character shapes - ADC
+
+12-14P-2  OK	Minor differences visually reviewed by RJJ
+
+12-14P-3  OK	Minor differences in positions and character shapes - ADC
+
+12-14P-4  AOK	Fixed by rev 7206
+		CPSI has a worse shading precision with a non-contigous color.
+
+12-14P-5  AOK	CPSI problem with self-intersecting tensor shadings - Analyzed by Igor.
+		GS matches Distiller/Acrobat. - ADC
+
+12-14Q-1  OK	Minor differences in positions and character shapes - ADC
+
+12-14Q-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14Q-3  OK	Minor differences in positions and character shapes - ADC
+
+12-14Q-4  OK	Fixed by rev 7206
+
+12-14Q-5  OK	Minor differences in positions and character shapes - ADC
+                
+
+12-14R-1  AOK	Test02, 03, 06, 07, 08: aok. The function cropping, same as 09-47G-2 Test10.
+		CPSI is wrong.
+
+12-14R-2  AOK	Worse smoothing with CPSI.
+
+12-14R-3  DIFF	Analyzed by Igor.
+		-
+		Test07:
+		Analyzed by Igor.
+		The test looks buggy : duplicate DataSource.
+		CPSI uses the first DataSource (padded with zeros at end), 
+		and GS uses the second one while constructing the shading dictionary.
+		GS interpretes the stream like this :
+		000000ff 000000ff 
+		00ffffff 00000000
+		so the shading is not completely black - it is 1/256 gray in one corner.
+		Note : lib/gs_*.ps files assume the usage of the last definition.
+		I recall that at least gs_ttf.ps depends on that.
+		Passing to Ray to decide what to do with it.
+		assign: Ray.
+		-
+		Test08: aok - CPSI ingores Encode.
+		It maps a haff of shading Domain outside (to negative values)
+		of the function domain, so that shading must look constant at
+		the riht half. That's what we see with GS.
+		-
+		Test09, 10, 11, 12: aok, same as Test07 except a different Encode.
+		Note : the vertical 'spike' in Test10 is a false human visual effect.
+
+12-14R-4  AOK	Test1: aok - A worse smoothing with CPSI.
+		-
+		Test12: aok : 
+		The function itself :
+		         000000 0000ff        black   blue
+                         ff0000 00ff00        red     green
+                         ff00ff 00ff00        magenta green 
+                         ffff00 ffffff        yellow  white
+                It is linear, but the green component has Decode 0 3,
+                so it maps outside the color domain and 
+                therefore it is cropped by the max color value 1.
+                Due to the color croppig it has a plattue
+                around the point where the green peak would apper.
+                Then the function domain is cropped 
+                with 300/400 = 0.75 by X
+                and  500/600 = 0.83 by Y.
+                Therefore we don't see yellow and white.
+                GS paint it fine.
+                CPSI has a bad smoothing and a linear gradient instead the plattue.
+
+12-14S-1  OK	Minor differences in positions and character shapes - ADC
+
+12-14S-2  OK	Minor differences in positions and character shapes - ADC
+
+12-14S-3  OK	Minor differences in positions and character shapes - ADC
+
+12-14T-1  OK	fixed
+
+12-14T-2  OK	fixed
+
+12-14U-1  OK	
+
+12-14U-2  OK	
+
+12-14U-3  OK	Minor differences visually reviewed by RJJ
+
+13-01-1  OK	Minor differences visually reviewed by RJJ
+
+13-01-2  OK
+
+13-01-3  OK	Minor differences visually reviewed by RJJ
+
+13-01-4  OK	Minor differences visually reviewed by RJJ
+
+13-01-5  OK	
+
+13-01-6  OK	Minor differences visually reviewed by HAS
+
+13-01-7  OK	rev 7617.
+
+13-02-1  OK	Minor differences visually reviewed by RJJ
+
+13-02-10  OK	rev 7617.
+
+13-02-2  OK	Minor differences visually reviewed by RJJ
+
+13-02-3  OK	
+
+13-02-4  OK	
+
+13-02-5  OK  	Fixed as of rev. 7583.
+
+13-02-6  OK	Minor differences visually reviewed by RJJ
+
+13-02-7  OK	Minor differences visually reviewed by RJJ
+
+13-02-8  OK	
+
+13-02-9  OK	Minor differences visually reviewed by HAS
+
+13-03-1  OK	
+
+13-03-2  DIFF	show error incomformity.
+		{{/a /b add } (abc) cshow} stopped
+                returns only true on the stack. assign: Peter
+
+13-03-3  OK	Minor differences visually reviewed by RJJ
+
+13-03-4  OK  	Matches Tek hardcopy. PhotoPRINT appication we use for testing
+		redefines halftone operations as no-op, which is wrong and
+                cannot be considered a reference implementation. - Alex
+
+13-03-5  OK	Minor differences visually reviewed by RJJ
+
+13-03-6  OK	
+
+13-03-7  OK	Color corrected by rev 7172.
+
+13-03-8  AOK	Same as cash21, look30 : ustrokepath ending point.
+
+13-04-1  AOK	Analyzed by Igor.
+		CPSI prints an incomplete page.
+		GS raster matches Tek except (1) different order 
+		of keys in a dictionary forall (implementation dependent),
+		and (2) tek has an incorrect value FontType -1.
+
+13-04-2  OK	
+
+13-04-3  OK	
+
+13-05-1  OK	
+
+13-05-2  OK	
+
+13-05-3  AOK	Adobe's interpreters accept a read-only font dictionary as a
+		valid argument of definefont and modify it anyway. This is a
+		bug that we will not emulate. (r7165 by Alex + comment by
+		Peter)
+
+13-05-4  OK	Minor differences visually reviewed by HAS
+
+13-06-1  OK  	Fixed in rev. 7163. - Alex
+
+13-06-2  OK	
+
+13-07-1  OK	
+
+13-07-2  OK  	Adjust error reporting from findfont procedure to match
+                Distiller 5 and CET 13-06.PS.tek360 . The PhotoPrint product
+                is clearly wrong here leaving a few objects on the stack
+                besides the arguments when findfont fails. rev. 7164 - Alex
+
+13-07-3  OK	
+
+13-08-1  OK	Fixed by r7642.
+
+13-09-1  OK	Fixed by r7642.
+
+13-10-1  OK	
+
+13-10-2  OK	
+
+13-10-3  OK	
+
+13-10-4  OK	
+
+13-10-5  OK  	Works for me in rev. 7543 - Alex.
+
+13-10-6  OK	Minor differences visually reviewed by RJJ
+
+13-10-7  OK	
+
+13-10-8  OK	Minor differences visually reviewed by HAS. Color corrected by rev 7172.
+
+13-10-9  OK	rev 7617.
+
+13-11-1  OK	
+
+13-12-1  OK	
+
+13-12-10  OK	rev 7617.
+
+13-12-2  OK	
+
+13-12-3  OK	
+
+13-12-4  OK
+
+13-12-5  OK	Minor differences visually reviewed by RJJ
+
+13-12-6  OK  	Matches Tek hardcopy, same as 13-03-4
+
+13-12-7  OK	Minor differences visually reviewed by RJJ
+
+13-12-8  OK	
+
+13-12-9  OK	Color corrected by rev 7172.
+
+13-13-1  OK	
+
+13-13-2  OK	
+
+13-13-3  OK	Minor differences visually reviewed by HAS 
+                (large diff count because of minor color diffs)
+
+13-13-4  OK	Color corrected by rev 7172.
+
+13-13-5  OK	Minor differences visually reviewed by HAS 
+
+13-13-6 OK
+
+13-13-7  OK	
+
+13-13-8  OK	Color corrected by rev 7172. Fixed by rev 7617.
+
+13-14-1  AOK	same as 13-04-1
+
+13-14-2  OK	
+
+13-14-3  OK	
+
+13-15-1  OK	
+
+13-15-2  OK	Color corrected by rev 7172. 
+
+13-15-3  OK
+
+13-15-4  OK	
+
+13-15-5  OK	Minor differences visually reviewed by HAS
+
+13-16-1  OK	
+
+13-16-2  OK	
+
+13-16-3  OK	Minor differences visually reviewed by RJJ
+
+13-16-4  OK	
+
+13-16-5  OK	Minor differences visually reviewed by RJJ
+
+13-16-6  OK	
+
+13-16-7  OK	Minor differences visually reviewed by RJJ
+
+13-16-8  OK	
+
+13-16-9  OK	rev 7617.
+
+13-17-1  OK	Corrected by 7152 and 7162.  ADC
+
+13-17-2  OK	Corrected by 7152 and 7162.  ADC
+
+13-17-3  OK	Corrected by 7152 and 7162.  ADC
+
+13-17-4  OK	Corrected by 7152 and 7162.  ADC
+
+13-17-5  OK	Minor differences visually reviewed by RJJ
+
+13-17-6  OK	Corrected by 7152 and 7162.  ADC
+
+13-17-7  OK	Minor differences in positions and character shapes - ADC
+
+13-17-8  OK	rev 7617.
+
+13-18-1  OK
+
+13-18-10  OK	Minor differences in positions and character shapes - ADC
+
+13-18-11  OK	rev 7617.
+
+13-18-2  OK
+
+13-18-3  OK
+
+13-18-4  OK
+
+13-18-5  OK	
+
+13-18-6  OK
+
+13-18-7  OK
+
+13-18-8  OK
+
+13-18-9  OK
+
+13-19-1  AOK	GS has a better stroke adjustment. not impotant. Analyzed by Igor.
+
+13-19-2  AOK	Same as 13-19-1. Analyzed by Igor.
+
+13-19-3  AOK 	Same as 13-19-1. Analyzed by Igor.
+
+13-19-4  AOK	Same as 13-19-1. Analyzed by Igor.
+
+13-19-5  OK	Minor differences visually reviewed by RJJ
+
+13-19-6  OK	Minor differences in positions and character shapes - ADC
+
+13-19-7  OK	rev 7617.
+
+13-20-1  OK	Minor differences in positions and character shapes - ADC
+
+13-20-2  OK  	
+
+13-20-3  OK	Minor differences visually reviewed by RJJ
+
+13-20-4  OK	
+
+13-20-5  OK	Corrected by 7152 and 7162.  ADC
+
+13-20-6  OK	rev 7617.
+
+13-21-1  OK	Fixed by r7642.
+
+13-22-1  OK
+
+13-22-2  OK	Minor differences visually reviewed by RJJ
+
+13-22-3  OK	Minor differences visually reviewed by RJJ
+
+13-22-4  OK	Minor differences visually reviewed by RJJ
+
+13-22-5  OK	Color corrected by rev 7172.
+
+13-22-6  OK	rev 7617.
+
+13-23-1  OK	GS matches CPSI and Tek when Adobe fonts are used.
+		With URW or UFST fonts, an extra line under /ordfeminine and
+		/ordmasculine characters shows as well as slightly different
+		appearance of other characters. This is a font issue and must
+		be resolved by the font vendor chosen for the implementation.
+
+13-24-1  OK
+
+13-24-2  AOK	An unimportant difference in the character cache logics. Analyzed by Igor.
+
+13-24-3  OK	Minor differences visually reviewed by RJJ
+
+13-24-4  OK	Minor differences in positions and character shapes - ADC
+
+13-24-5  OK	Minor differences visually reviewed by Igor.
+
+13-24-6  AOK	Same as cash21, look30 : ustrokepath ending point.
+
+13-25-1  OK
+
+13-25-2  OK	Fixed as of r7610 (when run with -dLOCALFONTS).
+
+13-25-3  OK	
+
+13-26-1  OK	Minor differences visually reviewed by RJJ
+
+13-26-2  OK	
+
+13-26-3  OK	
+
+13-26-4  OK  	Fixed in rev. 7562. - Alex
+
+13-26-5  OK	Minor differences visually reviewed by RJJ
+
+13-26-6  OK	Minor differences visually reviewed by RJJ
+
+13-26-7  OK	Minor differences visually reviewed by RJJ
+
+13-26-8  AOK	Minor differences in colors - ADC
+
+13-26-9  OK	rev 7617.
+
+13-27-1  OK	Minor differences visually reviewed by RJJ
+
+13-27-2  OK
+
+13-27-3  OK	rev 7542.
+
+13-27-4  OK	Minor differences visually reviewed by RJJ
+
+13-27-5  OK	Minor differences visually reviewed by RJJ
+
+13-27-6  OK	
+
+13-27-7  AOK	Minor differences in colors - ADC
+
+13-27-8  OK	rev 7617.
+
+13-28-1  OK	Minor differences visually reviewed by RJJ
+
+13-28-2  OK	Minor differences visually reviewed by RJJ
+
+13-28-3  OK
+
+13-28-4  OK	rev 7542.
+
+13-28-5  OK	Minor differences visually reviewed by RJJ
+
+13-28-6  OK	Minor differences visually reviewed by RJJ
+
+13-28-7  OK	Minor differences visually reviewed by RJJ
+
+13-28-8  AOK	Minor differences in colors - ADC
+
+13-28-9  OK	rev 7617.
+
+13-29-1  OK	Minor differences visually reviewed by RJJ
+
+13-29-2  OK
+
+13-29-3  OK	rev 7542.
+
+13-29-4  OK	Minor differences visually reviewed by RJJ
+
+13-29-5  OK	Minor differences visually reviewed by RJJ
+
+13-29-6  OK	Minor differences visually reviewed by RJJ
+
+13-29-7  OK	Minor differences visually reviewed by Igor.
+
+13-29-8  OK	rev 7617.
+
+14-01-1  OK	Minor differences visually reviewed by RJJ
+
+14-01-10  OK	Minor differences visually reviewed by RJJ
+
+14-01-11  OK	Minor differences visually reviewed by RJJ
+
+14-01-12  OK	Minor differences visually reviewed by RJJ
+
+14-01-13  OK	Minor differences visually reviewed by RJJ
+
+14-01-14  OK	Minor differences visually reviewed by RJJ
+
+14-01-15  OK	Minor differences visually reviewed by RJJ
+
+14-01-2  OK	Minor differences visually reviewed by RJJ
+
+14-01-3  OK	Minor differences visually reviewed by RJJ
+
+14-01-4  OK	Minor differences visually reviewed by RJJ
+
+14-01-5  OK	Minor differences visually reviewed by RJJ
+
+14-01-6  OK	Minor differences visually reviewed by RJJ
+
+14-01-7  OK	Minor differences visually reviewed by RJJ
+
+14-01-8  OK	Minor differences visually reviewed by RJJ
+
+14-01-9  OK	Minor differences visually reviewed by RJJ
+
+14-02-1  OK	Minor differences visually reviewed by RJJ
+
+14-02-2  OK	
+
+14-03-1  OK	Minor differences visually reviewed by RJJ
+
+14-03-2  OK
+
+14-03-3  OK	Minor differences visually reviewed by RJJ
+
+14-04-1  OK	Minor differences visually reviewed by RJJ
+
+14-04-2  OK	Minor differences visually reviewed by RJJ
+
+14-05-1  OK	
+
+14-05-2  OK	
+
+14-06-1  OK	
+
+14-07-1  OK	Minor differences visually reviewed by RJJ
+
+14-08-1  OK	Color corrected by rev 7172.
+
+14-08-10  OK	Corrected by 7152 and 7162.  ADC
+
+14-08-11  OK	Corrected by 7152 and 7162.  ADC
+
+14-08-12  OK	Corrected by 7152 and 7162.  ADC
+
+14-08-13  OK	Corrected by 7152 and 7162.  ADC
+
+14-08-14  OK	Corrected by 7152 and 7162.  ADC
+
+14-08-15  OK	Corrected by 7152 and 7162.  ADC
+
+14-08-16  OK	Corrected by 7152 and 7162.  ADC
+
+14-08-17  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-18  OK	Color corrected by rev 7172.
+
+14-08-19  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-2  OK	Color corrected by rev 7172.
+
+14-08-20  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-21  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-22  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-23  OK	Color corrected by rev 7172.
+
+14-08-24  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-3  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-4  OK	Color corrected by rev 7172.
+
+14-08-5  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-6  OK	Color corrected by rev 7172.
+
+14-08-7  OK	A minor difference in color. Analyzed by Igor.
+
+14-08-8  OK	Colors corrected by rev 7172.
+
+14-08-9  OK	Corrected by 7152 and 7162.  ADC
+
+14-09-1  OK	
+
+14-09-2  OK	
+
+14-09-3  OK	
+
+14-09-4  OK	
+
+14-10-1  OK	
+
+14-10-2  OK	
+
+14-10-3  OK	
+
+14-10-4  OK	
+
+14-11-1  OK	Minor differences visually reviewed by RJJ
+
+14-11-2  OK	Minor differences visually reviewed by RJJ
+
+14-12-1  OK	
+
+14-12-2  OK	
+
+14-12-3  AOK	A glyph positioning difference. 
+		Analyzed by Igor.
+		I believe it is CPSI problem.
+		A simplified test is placed to 
+		peeves:/home/igor/pscet/mytests/14-12-3-Igor01.PS 
+		With this test CPSI prints :
+		.
+		aaaa1:
+		Helvetica
+		has WMode
+		def:/Helvetica-Oblique
+		1
+		defined:1
+		aaaa2:
+		Helvetica
+		nas no WMode
+		.
+		Thus the redefinition of the font Helvetica
+		is dropped when Helvetica-Oblique is redefined.
+		It is an incorrect behavior.
+		Due to that the cshow procedure prints 
+		currentfont /WMode like this :
+		[1 1 /U /U /U /U 1 1 0 0 0 0] 
+		The right result must be :
+		[1 1 1 1 0 0 1 1 0 0 0 0]
+		Using the wrong WMode, glyph placements
+		are wrong with CPSI.
+		Tek paints something different,
+		which is closer to Ghostscript,
+		but looks wrong again.
+		.
+		Some tips for those who wants to analyze it :
+		1. Font_Dict is a FMap 2 font with 8 descendents :
+		1.0. Times-Roman
+		1.1. Type3WMode0  (paints rectangles with size depending on char code);
+		1.2. Type3WMode1  (same as above but with WMode 1)
+		1.3. Type0Font1 2 scalefont - the test doesn't use it.
+		1.4. FMAP2 - a FMap 2 font [ Helvetica, Helvetica-Bold, Helvetica-Oblique, Helvetica-BoldOblique]
+		1.5. FMAP4 [Symbol, Symbol 2 scalefont] - the test doesn't use it.
+		1.6. FMAP5 [Courier, , , ]  - the test doesn't use it.
+		1.7. FMap6 [Helvetica, ...]  - the test doesn't use it.
+		2. All 1st level descendent fonts above has WMode = DescendentWMode = 1
+		3. Helvetica, Helvetica-Bold, Helvetica-Oblique, Helvetica-BoldOblique
+		   are built into the font above aftyer redefinition with find&mod,
+		   which changes WMode like this :
+		   Helvetica WMode 1 
+		   Helvetica-Bold WMode 0
+		   Helvetica-Oblique WMode 1
+		   Helvetica-BoldOblique WMode 0
+		4. The text string is decomposed like this :
+		   2A 2a 40A 40a 41A 41a 42A 42a 43A 43a 1A 1A
+		   The 1st byte selects the 1st level descendent,
+		   then it tripples the 2nd byte selects the 2nd level descendent.
+		5. We believe that WMode of the leaf font only have sence.
+
+14-12-4  OK	
+
+14-12-5  AOK	Same as 14-12-3.
+
+14-12-6  AOK	Same as 14-12-3.
+
+14-13-1  OK	Minor differences visually reviewed by RJJ
+
+14-13-2  OK	Minor differences visually reviewed by RJJ
+
+14-14-1  OK	
+
+15-01-1  OK	Fixed as of Nov 4 2005
+
+15-01-2  OK	Minor rasterizing differences. -Tor
+
+15-02-1  OK	Fixed as of rev 7598.
+
+15-02-2  OK	Minor differences visually reviewed by RJJ
+
+15-03-1  OK	Fixed as of Nov 4 2005
+
+15-04-1  AOK	GS has -12dict- and CPSI has -11dict- in debug text. Different checksum. The
+		font dictionary debug for GS has one more key: /OrigFont.
+	 I think these differences are harmless, and are not particularly easy to fix. If we do decide it needs fixing, Peter is a good choice. - Raph
+
+15-04-2  AOK	Different checksum. The font dictionary debug for GS has more keys: /OrigFont and /FontInfo.
+	 See 15-04-1 - Raph
+
+15-04-3  AOK	Different checksum. The font dictionary debug for GS has one more key: /OrigFont.
+	 See 15-04-1 - Raph
+
+15-05-1  OK	Fixed when tested with 7210
+
+15-05-2  OK	Fixed when tested with 7210
+
+15-05-3  OK	Color corrected by rev 7172.
+
+15-06-1  OK	Corrected by rev 7172.
+
+15-07-1  OK 	Minor rasterizing differences. -Tor
+
+15-08-1  OK	Fixed in r7156 - Raph
+
+15-09-1  OK 	Minor rasterizing differences. Stroke width difference. -Tor
+
+15-09-2  OK	Minor rasterizing differences. -Tor
+
+15-09-3  OK	Minor rasterizing differences. -Tor
+
+15-10-1  OK	Minor differences visually reviewed by RJJ
+
+15-10-2  OK	Minor differences visually reviewed by RJJ
+
+15-10-3  OK	Minor rasterizing differences. -Tor
+
+15-10-4  OK	Minor rasterizing differences. -Tor
+
+15-11-1  OK  	Fixed by rev. 7806. - Alex
+
+15-14-1  OK	Minor differences visually reviewed by RJJ
+
+15-15-1  OK	Minor rasterizing differences. -Tor
+
+16-01-1  AOK	glyphs 19-22 : Tiny gaps between almost adjoining black rectangles; 
+		output will vary from device to device to device, and our rendering is valid. 
+		Glyphs 207, 208: reverse video in Adobe output, likely Adobe bug.
+		Simplified tests are placed at 
+		peeves:/home/igor/pscet/mytests/16-01/ 
+                A patch for emulating such behavior is placed at
+                peeves:/home/igor/pscet/mypatches/16-01-Igor-01.txt 
+                We won't commit that patch.
+                Suggesting to give the patch to the customer as a separate product.
+
+16-02-1  AOK	Same as 16-01-1.
+
+16-03-1  OK	Fixed by rev 7172.
+
+16-03-2	 OK
+
+16-03-3	 OK
+
+16-03-4  OK	Now appears correct - Raph
+
+16-04-1  OK  	Fixed by rev. 7686 - Alex
+
+16-05-1  OK	Color corrected by rev 7172
+
+16-05-2  DIFF	Three smallest sizes are slanted squares in gs, same shape as larger ones in Adobe. 
+		Also USE_ADOBE_CMYK_RGB issue - Raph
+		assign: Ray
+
+16-05-3  OK	Color corrected by rev 7172.
+
+16-06-1  OK	trivial font rendering diff - Raph
+
+16-07-1  OK	Checked by Raph
+
+16-08-1  OK	Fixed in r7156 - Raph
+
+16-09-1  OK
+
+16-10-1  AOK	Same as 16-01-1.
+
+16-10-2  AOK	Same as 16-01-1.
+
+16-10-3  AOK	Same as 16-01-1.
+
+16-11-1  OK	Fixed by rev 7172.
+
+16-14-1  OK	
+
+16-15-1  OK
+
+16-16-1  OK	
+
+17-01-1  OK	
+
+17-01-2  OK	Fixed as of rev 7598.
+
+17-01-3  OK	Fixed in rev 7630 (Peter)
+
+17-01-4  OK	Fixed as of rev 7598.
+
+17-01-5  OK	
+
+17-01-6  AOK	Matches Tek. CPSI different.
+
+17-01-7  AOK 	Matches Tek and Distiller 5. CPSI is different and wrong,
+                The test exercises ineofill operator and can be easily checked
+                visually by modifying the test to fill the current path.
+
+17-01-8  OK	
+
+17-02-1  OK	
+
+17-02-2  OK	Fixed as of rev. 7598.
+
+17-02-3  OK	Same as 17-01-3
+
+17-02-4  OK	Fixed as of rev 7598.
+
+17-02-5  OK	
+
+17-02-6  AOK 	Same as 17-01-6 but tests infill instead of ineofill.
+                Matches Tek and Distiller 5. CPSI is different and wrong,
+
+17-02-7  AOK 	Same as 17-01-6 but tests infill instead of ineofill.
+                Matches Tek and Distiller 5. CPSI is different and wrong,
+
+17-02-8  OK	
+
+17-03-1  OK	
+
+17-03-2  DIFF	GS has curves where CPSI has straight lines. Also GS differs in marker symbols.
+		Note Tek has _different_ straight line pattern and marker symbols.
+		This is not identified as "Device Dependent" in the test.
+		curve flatness used to draw lines.  Assign: ray
+
+17-03-3  OK	Same as 17-01-3
+
+17-03-4  OK	Minor differences visually reviewed by RJJ
+
+17-03-5  DIFF	Similar to 17-01-6 but tests instroke. The insideness testing is OK
+                but the pattern phase is different from Tek and CPSI. assign: Ray
+
+17-03-6  OK	
+
+17-04-1  OK	
+
+17-04-2  AOK 	The test is unreasonable. The test checks whether a point is in
+		the user path (using inueofill operator) but places many of
+                the points on the boundary of the path where insideness is
+                affected by rounding errors. When the point is inside the path,
+                a small black circle is drawn around the point. The test is
+                performed for different CTM.
+                -
+		Ghostscript skips some of the points at low resolution but
+                draws all expected points at 300 dpi and above.
+                -
+                CPSI, Tek, and Distiller 5 are all different and skip different
+                points depending on the current CTM. - Alex
+
+17-04-3  OK	same as 17-02-3
+
+17-04-4  OK	
+
+17-04-5  OK	
+
+17-05-1  OK	
+
+17-05-2  AOK 	Similar to 17-04-2 but testing inufill. - Alex
+
+17-05-3  OK	Same as 17-01-3
+
+17-05-4  OK	
+
+17-05-5  OK	
+
+17-06-1  OK	
+
+17-06-2  AOK 	Similar to 17-04-2 but testing inustroke. Placing the dots in
+		middle of the stroke is reasonable but some of the dots are
+                placed at the end of the line where their relative position
+                depends on the rounding errors. Ghostscript generates
+                correct results above 300 dpi. CPSI and Tek miss some
+                points, - Alex
+
+17-06-3  OK	Fixed as of rev 7636.
+
+17-06-4  OK	
+
+18-01A-1  AOK	Minor difference in the font size.
+		Note: patterns are resolution dependent,
+
+18-01A-2  OK    Minor differences visually reviewed by HAS.
+
+18-01A-3  OK	Minor differences visually reviewed by RJJ
+
+18-01A-4  OK	
+
+18-01A-5  OK	Minor differences visually reviewed by RJJ
+
+18-01A-6  OK	Minor differences visually reviewed by RJJ
+
+18-01A-7  OK	Minor differences visually reviewed by RJJ
+
+18-01B-1  DIFF	The word "FORM" in the magenta oval throughout the test
+                is white with cpsi and gray with gs.  (repeats). - color saturation problem.
+                assign Tim
+
+18-01B-2  DIFF	(18-01B-1) lower right graphic cpsi has red lines where gs has white. (assign Raph).
+		The locations of squares are shifted in this pattern.  Distiller/Acrobat
+		7.0 reports error 'incorrect number of values for setcolor operator'.
+		This is probaly related to the problem for 12-01-5.  See Jan's
+		email analysis of that problem.  (He reports a problem with pattern
+		shifts with patterns.)
+
+18-01C-1  OK	Minor differences visually reviewed by RJJ
+
+18-02A-1  DIFF	pattern size differs first row of graphics. assign Tim
+
+18-02A-2  OK    Minor differences visually reviewed by HAS. Color corrected by rev 7172.
+
+18-02A-3  OK    Minor differences visually reviewed by HAS.
+
+18-02A-4  OK	Reviewed by Raph. Probably fixed by r7114.
+
+18-02B-1  OK    Minor differences visually reviewed by HAS.
+
+18-02B-10  AOK	18-02A-4 repeat
+	   Fill rule is ok, shadings sharper in GS than Adobe. - Raph
+	Per conversation with Ray, we have decided that our rendering
+	of these shadings (which have discontinuities) is more correct
+	than Adobe. Also note that for test 9, Tek and GS match, but
+	CPSI doesn't.
+
+18-02B-11  DIFF	18-02A-4 repeat
+	   Fill rule is ok. Test 1, 4 shadings sharper in GS than Adobe.
+	   Test 9-12 colors darker in Adobe than GS. - Assign Tim
+
+18-02B-12  DIFF	18-02A-4 repeat
+	   Fill rule is ok. Test 1-3, 11 colors darker in Adobe.
+	   Test 12 colors lighter in Adobe. - Raph
+           assign Tim
+
+18-02B-13  DIFF	18-02A-4 repeat
+	   Fill rule is ok. Test 1-6 colors different as above. Raph
+           assign Tim
+
+18-02B-2  OK	
+
+18-02B-3  OK    Minor differences visually reviewed by HAS.
+
+18-02B-4  OK    Minor differences visually reviewed by HAS.
+
+18-02B-5  OK	Minor differences visually reviewed by RJJ
+
+18-02B-6  OK	Minor differences visually reviewed by RJJ
+
+18-02B-7  DIFF	18-02A-4 repeat
+	Fill rule is ok.
+	Test 8-12 colors darker in Adobe than GS. - Raph
+        assign Tim
+
+18-02B-8  OK	Probably fixed by r7114.
+
+18-02B-9  AOK	18-02A-4 repeat
+	Fill rule is ok, shadings sharper in GS than Adobe. - Raph
+
+18-02C-1  DIFF	Partialy fixed by rev. 7738.
+                Adobe doesn't restore operands of rectfill operator when
+                an error happen in the PaintProc function but
+                Ghostscript does. assign: Alex
+
+18-02D-1  OK  	Fixed by rev. 7738. - Alex
+
+18-02E-1  DIFF	much of postscript dump missing in gs. assign Ray
+		Ghostscript doesn't detect color operators in uncolored
+                pattern.
+
+18-02E-2  DIFF	much of postscript dump missing in gs. assign Ray
+		Ghostscript doesn't detect color operators in uncolored
+                pattern.
+
+18-02F-1  OK    Minor differences visually reviewed by HAS.
+
+18-02F-2  DIFF	pattern in third row of graphics out of phase.  assign Tim
+
+18-02F-3  DIFF	18-02A-4 repeat
+                repeat of AOK problem assign Tim
+
+18-02F-4  OK	Fixed before Nov 3 (after Oct 2).
+
+18-02F-5  DIFF	18-02A-4 repeat
+                repeat of AOK problem assign Tim
+
+18-02G-1  DIFF	strokepath different - assign: Igor.
+		-
+                pattern differs in 4th column of stars in the last box.
+                Analyzed by Igor.
+                See also 12-01-5.
+                A simplified test case is placed to
+                peeves:/home/igor/pscet/mytests/18-02G-1-Igor01.PS .
+                This is a general pattern implementation problem.
+                The test defines a pattern with TESTPROC,
+                and then applyes this pattern for creating another pattern 
+                Inf71ColorPattern. Doing the 2nd step, Ghostscript 
+                instantiates the 1st pattern in the 2nd pattern's space.
+                Contrary to that, CPSI instantiates the 1st pattern
+                in the device space when instantiating the 2st pattern.
+                Thus the overall pattern period with CPSI is a multiple
+                of periods of the 1st and the 2nd patterns.
+                This problem may be fixed for Ghostscript
+                with implementing high level patterns for
+                clist and raster devices.
+                It would be a significant development,
+                which we currently have no time for.
+                Passing to Ray for schedulling.
+                assign: Ray.
+
+18-02G-2  OK	Fixed by r7123.
+
+18-02G-3  AOK	Minor differences visually reviewed by HAS.
+
+19-01-1  OK	
+
+19-01-2  OK	
+
+19-02-1  OK	
+
+19-02-2  OK	
+
+19-02-3  OK	
+
+19-03-1  OK	
+
+19-03-2  OK	
+
+19-03-3  OK	
+
+19-04-1  OK	
+
+19-04-2  OK	
+
+19-05-1  OK	Minor differences visually reviewed by RJJ
+
+19-05-2  OK	Minor differences visually reviewed by RJJ
+
+19-05-3  OK	
+
+19-06-1  OK	
+
+19-06-2  OK	
+
+19-07-1  OK	
+
+19-07-2  OK	
+
+19-08-1  OK	
+
+19-08-2  OK	
+
+19-09-1  OK	
+
+19-09-2  OK	
+
+19-09-3  OK	
+
+19-10-1  OK	
+
+19-10-2  OK	
+
+19-11-1  OK	Minor differences visually reviewed by RJJ
+
+19-11-2  OK	
+
+19-12-1  OK	Minor differences visually reviewed by RJJ
+
+19-12-2  OK	
+
+19-13-1  OK	Minor differences visually reviewed by RJJ
+
+19-13-2  OK	Minor differences visually reviewed by RJJ
+
+19-13-3  OK	
+
+19-14-1  OK	Minor differences visually reviewed by RJJ
+
+19-14-2  OK	
+
+20-01-1  OK  	Fixed in rev. 7712. - Alex
+
+20-01-2  AOK 	GS prints { 1 2 3 } [ 1 2 3 ] (1 2 3) where CPSI prints { 1 2 3 } [mark /1 -3array- ] and (   )
+		i.e. CPSI modifies the content of the array arguments when operator >> fails.
+                Ghostscript matches Tek and Distiller 5. This is a bug in CPSI we don't
+                want to reproduce. - Alex 
+
+20-01-3  OK	
+
+20-02-1  OK	Looks okay. -Tor
+
+20-02-2  OK     Fixed by rev. 7829. - Alex
+
+20-02-3  OK	Color corrected by rev 7172.
+
+20-03-1  OK	
+
+20-03-2  OK	
+
+20-04-1  OK	Minor differences visually reviewed by RJJ
+
+20-04-2  OK	Minor differences visually reviewed by RJJ
+
+20-04-3  OK	Color corrected by rev 7172.
+
+20-05-1  OK	
+
+20-05-2  OK	
+
+20-06-1  OK	
+
+20-06-2  OK	
+
+20-07-1  OK	
+
+20-07-2  OK	
+
+20-08-1  OK	
+
+20-08-2  OK	
+
+20-08-3  OK	
+
+20-09-1  OK	
+
+20-09-2  OK	
+
+20-09-3  OK	
+
+20-10-1  OK	
+
+20-10-2  OK	
+
+20-11-1  OK	fixed incidentally.
+
+20-11-2  OK	fixed incidentally.
+
+20-11-3  OK	
+
+20-12-1  OK	Looks okay. -Tor
+
+20-12-2  OK	
+
+20-13-1  OK	Looks okay. -Tor
+
+20-13-2  OK	Color corrected by rev 7172.
+
+20-14-1  OK	GS matches Tek hardcopy. (Peter->Ray)
+
+20-14-2  OK	Color corrected by rev 7172.
+
+20-15-1  OK     Fixed by rev. 7713. - Alex
+
+20-15-2  OK	
+
+20-16-1  OK	Looks okay. -Tor
+
+20-16-2  OK	Color corrected by rev 7172.
+
+20-17-1  OK	
+
+20-17-2  OK	
+
+20-18-1  OK	Looks okay. -Tor
+
+20-18-2  OK	Color corrected by rev 7172.
+
+20-19-1  OK	Minor differences visually reviewed by RJJ
+
+20-19-2  OK	Color corrected by rev 7172.
+
+20-20-1  OK  	GS matches Tek and CPSI as of rev. 7741.
+
+20-20-2  OK	
+
+20-21-1  OK	
+
+20-21-2  OK	
+
+20-22-1  OK	
+
+20-22-2  OK	
+
+20-22-3  OK	
+
+20-23-1  OK  	Tek and CPSI don't have /deviceinfo. Availability of this operator
+                on Ghostscript deprnds on gs_dps device. Rev. 7723 undefines it in
+		gs_cet.ps to pass the test regardless of the configuration. - Alex
+
+20-23-2  OK	
+
+20-24-1  OK	
+
+20-24-2  OK	
+
+20-25-1  OK     
+
+20-25-2  OK	
+
+20-25-3  OK	
+
+20-26-1  OK	
+
+20-26-2  OK	
+
+20-27-1  AOK 	This test check the content of the $error dictionary.
+		The content varies depending on the code executed before.
+                There's no error on CPSI, as it was stated before, The
+                value of /errorname is an error name, which is always
+                printed as white on black by the test program. - Alex
+
+20-27-2  OK	
+
+21-01-1  OK	
+
+21-01-2  OK	
+
+21-02-1  OK	Minor differences visually reviewed by RJJ
+
+21-02-2  OK	Minor differences visually reviewed by RJJ
+
+21-02-3 OK	Minor differences in positions and character shapes - ADC
+
+21-03-1  OK	Minor differences in positions and character shapes - ADC
+
+21-03-2  OK	Minor differences in positions and character shapes - ADC
+
+21-03-3  OK	
+
+21-04-1  OK	Minor differences in positions and character shapes - ADC
+
+21-04-2  OK	Minor differences in positions and character shapes - ADC
+
+21-04-3  OK	Minor differences in positions and character shapes - ADC
+
+21-05-1  OK	Minor differences in positions and character shapes - ADC
+
+21-05-2  OK	Minor differences in positions and character shapes - ADC
+
+21-05-3  OK	Minor differences in positions and character shapes - ADC
+
+21-06-1  OK	Minor differences in positions and character shapes - ADC
+
+21-06-2  OK	Minor differences in positions and character shapes - ADC2
+
+21-06-3  OK	Minor differences in positions and character shapes - ADC
+
+21-07-1  OK	Minor differences visually reviewed by RJJ
+
+21-07-2  OK	Minor differences in positions and character shapes - ADC
+
+21-07-3  OK	Minor differences in positions and character shapes - ADC
+
+21-08-1  OK	Minor differences visually reviewed by RJJ
+
+21-08-2  OK	Minor differences visually reviewed by RJJ
+
+21-08-3  OK	Minor differences in positions and character shapes - ADC
+
+21-09-1  OK	
+
+21-09-2  OK	
+
+21-10-1  OK	Minor differences in positions and character shapes - ADC
+
+21-10-2  OK	Minor differences in positions and character shapes - ADC
+
+21-11-1  OK	
+
+21-11-2  OK	Fixed as of rev 7598.
+
+21-11-3  OK	Fixed as of rev 7616.
+
+21-11-4  OK	
+
+21-11-5  OK	
+
+21-11-6  DIFF	Differences in error messages for operator token - ADC
+                assign Peter
+
+21-11-7  OK	Corrected by 7152 and 7162.  ADC
+
+22-01-1  OK	
+
+22-01-2  OK	
+
+22-02-1  OK	
+
+22-02-2  OK	
+
+22-03-1  OK	
+
+22-03-2  OK	
+
+22-04-1  OK	
+
+22-04-2  OK	
+
+22-05-1  OK	Minor differences visually reviewed by RJJ
+
+22-05-2  OK	
+
+22-06-1  OK	
+
+22-06-2  OK	
+
+22-07-1  OK	
+
+22-07-2  OK	
+
+22-07-3  OK	
+
+22-08-1  OK	Minor differences visually reviewed by RJJ
+
+22-08-2  OK	Minor differences visually reviewed by RJJ
+
+22-08-3  OK	Visually OK SK small variations in tiny colour cube.
+
+22-09-1  OK	
+
+22-09-2  OK	
+
+22-10-1  OK	Minor differences visually reviewed by HAS
+
+22-10-2  OK	
+
+22-10-3  OK	
+
+22-11-1  OK	
+
+22-11-2  OK	
+
+22-12-1  OK	Minor differences visually reviewed by RJJ
+
+22-12-2  OK	Minor differences visually reviewed by RJJ
+
+22-13-1  OK	
+
+22-13-2  OK	
+
+22-13-3  OK	
+
+22-13-4  OK	
+
+23-01-1  OK	
+
+23-01-2  OK	
+
+23-02-1  OK	
+
+23-02-2  OK	
+
+23-03-1  AOK	Device Dependent: Test checks for 'bytesavailable' on 'currentfile'.
+		This is generally not supported from %stdin.
+
+23-03-2  OK	
+
+23-04-1  OK	
+
+23-04-2  OK	
+
+23-05-1  OK	
+
+23-05-2  OK	
+
+23-06-1  OK	
+
+23-06-2  OK	
+
+23-07-1  OK	Fixed by rev. 7442
+
+23-07-2  AOK	There is still a diff in 23-07-2 in that the contents of our resource 
+                category dictionaries (in this case, the Generic dictionary) are different
+                from the Adobe interpreters: we and Adobe have different implementation-specific
+                (non-PLRM) entries, and the PLRM-documented procedures (FindResource, etc.)
+                are different.  This is inherently implementation-dependent and does not
+                affect any real program, so no further changes are needed. (Peter)
+
+23-07-3  OK	Fixed by rev. 7442
+
+23-07-4  OK	
+
+23-08-1  OK	
+
+23-09-1  DIFF	The first bytesavailable diff is identified as "highly device dependent".
+                As such, I recommend discounting it.  No real program will rely on the
+                result.
+                -
+                The two invalidaccess diffs occur because the reference implementation does
+                not allow PostScript programs to open files for writing.  This is not a gs
+                bug, but it does suggest that gs should provide some way to indicate/detect
+                that it is running in an embedded environment with no (writable) filesystem.
+                Does this exist already?
+                -
+                The remaining 3 diffs occur because gs implements %null as a special file
+                name and the reference implementation apparently doesn't, per a previous
+                e-mail.
+                -
+                assign: ray
+
+23-10-1  AOK	Device Dependent: GS looks like it is working similar to CPSI ot
+		Tek, but all three differ. RJJ
+
+23-10-2  OK	
+
+23-11-1  OK	Minor differences visually reviewed by RJJ
+
+23-12A-1  OK	
+
+23-12A-2  OK	
+
+23-12A-3  AOK   The discrepancies are in the length of the encoded
+                string produced by the ASCII85Encode and
+                RunLengthEncode filter respectively.  These filters
+                have some discretion in their output -- ASCII85Encode
+                must insert a \n at least every 80 characters, but may
+                insert one more often, and RunLengthEncode is not
+                required to produce maximum-length runs -- and it
+                appears that gs's implementation of these filters
+                produces output that is 1 byte shorter than Adobe's in
+                some cases.  gs's output is (also) correct -- the CET
+                verifies it by decoding it and comparing against the
+                original. (peter)
+
+23-12A-4  AOK	same resolution as 23-12A-3.
+
+23-12B-1  DIFF	GS gets "-file- ( ioerror --readstring--" on FAX_6 test. Last
+		image of top row missing, others may be shifted. assign: Peter
+
+23-12C-1  OK	
+
+23-12C-2  OK	
+
+23-12C-3  OK	
+
+23-12D-1  OK	Fixed incidentally
+
+23-12D-2  OK	Fixed incidentally
+
+23-12D-3  OK	Fixed incidentally
+
+23-12D-4  OK	Fixed incidentally
+
+23-12E-1  AOK	Device Dependent: Test says "length can vary due to multiple valid
+		methods". GS differs by 1 to 5 in results (hope that's close enough)
+		RJJ
+
+23-12E-2  AOK	(Peter) 7605 fixes ioerror and incorrect output problems.
+                -
+                "There are still discrepancies in the length of the
+                compressed data, for the same reason as 23-12A-3 et
+                al.  In this case, gs's implementation is slightly
+                inferior to Adobe's (about 6% larger compressed data
+                in the worst case on the CET page), probably because
+                in the mixed 1- and 2-D case, we don't bother to
+                compress each line both ways and use whichever method
+                produces the smaller output."
+
+23-12E-3  OK	Device Dependent: minor position/stairstep differences, but visually
+		equivalent to Tek. RJJ.
+
+23-12E-4  OK	Device Dependent: minor position/stairstep differences, but visually
+		equivalent to Tek. RJJ.
+
+23-12E-5  DIFF	GS has lower three graphics 'squashed' horizontally. assign: Ray
+
+23-12E-6  DIFF	GS has lower three graphics as .step-pyramids'. assign: Ray
+
+23-12E-7  OK	
+
+23-12F-1  OK	
+
+23-12G-1  AOK	same as 23-12A-3 (peter)
+
+23-12G-2  AOK	same as 23-12A-3 (peter)
+
+23-12G-3  OK	
+
+23-12H-1  OK	
+
+23-12I-1  OK.	Fix from Peter
+
+23-12I-2  OK.   Fix from Peter
+
+23-12J-1  OK	
+
+23-12J-2  OK	
+
+23-12J-3  OK	
+
+23-12J-4  OK	
+
+23-12K-1  OK	Fixed as of r7500.
+
+23-12K-2  OK  	Fixed by rev 7808. - Alex
+
+23-12L-1  AOK	same as 23-12A-3
+
+23-12M-1  AOK	same as 23-12A-3
+
+23-12N-1  AOK	same as 23-12A-3
+
+23-12O-1  AOK	same as 23-12A-3
+
+23-12O-2  OK	Fixed by rev 7489.
+
+23-12P-1  AOK	same as 23-12A-3
+
+23-12P-2  OK	Fixed by rev 7489.
+
+23-12Q-1  OK	
+
+23-12R-1  OK	
+
+23-12S-1  OK	
+
+23-12T-1  OK	
+
+23-12U-1  OK	Fixed as of r7500.
+
+23-12V-1  OK	Fixed as of r7500.
+
+23-12W-1  OK	Fixed as of r7500.
+
+23-12W-2  OK	Fixed as of rev 7636.
+
+23-12W-3  OK	Minor differences visually reviewed by RJJ
+
+23-12W-4  OK  	Matches Tek hardcopy. CPSI-based PhotoPrint product ignores
+                sethalftone and cannot be a reference implementation here. 
+
+23-12W-5  OK	Fixed by rev 7149.
+
+23-12W-6  OK	Fixed as of r7500.
+
+23-13-1  OK	Fixed as of r7610 (when run with -dLOCALFONTS).
+
+23-13-2  AOK	Device Dependent: GS has more entries for Filter, ColorSpace
+		page fills before ImageType and PatternType shown.
+
+23-13-3  DIFF	Device Dependent: GS has different Resource Categories and also
+		has different number of columns. Assign: Ray for further analysis
+
+23-13-4  AOK 	Ghostscript has extra keys in the font dictionary. PLRM says that
+		implementations can add specific keys. Rev. 7724 - Alex
+
+23-13-5  OK	Fixed by rev 7442.
+
+23-13-6  OK	
+
+23-14-1  OK	
+
+23-14-2  OK	
+
+23-15-1  OK	
+
+23-15-2  OK	
+
+23-16-1  OK	Minor differences visually reviewed by RJJ
+
+23-16-2  OK	
+
+23-17-1  OK	Minor differences visually reviewed by RJJ
+
+23-17-2  AOK	Probably fixed with 23-17-3
+
+23-17-3  AOK	Fixed see 23-29-2, 23-36-3 and 23-36-4
+
+23-18-1  OK	Minor differences visually reviewed by RJJ
+
+23-18-2  OK	
+
+23-19-1  OK	
+
+23-19-2  OK	
+
+23-20-1  OK	Fixed by rev. 7809. - Alex
+
+23-20-2  OK	
+
+23-21-1  OK  	Fixed in rev. 7140. - Alex.
+
+23-21-2  OK	
+
+23-22-1  OK  	Fixed in rev. 7143. - Alex.
+
+23-22-2  OK	
+
+23-23-1  OK  	Fixed in rev. 7144. - Alex.
+
+23-24-1  OK	
+
+23-24-2  OK	
+
+23-25-1  DIFF	GS gets 'undefinedfilename' error. Tek and CPSI do not. Assign: Ray
+
+23-25-2  DIFF	GS gets 'undefined' error during defineresource.  (PLRM3 requires
+		CIDSystemInfo).  Device Dependent: CPSI doesn't define Localization
+		category. Needs Tek hardcopy. Assign: Ray
+
+23-25-3  DIFF	GS close to Tek, but stack contents when 'stackunderflow' reported
+		differs. GS reports 'undefinedresource' vs. 'typecheck' of Tek.
+		Different error and stack from ((FNT1) {cvn} () resourceforall).
+		Needs Tek hardcopy. Assign: Ray
+
+23-25-4  OK	
+
+23-25-5  OK	
+
+23-25-6  OK	
+
+23-25-7  OK	
+
+23-26-1  OK	
+
+23-26-2  OK	Fixed before Oct 2.
+
+23-26-3  AOK	Device Dependent: GS has more entries for Filter, ColorSpace
+		page fills before ImageType and PatternType shown. Same as 23-13-2.
+
+23-26-4  OK	Adobe interpreters have resoursestatus as an operator but report errors
+		in the executable name. Since rev. 7619 we do the same. - Alex
+
+23-26-5  OK	
+
+23-26-6  OK	
+
+23-28-1  OK  	Fixed in rev. 7146. - Alex.
+
+23-29-1  OK	
+
+23-29-2  OK	fixed in rev. 7232 (Peter)
+
+23-29-3  OK	
+
+23-30-1  OK	
+
+23-30-2  OK	
+
+23-31-1  OK	Matches Tek hardcopy. RJJ (CPSI differs)
+
+23-31-2  OK	
+
+23-32-1  OK	
+
+23-32-2  DIFF	'token' error inconformity. 
+		Environment dependent (a virtual address in the printing).
+		assign: Peter
+
+23-32-3  OK	Fixed as of rev 7598.
+
+23-32-4  OK	fixed in rev 7672 (Peter)
+
+23-32-5  OK	
+
+23-32-6  OK	
+
+23-33-1  AOK	Device Dependent: status and number of Font, Encoding, and
+		ColorSpaceFamily resources pre-loaded differs between CPSI and
+                Tek and Ghostscript. (this is not a problem).
+
+23-33-2  OK	GS matches Tek hardcopy. CPSI shows "0 -1 T" in last line.
+
+23-33-3  OK  	Fixed in rev. 7620 - Alex
+
+23-33-4  OK	Fixed in rev. 7620 - Alex
+
+23-33-5  OK     Fixed in rev. 7619; See 23-26-4 for details. - Alex.
+
+23-33-6  OK	
+
+23-34-1  OK	
+
+23-34-2  OK	
+
+23-35-1  OK	
+
+23-35-2  OK	
+
+23-35-3  OK	
+
+23-36-1  OK	
+
+23-36-2  OK	Fixed in r7631 Peter
+
+23-36-3  AOK    fixed in rev. 7232 (Peter)
+
+23-36-4  OK	fixed in rev. 7232 (Peter)
+
+23-37-1  OK	
+
+23-37-2  OK	
+
+23-37-3  OK	
+
+24-01-1  OK	
+
+24-01-2  OK	
+
+24-02-1  OK	
+
+24-02-2  OK	
+
+24-02-3  OK	
+
+24-03-1  OK	
+
+24-03-2  OK	
+
+24-04-1  OK	
+
+24-04-2  OK	
+
+24-05-1  OK	Fixed by Alex, rev. 7131.
+
+24-05-2  AOK	Fixed by Alex, rev. 7131. except that Adobe interpreters have
+                a bug when "1234556789 10 ( ) cvrs" restores the stack as
+                "123456789 ( ) ( )" Ghostscript doesn't have this bug.
+		Since we don't want to put in a bug, this will be an anomaly.
+
+24-05-3  OK	
+
+24-06-1  OK	
+
+24-06-2  OK  	Fixed by Alex, rev. 7131.
+
+24-06-3  OK	
+
+24-07-1  OK	
+
+24-07-2  OK	
+
+24-08-1  OK	Minor differences visually reviewed by RJJ
+
+24-08-2  OK	
+
+24-08-3  OK	
+
+24-09-1  OK
+
+24-09-2  OK	
+
+24-09-3  OK	
+
+24-10-1  OK	
+
+24-10-2  OK	
+
+24-10-3  OK	
+
+24-11-1  OK	Minor differences visually reviewed by RJJ
+
+24-11-2  OK	
+
+24-11-3  OK	
+
+24-12-1  OK	Minor differences visually reviewed by RJJ
+
+24-12-2  OK	
+
+24-13-1  OK	
+
+24-13-2  OK	
+
+24-13-3  OK	Fixed by r7642.
+
+24-14-1  OK	
+
+24-14-2  OK	
+
+25-01-1  OK	
+
+25-01-2  OK	
+
+25-02-1  OK	
+
+25-02-2  OK	
+
+25-03-1  OK	Minor differences visually reviewed by RJJ
+
+25-03-2  OK	
+
+25-04-1  OK	Minor differences visually reviewed by RJJ
+
+25-04-2  OK	
+
+25-05-1  OK	GS matches Tek hardcopy. Fixed by rev 7140.
+		GS has more accurate (and correct) sin/cos functions than CPSI
+
+25-05-2  OK	
+
+25-06-1  OK	
+
+25-06-2  OK	
+
+25-07-1  OK	Fixed by rev 7139.
+
+25-07-2  OK	
+
+25-08-1  OK	Minor differences visually reviewed by RJJ
+
+25-08-2  OK	
+
+25-09-1  OK	Fixed by rev 7225.
+
+25-09-2  OK	Fixed by rev 7224.
+
+25-10-1  OK	GS matches Tek hardcopy. Fixed by rev 7140.
+
+25-10-2  OK	
+
+25-11-1  OK	GS matches Tek hardcopy. Fixed by rev 7140.
+		GS has more accurate (and correct) sin/cos functions than CPSI
+
+25-11-2  OK	
+
+25-12-1  OK	
+
+25-12-2  OK	
+
+25-13-1  OK  	Fixed - Alex.
+
+25-13-2  OK	
+
+25-14-1  OK	
+
+25-14-2  OK	
+
+25-15-1  OK	
+
+25-15-2  OK	
+
+25-16-1  OK	
+
+25-16-2  OK	
+
+25-16-3  OK	
+
+25-17-1  OK	
+
+25-17-2  OK	
+
+25-18-1  OK	GS matches Tek hardcopy. Fixed by rev 7140.
+		GS has more accurate (and correct) sin/cos functions than CPSI
+
+25-18-2  OK	
+
+25-19-1  OK  	Works for me in rev. 7149.
+
+25-19-2  OK	
+
+25-20-1  OK	
+
+25-20-2  OK	
+
+25-21-1  OK	
+
+25-21-2  OK	
+
+25-22-1  OK	
+
+25-22-2  OK	
+
+26-01-1  OK	
+
+26-01-2  OK	
+
+26-01-3  OK	
+
+26-02-1  OK	
+
+26-02-2  OK	
+
+26-03-1  OK	
+
+26-03-2  OK	Minor differences visually reviewed by RJJ
+
+26-03-3  OK	
+
+26-04-1  OK	
+
+26-04-2  OK	
+
+26-05-1  OK	
+
+26-05-2  OK	
+
+26-05-3  OK	
+
+26-06-1  OK	
+
+26-06-2  OK	
+
+26-06-3  OK	
+
+26-07-1  OK	
+
+26-07-2  OK	
+
+26-07-3  OK	
+
+26-08-1  OK	
+
+26-08-2  OK	
+
+26-09-1  OK	
+
+26-09-2  OK	
+
+26-10-1  OK	
+
+26-10-2  OK	
+
+26-11-1  OK	
+
+26-11-2  OK	
+
+26-11-3  OK	
+
+26-12-1  OK	
+
+26-12-2  OK	
+
+26-13-1  OK	
+
+26-13-2  OK	
+
+26-13-3  OK	
+
+27-01-1  OK	Minor differences visually reviewed by RJJ
+
+27-01-2  OK	
+
+27-02-1  OK  	Adobe has upper cache limit of 1e8 bytes.
+		Rev. 7746 does the same in CPSI compatibility mode. - Alex
+
+27-02-2  OK	
+
+27-03-1  OK	Fixed as of rev 7598.
+
+27-03-2  AOK	test unreasonable:
+                This page enumerates all the IODevices, arbitrarily selects the last one,
+                and then runs the GIF test, checking whether the currentdevparams values for
+                that IODevice change as a result of running the test procedures.  This is
+                dependent both on the set of IODevices (which is implementation-dependent,
+                although gs could be expected to include at least the non-hardware-dependent
+                ones documented in the PLRM3, which I believe it does) and the order in
+                which they are enumerated by /IODevice resourceforall (which is totally
+                implementation-dependent).
+                -
+                It appears that in the reference output, the last-enumerated IODevice is one
+                whose devparams values change somewhat unpredictably -- probably %Calendar%.
+                In the gs output, it's one whose devparams values don't change -- i.e. any
+                of the others! (peter)
+
+27-04-1  DIFF	Installation dependent (FontResourceDir).
+		Inconforming currentsystemparams. Analyzed by Igor.
+		assign: Ray for further analyzis.
+
+27-04-2  OK	
+
+27-05-1  DIFF	Inconforming currentuserparams. Analyzed by Igor.
+		assign: Ray for further analyzis.
+
+27-05-2  OK  	memo36 - setvmthreshold; cash18 ucachestatus;
+		assign: Ray for further analyzis.
+		more15 - same as currentstrokeadjust in 09-49D-3
+                peter writes:
+                These CET files will not run on my 64-bit build (they expect to be able to
+                'cvs' any integer into a 12-character string), and I don't seem to be able
+                to get gcc to produce 32-bit output, even with Ralph's help.  Please
+                reassign these files.
+
+27-06-1  OK  	Fixed in rev. 7157 - Alex.
+
+27-06-2  OK	
+
+27-07-1  AOK 	Fixed by rev. 7733 - Alex
+                Alternate use of --setcacheparams-- and /setcacheparams in error
+                messages is an obvious bug in Adobe interpreters that we won't
+                reproduce.
+
+27-07-2  OK	
+
+27-08-1  OK  	Fix error reporting for setdevparams operator, rev. 7161. - Alex
+
+27-08-2  OK	
+
+27-09-1  DIFF	Same as 27-04-1. Analyzed by Igor.
+		assign: Ray for further analyzis.
+
+27-09-2  DIFF	Same as 27-04-1. Analyzed by Igor.
+		assign: Ray for further analyzis.
+
+27-09-3  OK	Minor differences visually reviewed by RJJ
+
+27-09-4  OK	
+
+27-10-1  OK	Minor differences visually reviewed by RJJ
+
+27-10-2  OK	
+
+27-11-1  DIFF	Inconforming currentuserparams. See 27-05-1. Analyzed by Igor.
+		assign: Ray for further analyzis.
+
+27-11-2  OK	Minor differences visually reviewed by RJJ
+
+27-11-3  OK	
+
+27-12-1  DIFF	ucachestatus differs. Analyzed by Igor.
+		assign: Raph.
+
+27-12-2  DIFF	Same as 27-05-2.  Analyzed by Igor. assign: Ray..
+
+28-01-1  OK	
+
+28-01-2  OK	
+
+28-02-1  OK	
+
+28-02-2  OK	Fixed before Nov 4 2005 (after Oct 2)
+
+28-02-3  OK	
+
+28-03-1  AOK 	The following differences remain:
+		1. names of internal operators are different
+		2. execution stack od 49 elements doesn't fit into 40-element
+                arrays provided by the test causing different errors.
+                Rev. 7730 - Alex
+
+28-03-2  OK	
+
+28-04-1  OK	
+
+28-04-2  OK	
+
+28-05-1  OK	
+
+28-05-2  OK	Fixed by rev. 7725
+
+28-05-3  OK	
+
+28-06-1  AOK	Implementation Dependent: Section 6.3 - SYNTAX 2. The PLRM says the
+		the order of dict enumeration by 'forall' is "arbitrary".
+
+28-06-2  OK	
+
+28-06-3  OK	
+
+28-07-1  OK	
+
+28-07-2  OK	
+
+28-07-3  OK	
+
+28-08-1  OK	
+
+28-08-2  OK	
+
+28-09-1  OK	Minor differences visually reviewed by RJJ
+
+28-09-2  OK	Visually reviewed by RJJ
+		(previous report of '1' in more 15 is without gs_cet.ps).
+
+28-10-1  OK  	Fixed by rev. 7727. - Alex
+
+28-10-2  OK	Minor differences in boxed black/white 'T' 'F' glyphs, font renderer ufst.
+
+28-11-1  OK	Minor differences visually reviewed by RJJ
+
+28-11-2  OK	Visually reviewed by RJJ
+
+28-12-1  OK	
+
+28-13-1  OK	Minor differences visually reviewed by RJJ
+
+28-13-2  OK	Visually reviewed by RJJ
+
+28-14-1  OK	Fixed by r7115.
+
+28-14-2  OK	Minor differences visually reviewed by RJJ
+
+29-02-1  OK	Minor differences visually reviewed by RJJ
+
+29-02-2  OK  	Fixed by rev. 7716. Ghostscript matches Tek and CPSI except
+		that CPSI-based PhotoPrint doesn't implement copypage and skips
+                pages 3 and 4. - Alex
+
+29-02-3  OK  	See 29-02-2.
+
+29-02-4  OK  	See 29-02-2.
+
+29-02-5  OK  	See 29-02-2.
+
+29-02-6  OK     See 29-02-2.
+
+29-02-7  OK  	See 29-02-2.
+
+29-02-8  OK  	See 29-02-2.
+
+29-03-1  DIFF	Device Dependent. Too many InputAttributed. Analyzed by Igor. assign: Ray.
+
+29-03-2  DIFF	Device Dependent. OutputPage not known. Analyzed by Igor. assign: Ray
+
+29-03-3  DIFF	Device Dependent. currentpagedevice different. Analyzed by Igor. assign: Ray
+
+29-03-4  DIFF	Many conformity tests fail. Analyzed by Igor.
+                The test expects currentpagedevice to return the same dictionaty each time. 
+                assign: Alex.
+
+29-05-1  OK     Make the spot function in the high resolution halftone readable
+                to accomodate the test logic. Ghostscript matches Tek and
+                Distiller 5. CPSI-based PhotoPrint product redefines halftone
+                operations as no-op and cannot serve as a reference
+                implementation here. - Alex
+
+29-05-2  OK	
+
+29-05-3  OK	
+
+29-07A-1  OK	
+
+29-07A-2  OK	
+
+29-07A-3  OK	Device Dependent. CPSI ignores setcolortransfer to perform
+		image negation. Ghostscript matches Tektronix hardcopy.
+
+29-07A-4  OK	corrected with gs_cet.ps that only has 'letter' PageSize
+		in InputAttributes dictionary.
+
+29-07A-5  OK	corrected with gs_cet.ps that only has 'letter' PageSize
+		in InputAttributes dictionary.
+
+29-07A-6  AOK	Device Dependent: Error message differs. Ghostscript gives
+		"configurationerror in setpagedevice", CPSI gives bogus
+		"undefinedfilename in file" on this "Page 10 experiment"
+
+29-07B-1  OK	Verified visually by RJJ
+
+29-07B-10  OK	Verified visually by RJJ. CPSI ignores NumCopies.
+		cpsi/29-07B-10  missing
+
+29-07B-11  OK	Verified visually by RJJ. CPSI ignores NumCopies.
+		cpsi/29-07B-11  missing
+
+29-07B-12  OK	Verified visually by RJJ. CPSI ignores NumCopies.
+		cpsi/29-07B-12  missing
+
+29-07B-2  DIFF	GS shifts output up and left, CPSI and Tek ignore Margins [ -9 9 ]
+                assign ray.
+
+29-07B-3  DIFF	GS shifts output down and right, CPSI and Tek ignore Margins [ 9 -9 ]
+                assign ray.
+
+29-07B-4  OK	Verified visually by RJJ
+
+29-07B-5  OK	Verified visually by RJJ
+
+29-07B-6  OK	Verified visually by RJJ
+
+29-07B-7  OK	Verified visually by RJJ. CPSI ignores NumCopies.
+
+29-07B-8  OK	Verified visually by RJJ. CPSI ignores NumCopies.
+
+29-07B-9  OK	Verified visually by RJJ. CPSI ignores NumCopies.
+
+29-07C-1  OK	
+
+29-07C-2  DIFF	Device Dependent: CPSI shows offset page. GS shows 'undefined'
+		error. Tektronix shows 'configurationerror'. May be a default
+		Policy setting vs. CPSI. GS should issue 'configurationerror'
+                Assign: Ray.
+
+29-07C-3  AOK	Device Dependent: Ghostscript matches Tektronix hardcopy and
+		gives 'configurationerror'. CPSI output is offset.
+
+29-07C-4  DIFF	Device Dependent: CPSI shows offset page. GS shows 'undefined'
+		error. Tektronix shows 'configurationerror'. May be a default
+		Policy setting vs. CPSI. GS should issue 'configurationerror'
+                Assign: Ray.
+
+29-07C-5  AOK	Device Dependent: Ghostscript matches Tektronix hardcopy and
+		gives 'configurationerror'. CPSI output is offset.
+
+29-07C-6  DIFF	Device Dependent: CPSI shows offset page. GS shows several
+		parameters with value '1'. Tektronix shows only "/PageSize 1"
+                Assign: Ray.
+
+29-07C-7  AOK	Device Dependent: Ghostscript matches Tektronix hardcopy and
+		gives 'configurationerror'. CPSI output is offset.
+
+29-07C-8  DIFF	Device Dependent: CPSI shows offset page. GS offset differs.
+		Tektronix hardcopy shows << /PageSize 3 >> with offset that
+		might be the same as CPSI (clipping right edge after 's' of
+		'setpagedevice' in the lower right banner block).
+                assign ray
+
+29-07C-9  DIFF	Device Dependent: CPSI shows offset page. GS offset differs.
+		Tektronix hardcopy shows << /PageSize 3 >> with offset that
+		might be the same as CPSI (clipping right edge after 's' of
+		'setpagedevice' in the lower right banner block).
+                assign ray
+
+29-07C-10 DIFF	Device Dependent: CPSI shows offset page. GS has no offset
+		Tektronix hardcopy shows << /PageSize 3 >> with offset that
+		might be the same as GS (no clipping).
+                assign ray
+
+29-07C-11 DIFF	Device Dependent: CPSI shows offset page. GS has no offset
+		Tektronix hardcopy shows << /PageSize 3 >> with offset that
+		might be the same as GS (no clipping).
+                assign ray
+
+29-07D-1  OK	
+
+29-07D-2  OK	
+
+29-07D-3  OK	corrected with gs_cet.ps that only has 'letter' PageSize
+		in InputAttributes dictionary.
+
+29-07D-4  OK	
+
+29-07D-5  DIFF	Ghostscript is producing a page when OuputPage is 'false'.
+		cpsi/missing output for 'Page 5 experiment'.
+                assign ray
+
+29-07D-6  DIFF	Device Dependent: Ghostscript is honoring 'PageOffset'
+		Adobe ignores this. correct by modifying setpagedevice.
+                Assign: Ray
+
+29-07D-7  DIFF	Device Dependent: Ghostscript is honoring 'PageOffset'
+		Adobe ignores this. correct by modifying setpagedevice.
+                Assign: Ray
+
+29-07E-1  OK	
+
+29-07E-2  AOK	GS rotates the image to fit the page, same as CPSI when
+		rotated. PageSize Policy==7 of the PLRM says: "Positioning
+		of the page image on the medium is device-dependent and
+		unpredictable.  This policy exists solely for use in the
+		emulations of certain LanguageLevel 1 compatibility operators
+		that perform media selection and page device setup separately.
+		...
+		Because its behavior violates the PostScript page device model,
+		documents that use this policy are not portable; for this reason,
+		it should never be used directly in a page description."
+
+29-07E-3  AOK	See explanation under 29-07E-2.
+
+29-07E-4  DIFF	GS does not generate a configuration error. Tek does. PLRM says
+		> 5 units difference should generate configurationerror with
+		Policy == 7. GS rotates the page and generates a larger raster.
+		Assign: Ray (Peter can thank me that I didn't give this to him).	
+
+29-07E-5  DIFF	Same as 29-07E-4. Assign: Ray
+
+29-07E-6  DIFF	Same as 29-07E-4. Assign: Ray
+
+29-07E-7  OK	
+
+29-07F-1  OK	
+
+29-07F-2  OK	Matches Tek hardcopy. RJJ (CPSI differs / wrong)
+
+29-07F-3  OK	
+
+29-07F-4  OK	
+
+29-07F-5  OK	
+
+29-07F-6  OK	
+
+29-07F-7  OK	Matches Tek hardcopy. RJJ (CPSI differs / wrong)
+
+29-07F-8  OK	Matches Tek hardcopy. RJJ (CPSI differs / wrong)
+
+29-07G-1  OK	
+
+29-07G-2  OK	
+
+29-07G-3  OK	
+
+29-07G-4  OK	
+
+29-07G-5  OK	
+
+29-07G-6  OK	
+
+29-07G-7  OK	
+
+29-07G-8  OK	
+
+29-07H-1  OK	
+
+29-07H-2  OK	
+
+29-07H-3  OK	
+
+29-07H-4  OK	
+
+29-07H-5  OK	
+
+29-07H-6  OK	
+
+29-07H-7  OK	
+
+29-07H-8  OK	
+
+29-07I-1  OK	
+
+29-07I-2  OK	
+
+29-07I-3  OK	
+
+29-07I-4  OK	
+
+29-07I-5  OK	
+
+29-07I-6  OK	
+
+29-07I-7  OK	
+
+29-07I-8  OK	
+
+29-07I-9  OK	
+
+29-07J-1  OK	
+
+29-07J-2  OK	
+
+29-07J-3  OK	
+
+29-07J-4  OK	
+
+29-07J-5  OK	
+
+29-07J-6  OK	
+
+29-07J-7  OK	
+
+29-07J-8  OK	
+
+29-07J-9  OK	
+
+29-07K-1  OK	
+
+29-07K-2  OK	
+
+29-07K-3  OK	
+
+29-07K-4  OK	
+
+29-07K-5  OK	
+
+29-07K-6  OK	
+
+29-07K-7  OK	
+
+29-08-1  OK	
+
+29-08-2  OK	
+
+29-08-3  OK	Minor differences visually reviewed by RJJ
+
+29-08-4  OK	Visually reviewd by RJJ. CPSI doesn't do #copies.
+		Ghostscript matches Tektronix hardcopy.
+
+29-08-5  OK	Visually reviewd by RJJ. CPSI doesn't do #copies.
+		Ghostscript matches Tektronix hardcopy.
+
+29-08-6  OK	Visually reviewd by RJJ. CPSI doesn't do #copies.
+		Ghostscript matches Tektronix hardcopy.
+		cpsi/29-08-6  missing
+
+29-08-7  OK	Visually reviewd by RJJ. CPSI doesn't do #copies.
+		Ghostscript matches Tektronix hardcopy.
+		cpsi/29-08-7  missing
+
+30-01-1  OK	
+
+30-01-2  OK	
+
+30-02-1  OK	
+
+30-02-2  OK	
+
+30-03-1  AOK	These discrepancies occur because
+         	/show load gcheck
+                returns true in gs and false in the reference output.  This is an unarguable
+                bug in the reference interpreters: see the documentation for gcheck in the
+                PLRM3. (peter)
+
+30-03-2  OK	
+
+30-04-1  OK	
+
+30-04-2  OK	Fixed by rev 7439.
+
+30-04-3  OK	
+
+30-04-4  OK	fixed in packed array colorspace fix (ray) don't recall the rev.
+
+30-04-5  OK	
+
+30-05-1  OK	
+
+30-05-2  OK	
+
+30-06-1  AOK	These discrepancies occur because
+         	/show load gcheck
+                returns true in gs and false in the reference output.  This is an unarguable
+                bug in the reference interpreters: see the documentation for gcheck in the
+                PLRM3. (peter)
+
+30-06-2  OK	
+
+30-07-1  OK	Fixed by r7642.
+
+30-07-2  DIFF	/GlobalFontDirectory /Type3Font1 known gs=true, cpsi=false. assign Peter.
+
+30-07-3  DIFF	gs missing '1' for gray33.  Assign Peter.
+
+30-08-1  OK	Fixed by r7642.
+
+30-08-2  DIFF	same as 30-07-2 assign Peter.
+
+30-08-3  DIFF	same as 30-07-3 assign Peter
+
+30-09-1  OK	fixed in Revision 7233
+
+30-09-2  OK	
+
+30-10-1  OK	fixed in Revision 7233
+
+30-10-2  OK	
+
+30-11-1  OK	
+
+30-11-2  AOK	Environment dependent.
+                GS prints different numbers for every test in GLOBINT.
+		The number printed is the VM usage for the test.
+
+31-01-1  DIFF	Attributes differ (bottom of page filetype).
+                (%stdin)(r) file is global on GS and local on Adobe.
+                Also see bug 687682, where a similar problem was reported earlier.
+                Assign: Ray
+
+31-01-10  OK	
+
+31-01-2  OK  	Works for me in rev. 7453. - Alex
+
+31-01-3  OK	Minor differences visually reviewed by RJJ
+
+31-01-4  OK	
+
+31-01-5  OK  	MAX_DEPTH parameter is adjusted to match Adobe. - Alex
+
+31-01-6  OK  	Fixed - Alex
+
+31-01-7  OK	Minor differences visually reviewed by RJJ
+
+31-01-8  DIFF	Test 03 and 07 wrong.
+		The test defines 2 or more idioms that match the target and expects
+                the last definition to be used. PLRM (p. 121) says that the order is
+                undefined. assign Alex.
+
+31-01-9  DIFF	same as 31-01-8 but in the global VM. assign Alex.
+
+31-02-1  OK  	Fixed in rev. 7473 - Alex
+
+31-02-2  OK	
+
+31-03-1  OK  	Fixed in rev 7474. - Alex
+
+31-03-2  OK	
+
+31-04-1  OK	Minor differences in positions and character shapes - ADC
+
+31-04-2  OK	Minor differences in positions and character shapes - ADC
+
+31-05-1  OK	
+
+31-05-2  OK	
+
+31-06-1  OK	Fixed by gs_cet.ps
+
+31-06-2  OK	Minor differences in positions and character shapes - ADC
+
+31-07-1  OK	Minor differences visually reviewed by Igor.
+		Note: This test draws different length line depending on timing
+		(number of loops depends on 'realtime' resolution and results).
+
+31-07-2  OK	
+
+31-08-1  OK	Fixed by gs_cet.ps rev. 7180 (Device Dependent).
+		Note: CPSI shows revision 0, Tek shows revision 5.
+
+31-08-2  OK	
+
+31-09-1  OK	Fixed by gs_cet.ps rev.  7180 (Device Dependent).
+		Note: CPSI shows serialnumber 233460, Tek shows 1401788461
+
+31-09-2  OK	
+
+31-10-1  OK	Minor differences in positions and character shapes - ADC
+
+31-10-2  OK  	Fixed in rev. 7749. - Alex
+
+31-10-3  OK	
+
+31-11-1  OK  	Fixed in rev 7474. - Alex
+
+31-11-2  OK	
+
+31-12-1  OK	Minor differences visually reviewed by RJJ
+		Note: This test draws different length line depending on timing
+		(number of loops depends on 'realtime' resolution and results).
+
+31-12-2  OK	
+
+31-13-1  OK	
+
+31-13-2  OK	Fixed as of rev 7583.
+
+32_all-1  AOK	CPSI inserts CDevProc while /CIDFont defineresource.
+		That is not required by PLRM3.
+		Inserting a CDevProc is unnecessary and would impackt performance.
+
+32_all-10  OK	
+
+32_all-11  OK	
+
+32_all-12  OK	
+
+32_all-13  OK	
+
+32_all-14  OK	Fixed as of rev 7583.
+
+32_all-15  AOK	Same as 34_all-6
+
+32_all-16 OK
+
+32_all-2  OK	Fixed in rev. 7478. findfont, definefont, undefinefont also
+		handle /CIDFont resource instances now. - Alex
+
+32_all-3  OK	
+
+32_all-4  OK	
+
+32_all-5  OK	
+
+32_all-6  OK	
+
+32_all-7  OK	
+
+32_all-8  OK	
+
+32_all-9  OK	
+
+33_all-1  OK	Fixed as of rev 7583.
+
+33_all-2  OK  	Fixed as of rev 7583.
+
+33_all-3  OK	Minor differences visually reviewed by RJJ
+
+33_all-4  OK	
+
+33_all-5  OK	
+
+33_all-6  OK	Fixed as of rev 7583.
+
+33_all-7  AOK	CMAP names differ implementation dependent analyzed by Ray.
+
+33_all-8  OK	Minor differences visually reviewed by RJJ
+
+34_all-1  OK	Fixed as of rev 7583.
+
+34_all-2  OK  	Fixed as of rev 7583.
+
+34_all-3  OK	Fixed as of rev 7583.
+
+34_all-4  DIFF	Improved by rev 7583, but still has mismatch for glyph 222.
+		Assign: Ray
+
+34_all-5  OK	Fixed as of rev 7583.
+
+34_all-6  AOK	GS has more CMap resources. Not important. Analyzed by Igor.
+
+34_all-7  OK	Fixed as of rev 7583.
+
+35_all-1  DIFF	Even as of rev 7583, CID Font has /CharStrings array. Tek
+		and CPSI do not have this key. Tek has CDevProc that CPSI does
+		not. Assign: Ray
+
+35_all-10  OK	
+
+35_all-11  DIFF	GS paints glyphs when CPSI and Tek paint hollow boxes. It appears that
+		GS is not removing glyphs from previous page "currentfont removeall".
+		Assign: Ray
+
+35_all-12 OK  	Fixed by rev. 7710 - Alex.
+
+35_all-2  OK  	Fixed as of rev 7583.
+
+35_all-3  OK	Minor differences visually reviewed by RJJ
+
+35_all-4  OK	
+
+35_all-5  OK	
+
+35_all-6  OK	Fixed as of rev 7711 (detected during regression testing. RJJ)
+
+35_all-7  AOK	Same as 33_all-7. Analyzed by Igor.
+
+35_all-8  OK	Minor differences visually reviewed by RJJ
+
+35_all-9  OK	Minor differences visually reviewed by RJJ
+
+36-01-1  OK	
+
+37-01-1  OK	
+
+38-01-1  DIFF	CPSI has more fonts, particularly more Type 42 fonts.
+		Analyzed by Igor.
+		This test prints some data about installed Type 42 fonts :
+		Chicago, Geneva, HoeflerText-Black,  HoeflerText-BlackItalic, HoeflerText-Italic.
+		Neither URW nor UFST PCLPS2 provide them.
+		UFST PCLPS3 does provide.
+		Passing to Ray to decide what to do with it.
+		Assign: Ray.
+
+38-01-2  OK	
+
+99-01-1  AOK	Implementation Dependent: Different default system parameters can be set
+		if customer desires.
+		Environment dependent (GenericResourceDir).
+
+99-01-2  AOK	Implementation Dependent: Different default device parameters can be set
+		if customer desires.
+		Environment dependent (OutputFile).
+
+99-01-3  OK	
+
+99-02-1  OK	GS OK visually reviewed by RJJ
+		cpsi/99-02-1  missing
+		Environment dependent (GenericResourceDir).
+
+99-03-1  OK  	
+

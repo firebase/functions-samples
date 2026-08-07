@@ -1,0 +1,20 @@
+.TH PDF2PS 1 "26 September 2016" 9.20 "Ghostscript Tools" \" -*- nroff -*-
+.SH NAME
+pdf2ps \- Ghostscript PDF to PostScript translator
+.SH SYNOPSIS
+\fBpdf2ps\fR [ \fIoptions\fR ] \fIinput.pdf [output.ps]\fR
+.SH DESCRIPTION
+\fBpdf2ps\fR uses \fBgs\fR(1) to convert the Adobe \fBPortable Document
+Format\fR (PDF) file "input.pdf" to \fBPostScript\fR(tm) in "output.ps".
+Normally the output is allowed to use PostScript Level 2 (but not PostScript
+LanguageLevel 3) constructs; the \fB-dLanguageLevel=1\fR option restricts
+the output to Level 1, while \fB-dLanguageLevel=3\fR allows using
+LanguageLevel 3 in the output.
+.SH FILES
+Run "\fBgs -h\fR" to find the location of Ghostscript documentation on your
+system, from which you can get more details.
+.SH VERSION
+This document was last revised for Ghostscript version 9.20.
+.SH AUTHOR
+Artifex Software, Inc. are the
+primary maintainers of Ghostscript.

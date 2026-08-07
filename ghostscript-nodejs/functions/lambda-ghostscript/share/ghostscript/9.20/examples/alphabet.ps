@@ -1,0 +1,74 @@
+%!
+% Check for command line parameters:
+%	Name, FirstSize, Ratio, NumSizes, UseOutline.
+
+/alphabetsave save def		% prevent left over effects
+
+/FontName where { pop } { /FontName (Palatino-Italic) def } ifelse
+/FirstSize where { pop } { /FirstSize 15 def } ifelse
+/CurrentSize FirstSize def
+/Ratio where { pop } { /Ratio 1.6 def } ifelse
+/NumSizes where { pop } { /NumSizes 3 def } ifelse
+/UseOutline where { pop } { /UseOutline false def } ifelse
+
+/Strings FirstSize 20 gt
+ { [
+	(ABCDEFGHIJ) (KLMNOPQR) (STUVWXYZ)
+	(abcdefghijklm) (nopqrstuvwxyz)
+	(0123456789<=>) (:;?@  !"#$%&')
+	(\(\)*+,-./[\\]^_) (`{|}~)
+ ] }
+ { [
+	(ABCDEFGHIJKLMNOPQRSTUVWXYZ)
+	(abcdefghijklmnopqrstuvwxyz)
+	(0123456789<=>:;?@  !"#$%&')
+	(\(\)*+,-./  [\\]^_  `{|}~)
+ ] }
+ifelse def
+
+/sshow
+ { gsave UseOutline
+    { { gsave ( ) dup 0 4 -1 roll put
+	false charpath pathbbox 0 setlinewidth stroke grestore
+	pop 8 add currentpoint exch pop moveto pop
+      } forall
+    }
+    { 2 0 3 -1 roll ashow }
+   ifelse grestore
+ } def
+
+FontName findfont FirstSize scalefont setfont
+
+clippath pathbbox /top exch def pop pop pop newpath
+10 10 moveto
+NumSizes
+ { 
+   gsave
+   CurrentSize 50 lt {
+	FontName findfont 50 scalefont setfont
+   	(Q) false charpath pathbbox 
+      exch pop exch sub exch pop 1.25 mul CurrentSize 50 div mul /height exch def
+   }{
+      (Q) false charpath pathbbox 
+     exch pop exch sub exch pop 1.25 mul /height exch def
+   } ifelse 
+   grestore
+   Strings
+    { currentpoint exch pop top height 3 mul sub gt
+       { showpage 10 10 height sub moveto
+       }
+      if
+      dup sshow
+      UseOutline not
+       { 0 height rmoveto gsave 0.01 rotate sshow grestore }
+      if
+      0 height rmoveto
+    } forall
+   /CurrentSize FirstSize Ratio mul def
+   FontName findfont CurrentSize scalefont setfont
+   /Ratio Ratio dup mul def
+ } repeat
+showpage
+
+clear cleardictstack
+alphabetsave restore

@@ -1,0 +1,37 @@
+-supModel="Epson Stylus Color 800, 360x360DpI, Plain Paper"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceCMYK
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/EscP2
+-r360x360
+-dupMargins="{ 9.0 39.96 9.0 9.0}"
+-dupBlackTransfer="{   0.0000 0.0553 0.1158 0.1998 0.4321 1.0000 }"
+-dupCyanTransfer="{    0.0000 0.1188 0.2272 0.3745 0.5396 0.6145 }"
+-dupMagentaTransfer="{ 0.0000 0.0851 0.1512 0.2111 0.2606 0.2818 }"
+-dupYellowTransfer="{  0.0000 0.0679 0.1742 0.3129 0.4587 0.5389 }"
+-dupOutputComponentOrder="{ 1 2 3 0 }"
+-dupWeaveYPasses=2
+-dupOutputPins=64
+-dupWeaveYFeeds="{63 65}"
+-dupWeaveInitialYFeeds="{1 65}"
+-dupWeaveInitialPins="{ 33 64}"
+-dupBeginPageCommand="<
+   00 00 00 
+   1b01 40 45 4a 4c 20 31 32 38 34 2e 34 0a 
+   40 45 4a 4c 20 20 20 20 20 0a 
+   1b40   1b40
+   1b2847 0100 01
+   1b2855 0100 0A
+   1b5501
+   1b2865 0200 0002
+   1b2843 0200 0000
+   1b2863 0400 0000 0000
+>"
+-dupAdjustPageLengthCommand
+-dupAdjustTopMarginCommand
+-dupAdjustBottomMarginCommand
+-dupEndPageCommand="(\033@\014)"
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"
+

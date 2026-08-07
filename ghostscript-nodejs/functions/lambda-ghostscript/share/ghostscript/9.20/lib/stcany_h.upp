@@ -1,0 +1,27 @@
+-supModel="Any Epson Stylus Color, 720x720DpI"
+-sDEVICE=uniprint
+-dNOPAUSE
+-P- -dSAFER
+-dupColorModel=/DeviceCMYKgenerate
+-dupRendering=/ErrorDiffusion
+-dupOutputFormat=/EscP2
+-r720x720
+-dupMargins="{ 9.0 39.96 9.0 9.0}"
+-dupComponentBits="{1 1 1 1}"
+-dupBeginPageCommand="<
+   00 00 00 
+   1b01 40 45 4a 4c 20 31 32 38 34 2e 34 0a 
+   40 45 4a 4c 20 20 20 20 20 0a 
+   1b40   1b40
+   1b2847 0100 01
+   1b2869 0100 01
+   1b2855 0100 05
+   1b5500
+   1b2843 0200 0000
+   1b2863 0400 0000 0000
+>"
+-dupAdjustPageLengthCommand
+-dupAdjustTopMarginCommand
+-dupAdjustBottomMarginCommand
+-dupEndPageCommand="(\033@\014)"
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"

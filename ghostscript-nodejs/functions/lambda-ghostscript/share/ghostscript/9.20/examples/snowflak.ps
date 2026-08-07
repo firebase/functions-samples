@@ -1,0 +1,99 @@
+%!
+%% Elizabeth D. Zwicky
+%% zwicky@erg.sri.com
+%% multiflake
+
+/snowflaksave save def		% prevent left over effects
+
+% we make the seed deterministic for testing - the orginal code seeded
+% the generator with user time.
+/lastseed 0 def
+/seed {lastseed dup 1 add /lastseed exch def} def
+
+/newflake
+{
+seed srand 
+/strokecolor  [rand 99 mod 100 div 
+	       rand 99 mod 100 div
+	       100 rand 22 mod sub 100 div] def
+/fillcolor  [rand 99 mod 100 div 
+	       100 rand 22 mod sub 100 div
+	       rand 99 mod 100 div] def
+/eofillcolor [rand 99 mod 100 div
+		rand 22 mod 100 div
+		100 rand 22 mod sub 100 div] def
+		
+/colorfill {fillcolor aload pop setrgbcolor fill } def
+/colorstroke {strokecolor aload pop setrgbcolor stroke } def
+/eocolorfill {eofillcolor aload pop setrgbcolor eofill } def
+/arm {0 0 moveto
+     5 {3 {x y x y x y curveto} repeat} repeat
+	  seed srand
+	  0 0 moveto
+	  5 {3 {x neg y x neg y x neg y curveto} repeat} repeat
+	  seed srand
+} def
+
+ newpath
+
+0 0 moveto boxsize 0 rlineto 0 boxsize rlineto boxsize neg 0 rlineto
+0 0 lineto
+
+rand 99 mod 100 div
+100 rand 22 mod sub 100 div
+100 rand 22 mod sub 100 div
+ sethsbcolor fill
+seed srand
+boxsize 2 div boxsize 2 div translate
+
+%% If the device you are using can handle complex fills, replace the
+%% next three lines with:
+%%
+6 {arm 60 rotate} repeat
+gsave colorfill grestore gsave eocolorfill grestore colorstroke
+%%
+%% This will be not only faster, but prettier. On a LaserWriter or a
+%% Tektronix Phaser II PS it gives a limitcheck.
+
+%% 6 {arm 60 rotate colorfill} repeat
+%% 6 {arm 60 rotate eocolorfill} repeat
+%% 6 {arm 60 rotate} repeat colorstroke
+} def
+
+1 setlinewidth
+clippath pathbbox /ury exch def /urx exch def /lly exch def /llx exch def
+/minsize 250 def
+/pagewidth urx llx sub def
+/pageheight ury lly sub def
+/inwidth pagewidth minsize div def
+/inheight pageheight minsize div def
+
+/boxsize 
+	inwidth inheight gt
+	{pagewidth inwidth truncate 1 .max div}
+	{pageheight inheight truncate 1 .max div}
+	ifelse
+def
+
+/inwidth pagewidth boxsize div cvi def
+/inheight pageheight boxsize div cvi  def
+
+/x {rand 70 mod abs} def
+/y {rand 120 mod abs} def
+
+llx lly translate
+
+inheight {
+   inwidth {
+	gsave
+	newflake
+	grestore
+	boxsize 0 translate
+   } repeat
+  boxsize inwidth mul neg boxsize translate
+} repeat
+
+
+showpage
+clear cleardictstack
+snowflaksave restore

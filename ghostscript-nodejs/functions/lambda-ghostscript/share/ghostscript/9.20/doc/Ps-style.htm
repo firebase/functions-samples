@@ -1,0 +1,513 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Ghostscript PostScript coding guidelines</title>
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Ghostscript PostScript coding guidelines</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Summary">Summary of the coding guidelines</a>
+<li><a href="#Introduction">Introduction</a>
+<li><a href="#PS_features">Use of PostScript language features</a>
+<ul>
+<li><a href="#Restrictions">Restrictions</a>
+<li><a href="#Protection">Protection</a>
+<li><a href="#Standard_constructions">Standard constructions</a>
+</ul>
+<li><a href="#File_structuring">File structuring</a>
+<li><a href="#Commenting">Commenting</a>
+<li><a href="#Formatting">Formatting</a>
+<ul>
+<li><a href="#Indentation">Indentation</a>
+<li><a href="#Spaces">Spaces</a>
+</ul>
+<li><a href="#Naming">Naming</a>
+<li><a href="#Miscellany">Miscellany</a>
+<ul>
+<li><a href="#Non_standard_operators">Some useful non-standard operators</a>
+<li><a href="#Useful_procedures">Some useful procedures</a>
+<li><a href="#Other">Other</a>
+</ul>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>
+For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Summary"></a>Summary of the coding guidelines</h2>
+
+<ul>
+
+<li>Don't store into literals.
+
+<li>Use <code>loop</code> to create a block with multiple exits.
+
+<li>Use a dictionary or an array for multi-way switches.
+
+<li>Start every file with a copyright notice, the file name, and a one-line
+summary.
+
+<li>Comment every procedure with the arguments and result, and with the
+function of the procedure unless it's obvious.
+
+<li>Comment the stack contents ad lib, and particularly at the beginning of
+every loop body.
+
+<li>Indent every 2 spaces.
+
+<li>Always put { at the end of a line, and } at the beginning of a line,
+unless the contents are very short.
+
+<li>Always put spaces between adjacent tokens.
+
+<li>Use only lower-case letters and digits for names, or <a href="#Naming">Vienna style names</a>,
+except for an initial "." for names only used within a single file.
+
+<li>Don't allocate objects in heavily used code.
+
+<li>Consider factoring out code into a procedure if it is used more than
+once.
+
+</ul>
+
+<hr>
+
+<h2><a name="Introduction"></a>Introduction</h2>
+
+<p>
+The many rules that Ghostscript's code follows almost everywhere are meant
+to produce code that is easy to read.  It's important to observe them as
+much as possible in order to maintain a consistent style, but if you find a
+rule getting in your way or producing ugly-looking results once in a while,
+it's OK to break it.
+
+<hr>
+
+<h2><a name="PS_features"></a>Use of PostScript language features</h2>
+
+<h3><a name="Restrictions"></a>Restrictions</h3>
+
+<p>
+If you need to store a value temporarily, don't write into a literal in the
+code, as in this fragment to show a character given the character code:
+
+<blockquote><pre>
+( ) dup 0 4 -1 roll put show
+</pre></blockquote>
+
+<p>
+Instead, allocate storage for it:
+
+<blockquote><pre>
+1 string dup 0 4 -1 roll put show
+</pre></blockquote>
+
+<h3><a name="Protection"></a>Protection</h3>
+
+<p>
+If an object is never supposed to change, use <code>readonly</code> to
+make it read-only.  This applies especially to permanently allocated objects
+such as constant strings or dictionaries.
+
+<p>
+During initialization, and occasionally afterwards, it may be necessary to
+store into a read-only dictionary, or to store a pointer to a dictionary in
+local VM into a dictionary in global VM.  The operators
+<code>.forceput</code> and <code>.forceundef</code> are available for
+this purpose.  To make these operators inaccessible to ordinary programs,
+they are removed from <code>systemdict</code> at the end of
+initialization: system code that uses them should always use
+<code>bind</code> and <code>odef</code> (or
+<code>executeonly</code>) to make uses of them inaccessible as well.
+
+<h3><a name="Standard_constructions"></a>Standard constructions</h3>
+
+<h4>Multi-way conditionals</h4>
+
+<p>
+If you write a block of code with more than about 3 exit points, the usual
+way to do it would be like this:
+
+<blockquote><pre>
+{
+  ... {
+    ...1
+  } {
+    ... {
+      ...2
+    } {
+      ... {
+        ...3
+      } {
+        ...4
+      } ifelse
+    } ifelse
+  } ifelse
+}
+</pre></blockquote>
+
+<p>
+However, this causes the 4 logically somewhat parallel code blocks to be
+indented differently, and as the indentation increases, it becomes harder to
+see the structure visually.  As an alternative, you can do it this way:
+
+<blockquote><pre>
+{       % The loop doesn't actually loop: it just provides a common exit.
+  ... {
+    ...1
+    exit
+  } if
+  ... {
+    ...2
+    exit
+  } if
+  ... {
+    ...3
+    exit
+  } if
+  ...4
+  exit
+} loop
+</pre></blockquote>
+
+<p>
+Don't forget the final exit, to prevent the loop from actually looping.
+
+<h4>Switches</h4>
+
+<p>
+Use a dictionary or an array of procedures to implement a 'switch', rather
+than a series of conditionals, if there are more than about 3 cases.  For
+example, rather than:
+
+<blockquote><pre>
+dup /a eq {
+  pop ...a
+} {
+  dup /b eq {
+    pop ...b
+  } {
+    dup /c eq {
+      pop ...c
+    } {
+      ...x
+    } ifelse
+  } ifelse
+} ifelse
+</pre></blockquote>
+
+<p>
+(or using the loop/exit construct suggested above), consider:
+
+<blockquote><pre>
+/xyzdict mark
+  /a {...a} bind
+  /b {...b} bind
+  /c {...c} bind
+.dicttomark readonly def
+...
+//xyzdict 1 index .knownget {
+  exch pop exec
+} {
+  ...x
+} ifelse
+</pre></blockquote>
+
+<hr>
+
+<h2><a name="File_structuring"></a>File structuring</h2>
+
+<p>
+Every code file should start with comments containing
+
+<ol>
+<li>a copyright notice;
+<li>the name of the file in the form of an RCS Id:
+
+<blockquote><pre>
+% &#36;Id: filename.ps &#36;
+</pre></blockquote>
+
+<li>a very brief summary (preferably only one line) of what the file
+contains.
+</ol>
+
+<p>
+If you create a file by copying the beginning of another file, be sure to
+update the copyright year and change the file name.
+
+<hr>
+
+<h2><a name="Commenting"></a>Commenting</h2>
+
+<p>
+If a file has well-defined functional sections, put a comment at the
+beginning of each section to describe its purpose or function.
+
+<p>
+Put a comment before every procedure to describe what the procedure does,
+unless it's obvious or the procedure's function is defined by the PLRM.  In
+case of doubt, don't assume it's obvious.  If the procedure may execute a
+deliberate 'stop' or 'exit' not enclosed in 'stopped' or a loop
+respectively, that should be mentioned.  However, information about the
+arguments and results should go in the argument and result comment
+(described just below) if possible, not the functional comment.
+
+<p>
+Put a comment on every procedure to describe the arguments and results:
+
+<blockquote><pre>
+/hypot {	% &lt;num1&gt; &lt;num2&gt; hypot &lt;real&gt;
+  dup mul exch dup mul add sqrt
+} def
+</pre></blockquote>
+
+<p>
+There is another commenting style that some people prefer to the above:
+
+<blockquote><pre>
+/hypot {	% num1 num2 --&gt; realnum
+  dup mul exch dup mul add sqrt
+} def
+</pre></blockquote>
+
+<p>
+We have adopted the first style for consistency with Adobe's documentation,
+but we recognize that there are technical arguments for and against both
+styles, and might consider switching some time in the future.  If you have
+strong feelings either way, please make your opinion known to
+<code>gs-devel@ghostscript.com</code>.
+
+<p>
+Put comments describing the stack contents wherever you think they will be
+helpful; put such a comment at the beginning of every loop body unless you
+have a good reason not to.
+
+<p>
+When you change a piece of code, do <em>not</em> include a comment with your
+name or initials.  Also, do <em>not</em> retain the old code in a comment,
+unless you consider it essential to explain something about the new code; in
+that case, retain as little as possible.  (CVS logs do both of these things
+better than manual editing.)  However, if you make major changes in a
+procedure or a file, you may put your initials, the date, and a brief
+comment at the head of the procedure or file respectively.
+
+<hr>
+
+<h2><a name="Formatting"></a>Formatting</h2>
+
+<h3><a name="Indentation"></a>Indentation</h3>
+
+<p>
+Indent 2 spaces per indentation level.  You may use tabs at the left margin
+for indentation, with 1 tab = 8 spaces, but you should not use tabs anywhere
+else, except to place comments.
+
+<p>
+Indent { } constructs like this:
+
+<blockquote><pre>
+... {
+  ...
+} {
+  ...
+} ...
+</pre></blockquote>
+
+<p>
+If the body of a conditional or loop is no more than about 20 characters,
+you can put the entire construct on a single line if you want:
+
+<blockquote><pre>
+... { ... } if
+</pre></blockquote>
+
+rather than
+
+<blockquote><pre>
+... {
+  ...
+} if
+</pre></blockquote>
+
+<p>
+There is another indentation style that many people prefer to the above:
+
+<blockquote><pre>
+...
+{ ...
+}
+{ ...
+} ...
+</pre></blockquote>
+
+<p>
+We have adopted the first style for consistency with our C code, but we
+recognize that there are technical arguments for and against both styles,
+and might consider switching some time in the future.  If you have strong
+feelings either way, please make your opinion known to
+<code>gs-devel@ghostscript.com</code>.
+
+<h3><a name="Spaces"></a>Spaces</h3>
+
+<p>
+Always put spaces between two adjacent tokens, even if this isn't strictly
+required.  E.g.,
+
+<blockquote><pre>
+/Halftone /Category findresource
+</pre></blockquote>
+
+<p>
+not
+
+<blockquote><pre>
+/Halftone/Category findresource
+</pre></blockquote>
+
+<hr>
+
+<h2><a name="Naming"></a>Naming</h2>
+
+<p>
+All names should consist only of letters and digits, possibly with an
+initial ".", except for names drawn from the PostScript or PDF reference
+manual, which must be capitalized as in the manual.  In general, an initial
+"." should be used for those and only those names that are not defined in a
+private dictionary but that are meant to be used only in the file where they
+are defined.
+
+<p>
+For edits to existing code, names made up of multiple words should not use
+any punctuation, or capitalization, to separate the words, again except for
+names that must match a specification.  For new code, you may use this
+convention, or you may use the "Vienna" convention of capitalizing the first
+letter of words, e.g., <code>readSubrs</code> rather than
+<code>readsubrs</code>.  If you use the Vienna convention, function names
+should start with an upper case letter, variable names with a lower case
+letter.  Using the first letter of a variable name to indicate the
+variable's type is optional, but if you do it, you should follow existing
+codified usage (****** WE NEED A REFERENCE FOR THIS ******).
+
+<hr>
+
+<h2><a name="Miscellany"></a>Miscellany</h2>
+
+<h3><a name="Non_standard_operators"></a>Some useful non-standard
+operators</h3>
+
+<dl>
+
+<dt><code>&lt;obj1&gt; &lt;obj2&gt; ... &lt;objn&gt; &lt;n&gt; .execn ...</code>
+<dd>This executes <code>obj1</code> through <code>objn</code> in that
+order, essentially equivalent to
+
+<blockquote><pre>
+&lt;obj1&gt; &lt;obj2&gt; ... &lt;objn&gt; &lt;n&gt; array astore {exec} forall
+</pre></blockquote>
+
+<p>
+except that it doesn't actually create the array.
+
+<dt><code>&lt;dict&gt; &lt;key&gt; <b>.knownget</b> &lt;value&gt; true</code>
+<dt><code>&lt;dict&gt; &lt;key&gt; <b>.knownget</b> false</code>
+
+<dd>This combines <code>known</code> and <code>get</code> in the
+obvious way.
+
+<dt><code>&lt;name&gt; &lt;proc&gt; odef -</code>
+
+<dd>This defines <code>name</code> as a "pseudo-operator".  The value of
+<code>name</code> will be executable, will have type
+<code>operatortype</code>, and will be executed if it appears directly in
+the body of a procedure (like an operator, unlike a procedure), but what
+will actually be executed will be <code>proc</code>.  In addition, if the
+execution of <code>proc</code> is ended prematurely (by
+<code>stop</code>, including the <code>stop</code> that is normally
+executed when an error occurs, or <code>exit</code>) and the operand and
+dictionary stacks are at least as deep as they were when the "operator" was
+invoked, the stacks will be cut back to their original depths before the
+error is processed.  Thus, if pseudo-operator procedures are careful not to
+remove any of their operands until they reach a point in execution beyond
+which they cannot possibly cause an error, they will behave just like
+operators in that the stacks will appear to be unchanged if an error occurs.
+
+</dl>
+
+<h3><a name="Useful_procedures"></a>Some useful procedures</h3>
+
+<dl>
+
+<dt><code>&lt;object&gt; &lt;errorname&gt; signalerror -</code>
+
+<dd>Signal an error with the given name and the given "current object".
+This does exactly what the interpreter does when an error occurs.
+
+</dl>
+
+<h3><a name="Other"></a>Other</h3>
+
+<p>
+If you can avoid it, don't allocate objects (strings, arrays, dictionaries,
+gstates, etc.) in commonly used operators or procedures: these will need to
+be garbage collected later, slowing down execution.  Instead, keep values on
+the stack, if you can.  The <code>.execn</code> operator discussed above
+may be helpful in doing this.
+
+<p>
+If you find yourself writing the same stretch of code (more than about half
+a dozen tokens) more than once, ask yourself whether it performs a function
+that could be made into a procedure.
+
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+.TH PS2PDFWR 1 "26 September 2016" 9.20 Ghostscript \" -*- nroff -*-
+.SH NAME
+ps2pdfwr \- Convert PostScript to PDF without specifying CompatibilityLevel, using ghostscript
+.SH SYNOPSIS
+\fBps2pdfwr\fR  [options...] {input.[e]ps|-} [output.pdf|-]
+.SH DESCRIPTION
+This wrapper script invokes
+.BR gs (1)
+with following arguments
+
+.ce
+.B -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite
+
+as well as the appropriate
+.B -dOutputFile
+argument, all preceded and followed by any command-line arguments. Finally, the security option
+.B -dSAFER
+is prepended before all the other options.
+
+The version-specific
+.B ps2pdf
+scripts all invoke this one with the addition of the respective compatibility level option.
+.SH SEE ALSO
+gs(1), ps2pdf(1)
+.SH VERSION
+This document was last revised for Ghostscript version 9.20.
+.SH AUTHOR
+Artifex Software, Inc. are the
+primary maintainers of Ghostscript.
+This manpage by George Ferguson.

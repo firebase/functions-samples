@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Setting up a Unix lpr filter for Ghostscript</title>
+<!-- Originally: unix-lpr.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Setting up a Unix <tt>lpr</tt> filter for Ghostscript</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Overview">Overview</a>
+<li><a href="#What_it_can_do">What it can do</a>
+<li><a href="#Setting_up">Setting it up</a>
+<ul>
+<li><a href="#Editing_device_list">Editing the device list <code>DEVICES</code></a>
+<ul>
+<li><a href="#Field_bpp">Field 1: bits per pixel</a>
+<li><a href="#Field_colours">Field 2: colours</a>
+<li><a href="#Field_dq">Field 3: dual queues</a>
+<li><a href="#Device_example">Example definition of <code>DEVICES</code></a>
+</ul>
+<li><a href="#Editing_filter_list">Editing the filter list</a>
+<li><a href="#Editing_printer_port">Editing the printer port and type</a>
+<li><a href="#Modifying_printcap_insert">Modifying <code>printcap.insert</code></a>
+<li><a href="#Multiple_queues">Single or dual queues</a>
+</ul>
+<li><a href="#Bugs">Bugs</a>
+<li><a href="#Authors">Authors</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a> and the <a href="Use.htm">usage documentation</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Overview"></a>Overview</h2>
+
+<p>
+"How do I set up Ghostscript to provide PostScript queues in a standard lpr
+environment on Unix systems?" is a Frequently Asked Question amongst
+Ghostscript users.  The two shell scripts described by this document are
+designed to make this task a little easier. They are
+
+<blockquote><dl>
+<dt><code>unix-lpr.sh</code>
+<dd>a flexible, multi-option print filter
+
+<dt><code>lprsetup.sh</code>
+<dd>A shell script which sets up soft links and creates a template insert
+for the <code>printcap</code> file
+</dl></blockquote>
+
+<hr>
+
+<h2><a name="What_it_can_do"></a>What it can do</h2>
+
+<p>
+The print filter resides in the Ghostscript installation directory (often
+<code>/usr/local/share/ghostscript</code>, but may be something else at
+your installation), together with a dummy filter directory containing
+various soft links which point to the filter. It offers the following
+features:
+
+<ul>
+<li>Multiple devices supported by a single filter
+<li>Multiple bit-depths for the same device
+<li>Multiple number of colours for the same device
+<li>Direct (single-queue) and indirect (two-queue) setup
+<li>Support for the standard preprocessing filters if you have the
+corresponding (whatever)-to-PostScript translators
+<li>Redirection of diagnostic and programmed output to a logfile in
+the spooling directory
+<li>Maintaining of printer accounting records of the numbers of pages
+printed by each user (compatible with the <code>pac</code> command)
+<li>Straightforward editing for further customisation
+</ul>
+
+<hr>
+
+<h2><a name="Setting_up"></a>Setting it up</h2>
+
+<p>
+The <code>lprsetup.sh</code> script needs to have two lines edited
+before running, to set the printer devices to use and the list of filters
+available. With this information, it
+
+<ul>
+<li>creates a "<code>filt</code>" subdirectory under the
+Ghostscript installation directory
+<li>creates the links in this directory which enable the filter to
+determine the parameters for running Ghostscript
+<li>automatically generates <code>printcap</code> entries which should
+need only a little editing before adding to your system
+<code>printcap</code> file
+</ul>
+
+<h3><a name="Editing_device_list"></a>Editing the device list <tt>DEVICES</tt></h3>
+
+<p>
+At the top of <code>lprsetup.sh</code> is a line of the form
+<code>DEVICES=</code><em>{list}</em>.  Replace the example list with
+your own list of devices.  Each entry is the name of a device, followed by
+three more optional fields, separated by dots "<code>.</code>".
+
+<h4><a name="Field_bpp"></a>Field 1: bits per pixel</h4>
+
+<p>
+The first field is required only if the printer device understands the <a
+href="Devices.htm#deskjet_parameters"><code>-dBitsPerPixel=</code>
+switch</a>, which applies only to colour devices. For a particular number
+<b><em>N</em></b> of bits per pixel, add the suffix <b><em>.N</em></b> to
+the device name, for instance <code>cdj500.3</code>,
+<code>cdj500.24</code>, etc.
+
+<h4><a name="Field_colours"></a>Field 2: colours</h4>
+
+<p>
+The second field is required only if the printer device understands the
+setting of the <code>Colors</code> device parameter (as in
+<code>-dColors=</code>), which applies only to colour devices (and at
+present is only supported by the <code>bjc</code>* family of drivers).
+For a particular number <b><em>N</em></b> of colours, suffix
+<b><em>.N</em></b> to the device name, such as <code>bjc600.24.3</code>,
+<code>bjc600.8.1</code> etc.
+
+<h4><a name="Field_dq"></a>Field 3: dual queues</h4>
+
+<p>
+The third field is required in order to use two separate queues for the
+device, a "raw" queue and a PostScript queue (see
+"<a href="#Multiple_queues">Single or dual queues</a>" below).  If you want
+dual queues, add the suffix <code>.dq</code> ("dual queue") to the name,
+whether or not a <a href="#Field_bpp">bits-per-pixel suffix</a> has already
+been added.
+
+<h4><a name="Device_example"></a>Example definition of
+<tt>DEVICES</tt></h4>
+
+<p>
+Thus the following list supports a <code>cdj550</code> device at three
+different bit depths (24 bpp, 3 bpp and 1 bpp), with a dual queue (that is,
+a separate queue for the raw data); a monochrome <code>deskjet</code>
+device with a single queue; and a <code>djet500</code> device using a
+separate queue:
+
+<blockquote><code>
+DEVICES="cdj550.24.dq&nbsp;cdj550.3.dq&nbsp;cdj550.1.dq&nbsp;deskjet&nbsp;djet500.dq"
+</code></blockquote>
+
+<h3><a name="Editing_filter_list"></a>Editing the filter list</h3>
+
+<p>
+The standard list contains only the generic "<code>if</code>" filter,
+but a commented-out list shows other filters which may be available.  If
+you wish to use the support for these filters, you may need to edit the
+<code>bsd-if</code> file to add to the <code>PATH</code> the
+directories where the translators are stored, or to change the names of the
+filters if yours are different.  The <code>bsd-if</code> script is
+supplied with an example setup using Transcript (a commercial package from
+Adobe), and PBMPLUS, a freeware package by Jef Poskanzer and others.
+
+<h3><a name="Editing_printer_port"></a>Editing the printer port and
+type</h3>
+
+<p>
+You can set the port and port type (parallel or printer) for an attached
+printer, but for remote printers you'll have to modify the
+<tt>printcap.insert</tt> file yourself.
+
+<h3><a name="Modifying_printcap_insert"></a>Modifying
+<tt>printcap.insert</tt></h3>
+
+<p>
+Running <code>lprsetup.sh</code> generates a file
+<code>printcap.insert</code> which has a template setup for your
+printer queues.  It cannot guarantee to do the whole job, and you will
+probably need to consult your system documentation and edit this file
+before you add it to your <code>printcap</code> file.  The file has good
+defaults for serial printers, as these often cause problems in getting
+binary data to the printer.  However, you may need to change the baud rate,
+or the handshaking method.  Only a small change is required in the
+<code>printcap</code> file to use a networked remote printer instead of
+an attached printer, and an example is given in
+<code>printcap.insert</code>.
+
+<h3><a name="Multiple_queues"></a>Single or dual queues</h3>
+
+<p>
+If you wish to provide a PostScript-only queue (for example, so that all
+pages printed go through accounting), and the printer port is local to the
+host machine, a single queue is appropriate -- Ghostscript simply converts
+PostScript into the printer's native data format and sends it to the
+port.  But if the printer is on a remote networked machine, or if you need to
+send raw printer data to the printer, you must use two queues.  Simply
+specify the <a href="#Field_dq">"<code>.dq</code>" option</a> above.
+
+<hr>
+
+<h2><a name="Bugs"></a>Bugs</h2>
+
+<p>
+You must have write access to the Ghostscript installation directory for
+<code>lprsetup.sh</code> to create the filter directory and soft links.
+
+<p>
+If you have several different values of bits per pixel for the same device,
+you must list all instances of that device as adjacent items in the
+<a href="#Editing_device_list"><code>DEVICES</code></a> device
+list.  If you do not, <code>printcap.insert</code> will contain multiple
+entries for the same device, which is not supported.
+
+<hr>
+
+<h2><a name="Authors"></a>Authors</h2>
+
+<p>
+This material was contributed by George Cameron.  Yves Arrouye
+&lt;<a href="mailto:yves.arrouye@usa.net">yves.arrouye@usa.net</a>&gt;
+is responsible for the number-of-colours part of the script.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

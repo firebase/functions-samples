@@ -1,0 +1,4769 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Information for Ghostscript developers</title>
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Information for Ghostscript developers</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Introduction">Introduction</a>
+<li><a href="#Architecture">Architecture</a>
+<ul>
+<li><a href="#Design_goals">Design goals</a>
+<li><a href="#Design_principles">Design principles</a>
+<li><a href="#Large_scale_structure">Large-scale structure</a>
+<li><a href="#Object_oriented_constructs">Object-oriented constructs</a>
+</ul>
+<li><a href="#File_roadmap">File roadmap</a>
+<ul>
+<li><a href="#Substrate">Substrate</a>
+<li><a href="#Graphics_library">Graphics library</a>
+<ul>
+<li><a href="#Library_support">Support</a>,
+    <a href="#Paths">Paths</a>,
+    <a href="#Text">Text</a>,
+    <a href="#Images">Images</a>,
+    <a href="#Paint">Paint</a>,
+    <a href="#Clipping">Clipping</a>,
+    <a href="#Other_graphics">Other graphics</a>,
+    <a href="#Driver_support">Driver support</a>,
+    <a href="#FAPI_support_gx">Font API support</a>
+    <a href="#Visual_trace">Visual Trace</a>
+</ul>
+<li><a href="#Device_drivers">Device drivers</a>
+<ul>
+<li><a href="#Internal_devices">Internal devices</a>,
+    <a href="#PS_and_PDF_writers">PostScript and PDF writers</a>,
+    <a href="#High_level_devices">Other high-level devices</a>,
+    <a href="#Other_maintained_drivers">Other maintained drivers</a>,
+    <a href="#Contributed_drivers">Contributed drivers</a>
+</ul>
+<li><a href="#PostScript_interpreter">PostScript interpreter</a>
+<ul>
+<li><a href="#Main_program">Main program</a>,
+    <a href="#Data_structures">Data structures</a>,
+    <a href="#Stacks">Stacks</a>,
+    <a href="#Interpreter_loop">Interpreter loop</a>,
+    <a href="#Scanning_parsing">Scanning/parsing</a>,
+    <a href="#Standard_operators">Standard operators</a>,
+    <a href="#Non_standard_operators">Non-standard operators</a>,
+    <a href="#Interpreter_support">Interpreter support</a>,
+    <a href="#PostScript_code">PostScript code</a>
+</ul>
+<li><a href="#PDF_interpreter">PDF interpreter</a>
+<li><a href="#PPD">PostScript Printer Description</a>
+<li><a href="#Build_process">Build process</a>
+<ul>
+<li><a href="#Makefile_structure">Makefile structure</a>,
+    <a href="#dev_files">.dev files</a>,
+    <a href="#Generators">Generators</a>,
+    <a href="#Build_support">Support</a>
+</ul>
+<li><a href="#Utilities">Utilities</a>
+<ul>
+<li><a href="#Utilities_in_PostScript">Utilities in PostScript</a>
+<li><a href="#Utility_scripts">Utility scripts</a>
+</ul>
+</ul>
+<li><a href="#Memory_management">Memory management</a>
+<ul>
+<li><a href="#Memory_manager_architecture">Memory manager architecture</a>
+<ul>
+<li><a href="#Objects_vs_strings">Objects vs strings</a>,
+    <a href="#Structure_descriptors">Structure descriptors</a>,
+    <a href="#Garbage_collection">Garbage collection</a>,
+    <a href="#Movability">Movability</a>,
+    <a href="#Parent_hierarchy">Parent hierarchy</a>,
+    <a href="#Allocator_API">Allocator API</a>
+</ul>
+<li><a href="#Freeing_storage">Freeing storage</a>
+<ul>
+<li><a href="#Explicit_freeing">Explicit freeing</a>,
+    <a href="#Reference_counting">Reference counting</a>,
+    <a href="#Real_garbage_collection">(Real) garbage collection</a>
+</ul>
+<li><a href="#Special_implementations">Special implementations</a>
+<ul>
+<li><a href="#malloc">malloc</a>,
+    <a href="#Locking">Locking</a>,
+    <a href="#Retrying">Retrying</a>,
+    <a href="#Chunk">Chunk</a>
+</ul>
+<li><a href="#Standard_implementation">Standard implementation</a>
+<li><a href="#PostScript_interpreter_extensions">PostScript interpreter extensions</a>
+<ul>
+<li><a href="#Refs">Refs (PostScript "objects")</a>,
+    <a href="#save_forgetsave_restore">save/.forgetsave/restore</a>,
+    <a href="#Stable_allocators">Stable allocators</a>,
+    <a href="#Interpreter_GC">Garbage collection</a>
+</ul>
+</ul>
+<li><a href="#Portability">Portability</a>
+<ul>
+<li><a href="#Structural">Structural</a>
+<ul>
+<li><a href="#CPU_and_compiler">CPU and compiler</a>,
+    <a href="#Library_headers">Library headers</a>,
+    <a href="#Cross_platform_APIs">Cross-platform APIs</a>,
+    <a href="#Makefiles">Makefiles</a>
+</ul>
+<li><a href="#Coding">Coding</a>
+<ul>
+<li><a href="#Explicit_dependencies">Explicit dependencies</a>,
+    <a href="#Implicit_dependencies">Implicit dependencies</a>
+</ul>
+<li><a href="#Platform_specific_code">Platform-specific code</a>
+</ul>
+<li><a href="#Troubleshooting">Troubleshooting and debugging</a>
+<li><a href="#Profiling">Profiling</a>
+<ul>
+<li><a href="#ProfilingMSVC6">Profiling with Microsoft Developer Studio 6</a>
+</ul>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Introduction"></a>Introduction</h2>
+
+<p>
+This document provides a wealth of information about Ghostscript's
+internals, primarily for developers actively working on Ghostscript.  It is
+primarily <strong>descriptive</strong>, documenting the way things are; the
+companion <a href="C-style.htm">C style guide</a> is primarily
+<strong>prescriptive</strong>, documenting what developers should do when
+writing new code.
+
+<p>
+THIS FILE IS A WORK IN PROGRESS.  MANY SECTIONS ARE PLACE-HOLDERS.
+
+<h2><a name="Architecture"></a>Architecture</h2>
+
+<h3><a name="Design_goals"></a>Design goals</h3>
+
+<p>
+Ghostscript has the following high-level design goals (not listed in order
+of importance):
+
+<ul>
+<li>Functionality
+<ul>
+<li>Ability to interpret the current PostScript and PDF languages, as
+defined (and occasionally, in the case of conflict, as implemented) by
+Adobe.
+<li>Ability to convert PostScript to and from PDF, comparable to
+Adobe products.
+<li>Ability to produce output for a wide range of resolutions (from
+TV-resolution displays to imagesetters) and color models (black and white,
+multilevel gray, bilevel or multi-level RGB and CMYK, 6- or 8-color
+inkjet printers, spot color).
+</ul>
+<li>Performance
+<ul>
+<li>Ability to render PostScript and PDF with commercial-quality performance
+(memory usage, speed, and output quality) on all platforms.
+<li>Specifically, ability to render PostScript effectively in embedded
+environments with constrained RAM, including the ability to put the code and
+supporting data in ROM.
+</ul>
+<li>Licensing
+<ul>
+<li>Licensing that supports both the Open Source / Free software communities
+and a commercial licensing business.
+<li>Freedom from licensing restrictions or fees imposed by third parties.
+</ul>
+<li>Other
+<ul>
+<li>Easy source portability to any platform (CPU, operating system, and
+development tools) that has an ANSI C compiler.
+<li>Support for writing new interpreters and new drivers with no change to
+any existing code; specifically, ability to support PCL 5e, PCL 5c, and PCL
+XL interpreters, and the ever-changing roster of inkjet printers.
+</ul>
+</ul>
+
+<p>
+These goals often conflict: part of Ghostscript's claim to quality is that
+the conflicts have been resolved well.
+
+<h3><a name="Design_principles"></a>Design principles</h3>
+
+<p>
+Part of what has kept Ghostscript healthy through many years of major code
+revisions and functional expansion is consistent and conscientious adherence
+to a set of design principles.  We hope the following list captures the most
+important ones.
+
+<h4>Non-preemption</h4>
+
+<p>
+Ghostscript is designed to be used as a component.  As such, it must share
+its environment with other components.  Therefore, it must not require
+ownership of, or make decisions about, inherently shared resources.
+Specifically, it must not assume that it can "own" either the locus of
+control or the management of the address space.
+
+<p>
+Not owning control means that whenever Ghostscript passes control to its
+caller, it must do so in a way that doesn't constrain what the caller can do
+next.  The caller must be able to call any other piece of software, wait for
+an external event, execute another task, etc., without having to worry about
+Ghostscript being in an unknown state.  While this is easy to arrange in a
+multi-threaded environment (by running Ghostscript in a separate thread),
+multi-threading APIs are not well standardized at this time (December 2000),
+and may not be implemented efficiently, or at all, on some platforms.
+Therefore, Ghostscript must choose between only two options for interacting
+with its caller: to <em>return</em>, preserving its own state in data
+structures, or to <em>call back</em> through a caller-supplied procedure.
+Calling back constrains the client program unacceptably: the callback
+procedure only has the options of either returning, or aborting Ghostscript.
+In particular, if it wants (for whatever reason) to multi-task Ghostscript
+with another program, it cannot do so in general, especially if the other
+program also uses callback rather than suspension.  Therefore, Ghostscript
+tries extremely hard to return, rather than calling back, for all caller
+interaction.  In particular:
+
+<ul>
+
+<li>For callers that want to pass input to Ghostscript piece by piece,
+Ghostscript returns with an <code>gs_error_NeedInput</code> code rather than
+using a callback.  This allows the caller complete flexibility in its
+control structure for managing the source of input.  (It might, for example,
+be generating the input dynamically.)
+
+<li>In the future, the same arrangement should be used for input from
+<code>stdin</code> and output to <code>stdout</code> and
+<code>stderr</code>.
+
+<li>Likewise, scheduling of Ghostscript's own threads (contexts), currently
+done with a callback, should be done with suspension.  The Display
+Ghostscript project (GNU DGS) is working on this.
+
+</ul>
+
+<p>
+The one area where suspension is not feasible with Ghostscript's current
+architecture is device output.  Device drivers are called from deep within
+the graphics library.  (If Ghostscript were being redesigned from scratch,
+we might try to do this with suspension as well, or at least optional
+suspension.)
+
+<p>
+Not owning management of the address space means that even though
+Ghostscript supports garbage collection for its own data, it must not do any
+of the things that garbage collection schemes for C often require: it must
+not replace 'malloc' and 'free', must not require its clients to use its own
+allocator, must not rely on manipulating the read/write status of memory
+pages, must not require special compiler or run-time support (e.g., APIs for
+scanning the C stack), must not depend on the availability of
+multi-threading, and must not take possession of one of a limited number of
+timer interrupts.  However, in order not to constrain its own code unduly,
+it must also not require using special macros or calls to enter or leave
+procedures or assign pointers, and must not constrain the variety of C data
+structures any more than absolutely necessary.  It achieves all of these
+goals, at the expense of some complexity, some performance cost (mostly for
+garbage collection), and some extra manual work required for each structure
+type allocated by its allocator.  The details appear in the <a
+href="#Memory_management">Memory management</a> section below.
+
+<h4>Multi-instantiability</h4>
+
+<p>
+From many years of experience with the benefits of object-oriented design,
+we have learned that when the word "the" appears in a software design --
+"the" process scheduler, "the" memory manager, "the" output device, "the"
+interpreter, "the" stack -- it often flags an area in which the software
+will have difficulty adapting to future needs.  For this reason, Ghostscript
+attempts to make every internal structure capable of existing in multiple
+instances.  For example, Ghostscript's memory manager is not a one-of-a-kind
+entity with global state and procedures: it is (or rather they are, since
+Ghostscript has multiple memory managers, some of which have multiple
+instances) objects with their own state and (virtual) procedures.
+Ghostscript's PostScript interpreter has no writable non-local data
+(necessary, but not sufficient, to allow multiple instances), and in the
+future will be extended to be completely reentrant and instantiable.  The
+device driver API is designed to make this easy for drivers as well.  The
+graphics library is currently not completely reentrant or instantiable: we
+hope this will occur in the future.
+
+<h4>Late configuration binding</h4>
+
+<p>
+Ghostscript is designed to make configuration choices as late as possible,
+subject to simplicity and performance considerations.  The major binding
+times for such choices are compilation, linking, startup, and dynamic.
+
+<ul>
+
+<li>Compilation binds only CPU and compiler characteristics (including data
+type size, presence of floating point hardware, and data alignment), and
+whether the code will be used for production, debugging, or profiling.
+
+<li>Linking binds the choice of what features and device drivers will be
+included in the executable.  (Work is underway to make the choice of drivers
+dynamic.)
+
+<li>Startup binds essentially nothing.  Almost every option and parameter
+that can appear on the command line can also be changed dynamically.
+
+<li>The selection of output device, all parameters associated with the
+device, the selection of debugging printout and self-checking (in debugging
+configurations), the macro-allocation of memory, and almost all other
+operational parameters are dynamic.
+
+</ul>
+
+<p>
+In addition, a number of major implementation decisions are made dynamically
+depending on the availability of resources.  For example, Ghostscript
+chooses between banded and non-banded rendering depending on memory
+availability.
+
+<h3><a name="Large_scale_structure"></a>Large-scale structure</h3>
+
+<p>
+At the largest design scale, Ghostscript consists of 4 layers.  Layer N
+is allowed to use the facilities of all layers M &lt;= N.
+
+<ol>
+
+<li>The bottom layer is called the <a href="#Substrate">substrate</a>.  It
+includes facilities like memory management, streams, fixed-point arithmetic,
+and low-level interfaces to the operating system.  The substrate is written
+in C, with a little C++ and/or assembler code for some platforms.
+
+<li>The layer above the substrate is the graphics layer.  It consists of two
+separate sub-parts.  The graphics layer is written in C.
+
+<ul>
+
+<li>The <a href="#Graphics_library">graphics library</a> manages graphics
+state information for, and decomposes and renders 2-D images described
+using, a graphics model that is approximately the union of those of
+PostScript, PDF, and PCL 5e/5c/XL.
+
+<li>The <a href="#Device_drivers">device drivers</a> are called by the
+graphics library to produce actual output.  The graphics library, and all
+higher layers, call device driver procedures only through virtual functions.
+
+</ul>
+
+<li>The principal clients of the graphics layer are language interpreters.
+Ghostscript as distributed includes the <a
+href="#PostScript_interpreter">PostScript interpreter</a>; there are also
+interpreters for PCL 5e, PCL 5c, and PCL XL, which are not currently freely
+redistributable and are not included in the standard Ghostscript package.
+The PostScript interpreter is written partly in C and partly in PostScript.
+
+<li>The <a href="#PDF_interpreter">PDF interpreter</a> is actually a client
+of the PostScript interpreter: it is written entirely in PostScript.
+
+</ol>
+
+<p>
+The most important interface in Ghostscript is the API between the graphics
+library and the device drivers: new printers (and, to a lesser extent,
+window systems, displays, plotters, film recorders, and graphics file
+formats) come on the scene frequently, and it must be possible to produce
+output for them with a minimum of effort and distruption.  This API is the
+only one that is extensively documented (see <a
+href="Drivers.htm">Drivers.htm</a>) and kept stringently backward-compatible
+through successive releases.
+
+<h3><a name="Object_oriented_constructs"></a>Object-oriented constructs</h3>
+
+<p>
+Ghostscript makes heavy use of object-oriented constructs, including
+analogues of classes, instances, subclassing, and class-associated
+procedures.  Since Ghostscript is written in C, not C++, implementing these
+constructs requires following coding conventions.  The <a
+href="C-style.htm#Objects">"Objects"</a> section of the C style guide
+explains these.
+
+<p>
+The memory manager API provides run-time type information about each class,
+but this information does not include anything about subclassing.  See under
+<a href="#Structure_descriptors">Structure descriptors</a> below.
+
+<hr>
+
+<h2><a name="File_roadmap"></a>File roadmap</h2>
+
+<p>
+This section of the document provides a roadmap to all of the Ghostscript
+source files.
+
+<h3><a name="Substrate"></a>Substrate</h3>
+
+<h4>Runtime Context</h4>
+
+<dl>
+<dt>
+The libctx provides pointers to memory, stdio, and various other runtime 
+portablility services.
+<dd>
+<a href="../base/gslibctx.h">base/gslibctx.h</a>,
+<a href="../base/gslibctx.c">base/gslibctx.c</a>.
+</dl>
+
+<h4>Memory manager</h4>
+
+<p>
+See <a href="#Memory_management">below</a>.
+
+<h4>Streams</h4>
+
+<dl>
+
+<dt>
+Framework, file and string streams:
+<dd>
+<a href="../base/gsdsrc.c">base/gsdsrc.c</a>,
+<a href="../base/gsdsrc.h">base/gsdsrc.h</a>,
+<a href="../base/scommon.h">base/scommon.h</a>,
+<a href="../base/strmio.c">base/strmio.c</a>,
+<a href="../base/strmio.h">base/strmio.h</a>,
+<a href="../base/sfxboth.c">base/sfxboth.c</a>,
+<a href="../base/sfxfd.c">base/sfxfd.c</a>,
+<a href="../base/sfxstdio.c">base/sfxstdio.c</a>,
+<a href="../base/sfxcommon.c">base/sfxcommon.c</a>,
+<a href="../base/stream.h">base/stream.h</a>,
+<a href="../base/stream.c">base/stream.c</a>,
+<a href="../base/strimpl.h">base/strimpl.h</a>.
+
+<dt>
+Standard filters:
+<dd>
+
+<dl>
+
+<dt>
+CCITTFax:
+<dd>
+<a href="../base/scf.h">base/scf.h</a>,
+<a href="../base/scfd.c">base/scfd.c</a>,
+<a href="../base/scfdgen.c">base/scfdgen.c</a>,
+<a href="../base/scfdtab.c">base/scfdtab.c</a>,
+<a href="../base/scfe.c">base/scfe.c</a>,
+<a href="../base/scfetab.c">base/scfetab.c</a>,
+<a href="../base/scfparam.c">base/scfparam.c</a>,
+<a href="../base/scfx.h">base/scfx.h</a>.
+
+<dt>
+DCT (JPEG):
+<dd>
+<a href="../base/gsjconf.h">base/gsjconf.h</a>,
+<a href="../base/gsjmorec.h">base/gsjmorec.h</a>,
+<a href="../base/sdcparam.c">base/sdcparam.c</a>,
+<a href="../base/sdcparam.h">base/sdcparam.h</a>,
+<a href="../base/sdct.h">base/sdct.h</a>,
+<a href="../base/sdctc.c">base/sdctc.c</a>,
+<a href="../base/sdctd.c">base/sdctd.c</a>,
+<a href="../base/sdcte.c">base/sdcte.c</a>,
+<a href="../base/sddparam.c">base/sddparam.c</a>,
+<a href="../base/sdeparam.c">base/sdeparam.c</a>,
+<a href="../base/sjpeg.h">base/sjpeg.h</a>,
+<a href="../base/sjpegc.c">base/sjpegc.c</a>,
+<a href="../base/sjpegd.c">base/sjpegd.c</a>,
+<a href="../base/sjpege.c">base/sjpege.c</a>.
+
+<dt>
+JBIG2:
+<a href="../base/sjbig2.h">base/sjbig2.h</a>,
+<a href="../base/sjbig2.c">base/sjbig2.c</a>
+or
+<a href="../base/sjbig2_luratech.h">base/sjbig2_luratech.h</a>,
+<a href="../base/sjbig2_luratech.c">base/sjbig2_luratech.c</a>.
+
+<dt>
+JPX (JPEG 2000):
+<a href="../base/sjpx_openjpeg.h">base/sjpx_openjpeg.h</a>,
+<a href="../base/sjpx_openjpeg.c">base/sjpx_openjpeg.c</a>
+or
+<a href="../base/sjpx_luratech.h">base/sjpx_luratech.h</a>,
+<a href="../base/sjpx_luratech.c">base/sjpx_luratech.c</a>.
+<dt>
+Other compression/decompression:
+<dd>
+<a href="../base/slzwc.c">base/slzwc.c</a>,
+<a href="../base/slzwd.c">base/slzwd.c</a>,
+<a href="../base/slzwe.c">base/slzwe.c</a>,
+<a href="../base/slzwx.h">base/slzwx.h</a>,
+<a href="../base/srld.c">base/srld.c</a>,
+<a href="../base/srle.c">base/srle.c</a>,
+<a href="../base/srlx.h">base/srlx.h</a>.
+
+<dt>
+Other:
+<dd>
+<a href="../base/sa85d.c">base/sa85d.c</a>,
+<a href="../base/sa85d.h">base/sa85d.h</a>,
+<a href="../base/sa85x.h">base/sa85x.h</a>,
+<a href="../psi/sfilter1.c">psi/sfilter1.c</a>,
+<a href="../base/sfilter2.c">base/sfilter2.c</a>,
+<a href="../base/sstring.c">base/sstring.c</a>,
+<a href="../base/sstring.h">base/sstring.h</a>.
+
+</dl>
+
+<dt>
+Non-standard filters used to implement standard filters:
+<dd>
+<a href="../base/seexec.c">base/seexec.c</a>,
+<a href="../base/sfilter.h">base/sfilter.h</a>,
+<a href="../base/shc.c">base/shc.c</a>,
+<a href="../base/shc.h">base/shc.h</a>,
+<a href="../base/spdiff.c">base/spdiff.c</a>,
+<a href="../base/spdiffx.h">base/spdiffx.h</a>,
+<a href="../base/spngp.c">base/spngp.c</a>,
+<a href="../base/spngpx.h">base/spngpx.h</a>,
+<a href="../base/szlibc.c">base/szlibc.c</a>,
+<a href="../base/szlibd.c">base/szlibd.c</a>,
+<a href="../base/szlibe.c">base/szlibe.c</a>,
+<a href="../base/szlibx.h">base/szlibx.h</a>,
+<a href="../base/szlibxx.h">base/szlibxx.h</a>.
+
+<dt>
+Non-standard filters:
+<dd>
+<a href="../base/sbcp.c">base/sbcp.c</a>,
+<a href="../base/sbcp.h">base/sbcp.h</a>,
+<a href="../base/sbtx.h">base/sbtx.h</a>,
+<a href="../base/smd5.c">base/smd5.c</a>,
+<a href="../base/smd5.h">base/smd5.h</a>,
+<a href="../base/saes.c">base/saes.c</a>,
+<a href="../base/saes.h">base/saes.h</a>,
+<a href="../base/sarc4.c">base/sarc4.c</a>,
+<a href="../base/sarc4.h">base/sarc4.h</a>,
+<a href="../base/smtf.c">base/smtf.c</a>,
+<a href="../base/smtf.h">base/smtf.h</a>.
+
+<dt>
+Internal filters:
+<dd>
+<a href="../base/siinterp.c">base/siinterp.c</a>,
+<a href="../base/siinterp.h">base/siinterp.h</a>,
+<a href="../base/siscale.c">base/siscale.c</a>,
+<a href="../base/siscale.h">base/siscale.h</a>,
+<a href="../base/sidscale.c">base/sidscale.c</a>,
+<a href="../base/sidscale.h">base/sidscale.h</a>,
+<a href="../base/sisparam.h">base/sisparam.h</a>.
+
+<dt>
+Higher-level stream support:
+<dd>
+<a href="../base/spprint.c">base/spprint.c</a>,
+<a href="../base/spprint.h">base/spprint.h</a>,
+<a href="../base/spsdf.c">base/spsdf.c</a>,
+<a href="../base/spsdf.h">base/spsdf.h</a>,
+<a href="../base/srdline.h">base/srdline.h</a>.
+
+</dl>
+
+<h4>Platform-specific code</h4>
+
+See <a href="#Cross_platform_APIs">below</a>.
+
+<h4>Miscellaneous</h4>
+
+<dl>
+
+<dt>
+Library top level:
+<dd>
+<a href="../base/gsinit.c">base/gsinit.c</a>,
+<a href="../base/gslib.h">base/gslib.h</a>.
+
+<dt>
+Configuration-related:
+<dd>
+<a href="../base/gconf.c">base/gconf.c</a>,
+<a href="../base/gconf.h">base/gconf.h</a>,
+<a href="../base/gscdef.c">base/gscdef.c</a>,
+<a href="../base/gscdefs.h">base/gscdefs.h</a>,
+<a href="../base/gsromfs0.c">base/gsromfs0.c</a>.
+
+<dt>
+Arithmetic:
+<dd>
+<a href="../base/gxarith.h">base/gxarith.h</a>,
+<a href="../base/gxdda.h">base/gxdda.h</a>,
+<a href="../base/gxfarith.h">base/gxfarith.h</a>,
+<a href="../base/gxfixed.h">base/gxfixed.h</a>,
+<a href="../base/gxfrac.h">base/gxfrac.h</a>.
+
+<dt>
+Operating system interface:
+<dd>
+<a href="../base/gserrors.h">base/gserrors.h</a>,
+<a href="../base/gsexit.h">base/gsexit.h</a>,
+<a href="../base/gxstdio.h">base/gxstdio.h</a>,
+<a href="../base/gxsync.c">base/gxsync.c</a>,
+<a href="../base/gxsync.h">base/gxsync.h</a>.
+
+<dt>
+Other:
+<dd>
+<a href="../base/gsargs.c">base/gsargs.c</a>,
+<a href="../base/gsargs.h">base/gsargs.h</a>,
+<a href="../base/gserrors.h">base/gserrors.h</a>,
+<a href="../base/gsnotify.c">base/gsnotify.c</a>,
+<a href="../base/gsnotify.h">base/gsnotify.h</a>,
+<a href="../base/gsrect.h">base/gsrect.h</a>,
+<a href="../base/gstypes.h">base/gstypes.h</a>,
+<a href="../base/gsuid.h">base/gsuid.h</a>,
+<a href="../base/gsutil.h">base/gsutil.h</a>,
+<a href="../base/gsutil.c">base/gsutil.c</a>,
+<a href="../base/gx.h">base/gx.h</a>,
+<a href="../base/gsmd5.c">base/gsmd5.c</a>,
+<a href="../base/gsmd5.h">base/gsmd5.h</a>,
+<a href="../base/md5main.c">base/md5main.c</a>,
+<a href="../base/aes.c">base/aes.c</a>,
+<a href="../base/aes.h">base/aes.h</a>.
+
+</dl>
+
+<h3><a name="Graphics_library"></a>Graphics library</h3>
+
+<h4><a name="Library_support"></a>Support</h4>
+
+<dl>
+
+<dt>
+Bitmap processing:
+<dd>
+<a href="../base/gsbitcom.c">base/gsbitcom.c</a>,
+<a href="../base/gsbitmap.h">base/gsbitmap.h</a>,
+<a href="../base/gsbitops.c">base/gsbitops.c</a>,
+<a href="../base/gsbitops.h">base/gsbitops.h</a>,
+<a href="../base/gsbittab.c">base/gsbittab.c</a>,
+<a href="../base/gsbittab.h">base/gsbittab.h</a>,
+<a href="../base/gsflip.c">base/gsflip.c</a>,
+<a href="../base/gsflip.h">base/gsflip.h</a>,
+<a href="../base/gxbitmap.h">base/gxbitmap.h</a>,
+<a href="../base/gxbitops.h">base/gxbitops.h</a>,
+<a href="../base/gxsample.c">base/gxsample.c</a>,
+<a href="../base/gxsample.h">base/gxsample.h</a>.
+<a href="../base/gxsamplp.h">base/gxsamplp.h</a>.
+
+<dt>
+Functions:
+<dd>
+<a href="../base/gsfunc.c">base/gsfunc.c</a>,
+<a href="../base/gsfunc.h">base/gsfunc.h</a>,
+<a href="../base/gsfunc0.c">base/gsfunc0.c</a>,
+<a href="../base/gsfunc0.h">base/gsfunc0.h</a>,
+<a href="../base/gsfunc3.c">base/gsfunc3.c</a>,
+<a href="../base/gsfunc3.h">base/gsfunc3.h</a>,
+<a href="../base/gsfunc4.c">base/gsfunc4.c</a>,
+<a href="../base/gsfunc4.h">base/gsfunc4.h</a>,
+<a href="../base/gxfunc.h">base/gxfunc.h</a>.
+
+<dt>
+Parameter lists:
+<dd>
+<a href="../base/gscparam.c">base/gscparam.c</a>,
+<a href="../base/gsparam.c">base/gsparam.c</a>,
+<a href="../base/gsparam.h">base/gsparam.h</a>,
+<a href="../base/gsparam2.c">base/gsparam2.c</a> (not used),
+<a href="../base/gsparams.c">base/gsparams.c</a>,
+<a href="../base/gsparams.h">base/gsparams.h</a>,
+<a href="../base/gsparamx.c">base/gsparamx.c</a>,
+<a href="../base/gsparamx.h">base/gsparamx.h</a>.
+
+<dt>
+I/O-related:
+<dd>
+<a href="../base/gdevpipe.c">base/gdevpipe.c</a>,
+<a href="../base/gsfname.c">base/gsfname.c</a>,
+<a href="../base/gsfname.h">base/gsfname.h</a>,
+<a href="../base/gsio.h">base/gsio.h</a>,
+<a href="../base/gsiodev.c">base/gsiodev.c</a>,
+<a href="../base/gsiodevs.c">base/gsiodevs.c</a>,
+<a href="../base/gsiodisk.c">base/gsiodisk.c</a>,
+<a href="../base/gsiorom.c">base/gsiorom.c</a>.
+<a href="../base/gsiorom.h">base/gsiorom.h</a>.
+<a href="../base/gxiodev.h">base/gxiodev.h</a>.
+
+</dl>
+
+<h4><a name="Paths"></a>Paths</h4>
+
+<dl>
+
+<dt>
+Coordinate transformation:
+<dd>
+<a href="../base/gscoord.c">base/gscoord.c</a>,
+<a href="../base/gscoord.h">base/gscoord.h</a>,
+<a href="../base/gsmatrix.c">base/gsmatrix.c</a>,
+<a href="../base/gsmatrix.h">base/gsmatrix.h</a>,
+<a href="../base/gxcoord.h">base/gxcoord.h</a>,
+<a href="../base/gxmatrix.h">base/gxmatrix.h</a>.
+
+<dt>
+Path building:
+<dd>
+<a href="../base/gsdps1.c">base/gsdps1.c</a>,
+<a href="../base/gspath.c">base/gspath.c</a>,
+<a href="../base/gspath.h">base/gspath.h</a>,
+<a href="../base/gspath1.c">base/gspath1.c</a>,
+<a href="../base/gspath2.h">base/gspath2.h</a>,
+<a href="../base/gxpath.c">base/gxpath.c</a>,
+<a href="../base/gxpath.h">base/gxpath.h</a>,
+<a href="../base/gxpath2.c">base/gxpath2.c</a>,
+<a href="../base/gxpcopy.c">base/gxpcopy.c</a>,
+<a href="../base/gxpdash.c">base/gxpdash.c</a>,
+<a href="../base/gxpflat.c">base/gxpflat.c</a>,
+<a href="../base/gzpath.h">base/gzpath.h</a>.
+
+<dt>
+Path rendering:
+<dd>
+<a href="../base/gdevddrw.c">base/gdevddrw.c</a>,
+<a href="../base/gdevddrw.h">base/gdevddrw.h</a>,
+<a href="../base/gxdtfill.h">base/gxdtfill.h</a>,
+<a href="../base/gsdps1.c">base/gsdps1.c</a>,
+<a href="../base/gspaint.c">base/gspaint.c</a>,
+<a href="../base/gspaint.h">base/gspaint.h</a>,
+<a href="../base/gspenum.h">base/gspenum.h</a>,
+<a href="../base/gxfill.c">base/gxfill.c</a>,
+<a href="../base/gxfill.h">base/gxfill.h</a>,
+<a href="../base/gxfillsl.h">base/gxfillsl.h</a>,
+<a href="../base/gxfilltr.h">base/gxfilltr.h</a>,
+<a href="../base/gxfillts.h">base/gxfillts.h</a>,
+<a href="../base/gximask.c">base/gximask.c</a>,
+<a href="../base/gximask.h">base/gximask.h</a>,
+<a href="../base/gxfdrop.c">base/gxfdrop.c</a>,
+<a href="../base/gxfdrop.h">base/gxfdrop.h</a>,
+<a href="../base/gxpaint.c">base/gxpaint.c</a>,
+<a href="../base/gxpaint.h">base/gxpaint.h</a>,
+<a href="../base/gxstroke.c">base/gxstroke.c</a>,
+<a href="../base/gzspotan.c">base/gzspotan.c</a>,
+<a href="../base/gzspotan.h">base/gzspotan.h</a>.
+
+<dt>
+Clipping:
+<dd>
+See under <a href="#Clipping">Clipping</a> below.
+
+</dl>
+
+<h4><a name="Text"></a>Text</h4>
+
+<dl>
+
+<dt>
+Fonts, generic:
+<dd>
+<a href="../base/gsfont.c">base/gsfont.c</a>,
+<a href="../base/gsfont.h">base/gsfont.h</a>,
+<a href="../devices/gxfcopy.c">devices/gxfcopy.c</a>,
+<a href="../devices/gxfcopy.h">devices/gxfcopy.h</a>,
+<a href="../base/gxfont.h">base/gxfont.h</a>.
+
+<dt>
+Fonts, specific FontTypes:
+<dd>
+<a href="../base/gsfcid.c">base/gsfcid.c</a>,
+<a href="../base/gsfcid2.c">base/gsfcid.c</a>,
+<a href="../base/gsfcmap.c">base/gsfcmap.c</a>,
+<a href="../base/gsfcmap1.c">base/gsfcmap1.c</a>,
+<a href="../base/gsfcmap.h">base/gsfcmap.h</a>,
+<a href="../base/gsfont0.c">base/gsfont0.c</a>,
+<a href="../base/gsfont0c.c">base/gsfont0c.c</a>,
+<a href="../base/gxcid.h">base/gxcid.h</a>,
+<a href="../base/gxfcid.h">base/gxfcid.h</a>,
+<a href="../base/gxfcmap.h">base/gxfcmap.h</a>,
+<a href="../base/gxfcmap1.h">base/gxfcmap1.h</a>,
+<a href="../base/gxfont0.h">base/gxfont0.h</a>,
+<a href="../base/gxfont0c.h">base/gxfont0c.h</a>,
+<a href="../base/gxfont1.h">base/gxfont1.h</a>,
+<a href="../base/gxfont42.h">base/gxfont42.h</a>,
+<a href="../base/gxftype.h">base/gxftype.h</a>,
+<a href="../base/gxttf.h">base/gxttf.h</a>.
+
+<dt>
+Character rendering + font cache, generic:
+<dd>
+<a href="../base/gsccode.h">base/gsccode.h</a>,
+<a href="../base/gschar.c">base/gschar.c</a>,
+<a href="../base/gschar.h">base/gschar.h</a>,
+<a href="../base/gscpm.h">base/gscpm.h</a>,
+<a href="../base/gsgdata.c">base/gsgdata.c</a>,
+<a href="../base/gsgdata.h">base/gsgdata.h</a>,
+<a href="../base/gsgcache.c">base/gsgcache.c</a>,
+<a href="../base/gsgcache.h">base/gsgcache.h</a>,
+<a href="../base/gstext.c">base/gstext.c</a>,
+<a href="../base/gstext.h">base/gstext.h</a>,
+<a href="../base/gxbcache.c">base/gxbcache.c</a>,
+<a href="../base/gxbcache.h">base/gxbcache.h</a>,
+<a href="../base/gxccache.c">base/gxccache.c</a>,
+<a href="../base/gxccman.c">base/gxccman.c</a>,
+<a href="../base/gxchar.c">base/gxchar.c</a>,
+<a href="../base/gxchar.h">base/gxchar.h</a>,
+<a href="../base/gxfcache.h">base/gxfcache.h</a>,
+<a href="../base/gxtext.h">base/gxtext.h</a>.
+
+<dt>
+Character rendering, specific FontTypes:
+<dd>
+<a href="../base/gschar0.c">base/gschar0.c</a>,
+<a href="../base/gscrypt1.c">base/gscrypt1.c</a>,
+<a href="../base/gscrypt1.h">base/gscrypt1.h</a>,
+<a href="../base/gstype1.c">base/gstype1.c</a>,
+<a href="../base/gstype1.h">base/gstype1.h</a>,
+<a href="../base/gstype2.c">base/gstype2.c</a>,
+<a href="../base/gstype42.c">base/gstype42.c</a>,
+<a href="../base/gxchrout.c">base/gxchrout.c</a>,
+<a href="../base/gxchrout.h">base/gxchrout.h</a>,
+<a href="../base/gxhintn.h">base/gxhintn.h</a>,
+<a href="../base/gxhintn.c">base/gxhintn.c</a>,
+<a href="../base/gxhintn1.c">base/gxhintn1.c</a>,
+<a href="../base/gxtype1.c">base/gxtype1.c</a>,
+<a href="../base/gxtype1.h">base/gxtype1.h</a>.
+
+</dl>
+
+<h4><a name="Images"></a>Images</h4>
+
+<dl>
+
+<dt>
+Buffered API (mostly for PostScript interpreter):
+<dd>
+<a href="../base/gsimage.c">base/gsimage.c</a>,
+<a href="../base/gsimage.h">base/gsimage.h</a>.
+
+<dt>
+Generic support:
+<dd>
+<a href="../base/gsiparam.h">base/gsiparam.h</a>,
+<a href="../base/gxiclass.h">base/gxiclass.h</a>,
+<a href="../base/gximage.c">base/gximage.c</a>,
+<a href="../base/gximage.h">base/gximage.h</a>,
+<a href="../base/gxiparam.h">base/gxiparam.h</a>.
+
+<dt>
+Type 1 and 4 images:
+<dd>
+
+<dl>
+
+<dt>
+Setup:
+<dd>
+<a href="../base/gsiparm4.h">base/gsiparm4.h</a>,
+<a href="../base/gximage1.c">base/gximage1.c</a>,
+<a href="../base/gximage4.c">base/gximage4.c</a>.
+
+<dt>
+Rendering:
+<dd>
+<a href="../base/gxi12bit.c">base/gxi12bit.c</a>,
+<a href="../base/gxi16bit.c">base/gxi16bit.c</a>,
+<a href="../base/gxicolor.c">base/gxicolor.c</a>,
+<a href="../base/gxidata.c">base/gxidata.c</a>,
+<a href="../base/gxifast.c">base/gxifast.c</a>,
+<a href="../base/gximono.c">base/gximono.c</a>,
+<a href="../base/gxino12b.c">base/gxino12b.c</a>,
+<a href="../base/gxino16b.c">base/gxino16b.c</a>,
+<a href="../base/gxipixel.c">base/gxipixel.c</a>,
+<a href="../base/gxiscale.c">base/gxiscale.c</a>.
+
+</dl>
+
+<dt>
+Type 2 images (Display PostScript):
+<dd>
+<a href="../base/gsiparm2.h">base/gsiparm2.h</a>,
+<a href="../base/gximage2.c">base/gximage2.c</a>.
+
+<dt>
+Type 3 images:
+<dd>
+<a href="../base/gsipar3x.h">base/gsipar3x.h</a>,
+<a href="../base/gsiparm3.h">base/gsiparm3.h</a>,
+<a href="../base/gximag3x.c">base/gximag3x.c</a>,
+<a href="../base/gximag3x.h">base/gximag3x.h</a>,
+<a href="../base/gximage3.c">base/gximage3.c</a>,
+<a href="../base/gximage3.h">base/gximage3.h</a>.
+
+<dt>
+Other:
+<dd>
+<a href="../base/gsimpath.c">base/gsimpath.c</a>,
+<a href="../base/simscale.c">base/simscale.c</a>,
+<a href="../base/simscale.h">base/simscale.h</a>.
+.
+
+</dl>
+
+<h4><a name="Paint"></a>Paint</h4>
+
+<p>
+Ghostscript uses 4 internal representations of color.  We list them here in
+the order in which they occur in the rendering pipeline.
+
+<ol>
+
+<li>Clients of the graphics library normally specify colors using the
+<em>client color</em> structure (<code>gs_client_color</code>, defined in
+<a href="../psi/gs.color.h">psi/gs.color.h</a>), consisting of one or more
+numeric values and/or a pointer to a Pattern instance.  This corresponds
+directly to the values that would be passed to the PostScript
+<code>setcolor</code> operator: one or more (floating-point) numeric
+components and/or a Pattern.  Client colors are interpreted relative to a
+color space (<code>gs_color_space</code>, defined in <a
+href="../base/gscspace.h">base/gscspace.h</a> and <a
+href="../base/gxcspace.h">base/gxcspace.h</a>, with specific color spaces
+defined in other files).  Client colors do not explicitly reference the
+color space in which they are are interpreted: <code>setcolor</code> uses
+the color space in the graphics state, while images and shadings explicitly
+specify the color space to be used.
+
+<li>For ordinary non-Pattern colors, the first step in color rendering
+reduces a client color to a <em>concrete</em> color -- a set of values in a
+color space that corresponds to the device's color model (except for
+possible conversions between DeviceGray, DeviceRGB, and DeviceCMYK),
+together with an identification of the associated color space.  (The
+confusion here between color spaces and color models will have to be cleaned
+up when we implement native Separation/DeviceN colors.)  Concrete colors are
+like the numeric values in a client color, except that they are represented
+by arrays of <code>frac</code> values (defined in <a
+href="../base/gxfrac.h">base/gxfrac.h</a>) rather than floats.  The procedure
+for this step is the virtual <code>concretize_color</code> and
+<code>concrete_space</code> procedures in the (original) color space.
+This step reduces Indexed colors, CIEBased colors, and Separation and
+DeviceN colors that use the alternate space.
+
+<li>The final step requires mapping a concrete color to the device's color
+model, done by procedures in <a href="../base/gxcmap.c">base/gxcmap.c</a>.
+These procedures combine the following three conceptual sub-steps:
+
+<ul>
+
+<li>A possible mapping between Device color spaces, possibly involving black
+generation and undercolor removal.  The non-trivial cases are implemented in
+<a href="../base/gxdcconv.c">base/gxdcconv.c</a>.
+
+<li>Application of the transfer function(s) (done in-line).
+
+<li>Halftoning if necessary: see below.
+
+</ul>
+
+The result is called (inappropriately) a <em>device color</em>
+(<code>gx_device_color</code>, defined in <a
+href="../psi/gs.color.h">psi/gs.color.h</a> and <a
+href="../base/gxdcolor.h">base/gxdcolor.h</a>).  For ordinary non-Pattern
+colors, a device color is either a pure color, or a halftone.  The device
+and color model associated with a device color are implicit.  The procedure
+for this step is the virtual <code>remap_concrete_color</code> procedure
+in the color space.
+
+<li>The pure colors that underlie a device color are opaque <em>pixel
+values</em> defined by the device (misnamed <code>gx_color_index</code>,
+defined in <a href="../base/gscindex.h">base/gscindex.h</a>).  The device with
+which they are associated is implicit.  Although the format and
+interpretation of a pixel value are known only to the device, the device's
+color model and color representation capabilities are public, defined by a
+<code>gx_color_info</code> structure stored in the device (defined in <a
+href="../base/gxdevcli.h">base/gxdevcli.h</a>).  Virtual procedures of the
+device driver map between pixel values and RGB or CMYK.  (This area is
+untidy and will need to be cleaned up when we implement native
+Separation/DeviceN colors.)
+
+</ol>
+
+<p>
+Steps 2 and 3 are normally combined into a single step for efficiency, as
+the <code>remap_color</code> virtual procedure in a color space.
+
+<p>
+Using a device color to actually paint pixels requires a further step called
+<em>color loading</em>, implemented by the <code>load</code> virtual
+procedure in the device color.  This does nothing for pure colors, but loads
+the caches for halftones and Patterns.
+
+<p>
+All of the above steps -- concretizing, mapping to a device color, and color
+loading -- are done as late as possible, normally not until the color is
+actually needed for painting.
+
+<p>
+All painting operations (fill, stroke, imagemask/show) eventually call a
+virtual procedure in the device color, either <code>fill_rectangle</code>
+or <code>fill_mask</code> to actually paint pixels.  For rectangle fills,
+pure colors call the device's <code>fill_rectangle</code> procedure;
+halftones and tiled Patterns call the device's
+<code>tile_rectangle</code>; shaded Patterns, and painting operations
+that involve a RasterOp, do something more complicated.
+
+<dl>
+
+<dt>
+Color specification:
+<dd>
+<a href="../base/gsdcolor.h">base/gsdcolor.h</a>,
+<a href="../base/gscolor.c">base/gscolor.c</a>,
+<a href="../base/gscolor.h">base/gscolor.h</a>,
+<a href="../base/gscolor1.c">base/gscolor1.c</a>,
+<a href="../base/gscolor1.h">base/gscolor1.h</a>,
+<a href="../base/gscolor2.c">base/gscolor2.c</a>,
+<a href="../base/gscolor2.h">base/gscolor2.h</a>,
+<a href="../base/gscolor3.c">base/gscolor3.c</a>,
+<a href="../base/gscolor3.h">base/gscolor3.h</a>,
+<a href="../base/gshsb.c">base/gshsb.c</a>,
+<a href="../base/gshsb.h">base/gshsb.h</a>,
+<a href="../base/gxcolor2.h">base/gxcolor2.h</a>,
+<a href="../base/gxcvalue.h">base/gxcvalue.h</a>.
+
+<dt>
+Color spaces:
+<dd>
+<a href="../base/gscdevn.c">base/gscdevn.c</a>,
+<a href="../base/gscdevn.h">base/gscdevn.h</a>,
+<a href="../base/gscie.c">base/gscie.c</a>,
+<a href="../base/gscie.h">base/gscie.h</a>,
+<a href="../base/gscpixel.c">base/gscpixel.c</a>,
+<a href="../base/gscpixel.h">base/gscpixel.h</a>,
+<a href="../base/gscscie.c">base/gscscie.c</a>,
+<a href="../base/gscsepr.c">base/gscsepr.c</a>,
+<a href="../base/gscsepr.h">base/gscsepr.h</a>,
+<a href="../base/gscspace.c">base/gscspace.c</a>,
+<a href="../base/gscspace.h">base/gscspace.h</a>,
+<a href="../base/gscssub.c">base/gscssub.c</a>,
+<a href="../base/gscssub.h">base/gscssub.h</a>,
+<a href="../base/gxcdevn.h">base/gxcdevn.h</a>,
+<a href="../base/gxcie.h">base/gxcie.h</a>,
+<a href="../base/gxcspace.h">base/gxcspace.h</a>.
+
+<dt>
+Color mapping:
+<dd>
+<a href="../base/gsciemap.c">base/gsciemap.c</a>,
+<a href="../base/gscindex.h">base/gscindex.h</a>,
+<a href="../base/gscrd.c">base/gscrd.c</a>,
+<a href="../base/gscrd.h">base/gscrd.h</a>,
+<a href="../base/gscrdp.c">base/gscrdp.c</a>,
+<a href="../base/gscrdp.h">base/gscrdp.h</a>,
+<a href="../base/gscsel.h">base/gscsel.h</a>,
+<a href="../base/gxcindex.h">base/gxcindex.h</a>,
+<a href="../base/gxcmap.c">base/gxcmap.c</a>,
+<a href="../base/gxcmap.h">base/gxcmap.h</a>,
+<a href="../base/gxctable.c">base/gxctable.c</a>,
+<a href="../base/gxctable.h">base/gxctable.h</a>,
+<a href="../base/gxdcconv.c">base/gxdcconv.c</a>,
+<a href="../base/gxdcconv.h">base/gxdcconv.h</a>,
+<a href="../base/gxdcolor.c">base/gxdcolor.c</a>,
+<a href="../base/gxdcolor.h">base/gxdcolor.h</a>,
+<a href="../base/gxdevndi.c">base/gxdevndi.c</a>,
+<a href="../base/gxdevndi.h">base/gxdevndi.h</a>,
+<a href="../base/gxdither.h">base/gxdither.h</a>,
+<a href="../base/gxfmap.h">base/gxfmap.h</a>,
+<a href="../base/gxlum.h">base/gxlum.h</a>,
+<a href="../base/gxtmap.h">base/gxtmap.h</a>.
+
+<p>
+ICC profiles are in some ways a special case of color mapping, but are
+not standard in PostScript.
+
+<dt>
+<dd>
+<a href="../base/gsicc.c">base/gsicc.c</a>,
+<a href="../base/gsicc.h">base/gsicc.h</a>,
+
+<p>
+The following files provide a callback mechanism to allow a client program 
+to specify a special case alternate tint transforms for Separation and DeviceN 
+color spaces. Among other uses this can be used to provide special handling for
+PANTONE colors.
+<dt>
+<dd>
+<a href="../base/gsnamecl.c">base/gsnamecl.c</a>,
+<a href="../base/gsnamecl.h">base/gsnamecl.h</a>,
+<a href="../base/gsncdummy.c">base/gsncdummy.c</a>,
+<a href="../base/gsncdummy.h">base/gsncdummy.h</a>,
+<a href="../psi/zncdummy.c">psi/zncdummy.c</a>,
+
+</dl>
+
+<p>
+Ghostscript represents halftones internally by "whitening orders" --
+essentially, arrays of arrays of bit coordinates within a halftone cell,
+specifying which bits are inverted to get from halftone level K to level
+K+1.  The code does support all of the PostScript halftone types, but they
+are all ultimately reduced to whitening orders.
+
+<p>
+Threshold arrays, the more conventional representation of halftones, can be
+mapped to whitening orders straightforwardly; however, whitening orders can
+represent non-monotonic halftones (halftones where the bits turned on for
+level K+1 don't necessarily include all the bits turned on for level K),
+while threshold arrays cannot.  On the other hand, threshold arrays allow
+rapid conversion of images (using a threshold comparison for each pixel)
+with no additional space, while whitening orders do not: they require
+storing the rendered halftone cell for each possible level as a bitmap.
+
+<p>
+Ghostscript uses two distinct types of rendered halftones -- that is, the
+bitmap(s) that represent a particular level.
+
+<ul>
+
+<li>Binary halftones.  The rendered halftone is a single bit plane; each bit
+selects one of two pure colors.  These are fast but limited: they are used
+for monochrome output devices, or for color devices in those cases where
+only two distinct colors are involved in a halftone (e.g., a pure cyan shade
+on a CMYK device).  The device color for a binary halftone stores a pointer
+to the halftone bitmap, and the two pure colors.
+
+<li>Multi-plane halftones.  Internally, each plane is rendered individually.
+Since there isn't enough room to store all 2^N pure colors, multi-plane
+halftones only store the scaled values for the individual components; the
+halftone renderer maps these to the pure colors on the fly, then combines
+the planes to assemble an N-bit index into the list of colors for each
+pixel, and stores the color into the fully rendered halftone.
+
+</ul>
+
+<p>
+The halftone level for rendering a color is computed in <a
+href="../base/gxdevndi.c">base/gxdevndi.c</a>; the actual halftone mask or
+tile is computed either in <a href="../base/gxcht.c">base/gxcht.c</a> (for
+multi-plane halftones), or in <a href="../base/gxht.c">base/gxht.c</a> and <a
+href="../base/gxhtbit.c">base/gxhtbit.c</a> (for binary halftones).
+
+<dl>
+
+<dt>
+Halftoning:
+<dd>
+<a href="../base/gsht.c">base/gsht.c</a>,
+<a href="../base/gsht.h">base/gsht.h</a>,
+<a href="../base/gsht1.c">base/gsht1.c</a>,
+<a href="../base/gsht1.h">base/gsht1.h</a>,
+<a href="../base/gshtscr.c">base/gshtscr.c</a>,
+<a href="../base/gshtx.c">base/gshtx.c</a>,
+<a href="../base/gshtx.h">base/gshtx.h</a>,
+<a href="../base/gxcht.c">base/gxcht.c</a>,
+<a href="../base/gxdht.h">base/gxdht.h</a>,
+<a href="../base/gxdhtres.h">base/gxdhtres.h</a>,
+<a href="../base/gxht.c">base/gxht.c</a>,
+<a href="../base/gxht.h">base/gxht.h</a>,
+<a href="../base/gxhtbit.c">base/gxhtbit.c</a>,
+<a href="../base/gxhttile.h">base/gxhttile.h</a>,
+<a href="../base/gxhttype.h">base/gxhttype.h</a>,
+<a href="../base/gzht.h">base/gzht.h</a>.
+
+</dl>
+
+<p>
+Pattern colors (tiled patterns and shadings) each use a slightly different
+approach from solid colors.
+
+<p>
+The device color for a tiled (PatternType 1) pattern contains a pointer to a
+pattern instance, plus (for uncolored patterns) the device color to be
+masked.  The pattern instance includes a procedure that actually paints the
+pattern if the pattern is not in the cache.  For the PostScript interpreter,
+this procedure returns an <code>gs_error_RemapColor</code> exception code: this
+eventually causes the interpreter to run the pattern's PaintProc, loading
+the rendering into the cache, and then re-execute the original drawing
+operator.
+
+<dl>
+
+<dt>
+Patterns:
+<dd>
+<a href="../base/gspcolor.c">base/gs.color.c</a>,
+<a href="../base/gspcolor.h">base/gs.color.h</a>,
+<a href="../base/gsptype1.c">base/gsptype1.c</a>,
+<a href="../base/gsptype1.h">base/gsptype1.h</a>,
+<a href="../base/gxp1fill.c">base/gxp1fill.c</a>,
+<a href="../base/gxp1impl.h">base/gxp1impl.h</a>,
+<a href="../base/gxpcache.h">base/gxpcache.h</a>,
+<a href="../base/gxpcmap.c">base/gxpcmap.c</a>,
+<a href="../base/gxpcolor.h">base/gxpcolor.h</a>.
+
+</dl>
+
+<p>
+The device color for a shading (PatternType 2) pattern also contains a
+pointer to a pattern instance.  Shadings are not cached: painting with a
+shading runs the shading algorithm every time.
+
+<dl>
+
+<dt>
+Shading:
+<dd>
+<a href="../base/gsptype2.c">base/gsptype2.c</a>,
+<a href="../base/gsptype2.h">base/gsptype2.h</a>,
+<a href="../base/gsshade.c">base/gsshade.c</a>,
+<a href="../base/gsshade.h">base/gsshade.h</a>,
+<a href="../base/gxshade.c">base/gxshade.c</a>,
+<a href="../base/gxshade.h">base/gxshade.h</a>,
+<a href="../base/gxshade1.c">base/gxshade1.c</a>,
+<a href="../base/gxshade4.c">base/gxshade4.c</a>,
+<a href="../base/gxshade4.h">base/gxshade4.h</a>,
+<a href="../base/gxshade6.c">base/gxshade6.c</a>,
+<a href="../base/gscicach.h">base/gscicach.h</a>,
+<a href="../base/gscicach.c">base/gscicach.c</a>.
+
+</dl>
+
+<p> In addition to the PostScript graphics model, Ghostscript supports RasterOp, 
+  a weak form of alpha channel, and eventually the full PDF 1.4 transparency model. 
+  The implemention of these facilities is quite slipshod and scattered: only RasterOp 
+  is really implemented fully. There is a general compositing architecture, but 
+  it is hardly used at all, and in particular is not used for RasterOp. It is 
+  used for implementation of the general support for overprint and overprint mode.
+<dl>
+
+<dt>
+Compositing architecture:
+<dd>
+<a href="../base/gscompt.h">base/gscompt.h</a>,
+<a href="../base/gxcomp.h">base/gxcomp.h</a>.
+
+<dt>
+RasterOp:
+<dd>
+<a href="../base/gdevdrop.c">base/gdevdrop.c</a>,
+<a href="../base/gdevrops.c">base/gdevrops.c</a>,
+<a href="../base/gsrop.c">base/gsrop.c</a>,
+<a href="../base/gsrop.h">base/gsrop.h</a>,
+<a href="../base/gsropt.h">base/gsropt.h</a>,
+<a href="../base/gsroptab.c">base/gsroptab.c</a>,
+<a href="../base/gxdevrop.h">base/gxdevrop.h</a>.
+
+<dt>
+Alpha channel and compositing:
+<dd>
+<a href="../base/gsalpha.c">base/gsalpha.c</a>,
+<a href="../base/gsalpha.h">base/gsalpha.h</a>,
+<a href="../base/gsalphac.c">base/gsalphac.c</a>,
+<a href="../base/gsalphac.h">base/gsalphac.h</a>,
+<a href="../base/gsdpnext.h">base/gsdpnext.h</a>,
+<a href="../base/gxalpha.h">base/gxalpha.h</a>.
+
+<dt>
+Advanced transparency:
+<dd>
+<a href="../base/gstparam.h">base/gstparam.h</a>,
+<a href="../base/gstrans.c">base/gstrans.c</a>,
+<a href="../base/gstrans.h">base/gstrans.h</a>,
+<a href="../base/gxblend.c">base/gxblend.c</a>,
+<a href="../base/gxblend.h">base/gxblend.h</a>,
+<a href="../base/gdevp14.c">base/gdevp14.c</a>,
+<a href="../base/gdevp14.h">base/gdevp14.h</a>.
+
+<dt>
+Overprint and Overprint mode:
+<dd>
+<a href="../base/gsovrc.c">base/gsovrc.c</a>,
+<a href="../base/gsovrc.h">base/gsovrc.h</a>,
+<a href="../base/gxoprect.c">base/gxoprect.c</a>,
+<a href="../base/gxoprect.h">base/gxoprect.h</a>.
+There is support for both overprint and overprint mode. There is a general
+compositor based implementation of these features for all devices. In addition,
+the memory devices implement a higher speed set of special fill routines to
+improve performance for printer based devices.
+
+</dl>
+
+<h4><a name="Clipping"></a>Clipping</h4>
+
+<p>
+The Ghostscript graphics library implements clipping by inserting a clipping
+device in the device pipeline.  The clipping device modifies all drawing
+operations to confine them to the clipping region.
+
+<p>
+The library supports three different kinds of clipping:
+
+<dl>
+
+<dt>
+Region/path clipping
+<dd>
+This corresponds to the PostScript concept of a clipping path.  The clipping
+region is specified either by a list of rectangles (subject to the
+constraints documented in <a href="../base/gxcpath.h">base/gxcpath.h</a>), or
+by a path that is converted to such a list of rectangles.
+
+<dt>
+Stationary mask clipping
+<dd>
+This corresponds to the mask operand of a PostScript ImageType 3 image.  The
+clipping region is specified by a bitmap and an (X,Y) offset in the
+coordinate space.
+
+<dt>
+Tiled mask clipping
+<dd>
+This corresponds to the region painted by a PostScript Pattern, for the case
+where the Pattern does not completely cover its bounding box but the
+combined transformation matrix has no skew or non-orthogonal rotation (i.e.,
+XStep and YStep map respectively to (X,0) and (0,Y) or vice versa).  The
+clipping region is specified by a bitmap and an (X,Y) offset in the
+coordinate space, and is replicated indefinitely in both X and Y.
+
+</dl>
+
+<p>
+Note that simply scan-converting a clipping path in the usual way does not
+produce a succession of rectangles that can simply be stored as the list for
+region-based clipping: in general, the rectangles do not satisfy the
+constraint for rectangle lists specified in <a
+href="../base/gxcpath.h">base/gxcpath.h</a>, since they may overlap in X, Y,
+or both.  A non-trivial "clipping list accumulator" device is needed to
+produce a rectangle list that does satisfy the constraint.
+
+<dl>
+
+<dt>
+Clipping support:
+<dd>
+<a href="../base/gxclip.c">base/gxclip.c</a>,
+<a href="../base/gxclip.h">base/gxclip.h</a>.
+
+<dt>
+Region/path clipping:
+<dd>
+<a href="../base/gxcpath.c">base/gxcpath.c</a>,
+<a href="../base/gxcpath.h">base/gxcpath.h</a>,
+<a href="../base/gzcpath.h">base/gzcpath.h</a>.
+
+<dt>
+Clipping list accumulator:
+<dd>
+<a href="../base/gxacpath.c">base/gxacpath.c</a>,
+<a href="../base/gzacpath.h">base/gzacpath.h</a>.
+
+<dt>
+Mask clipping support:
+<dd>
+<a href="../base/gxmclip.c">base/gxmclip.c</a>,
+<a href="../base/gxmclip.h">base/gxmclip.h</a>.
+
+<dt>
+Stationary mask clipping:
+<dd>
+<a href="../base/gxclipm.c">base/gxclipm.c</a>,
+<a href="../base/gxclipm.h">base/gxclipm.h</a>.
+
+<dt>
+Tiled mask clipping:
+<dd>
+<a href="../base/gxclip2.c">base/gxclip2.c</a>,
+<a href="../base/gxclip2.h">base/gxclip2.h</a>.
+
+</dl>
+
+<h4><a name="Other_graphics"></a>Other graphics</h4>
+
+<dl>
+
+<dt>
+Miscellaneous graphics state:
+<dd>
+<a href="../base/gsclipsr.c">base/gsclipsr.c</a>,
+<a href="../base/gsclipsr.h">base/gsclipsr.h</a>,
+<a href="../base/gsdps.c">base/gsdps.c</a>,
+<a href="../base/gsdps.h">base/gsdps.h</a>,
+<a href="../base/gsdps1.c">base/gsdps1.c</a>,
+<a href="../base/gsistate.c">base/gsistate.c</a>,
+<a href="../base/gsline.c">base/gsline.c</a>,
+<a href="../base/gsline.h">base/gsline.h</a>,
+<a href="../base/gslparam.h">base/gslparam.h</a>,
+<a href="../base/gsstate.c">base/gsstate.c</a>,
+<a href="../base/gsstate.h">base/gsstate.h</a>,
+<a href="../base/gstrap.c">base/gstrap.c</a>,
+<a href="../base/gstrap.h">base/gstrap.h</a>,
+<a href="../base/gxclipsr.h">base/gxclipsr.h</a>,
+<a href="../base/gxistate.h">base/gxistate.h</a>,
+<a href="../base/gxline.h">base/gxline.h</a>,
+<a href="../base/gxstate.h">base/gxstate.h</a>,
+<a href="../base/gzline.h">base/gzline.h</a>,
+<a href="../base/gzstate.h">base/gzstate.h</a>.
+
+</dl>
+
+<h4><a name="FAPI_support_gx"></a>Font API support</h4>
+
+<dl>
+
+<dt>
+UFST bridge:
+<dd>
+<a href="../base/gxfapiu.c">base/gxfapiu.c</a>,
+<a href="../base/gxfapiu.h">base/gxfapiu.h</a>.
+</dl>
+
+
+<h4><a name="Driver_support"></a>Driver support</h4>
+
+<dl>
+
+<dt>
+Generic driver support:
+<dd>
+<a href="../base/gdevdcrd.c">base/gdevdcrd.c</a>,
+<a href="../base/gdevdcrd.h">base/gdevdcrd.h</a>,
+<a href="../base/gdevdsha.c">base/gdevdsha.c</a>,
+<a href="../base/gdevemap.c">base/gdevemap.c</a>,
+<a href="../base/gsdevice.c">base/gsdevice.c</a>,
+<a href="../base/gsdevice.h">base/gsdevice.h</a>,
+<a href="../base/gsdparam.c">base/gsdparam.c</a>,
+<a href="../base/gsxfont.h">base/gsxfont.h</a>,
+<a href="../base/gxdevbuf.h">base/gxdevbuf.h</a>,
+<a href="../base/gxdevcli.h">base/gxdevcli.h</a>,
+<a href="../base/gxdevice.h">base/gxdevice.h</a>,
+<a href="../base/gxrplane.h">base/gxrplane.h</a>,
+<a href="../base/gxxfont.h">base/gxxfont.h</a>.
+
+<dt>
+Accessing rendered bits:
+<dd>
+<a href="../base/gdevdbit.c">base/gdevdbit.c</a>,
+<a href="../base/gdevdgbr.c">base/gdevdgbr.c</a>,
+<a href="../base/gxbitfmt.h">base/gxbitfmt.h</a>,
+<a href="../base/gxgetbit.h">base/gxgetbit.h</a>.
+
+<dt>
+"Printer" driver support:
+<dd>
+<a href="../devices/gdevmeds.c">devices/gdevmeds.c</a>,
+<a href="../devices/gdevmeds.h">devices/gdevmeds.h</a>,
+<a href="../base/gdevppla.c">base/gdevppla.c</a>,
+<a href="../base/gdevppla.h">base/gdevppla.h</a>,
+<a href="../base/gdevprn.c">base/gdevprn.c</a>,
+<a href="../base/gdevprn.h">base/gdevprn.h</a>,
+<a href="../base/gdevprna.c">base/gdevprna.c</a>,
+<a href="../base/gdevprna.h">base/gdevprna.h</a>,
+<a href="../base/gxband.h">base/gxband.h</a>,
+<a href="../base/gxpageq.c">base/gxpageq.c</a>,
+<a href="../base/gxpageq.h">base/gxpageq.h</a>.
+
+<dt>
+High-level device support:
+<dd>
+<a href="../base/gdevvec.c">base/gdevvec.c</a>,
+<a href="../base/gdevvec.h">base/gdevvec.h</a>,
+<a href="../base/gxhldevc.c">base/gxhldevc.c</a>,
+<a href="../base/gxhldevc.h">base/gxhldevc.h</a>.
+
+<dt>
+Banding:
+<dd>
+<a href="../base/gxclbits.c">base/gxclbits.c</a>,
+<a href="../base/gxcldev.h">base/gxcldev.h</a>,
+<a href="../base/gxclfile.c">base/gxclfile.c</a>,
+<a href="../base/gxclimag.c">base/gxclimag.c</a>,
+<a href="../base/gxclio.h">base/gxclio.h</a>,
+<a href="../base/gxclist.c">base/gxclist.c</a>,
+<a href="../base/gxclist.h">base/gxclist.h</a>,
+<a href="../base/gxcllzw.c">base/gxcllzw.c</a>,
+<a href="../base/gxclmem.c">base/gxclmem.c</a>,
+<a href="../base/gxclmem.h">base/gxclmem.h</a>,
+<a href="../base/gxclpage.c">base/gxclpage.c</a>,
+<a href="../base/gxclpage.h">base/gxclpage.h</a>,
+<a href="../base/gxclpath.c">base/gxclpath.c</a>,
+<a href="../base/gxclpath.h">base/gxclpath.h</a>,
+<a href="../base/gxclrast.c">base/gxclrast.c</a>,
+<a href="../base/gxclread.c">base/gxclread.c</a>,
+<a href="../base/gxclrect.c">base/gxclrect.c</a>,
+<a href="../base/gxclthrd.c">base/gxclthrd.c</a>,
+<a href="../base/gxclthrd.h">base/gxclthrd.h</a>,
+<a href="../base/gxclutil.c">base/gxclutil.c</a>,
+<a href="../base/gxclzlib.c">base/gxclzlib.c</a>,
+<a href="../base/gxdhtserial.c">base/gxdhtserial.c</a>,
+<a href="../base/gxdhtserial.h">base/gxdhtserial.h</a>,
+<a href="../base/gsserial.c">base/gsserial.c</a>,
+<a href="../base/gsserial.h">base/gsserial.h</a>.
+
+</dl>
+
+<h4><a name="Visual_trace"></a>Visual Trace</h4>
+
+<dl>
+
+<dt>
+Visual Trace support :
+<dd>
+<a href="../base/vdtrace.h">base/vdtrace.h</a>,
+<a href="../base/vdtrace.c">base/vdtrace.c</a>.
+</dl>
+
+See <a href="Lib.htm">doc/Lib.htm</a> for extensive documentation on
+Visual Trace instructions.
+
+
+<h3><a name="Device_drivers"></a>Device drivers</h3>
+
+<p>
+See <a href="Drivers.htm">doc/Drivers.htm</a> for extensive documentation on
+the interface between the core code and drivers.
+
+<p>
+The driver API includes high-level (path / image / text), mid-level
+(polygon), and low-level (rectangle / raster) operations.  Most devices
+implement only the low-level operations, and let generic code break down the
+high-level operations.  However, some devices produce high-level output, and
+therefore must implement the high-level operations.
+
+<h4><a name="Internal_devices"></a>Internal devices</h4>
+
+<p>
+There are a number of "devices" that serve internal purposes.  Some of these
+are meant to be real rendering targets; others are intended for use in
+device pipelines.  The rendering targets are:
+
+<dl>
+
+<dt>
+Memory devices, depth-independent:
+<dd>
+<a href="../base/gdevmem.c">base/gdevmem.c</a>,
+<a href="../base/gdevmem.h">base/gdevmem.h</a>,
+<a href="../base/gdevmpla.c">base/gdevmpla.c</a>,
+<a href="../base/gdevmpla.h">base/gdevmpla.h</a>,
+<a href="../base/gdevmrop.h">base/gdevmrop.h</a>,
+<a href="../base/gsdevmem.c">base/gsdevmem.c</a>,
+<a href="../base/gxdevmem.h">base/gxdevmem.h</a>.
+
+<dt>
+Memory devices, specific depths:
+<dd>
+<a href="../base/gdevm1.c">base/gdevm1.c</a>,
+<a href="../base/gdevm2.c">base/gdevm2.c</a>,
+<a href="../base/gdevm4.c">base/gdevm4.c</a>,
+<a href="../base/gdevm8.c">base/gdevm8.c</a>,
+<a href="../base/gdevm16.c">base/gdevm16.c</a>,
+<a href="../base/gdevm24.c">base/gdevm24.c</a>,
+<a href="../base/gdevm32.c">base/gdevm32.c</a>,
+<a href="../base/gdevm40.c">base/gdevm40.c</a>,
+<a href="../base/gdevm48.c">base/gdevm48.c</a>,
+<a href="../base/gdevm56.c">base/gdevm56.c</a>,
+<a href="../base/gdevm64.c">base/gdevm64.c</a>,
+<a href="../base/gdevmr1.c">base/gdevmr1.c</a>,
+<a href="../base/gdevmr2n.c">base/gdevmr2n.c</a>,
+<a href="../base/gdevmr8n.c">base/gdevmr8n.c</a>.
+
+<dt>
+Alpha-related devices:
+<dd>
+<a href="../base/gdevabuf.c">base/gdevabuf.c</a>.
+
+<dt>
+Other devices:
+<dd>
+<a href="../base/gdevdflt.c">base/gdevdflt.c</a>,
+<a href="../base/gdevhit.c">base/gdevhit.c</a>,
+<a href="../base/gdevmrun.c">base/gdevmrun.c</a>,
+<a href="../base/gdevmrun.h">base/gdevmrun.h</a>,
+<a href="../base/gdevplnx.c">base/gdevplnx.c</a>,
+<a href="../base/gdevplnx.h">base/gdevplnx.h</a>.
+</dl>
+
+<p>
+The forwarding devices meant for use in pipelines are:
+
+<dl>
+
+<dt>
+The bounding box device:
+<dd>
+<a href="../base/gdevbbox.h">base/gdevbbox.h</a>,
+<a href="../base/gdevbbox.c">base/gdevbbox.c</a>.
+
+<dt>
+Clipping devices:
+<dd>
+See under <a href="#Clipping">Clipping</a> above.
+
+<dt>
+Device filter stack:
+<dd>
+<a href="../base/gsdfilt.c">base/gsdfilt.c</a>,
+<a href="../base/gsdfilt.h">base/gsdfilt.h</a>.
+
+<dt>
+Other devices:
+<dd>
+<a href="../base/gdevnfwd.c">base/gdevnfwd.c</a>.
+
+</dl>
+
+<h4><a name="PS_and_PDF_writers"></a>PostScript and PDF writers</h4>
+
+<p>
+Because PostScript and PDF have the same graphics model, lexical syntax, and
+stack-based execution model, the drivers that produce PostScript and PDF
+output share a significant amount of support code.  In the future, the
+PostScript output driver should be replaced with a slightly modified version
+of the PDF driver, since the latter is far more sophisticated (in
+particular, it has extensive facilities for image compression and for
+handling text and fonts).
+
+<p>
+The PDF code for handling text and fonts is complex and fragile.  A major
+rewrite in June 2002 was intended to make it more robust and somewhat easier
+to understand, but also increased its size by about 40%, contrary to the
+expectation that it would shrink.  Currently both sets of code are in the
+code base, with compatible APIs, selected by a line in <a
+href="../devices/devs.mak">devices/devs.mak</a>.
+
+<dl>
+
+<dt>
+Shared support:
+<dd>
+
+<dl>
+<dt>
+Writing fonts:
+<dd>
+<a href="../devices/vector/gdevpsf.h">devices/vector/gdevpsf.h</a>,
+<a href="../devices/vector/gdevpsf1.c">devices/vector/gdevpsf1.c</a>,
+<a href="../devices/vector/gdevpsf2.c">devices/vector/gdevpsf2.c</a>,
+<a href="../devices/vector/gdevpsfm.c">devices/vector/gdevpsfm.c</a>,
+<a href="../devices/vector/gdevpsft.c">devices/vector/gdevpsft.c</a>,
+<a href="../devices/vector/gdevpsfu.c">devices/vector/gdevpsfu.c</a>,
+<a href="../devices/vector/gdevpsfx.c">devices/vector/gdevpsfx.c</a>,
+<a href="../base/gscedata.c">base/gscedata.c</a>,
+<a href="../base/gscedata.h">base/gscedata.h</a>,
+<a href="../base/gscencs.c">base/gscencs.c</a>,
+<a href="../base/gscencs.h">base/gscencs.h</a>.
+
+<dt>
+Other:
+<dd>
+<a href="../devices/vector/gdevpsdf.h">devices/vector/gdevpsdf.h</a>,
+<a href="../devices/vector/gdevpsdi.c">devices/vector/gdevpsdi.c</a>,
+<a href="../devices/vector/gdevpsdp.c">devices/vector/gdevpsdp.c</a>,
+<a href="../devices/vector/gdevpsds.c">devices/vector/gdevpsds.c</a>,
+<a href="../devices/vector/gdevpsds.h">devices/vector/gdevpsds.h</a>,
+<a href="../devices/vector/gdevpsdu.c">devices/vector/gdevpsdu.c</a>.
+
+</dl>
+
+<dt>
+Encapsulated PostScript output driver (epswrite):
+<dd>
+<a href="../devices/vector/gdevpsu.c">devices/vector/gdevpsu.c</a>,
+<a href="../devices/vector/gdevpsu.h">devices/vector/gdevpsu.h</a>.
+
+<dt>
+PDF output driver (pdfwrite):
+<dd>
+<dl>
+
+<dt>
+Substrate:
+<dd>
+<a href="../devices/vector/gdevpdfo.c">devices/vector/gdevpdfo.c</a>,
+<a href="../devices/vector/gdevpdfo.h">devices/vector/gdevpdfo.h</a>,
+<a href="../devices/vector/gdevpdfr.c">devices/vector/gdevpdfr.c</a>,
+<a href="../devices/vector/gdevpdfu.c">devices/vector/gdevpdfu.c</a>.
+
+<dt>
+Old text and fonts:
+<dd>
+<a href="../devices/vector/gdevpdfe.c">devices/vector/gdevpdfe.c</a>,
+<a href="../devices/vector/gdevpdft.c">devices/vector/gdevpdft.c</a>.
+
+<dt>
+New text and fonts:
+<dd>
+<a href="../devices/vector/gdevpdt.c">devices/vector/gdevpdt.c</a>,
+<a href="../devices/vector/gdevpdt.h">devices/vector/gdevpdt.h</a>,
+<a href="../devices/vector/gdevpdtb.c">devices/vector/gdevpdtb.c</a>,
+<a href="../devices/vector/gdevpdtb.h">devices/vector/gdevpdtb.h</a>,
+<a href="../devices/vector/gdevpdtc.c">devices/vector/gdevpdtc.c</a>,
+<a href="../devices/vector/gdevpdtd.c">devices/vector/gdevpdtd.c</a>,
+<a href="../devices/vector/gdevpdtd.h">devices/vector/gdevpdtd.h</a>,
+<a href="../devices/vector/gdevpdte.c">devices/vector/gdevpdte.c</a>,
+<a href="../devices/vector/gdevpdtf.c">devices/vector/gdevpdtf.c</a>,
+<a href="../devices/vector/gdevpdtf.h">devices/vector/gdevpdtf.h</a>,
+<a href="../devices/vector/gdevpdti.c">devices/vector/gdevpdti.c</a>,
+<a href="../devices/vector/gdevpdti.h">devices/vector/gdevpdti.h</a>,
+<a href="../devices/vector/gdevpdts.c">devices/vector/gdevpdts.c</a>,
+<a href="../devices/vector/gdevpdts.h">devices/vector/gdevpdts.h</a>,
+<a href="../devices/vector/gdevpdtt.c">devices/vector/gdevpdtt.c</a>,
+<a href="../devices/vector/gdevpdtt.h">devices/vector/gdevpdtt.h</a>,
+<a href="../devices/vector/gdevpdtv.c">devices/vector/gdevpdtv.c</a>,
+<a href="../devices/vector/gdevpdtv.h">devices/vector/gdevpdtv.h</a>,
+<a href="../devices/vector/gdevpdtw.c">devices/vector/gdevpdtw.c</a>,
+<a href="../devices/vector/gdevpdtw.h">devices/vector/gdevpdtw.h</a>,
+<a href="../devices/vector/gdevpdtx.h">devices/vector/gdevpdtx.h</a>.
+<a href="../base/ConvertUTF.h">base/ConvertUTF.h</a>,
+<a href="../base/ConvertUTF.c">base/ConvertUTF.c</a>,
+
+<dt>
+Graphics:
+<dd>
+<a href="../devices/vector/gdevpdfc.c">devices/vector/gdevpdfc.c</a>,
+<a href="../devices/vector/gdevpdfc.h">devices/vector/gdevpdfc.h</a>,
+<a href="../devices/vector/gdevpdfd.c">devices/vector/gdevpdfd.c</a>,
+<a href="../devices/vector/gdevpdfg.c">devices/vector/gdevpdfg.c</a>,
+<a href="../devices/vector/gdevpdfg.h">devices/vector/gdevpdfg.h</a>,
+<a href="../devices/vector/gdevpdfk.c">devices/vector/gdevpdfk.c</a>,
+<a href="../devices/vector/gdevpdft.c">devices/vector/gdevpdft.c</a>.
+<a href="../devices/vector/gdevpdfv.c">devices/vector/gdevpdfv.c</a>.
+
+<dt>
+Images:
+<dd>
+<a href="../devices/vector/gdevpdfb.c">devices/vector/gdevpdfb.c</a>,
+<a href="../devices/vector/gdevpdfi.c">devices/vector/gdevpdfi.c</a>,
+<a href="../devices/vector/gdevpdfj.c">devices/vector/gdevpdfj.c</a>.
+
+<dt>
+Other:
+<dd>
+<a href="../devices/vector/gdevpdf.c">devices/vector/gdevpdf.c</a>,
+<a href="../devices/vector/gdevpdfm.c">devices/vector/gdevpdfm.c</a>,
+<a href="../devices/vector/gdevpdfp.c">devices/vector/gdevpdfp.c</a>,
+<a href="../devices/vector/gdevpdfx.h">devices/vector/gdevpdfx.h</a>.
+<a href="../devices/vector/gdevpdfb.h">devices/vector/gdevpdfb.h</a>.
+
+</dl>
+
+</dl>
+
+<h4><a name="High_level_devices"></a>Other high-level devices</h4>
+
+<p>
+PCL XL output device (pxlmono, pxlcolor):
+<dd>
+<a href="../devices/vector/gdevpx.c">devices/vector/gdevpx.c</a>,
+<a href="../base/gdevpxat.h">base/gdevpxat.h</a>,
+<a href="../base/gdevpxen.h">base/gdevpxen.h</a>,
+<a href="../base/gdevpxop.h">base/gdevpxop.h</a>,
+<a href="../devices/gdevpxut.c">devices/gdevpxut.c</a>,
+<a href="../devices/gdevpxut.h">devices/gdevpxut.h</a>.
+
+<dt>
+Text extraction:
+<dd>
+<a href="../devices/vector/gdevtxtw.c">devices/vector/gdevtxtw.c</a>.
+
+<dt>
+Other high-level devices:
+<dd>
+<a href="../devices/gdevtrac.c">devices/gdevtrac.c</a>.
+
+</dl>
+
+<h4><a name="Other_maintained_drivers"></a>Other maintained drivers</h4>
+
+<p>
+The standard Ghostscript distribution includes a collection of drivers,
+mostly written by Aladdin Enterprises, that are "maintained" in the same
+sense as the Ghostscript core code.
+
+<dl>
+
+<dt>
+Display drivers:
+<dd>
+<a href="../devices/gdev8bcm.c">devices/gdev8bcm.c</a>,
+<a href="../devices/gdev8bcm.h">devices/gdev8bcm.h</a>,
+<a href="../devices/gdevevga.c">devices/gdevevga.c</a>,
+<a href="../devices/gdevl256.c">devices/gdevl256.c</a>,
+<a href="../base/gdevpccm.c">base/gdevpccm.c</a>,
+<a href="../base/gdevpccm.h">base/gdevpccm.h</a>,
+<a href="../devices/gdevpcfb.c">devices/gdevpcfb.c</a>,
+<a href="../devices/gdevpcfb.h">devices/gdevpcfb.h</a>,
+<a href="../devices/gdevs3ga.c">devices/gdevs3ga.c</a>,
+<a href="../devices/gdevsco.c">devices/gdevsco.c</a>,
+<a href="../devices/gdevsvga.c">devices/gdevsvga.c</a>,
+<a href="../devices/gdevsvga.h">devices/gdevsvga.h</a>,
+<a href="../devices/gdevvglb.c">devices/gdevvglb.c</a>.
+
+<dt>
+Window system drivers:
+<dd>
+
+<dl>
+
+<dt>
+X Windows:
+<dd>
+<a href="../devices/gdevx.c">devices/gdevx.c</a>,
+<a href="../devices/gdevx.h">devices/gdevx.h</a>,
+<a href="../devices/gdevxalt.c">devices/gdevxalt.c</a>,
+<a href="../devices/gdevxcmp.c">devices/gdevxcmp.c</a>,
+<a href="../devices/gdevxcmp.h">devices/gdevxcmp.h</a>,
+<a href="../devices/gdevxini.c">devices/gdevxini.c</a>,
+<a href="../devices/gdevxres.c">devices/gdevxres.c</a>.
+
+<dt>
+Microsoft Windows:
+<dd>
+<a href="../devices/gdevmswn.c">devices/gdevmswn.c</a>,
+<a href="../devices/gdevmswn.h">devices/gdevmswn.h</a>,
+<a href="../devices/gdevmsxf.c">devices/gdevmsxf.c</a>,
+<a href="../devices/gdevwddb.c">devices/gdevwddb.c</a>,
+<a href="../devices/gdevwdib.c">devices/gdevwdib.c</a>.
+
+<dt>
+OS/2 Presentation Manager:
+<dd>
+<a href="../devices/gdevpm.h">devices/gdevpm.h</a>,
+<a href="../base/gspmdrv.c">base/gspmdrv.c</a>,
+<a href="../base/gspmdrv.h">base/gspmdrv.h</a>.
+
+</dl>
+
+<dt>
+Raster file output drivers:
+<dd>
+
+<dl>
+
+<dt>
+Fax and TIFF:
+<dd>
+<a href="../devices/gdevfax.c">devices/gdevfax.c</a>,
+<a href="../devices/gdevfax.h">devices/gdevfax.h</a>,
+<a href="../devices/gdevtfax.c">devices/gdevtfax.c</a>,
+<a href="../devices/gdevtfax.h">devices/gdevtfax.h</a>,
+<a href="../devices/gdevtifs.c">devices/gdevtifs.c</a>,
+<a href="../devices/gdevtifs.h">devices/gdevtifs.h</a>,
+<a href="../devices/gdevtfnx.c">devices/gdevtfnx.c</a>.
+<a href="../devices/gdevtsep.c">devices/gdevtsep.c</a>.
+
+<dt>
+Example DeviceN devices:
+<dd>
+<a href="../base/gdevdevn.c">base/gdevdevn.c</a>,
+<a href="../base/gdevdevn.h">base/gdevdevn.h</a>,
+<a href="../devices/gdevxcf.c">devices/gdevxcf.c</a>,
+<a href="../devices/gdevpsd.c">devices/gdevpsd.c</a>,
+<a href="../devices/gdevperm.c">devices/gdevperm.c</a>.
+
+<dt>
+Other raster file formats:
+<dd>
+<a href="../devices/gdevbit.c">devices/gdevbit.c</a>,
+<a href="../devices/gdevbmp.c">devices/gdevbmp.c</a>,
+<a href="../devices/gdevbmp.h">devices/gdevbmp.h</a>,
+<a href="../devices/gdevbmpa.c">devices/gdevbmpa.c</a>,
+<a href="../devices/gdevbmpc.c">devices/gdevbmpc.c</a>,
+<a href="../devices/gdevjpeg.c">devices/gdevjpeg.c</a>,
+<a href="../devices/gdevmiff.c">devices/gdevmiff.c</a>,
+<a href="../devices/gdevp2up.c">devices/gdevp2up.c</a>,
+<a href="../devices/gdevpcx.c">devices/gdevpcx.c</a>,
+<a href="../devices/gdevpbm.c">devices/gdevpbm.c</a>,
+<a href="../devices/gdevpng.c">devices/gdevpng.c</a>,
+<a href="../devices/gdevpsim.c">devices/gdevpsim.c</a>.
+
+</dl>
+
+<dt>
+Printer drivers:
+<dd>
+
+<dl>
+
+<dt>
+Operating system printer services:
+<dd>
+<a href="../devices/gdevos2p.c">devices/gdevos2p.c</a>,
+<a href="../devices/gdevwpr2.c">devices/gdevwpr2.c</a>,
+<a href="../devices/gdevwprn.c">devices/gdevwprn.c</a>.
+
+<dt>
+H-P monochrome printers:
+<dd>
+<a href="../devices/gdevdljm.c">devices/gdevdljm.c</a>,
+<a href="../devices/gdevdljm.h">devices/gdevdljm.h</a>,
+<a href="../devices/gdevdjet.c">devices/gdevdjet.c</a>,
+<a href="../devices/gdevlj56.c">devices/gdevlj56.c</a>.
+
+<dt>
+Other printers:
+<dd>
+<a href="../devices/gdevatx.c">devices/gdevatx.c</a>.
+
+</dl>
+
+</dl>
+
+<h4><a name="Contributed_drivers"></a>Contributed drivers</h4>
+
+<p>
+This list is likely to be incomplete and inaccurate: see
+<a href="../devices/contrib.mak">devices/contrib.mak</a> and
+<a href="../contrib/contrib.mak">contrib/contrib.mak</a>.
+
+<dl>
+
+<dt>
+Display and window system drivers:
+<dd>
+<a href="../devices/gdev3b1.c">devices/gdev3b1.c</a>,
+<a href="../devices/gdevherc.c">devices/gdevherc.c</a>,
+<a href="../devices/gdevpe.c">devices/gdevpe.c</a>,
+<a href="../devices/gdevsnfb.c">devices/gdevsnfb.c</a>,
+<a href="../devices/gdevsun.c">devices/gdevsun.c</a>.
+
+<dt>
+Raster file output drivers:
+<dd>
+<a href="../devices/gdevcfax.c">devices/gdevcfax.c</a>,
+<a href="../devices/gdevcif.c">devices/gdevcif.c</a>,
+<a href="../devices/gdevdfax.c">devices/gdevdfax.c</a>,
+<a href="../devices/gdevifno.c">devices/gdevifno.c</a>,
+<a href="../devices/gdevmgr.c">devices/gdevmgr.c</a>,
+<a href="../devices/gdevmgr.h">devices/gdevmgr.h</a>,
+<a href="../devices/gdevsgi.c">devices/gdevsgi.c</a>,
+<a href="../devices/gdevsgi.h">devices/gdevsgi.h</a>,
+<a href="../devices/gdevsunr.c">devices/gdevsunr.c</a>,
+<a href="../devices/gdevjbig2.c">devices/gdevjbig2.c</a>,
+<a href="../devices/gdevjpx.c">devices/gdevjpx.c</a>.
+
+<dt>
+Printer drivers:
+<dd>
+<a href="../lib/bj8.rpd">lib/bj8.rpd</a>,
+<a href="../lib/cbjc600.ppd">lib/cbjc600.ppd</a>,
+<a href="../lib/cbjc800.ppd">lib/cbjc800.ppd</a>,
+<a href="../devices/gdev3852.c">devices/gdev3852.c</a>,
+<a href="../devices/gdev4081.c">devices/gdev4081.c</a>,
+<a href="../devices/gdev4693.c">devices/gdev4693.c</a>,
+<a href="../devices/gdev8510.c">devices/gdev8510.c</a>,
+<a href="../devices/gdevadmp.c">devices/gdevadmp.c</a>,
+<a href="../devices/gdevbj10.c">devices/gdevbj10.c</a>,
+<a href="../devices/gdevbjc.h">devices/gdevbjc.h</a>,
+<a href="../devices/gdevbjcl.c">devices/gdevbjcl.c</a>,
+<a href="../devices/gdevbjcl.h">devices/gdevbjcl.h</a>,
+<a href="../devices/gdevccr.c">devices/gdevccr.c</a>,
+<a href="../devices/gdevcdj.c">devices/gdevcdj.c</a>,
+<a href="../devices/gdevclj.c">devices/gdevclj.c</a>,
+<a href="../devices/gdevcljc.c">devices/gdevcljc.c</a>,
+<a href="../devices/gdevcp50.c">devices/gdevcp50.c</a>,
+<a href="../devices/gdevcslw.c">devices/gdevcslw.c</a>,
+<a href="../devices/gdevdjtc.c">devices/gdevdjtc.c</a>,
+<a href="../devices/gdevdm24.c">devices/gdevdm24.c</a>,
+<a href="../devices/gdevepsc.c">devices/gdevepsc.c</a>,
+<a href="../devices/gdevepsn.c">devices/gdevepsn.c</a>,
+<a href="../devices/gdevescp.c">devices/gdevescp.c</a>,
+<a href="../devices/gdevhl7x.c">devices/gdevhl7x.c</a>,
+<a href="../devices/gdevijs.c">devices/gdevijs.c</a>,
+<a href="../devices/gdevimgn.c">devices/gdevimgn.c</a>,
+<a href="../devices/gdevl31s.c">devices/gdevl31s.c</a>,
+<a href="../devices/gdevlbp8.c">devices/gdevlbp8.c</a>,
+<a href="../devices/gdevlp8k.c">devices/gdevlp8k.c</a>,
+<a href="../devices/gdevlxm.c">devices/gdevlxm.c</a>,
+<a href="../devices/gdevn533.c">devices/gdevn533.c</a>,
+<a href="../devices/gdevo182.c">devices/gdevo182.c</a>,
+<a href="../devices/gdevokii.c">devices/gdevokii.c</a>,
+<a href="../devices/gdevpcl.c">devices/gdevpcl.c</a>,
+<a href="../devices/gdevpcl.h">devices/gdevpcl.h</a>,
+<a href="../devices/gdevphex.c">devices/gdevphex.c</a>,
+<a href="../devices/gdevpjet.c">devices/gdevpjet.c</a>,
+<a href="../devices/gdevsj48.c">devices/gdevsj48.c</a>,
+<a href="../devices/gdevsppr.c">devices/gdevsppr.c</a>,
+<a href="../devices/gdevstc.c">devices/gdevstc.c</a>,
+<a href="../devices/gdevstc.h">devices/gdevstc.h</a>,
+<a href="../devices/gdevstc1.c">devices/gdevstc1.c</a>,
+<a href="../devices/gdevstc2.c">devices/gdevstc2.c</a>,
+<a href="../devices/gdevstc3.c">devices/gdevstc3.c</a>,
+<a href="../devices/gdevstc4.c">devices/gdevstc4.c</a>,
+<a href="../devices/gdevtknk.c">devices/gdevtknk.c</a>,
+<a href="../devices/gdevupd.c">devices/gdevupd.c</a>.
+
+<dt>
+The special <tt>rinkj</tt> high-quality inkjet driver:
+<dd>
+<a href="../devices/gdevrinkj.c">devices/gdevrinkj.c</a>,
+<a href="../base/gsequivc.c">base/gsequivc.c</a>,
+<a href="../base/gsequivc.h">base/gsequivc.h</a>,
+<a href="../devices/rinkj/evenbetter-rll.c">devices/rinkj/evenbetter-rll.c</a>,
+<a href="../devices/rinkj/evenbetter-rll.h">devices/rinkj/evenbetter-rll.h</a>,
+<a href="../devices/rinkj/rinkj-byte-stream.c">devices/rinkj/rinkj-byte-stream.c</a>,
+<a href="../devices/rinkj/rinkj-byte-stream.h">devices/rinkj/rinkj-byte-stream.h</a>,
+<a href="../devices/rinkj/rinkj-config.c">devices/rinkj/rinkj-config.c</a>,
+<a href="../devices/rinkj/rinkj-config.h">devices/rinkj/rinkj-config.h</a>,
+<a href="../devices/rinkj/rinkj-device.c">devices/rinkj/rinkj-device.c</a>,
+<a href="../devices/rinkj/rinkj-device.h">devices/rinkj/rinkj-device.h</a>,
+<a href="../devices/rinkj/rinkj-dither.c">devices/rinkj/rinkj-dither.c</a>,
+<a href="../devices/rinkj/rinkj-dither.h">devices/rinkj/rinkj-dither.h</a>,
+<a href="../devices/rinkj/rinkj-epson870.c">devices/rinkj/rinkj-epson870.c</a>,
+<a href="../devices/rinkj/rinkj-epson870.h">devices/rinkj/rinkj-epson870.h</a>,
+<a href="../devices/rinkj/rinkj-screen-eb.c">devices/rinkj/rinkj-screen-eb.c</a>,
+<a href="../devices/rinkj/rinkj-screen-eb.h">devices/rinkj/rinkj-screen-eb.h</a>,
+<a href="../lib/rinkj-2200-setup">lib/rinkj-2200-setup</a>.
+
+</dl>
+
+<h3><a name="PostScript_interpreter"></a>PostScript interpreter</h3>
+
+<p>
+The PostScript interpreter is conceptually simple: in fact, an interpreter
+that could execute "3 4 add =" and print "7" was running 3 weeks after the
+first line of Ghostscript code was written.  However, a number of
+considerations make the code large and complex.
+
+<p>
+The interpreter is designed to run in environments with very limited memory.
+The main consequence of this is that it cannot allocate its stacks
+(dictionary, execution, operand) as ordinary arrays, since the
+user-specified stack size limit may be very large.  Instead, it allocates
+them as a linked list of blocks.  See below for more details.
+
+<p>
+The interpreter must never cause a C runtime error that it cannot trap.
+Unfortunately, C implementations almost never provide the ability to trap
+stack overflow.  In order to put a fixed bound on the C stack size, the
+interpreter never implements PostScript recursion by C recursion.  This
+means that any C code that logically needs to call the interpreter must
+instead push a continuation (including all necessary state information) on
+the PostScript execution stack, followed by the PostScript object to be
+executed, and then <em>return</em> to the interpreter.  (See <a
+href="../psi/estack.h">psi/estack.h</a> for more details about
+continuations.)  Unfortunately, since PostScript Level 2 introduces streams
+whose data source can be a PostScript procedure, any code that reads or
+writes stream data must be prepared to suspend itself, storing all necessary
+state in a continuation.  There are some places where this is extremely
+awkward, such as the scanner/parser.
+
+<p>
+The use of continuations affects many places in the interpreter, and even
+some places in the graphics library.  For example, when processing an image,
+one may need to call a PostScript procedure as part of mapping a CIE color
+to a device color.  Ghostscript uses a variety of dodges to handle this: for
+example, in the case of CIE color mapping, all of the PostScript procedures
+are pre-sampled and the results cached.  The Adobe implementation limits
+this kind of recursion to a fixed number of levels (5?): this would be
+another acceptable approach, but at this point it would require far more
+code restructuring than it would be worth.
+
+<p>
+A significant amount of the PostScript language implementation is in fact
+written in PostScript.  Writing in PostScript leverages the C code for
+multi-threading, garbage collection, error handling, continuations for
+streams, etc., etc.; also, we have found PostScript in general more concise
+and easier to debug than C, mostly because of memory management issues.  So
+given the choice, we tended to implement a feature in PostScript if it
+worked primarily with PostScript data structures, wasn't heavily used
+(example: font loading), or if it interacted with the stream or other
+callback machinery (examples: ReusableFileDecode streams, resourceforall).
+Often we would add non-standard PostScript operators for functions that had
+to run faster or that did more C-like things, such as the media matching
+algorithm for setpagedevice.
+
+
+
+<h4><a name="Main_program"></a>Main program</h4>
+
+<p>
+The main program of the interpreter is normally invoked from the command
+line, but it has an API as well.  In fact, it has two APIs: one that
+recognizes the existence of multiple "interpreter instances" (although it
+currently provides a default instance, which almost all clients use), and a
+completely different one designed for Windows DLLs.  These should be unified
+as soon as possible, since there are two steadily growing incompatible
+bodies of client code.
+
+<dl>
+
+<dt>
+Files:
+<dd>
+<a href="../psi/gs.c">psi/gs.c</a>,
+<a href="../psi/gserver.c">psi/gserver.c</a>,
+<a href="../psi/iinit.c">psi/iinit.c</a>,
+<a href="../psi/iinit.h">psi/iinit.h</a>,
+<a href="../psi/imain.c">psi/imain.c</a>,
+<a href="../psi/imain.h">psi/imain.h</a>,
+<a href="../psi/imainarg.c">psi/imainarg.c</a>,
+<a href="../psi/imainarg.h">psi/imainarg.h</a>,
+<a href="../psi/iminst.h">psi/iminst.h</a>,
+<a href="../psi/main.h">psi/main.h</a>.
+
+</dl>
+
+<h4><a name="Data_structures"></a>Data structures</h4>
+
+<p>
+The main data structures visible to the PostScript programmers are arrays,
+contexts, dictionaries, names, and stacks.
+
+<p>
+Arrays have no unusual properties.  See under <a href="#Refs">Refs</a> below
+for more information about how array elements are stored.
+
+<p>
+Contexts are used to hold the interpreter state even in configurations that
+don't include the Display PostScript multiple context extension.  Context
+switching is implemented by a complex cooperation of C and PostScript code.
+
+<p>
+Dictionaries have two special properties worth noting:
+
+<ul>
+
+<li>They use an optimized storage representation if all the keys are names,
+which is almost always the case.
+
+<li>They interact with a caching scheme used to accelerate name lookup in
+the interpreter.
+
+</ul>
+
+<p>
+Names are allocated in blocks.  The characters and hash chains are stored
+separately from the lookup cache information, so that in the future, most of
+the former can be compiled into the executable and shared or put in ROM.
+(This is not actually done yet.)
+
+<dl>
+
+<dt>
+Contexts:
+<dd>
+<a href="../psi/icontext.c">psi/icontext.c</a>,
+<a href="../psi/icontext.h">psi/icontext.h</a>,
+<a href="../psi/icstate.h">psi/icstate.h</a>.
+
+<dt>
+Dictionaries:
+<dd>
+<a href="../psi/iddict.h">psi/iddict.h</a>,
+<a href="../psi/idict.h">psi/idict.h</a>,
+<a href="../psi/idict.c">psi/idict.c</a>,
+<a href="../psi/idictdef.h">psi/idictdef.h</a>,
+<a href="../psi/idicttpl.h">psi/idicttpl.h</a>.
+
+<dt>
+Names:
+<dd>
+<a href="../psi/iname.c">psi/iname.c</a>,
+<a href="../psi/iname.h">psi/iname.h</a>,
+<a href="../psi/inamedef.h">psi/inamedef.h</a>,
+<a href="../psi/inameidx.h">psi/inameidx.h</a>,
+<a href="../psi/inames.h">psi/inames.h</a>,
+<a href="../psi/inamestr.h">psi/inamestr.h</a>.
+
+</dl>
+
+<h4><a name="Stacks"></a>Stacks</h4>
+
+<p>
+As mentioned above, each stack is allocated as a linked list of blocks.
+However, for reasonable performance, operators must normally be able to
+access their operands and produce their results using indexing rather than
+an access procedure.  This is implemented by ensuring that all the operands
+of an operator are in the topmost block of the stack, using guard entries
+that cause an internal error if the condition isn't met.  See <a
+href="../psi/iostack.h">psi/iostack.h</a> for more details.
+
+<dl>
+
+<dt>
+Generic stacks:
+<dd>
+<a href="../psi/isdata.h">psi/isdata.h</a>,
+<a href="../psi/istack.c">psi/istack.c</a>,
+<a href="../psi/istack.h">psi/istack.h</a>,
+<a href="../psi/istkparm.h">psi/istkparm.h</a>.
+
+<dt>
+Specific stacks:
+<dd>
+
+<dl>
+
+<dt>
+Dictionary stack:
+<dd>
+<a href="../psi/dstack.h">psi/dstack.h</a>,
+<a href="../psi/iddstack.h">psi/iddstack.h</a>,
+<a href="../psi/idsdata.h">psi/idsdata.h</a>,
+<a href="../psi/idstack.c">psi/idstack.c</a>,
+<a href="../psi/idstack.h">psi/idstack.h</a>.
+
+<dt>
+Execution stack:
+<dd>
+<a href="../psi/estack.h">psi/estack.h</a>,
+<a href="../psi/iesdata.h">psi/iesdata.h</a>,
+<a href="../psi/iestack.h">psi/iestack.h</a>.
+
+<dt>
+Operand stack:
+<dd>
+<a href="../psi/iosdata.h">psi/iosdata.h</a>,
+<a href="../psi/iostack.h">psi/iostack.h</a>,
+<a href="../psi/ostack.h">psi/ostack.h</a>.
+
+</dl>
+
+</dl>
+
+<h4><a name="Interpreter_loop"></a>Interpreter loop</h4>
+
+<dl>
+
+<dt>
+Files:
+<dd>
+<a href="../psi/interp.c">psi/interp.c</a>,
+<a href="../psi/interp.h">psi/interp.h</a>.
+
+</dl>
+
+<h4><a name="Scanning_parsing"></a>Scanning/parsing</h4>
+
+<p>
+PostScript parsing consists essentially of token scanning, and is simple in
+principle.  The scanner is complex because it must be able to suspend its
+operation at any time (i.e., between any two input characters) to allow an
+interpreter callout, if its input is coming from a procedure-based stream
+and the procedure must be called to provide more input data.
+
+<dl>
+
+<dt>
+Main scanner:
+<dd>
+<a href="../psi/iscan.c">psi/iscan.c</a>,
+<a href="../psi/iscan.h">psi/iscan.h</a>,
+<a href="../psi/iscannum.c">psi/iscannum.c</a>,
+<a href="../psi/iscannum.h">psi/iscannum.h</a>,
+<a href="../base/scanchar.h">base/scanchar.h</a>,
+<a href="../base/scantab.c">base/scantab.c</a>.
+
+<dt>
+Binary tokens:
+<dd>
+<a href="../psi/btoken.h">psi/btoken.h</a>,
+<a href="../psi/ibnum.c">psi/ibnum.c</a>,
+<a href="../psi/ibnum.h">psi/ibnum.h</a>,
+<a href="../psi/inobtokn.c">psi/inobtokn.c</a>,
+<a href="../psi/iscanbin.c">psi/iscanbin.c</a>,
+<a href="../psi/iscanbin.h">psi/iscanbin.h</a>.
+
+<dt>
+DSC parsing:
+<dd>
+<a href="../psi/dscparse.c">psi/dscparse.c</a>,
+<a href="../psi/dscparse.h">psi/dscparse.h</a>.
+
+</dl>
+
+<h4><a name="Standard_operators"></a>Standard operators</h4>
+
+<dl>
+
+<dt>
+Non-output-related:
+<dd>
+
+<dl>
+
+<dt>
+Filters:
+<dd>
+<a href="../psi/ifilter.h">psi/ifilter.h</a>,
+<a href="../psi/ifilter2.h">psi/ifilter2.h</a>,
+<a href="../psi/ifrpred.h">psi/ifrpred.h</a>,
+<a href="../psi/ifwpred.h">psi/ifwpred.h</a>,
+<a href="../psi/istream.h">psi/istream.h</a>,
+<a href="../psi/zfbcp.c">psi/zfbcp.c</a>,
+<a href="../psi/zfdctd.c">psi/zfdctd.c</a>,
+<a href="../psi/zfdcte.c">psi/zfdcte.c</a>,
+<a href="../psi/zfdecode.c">psi/zfdecode.c</a>,
+<a href="../psi/zfilter.c">psi/zfilter.c</a>,
+<a href="../psi/zfilter2.c">psi/zfilter2.c</a>,
+<a href="../psi/zfilterx.c">psi/zfilterx.c</a>,
+<a href="../psi/zfjbig2.c">psi/zfjbig2.c</a>,
+<a href="../psi/zfjpx.c">psi/zfjpx.c</a>,
+<a href="../psi/zfmd5.c">psi/zfmd5.c</a>,
+<a href="../psi/zfarc4.c">psi/zfarc4.c</a>,
+<a href="../psi/zfproc.c">psi/zfproc.c</a>,
+<a href="../psi/zfrsd.c">psi/zfrsd.c</a>,
+<a href="../psi/zfzlib.c">psi/zfzlib.c</a>.
+
+<dt>
+File and stream I/O:
+<dd>
+<a href="../psi/files.h">psi/files.h</a>,
+<a href="../psi/itoken.h">psi/itoken.h</a>,
+<a href="../psi/zbseq.c">psi/zbseq.c</a>,
+<a href="../psi/zdscpars.c">psi/zdscpars.c</a>,
+<a href="../psi/zfile.h">psi/zfile.h</a>,
+<a href="../psi/zfile.c">psi/zfile.c</a>,
+<a href="../psi/zfile1.c">psi/zfile1.c</a>,
+<a href="../psi/zfileio.c">psi/zfileio.c</a>,
+<a href="../psi/ztoken.c">psi/ztoken.c</a>.
+
+<dt>
+Data structures:
+<dd>
+<a href="../psi/zarray.c">psi/zarray.c</a>,
+<a href="../psi/zdict.c">psi/zdict.c</a>,
+<a href="../psi/zgeneric.c">psi/zgeneric.c</a>,
+<a href="../psi/zpacked.c">psi/zpacked.c</a>,
+<a href="../psi/zstring.c">psi/zstring.c</a>.
+
+<dt>
+Functions:
+<dd>
+<a href="../psi/ifunc.h">psi/ifunc.h</a>,
+<a href="../psi/zfunc.c">psi/zfunc.c</a>,
+<a href="../psi/zfunc0.c">psi/zfunc0.c</a>,
+<a href="../psi/zfunc3.c">psi/zfunc3.c</a>,
+<a href="../psi/zfunc4.c">psi/zfunc4.c</a>,
+
+<dt>
+Other:
+<dd>
+<a href="../psi/ivmem2.h">psi/ivmem2.h</a>,
+<a href="../psi/zalg.c">psi/zalg.c</a>,
+<a href="../psi/zarith.c">psi/zarith.c</a>,
+<a href="../psi/zcontext.c">psi/zcontext.c</a>,
+<a href="../psi/zcontrol.c">psi/zcontrol.c</a>,
+<a href="../psi/zmath.c">psi/zmath.c</a>,
+<a href="../psi/zmatrix.c">psi/zmatrix.c</a>,
+<a href="../psi/zmisc.c">psi/zmisc.c</a>,
+<a href="../psi/zmisc1.c">psi/zmisc1.c</a>,
+<a href="../psi/zmisc2.c">psi/zmisc2.c</a>,
+<a href="../psi/zmisc3.c">psi/zmisc3.c</a>,
+<a href="../psi/zrelbit.c">psi/zrelbit.c</a>,
+<a href="../psi/zstack.c">psi/zstack.c</a>,
+<a href="../psi/ztype.c">psi/ztype.c</a>,
+<a href="../psi/zusparam.c">psi/zusparam.c</a>,
+<a href="../psi/zvmem.c">psi/zvmem.c</a>,
+<a href="../psi/zvmem2.c">psi/zvmem2.c</a>.
+
+</dl>
+
+<dt>
+Output-related:
+<dd>
+
+<dl>
+
+<dt>
+Device management:
+<dd>
+<a href="../psi/zdevcal.c">psi/zdevcal.c</a>,
+<a href="../psi/zdevice.c">psi/zdevice.c</a>,
+<a href="../psi/zdevice2.c">psi/zdevice2.c</a>,
+<a href="../psi/ziodev.c">psi/ziodev.c</a>,
+<a href="../psi/ziodev2.c">psi/ziodev2.c</a>,
+<a href="../psi/ziodevs.c">psi/ziodevs.c</a>,
+<a href="../psi/zmedia2.c">psi/zmedia2.c</a>,
+<a href="../psi/zdfilter.c">psi/zdfilter.c</a>.
+
+<dt>
+Fonts and text:
+<dd>
+<a href="../psi/bfont.h">psi/bfont.h</a>,
+<a href="../psi/ichar.h">psi/ichar.h</a>,
+<a href="../psi/ichar1.h">psi/ichar1.h</a>,
+<a href="../psi/icharout.h">psi/icharout.h</a>,
+<a href="../psi/icid.h">psi/icid.h</a>,
+<a href="../psi/ifcid.h">psi/ifcid.h</a>,
+<a href="../psi/ifont.h">psi/ifont.h</a>,
+<a href="../psi/ifont1.h">psi/ifont1.h</a>,
+<a href="../psi/ifont2.h">psi/ifont2.h</a>,
+<a href="../psi/ifont42.h">psi/ifont42.h</a>,
+<a href="../psi/zbfont.c">psi/zbfont.c</a>,
+<a href="../psi/zcfont.c">psi/zcfont.c</a>,
+<a href="../psi/zchar.c">psi/zchar.c</a>,
+<a href="../psi/zchar1.c">psi/zchar1.c</a>,
+<a href="../psi/zchar2.c">psi/zchar2.c</a>,
+<a href="../psi/zchar32.c">psi/zchar32.c</a>,
+<a href="../psi/zchar42.c">psi/zchar42.c</a>,
+<a href="../psi/zchar42.h">psi/zchar42.h</a>,
+<a href="../psi/zcharout.c">psi/zcharout.c</a>,
+<a href="../psi/zcharx.c">psi/zcharx.c</a>,
+<a href="../psi/zcid.c">psi/zcid.c</a>,
+<a href="../psi/zcidtest.c">psi/zcidtest.c</a>,
+<a href="../psi/zfcid.c">psi/zfcid.c</a>,
+<a href="../psi/zfcid0.c">psi/zfcid0.c</a>,
+<a href="../psi/zfcid1.c">psi/zfcid1.c</a>,
+<a href="../psi/zfcmap.c">psi/zfcmap.c</a>,
+<a href="../psi/zfont.c">psi/zfont.c</a>,
+<a href="../psi/zfont0.c">psi/zfont0.c</a>,
+<a href="../psi/zfont1.c">psi/zfont1.c</a>,
+<a href="../psi/zfont2.c">psi/zfont2.c</a>,
+<a href="../psi/zfont32.c">psi/zfont32.c</a>,
+<a href="../psi/zfont42.c">psi/zfont42.c</a>,
+<a href="../psi/zfontenum.c">psi/zfontenum.c</a>.
+
+<dt>
+A bridge to the True Type bytecode interpreter:
+<dd>
+<a href="../base/gxttfb.c">base/gxttfb.c</a>,
+<a href="../base/gxttfb.h">base/gxttfb.h</a>,
+<a href="../base/ttfoutl.h">base/ttfoutl.h</a>,
+<a href="../base/ttfmain.c">base/ttfmain.c</a>,
+<a href="../base/ttfmemd.c">base/ttfmemd.c</a>,
+<a href="../base/ttfmemd.h">base/ttfmemd.h</a>,
+<a href="../base/ttfinp.c">base/ttfinp.c</a>,
+<a href="../base/ttfinp.h">base/ttfinp.h</a>.
+
+<dt>
+A reduced True Type bytecode interpreter:
+<br><em>(this is based in part on the work of the Freetype Team and incorporates some code from
+the
+FreeType 1 project)</em>
+<dd>
+<a href="../base/ttfsfnt.h">base/ttfsfnt.h</a>,
+<a href="../base/ttcalc.c">base/ttcalc.c</a>,
+<a href="../base/ttcalc.h">base/ttcalc.h</a>,
+<a href="../base/ttcommon.h">base/ttcommon.h</a>,
+<a href="../base/ttconf.h">base/ttconf.h</a>,
+<a href="../base/ttconfig.h">base/ttconfig.h</a>,
+<a href="../base/ttinterp.c">base/ttinterp.c</a>,
+<a href="../base/ttinterp.h">base/ttinterp.h</a>,
+<a href="../base/ttload.c">base/ttload.c</a>,
+<a href="../base/ttload.h">base/ttload.h</a>,
+<a href="../base/ttmisc.h">base/ttmisc.h</a>,
+<a href="../base/ttobjs.c">base/ttobjs.c</a>,
+<a href="../base/ttobjs.h">base/ttobjs.h</a>,
+<a href="../base/tttables.h">base/tttables.h</a>,
+<a href="../base/tttype.h">base/tttype.h</a>,
+<a href="../base/tttypes.h">base/tttypes.h</a>.
+
+<dt>
+Color, pattern, and halftone:
+<dd>
+<a href="../psi/icie.h">psi/icie.h</a>,
+<a href="../psi/icolor.h">psi/icolor.h</a>,
+<a href="../psi/icremap.h">psi/icremap.h</a>,
+<a href="../psi/icsmap.h">psi/icsmap.h</a>,
+<a href="../psi/iht.h">psi/iht.h</a>,
+<a href="../psi/ipcolor.h">psi/ipcolor.h</a>,
+<a href="../psi/zcie.c">psi/zcie.c</a>,
+<a href="../psi/zcolor.c">psi/zcolor.c</a>,
+<a href="../psi/zcolor1.c">psi/zcolor1.c</a>,
+<a href="../psi/zcolor2.c">psi/zcolor2.c</a>,
+<a href="../psi/zcolor3.c">psi/zcolor3.c</a>,
+<a href="../psi/zcrd.c">psi/zcrd.c</a>,
+<a href="../psi/zcsdevn.c">psi/zcsdevn.c</a>,
+<a href="../psi/zcsindex.c">psi/zcsindex.c</a>,
+<a href="../psi/zcspixel.c">psi/zcspixel.c</a>,
+<a href="../psi/zcssepr.c">psi/zcssepr.c</a>,
+<a href="../psi/zicc.c">psi/zicc.c</a>,
+<a href="../psi/zhsb.c">psi/zhsb.c</a>,
+<a href="../psi/zht.c">psi/zht.c</a>,
+<a href="../psi/zht1.c">psi/zht1.c</a>,
+<a href="../psi/zht2.h">psi/zht2.h</a>,
+<a href="../psi/zht2.c">psi/zht2.c</a>,
+<a href="../psi/zpcolor.c">psi/zpcolor.c</a>,
+<a href="../psi/zshade.c">psi/zshade.c</a>,
+<a href="../psi/ztrans.c">psi/ztrans.c</a>.
+
+<dt>
+Images:
+<dd>
+<a href="../psi/iimage.h">psi/iimage.h</a>,
+<a href="../psi/iimage2.h">psi/iimage2.h</a>,
+<a href="../psi/zimage.c">psi/zimage.c</a>,
+<a href="../psi/zimage2.c">psi/zimage2.c</a>,
+<a href="../psi/zimage3.c">psi/zimage3.c</a>,
+<a href="../psi/zfimscale.c">psi/zfimscale.c</a>.
+
+<dt>
+Other graphics:
+<dd>
+<a href="../psi/igstate.h">psi/igstate.h</a>,
+<a href="../psi/zdpnext.c">psi/zdpnext.c</a>,
+<a href="../psi/zdps.c">psi/zdps.c</a>,
+<a href="../psi/zdps1.c">psi/zdps1.c</a>,
+<a href="../psi/zgstate.c">psi/zgstate.c</a>,
+<a href="../psi/zpaint.c">psi/zpaint.c</a>,
+<a href="../psi/zpath.c">psi/zpath.c</a>,
+<a href="../psi/zpath1.c">psi/zpath1.c</a>,
+<a href="../psi/zrop.c">psi/zrop.c</a>,
+<a href="../psi/ztrap.c">psi/ztrap.c</a>,
+<a href="../psi/zupath.c">psi/zupath.c</a>.
+
+</dl>
+
+<dt>
+Operator support:
+<dd>
+<a href="../psi/oparc.h">psi/oparc.h</a>,
+<a href="../psi/opcheck.h">psi/opcheck.h</a>,
+<a href="../psi/opdef.h">psi/opdef.h</a>,
+<a href="../psi/oper.h">psi/oper.h</a>,
+<a href="../psi/opextern.h">psi/opextern.h</a>.
+
+</dl>
+
+<h4><a name="Non_standard_operators"></a>Non-standard operators</h4>
+
+<p>
+The interpreter includes many non-standard operators.  Most of these provide
+some part of the function of a standard operator, so that the standard
+operator itself can be implemented in PostScript: these are not of interest
+to users, and their function is usually obvious from the way they are used.
+However, some non-standard operators provide access to additional,
+non-standard facilities that users might want to know about, such as
+transparency, RasterOp, and in-memory rendering.  These are documented at <a
+href="Language.htm#Additional_operators">Language.htm#Additional_operators</a>.
+
+<p>
+We don't document the complete set of non-standard operators here, because
+the set changes frequently.  However, all non-standard operators are
+supposed to have names that begin with '.', so you can find them all by
+executing the following (Unix) command:
+
+<blockquote><pre>
+grep '{".[.]' psi/[zi]*.c
+</pre></blockquote>
+
+<p>
+In addition to individual non-standard operators implemented in the same
+files as standard ones, there are several independent optional packages of
+non-standard operators.  As with other non-standard operators, the names of
+all the operators in these packages begin with '.'.  We list those packages
+here.
+
+<dl>
+
+<dt>
+<a href="../psi/zdosio.c">psi/zdosio.c</a>
+<dd>
+Provides access to PC hardware I/O through MS-DOS system calls.  Probably no
+longer useful.
+
+<dt>
+<a href="../psi/zdouble.c">psi/zdouble.c</a>
+<dd>
+Provides "double" floating point arithmetic, using 8-byte strings to hold
+values.  Developed under a contract; probably used only by the group that
+funded the development.
+
+<dt>
+<a href="../psi/zfsample.c">psi/zfsample.c</a>,
+<dd>
+Provides a special operator to sample a given function and create a new type 0 function.
+
+<dt>
+<a href="../psi/zsysvm.c">psi/zsysvm.c</a>
+<dd>
+Provides operators for allocating objects in specific VM spaces,
+disregarding the current VM mode.
+
+</dl>
+
+<h4><a name="Interpreter_support"></a>Interpreter support</h4>
+
+<p>
+Memory management (refs, GC, save/restore) -- see <a
+href="#PostScript_interpreter_extensions">below</a>.
+
+<dl>
+<dt>
+Font API :
+<dd>
+<a href="../psi/ifapi.h">psi/ifapi.h</a>,
+<a href="../psi/zfapi.c">psi/zfapi.c</a>,
+<a href="../base/fapiufst.c">base/fapiufst.c</a>,
+<a href="../base/fapi_ft.c">base/fapi_ft.c</a>,
+<a href="../base/wrfont.h">base/wrfont.h</a>,
+<a href="../base/wrfont.c">base/wrfont.c</a>,
+<a href="../base/write_t1.h">base/write_t1.h</a>,
+<a href="../base/write_t1.c">base/write_t1.c</a>,
+<a href="../base/write_t2.h">base/write_t2.h</a>,
+<a href="../base/write_t2.c">base/write_t2.c</a>,
+
+<dt>
+Miscellaneous support:
+<dd>
+<a href="../psi/ierrors.h">psi/ierrors.h</a>,
+<a href="../base/gserrors.h">base/gserrors.h</a>,
+<a href="../psi/ghost.h">psi/ghost.h</a>,
+<a href="../psi/iconf.c">psi/iconf.c</a>,
+<a href="../psi/iconf.h">psi/iconf.h</a>,
+<a href="../psi/idparam.c">psi/idparam.c</a>,
+<a href="../psi/idparam.h">psi/idparam.h</a>,
+<a href="../psi/ilevel.h">psi/ilevel.h</a>,
+<a href="../psi/inouparm.c">psi/inouparm.c</a>,
+<a href="../psi/iparam.c">psi/iparam.c</a>,
+<a href="../psi/iparam.h">psi/iparam.h</a>,
+<a href="../psi/iparray.h">psi/iparray.h</a>,
+<a href="../psi/iutil.c">psi/iutil.c</a>,
+<a href="../psi/iutil.h">psi/iutil.h</a>,
+<a href="../psi/iutil2.c">psi/iutil2.c</a>,
+<a href="../psi/iutil2.h">psi/iutil2.h</a>,
+<a href="../psi/iplugin.c">psi/iplugin.c</a>,
+<a href="../psi/iplugin.h">psi/iplugin.h</a>.
+
+</dl>
+
+<h4><a name="PostScript_code"></a>PostScript code</h4>
+
+<dl>
+
+<dt>
+Initialization and language support:
+<dd>
+
+<dl>
+
+<dt>
+All configurations:
+<dd>
+<a href="../Resource/Init/gs_init.ps">Resource/Init/gs_init.ps</a>,
+<a href="../Resource/Init/gs_statd.ps">Resource/Init/gs_statd.ps</a>.
+
+<dt>
+Level 2:
+<dd>
+<a href="../Resource/Init/gs_btokn.ps">Resource/Init/gs_btokn.ps</a>,
+<a href="../Resource/Init/gs_dps1.ps">Resource/Init/gs_dps1.ps</a>,
+<a href="../Resource/Init/gs_dps2.ps">Resource/Init/gs_dps2.ps</a>,
+<a href="../Resource/Init/gs_lev2.ps">Resource/Init/gs_lev2.ps</a>,
+<a href="../Resource/Init/gs_res.ps">Resource/Init/gs_res.ps</a>,
+<a href="../Resource/Init/gs_resmp.ps">Resource/Init/gs_resmp.ps</a>,
+<a href="../Resource/Init/gs_setpd.ps">Resource/Init/gs_setpd.ps</a>.
+
+<dt>
+LanguageLevel 3:
+<dd>
+<a href="../Resource/Init/gs_frsd.ps">Resource/Init/gs_frsd.ps</a>,
+<a href="../Resource/Init/gs_ll3.ps">Resource/Init/gs_ll3.ps</a>,
+<a href="../Resource/Init/gs_trap.ps">Resource/Init/gs_trap.ps</a>.
+
+<dt>
+Display PostScript:
+<dd>
+<a href="../Resource/Init/gs_dpnxt.ps">Resource/Init/gs_dpnxt.ps</a>,
+<a href="../Resource/Init/gs_dps.ps">Resource/Init/gs_dps.ps</a>.
+
+<dt>
+Emulation of other interpreters:
+<dd>
+<a href="../Resource/Init/gs_cet.ps">Resource/Init/gs_cet.ps</a> (Adobe CPSI).
+
+</dl>
+
+<dt>
+Color Spaces and support:
+<dd>
+
+<dl>
+
+<dt>
+Color Space Loading:
+<dd>
+<a href="../Resource/Init/gs_cspace.ps">Resource/Init/gs_cspace.ps</a>,
+
+<dt>
+ICC color profiles:
+<dd>
+<a href="../Resource/Init/gs_icc.ps">Resource/Init/gs_icc.ps</a>.
+
+</dl>
+
+<dt>
+Font loading and support:
+<dd>
+
+<dl>
+
+<dt>
+Font name mapping:
+<dd>
+<a href="../Resource/Init/Fontmap">Resource/Init/Fontmap</a>,
+<a href="../lib/Fontmap.ATB">lib/Fontmap.ATB</a>,
+<a href="../lib/Fontmap.ATM">lib/Fontmap.ATM</a>,
+<a href="../Resource/Init/Fontmap.GS">Resource/Init/Fontmap.GS</a>,
+<a href="../lib/Fontmap.OS2">lib/Fontmap.OS2</a>,
+<a href="../lib/Fontmap.OSF">lib/Fontmap.OSF</a>,
+<a href="../lib/Fontmap.SGI">lib/Fontmap.SGI</a>,
+<a href="../lib/Fontmap.Sol">lib/Fontmap.Sol</a>,
+<a href="../lib/Fontmap.Ult">lib/Fontmap.Ult</a>,
+<a href="../lib/Fontmap.VMS">lib/Fontmap.VMS</a>,
+<a href="../lib/Fontmap.URW-136.T1">lib/Fontmap.URW-136.T1</a>,
+<a href="../lib/Fontmap.URW-136.TT">lib/Fontmap.URW-136.TT</a>,
+<a href="../Resource/Init/cidfmap">Resource/Init/cidfmap</a>,
+<a href="../Resource/Init/FAPIcidfmap">Resource/Init/FAPIcidfmap</a>,
+<a href="../Resource/Init/FAPIfontmap">Resource/Init/FAPIfontmap</a>,
+<a href="../Resource/Init/FCOfontmap-PCLPS2">Resource/Init/FCOfontmap-PCLPS2</a>.
+
+<dt>
+Generic:
+<dd>
+<a href="../Resource/Init/gs_fonts.ps">Resource/Init/gs_fonts.ps</a>,
+<a href="../Resource/Init/gs_fntem.ps">Resource/Init/gs_fntem.ps</a>.
+
+<dt>
+Type 1 and CFF:
+<dd>
+<a href="../Resource/Init/gs_cff.ps">Resource/Init/gs_cff.ps</a>,
+<a href="../Resource/Init/gs_diskf.ps">Resource/Init/gs_diskf.ps</a>,
+<a href="../Resource/Init/gs_type1.ps">Resource/Init/gs_type1.ps</a>.
+
+<dt>
+TrueType:
+<dd>
+<a href="../Resource/Init/gs_ttf.ps">Resource/Init/gs_ttf.ps</a>,
+<a href="../Resource/Init/gs_typ42.ps">Resource/Init/gs_typ42.ps</a>.
+
+<dt>
+CID-keyed:
+<dd>
+<a href="../Resource/Init/gs_cidcm.ps">Resource/Init/gs_cidcm.ps</a>,
+<a href="../Resource/Init/gs_cidfn.ps">Resource/Init/gs_cidfn.ps</a>,
+<a href="../Resource/Init/gs_cmap.ps">Resource/Init/gs_cmap.ps</a>,
+<a href="../Resource/Init/gs_ciddc.ps">Resource/Init/gs_ciddc.ps</a>,
+<a href="../Resource/Init/gs_cidfm.ps">Resource/Init/gs_cidfm.ps</a>,
+<a href="../Resource/Init/gs_cidtt.ps">Resource/Init/gs_cidtt.ps</a>.
+
+<dt>
+Font API:
+<dd>
+<a href="../Resource/Init/gs_fapi.ps">Resource/Init/gs_fapi.ps</a>,
+<a href="../Resource/Init/FAPIconfig">Resource/Init/FAPIconfig</a>,
+<a href="../lib/FAPIconfig-FCO">lib/FAPIconfig-FCO</a>,
+<a href="../Resource/Init/xlatmap">Resource/Init/xlatmap</a>.
+<a href="../Resource/Init/FCOfontmap-PCLPS2">Resource/Init/FCOfontmap-PCLPS2</a>.
+<a href="../lib/FCOfontmap-PCLPS3">lib/FCOfontmap-PCLPS3</a>.
+<a href="../lib/FCOfontmap-PS3">lib/FCOfontmap-PS3</a>.
+
+<dt>
+Other:
+<dd>
+<a href="../lib/gs_kanji.ps">lib/gs_kanji.ps</a>,
+<a href="../lib/gs_pfile.ps">lib/gs_pfile.ps</a>,
+<a href="../Resource/Init/gs_typ32.ps">Resource/Init/gs_typ32.ps</a>.
+
+</dl>
+
+<dt>
+Encodings:
+<dd>
+
+<dl>
+
+<dt>
+Adobe-specified:
+<dd>
+<a href="../lib/gs_ce_e.ps">lib/gs_ce_e.ps</a>,
+<a href="../Resource/Init/gs_dbt_e.ps">Resource/Init/gs_dbt_e.ps</a>,
+<a href="../Resource/Init/gs_il1_e.ps">Resource/Init/gs_il1_e.ps</a>,
+<a href="../Resource/Init/gs_mex_e.ps">Resource/Init/gs_mex_e.ps</a>,
+<a href="../Resource/Init/gs_mro_e.ps">Resource/Init/gs_mro_e.ps</a>,
+<a href="../Resource/Init/gs_pdf_e.ps">Resource/Init/gs_pdf_e.ps</a>,
+<a href="../Resource/Init/gs_std_e.ps">Resource/Init/gs_std_e.ps</a>,
+<a href="../Resource/Init/gs_sym_e.ps">Resource/Init/gs_sym_e.ps</a>,
+<a href="../Resource/Init/gs_wan_e.ps">Resource/Init/gs_wan_e.ps</a>.
+
+<dt>
+Additional:
+<dd>
+<a href="../lib/gs_il2_e.ps">lib/gs_il2_e.ps</a>,
+<a href="../lib/gs_ksb_e.ps">lib/gs_ksb_e.ps</a>,
+<a href="../lib/gs_wl1_e.ps">lib/gs_wl1_e.ps</a>,
+<a href="../lib/gs_wl2_e.ps">lib/gs_wl2_e.ps</a>,
+<a href="../lib/gs_wl5_e.ps">lib/gs_wl5_e.ps</a>.
+
+<dt>
+Pseudo-encodings for internal use:
+<dd>
+<a href="../lib/gs_lgo_e.ps">lib/gs_lgo_e.ps</a>,
+<a href="../lib/gs_lgx_e.ps">lib/gs_lgx_e.ps</a>,
+<a href="../Resource/Init/gs_mgl_e.ps">Resource/Init/gs_mgl_e.ps</a>.
+
+</dl>
+
+<dt>
+Miscellaneous:
+<dd>
+
+<dl>
+
+<dt>
+Image support:
+<dd>
+<a href="../Resource/Init/gs_img.ps">Resource/Init/gs_img.ps</a>,
+
+<dt>
+Emulation of %disk IODevice:
+<dd>
+<a href="../Resource/Init/gs_diskn.ps">Resource/Init/gs_diskn.ps</a>,
+
+<dt>
+Other support:
+<dd>
+<a href="../Resource/Init/gs_agl.ps">Resource/Init/gs_agl.ps</a>,
+<a href="../Resource/Init/gs_dscp.ps">Resource/Init/gs_dscp.ps</a>,
+<a href="../Resource/Init/gs_epsf.ps">Resource/Init/gs_epsf.ps</a>,
+<a href="../Resource/Init/gs_pdfwr.ps">Resource/Init/gs_pdfwr.ps</a>,
+<a href="../lib/gs_rdlin.ps">lib/gs_rdlin.ps</a>.
+
+<dt>
+X Windows icon bitmaps:
+<dd>
+<a href="../lib/gs_l.xbm">lib/gs_l.xbm</a>,
+<a href="../lib/gs_l.xpm">lib/gs_l.xpm</a>,
+<a href="../lib/gs_l_m.xbm">lib/gs_l_m.xbm</a>,
+<a href="../lib/gs_m.xbm">lib/gs_m.xbm</a>,
+<a href="../lib/gs_m.xpm">lib/gs_m.xpm</a>,
+<a href="../lib/gs_m_m.xbm">lib/gs_m_m.xbm</a>,
+<a href="../lib/gs_s.xbm">lib/gs_s.xbm</a>,
+<a href="../lib/gs_s.xpm">lib/gs_s.xpm</a>,
+<a href="../lib/gs_s_m.xbm">lib/gs_s_m.xbm</a>,
+<a href="../lib/gs_t.xbm">lib/gs_t.xbm</a>,
+<a href="../lib/gs_t.xpm">lib/gs_t.xpm</a>,
+<a href="../lib/gs_t_m.xbm">lib/gs_t_m.xbm</a>.
+
+<dt>
+PDF/X-3 definition file sample :
+<dd>
+<a href="../lib/PDFX_def.ps">lib/PDFX_def.ps</a>,
+
+<dt>
+Not currently used:
+<dd>
+<a href="../lib/gs_cmdl.ps">lib/gs_cmdl.ps</a>,
+<a href="../Resource/Init/gs_l2img.ps">Resource/Init/gs_l2img.ps</a>.
+
+</dl>
+
+</dl>
+
+<h3><a name="PDF_interpreter"></a>PDF interpreter</h3>
+
+<p>
+Ghostscript's PDF interpreter is written entirely in PostScript, because its
+data structures are the same as PostScript's, and it is much more convenient
+to manipulate PostScript-like data structures in PostScript than in C.
+There is definitely a performance cost, but apparently not a substantial
+one: we considered moving the main interpreter loop (read a token using
+slightly different syntax than PostScript, push it on the stack if literal,
+look it up in a special dictionary for execution if not) into C, but we did
+some profiling and discovered that this wasn't accounting for enough of the
+time to be worthwhile.
+
+<p>
+Until recently, there was essentially no C code specifically for the purpose
+of supporting PDF interpretation.  The one major exception is the PDF 1.4
+transparency features, which we (but not Adobe) have made available to
+PostScript code.
+
+<p>
+In addition to patching the <code>run</code> operator to detect PDF
+files, the interpreter provides some procedures in <a
+href="../Resource/Init/pdf_main.ps">Resource/Init/pdf_main.ps</a> that are meant to be called
+from applications such as previewers.
+
+<dl>
+
+<dt>
+Files:
+<dd>
+<a href="../Resource/Init/pdf_base.ps">Resource/Init/pdf_base.ps</a>,
+<a href="../Resource/Init/pdf_draw.ps">Resource/Init/pdf_draw.ps</a>,
+<a href="../Resource/Init/pdf_font.ps">Resource/Init/pdf_font.ps</a>,
+<a href="../Resource/Init/pdf_main.ps">Resource/Init/pdf_main.ps</a>,
+<a href="../Resource/Init/pdf_rbld.ps">Resource/Init/pdf_rbld.ps</a>,
+<a href="../Resource/Init/pdf_ops.ps">Resource/Init/pdf_ops.ps</a>,
+<a href="../Resource/Init/pdf_sec.ps">Resource/Init/pdf_sec.ps</a>.
+</dl>
+
+<h3><a name="PPD"></a>PostScript Printer Description</h3>
+<p>
+A PostScript Printer Description tells a generic PostScript printer 
+driver how to generate PostScript for a particular printer.
+Ghostscript includes a PPD file for generating PostScript 
+intended to be converted to PDF.  A Windows INF file for
+installing the PPD on Windows 2000 and XP is included.
+
+<dl>
+
+<dt>
+Files:
+<dd>
+<a href="../lib/ghostpdf.ppd">lib/ghostpdf.ppd</a>,
+<a href="../lib/ghostpdf.inf">lib/ghostpdf.inf</a>,
+<a href="../lib/ghostpdf.cat">lib/ghostpdf.cat</a>,
+<a href="../lib/ghostpdf.README">lib/ghostpdf.README</a>.
+
+</dl>
+
+<h3><a name="Build_process"></a>Build process</h3>
+
+<h4><a name="Makefile_structure"></a>Makefile structure</h4>
+
+<p>
+Ghostscript's makefiles embody a number of design decisions and assumptions
+that may not be obvious from a casual reading of the code.
+
+<ul>
+
+<li>All files are stored in subdirectories.  The names of all subdirectories
+used in the build process are defined in the top-level makefiles for the
+various platforms: there are no "hard wired" directory names in any makefile
+rule.  Subdirectory names in the makefiles are relative to the directory
+that is current at build time: normally this directory is the parent of the
+various subdirectories, and holds only a <code>makefile</code>, which in
+turn simply references the real top-level makefile in the source
+subdirectory.
+
+<li>All compiler and linker switches are likewise defined by macros, again
+preferably in the top-level platform makefile.
+
+<li>There is an absolute distinction between "source-like" subdirectories,
+which are read-only during the build process, and "object-like"
+subdirectories, all of whose contents are generated by the build process and
+which can be emptied (<code>rm&nbsp;*</code>) at any time with no bad
+effects.  The source subdirectories are defined by macros named
+<code>xxxSRCDIR</code>.
+
+<li>Object subdirectories may distinguish further between those that hold
+the results of the build process that are needed at run time (i.e., that
+should be included in a run-time distribution), defined by
+<code>BINDIR</code>, and those that are not needed at run time, defined
+by <code>xxxGENDIR</code> and <code>xxxOBJDIR</code>.  (The
+distinction between these is historical and probably no longer relevant.)
+
+<li>There may be multiple object subdirectories for different build
+configurations.  On Unix, the <code>obj</code> and <code>bin</code>
+directories are used for normal production builds, the
+<code>debugobj</code> directory for debugging builds, and the
+<code>pgobj</code> directory for profiling builds; other platforms may
+use different conventions.  The Unix makefiles support targets named
+<code>debug</code> and <code>pg</code> for debugging and profiling
+builds respectively; other platforms generally do not.
+
+<li>Makefiles will be maintained by hand.  This requires editing the
+following makefile elements whenever the relevant source files changes:
+
+<ul>
+
+<li>Every header (.h) file must have a corresponding macro definition in a
+makefile.  If <code>abc.h</code> #includes <code>def.h</code> and
+<code>xyz.h</code>, the definition must have the form
+
+<blockquote><pre>
+xyz_h=&#36;(xxxSRCD)xyz.h &#36;(def_h) &#36;(xyz_h)
+</pre></blockquote>
+
+where <code>xxxSRCD</code> is the macro defining the relevant source
+directory (including a trailing '/').  Note that the '.' in the file name
+has been replaced by an underscore.  Note also that the definition must
+follow all definitions it references, since some <code>make</code>
+programs expand macros in definitions at the time of definition rather than
+at the time of use.
+
+<li>Every .c file must have a corresponding rule in a makefile.  If
+<code>abc.c</code> #includes <code>def.h</code> and
+<code>lmn.h</code>, the rule must have approximately the form
+
+<blockquote><pre>
+&#36;(xxxOBJD)abc.&#36;(OBJ) : &#36;(xxxSRCD)abc.c &#36;(def_h) &#36;(lmn_h)
+    &#36;(xxCC) &#36;(xxO_)abc.&#36;(OBJ) &#36;(C_) &#36;(xxxSRCD)abc.c
+</pre></blockquote>
+
+where <code>xxxSRCD</code> is as before; <code>xxxOBJD</code> is the
+relevant object directory; <code>xxCC</code> defines the name of the C
+compiler plus the relevant compilation switches; and <code>xxO_</code>
+and <code>C_</code> are macros used to bridge syntactic differences
+between different <code>make</code> programs.
+
+</ul>
+
+</ul>
+
+<p>
+The requirement to keep makefiles up to date by hand has been controversial.
+Two alternatives are generally proposed.
+
+<ul>
+
+<li>Programs like <code>makedeps</code>, which generate build rules
+automatically from the #include lists in C files.  We have found such
+programs useless: they "wire in" specific, concrete directory names, not
+only for our own code but even for the system header files; they have to be
+run manually whenever code files are added, renamed, or deleted, or whenever
+the list of #includes in any file changes; and they cannot deal with
+different source files requiring different compilation switches.
+
+<li>MSVC-style "project" files.  These are equally useless: they are not
+portable across different vendors' tools -- in fact, there may not even be a
+usable import/export facility to convert their data to or from text form --
+and they cannot combine configuration-independent data with
+configuration-specific data.
+
+</ul>
+
+<p>
+We have seriously considered writing our own build program in Tcl or Python
+that would eliminate these problems, or perhaps porting the tools developed
+by Digital's Vesta research project (if we can get access to them); however,
+either of these approaches would create potential portability problems of
+its own, not to mention difficulties in integrating with others' build
+systems.
+
+<p>
+For more information about makefiles:
+
+<ul>
+
+<li>For a detailed list of makefiles, and a discussion of makefile issues
+related to portability, see the <a href="#Makefiles">Makefiles</a> section
+below.
+
+<li>For more detailed information about editing configuration information in
+makefiles, see <a
+href="Make.htm#Makefile_overview">doc/Make.htm#Makefile_overview</a>.
+
+<li>For a complete example of adding a new driver to a makefile, see <a
+href="Drivers.htm#Adding_drivers">doc/Drivers.htm#Adding_drivers</a>.
+
+<li>For a few more notes on makefile coding conventions, see <a
+href="C-style.htm#Makefiles">doc/C-style.htm#Makefiles</a>.
+
+</ul>
+
+<h4><a name="dev_files"></a>.dev files</h4>
+
+<p>
+On top of the general conventions just described, Ghostscript's makefiles
+add a further layer of structure in order to support an open-ended set of
+fine-grained, flexible configuration options.  Selecting an option (usually
+called a "module") for inclusion in the build may affect the build in many
+ways:
+
+<ul>
+
+<li>Almost always, it requires linking in some compiled code files.
+
+<li>It may require running some additional initialization procedures at
+startup.
+
+<li>It may require reading in some additional PostScript files at startup.
+For example, a Level 2 PostScript build requires support for PostScript
+resources and for setpagedevice, which are implemented in PostScript code.
+
+<li>It may require adding entries to a variety of internal tables that
+catalogue such things as drivers, IODevices, Function types, etc.
+
+<li>It may require that other particular modules be included.  For example,
+the "PostScript Level 2" module requires the modules for various filters,
+color spaces, etc.
+
+<li>It may require <em>removing</em> some other (default) module from the
+build.  For example, the core (Level 1) PostScript build has a "stub" for
+binary tokens, which are a Level 2 feature but are referenced by the core
+scanner: a Level 2 build must remove the stub.  For more information about
+this, look for the string <code>-replace</code> in the makefiles and in
+<a href="../base/genconf.c">base/genconf.c</a>.
+
+</ul>
+
+<p>
+Each module is defined in the makefiles by rules that create a file named
+<code><em>xxx</em>.dev</code>.  The dependencies of the rule include all
+the files that make up the module (compiled code files, PostScript files,
+etc.); the body of the rule creates the .dev file by writing the description
+of the module into it.  A program called <code>genconf</code>, described
+in the next section, merges all the relevant .dev files together.  For
+examples of .dev rules, see any of the Ghostscript makefiles.
+
+<p>
+Ultimately, a person must specify the root set of modules to include in a
+build (which of course may require other modules, recursively).
+Ghostscript's makefiles do this with a set of macros called
+<code>FEATURE_DEVS</code> and <code>DEVICE_DEVS</code><em>n</em>, 
+defined in each top-level makefile, but nothing in the module machinery 
+depends on this.
+
+<h4><a name="Generators"></a>Generators</h4>
+
+<p>
+Ghostscript's build procedure is somewhat unusual in that it compiles and
+then executes some support programs during the build process.  These
+programs then generate data or source code that is used later on in the
+build.
+
+<p>
+The most important and complex of the generator programs is
+<code>genconf</code>.  <code>genconf</code> merges all the .dev files
+that make up the build, and creates three or more output files used in later
+stages:
+
+<ul>
+
+<li><code>gconfig.h</code>, consisting mainly of macro calls, one call
+per "resource" making up the build, other than "resources" listed in the
+other output files.
+
+<li><code>gconfigf.h</code>, produced only for PostScript builds with
+compiled-in fonts, consisting of one macro call per font.
+
+<li>A linker control file whose name varies from one platform to another,
+containing the list of compiled code files to be linked.
+
+<li>If necessary, another linker control file, also varying between
+platforms, that contains other information for the linker such as the list
+of system libraries to be searched.  (On Unix platforms, the two linker
+control functions are combined in a single file.)
+
+</ul>
+
+<dl>
+
+<dt>
+Source generators:
+<dd>
+
+<dl>
+
+<dt>
+<a href="../base/genarch.c">base/genarch.c</a>
+<dd>
+Creates a header file containing a variety of information about the hardware
+and compiler that isn't provided in any standard system header file.  Always
+used.
+
+<dt>
+<a href="../base/genconf.c">base/genconf.c</a> (also generates non-source)
+<dd>
+Constructs header files and linker control files from the collection of
+options and modules that make up the build.  See above.  Always used.
+
+<dt>
+<a href="../base/genht.c">base/genht.c</a>
+<dd>
+Converts a PostScript halftone (in a particular constrained format) to a C
+data structure that can be compiled into an executable.  Only used if any
+such halftones are included in the build.
+
+<dt>
+<a href="../base/mkromfs.c">base/mkromfs.c</a>
+<dd>
+Takes a set of directories, and creates a compressed filesystem
+image that can be compiled into the executable as static data and accessed
+through the %rom% iodevice prefix. This is used to implement the
+<code>COMPILE_INITS=1</code> feature (a compressed init fileset is more
+efficient than the current 'gsinit.c' produced by 'geninit.c'). This IODevice
+is more versatile since other files can be encapsulated such as fonts, helper
+PostScript files and Resources. The list of files is defined in part in 
+<a href="../psi/psromfs.mak">psi/psromfs.mak</a>.
+
+</dl>
+
+<dt>
+Other generators:
+<dd>
+
+<dl>
+
+<dt>
+<a href="../base/echogs.c">base/echogs.c</a>
+<dd>
+Implements a variety of shell-like functions to get around quirks,
+limitations, and omissions in the shells on various platforms.  Always used.
+
+<dt>
+<a href="../base/genconf.c">base/genconf.c</a> (also generates source)
+<dd>
+See above.
+
+<dt>
+<a href="../base/gendev.c">base/gendev.c</a> (not used)
+<dd>
+Was intended as a replacement for <code>genconf</code>, but was never
+completed.
+
+</dl>
+
+</dl>
+
+<h4><a name="Build_support"></a>Support</h4>
+
+<p>
+There are a number of programs, scripts, and configuration files that exist
+only for the sake of the build process.
+
+<dl>
+
+<dt>
+Files for PC environments:
+<dd>
+<a href="../base/gswin.icx">base/gswin.icx</a>,
+<a href="../base/gswin16.icx">base/gswin16.icx</a>,
+<a href="../base/bcc32.cfg">base/bcc32.cfg</a>,
+<a href="../base/cp.bat">base/cp.bat</a>,
+<a href="../base/cp.cmd">base/cp.cmd</a>,
+<a href="../psi/dw32c.def">psi/dw32c.def</a>,
+<a href="../psi/dwmain.rc">psi/dwmain.rc</a>,
+<a href="../psi/dwmain32.def">psi/dwmain32.def</a>,
+<a href="../psi/dwsetup.def">psi/dwsetup.def</a>,
+<a href="../psi/dwsetup_x86.manifest">psi/dwsetup_x86.manifest</a>,
+<a href="../psi/dwsetup_x64.manifest">psi/dwsetup_x64.manifest</a>,
+<a href="../psi/dwuninst.def">psi/dwuninst.def</a>,
+<a href="../psi/dwuninst_x86.manifest">psi/dwuninst_x86.manifest</a>,
+<a href="../psi/dwuninst_x64.manifest">psi/dwuninst_x64.manifest</a>,
+<a href="../psi/gsdll2.def">psi/gsdll2.def</a>,
+<a href="../psi/gsdll2.rc">psi/gsdll2.rc</a>,
+<a href="../psi/gsdll32.def">psi/gsdll32.def</a>,
+<a href="../psi/gsdll32.rc">psi/gsdll32.rc</a>,
+<a href="../psi/gsdll32w.lnk">psi/gsdll32w.lnk</a>,
+<a href="../psi/gsos2.def">psi/gsos2.def</a>,
+<a href="../psi/gsos2.icx">psi/gsos2.icx</a>,
+<a href="../psi/gsos2.rc">psi/gsos2.rc</a>,
+<a href="../base/gspmdrv.def">base/gspmdrv.def</a>,
+<a href="../base/gspmdrv.icx">base/gspmdrv.icx</a>,
+<a href="../base/gspmdrv.rc">base/gspmdrv.rc</a>,
+<a href="../base/gswin.rc">base/gswin.rc</a>,
+<a href="../base/gswin32.rc">base/gswin32.rc</a>,
+<a href="../base/mv.bat">base/mv.bat</a>,
+<a href="../base/mv.cmd">base/mv.cmd</a>,
+<a href="../base/rm.bat">base/rm.bat</a>,
+<a href="../base/rm.cmd">base/rm.cmd</a>,
+
+<dt>
+Files for MacOS:
+<dd>
+<a href="../lib/Info-macos.plist">lib/Info-macos.plist</a>.
+
+<dt>
+Files for OpenVMS:
+<dd>
+<a href="../base/append_l.com">base/append_l.com</a>,
+<a href="../base/copy_one.com">base/copy_one.com</a>,
+<a href="../base/rm_all.com">base/rm_all.com</a>,
+<a href="../base/rm_one.com">base/rm_one.com</a>.
+
+<dt>
+Other files:
+<dd>
+<a href="../base/bench.c">base/bench.c</a>,
+<a href="../base/catmake">base/catmake</a>,
+<a href="../base/instcopy">base/instcopy</a>.
+
+</dl>
+
+<h3><a name="Utilities"></a>Utilities</h3>
+
+<p>
+Ghostscript comes with many utilities for doing things like viewing bitmap
+files and converting between file formats.  Some of these are written in
+PostScript, some as scripts, and some as scripts that invoke special
+PostScript code.
+
+<h4><a name="Utilities_in_PostScript"></a>Utilities in PostScript</h4>
+
+<p>
+These are all documented in <a href="Psfiles.htm">doc/Psfiles.htm</a>, q.v.
+
+<h4><a name="Utility_scripts"></a>Utility scripts</h4>
+
+<p>
+Many of these scripts come in both Unix and MS-DOS (<code>.bat</code>
+versions; some also have an OS/2 (<code>.cmd</code>) version.  The choice
+of which versions are provided is historical and irregular.  These scripts
+should all be documented somewhere, but currently, many of them have man
+pages, a few have their own documentation in the doc directory, and some
+aren't documented at all.
+
+<dl>
+
+<dt>
+Script files without PC versions:
+<dd>
+<a href="../lib/afmdiff.awk">lib/afmdiff.awk</a>,
+<a href="../lib/dvipdf">lib/dvipdf</a>,
+<a href="../lib/lprsetup.sh">lib/lprsetup.sh</a>,
+<a href="../lib/pphs">lib/pphs</a>,
+<a href="../lib/printafm">lib/printafm</a>,
+<a href="../lib/unix-lpr.sh">lib/unix-lpr.sh</a>,
+<a href="../lib/wftopfa">lib/wftopfa</a>.
+
+<dt>
+Script files with PC versions:
+<dd>
+<a href="../lib/eps2eps">lib/eps2eps</a>,
+<a href="../lib/eps2eps.bat">lib/eps2eps.bat</a>,
+<a href="../lib/eps2eps.cmd">lib/eps2eps.cmd</a>,
+<a href="../lib/ps2ps2">lib/ps2ps2</a>,
+<a href="../lib/ps2ps2.bat">lib/ps2ps2.bat</a>,
+<a href="../lib/ps2ps2.cmd">lib/ps2ps2.cmd</a>,
+<a href="../lib/font2c">lib/font2c</a>,
+<a href="../lib/font2c.bat">lib/font2c.bat</a>,
+<a href="../lib/font2c.cmd">lib/font2c.cmd</a>,
+<a href="../lib/gsbj">lib/gsbj</a>,
+<a href="../lib/gsbj.bat">lib/gsbj.bat</a>,
+<a href="../lib/gsdj">lib/gsdj</a>,
+<a href="../lib/gsdj.bat">lib/gsdj.bat</a>,
+<a href="../lib/gsdj500">lib/gsdj500</a>,
+<a href="../lib/gsdj500.bat">lib/gsdj500.bat</a>,
+<a href="../lib/gslj">lib/gslj</a>,
+<a href="../lib/gslj.bat">lib/gslj.bat</a>,
+<a href="../lib/gslp">lib/gslp</a>,
+<a href="../lib/gslp.bat">lib/gslp.bat</a>,
+<a href="../lib/gsnd">lib/gsnd</a>,
+<a href="../lib/gsnd.bat">lib/gsnd.bat</a>,
+<a href="../lib/pdf2dsc">lib/pdf2dsc</a>,
+<a href="../lib/pdf2dsc.bat">lib/pdf2dsc.bat</a>,
+<a href="../lib/pdf2ps">lib/pdf2ps</a>,
+<a href="../lib/pdf2ps.bat">lib/pdf2ps.bat</a>,
+<a href="../lib/pdf2ps.cmd">lib/pdf2ps.cmd</a>,
+<a href="../lib/pf2afm">lib/pf2afm</a>,
+<a href="../lib/pf2afm.bat">lib/pf2afm.bat</a>,
+<a href="../lib/pf2afm.cmd">lib/pf2afm.cmd</a>,
+<a href="../lib/pfbtopfa">lib/pfbtopfa</a>,
+<a href="../lib/pfbtopfa.bat">lib/pfbtopfa.bat</a>,
+<a href="../lib/ps2ascii">lib/ps2ascii</a>,
+<a href="../lib/ps2ascii.bat">lib/ps2ascii.bat</a>,
+<a href="../lib/ps2ascii.cmd">lib/ps2ascii.cmd</a>,
+<a href="../lib/ps2epsi">lib/ps2epsi</a>,
+<a href="../lib/ps2epsi.bat">lib/ps2epsi.bat</a>,
+<a href="../lib/ps2epsi.cmd">lib/ps2epsi.cmd</a>,
+<a href="../lib/ps2pdf">lib/ps2pdf</a>,
+<a href="../lib/ps2pdf.bat">lib/ps2pdf.bat</a>,
+<a href="../lib/ps2pdf.cmd">lib/ps2pdf.cmd</a>,
+<a href="../lib/ps2pdf12">lib/ps2pdf12</a>,
+<a href="../lib/ps2pdf12.bat">lib/ps2pdf12.bat</a>,
+<a href="../lib/ps2pdf12.cmd">lib/ps2pdf12.cmd</a>,
+<a href="../lib/ps2pdf13">lib/ps2pdf13</a>,
+<a href="../lib/ps2pdf13.bat">lib/ps2pdf13.bat</a>,
+<a href="../lib/ps2pdf13.cmd">lib/ps2pdf13.cmd</a>,
+<a href="../lib/ps2pdf14">lib/ps2pdf14</a>,
+<a href="../lib/ps2pdf14.bat">lib/ps2pdf14.bat</a>,
+<a href="../lib/ps2pdf14.cmd">lib/ps2pdf14.cmd</a>,
+<a href="../lib/ps2pdfwr">lib/ps2pdfwr</a>,
+<a href="../lib/ps2pdfxx.bat">lib/ps2pdfxx.bat</a>,
+<a href="../lib/ps2ps">lib/ps2ps</a>,
+<a href="../lib/ps2ps.bat">lib/ps2ps.bat</a>,
+<a href="../lib/ps2ps.cmd">lib/ps2ps.cmd</a>.
+
+<dt>
+Script files with only PC versions:
+<dd>
+<a href="../lib/gsndt.bat">lib/gsndt.bat</a>,
+<a href="../lib/gssetgs.bat">lib/gssetgs.bat</a>,
+<a href="../lib/gssetgs32.bat">lib/gssetgs32.bat</a>,
+<a href="../lib/gssetgs64.bat">lib/gssetgs64.bat</a>,
+<a href="../lib/gst.bat">lib/gst.bat</a>,
+<a href="../lib/gstt.bat">lib/gstt.bat</a>,
+<a href="../lib/lp386.bat">lib/lp386.bat</a>,
+<a href="../lib/lp386r2.bat">lib/lp386r2.bat</a>,
+<a href="../lib/lpgs.bat">lib/lpgs.bat</a>,
+<a href="../lib/lpr2.bat">lib/lpr2.bat</a>,
+<a href="../lib/pftogsf.bat">lib/pftogsf.bat</a>,
+<a href="../lib/wmakebat.bat">lib/wmakebat.bat</a>.
+
+</dl>
+
+<hr>
+
+<h2><a name="Memory_management"></a>Memory management</h2>
+
+<h3><a name="Memory_manager_architecture"></a>Memory manager architecture</h3>
+
+<p>
+In many environments, the memory manager is a set of library facilities that
+implicitly manage the entire address space in a homogenous manner.
+Ghostscript's memory manager architecture has none of these properties:
+
+<ul>
+
+<li>Rather than a single library accessed as procedures, Ghostscript
+includes multiple allocator types, each of which in turn may have multiple
+instances (allocators).  Allocators are 'objects' with a substantial set of
+virtual functions.
+
+<li>Rather than managing the entire address space, each allocator manages a
+storage pool, which it may or may not be able to expand or reduce by calling
+on a 'parent' allocator.
+
+<li>Rather than a single genus of untyped storage blocks, Ghostscript's
+allocators provide two genera -- type-tagged 'objects', and 'strings' --
+with substantially different properties.
+
+</ul>
+
+<h4><a name="Objects_vs_strings"></a>Objects vs strings</h4>
+
+<p>
+As noted above, allocators provide two different storage genera.
+
+<p>
+Objects:
+
+<ul>
+<li>Are aligned in storage to satisfy the most stringent alignment
+requirement imposed by the CPU or compiler;
+<li>Can be referenced only by pointers to their start, not to any internal
+location, unless special arrangements are made;
+<li>May contain pointers to other objects, or to strings;
+<li>Have an associated <em>structure descriptor</em> that specifies their
+size (usually) and the location of any pointers contained within them.
+</ul>
+
+<p>
+Given a pointer to an object, the allocator that allocated it must be able
+to return the object's size and the pointer to its structure descriptor.
+(It is up to the client to know what allocator allocated an object.)
+
+<p>
+Strings:
+
+<ul>
+<li>Are not aligned in storage;
+<li>Can be referenced by pointers (consisting of a starting address and a
+length) to any substring, starting anywhere within the string;
+<li>May not contain pointers;
+<li>Do not have a structure descriptor.
+</ul>
+
+<p>
+The object/string distinction reflects a space/capability tradeoff.  The
+per-object space overhead of the standard type of allocator is typically 12
+bytes; this is too much to impose on every string of a few bytes.  On the
+other hand, restricting object pointers to reference the start of the object
+currently makes object garbage collection and compaction more
+space-efficient.  If we were to redesign the standard allocator, we would
+probably opt for a different design in which strings were allocated within
+container objects of a few hundred bytes, and pointers into the middle of
+all objects were allowed.
+
+<h4><a name="Structure_descriptors"></a>Structure descriptors</h4>
+
+<p>
+Every object allocated by a Ghostscript allocator has an associated
+structure descriptor, which the caller provides when allocating the object.
+The structure descriptor serves several purposes:
+
+<ul>
+<li>Specifying the size of the object for allocation;
+<li>Providing pointer-enumeration and pointer-relocation procedures for
+the garbage collector;
+<li>Providing an optional finalization procedure to be called when the
+object is freed (either explicitly or automatically).
+</ul>
+
+<p>
+Structure descriptors are read-only, and are normally defined statically
+using one of the large set of <code>gs_private_st_</code> or
+<code>gs_public_st_</code> macros in <a
+href="../base/gsstruct.h">base/gsstruct.h</a>.
+
+<p>
+While the structure descriptor normally specifies the size of the object,
+one can also allocate an array of bytes or objects, whose size is a multiple
+of the size in the descriptor.  For this reason, every object stores its
+size as well as a reference to its descriptor.
+
+<p>
+Because the standard Ghostscript garbage collector is non-conservative and
+can move objects, every object allocated by a Ghostscript allocator must
+have an accurate structure descriptor.  If you define a new type of object
+(structure) that will be allocated in storage managed by Ghostscript, you
+<em>must</em> create an accurate descriptor for it, and use that descriptor
+to allocate it.  The process of creating accurate descriptors for all
+structures was long and painful, and accounted for many hard-to-diagnose
+bugs.
+
+<p>
+By convention, the structure descriptor for structure type
+<code>xxx_t</code> is named <code>st_xxx</code> (this is preferred),
+or occasionally <code>st_xxx_t</code>.
+
+<p>
+Note that a structure descriptor is only required for objects allocated by
+the Ghostscript allocator.  A structure type <code>xxx_t</code> does not
+require a structure descriptor if instances of that type are used
+<em>only</em> in the following ways:
+
+<ul>
+
+<li>Instances are allocated only on the C stack, e.g., as
+<code>xxx_t&nbsp;xxx1,&nbsp;xxx2;</code>, or on the C heap, with
+<code>malloc</code> or through the Ghostscript "wrapper" defined in <a
+href="../base/gsmalloc.h">base/gsmalloc.h</a>.
+
+<li>Pointers to instances are not stored in places where the garbage
+collector will try to trace the pointer.
+
+<li>Code never attempts to get the structure type or size of an instance
+through the allocator API.
+
+</ul>
+
+<p>
+In general, structures without descriptors are problem-prone, and are
+deprecated; in new code, they should only be used if the structure is
+confined to a single .c file and its instances are only allocated on the C
+stack.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsstruct.h">base/gsstruct.h</a>,
+<a href="../base/gsstype.h">base/gsstype.h</a>.
+</dl>
+
+<h4><a name="Garbage_collection"></a>Garbage collection</h4>
+
+<p>
+The allocator architecture is designed to support compacting garbage
+collection.  Every object must be able to enumerate all the pointers it
+contains, both for tracing and for relocation.  As noted just above, the
+structure descriptor provides procedures that do this.
+
+<p>
+Whether or not a particular allocator type actually provides a garbage
+collector is up to the allocator: garbage collection is invoked through a
+virtual procedure.  In practice, however, there are only two useful garbage
+collectors for Ghostscript's own allocator:
+
+<ul>
+<li>The "real" garbage collector associated with the PostScript interpreter,
+described <a href="#Interpreter_GC">below</a>;
+<li>A "non" garbage collector that only merges adjacent free blocks.
+</ul>
+
+<p>
+As noted above, because the architecture supports compacting garbage
+collection, a "real" garbage collector cannot be run at arbitrary times,
+because it cannot reliably find and relocate pointers that are on the C
+stack.  In general, it is only safe to run a "real" garbage collector when
+control is at the top level of the program, when there are no pointers to
+garbage collectable objects from the stack (other than designated roots).
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsgc.h">base/gsgc.h</a>,
+<a href="../base/gsnogc.c">base/gsnogc.c</a>,
+<a href="../base/gsnogc.h">base/gsnogc.h</a>.
+</dl>
+
+<h4><a name="Movability"></a>Movability</h4>
+
+<p>
+As just noted, objects are normally movable by the garbage collector.
+However, some objects must be immovable, usually because some other piece of
+software must retain pointers to them.  The allocator API includes
+procedures for allocating both movable (default) and immovable objects.
+Note, however, that even immovable objects must be traceable (have a
+structure descriptor), and may be freed, by the garbage collector.
+
+<h4><a name="Parent_hierarchy"></a>Parent hierarchy</h4>
+
+<p>
+When an allocator needs to add memory to the pool that it manages, it
+requests the memory from its <em>parent</em> allocator.  Every allocator has
+a pointer to its parent; multiple allocators may share a single parent.  The
+ultimate ancestor of all allocators that can expand their pool dynamically
+is an allocator that calls <code>malloc</code>, described <a
+href="#malloc">below</a>.  However, especially in embedded environments, an
+allocator may be limited to a fixed-size pool assigned to it when it is
+created.
+
+<h4><a name="Allocator_API"></a>Allocator API</h4>
+
+In summary, the allocator API provides the following principal operations:
+
+<ul>
+<li>Allocate and free movable (default) or immovable objects and strings.
+<li>Return the structure type and size of an object.
+<li>Resize (shrink or grow) movable objects and strings, preserving
+the contents insofar as possible.
+<li>Report the size of the managed pool, and how much of it is in use.
+<li>Register and unregister root pointers for the garbage collector.
+<li>Free the allocator itself.
+<li>Consolidate adjacent free blocks to reduce fragmentation.
+</ul>
+
+<p>
+For details, see <a href="../base/gsmemory.h">base/gsmemory.h</a>.
+
+<p>
+The allocator API also includes one special hook for the PostScript
+interpreter: the concept of stable allocators.  See the section on <a
+href="#save_forgetsave_restore"><code>save</code> and
+<code>restore</code></a> below for details.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsmemraw.h">base/gsmemraw.h</a>,
+<a href="../base/gsmemory.c">base/gsmemory.c</a>,
+<a href="../base/gsmemory.h">base/gsmemory.h</a>,
+<a href="../base/gsstruct.h">base/gsstruct.h</a>,
+<a href="../base/gsstype.h">base/gsstype.h</a>.
+</dl>
+
+<h3><a name="Freeing_storage"></a>Freeing storage</h3>
+
+<p>
+Ghostscript's memory management architecture provides three different ways
+to free objects: explicitly, by reference counting, or by garbage
+collection.  They provide different safety / performance / convenience
+tradeoffs; we believe that all three are necessary.
+
+<p>
+Objects are always freed as a whole; strings may be freed piecemeal.
+
+<p>
+An object may have an associated finalization procedure, defined in the
+structure descriptor.  This procedure is called just before the object is
+freed, independent of which method is being used to free the object.  A few
+types of objects have a virtual finalization procedure as well: the
+finalization procedure defined in the descriptor simply calls the one in the
+object.
+
+<h4><a name="Explicit_freeing"></a>Explicit freeing</h4>
+
+<p>
+Objects and strings may be freed explicitly, using the
+<code>gs_free_</code> virtual procedures in the allocator API.  It is up
+to the client to ensure that all allocated objects are freed at most once,
+and that there are no dangling pointers.
+
+<p>
+Explicit freeing is the fastest method, but is the least convenient and
+least safe.  It is most appropriate when storage is freed in the same
+procedure where it is allocated, or for storage that is known to be
+referenced by only one pointer.
+
+<h4><a name="Reference_counting"></a>Reference counting</h4>
+
+<p>
+Objects may be managed by reference counting.  When an object is allocated,
+its reference count may be set to 0 or 1.  Subsequently, when the reference
+count is decremented to 0, the object is freed.
+
+<p>
+The reference counting machinery provides its own virtual finalization
+procedure for all reference-counted objects.  The machinery calls this
+procedure when it is about to free the object (but not when the object is
+freed in any other way, which is probably a design bug).  This is in
+addition to (and called before) any finalization procedure associated with
+the object type.
+
+<p>
+Reference counting is as fast as explicit freeing, but takes more space in
+the object.  It is most appropriate for relatively large objects which are
+referenced only from a small set of pointers.  Note that reference counting
+cannot free objects that are involved in a pointer cycle (e.g., A -&gt; B -&gt; C
+-&gt; A).
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsrefct.h">base/gsrefct.h</a>.
+</dl>
+
+<h4><a name="Real_garbage_collection"></a>(Real) garbage collection</h4>
+
+<p>
+Objects and strings may be freed automatically by a garbage collector.  See
+<a href="#Interpreter_GC">below</a>.
+
+<h3><a name="Special_implementations"></a>Special implementations</h3>
+
+<h4><a name="malloc"></a>malloc</h4>
+
+<p>
+As mentioned <a href="#Parent_hierarchy">above</a>, the ultimate ancestor of
+all allocators with an expandable pool is one that calls
+<code>malloc</code>.
+
+<p>Note that the default gsmalloc.c allocator for malloc/free now uses
+a mutex so that allocators that use this can be assured of thread safe
+behavior.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsmalloc.h">base/gsmalloc.h</a>,
+<a href="../base/gsmalloc.c">base/gsmalloc.c</a>.
+</dl>
+
+<h4><a name="Locking"></a>Locking</h4>
+
+<p>
+In a multi-threaded environment, if an allocator must be callable from
+multiple threads (for example, if it is used to allocate structures in one
+thread that are passed to, and freed by, another thread), the allocator must
+provide mutex protection.  Ghostscript provides this capability in the form
+of a <em>wrapper</em> allocator, that simply forwards all calls to a
+<em>target</em> allocator under protection of a mutex.  Using the wrapper
+technique, any allocator can be made thread-safe.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsmemlok.h">base/gsmemlok.h</a>,
+<a href="../base/gsmemlok.c">base/gsmemlok.c</a>.
+</dl>
+
+<h4><a name="Retrying"></a>Retrying</h4>
+
+<p>
+In an embedded environment, job failure due to memory exhaustion is very
+undesirable.  Ghostscript provides a wrapper allocator that, when an
+allocation attempt fails, calls a client-provided procedure that can attempt
+to free memory, then ask for the original allocation to be retried.  For
+example, such a procedure can wait for a queue to empty, or can free memory
+occupied by caches.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsmemret.h">base/gsmemret.h</a>,
+<a href="../base/gsmemret.c">base/gsmemret.c</a>.
+</dl>
+
+<h4><a name="Chunk"></a>Chunk</h4>
+
+<p>When multiple threads are used and there may be frequent memory allocator
+requests, mutex contention is a problem and can cause severe performance
+degradation. The chunk memory wrapper can provide each thread with its own
+instance of an allocator that only makes requests on the underlying (non-GC)
+alloctor when large blocks are needed. Small object allocations are managed
+within chunks.
+
+<p>This allocator is intended to be used on top of the basic 'gsmalloc'
+allocator (malloc/free) which is NOT garbage collected or relocated and
+which MUST be mutex protected.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsmchunk.h">base/gsmchunk.h</a>,
+<a href="../base/gsmchunk.c">base/gsmchunk.c</a>.
+</dl>
+
+<h3><a name="Standard_implementation"></a>Standard implementation</h3>
+
+<p>
+The standard Ghostscript allocator gets storage from its parent (normally
+the <code>malloc</code> allocator) in large blocks called
+<em>clumps</em>, and then allocates objects up from the low end and strings
+down from the high end.  Large objects or strings are allocated in their own
+clump.
+
+<p>
+The standard allocator maintains a set of free-block lists for small object
+sizes, one list per size (rounded up to the word size), plus a free-block
+list for large objects (but not for objects so large that they get their own
+clump: when such an object is freed, its chunk is returned to the parent).
+The lists are not sorted; adjacent blocks are only merged if needed.
+
+<p>
+While the standard allocator implements the generic allocator API, and is
+usable with the library alone, it includes a special hook for the PostScript
+interpreter to aid in the efficient allocation of PostScript composite
+objects (arrays and dictionaries).  See the section on <a
+href="#Refs">Refs</a> below for details.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/gsalloc.c">base/gsalloc.c</a>,
+<a href="../base/gsalloc.h">base/gsalloc.h</a>,
+<a href="../base/gxalloc.h">base/gxalloc.h</a>,
+<a href="../base/gxobj.h">base/gxobj.h</a>.
+</dl>
+
+<h3><a name="PostScript_interpreter_extensions"></a>PostScript interpreter extensions</h3>
+
+<p>
+The PostScript interpreter uses an allocator that extends the graphic
+library's standard allocator to handle PostScript objects,
+<code>save</code> and <code>restore</code>, and real garbage
+collection.
+
+<h4><a name="Refs"></a>Refs (PostScript "objects")</h4>
+
+<p>
+Ghostscript represents what the PLRM calls PostScript "objects" using a
+structure called a <code>ref</code>, defined in <a
+href="../psi/iref.h">psi/iref.h</a>; packed refs, used for the elements of
+packed arrays, are defined in <a href="../psi/ipacked.h">psi/ipacked.h</a>.
+See those files for detailed information.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../psi/ipacked.h">psi/ipacked.h</a>,
+<a href="../psi/iref.h">psi/iref.h</a>.
+</dl>
+
+<p>
+The PLRM calls for two types of "virtual memory" (VM) space: global and
+local.  Ghostscript adds a third space, <em>system</em> VM, whose lifetime
+is an entire session -- i.e., it is effectively "permanent".  All three
+spaces are subject to garbage collection.  There is a separate allocator
+instance for each VM space (actually, two instances each for global and
+local spaces; see <a href="#save_forgetsave_restore">below</a>).  In a
+system with multiple contexts and multiple global or local VMs, each global
+or local VM has its own allocator instance(s).
+
+<p>
+Refs that represent PostScript composite objects, and therefore include
+pointers to stored data, include a 2-bit VM space tag to indicate in which
+VM the object data are stored.  In addition to system, global, and local VM,
+there is a tag for "foreign" VM, which means that the memory is not managed
+by a Ghostscript allocator at all.  Every store into a composite object must
+check for <code>invalidaccess</code>: the VM space tag values are chosen
+to help make this check efficient.  See <a
+href="../psi/ivmspace.h">psi/ivmspace.h</a>, <a
+href="../psi/iref.h">psi/iref.h</a>, and <a
+href="../psi/store.h">psi/store.h</a> for details.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../psi/ivmspace.h">psi/ivmspace.h</a>.
+</dl>
+
+<p>
+PostScript composite objects (arrays and dictionaries) are usually small.
+Using a separate memory manager object for each composite object would waste
+a lot of space for object headers.  Therefore, the interpreter's memory
+manager packs multiple composite objects (also called "ref-containing
+objects") into a single memory manager object, similar to the way the memory
+manager packs multiple objects into a clump (see <a
+href="#Standard_implementation">above</a>).  See <a
+href="../base/gxalloc.h">base/gxalloc.h</a> for details.  This memory manager
+object has a structure descriptor, like all other memory manager objects.
+
+<p>
+Note that the <code>value.pdict</code>, <code>value.refs</code>, or
+<code>value.packed</code> member of a ref must point to a PostScript
+composite object, and therefore can point into the middle of a memory
+manager object.  This requires special handling by the garbage collector (<a
+href="#Interpreter_GC">q.v.</a>).
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../psi/ialloc.c">psi/ialloc.c</a>,
+<a href="../psi/ialloc.h">psi/ialloc.h</a>,
+<a href="../psi/iastate.h">psi/iastate.h</a>,
+<a href="../psi/iastruct.h">psi/iastruct.h</a>,
+<a href="../psi/ilocate.c">psi/ilocate.c</a>,
+<a href="../psi/imemory.h">psi/imemory.h</a>,
+<a href="../psi/istruct.h">psi/istruct.h</a>.
+</dl>
+
+<h4><a name="save_forgetsave_restore"></a>save/.forgetsave/restore</h4>
+
+<p>
+In addition to <code>save</code> and <code>restore</code>, Ghostscript
+provides a <code>.forgetsave</code> operator that makes things as though
+a given <code>save</code> had never happened.  (In data base terminology,
+<code>save</code> is "begin transaction", <code>restore</code> is
+"abort transaction", and <code>.forgetsave</code> is "end/commit
+transaction").  <code>.forgetsave</code> was implemented for a specific
+commercial customer (who may no longer even be using it): it was a pain to
+make work, but it's in the code now, and should be maintained.  See the
+extensive comments in <a href="../psi/isave.c">psi/isave.c</a> for more
+information about how these operations work.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../psi/idosave.h">psi/idosave.h</a>,
+<a href="../psi/isave.c">psi/isave.c</a>,
+<a href="../psi/isave.h">psi/isave.h</a>,
+<a href="../psi/isstate.h">psi/isstate.h</a>,
+<a href="../psi/store.h">psi/store.h</a>.
+</dl>
+
+<h4><a name="Stable_allocators"></a>Stable allocators</h4>
+
+<p>
+Even though <code>save</code> and <code>restore</code> are concepts
+from the PostScript interpreter, the generic allocator architecture and API
+include a feature to support them, called <em>stable</em> allocators.  Every
+allocator has an associated stable allocator, which tags pointers with the
+same VM space number but which is not subject to <code>save</code> and
+<code>restore</code>.  System VM is intrinsically stable (its associated
+stable allocator is the same allocator), so there are only 5 allocators in
+ordinary single-context usage: system VM, stable global VM, ordinary global
+VM, stable local VM, ordinary local VM.
+
+<p>
+The reason that we cannot simply allocate all stable objects in system VM is
+that their refs must still be tagged with the correct VM space number, so
+that the check against storing pointers from global VM to local VM can be
+enforced properly.
+
+<p>
+All PostScript objects are normally allocated with the non-stable
+allocators.  The stable allocators should be used with care, since using
+them can easily create dangling pointers: if storage allocated with a stable
+allocator contains any references to PostScript objects, the client is
+responsible for ensuring that the references don't outlive the referenced
+objects, normally by ensuring that any such referenced objects are allocated
+at the outermost <code>save</code> level.
+
+<p>
+The original reason for wanting stable allocators was the PostScript stacks,
+which are essentially PostScript arrays but are not subject to
+<code>save</code> and <code>restore</code>.  Some other uses of stable
+allocators are:
+
+<ul>
+
+<li>Several per-context structures for DPS.
+
+<li>Paths (see <code>gstate_path_memory</code> in
+<a href="../base/gsstate.c">base/gsstate.c</a>.
+
+<li>Row buffers for images (see <code>gs_image_row_memory</code> in <a
+href="../base/gsimage.c">base/gsimage.c</a>), because the data-reading
+procedure for an image can invoke <code>save</code> and
+<code>restore</code>.
+
+<li>Notification lists for fonts, to handle the sequence allocate .. save
+.. register .. restore.
+
+<li>The parameter lists for pdfwrite and epswrite devices (in <a
+href="../devices/vector/gdevpsdp.c">devices/vector/gdevpsdp.c</a>), because the whole issue of
+local vs. global VM for setpagedevice is, in the words of Ed Taft of Adobe,
+"a mess".
+
+<li>Many places in the pdfwrite driver, because many of its bookkeeping
+structures must not be restorable.
+
+</ul>
+
+<p>
+For more specific examples, search the sources for references to
+<code>gs_memory_stable</code>.
+
+<h4><a name="Interpreter_GC"></a>Garbage collection</h4>
+
+<p>
+The interpreter's garbage collector is a compacting, non-conservative,
+mark-and-sweep collector.
+
+<ul>
+<li>It compacts storage because that is the only way to avoid permanent
+sandbars, which is essential in limited-memory environments.
+<li>It is non-conservative because conservative collectors (which attempt
+to determine whether arbitrary bit patterns are pointers) cannot compact.
+<li>It uses mark-and-sweep, rather than a more modern copying approach,
+because it cannot afford the extra memory required for copying.
+</ul>
+
+<p>
+Because the garbage collector is non-conservative, it cannot be run if there
+are any pointers to movable storage from the C stack.  Thus it cannot be run
+automatically when the allocator is unable to allocate requested space.
+Instead, when the allocator has allocated a given amount of storage (the
+<code>vm_threshold</code> amount, corresponding to the PostScript
+<code>VMThreshold</code> parameter), it sets a flag that the interpreter
+checks in the main loop.  When the interpreter sees that this flag is set,
+it calls the garbage collector: at that point, there are no problematic
+pointers from the stack.
+
+<p>
+Roots for tracing must be registered with the allocator.  Most roots are
+registered during initialization.
+
+<p>
+"Mark-and-sweep" is a bit of a misnomer.  The garbage collector actually has
+5 main phases:
+
+<ul>
+<li>Sweep to clear marks;
+<li>Trace and mark;
+<li>Sweep to compute relocation;
+<li>Sweep to relocate pointers;
+<li>Sweep and compact.
+</ul>
+
+<p>
+There is some extra complexity to handle collecting local VM only.  In this
+case, all pointers in global VM are treated as roots, and global VM is not
+compacted.
+
+<p>
+As noted above, PostScript arrays and strings can have refs that point
+within them (because of <code>getinterval</code>).  Thus the garbage
+collector must mark each element of an array, and even each byte of a
+string, individually.  Specifically, it marks objects, refs, and strings
+using 3 different mechanisms:
+
+<ul>
+
+<li>Objects have a mark bit in their header: see
+<a href="../base/gxobj.h">base/gxobj.h</a>,
+
+<li>Refs and packed refs have a reserved mark bit: see <a
+href="../psi/iref.h">psi/iref.h</a> and <a
+href="../psi/ipacked.h">psi/ipacked.h</a>.
+
+<li>Strings use a separate bit table, with one bit per string byte: see
+<a href="../base/gxalloc.h">base/gxalloc.h</a>,
+
+</ul>
+
+<p>
+Similarly, it records the relocation information for objects, refs, and
+strings differently:
+
+<ul>
+
+<li>Objects record relocation in the object header.
+
+<li>Refs record relocation in unused fields of refs such as nulls that
+don't use their <code>value</code> field.  Every memory manager object
+that stores ref-containing objects as described above has an extra, unused
+ref at the end for this purpose.
+
+<li>Strings use a separate relocation table.
+
+</ul>
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../psi/igc.c">psi/igc.c</a>,
+<a href="../psi/igc.h">psi/igc.h</a>,
+<a href="../psi/igcref.c">psi/igcref.c</a>,
+<a href="../psi/igcstr.c">psi/igcstr.c</a>,
+<a href="../psi/igcstr.h">psi/igcstr.h</a>,
+<a href="../psi/ireclaim.c">psi/ireclaim.c</a>.
+</dl>
+
+<hr>
+
+<h2><a name="Portability"></a>Portability</h2>
+
+<p>
+One of Ghostscript's most important features is its great portability across
+platforms (CPUs, operating systems, compilers, and build tools).  The code
+supports portability through two mechanisms:
+
+<ul>
+
+<li><a href="#Structural">Structural mechanisms</a> -- segregating
+platform-dependent information into files in a particular way.
+
+<li><a href="#Coding">Coding standards</a> -- avoiding relying on byte
+order, scalar size, and platform-specific compiler or library features.
+
+</ul>
+
+<h3><a name="Structural"></a>Structural</h3>
+
+<h4><a name="CPU_and_compiler"></a>CPU and compiler</h4>
+
+<p>
+Ghostscript attempts to discover characteristics of the CPU and compiler
+automatically during the build process, by compiling and then executing a
+program called <code>genarch</code>.  <code>genarch</code> generates a
+file <code>obj/arch.h</code>, which almost all Ghostscript files then
+include.  This works well for things like word size, byte order, and
+floating point representation, but it can't determine whether or not a
+compiler supports a particular feature, because if a feature is absent, the
+compilation may fail.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/genarch.c">base/genarch.c</a>,
+<a href="../obj/arch.h">obj/arch.h</a>.
+</dl>
+
+<h4><a name="Library_headers"></a>Library headers</h4>
+
+<p>
+Despite the supposed standardization of ANSI C, platforms vary considerably
+in where (and whether) they provide various standard library facilities.
+Currently, Ghostscript's build process doesn't attempt to sort this out
+automatically.  Instead, for each library header file
+<code>&lt;</code><em>xxx</em><code>.h&gt;</code> there is a
+corresponding Ghostscript source file
+<code>base/</code><em>xxx</em><code>_.h</code>, containing a set of
+compile-time conditionals that attempt to select the correct platform header
+file, or in some cases substitute Ghostscript's own code for a missing
+facility.  You may need to edit these files when moving to platforms with
+unusually non-standard libraries.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/ctype_.h">base/ctype_.h</a>,
+<a href="../base/dirent_.h">base/dirent_.h</a>,
+<a href="../base/dos_.h">base/dos_.h</a>,
+<a href="../base/errno_.h">base/errno_.h</a>,
+<a href="../base/fcntl_.h">base/fcntl_.h</a>,
+<a href="../base/jerror_.h">base/jerror_.h</a>,
+<a href="../base/malloc_.h">base/malloc_.h</a>,
+<a href="../base/math_.h">base/math_.h</a>,
+<a href="../base/memory_.h">base/memory_.h</a>,
+<a href="../base/pipe_.h">base/pipe_.h</a>,
+<a href="../base/png_.h">base/png_.h</a>,
+<a href="../base/setjmp_.h">base/setjmp_.h</a>,
+<a href="../base/stat_.h">base/stat_.h</a>,
+<a href="../base/stdint_.h">base/stdint_.h</a>,
+<a href="../base/stdio_.h">base/stdio_.h</a>,
+<a href="../base/string_.h">base/string_.h</a>,
+<a href="../base/time_.h">base/time_.h</a>,
+<a href="../base/unistd_.h">base/unistd_.h</a>,
+<a href="../base/vmsmath.h">base/vmsmath.h</a>,
+<a href="../base/windows_.h">base/windows_.h</a>,
+<a href="../base/x_.h">base/x_.h</a>.
+</dl>
+
+<p>
+It has been suggested that the GNU <code>configure</code> scripts do the
+above better, for Unix systems, than Ghostscript's current methods.  While
+this may be true, we have found <code>configure</code> scripts difficult
+to write, understand, and maintain; and the <code>autoconf</code> tool
+for generating <code>configure</code> scripts, which we found easy to
+use, doesn't cover much of the ground that Ghostscript requires.
+
+<h4><a name="Cross_platform_APIs"></a>Cross-platform APIs</h4>
+
+<p>
+For a few library facilities that are available on all platforms but are not
+well standardized, or that may need to be changed for special environments,
+Ghostscript defines its own APIs.  It is an architectural property of
+Ghostscript that the implementations of these APIs are the only .c files for
+which the choice of platform (as opposed to choices of drivers or optional
+features) determines whether they are compiled and linked into an
+executable.
+
+<dl>
+
+<dt>
+API:
+<dd>
+<a href="../base/gp.h">base/gp.h</a>,
+<a href="../base/gpcheck.h">base/gpcheck.h</a>,
+<a href="../base/gpgetenv.h">base/gpgetenv.h</a>,
+<a href="../base/gpmisc.h">base/gpmisc.h</a>,
+<a href="../base/gpsync.h">base/gpsync.h</a>.
+
+<dt>
+Implementation files shared among multiple platforms:
+<dd>
+<a href="../base/gp_getnv.c">base/gp_getnv.c</a>,
+<a href="../base/gp_mktmp.c">base/gp_mktmp.c</a>,
+<a href="../base/gp_nsync.c">base/gp_nsync.c</a>,
+<a href="../base/gp_paper.c">base/gp_paper.c</a>,
+<a href="../base/gp_psync.c">base/gp_psync.c</a>,
+<a href="../base/gp_strdl.c">base/gp_strdl.c</a>,
+<a href="../base/gpmisc.c">base/gpmisc.c</a>.
+
+<dt>
+Platform-specific implementation files:
+<dd>
+<a href="../base/gp_dosfe.c">base/gp_dosfe.c</a>,
+<a href="../base/gp_dosfs.c">base/gp_dosfs.c</a>,
+<a href="../base/gp_dvx.c">base/gp_dvx.c</a>,
+<a href="../base/gp_msdos.c">base/gp_msdos.c</a>,
+<a href="../base/gp_mshdl.c">base/gp_mshdl.c</a>,
+<a href="../base/gp_mslib.c">base/gp_mslib.c</a>,
+<a href="../base/gp_mswin.c">base/gp_mswin.c</a>,
+<a href="../base/gp_mswin.h">base/gp_mswin.h</a>,
+<a href="../base/gp_ntfs.c">base/gp_ntfs.c</a>,
+<a href="../base/gp_os2.c">base/gp_os2.c</a>,
+<a href="../base/gp_os2.h">base/gp_os2.h</a>,
+<a href="../base/gp_os2fs.c">base/gp_os2fs.c</a>,
+<a href="../base/gp_os9.c">base/gp_os9.c</a>,
+<a href="../base/gp_stdia.c">base/gp_stdia.c</a>,
+<a href="../base/gp_stdin.c">base/gp_stdin.c</a>,
+<a href="../base/gp_sysv.c">base/gp_sysv.c</a>,
+<a href="../base/gp_unifn.c">base/gp_unifn.c</a>,
+<a href="../base/gp_unifs.c">base/gp_unifs.c</a>,
+<a href="../base/gp_unix.c">base/gp_unix.c</a>,
+<a href="../base/gp_unix_cache.c">base/gp_unix_cache.c</a>,
+<a href="../base/gp_upapr.c">base/gp_upapr.c</a>,
+<a href="../base/gp_vms.c">base/gp_vms.c</a>,
+<a href="../base/gp_wgetv.c">base/gp_wgetv.c</a>,
+<a href="../base/gp_win32.c">base/gp_win32.c</a>,
+<a href="../base/gp_wpapr.c">base/gp_wpapr.c</a>,
+<a href="../base/gp_wsync.c">base/gp_wsync.c</a>,
+<a href="../base/gs_dll_call.h">base/gs_dll_call.h</a>.
+
+</dl>
+
+<h4><a name="Makefiles"></a>Makefiles</h4>
+
+<p>
+For information on the structure and conventions used within makefiles, see
+the <a href="#Makefile_structure">Makefile structure</a> section above.
+
+<p>
+Ghostscript's makefiles are structured very similarly to the cross-platform
+library files.  The great majority of the makefiles are portable across all
+platforms and all versions of <code>make</code>.  To achieve this, the
+platform-independent makefiles must obey two constraints beyond those of the
+POSIX <code>make</code> program:
+
+<ul>
+
+<li>No conditionals or <code>include</code>s are allowed.  While most
+<code>make</code> programs now provide some form of conditional execution
+and some form of inclusion, there is no agreement on the syntax.
+(Conditionals and includes are allowed in platform-dependent makefiles; in
+fact, an inclusion facility is required.)
+
+<li>There must be a space on both sides of the : that separates the target
+of a rule from its dependencies.  This is required for compatibility with
+the OpenVMS <code>MMS</code> and <code>MMK</code> programs.
+
+</ul>
+
+<p>
+The top-level makefile for each platform (where "platform" includes the OS,
+the compiler, and the flavor of <code>make</code>) contains all the build
+options, plus <code>include</code>s for the generic makefiles and any
+platform-dependent makefiles that are shared among multiple platforms.
+
+<p>
+While most of the top-level makefiles build a PostScript and/or PDF
+interpreter configuration, there are also a few makefiles that build a test
+program that only uses the graphics library without any language
+interpreter.  Among other things, this can be helpful in verifying that no
+accidental dependencies on the interpreter have crept into the library or
+drivers.
+
+<p>
+For families of similar platforms, the question arises whether to use
+multiple top-level makefiles, or whether to use a single top-level makefile
+that may require minor editing for some (or all) platforms.  Ghostscript
+currently uses the following top-level makefiles for building interpreter
+configurations:
+
+<ul>
+
+<li>POSIX systems (inluding Linux and Unix):
+<ul>
+<li><a href="../configure.ac"configure.ac</a>,
+GNU Autoconf source script for automatic build configuration.
+<li><a href="../Makefile.in">Makefile.in</a>,
+source for the top-level makefile used in the Autoconf build.
+<li><a href="../base/unix-gcc.mak">base/unix-gcc.mak</a>,
+for Unix with gcc.
+<li><a href="../base/unixansi.mak">base/unixansi.mak</a>,
+for Unix with an ANSI C compiler other than gcc.
+</ul>
+
+<li>PC:
+<ul>
+<li><a href="../ghostscript.vcproj">ghostscript.vcproj</a>,
+Visual Studio project file used to build Ghostscript.
+<li><a href="../psi/msvc32.mak">psi/msvc32.mak</a>,
+for MS Windows with Microsoft Visual C (MSVC).
+<li><a href="../psi/os2.mak">psi/os2.mak</a>,
+for MS-DOS or OS/2 GCC/EMX environment.
+</ul>
+
+<li>Macintosh:
+<ul>
+<li><a href="../base/macosx.mak">base/macosx.mak</a>,
+commandline makefile for MacOS X.
+<li><a href="../base/macos-mcp.mak">base/macos-mcp.mak</a>,
+dummy makefile to generate an xml project file for Metrowerks Codewarrior.
+</ul>
+
+
+<li>Other:
+<ul>
+<li><a href="../base/all-arch.mak">base/all-arch.mak</a>,
+for building on many Unix systems in a networked test environment.
+<li><a href="../base/openvms.mak">base/openvms.mak</a>,
+for OpenVMS with Digital's CC compiler and the MMS build program.
+<li><a href="../base/openvms.mmk">base/openvms.mmk</a>,
+for OpenVMS with Digital's CC compiler and the MMK build program.
+</ul>
+
+</ul>
+
+<p>
+The following top-level makefiles build the library test program:
+
+<ul>
+<li><a href="../base/ugcclib.mak">base/ugcclib.mak</a>,
+on Unix with gcc.
+<li><a href="../base/msvclib.mak">base/msvclib.mak</a>,
+on MS Windows with MSVC.
+</ul>
+
+<p>
+The MSVC makefiles may require editing to select between different versions
+of MSVC, since different versions may have slightly incompatible command
+line switches or customary installation path names.  The Unix makefiles
+often require editing to deal with differing library path names and/or
+library names.  For details, see <a href="Make.htm#Unix_build">the Unix
+section</a> of the documentation for building Ghostscript.
+
+<dl>
+
+<dt>
+Library test program:
+<dd>
+<a href="../base/gslib.c">base/gslib.c</a>.
+
+<dt>
+Platform-independent makefiles:
+<dd>
+
+<dl>
+
+<dt>
+Graphics library and support:
+<dd>
+<a href="../devices/contrib.mak">devices/contrib.mak</a>,
+<a href="../devices/devs.mak">devices/devs.mak</a>,
+<a href="../base/gs.mak">base/gs.mak</a>,
+<a href="../base/lib.mak">base/lib.mak</a>,
+<a href="../base/version.mak">base/version.mak</a>.
+
+<dt>
+PostScript interpreter and fonts:
+<dd>
+<a href="../psi/int.mak">psi/int.mak</a>.
+
+<dt>
+Third-party libraries:
+<dd>
+<a href="../base/expat.mak">base/expat.mak</a>,
+<a href="../base/ijs.mak">base/ijs.mak</a>,
+<a href="../base/jbig2.mak">base/jbig2.mak</a>,
+<a href="../base/ldf_jb2.mak">base/ldf_jb2.mak</a>,
+<a href="../base/lwf_jp2.mak">base/lwf_jp2.mak</a>,
+<a href="../base/jpeg.mak">base/jpeg.mak</a>,
+<a href="../base/png.mak">base/png.mak</a>,
+<a href="../base/zlib.mak">base/zlib.mak</a>.
+</dl>
+
+<dt>
+Shared platform-dependent makefiles:
+<dd>
+
+<dl>
+
+<dt>
+Unix:
+<dd>
+<a href="../base/unix-aux.mak">base/unix-aux.mak</a>,
+<a href="../base/unix-dll.mak">base/unix-dll.mak</a>,
+<a href="../base/unix-end.mak">base/unix-end.mak</a>,
+<a href="../base/unixhead.mak">base/unixhead.mak</a>,
+<a href="../base/unixinst.mak">base/unixinst.mak</a>,
+<a href="../base/unixlink.mak">base/unixlink.mak</a>.
+
+<dt>
+Microsoft Windows and MS-DOS:
+<dd>
+<a href="../base/msvccmd.mak">base/msvccmd.mak</a>,
+<a href="../base/msvctail.mak">base/msvctail.mak</a>,
+<a href="../base/pcwin.mak">base/pcwin.mak</a>,
+<a href="../psi/winint.mak">psi/winint.mak</a>,
+<a href="../base/winlib.mak">base/winlib.mak</a>,
+<a href="../base/winplat.mak">base/winplat.mak</a>.
+
+</dl>
+
+</dl>
+
+<h3><a name="Coding"></a>Coding</h3>
+
+<p>
+Coding for portability requires avoiding both <em>explicit</em>
+dependencies, such as platform-dependent <code>#ifdef</code>s, and
+<em>implicit</em> dependencies, such as dependencies on byte order or the
+size of the integral types.
+
+<h4><a name="Explicit_dependencies"></a>Explicit dependencies</h4>
+
+<p>
+The platform-independent .c files never, ever, use <code>#ifdef</code> or
+<code>#if</code> to select code for specific platforms.  Instead, we
+always try to characterize some abstract property that is being tested.  For
+example, rather than checking for macros that are defined on those specific
+platforms that have 64-bit <code>long</code> values, we define a macro
+<code>ARCH_SIZEOF_LONG</code> that can then be tested.  Such macros are
+always defined in a .h file, either automatically in <code>arch.h</code>,
+or explicitly in a <em>xxx</em><code>_.h</code> file, as described in
+earlier sections.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="../base/std.h">base/std.h</a>,
+<a href="../base/stdpn.h">base/stdpn.h</a>,
+<a href="../base/stdpre.h">base/stdpre.h</a>.
+</dl>
+
+<h4><a name="Implicit_dependencies"></a>Implicit dependencies</h4>
+
+<p>
+The most common source of byte ordering dependencies is casting between
+types (T1 *) and (T2 *) where T1 and T2 are numeric types that aren't merely
+signed/unsigned variants of each other.  To avoid this, the only casts
+allowed in the code are between numeric types, from a pointer type to a long
+integral type, and between pointer types.
+
+<p>
+Ghostscript's code assumes the following about the sizes of various types:
+
+<dl>
+<dt>char<dd>8 bits
+<dt>short<dd>16 bits
+<dt>int<dd>32 or 64 bits
+<dt>long<dd>32 or 64 bits
+<dt>float<dd>32 bits (may work with 64 bits)
+<dt>double<dd>64 bits (may work with 128 bits)
+</dl>
+
+<p>
+The code does not assume that the <code>char</code> type is signed (or
+unsigned); except for places where the value is always a literal string, or
+for interfacing to library procedures, the code uses <code>byte</code> (a
+Ghostscript synonym for <code>unsigned char</code>) almost everywhere.
+
+<p>
+Pointers are signed on some platforms and unsigned on others.  In the few
+places in the memory manager where it's necessary to reliably order-compare
+(as opposed to equality-compare) pointers that aren't known to point to the
+same allocated block of memory, the code uses the
+<code>PTR_</code><em>relation</em> macros rather than direct comparisons.
+
+<p>
+See the files listed above for other situations where a macro provides
+platform-independence or a workaround for bugs in specific compilers or
+libraries (of which there are a distressing number).
+
+<h4><a name="Platform_specific_code"></a>Platform-specific code</h4>
+
+<p>
+There are some features that are inherently platform-specific:
+
+<ul>
+
+<li>Microsoft Windows requires a lot of special top-level code, and also has
+an installer and uninstaller.
+
+<li>OS/2 requires a little special code.
+
+<li>MacOS also requires special top-level code (now distributed with the
+standard Ghostscript package).
+
+<li>All platforms supporting DLLs (currently all three of the above) share
+some special top-level code.
+
+</ul>
+
+<dl>
+
+<dt>
+MS Windows files:
+<dd>
+<a href="../psi/dpmain.c">psi/dpmain.c</a>,
+<a href="../psi/dwdll.c">psi/dwdll.c</a>,
+<a href="../psi/dwdll.h">psi/dwdll.h</a>,
+<a href="../psi/dwimg.c">psi/dwimg.c</a>,
+<a href="../psi/dwimg.h">psi/dwimg.h</a>,
+<a href="../psi/dwmain.c">psi/dwmain.c</a>,
+<a href="../psi/dwmainc.c">psi/dwmainc.c</a>,
+<a href="../psi/dwnodll.c">psi/dwnodll.c</a>,
+<a href="../psi/dwreg.c">psi/dwreg.c</a>,
+<a href="../psi/dwreg.h">psi/dwreg.h</a>,
+<a href="../psi/dwres.h">psi/dwres.h</a>,
+<a href="../psi/dwtext.c">psi/dwtext.c</a>,
+<a href="../psi/dwtext.h">psi/dwtext.h</a>,
+<a href="../psi/dwtrace.c">psi/dwtrace.c</a>,
+<a href="../psi/dwtrace.h">psi/dwtrace.h</a>,
+<a href="../base/gp_msdll.c">base/gp_msdll.c</a>,
+<a href="../base/gp_mspol.c">base/gp_mspol.c</a>,
+<a href="../base/gp_msprn.c">base/gp_msprn.c</a>,
+<a href="../base/gsdllwin.h">base/gsdllwin.h</a>.
+
+<dt>
+OS/2 files:
+<dd>
+<a href="../base/gp_os2pr.c">base/gp_os2pr.c</a>,
+
+<dt>
+Unix files:
+<dd>
+<a href="../psi/dxmain.c">psi/dxmain.c</a>,
+<a href="../psi/dxmainc.c">psi/dxmainc.c</a>.
+
+<dt>
+Macintosh files:
+<dd>
+<a href="../devices/gdevmac.c">devices/gdevmac.c</a>,
+<a href="../devices/gdevmac.h">devices/gdevmac.h</a>,
+<a href="../devices/gdevmacpictop.h">devices/gdevmacpictop.h</a>,
+<a href="../devices/gdevmacttf.h">devices/gdevmacttf.h</a>,
+<a href="../base/gp_mac.c">base/gp_mac.c</a>,
+<a href="../base/gp_mac.h">base/gp_mac.h</a>,
+<a href="../base/gp_macio.c">base/gp_macio.c</a>,
+<a href="../base/gp_macpoll.c">base/gp_macpoll.c</a>,
+<a href="../base/gsiomacres.c">base/gsiomacres.c</a>,
+<a href="../base/macgenmcpxml.sh">base/macgenmcpxml.sh</a>,
+<a href="../base/macsystypes.h">base/macsystypes.h</a>,
+<a href="../base/macos_carbon_pre.h">base/macos_carbon_pre.h</a>,
+<a href="../base/macos_carbon_d_pre.h">base/macos_carbon_d_pre.h</a>,
+<a href="../base/macos_classic_d_pre.h">base/macos_classic_d_pre.h</a>,
+
+<a href="../psi/dmmain.c">psi/dmmain.c</a>,
+<a href="../psi/dmmain.r">psi/dmmain.r</a>.
+
+<dt>
+VMS files:
+<dd>
+<a href="../base/vms_x_fix.h">base/vms_x_fix.h</a>.
+
+<dt>
+DLL files:
+<dd>
+<a href="../psi/gsdll.c">psi/gsdll.c</a>,
+<a href="../base/gsdll.h">base/gsdll.h</a>,
+<a href="../devices/gdevdsp.c">devices/gdevdsp.c</a>,
+<a href="../devices/gdevdsp.h">devices/gdevdsp.h</a>,
+<a href="../devices/gdevdsp2.h">devices/gdevdsp2.h</a>,
+<a href="../psi/iapi.c">psi/iapi.c</a>,
+<a href="../psi/iapi.h">psi/iapi.h</a>,
+<a href="../psi/idisp.c">psi/idisp.c</a>,
+<a href="../psi/idisp.h">psi/idisp.h</a>.
+<p>
+The new DLL interface (new as of 7.0) is especially useful with the
+new display device, so it is included here. Both are due to Russell
+Lang.
+
+</dl>
+
+
+<hr>
+
+<h2><a name="Troubleshooting"></a>Troubleshooting</h2>
+
+<p>
+The Ghostscript code has many tracing and debugging features that can be
+enabled at run time using the <code>-Z</code> command line switch, if the
+executable was compiled with <code>DEBUG</code> defined.  One
+particularly useful combination is <code>-Z@\?</code>, which fills free
+memory blocks with a pattern and also turns on run-time memory consistency
+checking.  For more information, see <a
+href="Use.htm#Debugging">doc/Use.htm#Debugging</a>; you can also search for
+occurrences of <code>if_debug</code> or <code>gs_debug_c</code> in the
+source code.  Note that many of these features are in the graphics library
+and do not require a PostScript interpreter.
+
+<p>
+The code also contains many run-time procedures whose only purpose is to be
+called from the debugger to print out various data structures, including all
+the procedures in <a href="../psi/idebug.c">psi/idebug.c</a> (for the
+PostScript interpreter) and the <code>debug_dump_</code> procedures in <a
+href="../base/gsmisc.c">base/gsmisc.c</a>.
+
+<dl>
+<dt>
+Files:
+<dd>
+<a href="Use.htm#Debugging">doc/Use.htm#Debugging</a>,
+<a href="../base/gdebug.h">base/gdebug.h</a>,
+<a href="../base/gsmdebug.h">base/gsmdebug.h</a>,
+<a href="../psi/idebug.h">psi/idebug.h</a>,
+<a href="../psi/idebug.c">psi/idebug.c</a>.
+</dl>
+
+<hr>
+
+<h2><a name="Profiling"></a>Profiling</h2>
+<h3><a name="ProfilingMSVC6"></a>Profiling with Microsoft Developer Studio 6</h3>
+
+<p>
+The Microsoft profiling tool is included into Microsoft Developer Studio 6
+Enterprise Edition only. Standard Edition and Professional Edition do not include it.
+
+<p>
+Microsoft profiler tool requires the application to be linked with
+a special linker option. To provide it you need the following change to 
+<code>gs/base/msvccmd.mak</code> :
+
+<blockquote><pre><tt> 
+ 
+*** SVN-GS\HEAD\gs\src\msvccmd.mak	Tue Jan  9 21:41:07 2007
+--- gs\src\msvccmd.mak	Mon May  7 11:29:35 2007
+***************
+*** 159,163 ****
+  # Note that it must be followed by a space.
+  CT=/Od /Fd&#36;(GLOBJDIR) &#36;(NULL) &#36;(CDCC) &#36;(CPCH)
+! LCT=/DEBUG /INCREMENTAL:YES
+  COMPILE_FULL_OPTIMIZED=    # no optimization when debugging
+  COMPILE_WITH_FRAMES=    # no optimization when debugging
+--- 159,164 ----
+  # Note that it must be followed by a space.
+  CT=/Od /Fd&#36;(GLOBJDIR) &#36;(NULL) &#36;(CDCC) &#36;(CPCH)
+! # LCT=/DEBUG /INCREMENTAL:YES
+! LCT=/DEBUG /PROFILE
+  COMPILE_FULL_OPTIMIZED=    # no optimization when debugging
+  COMPILE_WITH_FRAMES=    # no optimization when debugging
+***************
+*** 167,175 ****
+  !if &#36;(DEBUGSYM)==0
+  CT=
+! LCT=
+  CMT=/MT
+  !else
+  CT=/Zi /Fd&#36;(GLOBJDIR) &#36;(NULL)
+! LCT=/DEBUG
+  CMT=/MTd
+  !endif
+--- 168,178 ----
+  !if &#36;(DEBUGSYM)==0
+  CT=
+! # LCT=
+! LCT=/PROFILE
+  CMT=/MT
+  !else
+  CT=/Zi /Fd&#36;(GLOBJDIR) &#36;(NULL)
+! # LCT=/DEBUG
+! LCT=/DEBUG /PROFILE
+  CMT=/MTd
+  !endif
+
+</tt></pre></blockquote>
+
+Note that any of debug and release build may be profiled.
+ 
+<p>
+Mictosoft Profiler tool can't profile a dynamically loaded DLLs. 
+When building Ghostscript with makefiles you need to specify 
+<code>MAKEDLL=0</code> to <code>nmake</code> command line.
+
+<p>
+The Integrated Development Environment of Microsoft Developer Studio 6
+cannot profile a makefile-based project. Therefore the profiling tool
+to be started from command line. 
+
+<p>
+The profiling from command line is a 4 step procedure.
+The following batch file provides a sample for it :
+
+<blockquote><pre><tt>
+
+set DEVSTUDIO=G:\Program Files\Microsoft Visual Studio
+set GS_HOME=..\..\gs-hdp
+set GS_COMMAND_LINE=%GS_HOME%\bin\gswin32c.exe -I%GS_HOME%\lib;f:\afpl\fonts -r144 -dBATCH -dNOPAUSE -d/DEBUG attachment.pdf
+set START_FUNCTION=_main
+set Path=%DEVSTUDIO%\Common\MSDev98\Bin;%DEVSTUDIO%\VC98\Bin
+PREP.EXE /OM /SF %START_FUNCTION% /FT   %GS_HOME%\bin\gswin32c.exe  
+If ERRORLEVEL 1 echo step 1 fails&amp;exit
+PROFILE  /I %GS_HOME%\bin\gswin32c.pbi  %GS_COMMAND_LINE%
+If ERRORLEVEL 1 echo step 2 fails&amp;exit
+PREP /M %GS_HOME%\bin\gswin32c /OT xxx.pbt 
+If ERRORLEVEL 1 echo step 3 fails&amp;exit
+PLIST /ST xxx.pbt &gt;profile.txt
+If ERRORLEVEL 1 echo step 4 fails&amp;exit
+
+</tt></pre></blockquote>
+
+<p>
+This batch file to be adopted to your configuration :
+
+<ul>
+<li>
+Edit the path to developer studio in the line 1.
+<li>
+Edit the Ghostscript home directory in the line 2.
+<li>
+Edit Ghostscript command line in line 3. Note that profiling without /NOPAUSE is a bad idea.
+<li>
+In the line 4 edit the function name to start the profiling from.
+The sample code specifies _main as the starting function.
+Note it is the linker's function name, which starts with underscore.
+<li>
+Edit the output file name in the line 5.
+</ul>
+
+
+
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2001-2009 Artifex Software, Inc.  All rights 
+reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

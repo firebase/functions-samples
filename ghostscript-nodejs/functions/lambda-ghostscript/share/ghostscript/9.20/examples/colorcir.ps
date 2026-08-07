@@ -1,0 +1,125 @@
+%!
+/colorcirsave save def		% prevent left over effects
+
+gsave
+/Times-Roman findfont 24 scalefont setfont
+72 72 translate 0 0 moveto 1 0 0 setrgbcolor (Red) show
+72 0 translate 0 0 moveto 0 1 0 setrgbcolor (Green) show
+72 0 translate 0 0 moveto 0 0 1 setrgbcolor (Blue) show
+72 0 translate 0 0 moveto 1 1 0 setrgbcolor (Yellow) show
+72 0 translate 0 0 moveto 1 0 1 setrgbcolor (Pink) show
+72 0 translate 0 0 moveto 0 1 1 setrgbcolor (Cyan) show
+72 0 translate 0 0 moveto 0.9 0.9 0.9 setrgbcolor ('White') show
+grestore
+
+0.0 setlinewidth
+
+/length 0.1 def
+/width 0.02 def
+/hsvcircle {
+gsave
+    /h 0.0 def
+    0 4 360 {
+    pop
+    gsave
+    0.5 0.0 translate
+
+    newpath
+    0.0 0.0 moveto
+    length 0.0 lineto
+    length width lineto
+    0.0 width lineto
+    closepath
+    h 1.0 1.0 sethsbcolor
+    fill
+
+    %newpath
+    %0.0 0.0 moveto
+    %length 0.0 lineto
+    %length width lineto
+    %0.0 width lineto
+    %closepath
+    %0.0 setgray
+    %stroke
+
+    grestore
+    /h h 4 360 div add def
+    4 rotate
+    } for
+grestore
+} def
+
+/graycircle {
+gsave
+    /h -1.0 def
+    0 4 360 {
+    pop
+    gsave
+    0.5 0.0 translate
+
+    newpath
+    0.0 0.0 moveto
+    length 0.0 lineto
+    length width lineto
+    0.0 width lineto
+    closepath
+
+    h abs setgray
+    fill
+
+    %newpath
+    %0.0 0.0 moveto
+    %length 0.0 lineto
+    %length width lineto
+    %0.0 width lineto
+    %closepath
+    %0.0 setgray
+    %stroke
+    grestore
+
+    /h h 8 360 div add def
+    4 rotate
+    } for
+grestore
+} def
+
+0.0 setlinewidth
+0.0 setgray
+300 400 translate
+500 500 scale
+
+30 rotate 
+1.0 0.7 scale
+-30 rotate 
+
+hsvcircle
+0.8 0.8 scale
+graycircle
+0.8 0.8 scale
+hsvcircle
+0.8 0.8 scale
+graycircle
+0.8 0.8 scale
+hsvcircle
+0.8 0.8 scale
+graycircle
+0.8 0.8 scale
+hsvcircle
+0.8 0.8 scale
+graycircle
+0.8 0.8 scale
+hsvcircle
+0.8 0.8 scale
+graycircle
+0.8 0.8 scale
+hsvcircle
+0.8 0.8 scale
+graycircle
+0.8 0.8 scale
+hsvcircle
+0.8 0.8 scale
+graycircle
+
+showpage
+clear cleardictstack
+colorcirsave restore

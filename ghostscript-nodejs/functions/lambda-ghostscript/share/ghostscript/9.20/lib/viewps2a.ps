@@ -1,0 +1,31 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Display a file produced by ps2ascii with no switch or with -dCOMPLEX.
+% This is just a procset to read in before the file to display.
+
+/init { 0.1 0.1 scale } bind def
+init
+/next { currentfile token pop } bind def
+/F { next next pop next exch selectfont } bind def
+/P { showpage init } bind def
+/S
+ { next next moveto
+   next dup stringwidth pop next exch div
+   gsave 1 scale show grestore
+ } bind def
+/C { next next next setrgbcolor } bind def
+/I { next next next next gsave 0.75 setgray rectfill grestore } bind def
+/R { next next next next rectfill } bind def

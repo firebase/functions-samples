@@ -1,0 +1,438 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>History of Ghostscript versions 1.n</title>
+<!-- Originally: history1.txt -->
+<!--
+	WARNING: do not use Pete Kaiser's emacs function "gs-toc" alone to
+	re-create the table of contents here, because it will replace the
+	hand-edited TOC subheads with a separate subhead for each H2 in
+	the body of the file.  Or if you do, first look at the original
+	TOC to see how to edit it for visual conciseness.
+-->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>History of Ghostscript versions 1.n</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Version1.3">Version 1.3 (6/20/89)</a>
+<ul>
+<li><a href="#V1.3_Interpreter">Interpreter</a>,
+    <a href="#V1.3_Fonts">Fonts</a>,
+    <a href="#V1.3_Library">Library</a>,
+    <a href="#V1.3_Usage_procedures">Usage procedures</a>
+</ul>
+<li><a href="#Version1.2">Version 1.2 (2/22/89)</a>
+<ul>
+<li><a href="#V1.2_Interpreter">Interpreter</a>,
+    <a href="#V1.2_Library">Library</a>,
+    <a href="#V1.2_Usage_procedures">Usage procedures</a>
+</ul>
+<li><a href="#Version1.1">Version 1.1 (2/12/89)</a>
+<ul>
+<li><a href="#V1.1_Interpreter">Interpreter</a>,
+    <a href="#V1.1_Initialization">Initialization (ghost.ps, gfonts.ps)</a>,
+    <a href="#V1.1_Library">Library</a>,
+    <a href="#V1.1_Usage_procedures">Usage procedures</a>
+</ul>
+<li><a href="#Version1.0">Version 1.0 (8/11/88)</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>
+This document is a history of Ghostscript releases numbered 1.n.  For more
+recent changes, see the the other history documents and, for the latest
+versions, the news:
+
+<blockquote>
+<a href="News.htm">News</a><br>
+<a href="History4.htm">History of Ghostscript versions 4.n</a><br>
+<a href="History3.htm">History of Ghostscript versions 3.n</a><br>
+<a href="History2.htm">History of Ghostscript versions 2.n</a><br>
+History of Ghostscript versions 1.n (this document)<br>
+</blockquote>
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+
+<h2><a name="Version1.3"></a>Version 1.3 (6/20/89)</h2>
+<pre>
+This release should have had a lot more things in it, but time pressure
+and the already long delay in getting it out made it necessary to push it
+out the door in an incomplete state (e.g., no testing on X systems
+whatsoever).
+
+</pre>
+<h3><a name="V1.3_Interpreter"></a>Interpreter</h3>
+
+<pre>
+Makes -d and -D equivalent on the command line.  Adds a new switch -s / -S
+that defines a name as a string rather than a token.
+
+Arranges things so that if -sLIB=_a_prefix_ is defined on the command
+line, (filename) run will look for _a_prefix_filename before giving up if
+filename isn't the name of an accessible file.
+
+Changes showpage from an operator to a procedure.  The definition of
+showpage in ghost.ps does a copypage, beeps the console, waits for the
+user to type a character (normally a &lt;return&gt;, since line buffering is
+always enabled), and then does an erasepage and an initgraphics.
+
+Adds a new initialization file, gdevs.ps, containing device-dependent
+parameters.  The default window size for X Windows is properly set to 612
+x 792, i.e., 8.5" x 11".
+
+Adds a new optional initialization file, statusd.ps, that provides dummy
+definitions for the names found in statusdict on LaserWriters.
+
+Adds a new operator, getenv, to get information from the shell
+environment.
+
+Adds a new predefined operator, defaultdevicename, that returns either (X)
+or (EGA) according to how the interpreter was built.
+
+Adds a new type, devicetype, and new operators deviceparams, getscanlines,
+makedevice, makeimagedevice, and setdevice.  Changes currentdevice to
+return a device object rather than a set of parameters.
+
+Makes the scanner recognize reals with 'e' exponent notation, and handle
+reals with more than 9 digits.
+
+Fixes a bug that made names starting with digits read incorrectly.
+
+Fixes a bug in the exp operator that made it not pop its first argument
+from the stack.
+
+Fixes a bug in the rand operator that made it return negative values about
+half the time.
+
+Fixes a bug in equality comparison (eq, ne, and several other operators)
+that made unequal operator objects occasionally appear to be equal on DOS
+systems.
+
+Fixes a bug in the bind operator that made it not work on packed arrays.
+
+Changes the internal representation of dictionaries so they can be
+expanded or contracted dynamically.  Adds a new operator, setmaxlength, to
+change the allocated size of a dictionary.
+
+Changes sstorei.h so that non-DOS compilers don't encounter the #pragma
+directive used by Turbo C.
+
+Restores the display mode (on MS-DOS systems) when exiting.
+
+</pre>
+<h3><a name="V1.3_Fonts"></a>Fonts</h3>
+
+<pre>
+Makes undefined characters in the standard font display as tilde rather
+than blank (or causing an error).  Unmapped character codes (those mapped
+to .notdef in the encoding) still display as nothing, per the PostScript
+manual.
+
+</pre>
+<h3><a name="V1.3_Library"></a>Library</h3>
+
+<pre>
+Adds a new header file, gxbitmap.h, with some new documentation describing
+the internal storage format for bitmaps.
+
+Makes numerous internal changes in the character / font cache, affecting
+many of the routines in gxcache.c.
+
+Fixes a bug in gz_draw_line / gz_fill_trapezoid that made nearly
+horizontal lines display wrong.
+
+Fixes a bug in gs_scale that made scaling not work if the coordinate
+system was rotated or skewed.
+
+Extends the font cache so it will handle characters rotated by multiples
+of 90 degrees.
+
+Changes the second argument of gx_path_bbox and gx_path_is_rectangle to be
+a gs_fixed_rect * rather than a fixed [4].
+
+Changes gs_matrix_rotate so it handles multiples of 90 degrees as a
+special case.
+
+Changes the definition of the gx_device structure to accommodate the new
+device operators, and adds corresponding library calls.
+
+Changes the type for a device color index from int to gx_color_index
+(equivalent to unsigned long).  ***NOTE***: this affects existing clients
+and drivers in a non-trivial way on MS-DOS systems.
+
+Changes gs_malloc and gs_free to take a client name string as an argument.
+
+</pre>
+<h3><a name="V1.3_Usage_procedures"></a>Usage procedures</h3>
+
+<pre>
+Changes the compilation rules for Unix systems to not use the -o and -c
+compiler flags together, to be compatible with more versions of cc.
+
+Changes the gcc makefile to use &#36;(GCC) rather than gcc as the compiler
+name.
+
+Moves the -1 flag for the MS-DOS compiler from the cc*.bat files to the
+makefile.
+
+Changes CCDEBUG to CCFLAGS, and adds ASMFLAGS, in DOS makefile.
+
+Adds -DFOR80386 and /DFOR80386 to enable use of 80386 instructions in
+assembly code on DOS systems.
+
+Merges the DEBUG and gs_DEBUG switches.  There is now only a single DEBUG
+switch that affects both the interpreter and the library.
+
+Adds a new compilation switch, -DNOPRIVATE, that makes private (static)
+variables and procedures public for debugging and profiling (only needed
+on DOS systems).
+
+Adds the DOS executable (gs.exe and gs.map) to the distribution fileset.
+
+Adds new platform-specific code files, gp-*.c, for a few things like
+reading the clock.
+
+Adds a new documentation file, drivers.doc, that describes the interface
+between Ghostscript and device drivers.
+
+</pre>
+
+<hr>
+
+<h2><a name="Version1.2"></a>Version 1.2 (2/22/89)</h2>
+
+<h3><a name="V1.2_Interpreter"></a>Interpreter</h3>
+
+<pre>
+Adds the new facilities in version 25 of PostScript: //name for immediate
+lookup, packed arrays (setpacking, currentpacking, packedarray operators),
+and new font cache parameters (setcacheparams, currentcacheparams
+operators).
+
+Adds new operators (setfileposition, currentfileposition) for random
+access to files.
+
+Extends readhexstring to take either a string or a file, just like token.
+
+Fixes a bug that caused the 'for' operator (and a couple of others) to
+randomly smash memory locations on PC platforms.
+
+</pre>
+<h3><a name="V1.2_Library"></a>Library</h3>
+
+<pre>
+Renames the init_device driver procedure as open_device, and adds a
+corresponding close_device.
+
+Adds new procedures to read and set the cache limit values (implementing
+the currentcacheparams and setcacheparams operators).
+
+</pre>
+<h3><a name="V1.2_Usage_procedures"></a>Usage procedures</h3>
+
+<pre>
+Changes the name of the Unix makefile to ux-cc-x.mak, and adds a new Unix
+makefile, ux-gcc-x.mak, for using gcc instead of cc.  (The latter doesn't
+actually work yet.)
+
+Changes the name of the single built-in font from uglyfont.cp to
+ugly10.cp.
+
+</pre>
+
+<hr>
+
+<h2><a name="Version1.1"></a>Version 1.1 (2/12/89)</h2>
+
+<h3><a name="V1.1_Interpreter"></a>Interpreter</h3>
+
+<pre>
+Makes the scanner treat ^Z (ASCII code 26) as whitespace: it erroneously
+treated ^R (ASCII code 22, or octal 26) as whitespace.
+
+Makes the token and readline operators, and the syntax for comments,
+recognize \r (code 13), \n (code 10), and \r\n as equivalent end-of-line
+indicators.  The token and readline operators will skip over any of these
+sequences at the end of a token or line respectively, and a comment will
+read through any of these sequences.  The other file operators (read,
+write, readstring, writestring) do nothing special with these characters.
+
+Changes the debug switch name from -D to -Z.  Adds a -D switch for
+defining names in systemdict from the command line.  Defines -DDEBUG for
+printing out debugging information during initialization, and -DNODISPLAY
+for suppressing display output.
+
+Corrects a bug that prevented the error machinery from working -- in
+version 1.0, errors always dumped the stacks and aborted interpretation.
+
+Corrects a bug that made eq and ne not work for strings.
+
+Makes the atan (arctangent) operator normalize its results according to
+the PostScript convention.
+
+Makes the div operator check for zero divisor.
+
+Makes unimplemented operators (resetfile, echo, save, restore, strokepath,
+reversepath) truly undefined.
+
+Makes the interactive loop exit gracefully on end-of-file: in version 1.0
+this caused an infinite loop.
+
+Implements the status operator.
+
+Corrects a bug that made the 'for' operator deliver garbage values if one
+or more of the operands (start, increment, end) was a real.
+
+Corrects a bug that made the arc and arcn operators not pop their operands
+from the stack.
+
+Corrects a bug that made the kshow operator crash the interpreter.
+
+Corrects a bug that made the print operator fail on machines that don't
+pass structure arguments by simply pushing the contents of the structure.
+
+Adds a new operator, imagecharpath, to convert images to
+addcharpath-compatible outlines.
+
+Changes alloc and alloc_free to use char * rather than byte *, and
+alloc_free to return void rather than int, making them compatible with the
+library's expectations and with malloc/free.
+
+Explicitly casts all expressions of the form (ptr1 - ptr2) used as
+procedure arguments to unsigned, to handle an incompatibility between
+Turbo C versions 1.5 and 2.0.
+
+Changes some of the internal conventions for operators: operators that
+push on the operand stack must check for overflow explicitly, and
+operators that modify the execution stack must return a special code.
+(See oper.h for details.)
+
+</pre>
+<h3><a name="V1.1_Initialization"></a>Initialization (ghost.ps, gfonts.ps)</h3>
+
+<pre>
+Modifies ghost.ps and gfonts.ps so they print debugging information only
+if the name DEBUG is defined.  (Presumably the user will set this from the
+command line with -DDEBUG.)
+
+Changes ghost.ps so it initializes the nominal screen size to 640 x 350 on
+MS-DOS systems as before, but to 612 x 792 on Unix systems, which is an
+8.5" x 11" page at 72 pixels per inch.
+
+</pre>
+<h3><a name="V1.1_Library"></a>Library</h3>
+
+<pre>
+Corrects a bug that made the fill and eofill operators (gs_fill and
+gs_eofill) not perform a newpath afterward.
+
+Corrects the bug that made thin, nearly horizontal lines display wrong (as
+a series of disconnected dots) in the MS-DOS implementation.
+
+Fixes a bug in the EGA driver that often made it fill rectangular regions
+with black around information being displayed in white.
+
+Completely changes the internal representation of outline fonts, and
+changes btoi.ps (a Ghostscript language program for converting bitmaps to
+outlines) to use a new library call, gs_imagecharpath.
+
+Changes the extension for outline font files from .gf to .cp.
+
+Adds a new debugging switch, q, that traces all rectangle fill operations.
+
+Adds a new debugging switch, v, that traces all device-level output calls.
+
+Explicitly casts pointer differences passed as procedure arguments, as in
+the interpreter.
+
+Makes stringwidth work if there is no current point.  In version 1.0, this
+gave a nocurrentpoint error.
+
+</pre>
+<h3><a name="V1.1_Usage_procedures"></a>Usage procedures</h3>
+
+<pre>
+Changes the name of the 'read me' file from READ.ME to README.
+
+Removes a bogus line (invoking the 'mcopy' utility) from the makefile.
+
+Splits up the makefile into a generic part (ghost.mak) and
+platform-specific parts (dos-ega.mak, unix-x11.mak).  The latter are what
+is actually executed.
+
+Puts the definitions of the DEBUG and gs_DEBUG compilation flags into the
+makefile instead of in ghost.h and gx.h respectively.
+
+Changes the names of the documentation files to be a little less cryptic.
+Changes all the file names to lower-case in the documentation.  Adds
+installation information to make.doc.
+
+Changes all function definitions (but not prototype declarations) to ANSI
+syntax, and adds a preprocessing step (ansi2knr) to convert them to K&amp;R
+syntax on Unix systems.
+
+Changes the normal MS-DOS link configuration to not assume the presence of
+an 80x87 coprocessor, and describes how to increase performance if a
+coprocessor is present.
+
+Changes the names of all the interpreter .c files, except stream.c, to
+begin with 'i'.
+
+</pre>
+
+<hr>
+
+<h2><a name="Version1.0"></a>Version 1.0 (8/11/88)</h2>
+
+<pre>
+First version released to the public.
+</pre>
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

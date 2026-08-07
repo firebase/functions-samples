@@ -1,0 +1,99 @@
+.TH GSLP 1 "26 September 2016" 9.20 Ghostscript \" -*- nroff -*-
+.SH NAME
+gslp \- Format and print text using ghostscript
+.br
+gsbj \- Format and print text for BubbleJet printer using ghostscript
+.br
+gsdj \- Format and print text for DeskJet printer using ghostscript
+.br
+gsdj500 \- Format and print text for DeskJet 500 BubbleJet using ghostscript
+.br
+gslj \- Format and print text for LaserJet printer using ghostscript
+.SH SYNOPSIS
+.na
+\fBgslp\fB 
+\-12BclqRr \-b<header> \-f<font> \-F<hfont> \-L<lines> \-p<outfile>
+\-T<n>
+\-\-add\-to\-space\ <units>
+\-\-add\-to\-width\ <units>
+\-\-columns\ <n>
+\-\-detect
+\-\-first\-page\ <n>
+\-\-kern\ <file.afm>
+\-\-last\-page\ <n>
+\-\-(heading|footing)\-(left|center|right)\ <string>
+\-\-margin\-(top|bottom|left|right)\ <inches>
+\-\-no\-eject\-(file|formfeed)
+\-\-spacing\ <n>
+[gs\ options] [files]
+.ad
+.br
+\fBgsbj\fR [options] [files]
+.br
+\fBgsdj\fR [options] [files]
+.br
+\fBgsdj500\fR [options] [files]
+.br
+\fBgslj\fR [options] [files]
+.SH DESCRIPTION
+This utility provides functionality approximately equivalent to the Unix
+.BR enscript (1)
+program.  It prints plain text files using a single font.
+It currently handles tabs and formfeeds, but not backspaces.
+It will line-wrap when using fixed-pitch fonts.
+It will also do kerning and width adjustment.
+.PP
+The default device (\-sDEVICE=) and resolution (\-r) are as follows:
+.nf
+.na
+      gslp      epson      180
+      gsbj      bj10e      180
+      gsdj      deskjet    300
+      gsdj500   djet500    300
+      gslj      laserjet   300
+.ad
+.fi
+By default the current date is formatted as the center header.
+.SH OPTIONS
+.IP "Standard switches implemented:"
+-12BclqRr -b<header> -f<font> -F<hfont> -L<lines> -p<outfile>
+.IP "Sun switches implemented:"
+-T<n>	set tab width
+.IP "Switches ignored:"
+-GghKkmow -# -C -d -J -n -P -S -s -t -v
+.IP "Switches added:"
+.RS
+.IP "--add-to-space <units>"
+add the given number of 1/72" units to the width of each
+space (may be negative)
+.IP "--add-to-width <units>"
+add the given number of 1/72" units to the width of each
+character (may be negative)
+.IP "--columns <n>"
+print in <n> columns
+.IP "--detect"
+treat the file as PostScript if it starts with %!
+.IP "--first-page <n>"
+start printing at page <n>
+.IP "--kern <file.afm>"
+kern using information from the given .AFM file
+.IP "--last-page <n>"
+stop printing after page <n>
+.IP "--(heading|footing)-(left|center|right) <string>"
+set the heading/footing fields; use -B first to clear
+.IP "--margin-(top|bottom|left|right) <inches>"
+set a margin
+.IP "--no-eject-(file|formfeed)"
+end-of-file/FF only starts a new column, not a new sheet
+.IP "--spacing <n>"
+use double (n=2), triple (n=3), etc. spacing
+.RE
+Also, the string %# in a heading or footing is replaced with the page #.
+.SH SEE ALSO
+gs(1)
+.SH VERSION
+This document was last revised for Ghostscript version 9.20.
+.SH AUTHOR
+Artifex Software, Inc. are the
+primary maintainers of Ghostscript.
+This manpage by George Ferguson.
