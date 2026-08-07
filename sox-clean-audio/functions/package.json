@@ -1,0 +1,30 @@
+{
+  "name": "functions",
+  "description": "Apply audio processing to uploads on Firebase",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^0.4.0",
+    "firebase-admin": "^8.0.0",
+    "base64url": "^3.0.1",
+    "child-process-promise": "^2.2.1",
+    "core-util-is": "^1.0.2",
+    "firebase-functions": "^3.0.2",
+    "firebase-tools": "^7.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "firebase-functions-test": "^0.1.6"
+  },
+  "private": true
+}
