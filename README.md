@@ -1,5 +1,7 @@
 # Cloud Functions for Firebase Sample Library
 
+> **📣 Announcement:** Support for Dart in Cloud Functions for Firebase is now available! Read the [Dart announcement in the Firebase blog post](https://firebase.blog/posts/2026/04/cloud-next-2026-announcements#dart-for-cloud-functions). To see Dart samples, check out the [Dart folder on the `dart-launch` branch](https://github.com/firebase/functions-samples/tree/dart-launch/Dart).
+
 This repository contains a collection of samples showcasing some typical uses of [Cloud Functions for Firebase](https://firebase.google.com/features/functions).
 
 Samples are available for **Node** (1st and 2nd gen) and **Python** (2nd gen).
