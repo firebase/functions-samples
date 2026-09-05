@@ -3,7 +3,7 @@
   "description": "Authenticate with Spotify Cloud Functions for Firebase sample",
   "dependencies": {
     "cookie-parser": "^1.4.7",
-    "firebase-admin": "^14.2.0",
+    "firebase-admin": "^14.3.0",
     "firebase-functions": "^7.3.2",
     "spotify-web-api-node": "^5.0.2"
   },

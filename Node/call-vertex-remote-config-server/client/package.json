@@ -28,9 +28,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@firebase/functions": "^0.13.5",
+    "@firebase/functions": "^0.14.0",
     "eslint": "^10.8.0",
-    "firebase": "^12.16.0",
+    "firebase": "^12.18.0",
     "marked": "^12.0.2"
   }
 }

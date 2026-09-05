@@ -2,7 +2,7 @@
   "name": "new-user-email-functions",
   "description": "Send an email to new users and users who delete their account",
   "dependencies": {
-    "firebase-admin": "^14.2.0",
+    "firebase-admin": "^14.3.0",
     "firebase-functions": "^7.3.2",
     "nodemailer": "^8.0.11"
   },
