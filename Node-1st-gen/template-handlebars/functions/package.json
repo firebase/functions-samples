@@ -6,7 +6,7 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "express-handlebars": "^9.0.1",
-    "firebase-admin": "^14.2.0",
+    "firebase-admin": "^14.3.0",
     "firebase-functions": "^7.3.2",
     "handlebars": "^4.7.9"
   },

@@ -7,7 +7,7 @@
     "algoliasearch": "^5.56.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "firebase-admin": "^14.2.0",
+    "firebase-admin": "^14.3.0",
     "firebase-functions": "^7.3.2",
     "typesense": "^3.0.6"
   },
