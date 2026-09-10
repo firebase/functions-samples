@@ -16,11 +16,11 @@
   "dependencies": {
     "firebase-admin": "^14.2.0",
     "firebase-functions": "^7.3.2",
-    "nodemailer": "^8.0.11"
+    "resend": "^4.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
-    "eslint-plugin-promise": "^7.3.0"
+    "eslint-config-google": "^0.14.0"
   },
   "private": true
 }

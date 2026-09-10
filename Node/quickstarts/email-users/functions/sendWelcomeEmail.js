@@ -15,14 +15,20 @@
  */
 "use strict";
 
-const {sendWelcomeEmail} = require("./sendWelcomeEmail");
-const {sendByeEmail} = require("./sendByeEmail");
-const {
-  sendWelcomeEmailToTenant,
-  sendWelcomeEmailNoTenant,
-} = require("./tenants");
+// [START sendWelcomeEmail]
+const {onUserCreated} = require("firebase-functions/identity");
+const {defineSecret} = require("firebase-functions/params");
+const {sendWelcomeEmail} = require("./utils/myEmailService");
 
-exports.sendWelcomeEmail = sendWelcomeEmail;
-exports.sendByeEmail = sendByeEmail;
-exports.sendWelcomeEmailToTenant = sendWelcomeEmailToTenant;
-exports.sendWelcomeEmailNoTenant = sendWelcomeEmailNoTenant;
+const emailApiKey = defineSecret("EMAIL_API_KEY");
+
+// [START onCreateTrigger]
+exports.sendWelcomeEmail = onUserCreated({secrets: [emailApiKey]}, async (event) => {
+// [END onCreateTrigger]
+  // [START eventAttributes]
+  const {email, displayName} = event.data;
+  // [END eventAttributes]
+
+  await sendWelcomeEmail(email, displayName);
+});
+// [END sendWelcomeEmail]

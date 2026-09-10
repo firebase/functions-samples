@@ -1,55 +1,82 @@
 # Firebase SDK for Cloud Functions Quickstart - Auth triggers
 
-This quickstart demonstrates how to setup an Auth triggered Cloud Function using the **Firebase SDK for Cloud Functions**.
+This quickstart demonstrates how to setup an Auth triggered Cloud Function using the **Firebase SDK for Cloud Functions** and [Resend](https://resend.com/).
 
 
 ## Introduction
 
-We'll deploy 2nd gen Auth triggered Functions that send a welcome email when a new user signs up and a goodbye email when user accounts are deleted.
+We'll deploy 2nd gen Auth triggered functions that send a welcome email when a new user signs up and a goodbye email when user accounts are deleted.
 
-Further reading: [Firebase SDK for Cloud Functions](https://firebase.google.com/docs/functions/)
+- [Read more about Cloud Functions for Firebase](https://firebase.google.com/docs/functions/)
+- [Read more about the Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite)
+- [Connect Cloud Functions to the Emulator](https://firebase.google.com/docs/emulator-suite/connect_functions)
 
 
 ## Functions Code
 
-See file [functions/index.js](functions/index.js) for the Functions trigger and the email sending code.
+The functions are organized into separate files for clean, self-contained documentation snippets and modular code:
 
-Sending emails is performed using [nodemailer](https://www.npmjs.com/package/nodemailer), a node-based email client with comprehensive email server setup. For simplicity, in this sample we're showing how to send email through SMTP using a Gmail account. Be aware that Gmail has an [email sending quota](https://support.google.com/mail/answer/22839). If you are planning on sending a large number of emails you should use a professional email sending platform such as SendGrid, Mailjet, or Mailgun.
+- [functions/sendWelcomeEmail.js](functions/sendWelcomeEmail.js): `sendWelcomeEmail` triggers on all user creations across the project (default behavior).
+- [functions/sendByeEmail.js](functions/sendByeEmail.js): `sendByeEmail` triggers when any user account is deleted.
+- [functions/tenants.js](functions/tenants.js): Multi-tenancy examples:
+  - `sendWelcomeEmailToTenant`: Scoped to users in a specific Identity Platform tenant using `tenantId: "my-tenant-id"`.
+  - `sendWelcomeEmailNoTenant`: Triggers only for users not associated with any tenant using `tenantId: IS_NOT_TENANT`.
+- [functions/utils/myEmailService.js](functions/utils/myEmailService.js): Configures the Resend client, defines the `EMAIL_API_KEY` secret, and provides the `sendEmail`, `sendWelcomeEmail`, and `sendGoodbyeEmail` helpers.
+- [functions/index.js](functions/index.js): Entry point re-exporting all function triggers.
 
-> If switching to Sendgrid, Mailjet or Mailgun make sure you enable billing on your Firebase project as this is required to send requests to non-Google services.
-
-The dependencies are listed in [functions/package.json](functions/package.json).
-
-This sample comes with a simple web-based UI whose code is in the [public](public) directory that lets you easily sign in to Firebase and delete your account for purposes of testing the functions.
-
-
-## Setting up the sample
-
- 1. Create a Firebase Project using the [Firebase Console](https://console.firebase.google.com).
- 1. Enable the **Google** Provider in the **Auth** section.
- 1. Clone or download this repo and open the `quickstarts/email-users` directory.
- 1. You must have the Firebase CLI installed. If you don't have it install it with `npm install -g firebase-tools` and then configure it with `firebase login`.
- 1. Configure the CLI locally by using `firebase use --add` and select your project in the list.
- 1. Install Cloud Functions dependencies locally by running: `cd functions; npm install; cd -`
- 1. To be able to send emails with your Gmail account: enable access to [Less Secure Apps](https://www.google.com/settings/security/lesssecureapps) and [Display Unlock Captcha](https://accounts.google.com/DisplayUnlockCaptcha). For accounts with 2-step verification enabled [Generate an App Password](https://support.google.com/accounts/answer/185833).
- 1. This sample uses [parameterized configuration and Cloud KMS secrets](https://firebase.google.com/docs/functions/config-env). Set `GMAIL_EMAIL` and `GMAIL_PASSWORD`:
-    - For `GMAIL_PASSWORD`, store it as a secret using Cloud Secret Manager:
-      ```bash
-      firebase functions:secrets:set GMAIL_PASSWORD
-      ```
-    - For `GMAIL_EMAIL`, you will be prompted when deploying, or you can define it in a `.env` file or `functions/.env`:
-      ```bash
-      GMAIL_EMAIL="myusername@gmail.com"
-      ```
+Sending emails is performed using [Resend](https://resend.com/). The dependencies are listed in [functions/package.json](functions/package.json).
 
 
-## Deploy and test
+## Set up the sample
 
-This sample comes with a web-based UI for testing the function. To test it out:
+1. Clone or download this repo and navigate to `Node/quickstarts/email-users`:
+   ```bash
+   cd Node/quickstarts/email-users
+   ```
+2. Install Cloud Functions dependencies:
+   ```bash
+   cd functions && pnpm install && cd ..
+   ```
+3. Set your Resend API key for local development in `functions/.env.local`:
+   ```bash
+   EMAIL_API_KEY="re_123456789"
+   ```
+   > You can obtain a free API key from [Resend](https://resend.com/api-keys).
 
- 1. Deploy your project using `firebase deploy`
- 1. Open the app using `firebase open hosting:site`, this will open a browser.
- 1. Sign in to the web app in the browser using Google Sign-In and delete your account using the button on the web app. You should receive email confirmations for each action.
+
+## Run locally with the Firebase Emulator Suite
+
+The [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) lets you test Auth triggers and create/delete users directly in the Emulator UI without deploying to a live project.
+
+1. Start the emulators:
+   ```bash
+   firebase emulators:start
+   ```
+2. Open the **Emulator Suite UI** in your browser at [http://localhost:4000](http://localhost:4000) (or the port printed in your terminal).
+3. Navigate to the **Authentication** tab.
+4. **Trigger `sendWelcomeEmail`**: Click **Add user**, enter an email address and display name, and click **Save**.
+5. **Trigger `sendByeEmail`**: Select the user you just created and click **Delete user**.
+6. View the logs in the **Logs** tab of the Emulator Suite UI or in your terminal to see the functions execute:
+   > `New welcome email sent to: user@example.com`  
+   > `Account deletion confirmation email sent to: user@example.com`
+
+
+## Deploy to production
+
+To deploy the functions to a live Firebase project:
+
+1. Configure your Firebase project:
+   ```bash
+   firebase use --add
+   ```
+2. Set your Resend API key as a Cloud Secret:
+   ```bash
+   firebase functions:secrets:set EMAIL_API_KEY
+   ```
+3. Deploy the functions:
+   ```bash
+   firebase deploy --only functions
+   ```
 
 
 ## Contributing
@@ -59,4 +86,4 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## License
 
-© Google, 2024. Licensed under an [Apache-2](../../LICENSE) license.
+© Google, 2026. Licensed under an [Apache-2](../../LICENSE) license.
