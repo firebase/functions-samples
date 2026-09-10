@@ -26,7 +26,7 @@ module.exports = [
       "no-prototype-builtins": "off",
       "no-redeclare": "off",
       "no-constant-condition": "off",
-      "no-case-declarations": "off"
-    }
-  }
+      "no-case-declarations": "off",
+    },
+  },
 ];

@@ -16,9 +16,9 @@
 "use strict";
 
 // [START multitenancy]
-const {onUserCreated, IS_NOT_TENANT} = require("firebase-functions/identity");
-const {defineSecret} = require("firebase-functions/params");
-const {sendWelcomeEmail} = require("./utils/myEmailService");
+const { onUserCreated, IS_NOT_TENANT } = require("firebase-functions/identity");
+const { defineSecret } = require("firebase-functions/params");
+const { sendWelcomeEmail } = require("./utils/myEmailService");
 
 const emailApiKey = defineSecret("EMAIL_API_KEY");
 
@@ -26,23 +26,33 @@ const emailApiKey = defineSecret("EMAIL_API_KEY");
  * Sends a welcome email scoped to a specific tenant in Identity Platform.
  */
 exports.sendWelcomeEmailToTenant = onUserCreated(
-    {secrets: [emailApiKey], tenantId: "my-tenant-id"},
-    async (event) => {
-      const {email, displayName} = event.data;
+  {
+    secrets: [emailApiKey],
+    // Only trigger when a user is a member of this tenant
+    tenantId: "my-tenant-id",
+  },
+  async (event) => {
+    const { email, displayName } = event.data;
 
-      await sendWelcomeEmail(email, displayName, "my-tenant-id");
-    },
+    // Customize the email for this tenant
+    await sendWelcomeEmail(email, displayName, "my-tenant-id");
+  },
 );
 
 /**
  * Sends a welcome email only to users not associated with any tenant.
  */
 exports.sendWelcomeEmailNoTenant = onUserCreated(
-    {secrets: [emailApiKey], tenantId: IS_NOT_TENANT},
-    async (event) => {
-      const {email, displayName} = event.data;
+  {
+    secrets: [emailApiKey],
+    // Only trigger when a user is NOT a member of a tenant
+    tenantId: IS_NOT_TENANT,
+  },
+  async (event) => {
+    const { email, displayName } = event.data;
 
-      await sendWelcomeEmail(email, displayName);
-    },
+    // Send a generic welcome email
+    await sendWelcomeEmail(email, displayName);
+  },
 );
 // [END multitenancy]

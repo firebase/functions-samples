@@ -15,8 +15,8 @@
  */
 "use strict";
 
-const {sendWelcomeEmail} = require("./sendWelcomeEmail");
-const {sendByeEmail} = require("./sendByeEmail");
+const { sendWelcomeEmail } = require("./sendWelcomeEmail");
+const { sendByeEmail } = require("./sendByeEmail");
 const {
   sendWelcomeEmailToTenant,
   sendWelcomeEmailNoTenant,

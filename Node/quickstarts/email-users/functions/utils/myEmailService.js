@@ -16,9 +16,9 @@
 "use strict";
 
 // [START myEmailService]
-const {logger} = require("firebase-functions");
-const {defineSecret} = require("firebase-functions/params");
-const {Resend} = require("resend");
+const { logger } = require("firebase-functions");
+const { defineSecret } = require("firebase-functions/params");
+const { Resend } = require("resend");
 
 const emailApiKey = defineSecret("EMAIL_API_KEY");
 
@@ -30,7 +30,7 @@ const emailApiKey = defineSecret("EMAIL_API_KEY");
  * @param {string} options.text Plaintext email body.
  * @return {Promise<void>}
  */
-async function sendEmail({to, subject, text}) {
+async function sendEmail({ to, subject, text }) {
   const resend = new Resend(emailApiKey.value());
   await resend.emails.send({
     from: "My Firebase demo <onboarding@resend.dev>",

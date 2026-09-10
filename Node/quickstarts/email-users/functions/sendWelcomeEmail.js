@@ -16,19 +16,22 @@
 "use strict";
 
 // [START sendWelcomeEmail]
-const {onUserCreated} = require("firebase-functions/identity");
-const {defineSecret} = require("firebase-functions/params");
-const {sendWelcomeEmail} = require("./utils/myEmailService");
+const { onUserCreated } = require("firebase-functions/identity");
+const { defineSecret } = require("firebase-functions/params");
+const { sendWelcomeEmail } = require("./utils/myEmailService");
 
 const emailApiKey = defineSecret("EMAIL_API_KEY");
 
 // [START onCreateTrigger]
-exports.sendWelcomeEmail = onUserCreated({secrets: [emailApiKey]}, async (event) => {
-// [END onCreateTrigger]
-  // [START eventAttributes]
-  const {email, displayName} = event.data;
-  // [END eventAttributes]
+exports.sendWelcomeEmail = onUserCreated(
+  { secrets: [emailApiKey] },
+  async (event) => {
+    // [END onCreateTrigger]
+    // [START eventAttributes]
+    const { email, displayName } = event.data;
+    // [END eventAttributes]
 
-  await sendWelcomeEmail(email, displayName);
-});
+    await sendWelcomeEmail(email, displayName);
+  },
+);
 // [END sendWelcomeEmail]

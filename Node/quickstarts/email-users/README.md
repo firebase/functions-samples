@@ -2,7 +2,6 @@
 
 This quickstart demonstrates how to setup an Auth triggered Cloud Function using the **Firebase SDK for Cloud Functions** and [Resend](https://resend.com/).
 
-
 ## Introduction
 
 We'll deploy 2nd gen Auth triggered functions that send a welcome email when a new user signs up and a goodbye email when user accounts are deleted.
@@ -10,7 +9,6 @@ We'll deploy 2nd gen Auth triggered functions that send a welcome email when a n
 - [Read more about Cloud Functions for Firebase](https://firebase.google.com/docs/functions/)
 - [Read more about the Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite)
 - [Connect Cloud Functions to the Emulator](https://firebase.google.com/docs/emulator-suite/connect_functions)
-
 
 ## Functions Code
 
@@ -25,7 +23,6 @@ The functions are organized into separate files for clean, self-contained docume
 - [functions/index.js](functions/index.js): Entry point re-exporting all function triggers.
 
 Sending emails is performed using [Resend](https://resend.com/). The dependencies are listed in [functions/package.json](functions/package.json).
-
 
 ## Set up the sample
 
@@ -43,7 +40,6 @@ Sending emails is performed using [Resend](https://resend.com/). The dependencie
    ```
    > You can obtain a free API key from [Resend](https://resend.com/api-keys).
 
-
 ## Run locally with the Firebase Emulator Suite
 
 The [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) lets you test Auth triggers and create/delete users directly in the Emulator UI without deploying to a live project.
@@ -59,7 +55,6 @@ The [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-su
 6. View the logs in the **Logs** tab of the Emulator Suite UI or in your terminal to see the functions execute:
    > `New welcome email sent to: user@example.com`  
    > `Account deletion confirmation email sent to: user@example.com`
-
 
 ## Deploy to production
 
@@ -78,11 +73,9 @@ To deploy the functions to a live Firebase project:
    firebase deploy --only functions
    ```
 
-
 ## Contributing
 
 We'd love that you contribute to the project. Before doing so please read our [Contributor guide](../../CONTRIBUTING.md).
-
 
 ## License
 
