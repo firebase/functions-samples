@@ -74,8 +74,7 @@ This quickstart sample demonstrates using **Cloud Functions** triggered by **Fir
 
 ### Auth trigger quickstart: Welcome Email
 
-> Auth user create and delete triggers aren't yet supported by 2nd gen functions
-
+- [Node 2nd gen](/Node/quickstarts/email-users/)
 - [Node 1st gen](/Node-1st-gen/quickstarts/email-users/)
 
 This quickstart sample demonstrates using **Cloud Functions** triggered by **Firebase Auth events**. The function sends a Welcome Email when user accounts are created (or when users sign-in using an Identity Provider for the first time) and sends a Goodbye Email when user accounts are deleted.
