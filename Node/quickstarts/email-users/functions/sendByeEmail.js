@@ -18,6 +18,7 @@
 // [START sendByeEmail]
 const { onUserDeleted } = require("firebase-functions/identity");
 const { defineSecret } = require("firebase-functions/params");
+const { logger } = require("firebase-functions");
 const { sendGoodbyeEmail } = require("./utils/myEmailService");
 
 const emailApiKey = defineSecret("EMAIL_API_KEY");
@@ -27,7 +28,11 @@ exports.sendByeEmail = onUserDeleted(
   { secrets: [emailApiKey] },
   async (event) => {
     // [END onDeleteTrigger]
-    const { email, displayName } = event.data;
+    const { uid, email, displayName } = event.data;
+    if (!email) {
+      logger.log(`User ${uid} does not have an email address.`);
+      return;
+    }
 
     await sendGoodbyeEmail(email, displayName);
   },

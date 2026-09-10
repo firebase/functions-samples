@@ -18,6 +18,7 @@
 // [START sendWelcomeEmail]
 const { onUserCreated } = require("firebase-functions/identity");
 const { defineSecret } = require("firebase-functions/params");
+const { logger } = require("firebase-functions");
 const { sendWelcomeEmail } = require("./utils/myEmailService");
 
 const emailApiKey = defineSecret("EMAIL_API_KEY");
@@ -28,8 +29,13 @@ exports.sendWelcomeEmail = onUserCreated(
   async (event) => {
     // [END onCreateTrigger]
     // [START eventAttributes]
-    const { email, displayName } = event.data;
+    const { uid, email, displayName } = event.data;
     // [END eventAttributes]
+
+    if (!email) {
+      logger.log(`User ${uid} does not have an email address.`);
+      return;
+    }
 
     await sendWelcomeEmail(email, displayName);
   },

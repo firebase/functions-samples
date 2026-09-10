@@ -31,6 +31,9 @@ const emailApiKey = defineSecret("EMAIL_API_KEY");
  * @return {Promise<void>}
  */
 async function sendEmail({ to, subject, text }) {
+  if (!to) {
+    throw new Error('Missing email address.');
+  }
   const resend = new Resend(emailApiKey.value());
   await resend.emails.send({
     from: "My Firebase demo <onboarding@resend.dev>",
@@ -48,7 +51,10 @@ async function sendEmail({ to, subject, text }) {
  * @return {Promise<void>}
  */
 async function sendWelcomeEmail(email, displayName, tenantId) {
-  const greeting = tenantId ? "Welcome, new customer" : "Hey";
+  if (!email) {
+    return;
+  }
+  const greeting = tenantId ? `Hello member of ${tenantId}` : "Hey";
   const name = displayName ? ` ${displayName}` : "";
   await sendEmail({
     to: email,
@@ -66,7 +72,10 @@ async function sendWelcomeEmail(email, displayName, tenantId) {
  * @return {Promise<void>}
  */
 async function sendGoodbyeEmail(email, displayName, tenantId) {
-  const greeting = tenantId ? "Welcome, new customer" : "Hey";
+  if (!email) {
+    return;
+  }
+  const greeting = tenantId ? `Goodbye member of ${tenantId}` : "Bye";
   const name = displayName ? ` ${displayName}` : "";
   await sendEmail({
     to: email,
