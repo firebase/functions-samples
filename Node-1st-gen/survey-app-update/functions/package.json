@@ -4,7 +4,7 @@
   "dependencies": {
     "firebase-admin": "^14.2.0",
     "firebase-functions": "^7.3.2",
-    "nodemailer": "^8.0.11"
+    "nodemailer": "^9.1.1"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
