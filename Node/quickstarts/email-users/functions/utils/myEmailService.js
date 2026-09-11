@@ -80,7 +80,7 @@ async function sendGoodbyeEmail(email, displayName, tenantId) {
   await sendEmail({
     to: email,
     subject: "Bye!",
-    text: `${greeting}${name}!, We confirm that we have deleted your My Firebase demo account.`,
+    text: `${greeting}${name}! We confirm that we have deleted your My Firebase demo account.`,
   });
   logger.log("Account deletion confirmation email sent to:", email);
 }
