@@ -16,7 +16,9 @@
 "use strict";
 
 // [START sendByeEmail]
+// [START onDeleteImport]
 const { onUserDeleted } = require("firebase-functions/identity");
+// [END onDeleteImport]
 const { defineSecret } = require("firebase-functions/params");
 const { logger } = require("firebase-functions");
 const { sendGoodbyeEmail } = require("./utils/myEmailService");

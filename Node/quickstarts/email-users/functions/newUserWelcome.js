@@ -16,7 +16,9 @@
 "use strict";
 
 // [START sendWelcomeEmail]
+// [START onCreateImport]
 const { onUserCreated } = require("firebase-functions/identity");
+// [END onCreateImport]
 const { defineSecret } = require("firebase-functions/params");
 const { logger } = require("firebase-functions");
 const { sendWelcomeEmail } = require("./utils/myEmailService");
