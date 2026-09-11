@@ -32,7 +32,7 @@ const emailApiKey = defineSecret("EMAIL_API_KEY");
  */
 async function sendEmail({ to, subject, text }) {
   if (!to) {
-    throw new Error('Missing email address.');
+    throw new Error("Missing email address.");
   }
   const resend = new Resend(emailApiKey.value());
   await resend.emails.send({

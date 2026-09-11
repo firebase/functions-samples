@@ -24,7 +24,7 @@ const { sendGoodbyeEmail } = require("./utils/myEmailService");
 const emailApiKey = defineSecret("EMAIL_API_KEY");
 
 // [START onDeleteTrigger]
-exports.sendByeEmail = onUserDeleted(
+exports.deletedUserFarewell = onUserDeleted(
   { secrets: [emailApiKey] },
   async (event) => {
     // [END onDeleteTrigger]

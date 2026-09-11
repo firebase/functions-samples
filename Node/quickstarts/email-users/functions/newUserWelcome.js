@@ -24,7 +24,7 @@ const { sendWelcomeEmail } = require("./utils/myEmailService");
 const emailApiKey = defineSecret("EMAIL_API_KEY");
 
 // [START onCreateTrigger]
-exports.sendWelcomeEmail = onUserCreated(
+exports.newUserWelcome = onUserCreated(
   { secrets: [emailApiKey] },
   async (event) => {
     // [END onCreateTrigger]

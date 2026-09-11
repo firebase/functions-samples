@@ -15,14 +15,14 @@
  */
 "use strict";
 
-const { sendWelcomeEmail } = require("./sendWelcomeEmail");
-const { sendByeEmail } = require("./sendByeEmail");
+const { newUserWelcome } = require("./newUserWelcome");
+const { deletedUserFarewell } = require("./deletedUserFarewell");
 const {
   sendWelcomeEmailToTenant,
   sendWelcomeEmailNoTenant,
 } = require("./tenants");
 
-exports.sendWelcomeEmail = sendWelcomeEmail;
-exports.sendByeEmail = sendByeEmail;
+exports.newUserWelcome = newUserWelcome;
+exports.deletedUserFarewell = deletedUserFarewell;
 exports.sendWelcomeEmailToTenant = sendWelcomeEmailToTenant;
 exports.sendWelcomeEmailNoTenant = sendWelcomeEmailNoTenant;
