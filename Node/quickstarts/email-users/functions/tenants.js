@@ -18,7 +18,6 @@
 // [START multitenancy]
 const { onUserCreated, IS_NOT_TENANT } = require("firebase-functions/identity");
 const { defineSecret } = require("firebase-functions/params");
-const { logger } = require("firebase-functions");
 const { sendWelcomeEmail } = require("./utils/myEmailService");
 
 const emailApiKey = defineSecret("EMAIL_API_KEY");
@@ -34,13 +33,8 @@ exports.sendWelcomeEmailToTenant = onUserCreated(
   },
   async (event) => {
     const { uid, email, displayName } = event.data;
-    if (!email) {
-      logger.log(`User ${uid} does not have an email address.`);
-      return;
-    }
-
     // Customize the email for this tenant
-    await sendWelcomeEmail(email, displayName, "my-tenant-id");
+    await sendWelcomeEmail(email, displayName, event.tenantId);
   },
 );
 
@@ -54,11 +48,7 @@ exports.sendWelcomeEmailNoTenant = onUserCreated(
     tenantId: IS_NOT_TENANT,
   },
   async (event) => {
-    const { uid, email, displayName } = event.data;
-    if (!email) {
-      logger.log(`user ${uid} does not have an email address.`);
-      return;
-    }
+    const { email, displayName } = event.data;
 
     // Send a generic welcome email
     await sendWelcomeEmail(email, displayName);
