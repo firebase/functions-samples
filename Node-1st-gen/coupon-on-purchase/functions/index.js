@@ -16,8 +16,10 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getMessaging } = require('firebase-admin/messaging');
+const { getDatabase } = require('firebase-admin/database');
+initializeApp();
 
 // [START all]
 /**
@@ -70,7 +72,7 @@ async function sendCouponViaFCM(uid, userLanguage) {
     }
 
     // Send notifications to all tokens.
-    return admin.messaging().sendEachForMulticast({
+    return getMessaging().sendEachForMulticast({
       notification: payload.notification,
       tokens
     });
@@ -107,7 +109,7 @@ async function sendHighValueCouponViaFCM(uid, userLanguage) {
     }
 
     // Send notifications to all tokens.
-    return admin.messaging().sendEachForMulticast({
+    return getMessaging().sendEachForMulticast({
       notification: payload.notification,
       tokens
     });
@@ -121,7 +123,7 @@ async function sendHighValueCouponViaFCM(uid, userLanguage) {
  * @param {string} uid The UID of the user.
  */
 async function getDeviceTokens(uid) {
-  const snap = await admin.database().ref(`/users/${uid}/tokens`).once('value');
+  const snap = await getDatabase().ref(`/users/${uid}/tokens`).once('value');
   if (snap.exists()) {
     return Object.keys(snap.val());
   }

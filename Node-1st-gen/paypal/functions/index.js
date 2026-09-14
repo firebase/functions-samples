@@ -20,8 +20,9 @@ const {onInit} = require('firebase-functions/v1/init');
 const {defineSecret} = require('firebase-functions/params');
 const paypal = require('paypal-rest-sdk');
 // firebase-admin SDK init
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
+initializeApp();
 
 const paypalClientId = defineSecret('PAYPAL_CLIENT_ID');
 const paypalClientSecret = defineSecret('PAYPAL_CLIENT_SECRET');
@@ -112,7 +113,7 @@ exports.process = functions.runWith({secrets: [paypalClientId, paypalClientSecre
         // set paid status to True in RealTime Database
         const date = Date.now();
         const uid = payment.transactions[0].description;
-        const ref = admin.database().ref('users/' + uid + '/');
+        const ref = getDatabase().ref('users/' + uid + '/');
         ref.push({
           paid: true,
           // 'description': description,

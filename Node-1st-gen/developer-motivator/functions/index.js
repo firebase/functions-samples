@@ -15,10 +15,11 @@
  */
 'use strict';
 
-const admin = require('firebase-admin');
+const { initializeApp } = require('firebase-admin/app');
+const { getMessaging } = require('firebase-admin/messaging');
 const functions = require('firebase-functions/v1');
 const {defineSecret} = require('firebase-functions/params');
-admin.initializeApp();
+initializeApp();
 
 // TODO: Make sure you configure the 'DEV_MOTIVATOR_DEVICE_TOKEN' secret.
 const devMotivatorDeviceToken = defineSecret('DEV_MOTIVATOR_DEVICE_TOKEN');
@@ -37,7 +38,7 @@ exports.appinstalled = functions.runWith({secrets: [devMotivatorDeviceToken]}).a
     }
   };
 
-  return admin.messaging().send({token: devMotivatorDeviceToken.value(), notification: payload.notification});
+  return getMessaging().send({token: devMotivatorDeviceToken.value(), notification: payload.notification});
 });
 
 /**
@@ -56,5 +57,5 @@ exports.appremoved = functions.runWith({secrets: [devMotivatorDeviceToken]}).ana
     }
   };
 
-  return admin.messaging().send({token: devMotivatorDeviceToken.value(), notification: payload.notification});
+  return getMessaging().send({token: devMotivatorDeviceToken.value(), notification: payload.notification});
 });

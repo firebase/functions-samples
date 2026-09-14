@@ -21,11 +21,12 @@ const functions = require('firebase-functions/v1');
 const cors = require('cors')({origin: true});
 
 // Firebase Setup
-const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
 // @ts-ignore
 const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+initializeApp({
+  credential: cert(serviceAccount),
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
@@ -83,7 +84,7 @@ exports.auth = functions.https.onRequest((req, res) => {
       }
 
       // On success return the Firebase Custom Auth Token.
-      const firebaseToken = await admin.auth().createCustomToken(username);
+      const firebaseToken = await getAuth().createCustomToken(username);
       return handleResponse(username, 200, { token: firebaseToken });
     });
   } catch (error) {

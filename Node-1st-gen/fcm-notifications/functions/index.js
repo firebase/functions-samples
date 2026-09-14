@@ -16,8 +16,11 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+const { getDatabase } = require('firebase-admin/database');
+const { getMessaging } = require('firebase-admin/messaging');
+initializeApp();
 
 /**
  * Triggers when a user gets a new follower and sends a notification.
@@ -46,11 +49,11 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       );
 
       // Get the list of device notification tokens.
-      const getDeviceTokensPromise = admin.database()
+      const getDeviceTokensPromise = getDatabase()
           .ref(`/users/${followedUid}/notificationTokens`).once('value');
 
       // Get the follower profile.
-      const getFollowerProfilePromise = admin.auth().getUser(followerUid);
+      const getFollowerProfilePromise = getAuth().getUser(followerUid);
 
       // The snapshot to the user's tokens.
       let tokensSnapshot;
@@ -87,7 +90,7 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       // Listing all tokens as an array.
       tokens = Object.keys(tokensSnapshot.val());
       // Send notifications to all tokens.
-      const {responses} = await admin.messaging().sendEachForMulticast({
+      const {responses} = await getMessaging().sendEachForMulticast({
         notification: payload.notification,
         tokens,
       });

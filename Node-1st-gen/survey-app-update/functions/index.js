@@ -18,8 +18,9 @@
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1/init');
 const {defineString, defineSecret} = require('firebase-functions/params');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+initializeApp();
 const nodemailer = require('nodemailer');
 // Configure the email transport using the default SMTP transport and a GMail account.
 // For other types of transports such as Sendgrid see https://nodemailer.com/transports/
@@ -49,7 +50,7 @@ exports.sendAppUpdateSurvey = functions.runWith({secrets: [gmailPassword]}).anal
     // Fetch the email of the user. In this sample we assume that the app is using Firebase Auth and
     // has set the Firebase Analytics User ID to be the same as the Firebase Auth uid using the
     // setUserId API.
-    const user = await admin.auth().getUser(uid);
+    const user = await getAuth().getUser(uid);
     const email = user.email;
     const name = user.displayName;
     return sendSurveyEmail(email, name);

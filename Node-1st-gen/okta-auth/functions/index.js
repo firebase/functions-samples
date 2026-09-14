@@ -34,8 +34,9 @@ if (envCfg.parsed && envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS) {
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1/init');
 const {defineString} = require('firebase-functions/params');
-const firebaseAdmin = require('firebase-admin');
-const firebaseApp = firebaseAdmin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+initializeApp();
 
 const oktaOrgUrl = defineString('OKTA_ORG_URL');
 const OktaJwtVerifier = require('@okta/jwt-verifier');
@@ -85,7 +86,7 @@ app.get('/firebaseCustomToken', [cors, oktaAuth], async (req, res) => {
     const oktaUid = req.jwt.claims.uid;
     try {
         const firebaseToken =
-                await firebaseApp.auth().createCustomToken(oktaUid);
+                await getAuth().createCustomToken(oktaUid);
         res.send(firebaseToken);
     } catch (err) {
         functions.logger.error('Error minting token.', err);
