@@ -83,7 +83,7 @@ Demo.prototype.signIn = function() {
   req.onerror = function() {
     err.innerText = 'Network error in Firebase Cloud Function call see developer console for details';
   };
-  var url = 'https://us-central1-' + getFirebaseProjectId() + '.cloudfunctions.net/auth';
+  var url = new URL(`https://us-central1-${getFirebaseProjectId()}.cloudfunctions.net/auth`);
   req.open('POST', url, true);
   req.setRequestHeader('Content-Type', 'application/json');
   req.send(JSON.stringify({

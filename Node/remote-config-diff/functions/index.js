@@ -17,12 +17,13 @@
 
 // [START all]
 // [START import]
+const {URL, URLSearchParams} = require("node:url");
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
 const {onConfigUpdated} = require("firebase-functions/remoteConfig");
 const logger = require("firebase-functions/logger");
 // The Firebase Admin SDK to obtain access tokens.
 const {initializeApp, applicationDefault} = require("firebase-admin/app");
-const app = initializeApp();
+initializeApp();
 const jsonDiff = require("json-diff");
 // [END import]
 
@@ -35,8 +36,9 @@ exports.showconfigdiff = onConfigUpdated(async (event) => {
     const accessToken = accessTokenObj.access_token;
 
     // Get the version number from the event object
-    const remoteConfigApi = "https://firebaseremoteconfig.googleapis.com/v1/" +
-        `projects/${app.options.projectId}/remoteConfig`;
+    const remoteConfigApi = new URL(
+        `https://firebaseremoteconfig.googleapis.com/v1/projects/${process.env.GCLOUD_PROJECT}/remoteConfig`,
+    );
     const currentVersion = event.data.versionNumber;
     const prevVersion = currentVersion - 1;
     const templatePromises = [];

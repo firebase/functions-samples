@@ -17,6 +17,7 @@
 import {
   onInAppFeedbackPublished} from "firebase-functions/alerts/appDistribution";
 import {defineInt, defineSecret, defineString} from "firebase-functions/params";
+import {URL, URLSearchParams} from "node:url";
 import logger from "firebase-functions/logger";
 import {FormData} from "formdata-polyfill/esm.min.js";
 
@@ -119,7 +120,8 @@ async function uploadScreenshot(issueUri, screenshotUri) {
 
   const form = new FormData();
   form.append("file", blob, "screenshot.png");
-  const ulResponse = await fetch(issueUri + "/attachments", {
+  const attachmentsUrl = new URL(`${issueUri}/attachments`);
+  const ulResponse = await fetch(attachmentsUrl, {
     method: "POST",
     body: form,
     headers: {
@@ -139,15 +141,17 @@ async function uploadScreenshot(issueUri, screenshotUri) {
  * @param {string} testerEmail Email address of tester who filed feedback
  */
 async function lookupReporter(testerEmail) {
-  const response =
-        await fetch(
-            `${jiraUriConfig.value()}/rest/api/3/user/search` +
-              `?query=${testerEmail}`, {
-              method: "GET",
-              headers: {
-                "Authorization": authHeader(),
-                "Accept": "application/json",
-              }});
+  const searchUrl = new URL(
+      `${jiraUriConfig.value()}/rest/api/3/user/search`,
+  );
+  searchUrl.search = new URLSearchParams({query: testerEmail}).toString();
+  const response = await fetch(searchUrl, {
+    method: "GET",
+    headers: {
+      "Authorization": authHeader(),
+      "Accept": "application/json",
+    },
+  });
   if (!response.ok) {
     logger.info(`Failed to find Jira user for '${testerEmail}':` +
                 `${response.status} ${response.statusText}`);
