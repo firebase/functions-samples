@@ -16,7 +16,7 @@
 
 import { onCall, CallableRequest } from "firebase-functions/https";
 import { defineSecret } from "firebase-functions/params";
-import { google } from "googleapis";
+import { google, youtube_v3 } from "googleapis";
 
 const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
 
@@ -60,7 +60,7 @@ export const getChannelInfo = onCall({ secrets: [youtubeApiKey] }, async (reques
     channelTitle: channel.snippet!.title,
     channelDescription: channel.snippet!.description,
     subscriberCount: channel.statistics!.subscriberCount,
-    recentVideos: videos.map((video: any) => {
+    recentVideos: videos.map((video: youtube_v3.Schema$SearchResult) => {
       return {
         videoTitle: video.snippet!.title,
         videoUrl: `https://www.youtube.com/watch?v=${video.id!.videoId}`,

@@ -23,7 +23,7 @@ initializeApp();
 const path = require('path');
 
 //library for resizing images
-const sharp = /** @type {any} */ (require('sharp'));
+const sharp = /** @type {import('sharp').SharpConstructor} */ (/** @type {unknown} */ (require('sharp')));
 // [END import]
 
 // [START generateThumbnail]
