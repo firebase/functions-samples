@@ -31,6 +31,7 @@ const emailApiKey = defineSecret("EMAIL_API_KEY");
  * @return {Promise<void>}
  */
 async function sendEmail({ to, subject, text }) {
+  logger.log({ to, subject, text });
   if (!to) {
     throw new Error("Missing email address.");
   }
