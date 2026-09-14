@@ -27,7 +27,7 @@ const logger = require("firebase-functions/logger");
 const path = require("path");
 
 // library for image resizing
-const sharp = require("sharp");
+const sharp = /** @type {any} */ (require("sharp"));
 
 initializeApp();
 // [END v2storageAdditionalImports]

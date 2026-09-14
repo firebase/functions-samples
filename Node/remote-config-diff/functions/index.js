@@ -21,8 +21,8 @@
 const {onConfigUpdated} = require("firebase-functions/remoteConfig");
 const logger = require("firebase-functions/logger");
 // The Firebase Admin SDK to obtain access tokens.
-const admin = require("firebase-admin");
-const app = admin.initializeApp();
+const {initializeApp, applicationDefault} = require("firebase-admin/app");
+const app = initializeApp();
 const jsonDiff = require("json-diff");
 // [END import]
 
@@ -30,7 +30,7 @@ const jsonDiff = require("json-diff");
 exports.showconfigdiff = onConfigUpdated(async (event) => {
   try {
     // Obtain the access token from the Admin SDK
-    const accessTokenObj = await admin.credential.applicationDefault()
+    const accessTokenObj = await applicationDefault()
         .getAccessToken();
     const accessToken = accessTokenObj.access_token;
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/// <reference types="mocha" />
+
 const {logger} = require("firebase-functions");
 const test = require("firebase-functions-test");
 const {spy} = require("sinon");
