@@ -15,10 +15,11 @@
  */
 
 const {functions} = require("firebase-functions/v1");
-const {admin} = require("firebase-admin");
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 
-admin.initializeApp();
-const db = admin.firestore();
+initializeApp();
+const db = getFirestore();
 
 // [START v1ValidateNewUser]
 // [START v1beforeCreateFunctionTrigger]

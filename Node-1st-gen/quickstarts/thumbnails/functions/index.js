@@ -17,12 +17,13 @@
 
 // [START import]
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp()
+const { initializeApp } = require('firebase-admin/app');
+const { getStorage } = require('firebase-admin/storage');
+initializeApp();
 const path = require('path');
 
 //library for resizing images
-const sharp = require('sharp');
+const sharp = /** @type {any} */ (require('sharp'));
 // [END import]
 
 // [START generateThumbnail]
@@ -55,7 +56,7 @@ exports.firstGenGenerateThumbnail = functions.storage.object().onFinalize(async 
 
   // [START thumbnailGeneration]
   // Download file from bucket.
-  const bucket = admin.storage().bucket(fileBucket);
+  const bucket = getStorage().bucket(fileBucket);
   const metadata = {
     contentType: contentType,
   };

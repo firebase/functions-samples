@@ -21,8 +21,9 @@
 const functions = require('firebase-functions/v1');
 
 // The Firebase Admin SDK to access Firestore.
-const admin = require("firebase-admin");
-admin.initializeApp();
+const { initializeApp } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
+initializeApp();
 // [END import]
 
 // [START addMessage]
@@ -35,8 +36,7 @@ exports.addMessage = functions.https.onRequest(async (req, res) => {
   const original = req.query.text;
   // [START adminSdkAdd]
   // Push the new message into Firestore using the Firebase Admin SDK.
-  const writeResult = await admin
-    .firestore()
+  const writeResult = await getFirestore()
     .collection("messages")
     .add({ original: original });
   // Send back a message that we've successfully written the message

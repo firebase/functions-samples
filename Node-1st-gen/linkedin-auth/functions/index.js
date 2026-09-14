@@ -23,11 +23,13 @@ const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 
 // Firebase Setup
-const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+const { getDatabase } = require('firebase-admin/database');
 // @ts-ignore
 const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+initializeApp({
+  credential: cert(serviceAccount),
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
@@ -146,16 +148,16 @@ exports.token = functions.runWith({secrets: [linkedinClientId, linkedinClientSec
  */
 async function createFirebaseAccount(linkedinID, displayName, photoURL, email, accessToken) {
   const uid = `linkedin:${linkedinID}`;
-  const databaseTask = admin.database().ref(`/linkedInAccessToken/${uid}`).set(accessToken);
+  const databaseTask = getDatabase().ref(`/linkedInAccessToken/${uid}`).set(accessToken);
 
-  const userCreationTask = admin.auth().updateUser(uid, {
+  const userCreationTask = getAuth().updateUser(uid, {
     displayName: displayName,
     photoURL: photoURL,
     email: email,
     emailVerified: true,
   }).catch((error) => {
     if (error.code === 'auth/user-not-found') {
-      return admin.auth().createUser({
+      return getAuth().createUser({
         uid: uid,
         displayName: displayName,
         photoURL: photoURL,
@@ -167,7 +169,7 @@ async function createFirebaseAccount(linkedinID, displayName, photoURL, email, a
   });
 
   await Promise.all([userCreationTask, databaseTask]);
-  const token = await admin.auth().createCustomToken(uid);
+  const token = await getAuth().createCustomToken(uid);
   functions.logger.log('Created Custom token for UID "', uid, '" Token:', token);
   return token;
 }

@@ -16,8 +16,9 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+initializeApp();
 const PromisePool = require('es6-promise-pool').default;
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
@@ -45,7 +46,7 @@ function deleteInactiveUser(inactiveUsers) {
     const userToDelete = inactiveUsers.pop();
     
     // Delete the inactive user.
-    return admin.auth().deleteUser(userToDelete.uid).then(() => {
+    return getAuth().deleteUser(userToDelete.uid).then(() => {
       return functions.logger.log(
         'Deleted user account',
         userToDelete.uid,
@@ -68,7 +69,7 @@ function deleteInactiveUser(inactiveUsers) {
  * Returns the list of all inactive users.
  */
 async function getInactiveUsers(users = [], nextPageToken) {
-  const result = await admin.auth().listUsers(1000, nextPageToken);
+  const result = await getAuth().listUsers(1000, nextPageToken);
   // Find users that have not signed in in the last 30 days.
   const inactiveUsers = result.users.filter(
       user => Date.parse(user.metadata.lastRefreshTime || user.metadata.lastSignInTime) < (Date.now() - 30 * 24 * 60 * 60 * 1000));

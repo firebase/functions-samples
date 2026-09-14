@@ -17,12 +17,14 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
+const { initializeApp, applicationDefault } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+const { getDatabase } = require('firebase-admin/database');
 
 // Follow instructions to set up admin credentials:
 // https://firebase.google.com/docs/functions/local-emulator#set_up_admin_credentials_optional
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
+initializeApp({
+  credential: applicationDefault(),
   // TODO: ADD YOUR DATABASE URL
   databaseURL: undefined
 });
@@ -44,7 +46,7 @@ const authenticate = async (req, res, next) => {
   }
   const idToken = req.headers.authorization.split('Bearer ')[1];
   try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
+    const decodedIdToken = await getAuth().verifyIdToken(idToken);
     req.user = decodedIdToken;
     next();
     return;
@@ -74,7 +76,7 @@ app.post('/api/messages', async (req, res) => {
 
     // @ts-ignore
     const uid = req.user.uid;
-    await admin.database().ref(`/users/${uid}/messages`).push(data);
+    await getDatabase().ref(`/users/${uid}/messages`).push(data);
 
     res.status(201).json({message, category});
   } catch(error) {
@@ -94,8 +96,8 @@ app.get('/api/messages', async (req, res) => {
   const uid = req.user.uid;
   const category = `${req.query?.category ?? ''}`;
 
-  /** @type admin.database.Query */
-  let query = admin.database().ref(`/users/${uid}/messages`);
+  /** @type {import('firebase-admin/database').Query} */
+  let query = getDatabase().ref(`/users/${uid}/messages`);
 
   if (category && ['positive', 'negative', 'neutral'].indexOf(category) > -1) {
     // Update the query with the valid category
@@ -129,7 +131,7 @@ app.get('/api/message/:messageId', async (req, res) => {
   try {
     // @ts-ignore
     const uid = req.user.uid;
-    const snapshot = await admin.database().ref(`/users/${uid}/messages/${messageId}`).once('value');
+    const snapshot = await getDatabase().ref(`/users/${uid}/messages/${messageId}`).once('value');
 
     if (!snapshot.exists()) {
       return res.status(404).json({errorCode: 404, errorMessage: `message '${messageId}' not found`});

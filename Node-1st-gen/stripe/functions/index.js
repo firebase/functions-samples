@@ -18,20 +18,21 @@
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1/init');
 const {defineSecret} = require('firebase-functions/params');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+initializeApp();
 const { Logging } = require('@google-cloud/logging');
 const logging = new Logging({
   projectId: process.env.GCLOUD_PROJECT,
 });
 
-const { Stripe } = require('stripe');
+const Stripe = require('stripe');
 const stripeSecret = defineSecret('STRIPE_SECRET');
 
 let stripe;
 onInit(() => {
   stripe = new Stripe(stripeSecret.value(), {
-    apiVersion: '2020-08-27',
+    apiVersion: '2026-07-29.dahlia',
   });
 });
 
@@ -45,7 +46,7 @@ exports.createStripeCustomer = functions.runWith({secrets: [stripeSecret]}).auth
   const intent = await stripe.setupIntents.create({
     customer: customer.id,
   });
-  await admin.firestore().collection('stripe_customers').doc(user.uid).set({
+  await getFirestore().collection('stripe_customers').doc(user.uid).set({
     customer_id: customer.id,
     setup_secret: intent.client_secret,
   });
@@ -147,11 +148,11 @@ exports.confirmStripePayment = functions.runWith({secrets: [stripeSecret]}).fire
  * When a user deletes their account, clean up after them
  */
 exports.cleanupUser = functions.runWith({secrets: [stripeSecret]}).auth.user().onDelete(async (user) => {
-  const dbRef = admin.firestore().collection('stripe_customers');
+  const dbRef = getFirestore().collection('stripe_customers');
   const customer = (await dbRef.doc(user.uid).get()).data();
   await stripe.customers.del(customer.customer_id);
   // Delete the customers payments & payment methods in firestore.
-  const batch = admin.firestore().batch();
+  const batch = getFirestore().batch();
   const paymetsMethodsSnapshot = await dbRef
     .doc(user.uid)
     .collection('payment_methods')

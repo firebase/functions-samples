@@ -16,8 +16,9 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
+initializeApp();
 const { TranslationServiceClient } = require('@google-cloud/translate');
 
 const translate = new TranslationServiceClient();
@@ -42,7 +43,7 @@ exports.translate = functions.database.ref('/messages/{languageID}/{messageID}')
               sourceLanguageCode: context.params.languageID, 
               targetLanguageCode: language 
             });
-            return admin.database().ref(`/messages/${language}/${snapshot.key}`).set({
+            return getDatabase().ref(`/messages/${language}/${snapshot.key}`).set({
               message: results[0],
               translated: true,
             });

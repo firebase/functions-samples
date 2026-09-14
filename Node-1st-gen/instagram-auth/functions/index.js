@@ -22,11 +22,13 @@ const cookieParser = require('cookie-parser');
 const crypto = require('node:crypto');
 
 // Firebase Setup
-const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+const { getDatabase } = require('firebase-admin/database');
 // @ts-ignore
 const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+initializeApp({
+  credential: cert(serviceAccount),
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
@@ -37,6 +39,7 @@ const instagramClientId = defineSecret('INSTAGRAM_CLIENT_ID');
 const instagramClientSecret = defineSecret('INSTAGRAM_CLIENT_SECRET');
 
 const { AuthorizationCode } = require('simple-oauth2');
+let oauth2;
 onInit(() => {
   // Instagram OAuth 2 setup
   // TODO: Configure the `INSTAGRAM_CLIENT_ID` and `INSTAGRAM_CLIENT_SECRET` secrets.
@@ -129,16 +132,16 @@ async function createFirebaseAccount(instagramID, displayName, photoURL, accessT
   const uid = `instagram:${instagramID}`;
 
   // Save the access token to the Firebase Realtime Database.
-  const databaseTask = admin.database().ref(`/instagramAccessToken/${uid}`).set(accessToken);
+  const databaseTask = getDatabase().ref(`/instagramAccessToken/${uid}`).set(accessToken);
 
   // Create or update the user account.
-  const userCreationTask = admin.auth().updateUser(uid, {
+  const userCreationTask = getAuth().updateUser(uid, {
     displayName: displayName,
     photoURL: photoURL,
   }).catch((error) => {
     // If user does not exists we create it.
     if (error.code === 'auth/user-not-found') {
-      return admin.auth().createUser({
+      return getAuth().createUser({
         uid: uid,
         displayName: displayName,
         photoURL: photoURL,
@@ -150,7 +153,7 @@ async function createFirebaseAccount(instagramID, displayName, photoURL, accessT
   // Wait for all async task to complete then generate and return a custom auth token.
   await Promise.all([userCreationTask, databaseTask]);
   // Create a Firebase custom auth token.
-  const token = await admin.auth().createCustomToken(uid);
+  const token = await getAuth().createCustomToken(uid);
   functions.logger.log(
     'Created Custom token for UID "',
     uid,

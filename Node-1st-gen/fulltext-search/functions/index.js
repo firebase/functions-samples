@@ -18,8 +18,9 @@
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1/init');
 const {defineSecret} = require('firebase-functions/params');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
+initializeApp();
 
 // Authenticate to Algolia Database.
 // TODO: Make sure you configure the `ALGOLIA_APP_ID` and `ALGOLIA_API_KEY` secrets.
@@ -62,5 +63,5 @@ exports.searchentry = functions.runWith({secrets: [algoliaAppId, algoliaApiKey]}
         '/search/last_query_timestamp': Date.parse(context.timestamp),
       };
       updates[`/search/results/${key}`] = content;
-      return admin.database().ref().update(updates);
+      return getDatabase().ref().update(updates);
     });
