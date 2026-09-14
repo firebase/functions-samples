@@ -12,8 +12,8 @@ importers:
         specifier: ^14.2.0
         version: 14.2.0(supports-color@7.2.0)
       firebase-functions:
-        specifier: ^7.3.2
-        version: 7.3.2(firebase-admin@14.2.0(supports-color@7.2.0))(supports-color@7.2.0)
+        specifier: 7.3.3-rc.3
+        version: 7.3.3-rc.3(firebase-admin@14.2.0(supports-color@7.2.0))(supports-color@7.2.0)
       resend:
         specifier: ^4.0.0
         version: 4.8.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -599,8 +599,8 @@ packages:
     resolution: {integrity: sha512-zfs5PdccEgjX479bbMmz95Rqc7ttQ4LV3qkGFlPiqOaOu/suBZc3fG52Qzn2hQjiSHkBM4NP2AZV5r2NvAt0TQ==}
     engines: {node: '>=22'}
 
-  firebase-functions@7.3.2:
-    resolution: {integrity: sha512-DTa5CtCNxFE1gPjkjlhl5uh8AcNWXLKORAMRenfkecP8zGstbje+r2TaNh4Ehdxp0qTPvTUe/sS23VESW32Gbg==}
+  firebase-functions@7.3.3-rc.3:
+    resolution: {integrity: sha512-ZSk85ExZSIgRaKZiTD2Z8Q4dU6KIeIVfwYT75PWC4KlaEgnoAyH6l4fmbP2IeAV3K8WQpLP9A5uTJIKMzeqL8A==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -2117,7 +2117,7 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions@7.3.2(firebase-admin@14.2.0(supports-color@7.2.0))(supports-color@7.2.0):
+  firebase-functions@7.3.3-rc.3(firebase-admin@14.2.0(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       '@types/cors': 2.8.19
       '@types/express': 5.0.6
