@@ -22,9 +22,8 @@ const {onSchedule} = require("firebase-functions/scheduler");
 const {logger} = require("firebase-functions");
 
 // The Firebase Admin SDK to delete inactive users.
-const {initializeApp} = require("firebase-admin/app");
-const {getAuth} = require("firebase-admin/auth");
-initializeApp();
+const admin = require("firebase-admin");
+admin.initializeApp();
 
 // The es6-promise-pool to limit the concurrency of promises.
 const PromisePool = require("es6-promise-pool").default;
@@ -53,7 +52,7 @@ exports.accountcleanup = onSchedule("every day 00:00", async (event) => {
 // [START deleteInactiveUser]
 /**
  * Deletes one inactive user from the list.
- * @param {import("firebase-admin/auth").UserRecord[]} inactiveUsers
+ * @param {admin.auth.UserRecord[]} inactiveUsers
  * @return {null | Promise<void>}
  */
 function deleteInactiveUser(inactiveUsers) {
@@ -61,7 +60,7 @@ function deleteInactiveUser(inactiveUsers) {
     const userToDelete = inactiveUsers.pop();
 
     // Delete the inactive user.
-    return getAuth().deleteUser(userToDelete.uid).then(() => {
+    return admin.auth().deleteUser(userToDelete.uid).then(() => {
       return logger.log(
           "Deleted user account",
           userToDelete.uid,
@@ -85,12 +84,12 @@ function deleteInactiveUser(inactiveUsers) {
 // Returns the list of all inactive users.
 /**
  *
- * @param {import("firebase-admin/auth").UserRecord[]} [users] the current list of inactive users
+ * @param {admin.auth.UserRecord[]} [users] the current list of inactive users
  * @param {string} [nextPageToken]
- * @return {Promise<import("firebase-admin/auth").UserRecord[]>}
+ * @return {Promise<admin.auth.UserRecord[]>}
  */
 async function getInactiveUsers(users = [], nextPageToken) {
-  const result = await getAuth().listUsers(1000, nextPageToken);
+  const result = await admin.auth().listUsers(1000, nextPageToken);
   // Find users that have not signed in in the last 30 days.
   const inactiveUsers = result.users.filter(
       (user) =>
