@@ -1,0 +1,218 @@
+%!PS-Adobe-3.0
+%%Title: Adobe-Japan1 CID-Keyed Fonts Character List
+%%Creator: Taiji Yamada <taiji@aihara.co.jp> and gs-cjk project
+%%Copyright: (C) 2001 Taiji Yamada and gs-cjk project
+%%+ This script is part of GNU Ghostscript and is distributed under
+%%+ the terms of the GNU Affero General Public License. See the file COPYING
+%%+ for more information.
+%%Version: 1.0
+%
+% Usage:
+%   gs [-sF=WadaMin-Regular] [-daffix [-sAF=HeiseiMin-W3]] \
+%      [-dglyphshow- [-sI=Identity-H]] [-ddescent=200] all_aj1.ps
+%
+%%DocumentMedia: A4 595 842 0 white ()
+%%EndComments
+%%BeginProlog
+
+/*gs-cjk (\
+------------------------------------------------------------------------\n\
+This is a script to test CJK fonts such as CID-keyed fonts.\n\
+If you have not done CID-keyed fonts installation and definitions at\n\
+/Resource/CMap and CIDFnmap or /Resource/CIDFont of ghostscript, then\n\
+this script can't work correctly.\n\
+For details, please see README at http://www.gyve.org/gs-cjk/supplement.\n\
+
+If you throw this script into a printer, it requires PostScript 3\n\
+printer and CID-keyed fonts specified in this script.\n\
+------------------------------------------------------------------------\n) def
+
+/notice*stdout 4 dict begin
+  /*open {} def /*echo-n { =only } def /*echo { = } def /*close { flush } def
+  currentdict
+end def
+
+/notice*page 5 dict begin
+  /*y 750 def
+  /*open {
+    gsave initmatrix /Courier findfont 11 scalefont setfont 50 *y moveto
+    *y 750 eq {
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+    } if
+  } def
+  /*echo-n { dup type /stringtype ne { dup length string cvs } if show } def
+  /*echo { *echo-n /*y *y 11 sub def 50 *y moveto } def
+  /*close { grestore } def
+  currentdict
+end def
+
+/greeting*gs-cjk {
+  product (Ghostscript) search not { pop } { pop pop pop QUIET not {
+    notice*stdout begin
+      *open
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+      *close
+    end
+  } if } ifelse
+} bind def
+greeting*gs-cjk
+
+/*findfont {
+  dup /Font resourcestatus { pop pop findfont } {
+    notice*page begin
+      *open
+      (Error in findfont: ) *echo-n dup *echo
+      *close
+    end
+    findfont
+  } ifelse
+} bind def
+
+/*CIDFont*findresource {
+  dup /CIDFont resourcestatus { pop pop /CIDFont findresource } {
+    notice*page begin
+      *open
+      (Error in /CIDFont findresource: ) *echo-n dup *echo
+      *close
+    end
+    /CIDFont findresource
+  } ifelse
+} bind def
+
+/orighandleerror errordict /handleerror get def
+errordict begin
+  /handleerror {
+    notice*page begin errordict begin $error begin
+      *open
+      (Error of ) *echo-n errorname dup length string cvs *echo
+      *close
+      showpage
+    end end end
+    orighandleerror
+  } bind def
+end
+
+/title (Adobe-Japan1 CID-Keyed Fonts Character List) def
+/PW 595 def
+/PH 842 def
+/LM 78 def
+/TM 130 def
+/RM 47 def
+/BM 76 def
+/NH 10 def
+/NV 12 def
+/RW PW LM RM add sub NH div def
+/RH PH TM BM add sub NV div def
+/FS RW 3 mul 4 div def
+/AFS RW 1 mul 4 div def
+/unknowndef { exch dup where { pop pop pop } { exch def } ifelse } bind def
+/F (HeiseiKakuGo-W5) unknowndef
+/affix false unknowndef
+/AF (HeiseiMin-W3) unknowndef
+/descent 130 unknowndef
+/glyphshow- false unknowndef
+/fss { exch *CIDFont*findresource exch scalefont setfont } bind def
+/concats { % [str ...] concats str
+  () exch dup length 1 sub -1 0 {
+    1 index exch get dup type /stringtype ne { dup length string cvs } if
+    3 -1 roll exch dup length 2 index length add string
+    dup dup 4 2 roll copy length 4 -1 roll putinterval exch
+  } for pop
+} bind def
+/composefontname { % font cmap composefontname font--cmap
+  [ 2 index (--) 3 index ] concats dup 3 -1 roll [ 5 -1 roll ] composefont pop
+} bind def
+glyphshow- {
+  /I (Identity-H) unknowndef
+  /F F I composefontname def
+  affix { /AF AF I composefontname def } if
+  /fss { exch *findfont exch scalefont setfont } bind def
+  /s 2 string def
+} if
+/glyphframe { % h oldx glyphframe -
+  gsave 0 setlinewidth
+  currentpoint pop sub exch dup 0 exch descent mul 1000 div neg rmoveto
+  currentpoint 4 -2 roll rectstroke grestore
+} bind def
+/box { % llx lly urx ury box -
+  3 index 3 index moveto exch 4 -1 roll sub 3 1 roll exch sub
+  currentpoint 4 -2 roll rectstroke
+} bind def
+/charframe { % h string charframe -
+  gsave 0 setlinewidth
+  stringwidth pop exch dup 0 exch descent mul 1000 div neg rmoveto
+  currentpoint 4 -2 roll rectstroke grestore
+} bind def
+/pathframe { % string pathframe -
+  gsave 0 setlinewidth
+  true charpath flattenpath pathbbox box grestore
+} bind def
+/np {
+  /Helvetica findfont 11 scalefont setfont
+  LM BM 11 2 mul sub moveto title show ( - ) show F show
+  affix {
+    gsave /Helvetica findfont 5 scalefont setfont ( and ) show AF show grestore
+  } if
+  PW RM sub BM 11 2 mul sub moveto p 3 string cvs show
+  /p p 1 add def
+  showpage
+  /x LM def
+  /y PH TM sub def
+} bind def
+/nb {
+  /x x RW add def
+  x PW RM sub ge {
+    /x LM def
+    /y y RH sub def
+    y BM le {
+      np
+      /y PH TM sub def
+    } if
+  } if
+} bind def
+%%EndProlog
+/x LM def
+/y PH TM sub def
+/p 1 def
+[
+  [0 8283]	% Adobe-Japan1-0
+  [8284 8358]	% Adobe-Japan1-1
+  [8359 8719]	% Adobe-Japan1-2
+  [8720 9353]	% Adobe-Japan1-3
+  [9354 15443]	% Adobe-Japan1-4
+] {
+  cvx exec 1 exch {
+    /id exch def
+    F FS fss
+    x y FS sub moveto
+    glyphshow- not {
+      id glyphshow
+      FS x glyphframe
+    } {
+      s 0 id 256 idiv put s 1 id 256 mod put
+      FS s charframe
+      s pathframe
+      s show
+    } ifelse
+    affix {
+      AF AFS fss
+      x FS add y FS sub moveto
+      glyphshow- not {
+        id glyphshow
+        AFS x FS add glyphframe
+      } {
+        AFS s charframe
+        s pathframe
+        s show
+      } ifelse
+    } if
+    %
+    /Times-Roman findfont 7 scalefont setfont
+    x y FS sub FS descent mul 1000 div sub 7 sub moveto
+    id 5 string cvs show
+    nb
+  } for
+  np
+} forall
+%%Trailer
+%%EOF

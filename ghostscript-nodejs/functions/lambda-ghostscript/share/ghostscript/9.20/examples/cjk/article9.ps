@@ -1,0 +1,103 @@
+%!PS-Adobe-2.0
+%
+% Article 9 of the Constitution of Japan 
+% written in vertical direction using ...
+%	Fonts:
+%		Ryumin-Light-V, GothicBBB-Medium-V
+%	Operators for characters:
+%		show, widthshow, ashow, stringwidth, charpath, cshow
+
+% (lib/cjkv/cjk_ttf.ps) runlibfile
+% (lib/cjkv/cjkfnmap.ps) runlibfile
+% /Ryumin-Light      (Resource/FreeTT/sazanami-mincho.ttf) .openttcidfont /CIDFont defineresource pop
+% /GothicBBB-Medium  (Resource/FreeTT/sazanami-gothic.ttf) .openttcidfont /CIDFont defineresource pop
+
+
+% constants
+
+/RIGHT	550 def
+/WIDTH	500 def
+/TOP	750 def
+/HEIGHT	700 def
+/SIZE	 20 def
+/MARGIN	 40 def
+
+% utility operators
+
+/GOTHIC { /GothicBBB-Medium-V findfont exch dup
+	  /FONTSIZE exch def scalefont setfont } def
+/RYUMIN { /Ryumin-Light-V findfont exch dup
+	  /FONTSIZE exch def scalefont setfont } def
+/NEXTLINE { currentpoint pop FONTSIZE 1.8 mul sub TOP MARGIN sub moveto } def
+
+/MARU { dup gsave false charpath flattenpath pathbbox grestore
+	/ury exch def /urx exch def /lly exch def /llx exch def
+	gsave llx urx add 2 div lly ury add 2 div translate 
+	urx llx sub ury lly sub 2 copy gt { pop }{ exch pop }ifelse 
+	1.2 mul dup scale 0 setlinewidth
+	0.5 0 moveto 0 0 0.5 0 360 arc stroke grestore show } def
+/STRLEN { 0 exch { pop pop pop 1 add } exch cshow } def
+/JUSTIFY { dup STRLEN 1 sub 1 index stringwidth exch pop 
+	   currentpoint exch pop add TOP HEIGHT MARGIN sub sub sub
+	   exch div neg 0 exch 3 -1 roll ashow } def
+
+% initialize
+
+RIGHT TOP moveto 0 HEIGHT neg rlineto WIDTH neg 0 rlineto 0 HEIGHT rlineto
+closepath stroke
+
+RIGHT MARGIN sub TOP MARGIN sub moveto
+
+% title
+
+SIZE 2 mul GOTHIC
+<2121467C4B5C3971377B4B21> show
+NEXTLINE
+
+% chapter
+
+SIZE 1.5 mul GOTHIC
+<21212121426846733E4F2121> show
+
+SIZE 1.5 mul RYUMIN
+<406F4168244E4A7C347E> show
+NEXTLINE
+
+% abstract
+
+SIZE GOTHIC
+0 SIZE 2 div 16#2122 <2121214C406F4168244E4A7C347E2122406F4E4F244E49544A5D3B7D
+21223872406F3822244E485D4727214D> widthshow
+NEXTLINE
+
+% sentence
+
+SIZE GOTHIC
+<426836653E72> show
+SIZE RYUMIN
+<2331> MARU
+<2121467C4B5C39714C31244F212240353541244843613D7824723470443424482439246B39713A
+5D> JUSTIFY
+NEXTLINE
+
+<4A3F4F422472403F3C42244B347535612437212239713822244E482F4630243F246B406F416824
+48212249704E4F244B2468246B> JUSTIFY
+NEXTLINE
+
+<305233454B74244F49704E4F244E39543B48244F212239713A5D4A364168247232723768243924
+6B3C6A434A244824372446> JUSTIFY
+NEXTLINE
+
+<244F2122314A3557244B2433246C24724A7C347E2439246B2123> show
+NEXTLINE
+
+<2332> MARU
+<212141303960244E4C5C452A247243232439246B243F246121224E26332436753733243D244E42
+3E244E406F4E4F> JUSTIFY
+NEXTLINE
+
+<244F21222433246C24724A5D3B7D2437244A242421233971244E3872406F3822244F2122243324
+6C247247272461244A24242123> show
+NEXTLINE
+
+showpage

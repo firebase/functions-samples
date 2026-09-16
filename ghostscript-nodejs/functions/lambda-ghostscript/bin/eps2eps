@@ -1,0 +1,28 @@
+#!/bin/sh
+# "Distill" Encapsulated PostScript.
+
+# This definition is changed on install to match the
+# executable name set in the makefile
+GS_EXECUTABLE=gs
+gs="`dirname \"$0\"`/$GS_EXECUTABLE"
+if test ! -x "$gs"; then
+	gs="$GS_EXECUTABLE"
+fi
+GS_EXECUTABLE="$gs"
+
+OPTIONS="-dDEVICEWIDTH=250000 -dDEVICEHEIGHT=250000"
+while true
+do
+	case "$1" in
+	-?*) OPTIONS="$OPTIONS $1" ;;
+	*)  break ;;
+	esac
+	shift
+done
+
+if [ $# -ne 2 ]; then
+	echo "Usage: `basename \"$0\"` ...switches... input.eps output.eps" 1>&2
+	exit 1
+fi
+
+exec "$GS_EXECUTABLE" -q -sDEVICE=eps2write -sstdout=%stderr "-sOutputFile=$2" -dNOPAUSE -dBATCH -P- -dSAFER $OPTIONS "$1"

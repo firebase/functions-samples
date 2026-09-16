@@ -1,0 +1,65 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Define the Windows 3.1 Latin 5 encoding vector (H-P Symbol set 5T).
+/currentglobal where
+ { pop currentglobal { setglobal } true setglobal }
+ { { } }
+ifelse
+/Win32Latin5Encoding
+ISOLatin1Encoding 0 39 getinterval aload pop
+    /quotesingle
+ISOLatin1Encoding 40 5 getinterval aload pop
+    /hyphen
+ISOLatin1Encoding 46 50 getinterval aload pop
+    /grave
+ISOLatin1Encoding 97 30 getinterval aload pop
+    /graybox
+% \20x
+    /.notdef /.notdef /quotesinglbase /florin
+        /quotedblbase /ellipsis /dagger /daggerdbl
+    /circumflex /perthousand /Scaron /guilsinglleft
+        /OE /.notdef /.notdef /.notdef
+    /.notdef /quoteleft /quoteright /quotedblleft
+        /quotedblright /bullet /endash /emdash
+    /tilde /trademark /scaron /guilsinglright
+        /oe /.notdef /.notdef /Ydieresis
+    /.notdef /exclamdown /cent /sterling
+        /currency /yen /brokenbar /section
+    /dieresis /copyright /ordfeminine /guillemotleft
+        /logicalnot /softhyphen /registered /overscore
+    /degree /plusminus /twosuperior /threesuperior
+        /acute /mu /paragraph /periodcentered
+    /cedilla /onesuperior /ordmasculine /guillemotright
+        /onequarter /onehalf /threequarters /questiondown
+% \30x
+    /Agrave /Aacute /Acircumflex /Atilde
+        /Adieresis /Aring /AE /Ccedilla
+    /Egrave /Eacute /Ecircumflex /Edieresis
+        /Igrave /Iacute /Icircumflex /Idieresis
+    /Gbreve /Ntilde /Ograve /Oacute
+        /Ocircumflex /Otilde /Odieresis /multiply
+    /Oslash /Ugrave /Uacute /Ucircumflex
+        /Udieresis /Idotaccent /Scedilla /germandbls
+    /agrave /aacute /acircumflex /atilde
+        /adieresis /aring /ae /ccedilla
+    /egrave /eacute /ecircumflex /edieresis
+        /igrave /iacute /icircumflex /idieresis
+    /gbreve /ntilde /ograve /oacute
+        /ocircumflex /otilde /odieresis /divide
+    /oslash /ugrave /uacute /ucircumflex
+        /udieresis /dotlessi /scedilla /ydieresis
+256 packedarray .defineencoding
+exec

@@ -1,0 +1,5600 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Deprecated Ghostscript features</title>
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Deprecated Ghostscript options and output devices</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Options">Deprecated Options</a>
+<li><a href="#HP8_color_inkjet">H-P 8xx, 1100, and 1600 color inkjet printers</a>
+<ul>
+<li><a href="#HP8_gdevcd8">Drivers contained in <code>gdevcd8.c</code></a>
+<li><a href="#HP8_further_documentation">Further documentation</a>
+</ul>
+<li><a href="#HP880_color_inkjet">H-P 812, 815, 832, 880, 882, 895, and 970 color inkjet printers</a>
+<ul>
+<li><a href="#HP880_gdevcd8">Drivers contained in <code>gdevcd8.c</code></a>
+<li><a href="#HP880_further_documentation">Further documentation</a>
+</ul>
+<li><a href="#HP_color_inkjet">Other H-P color inkjet printers</a>
+<ul>
+<li><a href="#HP_gdevcdj">Drivers contained in <code>gdevcdj.c</code></a>
+<li><a href="#HP_paper_size">Default paper size</a>
+<li><a href="#HP_limits">Deskjet physical limits</a>
+<li><a href="#HP_command_line">Printer properties (command-line parameters)</a>
+<ul>
+<li><a href="#HP_bpp">Bits per pixel</a>
+<li><a href="#HP_deskjet_properties">Deskjet properties</a>
+<li><a href="#HP_paintjet_properties">Paintjet XL300 / Paintjet XL properties</a>
+</ul>
+<li><a href="#HP_gamma">Gamma correction</a>
+<li><a href="#HP_resolution_enhance">HP's resolution-enhanced mode for Inkjet printers</a>
+<li><a href="#HP_tips">General tips</a>
+</ul>
+<li><a href="#BJC_8200">Canon BJC-8200 printer</a>
+<li><a href="#BJC">Other Canon BubbleJet (BJC) printers</a>
+<ul>
+<li><a href="#BJC_history">History</a>
+<li><a href="#BJC_build">Configuring and building the BJC drivers</a>
+<ul>
+<li><a href="#BJC_defaults">Modify values in <code>gdevbjc.h</code></a>
+<li><a href="#BJC_CMYK_RGB">CMYK-to-RGB color conversion</a>
+<li><a href="#BJC_vertical_centering">Vertical centering of the printable area</a>
+<li><a href="#BJC_margins">Page margins</a>
+<li><a href="#BJC_compile">Makefile and compilation</a>
+</ul>
+<li><a href="#BJC_usage">Use of the drivers</a>
+<ul>
+<li><a href="#BJC_options">Supported Options and Defaults</a>
+<li><a href="#BJC_device_info">Device information</a>
+<li><a href="#BJC_HW_margins">Hardware margins</a>
+<li><a href="#BJC_PPD">PostScript printer description (PPD) files</a>
+<li><a href="#BJC_PPD_custom">Customizing the PPD files</a>
+</ul>
+<li><a href="#BJC_bugs">How to report problems</a>
+<li><a href="#BJC_acks">Acknowledgements</a>
+</ul>
+<li><a href="#STC_epson_stylus">Epson Stylus color printer (see also <code>uniprint</code>)</a>
+<ul>
+<li><a href="#STC_usage">Usage</a>
+<li><a href="#STC_options">Options</a>
+<li><a href="#STC_FAQ">Application note and FAQ</a>
+<ul>
+<li><a href="#STC_FAQ_A3">Support for A3 paper</a>
+<li><a href="#STC_FAQ_margins">Margins, PageSize</a>
+<li><a href="#STC_FAQ_II_IIS_1500">Stylus Color II / IIs and 1500</a>
+</ul>
+<li><a href="#STC_recommendations">Recommendations</a>
+<ul>
+<li><a href="#STC_dither_experiment">Color dithering experiments with <code>gdevstc</code> 1.21</a>
+</ul>
+<li><a href="#STC_color_transform">Color transformation</a>
+<li><a href="#STC_CAM"><code>ColorAdjustMatrix</code></a>
+<li><a href="#STC_RGBCMYK_coding">RGB / CMYK coding and transfer, and <code>BitsPerPixel</code></a>
+<li><a href="#What_is_weaving">What is weaving?</a>
+<li><a href="#STC_print_modes">Print mode parameters</a>
+<ul>
+<li><a href="#STC_unidirectional"><code>Unidirectional</code></a>
+<li><a href="#STC_noweave"><code>Microweave</code>, <code>noWeave</code> and <code>OutputCode=deltarow</code></a>
+<li><a href="#STC_model"><code>Model</code></a>
+</ul>
+<li><a href="#STC_Pitfalls">Bugs and pitfalls</a>
+<li><a href="#STC_Tests">Tests</a>
+<ul>
+<li><a href="#STC_OutputCodes">The various OutputCodes</a>
+<li><a href="#STC_printing_time">Printing time related to other options</a>
+</ul>
+<li><a href="#STC_acks">Acknowledgments</a>
+</ul>
+<li><a href="#Uniprint">uniprint, a flexible unified printer driver</a>
+<ul>
+<li><a href="#Uni_state">The state of this driver</a>
+<li><a href="#Uni_background">Notes on <code>uniprint</code>'s background</a>
+<li><a href="#Uni_make_pfile">Godzilla's guide to the creation of Unified Printer Parameter (<code>.upp</code>) files</a>
+<li><a href="#Uni_all_parameters">All parameters in brief</a>
+<li><a href="#Uni_honors"><code>Uniprint</code>'s Roll of Honor</a>
+<li><a href="#Uni_weaving_howto"><code>Uniprint</code> weaving parameters howto</a></li>
+<li><a href="#Uni_esc300">Extension to <code>uniprint</code> for the Epson Stylus Color 300</a></li>
+</ul>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p><strong>These devices are no longer supported and/or superceeded by newer methods.
+The documentation is kept here for reference. Be advised that these devices
+will be removed in future versions of Ghostscript.</strong></p>
+
+<p>Supported devices are descripted in <a href="Devices">Details of Ghostscript
+output devices</a>.</p>
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>. You may also be interested in <a href="Make.htm">how to
+build Ghostscript</a> and <a href="Install.htm">install it</a>, as well as
+the description of the <a href="Drivers.htm">driver interface</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Options"></a>Deprecated options</h2>
+
+<p>
+For compatibility with older versions of Ghostscript, <tt>-sOUTPUTFILE</tt> 
+is a synonym for <tt>-sOutputFile</tt>. It should not be used in new code.
+
+<hr>
+
+<h2><a name="HP8_color_inkjet"></a>H-P 8xx, 1100, and 1600 color inkjet printers</h2>
+
+<p>
+This section, written by Uli Wortmann &lt;<a
+href="mailto:uliw@erdw.ethz.ch">uliw@erdw.ethz.ch</a>&gt;, deals with the
+DeskJet 670, 690, 850, 855, 870, 890, 1100, and 1600.
+
+<h3><a name="HP8_gdevcd8"></a>Drivers contained in <code>gdevcd8.c</code></h3>
+
+<p>
+The source module <code>gdevcd8.c</code> contains four generic drivers:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>cdj670</code>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td>HP DeskJet 670 and 690
+<tr valign=top>	<td><code>cdj850</code>
+	<td>&nbsp;
+	<td>HP DeskJet 850, 855, 870, and 1100
+<tr valign=top>	<td><code>cdj890</code>
+	<td>&nbsp;
+	<td>HP DeskJet 890
+<tr valign=top>	<td><code>cdj1600</code>
+	<td>&nbsp;
+	<td>HP DeskJet 1600
+</table></blockquote>
+
+<h3><a name="HP8_further_documentation"></a>Further documentation</h3>
+
+<p>
+<b>Credits:</b> Much of the driver is based on ideas derived from the
+cdj550 driver of George Cameron. The support for the hp670, hp690, hp890
+and hp1600 was added by Martin Gerbershagen.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td>11.11.96
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>Version 1.0
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>25.08.97
+	<td>&nbsp;
+	<td>Version 1.2
+	<td>&nbsp;
+	<td>Resolved all but one of the known bugs, introduced a couple of
+	perfomance improvements. Complete new color-transfer-function
+	handling (see gamma).
+<tr valign=top>	<td>01.06.98
+	<td>&nbsp;
+	<td>Version 1.3
+	<td>&nbsp;
+	<td>Due to the most welcome contribution of Martin Gerbershagen
+	(ger@ulm.temic.de), support for the hp670, hp690 and hp890 and
+	hp1600 has been added. Martin has also resolved all known bugs.
+<tr valign=top> <td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>Problems:Dark colors are still pale.
+</table></blockquote>
+
+<p>
+The hp690 is supported through the hp670 device, the hp855, hp870 and the
+hp1100 through the hp850 device.  The driver needs no longer special
+switches to be invoked except <code>-sDEVICE=cdj850</code>,
+<code>-sDEVICE=CDJ890</code>, <code>-sDEVICE=CDJ670</code>, or
+<code>-sDevice=CDJ1600</code>.  The following switches are supported.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>-dPapertype=</code>
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>0
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>plain paper [default]
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>1
+	<td>&nbsp;
+	<td>bond paper
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>2
+	<td>&nbsp;
+	<td>special paper
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>3
+	<td>&nbsp;
+	<td>glossy film
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>4
+	<td>&nbsp;
+	<td>transparency film
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>Currently the lookup tables are unsuited for printing on
+	special paper or transparencies. For these please revert to the
+	gamma functions.
+<tr valign=top>	<td><code>-dQuality=</code>
+	<td>&nbsp;
+	<td>-1
+	<td>&nbsp;
+	<td>draft
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>0
+	<td>&nbsp;
+	<td>normal [default]
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>1
+	<td>&nbsp;
+	<td>presentation
+<tr valign=top>	<td><code>-dRetStatus=</code>
+	<td>&nbsp;
+	<td>0
+	<td>&nbsp;
+	<td>C-RET off
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>1
+	<td>&nbsp;
+	<td>C-RET on [default]
+<tr valign=top>	<td><code>-dMasterGamma=</code>
+	<td>&nbsp;
+	<td>3.0
+	<td>&nbsp;
+	<td>[default = 1.0]
+</table></blockquote>
+
+<blockquote>
+<b>Note:</b> To take advantage of the calibrated color-transfer functions,
+be sure not to have any gamma statements left! If you need to (i.e., for
+overhead transparencies), you still can use the gamma functions, but they
+will override the built-in calibration. To use gamma in the traditional
+way, set MasterGamma to any value greater than 1.0 and less than 10.0. To
+adjust individual gamma values, you have to additionally set MasterGamma to
+a value greater than 1.0 and less than 10.0.  With the next release, gamma
+functions will be dropped.
+</blockquote>
+
+<p>
+When using the driver, be aware that printing at 600dpi involves
+processing large amounts of data (&gt; 188MB !). Therefore the
+driver is not what you would expect to be a fast driver ;-)
+This is no problem when printing a full-sized color page (because
+printing itself is slow), but it's really annoying if you print only
+text pages. Maybe I can optimize the code for text-only pages in a
+later release. Right now, it is recommended to use the highest
+possible optimisation level your compiler offers.
+For the time being, use the cdj550 device with <code>-sBitsPerPixel=3</code>
+for fast proof prints. If you simply want to print 600dpi BW data,
+use the cdj550 device with <code>-sBitsPerPixel=8</code> (or 1).
+
+<p>
+Since the printer itself is slow, it may help to set the process priority
+of the gs process to "regular" or even less. On a 486/100MHz this is still
+sufficient to maintain a continuous data flow.  Note to OS/2 users: simply
+put the gs window into the background or minimize it. Also make sure that
+<code>print01.sys</code> is invoked without the <code>/irq</code>
+switch (great speed improvement under Warp4).
+
+<p>
+The printer default settings compensate for dot-gain by a calibrated
+color-transfer function. If this appears to be too light for your business
+graphs, or for overhead transparencies, feel free to set
+<code>-dMasterGamma=1.7</code>.  Furthermore, you may tweak the gamma
+values independently by setting <code>-dGammaValC</code>,
+<code>-dGammaValM</code>, <code>-dGammaValY</code> or
+<code>-dGammaValK</code> (if not set, the values default to
+<code>MasterGamma</code>). This will only work when
+<code>-dMasterGamma</code> is set to a value greater than 1.0.
+
+<p>
+Further information, bugs, tips etc, can be found at my website.  To learn
+more about gamma, see
+<a href="ftp://ftp.igd.fhg.de/pub/doc/colour/GammaFAQ.pdf">ftp://ftp.igd.fhg.de/pub/doc/colour/GammaFAQ.pdf</a>.
+
+<p>
+Depending on how you transfer the files, under UNIX you may need to remove
+the CRs of the CR-LF sequence used for end-of-line on DOS-based (MS
+Windows-based) systems.  You can do this in unpacking the files with <code>unzip&nbsp;-a&nbsp;hp850.zip</code>.
+
+<p>
+To compile with gs5.x or later, simply add to your makefile
+<blockquote>
+DEVICE_DEVS4=cdj850.dev cdj670.dev cdj890.dev cdj1600.dev
+</blockquote>
+
+<p>
+Have fun!
+
+<p>
+Uli &lt;<a href="mailto:uliw@erdw.ethz.ch">uliw@erdw.ethz.ch</a>&gt;
+<br><a href="http://www.erdw.ethz.ch/~bonk/">http://www.erdw.ethz.ch/~bonk/</a>
+
+<hr>
+
+<h2><a name="HP880_color_inkjet"></a>H-P 812, 815, 832, 880, 882, 895, and 970 color inkjet printers</h2>
+
+<p>
+This section, written by Matthew Gelhaus &lt;<a
+href="mailto:hp880@gelhaus.net">hp880@gelhaus.net</a>&gt;, deals with the
+DeskJet 812, 815, 832, 880, 882, 895, and 970.
+
+<p>
+This is a modified version of the <a href="#HP8_color_inkjet">HP8xx driver</a>
+written by Uli Wortmann.  More information and download are available at
+<a href="http://www.gelhaus.net/hp880c/">http://www.gelhaus.net/hp880c/</a>.
+
+<h3><a name="HP880_gdevcd8"></a>Drivers contained in <code>gdevcd8.c</code></h3>
+
+<p>
+The source module <code>gdevcd8.c</code> contains one generic driver:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>cdj880</code>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td>HP DeskJet 812, 815, 832, 880, 882, 895, and 970
+</table></blockquote>
+
+<h3><a name="HP880_further_documentation"></a>Further documentation</h3>
+
+<p>
+<b>Credits:</b> This driver is based on the cdj850 driver by Uli Wortmann, and shares the same
+internal structure, although the PCL3+ interpretation has changed.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td>15.03.99
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>Version 1.3
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>Initial version, based on Version 1.3 of Uli Wortmann's driver.
+<tr valign=top>	<td>26.02.00
+	<td>&nbsp;
+	<td>Version 1.4beta
+	<td>&nbsp;
+	<td>Greatly improved color handling &amp; dithering, but not yet complete enough
+	to use for text.
+</table></blockquote>
+
+<p>
+All printers are supported through the cdj880 device.  Invoke with
+<code>-sDEVICE=cdj880</code>.  The following switches are supported.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>-dPapertype=</code>
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>0
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>plain paper [default]
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>1
+	<td>&nbsp;
+	<td>bond paper
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>2
+	<td>&nbsp;
+	<td>special paper
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>3
+	<td>&nbsp;
+	<td>glossy film
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>4
+	<td>&nbsp;
+	<td>transparency film
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>Currently the lookup tables are unsuited for printing on
+	special paper or transparencies. For these please revert to the
+	gamma functions.
+<tr valign=top>	<td><code>-dQuality=</code>
+	<td>&nbsp;
+	<td>-1
+	<td>&nbsp;
+	<td>draft
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>0
+	<td>&nbsp;
+	<td>normal [default]
+<tr valign=top>	<td>
+	<td>&nbsp;
+	<td>1
+	<td>&nbsp;
+	<td>presentation
+<tr valign=top>	<td><code>-dMasterGamma=</code>
+	<td>&nbsp;
+	<td>3.0
+	<td>&nbsp;
+	<td>[default = 1.0]
+</table></blockquote>
+
+<p>
+The printer default settings compensate for dot-gain by a pre-defined
+color-transfer function. If this appears to be too light for your business
+graphs, or for overhead transparencies, feel free to set
+<code>-dMasterGamma=1.7</code>.  Furthermore, you may tweak the gamma
+values independently by setting <code>-dGammaValC</code>,
+<code>-dGammaValM</code>, <code>-dGammaValY</code> or
+<code>-dGammaValK</code> (if not set, the values default to
+<code>MasterGamma</code>). This will only work when
+<code>-dMasterGamma</code> is set to a value greater than 1.0.
+
+<p>
+Further information, bugs, tips etc, can be found at my website.
+
+<p>
+To compile with gs6.x or later, simply add to your makefile
+<blockquote>
+DEVICE_DEVS4=&#36;(DD)cdj880.dev
+</blockquote>
+
+<p>
+Matthew Gelhaus &lt;<a href="mailto:hp880@gelhaus.net">mailto:hp880@gelhaus.net</a>&gt;
+<br><a href="http://www.gelhaus.net/hp880c/">http://www.gelhaus.net/hp880c/</a>
+
+<hr>
+
+<h2><a name="HP_color_inkjet"></a>H-P color inkjet printers</h2>
+
+<p>
+This section, written by George Cameron, deals with the DeskJet 500C,
+DeskJet 550C, PaintJet, PaintJet XL, PaintJet XL300, the DEC LJ250
+operating in PaintJet-compatible mode.
+
+<h3><a name="HP_gdevcdj"></a>Drivers contained in <code>gdevcdj.c</code></h3>
+
+<p>
+The source module <code>gdevcdj.c</code> contains six generic drivers:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>cdj500</code>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td>HP DeskJet 500C and 540C
+<tr valign=top>	<td><code>cdj550</code>
+	<td>&nbsp;
+	<td>HP DeskJet 550C, 560C, 660C, 660Cse
+<tr valign=top>	<td><code>pjxl300</code>
+	<td>&nbsp;
+	<td>HP PaintJet XL300, DeskJet 1200C, and CopyJet
+<tr valign=top>	<td><code>pjtest</code>
+	<td>&nbsp;
+	<td>HP PaintJet
+<tr valign=top>	<td><code>pjxltest</code>
+	<td>&nbsp;
+	<td>HP PaintJet XL
+<tr valign=top>	<td><code>declj250</code>
+	<td>&nbsp;
+	<td>DEC LJ250
+</table></blockquote>
+
+<p>
+All these drivers have 8-bit (monochrome), 16-bit and 24-bit (colour) and
+for the DJ 550C, 32-bit (colour, CMYK mode) options in addition to standard
+colour and mono drivers.  It is also possible to set various
+printer-specific parameters from the command line, for example
+
+<blockquote><code>
+gs&nbsp;-sDEVICE=cDeskJet&nbsp;-dBitsPerPixel=16&nbsp;-dDepletion=1&nbsp;-dShingling=2&nbsp;tiger.eps
+</code></blockquote>
+
+<p>
+<b>Note:</b> the old names <code>cDeskJet</code>,
+<code>cdjcolor</code> and <code>cdjmono</code> drivers have been
+retained; however, their functionality duplicates that available using the
+drivers above (and <code>cDeskJet</code> is identical to
+<code>cdj500</code>).  That is, we can use
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>gs -sDEVICE=cdj500 -dBitsPerPixel=24</code>
+	<td>&nbsp;&nbsp;&nbsp;
+	<td>for <code>cdjcolor</code>, and
+<tr valign=top>	<td><code>gs -sDEVICE=cdj500 -dBitsPerPixel=1</code>
+	<td>&nbsp;
+	<td>for <code>cdjmono</code>
+</table></blockquote>
+
+<h3><a name="HP_paper_size"></a>Default paper size</h3>
+
+<p>
+If the preprocessor symbol <code>A4</code> is defined, the default paper
+size is ISO A4; otherwise it is U.S. letter size (see about
+<a href="Use.htm#Known_paper_sizes">paper sizes</a> in the usage
+documentation).  You can <a href="Use.htm#Paper_size">specify other paper
+sizes</a> on the command line, including A3 for the PaintJet XL and
+PaintJet XL300, as also explained in the usage documentation.
+
+<h3><a name="HP_limits"></a>DeskJet physical limits</h3>
+
+<p>
+The DeskJet's maximum printing width is 2400 dots, or 8 inches
+(20.32cm). The printer manuals say that the maximum recommended printing
+height on the page is 10.3 inches (26.16cm), but since this is obviously
+not true for A4 paper, and I have been unable to detect any problems in
+printing longer page lengths, this would seem to be a rather artificial
+restriction.
+
+<p>
+All DeskJets have 0.5 inches (1.27cm) of unprintable bottom margin, due to the mechanical
+arrangement used to grab the paper.  Side margins are approximately 0.25 inches (0.64cm)
+for U.S. letter paper, and 0.15 inches (0.38cm) for A4.
+
+<h4><a name="HP_command_line"></a>Printer properties (command-line parameters)</h4>
+
+<p>
+Several printer "properties" have been implemented for these printers.
+Those available so far are all integer quantities, and thus may be
+specified, for instance, like
+
+<blockquote>
+<code>gs -dBitsPerPixel=32 -dShingling=1</code> ...
+</blockquote>
+
+<p>
+which sets the <code>BitsPerPixel</code> parameter to 32 and the
+<code>Shingling</code> parameter to 1.
+
+<h4><a name="HP_bpp"></a>Bits per pixel</h4>
+
+<p>
+If the preprocessor symbol <code>BITSPERPIXEL</code> is defined as an
+integer (see below for the range of allowable values), that number defines
+the default bits per pixel (bit depth) for the generic drivers.  If the
+symbol is undefined, the default is 24 bits per pixel.  It is, of course,
+still possible to specify the value from the command line as described
+below.  Note also that the <code>cDeskJet</code>,
+<code>cdjcolor</code> and <code>cdjmono</code> drivers are unaffected
+by setting this symbol, as their default settings are predefined to be 1, 3
+and 24 respectively.
+
+<p>
+All of the drivers in <code>gdevcdj.c</code> accept a command line
+option to set the <code>BitsPerPixel</code> property.  This gives
+considerable flexibility in choosing various tradeoffs among speed,
+quality, colour, etc.  The valid numbers are:
+
+<blockquote><dl compact>
+<dt><b>1</b>
+<dd>A standard Ghostscript monochrome driver, using black ink (by
+installing the separate mono cartridge in the case of the DeskJet 500C, or
+automatically for the other printers).
+
+<dt><b>3</b>
+<dd>A standard Ghostscript colour driver, using internal dithering.  This
+is fast to compute and to print, but the clustered dithering can lose some
+detail and colour fidelity.
+
+<dt><b>8</b>
+<dd>An "error-diffusion" monochrome driver which uses Floyd-Steinberg
+dithering to print greyscale images.  The patterns are much more randomised
+than with the normal clustered dithering, but the data files can be much
+larger and somewhat slower to print.
+
+<dt><b>16</b>
+<dd>A "cheaper" version of the 24-bit driver, which generates
+Floyd-Steinberg colour dithered output using the minimum memory (this may
+be helpful when using Ghostscript has not been compiled using a 16-bit
+build environment).  The quality can be almost as good as the 24-bit
+version.
+
+<dt><b>24</b>
+<dd>A high-quality colour driver using Floyd-Steinberg dithering for
+maximum detail and colour range.  However, it is very memory-intensive, and
+thus can be slow to compute.  It tends to produce rather larger raw data
+files, so they can also take longer to print.
+
+<dt><b>32</b>
+<dd>Only for the DeskJet 550C, which uses the black cartridge and the
+colour cartridge simultaneously (that is, CMYK printing). This printer can
+both be faster and give higher quality than the DeskJet 500C, because of
+the true black ink. (Note that the 24-bit mode also permits CMYK printing
+on this printer, and uses less memory.  Any differences between 24-bit and
+32-bit should be small.)
+</dl></blockquote>
+
+<h4><a name="HP_DeskJet_properties"></a>DeskJet properties</h4>
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=bottom>
+	<th align=left>Name
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>Type
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>&nbsp;
+<tr>	<td colspan=5><hr>
+<tr valign=top>	<td><code>BlackCorrect</code>
+	<td>&nbsp;
+	<td><code>int</code>
+	<td>&nbsp;
+	<td>Colour correction to give better blacks when using the DJ500C in colour mode.  For example, the default of 4 reduces the cyan component to 4/5. Range accepted: 0 - 9 (0 = none).
+<tr valign=top>	<td><code>Shingling</code>
+	<td>&nbsp;
+	<td><code>int</code>
+	<td>&nbsp;
+	<td>Interlaced, multi-pass printing: 0 = none, 1 = 50%, 2 = 25%, 2 is best and slowest.
+<tr valign=top>	<td><code>Depletion</code>
+	<td>&nbsp;
+	<td><code>int</code>
+	<td>&nbsp;
+	<td>"Intelligent" dot-removal: 0 = none, 1 = 25%, 2 = 50%, 1 best for graphics? Use 0 for transparencies.
+</table></blockquote>
+
+<h4><a name="HP_PaintJet_properties"></a>PaintJet XL300 / PaintJet XL properties</h4>
+
+<blockquote>
+<table cellpadding=0 cellspacing=0>
+<tr valign=bottom>
+	<th align=left>Name
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>Type
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>
+<tr>	<td colspan=5><hr>
+<tr valign=top>	<td><code>PrintQuality</code>
+	<td>&nbsp;
+	<td><code>int</code>
+	<td>&nbsp;
+	<td>Mechanical print quality: -1 = fast, 0 = normal, 1 = presentation. Fast mode reduces ink usage and uses single-pass operation for some media types.  Presentation uses more ink and the maximum number of passes, giving slowest printing for highest quality
+<tr valign=top>	<td><code>RenderType</code>
+	<td>&nbsp;
+	<td><code>int</code>
+	<td>&nbsp;
+	<td><dl compact>
+		<dt><b>0</b><dd>driver does dithering
+		<dt><b>1</b><dd>snap to primaries
+		<dt><b>2</b><dd>snap black to white, others to black
+		<dt><b>3</b><dd>ordered dither
+		<dt><b>4</b><dd>error diffusion
+		<dt><b>5</b><dd>monochrome ordered dither
+		<dt><b>6</b><dd>monochrome error diffusion
+		<dt><b>7</b><dd>cluster ordered dither
+		<dt><b>8</b><dd>monochrome cluster ordered dither
+		<dt><b>9</b><dd>user-defined dither (not supported)
+		<dt><b>10</b><dd>monochrome user-defined dither ns.
+		</dl>
+</table>
+
+<p>
+The PaintJet (non-XL) has no additional properties.
+
+</blockquote>
+
+<h3><a name="HP_gamma"></a>Gamma correction</h3>
+
+<p>
+One consequence of using Floyd-Steinberg dithering rather than Ghostscript's
+default clustered ordered dither is that it is much more obvious that the
+ink dots are rather larger on the page than their nominal 1/180-inch or 1/300-inch
+size (clustering the dots tends to minimise this effect).  Thus it is often
+the case that the printed result is rather too dark.  A simple empirical
+correction for this may be achieved by preceding the actual PostScript
+file to be printed by a short file which effectively sets the gamma for
+the device, such as
+
+<blockquote><code>
+gs ... gamma.ps colorpic.ps -c quit
+</code></blockquote>
+
+<p>
+where <code>gamma.ps</code> is
+
+<blockquote>
+<pre>%!
+/.fixtransfer {
+  currentcolortransfer 4 {
+    mark exch
+    dup type dup /arraytype eq exch /packedarraytype eq or
+    1 index xcheck and { /exec load } if
+    0.333 /exp load
+    ] cvx 4 1 roll
+  } repeat setcolortransfer
+} bind odef
+.fixtransfer
+/setpagedevice { setpagedevice .fixtransfer } bind odef</pre>
+</blockquote>
+
+<p>
+This does the gamma correction <b><em>after</em></b> whatever correction
+the device might be doing already.  To do the correction
+<b><em>before</em></b> the current correction,
+
+<blockquote>
+<pre>%!
+/.fixtransfer {
+  currentcolortransfer 4 {
+    mark 0.333 /exp load 4 -1 roll
+    dup type dup /arraytype eq exch /packedarraytype eq or
+    1 index xcheck and { /exec load } if
+    ] cvx 4 1 roll
+  } repeat setcolortransfer
+} bind odef
+.fixtransfer
+/setpagedevice { setpagedevice .fixtransfer } bind odef</pre>
+</blockquote>
+
+<p>
+This example sets the gamma for R, G, and B to 3, which seems to work
+reasonably well in practice.
+
+<h3><a name="HP_resolution_enhance"></a>HP's resolution-enhanced mode for Inkjet printers</h3>
+
+<p>
+This feature is available on HP's more recent inkjet printers, including
+the DeskJet 520 (mono), 540 (mono or colour) and 560C (mono and colour).
+The colour and monochrome drivers for the HP DeskJet 550c are (probably)
+the best you will get for use with Ghostscript, for the following reasons.
+
+<p>
+These printers do not offer true 600&times;300dpi resolution.  Those that
+print in colour are strictly 300&times;300dpi in colour mode, while in mono
+mode there is a pseudo 600&times;300dpi mode with the restriction that you
+can't print two adjacent dots.  In effect what you have is 600dpi dot
+positioning, but on average you don't get more dots per line.  This
+provides the possibility, for instance, to have sharper character outlines,
+because you can place dots on the edges nearer to their ideal positions.
+This is why it is worth doing.
+
+<p>
+However, HP will not support user-level programming of this
+resolution-enhanced mode, one reason being that (I understand) all the dot
+spacing has to be done by the driver, and if you get it wrong, you can
+actually damage the print head.
+
+<p>
+To summarise, you may lose a smidgin of (potential) text clarity using the
+550c drivers (<code>cdj550</code>, <code>cdjcolor</code>,
+<code>cdjmono</code> etc.), but other than that, they are the ones for
+the job.
+
+<h3><a name="HP_tips"></a>General tips</h3>
+
+<p>
+For all the printers above, the choice of paper is critically important to
+the final results.  The printer manuals suggest type of paper, but in
+general, smoother, less fibrous types give better results.  In particular,
+the special ink-jet paper can make a big difference: colours are brighter,
+but most importantly, there is almost no colour bleed, even with adjacent
+areas of very heavy inking.  Similarly the special coated transparencies
+also work well (and ordinary transparencies do not work at all!).
+
+<p>
+The Unix procedure <a href="Unix-lpr.htm"><code>unix-lpr.sh</code></a>
+provides one example of setting up a multi-option colour PostScript
+<code>lpr</code> queue on Unix systems, and includes the ability to
+choose a range of different colour options and printer accounting and error
+logging.
+
+<p>
+<b>Caveat emptor!</b> It is not always easy for me to test all of these
+drivers, as the only colour printer I have here is the DeskJet 500C. I rely
+on others to test drivers for the additional machines and report their
+findings back to me.
+
+<hr>
+
+<h2><a name="BJC_8200"></a>Canon BJC-8200 printer</h2>
+
+<p>
+This section was contributed by the author of the <code>uniprint</code>
+configuration files for the Canon BJC-8200, Stephan C. Buchert &lt;<a
+href="mailto:scb@stelab.nagoya-u.ac.jp">scb@stelab.nagoya-u.ac.jp</a>&gt;.
+These files also handle the Japanese Canon F850 printer.
+
+<p>
+Warning: Usage of this program is neither supported nor endorsed by
+the Canon corporation. Please see the Ghostscript <a
+href="Public.htm">license</a> regarding warranty.
+
+<h3>Introduction</h3>
+
+<p>
+The Canon Bubble Jet printer BJC-8200 is designed for printing digital
+photos and halftone images. Software drivers for Windows 95-2000 and Mac are
+usually included and can be downloaded from the Canon web sites like
+<a href="http://consumer.usa.canon.com/bjc/bjc8200/">http://consumer.usa.canon.com/bjc/bjc8200/</a>
+for the US market. If these drivers cannot be used for some reason, then at
+present Ghostscript is probably the alternative giving the best results.
+
+<p>
+The BJC-8200 has features not found among the specs of earlier bubble jet
+models (except the even more advanced BJC-8500) and is advertised to offer:
+
+<ol>
+
+<li>microfine droplet technology;
+
+<li>support for printing on a new type of paper, Photo Paper Pro;
+
+<li>a printhead capable of printing up to 1200 DpI;
+
+<li>individual ink tanks for 6 colors;
+
+<li>an internal status monitor reporting low ink back to a driver;
+
+<li>an optional color scanner cartridge for up to 600 DpI resolution.
+
+</ol>
+
+<p>
+Access to features 5 and 6 requires use of the original Canon drivers for
+the foreseeable future. This README is about getting the printer features
+1-3 working with Ghostscript. No (re)compilation of Ghostscript is normally
+required.
+
+<p>
+Ghostscript comes with a relatively highly configurable driver, called
+<a href="#Uniprint">uniprint</a>, for printers which understand raster
+images in various propriety formats. Most options for this driver are
+usually organized into files having the suffix ".upp." Ghostscript
+versions &gt;= 5.10 (or even earlier) include such uniprint control files
+for the Canon BJC-610. They work also well for some other Canon Bubble
+Jet models, for example for my BJC-35vII. But when using them for a
+BJC-8200 the result is unsatisfactory.
+
+<h3>The uniprint control files for the BJC-8200</h3>
+
+<p>
+After some experimenting with the options for uniprint I have obtained quite
+satisfactory prints with my printer(*). This distribution includes six new
+uniprint control files:
+
+<ul>
+<li>bj8pp12f.upp
+<li>bj8hg12f.upp
+<li>bj8gc12f.upp
+<li>bj8oh06n.upp
+<li>bj8ts06n.upp
+<li>bj8pa06n.upp
+</ul>
+
+<p>
+They are included in Ghostscript &gt;=6.21. For older versions you can put
+them anywhere in the Ghostscript search path (type "gs -h" to see the
+path), but should perhaps add the files to the directory with the
+other *.upp files. This is "/usr/share/ghostscript/gs6.01/lib" in my
+RedHat 6.1 Linux box with Aladdin Ghostscript 6.01.
+
+<p>
+Here is an explanation of my file name convention: the prefix "bj8" should
+perhaps be used for the Canon BJC-8200 and compatible (like the Japanese
+F850 and perhaps the non-Japanese BJC-8500) models. The next two letters
+indicate the print media:
+
+<ul>
+<li>pp "Photo Paper Pro"
+<li>hg "High Gloss Photo Film"
+<li>gc "Glossy Photo Cards"
+<li>oh "OHP transparencies"
+<li>ts "T-shirt transfer"
+<li>pa "Plain Paper"
+</ul>
+
+<p>
+The numbers at positions 6 and 7 indicate the resolution
+
+<ul>
+<li>12   1200x1200 DpIxDpI
+<li>06    600x600  DpIxDpI
+</ul>
+
+<p>
+The last letter stands for a quality factor that effects also the print
+speed (presumably related to the number of passes that the printhead makes).
+
+<ul>
+<li>f   highest quality
+<li>n   normal quality
+</ul>
+
+<p>
+Printing a postcard size (~10x15 cm^2) image at 1200x1200 DpI^2 takes about
+3 minutes. The output of Ghostscript is then typically 4-5 MByte. The
+bootleneck seems to be the transfer of the raster image in run-length
+encoded Canon format to the printer (via the parallel port on my system) or
+the printer's speed, not Ghostscript or the uniprint renderer.
+
+<h3>Further Optimization for the Canon BJC-8200</h3>
+
+So far I have only experimented with the printer initialization code at the
+beginning of each page (-dupBeginPageCommand) and the resolution (-r). Other
+options, particularly the transfer arrays (-dupBlackTransfer,
+-dupCyanTransfer, -dupMagentaTransfer, -dupYellowTransfer) and the margins
+(-dupMargins) were simply copied from the files for the BJC-610, but they
+may need to be changed for optimized performance.
+
+<p>
+Here is information useful for changing or adding uniprint control files for
+the BJC-8200:
+
+<p>
+In "-dupBeginPageCommand=..." use the line
+
+<blockquote>
+   1b28 64 0400 04b0 04b0
+</blockquote>
+
+<p>
+for 1200x1200 resolution, and
+
+<blockquote>
+   1b28 64 0400 0258 0258
+</blockquote>
+
+<p>
+for 600x600. The "-r" option in the control file must of course match this
+line. Other resolutions might work as well, but I didn't try.
+
+<p>
+Crucial are the numbers in the lines like
+
+<blockquote><pre>
+   1b28 63 0300 3005 04
+                   ^  ^
+       Plain Paper 0  4 Highest quality
+  OHP transparency 2  .
+  T-shirt transfer 3  .
+ Glossy Photo Film 5  .
+  High Gloss Paper 6  0 Lowest quality
+   Photo Paper Pro 9
+</pre></blockquote>
+
+<h3>Outlook</h3>
+
+<p>
+Presently uniprint can use the black (K), cyan (C), magenta (M), and
+yellow (Y) colors in the BJC-8200. The unused colors are photo (or
+light) cyan (c) and magenta (m). Also the Canon driver seems to use
+only CMYK, for example when printing on Photo Paper Pro in "Camera" or
+"SuperPhoto" mode. These modes supposedly produce prints of the best
+quality that the Canon driver can offer. Other modes of Canon driver
+do use up to all six color cartridges (CMYKcm). Therefore expanding
+uniprint's capabilities for six colors would be interesting, but it may
+not increase the output quality of 6-color printers such as the
+BJC-8200 drastically.
+
+<p>
+More control files for uniprint could be added in order to offer more
+versatility for controlling the BJC-8200 within a Ghostscript
+installation. The number of possible combinations for media type, resolution
+and print quality factor is very large, many combinations would not make
+much sense, many might be used here and there, but relatively rarely. The
+user would have to remember a name for each combination that is used.
+
+<p>
+A better way would be to let the user patch optionally a user owned or
+system wide uniprint control file before each print via some print
+tool. This is similar to the approach taken by Canon with their driver for
+Windows. Similarly a uniprint tool could also incorporate other functions
+such as printing test and demo pages and the low ink warning once the
+protocol for this is known. Clearly it would be difficult to code such a
+uniprint tool for all the platforms where Ghostscript is running.
+
+<h3>Usage on RedHat Linux</h3>
+
+<p>
+In order to install a BJC-8200 printer on a RedHat Linux system with
+RedHat's printtool, you need also to insert with a text editor the contents
+of the file <code>bj8.rpd</code> into the RedHat printer database
+<code>/usr/lib/rhs/rhs-printfilters/printerdb</code>. Insert it most
+appropriately after the section
+
+<blockquote><pre>
+StartEntry: U_CanonBJC610
+.
+.
+.
+EndEntry
+
+&lt; --- insert here "bj8.rpd" from this distribution:
+&lt; --- StartEntry: U_CanonBJC8200
+      .
+      .
+      .
+</pre></blockquote>
+
+<h3>Contacting the Author</h3>
+
+<p>
+E-mail address: &lt;<a
+href="mailto:scb@stelab.nagoya-u.ac.jp">scb@stelab.nagoya-u.ac.jp</a>&gt;
+
+<p>
+Footnotes:
+
+<p>
+(*) Actually I have a F850, not a BJC-8200. That model is sold for the
+Japanese market only. The specs and also the external look are the
+same as those of the BJC-8200 models for the American and European
+markets. I expect that the raster image mode which is used exclusively
+by Ghostscript is entirely compatible for both models.
+
+<p>
+Stephan C. Buchert
+
+<hr>
+
+<h2><a name="BJC"></a>Other Canon BubbleJet (BJC) printers</h2>
+
+<p>
+This section was contributed by the author of the drivers, Yves Arrouye
+(&lt;<a href="mailto:yves.arrouye@usa.net">yves.arrouye@usa.net</a>&gt;, but
+please do not send questions to him: he no longer maintains these drivers.)
+The drivers handle Canon BJC-600, BJC-4xxx, BJC-70, Stylewriter 2x00, and
+BJC-800 printers.
+
+<h3><a name="BJC_history"></a>History</h3>
+
+<p>
+The BJC-600 driver was written in the first place by Yoshio Kuniyoshi and
+later modified by Yves Arrouye.  We tried to make it evolve synchronously,
+though Yoshio cannot be reached since a long time ago.  The drivers are
+based on code for the HP printers by George Cameron (in fact, they are in
+the same file!), so he's the first person to thank.
+
+<p>
+The 2.00 version of the drivers was a complete rewrite of the driver
+(arguments, optimization, colour handling, in short: everything!) by Yves
+Arrouye.  That release was also the first one to be able to use the full
+width of an A3 paper size.  PostScript Printer Description (PPD) files for
+the drivers were released with version 2.15.  They are incomplete,
+but they can be used to drive the printers' main features.
+
+<h3><a name="BJC_build"></a>Configuring and building the BJC drivers</h3>
+
+<h4><a name="BJC_defaults"></a>Modify values in
+<code>gdevbjc.h</code></h4>
+
+<p>
+Configure the drivers by modifying the default values in the file
+<code>gdevbjc.h</code> or on the compilation line.  If you don't do
+that, the drivers use reasonable defaults that make them work "as
+expected".  All default values shown here are defined in that file.
+
+<h4><a name="BJC_CMYK_RGB"></a>CMYK-to-RGB color conversion</h4>
+
+<p>
+By default, the drivers use the same algorithm as Ghostscript to convert
+CMYK colors to RGB. If you prefer to use Adobe formulas, define
+<code>USE_ADOBE_CMYK_RGB</code> when compiling.  (See the top of the
+file <code>gdevcdj.c</code> to see the difference between the two.)
+
+<h4><a name="BJC_vertical_centering"></a>Vertical centering of the
+printable area</h4>
+
+<p>
+The drivers center the imageable area horizontally but not vertically, so
+that what can be printed does use the most of the output media. If you
+define <code>BJC_DEFAULT_CENTEREDAREA</code> when compiling, then the
+top and bottom margins will be the same, resulting in a (smaller)
+vertically centered imageable area also.
+
+<h4><a name="BJC_margins"></a>Page margins</h4>
+
+<p>
+If you define <code>USE_RECOMMENDED_MARGINS</code>, then the top and
+bottom margins will be the same (that is,
+<code>BJC_DEFAULT_CENTEREDAREA</code> will be defined for you) and the
+margins will be the 12.4mm recommended by Canon.  Since margins are
+complicated (because one must rely on the mechanical precision of the
+printer), the drivers do something about the bottom margin: by default the
+bottom margin is 9.54mm for the BJC-600 driver and 7mm for the BJC-800.  If
+you define <code>USE_TIGHT_MARGINS</code>, then the bottom margin is 7mm
+for both drivers (but I never managed to get my own BJC-600 to print a line
+on this low bound, hence the larger default).  Regardless of the presence
+of this definition, <code>USE_FIXED_MARGINS</code> will not allow the
+BJC-800 to use the lower 7mm bottom margin, so if you have a problem with
+the bottom margin on a BJC-800, just define that (without defining
+<code>USE_TIGHT_MARGINS</code>, of course).
+
+<p>
+A quick way to be sure the margins you selected is to print a file whose
+contents are:
+
+<blockquote><code>
+%!<br>
+clippath stroke showpage
+</code></blockquote>
+
+<p>
+If the margins are okay, you will get a rectangle visibly surrounding
+the printable area.  If they're not correct, one or more of the sides will
+be either incomplete or completely unprinted.
+
+<h4><a name="BJC_compile"></a>Makefile and compilation</h4>
+
+<p>
+Make sure the <code>bjc600</code> or <code>bjc800</code> devices are
+in <a href="Make.htm#Features_and_devices"><code>DEVICE_DEVS</code> in
+the makefile</a>; that is, look in the makefile for your platform and add
+them if necessary -- they may already be there.  As of Ghostscript 5.10,
+for instance, one makefile has
+
+<blockquote><code>
+DEVICE_DEVS6=bj10e.dev&nbsp;bj200.dev&nbsp;bjc600.dev&nbsp;bjc800.dev
+</code></blockquote>
+
+<h3><a name="BJC_usage"></a>Use of the drivers</h3>
+
+<p>
+There are two drivers here.  The "<code>bjc600</code>" one supports the BJC-600 and
+BJC-4xxx (maybe the BJC-70 as well) and the "<code>bjc800</code>" one supports the
+BJC-800 series.  Remarks here that apply to both drivers use the name
+"bjc".
+
+<h4><a name="BJC_options"></a>Supported Options and Defaults</h4>
+
+<p>
+Note: "options", "properties", and "parameters" designate the same thing:
+device parameters that you can change.
+
+<p>
+Giving an option an incorrect value causes an error.  Unless stated
+otherwise, this error will be a rangecheckerror.  Options may be set from
+the Ghostscript command line (using the <code>-d</code> and
+<code>-s</code> switches or other predetermined switches if they have an
+effect on the driver) or using the PostScript Level 2
+<code>setpagedevice</code> operator if Ghostscript has been compiled
+with the <code>level2</code> or <code>level3</code> device (which it should
+<code>;-)</code>). There are <b>no</b> special-purpose operators such as
+one was able to find in Level 1 printers.
+
+<p>
+The bjc uses 24 bits per pixel by default (unless you change the value of
+<code>BJC_BITSPERPIXEL</code>), corresponding to CMYK printing.
+Supported modes are 1 bpp and 4 bpp (gray levels), 8 bpp, 16 bpp, 24 bpp
+and 32 bpp (colours).  Colours are preferably stored in the CMYK model
+(which means, for example, that with 16 bpp there are only 16 different
+shades of each color) but it is possible to store them as RGB color for
+some depths.  Some modes do Floyd-Steinberg dithering and some don't, but
+use the default Ghostscript halftoning (in fact, when halftoning is used,
+dithering takes also place but because of the low point density it is
+usually not efficient, and thus invisible).
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=5 bgcolor="#CCCC00"><hr><font size="+1">Descriptions of printing modes by bpp and <code>Colors</code></font><hr>
+<tr valign=bottom>
+	<th align=left>bpp
+	<td>&nbsp;&nbsp;&nbsp;
+	<th align=left><code>Colors</code>
+	<td>&nbsp;&nbsp;&nbsp;
+	<th align=left>Mode
+<tr>	<td colspan=5><hr>
+<tr valign=top>	<td>32
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td>CMYK colour printing, Floyd-Steinberg dithering
+<tr valign=top>	<td>24
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td>The same. (But each primary colour is stored on 6 bits instead of 8.)
+<tr valign=top>	<td>24
+	<td>&nbsp;
+	<td align=center>3
+	<td>&nbsp;
+	<td>RGB colour printing, Floyd-Steinberg dithering.  This mode does
+	    <code>not</code> use the black cartridge (that's why it
+	    exists, for when you don't want to use it <code>;-)</code>).
+	    Each primary colour is stored in 8 bits as in the 32/4 mode,
+	    but black generation and under-color removal are done on the
+	    driver side and not by Ghostscript, so you have no control over
+	    it.  (This mode is no longer supported in this driver.)
+<tr valign=top>	<td>16
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td>CMYK colour printing, halftoned by Ghostscript.  F-S dithering
+	    is still visible here (but the halftone patterns are visible
+	    too!).
+<tr valign=top>	<td>8
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td>The same.  (But each primary colour is stored in 2 bits instead of 4.)
+<tr valign=top>	<td>8
+	<td>&nbsp;
+	<td align=center>3
+	<td>&nbsp;
+	<td>RGB colour printing.  This mode is not intended for use. What I
+	    mean is that it should be used only if you want to use custom
+	    halftone screens <b>and</b> the halftoning is broken using the
+	    8/4 mode (some versions of Ghostscript have this problem).
+<tr valign=top>	<td>8
+	<td>&nbsp;
+	<td align=center>1
+	<td>&nbsp;
+	<td>Gray-level printing, Floyd-Steinberg dithering
+<tr valign=top>	<td>1
+	<td>&nbsp;
+	<td align=center>1
+	<td>&nbsp;
+	<td>Gray-level printing halftoned by Ghostscript
+</table></blockquote>
+
+<p>
+These modes are selected using the <code>BitsPerPixel</code> <b>and</b>
+<code>Colors</code> integer options (either from the command line or in
+a PostScript program using <code>setpagedevice</code>).  See below.
+
+<p>
+A note about darkness of what is printed: Canon printers do print dark,
+really.  And the Floyd-Steinberg dithering may eventually darken your image
+too.  So you may need to apply gamma correction by calling Ghostscript as in
+
+<blockquote><code>
+gs -sDEVICE=bjc600 gamma.ps myfile.ps
+</code></blockquote>
+
+<p>
+where <code>gamma.ps</code> changes the gamma correction (here to 3 for
+all colors); 0.45 gives me good results, but your mileage may vary.  The
+bigger the value the lighter the output:
+
+<blockquote><code>
+{ 0.45 exp } dup dup currenttransfer setcolortransfer
+</code></blockquote>
+
+<p>
+The drivers support printing at 90dpi, 180dpi and 360dpi.  Horizontal and
+vertical resolutions must be the same or a limitcheck error will happen.  A
+rangecheck will happen too if the resolution is not
+90&nbsp;&times;2^<small><sup><b>N</b></sup></small>.  If the driver
+is compiled with <code>-DBJC_STRICT</code> a rangecheck also happens if
+the resolution is not one of those supported.  This is not the case, as we
+expect that there may be a 720dpi bjc some day.
+
+<p>
+Here are the various options supported by the bjc drivers, along with
+their types, supported values, effects, and usage:
+
+<dl>
+<dt><code>BitsPerPixel</code> (int)
+<dd>Choose the depth of the page. Valid values are 1, 8, 16, 24 (the
+default) and 32.
+
+<p>
+Note that when this is set for the first time, the <code>Colors</code>
+property is automatically adjusted unless it is also specified.  The table
+here shows the corresponding color models and the rendering method visible:
+"GS" for Ghostscript halftoning and "F-S" for Floyd-Steinberg dithering.
+When both are present it means that the dithering of halftones is visible.
+Default choices are indicated by asterisk "*".
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=9 bgcolor="#CCCC00"><hr><font size="+1">Valid <code>Colors</code> values for<br>allowed <code>BitsPerPixel</code> values
+</font><hr>
+<tr valign=bottom>
+	<th align=left>bpp
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left><code>Colors</code>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>&nbsp;
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>Color model
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>Dithering
+<tr>	<td colspan=9><hr>
+<tr valign=top>	<td>32
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>&nbsp;
+	<td>CMYK
+	<td>&nbsp;
+	<td>F-S
+<tr valign=top>	<td>24
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td><b>*</b>
+	<td align=center>&nbsp;
+	<td>CMYK
+	<td>&nbsp;
+	<td>F-S
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>3
+	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>&nbsp;
+	<td>RGB
+	<td>&nbsp;
+	<td>F-S
+<tr valign=top>	<td>16
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>&nbsp;
+	<td>CMYK
+	<td>&nbsp;
+	<td>GS, F-S
+<tr valign=top>	<td>8
+	<td>&nbsp;
+	<td align=center>4
+	<td>&nbsp;
+	<td><b>*</b>
+	<td align=center>&nbsp;
+	<td>CMYK
+	<td>&nbsp;
+	<td>GS
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>3
+	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>&nbsp;
+	<td>RGB
+	<td>&nbsp;
+	<td>GS
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>1
+	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center>&nbsp;
+	<td>K (CMYK)
+	<td>&nbsp;
+	<td>F-S
+<tr valign=top>	<td>1
+	<td>&nbsp;
+	<td align=center>1
+	<td>&nbsp;
+	<td><b>*</b>
+	<td align=center>&nbsp;
+	<td>K (CMYK)
+	<td>&nbsp;
+	<td>GS
+</table></blockquote>
+
+<p>Also note that automagical change of one parameter depending on the
+other one does not work in a <code>setpagedevice</code> call.  This
+means that if you want to change <code>BitsPerPixel</code> to a value
+whose valid <code>Colors</code> values do not include the actual
+<code>Colors</code> value, you must change <code>Colors</code> too.
+</dl>
+
+<dl>
+<dt><code>Colors</code> (int)
+<dd>Choose the number of color components from among 1, 3 and 4 (the
+default).  This setting cannot be used in a PostScript program, only on
+Ghostscript's command line.  See <code>ProcessColorModel</code> below
+for what to use to change the number of colors with PostScript code.
+
+<p>
+Note that setting this property does limit the choices of
+<code>BitsPerPixel</code>.  As for the previous property, its first
+setting may induce a setting of the "other value"
+(<code>BitsPerPixel</code> here).  The table here indicates valid
+combinations with "V", default values with asterisk "*".
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=13 bgcolor="#CCCC00"><hr><font size="+1">Valid <code>BitsPerPixel</code> values<br>for allowed <code>Colors</code> values</font><hr>
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<th align=left colspan=9><code>BitsPerPixel</code> OK values<hr>
+<tr valign=top>	<th>Colors
+	<td>&nbsp;&nbsp;
+	<th>Type
+	<td>&nbsp;&nbsp;
+	<td>32
+	<td>&nbsp;&nbsp;
+	<td>24
+	<td>&nbsp;&nbsp;
+	<td>16
+	<td>&nbsp;&nbsp;
+	<td>8
+	<td>&nbsp;&nbsp;
+	<td>1
+<tr>	<td colspan=13><hr>
+<tr valign=top>	<td>4
+	<td>&nbsp;
+	<td>CMYK
+	<td>&nbsp;
+	<td><b>V</b>
+	<td>&nbsp;
+	<td><b>*</b>
+	<td>&nbsp;
+	<td><b>V</b>
+	<td>&nbsp;
+	<td><b>V</b>
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>3
+	<td>&nbsp;
+	<td>RGB
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td><b>*</b>
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td><b>V</b>
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>1
+	<td>&nbsp;
+	<td>K
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td><b>V</b>
+	<td>&nbsp;
+	<td><b>*</b>
+</table></blockquote>
+
+<p>Also note that automagical change of one parameter depending on the
+other one does not work in a <code>setpagedevice</code> call.  This
+means that if you want to change <code>Colors</code> to a value whose
+valid <code>BitsPerPixel</code> values don't include the actual
+<code>BitsPerPixel</code> value, you must change
+<code>BitsPerPixel</code> too.
+</dl>
+
+<dl>
+<dt><code>ProcessColorModel</code> (symbol)
+<dd>A symbol taken from <code>/DeviceGray</code>,
+<code>/DeviceRGB</code> or <code>/DeviceCMYK</code> which can be used
+to select 1, 3 or 4 colors respectively.  Note that this parameter takes
+precedence over <code>Colors</code>, and that both affect the same
+variable of the driver.  (See <code>Colors</code> above for values
+combined with <code>BitsPerPixel</code>.)
+</dl>
+
+<dl>
+<dt><code>HWResolution</code> (floats array)
+<dd>An array of two floats giving the horizontal and vertical resolution in
+dots per inch from among 90, 180 and 360 (the default).  Both values must
+be the same.  On the Ghostscript command line, the resolution may be
+changed with the <a href="Use.htm#Resolution_switch"><code>-r</code>
+switch</a>.
+</dl>
+
+<dl>
+<dt><code>ManualFeed</code> (bool)
+<dd>Indicate that the sheets won't be fed automatically by the printer,
+<code>false</code> by default.  (Not meaningful on the BJC-600, I fear.)
+</dl>
+
+<dl>
+<dt><code>MediaType</code> (string)
+<dd>The media to print on, chosen from among "<code>PlainPaper</code>",
+"<code>CoatedPaper</code>", "<code>TransparencyFilm</code>",
+"<code>Envelope</code>", "<code>Card</code>" and
+"<code>Other</code>".  Default is "<code>PlainPaper</code>".  For
+"<code>Envelope</code>", "<code>Card</code>" or
+"<code>Other</code>" the driver puts the printer into thick mode
+automatically regardless of the actual media weight.
+</dl>
+
+<dl>
+<dt><code>MediaWeight</code> (int or null)
+<dd>The weight of the media in grams per square meter.  Null (the default)
+indicates that the weight is of no importance.  If the specified media
+weight is greater than 105 (that is, the value of the compilation default
+<code>BJC</code>???<code>_MEDIAWEIGHT_THICKLIMIT</code>) then the
+printer will be set to use thick paper.
+</dl>
+
+<dl>
+<dt><code>PrintQuality</code> (string)
+<dd>The quality of printing.
+<table cellpadding=0 cellspacing=0>
+<tr valign=bottom>
+	<th align=left>Value
+	<td>&nbsp;&nbsp;
+	<th align=left><code>bjc600</code>
+	<td>&nbsp;&nbsp;
+	<th align=left><code>bjc800</code>
+	<td>&nbsp;&nbsp;
+	<th align=left>&nbsp;
+<tr>	<td colspan=7><hr>
+<tr valign=top>	<td><code>Low</code>
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td align=center><b>X</b>
+	<td>&nbsp;
+	<td>Has the effect of making only two printing passes instead of four, so should be twice the speed; known as "CN" (Color Normal) mode
+<tr valign=top>	<td><code>Draft</code>
+	<td>&nbsp;
+	<td align=center><b>X</b>
+	<td>&nbsp;
+	<td align=center><b>X</b>
+	<td>&nbsp;
+	<td>Unlights the "HQ" light on a BJC-600
+<tr valign=top>	<td><code>Normal</code>
+	<td>&nbsp;
+	<td align=center><b>X</b>
+	<td>&nbsp;
+	<td align=center><b>X</b>
+	<td>&nbsp;
+	<td>Default for both drivers; lights the "HQ" light on a BJC-600
+<tr valign=top>	<td><code>High</code>
+	<td>&nbsp;
+	<td align=center><b>X</b>
+	<td>&nbsp;
+	<td align=center><b>X</b>
+	<td>&nbsp;
+	<td>Means 200% black and 100% CMY; lights the "Bk+" light on a BJC-600
+</table>
+</dl>
+
+<dl>
+<dt><code>DitheringType</code> (string)
+<dd>Dithering algorithm from between "<code>Floyd-Steinberg</code>" and
+"<code>None</code>". "<code>None</code>" is the default for 1/1 print
+mode, "<code>Floyd-Steinberg</code>" for other modes.  At the moment
+this parameter is read-only, though no error is generated if one tries to
+change it.  This parameter is not of much value at the moment and is here
+mainly to reserve the name for future addition of dithering algorithms.
+</dl>
+
+<dl>
+<dt><code>PrintColors</code> (int)
+<dd>Mask for printing color.  If 0, use black for any color; otherwise the
+value must be the sum of any of 1 (cyan), 2 (magenta), 4 (yellow) and 8
+(black), indicating which colors will be used for printing.  When printing
+colour, only colours specified will be printed (this means that some planes
+will be missing if a color's value above is omitted).  When printing grays,
+black is used if it is present in the <code>PrintColors</code>;
+otherwise, the image is printed by superimposing each requested color.
+</dl>
+
+<dl>
+<dt><code>MonochromePrint</code> (bool)
+<dd><b>For <tt>bjc600</tt> only</b>, <code>false</code> by default.
+Substitute black for Cyan, Magenta and Yellow when printing -- useful, for
+example, to get some monochrome output of a dithered printing This is a
+hardware mechanism as opposed to the previous software one. I think that
+using this or setting <code>PrintColors</code> to 0 will give the same
+results.
+</dl>
+
+<p>
+Note that the <code>MediaType</code> and <code>ThickMedia</code>
+options will be replaced by the use of the device
+<code>InputAttributes</code> and <code>OutputAttributes</code> as
+soon as possible.  Please note too that the print mode may be reset at the
+start of printing, not at the end.  This is the expected behaviour.  If you
+need to reset the printer to its default state, simply print a file that
+does just a <code>showpage</code>.
+
+<h4><a name="BJC_device_info"></a>Device information</h4>
+
+<p>
+Here is other information published by the driver that you will find
+in the <code>deviceinfo</code> dictionary.
+
+<dl>
+<dt><code>OutputFaceUp</code> (bool)
+<dd>This has the boolean value <code>true</code>, indicating that the
+sheets are stacked face up.
+</dl>
+
+<dl>
+<dt><code>Version</code> (float)
+<dd>In the form <b>M.</b><em>mm</em>pp, where <b>M</b> is the major
+version, <em>mm</em> the bjc driver's minor version, and pp the specific
+driver minor version (that is, <code>M.</code><em>mm</em> will always be
+the same for the <code>bjc600</code> and <code>bjc800</code>
+drivers).
+</dl>
+
+<dl>
+<dt><code>VersionString</code> (string)
+<dd> A string showing the driver version and other indications.  At the
+moment, things like "a" or "b" may follow the version to indicate alpha or
+beta versions.  The date of the last change to this version is given in the
+form MM/DD/YY (no, it won't adapt to your locale).
+</dl>
+
+<h4><a name="BJC_HW_margins"></a>Hardware margins</h4>
+
+<p>
+The BJC printers have top and bottom hardware margins of 3mm and 7.1mm
+respectively (Canon says 7mm, but this is unusable because of the rounding
+of paper sizes to PostScript points).  The left margin is 3.4mm for A4 and
+smaller paper sizes, 6.4mm for U.S. paper sizes, envelopes and cards.  It
+is 4.0mm for A3 paper on the BJC-800.
+
+<p>
+The maximum printing width of a BJC-600 printer is 203mm.  The maximum
+printing width of a BJC-800 printer is 289mm on A3 paper, 203mm on
+U.S. letter and ISO A4 paper.
+
+<h4><a name="BJC_PPD"></a>PostScript printer description (PPD) files</h4>
+
+<p>
+The files <code>CBJC600.PPD</code> and <code>CBJC800.PPD</code> (whose
+long names are, respectively, <code>Canon_BubbleJetColor_600.ppd</code>
+and <code>Canon_BubbleJetColor_800.ppd</code>) are PPD files to drive the
+features of the <code>bjc600</code> and <code>bjc800</code> drivers.
+They can be used, for example, on NextStep systems (presumably on OpenStep
+systems too) and on Unix systems with Adobe's TranScript and
+<code>pslpr</code> (not tested).  The files are not complete at the
+moment.  Please note that NextStep's printing interface does not
+correctly enforce constraints specified in these files (in UIConstraints
+descriptions): you must force yourself to use valid combinations of
+options.
+
+<h4><a name="BJC_PPD_custom"></a>Customizing the PPD files</h4>
+
+<p>
+By default the PPD files are set for U.S. letter size paper, and they use a
+normalized transfer function.  If you choose to use A4 printing by default,
+you must replace "<code>Letter</code>" with "<code>A4</code>" in
+these (noncontiguous) lines:
+
+<blockquote>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+<code>*DefaultPageSize: Letter<br></code>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+<code>*DefaultRegion: Letter<br></code>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+<code>*DefaultImageableArea: Letter</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[...]<br>
+</blockquote>
+
+<p>
+Some versions of Ghostscript have problems with normalized colors, which
+makes them add magenta in gray levels.  If you experience this problem,
+in the PPD file replace the line
+
+<blockquote><code>
+*DefaultTransfer: Normalized
+</code></blockquote>
+
+<p>
+with the alternate line
+
+<blockquote><code>
+*DefaultTransfer: Null
+</code></blockquote>
+
+<p>
+The "thick media" option is implemented by choosing a value of 120 or 80
+(for thick and thin media respectively) for the <code>MediaWeight</code>
+feature of the drivers.  If you ever change the threshold for thick media
+in the driver code, you may need to change the values in the PPD files too.
+
+<p>
+All customization should be done using the "<code>*Include:</code>"
+feature of PPD files so that your local changes will be retained if you
+update the PPD files.
+
+<h3><a name="BJC_bugs"></a>How to report problems</h3>
+
+<p>
+Yves Arrouye no longer maintains this driver, and will not answer questions
+about it.  If you are posting a question about it in a public form, please
+be as descriptive as possible, and please send information that can be used
+to reproduce the problem.  Don't forget to say which driver you use, and in
+what version.  Version information can be found in the source code of the
+driver or by issuing the following command in a shell:
+
+<blockquote><code>
+echo&nbsp;"currentpagedevice&nbsp;/VersionString&nbsp;get&nbsp;=="&nbsp;|&nbsp;gs&nbsp;-q&nbsp;-sDEVICE=bjc600&nbsp;-
+</code></blockquote>
+
+<h3><a name="BJC_acks"></a>Acknowledgements</h3>
+
+<p>
+I am particularly grateful to Yoshio Kuniyoshi &lt;<a
+href="mailto:yoshio@nak.math.keio.ac.jp">yoshio@nak.math.keio.ac.jp</a>&gt;
+without whom I'd never make these drivers, and also to L. Peter Deutsch,
+who answered all my (often silly) questions about Ghostscript's driver
+interface.
+
+<p>
+Thanks also to the people who volunteered to beta-test the v2.x BJC
+drivers: David Gaudine
+&lt;<a href="mailto:david@donald.concordia.ca">david@donald.concordia.ca</a>&gt;,
+Robert M. Kenney &lt;<a href="mailto:rmk@unh.edu">rmk@unh.edu</a>&gt;,
+James McPherson
+&lt;<a href="mailto:someone@erols.com">someone@erols.com</a>&gt;
+and Ian Thurlbeck
+&lt;<a href="mailto:ian@stams.strath.ac.uk">ian@stams.strath.ac.uk</a>&gt;
+(listed alphabetically) were particularly helpful by discovering bugs and
+helping find out exact paper margins on printers I don't have access to.
+
+<p>
+And many thanks to Klaus-Gunther Hess
+&lt;<a href="mailto:ghess@elmos.de">ghess@elmos.de</a>&gt; for looking
+at the dithering code and devising a good CMYK dithering algorithm for the
+Epson Stylus Color, which I then adapted to the code of these drivers.
+
+<hr>
+
+<h2><a name="STC_epson_stylus"></a>Epson Stylus color printer (see also <code>uniprint</code>)</h2>
+
+<p>
+This section was contributed by Gunther Hess
+&lt;<a href="mailto:ghess@elmos.de">ghess@elmos.de</a>&gt;, who also wrote
+<code>uniprint</code>, a later set of drivers.  You should probably see
+the section on <a href="#Uniprint"><code>uniprint</code></a> for whether
+it might be better for your uses than this driver.
+
+<h3><a name="STC_usage"></a>Usage</h3>
+
+<p>
+
+This driver is selected with "<code>-sDEVICE=stcolor</code>", producing
+output for an Epson Stylus Color at 360dpi resolution by default.  But it
+can do much more with this printer, and with significantly better quality,
+than with the default mode; and it can also produce code for monochrome
+versions of the printer.  This can be achieved via either command-line
+options or Ghostscript input.  For convenience a PostScript file is
+supplied for use as an initial input file.  Try the following command:
+
+<blockquote>
+<code>gs -sDEVICE=stcolor -r</code><b>{Xdpi}</b><code>x</code><b>{Ydpi}</b><code> stcolor.ps</code> <b>{YourFile.ps}</b>
+</blockquote>
+
+<p>
+where <b>{Xdpi}</b> is one of 180, 360, or 720 and <b>{Ydpi}</b> is one of
+90, 180, 360, or 720.  The result should be significantly better.  You may
+use <code>stcolor.ps</code> with other devices too, but I do not
+recommend this, since it does nothing then. <code>stcolor.ps</code>
+should be available with binary distributions and should reside in the same
+directory as other Ghostscript initialization files or in the same
+directory as the files to be printed.  Thus if Ghostscript is part of your
+printer-spooler, you can insert
+
+<blockquote><code>
+(stcolor.ps) findlibfile { pop run } if pop
+</code></blockquote>
+
+<p>
+in files you want to use the improved algorithms.  You may want to adapt
+<code>stcolor.ps</code> file to your specific needs.  The methods and
+options for this are described here, but this description is restricted to
+Ghostscript options, while their manipulation at the PostScript level is
+documented in the material on <a href="Language.htm">the relationship of
+Ghostscript and PostScript</a> and in <code>stcolor.ps</code>.
+
+<h3><a name="STC_options"></a>Options</h3>
+
+<p>
+Now to explain the options (as written on my UNIX system).  The order is
+somehow related to their use during the printing process:
+
+<dl>
+<dt><code>-dUnidirectional</code>
+<dd>Force unidirectional printing, recommended for transparencies
+</dl>
+
+<dl>
+<dt><code>-dMicroweave</code>
+<dd>Enable the printer's "microweave" feature; see
+"<a href="#What_is_weaving">What is weaving?</a>" below.
+</dl>
+
+<dl>
+<dt><code>-dnoWeave</code>
+<dd>Disable any Weaving (overrides <code>-dMicroweave</code>)
+</dl>
+
+<dl>
+<dt><code>-dSoftweave</code>
+<dd>Enable the driver's internal weaving.  Note that <code>Softweave</code> works <b>only</b> with the original Stylus Color and the PRO-Series.
+</dl>
+
+<dl>
+<dt><code>-sDithering=</code><em>{name}</em>
+<dd>Select another dithering algorithm (name) from among
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>gscmyk</code>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td>fast color output, CMYK process color model (default)
+<tr valign=top>	<td><code>gsmono</code>
+	<td>&nbsp;
+	<td>fast monochrome output
+<tr valign=top>	<td><code>gsrgb</code>
+	<td>&nbsp;
+	<td>fast color output, RGB process color model
+<tr valign=top>	<td><code>fsmono</code>
+	<td>&nbsp;
+	<td>Floyd-Steinberg, monochrome
+<tr valign=top>	<td><code>fsrgb</code>
+	<td>&nbsp;
+	<td>Floyd-Steinberg, RGB process color model (almost identical to the <code>cdj550</code>/<code>bjc</code> algorithm)
+<tr valign=top>	<td><code>fsx4</code>
+	<td>&nbsp;
+	<td>Floyd-Steinberg, CMYK process color model (shares code with <code>fsmono</code> and <code>fsrgb</code>, but is algorithmically really bad)
+<tr valign=top>	<td><code>fscmyk</code>
+	<td>&nbsp;
+	<td>Floyd-Steinberg, CMYK process color model and proper modifications for CMYK
+<tr valign=top>	<td><code>hscmyk</code>
+	<td>&nbsp;
+	<td>modified Floyd-Steinberg with CMYK model ("hs" stands for "hess" not for "high speed", but the major difference from <code>fscmyk</code> is speed)
+<tr valign=top>	<td><code>fs2</code>
+	<td>&nbsp;
+	<td>algorithm by Steven Singer (RGB) should be identical to <code>escp2cfs2</code>.
+</table></blockquote>
+</dl>
+
+<dl>
+<dt><code>-dBitsPerPixel=</code><em>{1...32}</em>
+<dd>number of bits used for pixel storage; the larger the value, the better
+the quality -- at least in theory. In <code>fsrgb</code> one can gain
+some speed by restricting to 24 bits rather than the default 30.
+</dl>
+
+<dl>
+<dt><code>-dFlag0</code>
+<dd>causes some algorithms to select a uniform initialisation rather than a
+set of random values.  May yield a sharper image impression at the cost of
+dithering artifacts.  (Applies to <code>hscmyk</code> and all fs modes,
+except for fs2, which always uses a constant initialization.)
+</dl>
+
+<dl>
+<dt><code>-dFlag1</code> ... <code>-dFlag4</code>
+<dd>Available for future algorithms.
+</dl>
+
+<dl>
+<dt><code>-dColorAdjustMatrix='{</code><em>three, nine, or sixteen
+floating-point values</em><code>}'</code>
+<dd>This is a matrix to adjust the colors.  Values should be between -1.0
+and 1.0, and the number of values depends on the color model the selected
+algorithm uses. In RGB and CMYK modes a matrix with 1.0 on the diagonal
+produces no transformation.  This feature is really required, but I could
+not identify a similar feature at the language level, so I implemented it,
+but I don't know reasonable values yet.
+</dl>
+
+<dl>
+<dt><code>-dCtransfer='{</code><em>float float ...</em><code>}'</code> or
+<dt><code>-dMtransfer=</code>..., <code>-dY</code>..., <code>-dK</code>... or
+<dt><code>-dRtransfer='{</code><em>float float ...</em><code>}'</code> or
+<dt><code>-dG</code>..., <code>-dB</code>... or
+<dt><code>-dKtransfer='{</code><em>float float ...</em><code>}'</code>
+<dd>Which you use depends on the algorithm, which may be either either
+CMYK, RGB or monochrome. The values are arrays of floats in the range from
+0 to 1.0, representing the visible color intensity for the device.  One may
+achieve similar effects with <code>setcolortransfer</code> at the
+language level, but this takes more time and the underlying code for the
+driver-specific parameters is still required.  The size of the arrays is
+arbitrary and the defaults are "<code>{0.0&nbsp;1.0}</code>", which is a
+linear characteristic.  Most of the code in <code>stcolor.ps</code> are
+better transfer arrays.
+</dl>
+
+<dl>
+<dt><code>-dKcoding='{</code><em>float...</em><code>}'</code>
+<dt><code>-dC</code>..., <code>-dM</code>... etc.
+<dd>Arrays between 0.0 and 1.0, controlling the internal coding of the
+color values.  Clever use of these arrays may yield further enhancements,
+but I have no experience yet.  (To be discontinued with version 2.x.)
+</dl>
+
+<dl>
+<dt><code>-sModel=st800</code>
+<dd>Causes output to be suitable for the monochrome Stylus 800 (no weaving,
+no color).
+</dl>
+
+<dl>
+<dt><code>-sOutputCode=</code><em>{name}</em>
+<dd>Can be either "<code>plain</code>", "<code>runlength</code>" or
+"<code>deltarow</code>" and changes the ESC/P2 coding technique
+used by the driver. The default is to use runlength encoding.
+"<code>plain</code>" selects uncompressed encoding and generates
+enormous amounts of data.
+</dl>
+
+<dl>
+<dt><code>-descp_Band=</code><em>1/8/15/24</em>
+<dd>Number of nozzles of scanlines used in printing, Useful only with
+<code>-dnoWeave</code>.  Larger Values yield smaller code, but this
+doesn't increase the printing speed.
+</dl>
+
+<dl>
+<dt><code>-descp_Width=</code><em>N</em>
+<dd>Number of pixels Printed in each scan Line.  (Useful only when tuning
+margins; see below)
+</dl>
+
+<dl>
+<dt><code>-descp_Height=</code><em>pixels</em>
+<dd>Length of the entire page in pixels.  (Parameter of
+"<code>ESC(C</code>" in default initialization.)
+</dl>
+
+<dl>
+<dt><code>-descp_Top=</code><em>scan lines</em>
+<dd>Top margin in scan lines.  (First parameter of "<code>ESC(c</code>"
+in default initialization.)
+</dl>
+
+<dl>
+<dt><code>-descp_Bottom=</code><em>scan lines</em>
+<dd>Bottom margin in scan lines.  (Second parameter of
+"<code>ESC(c</code>" in default initialization.)
+</dl>
+
+<dl>
+<dt><code>-sescp_Init=</code>"<em>string</em>"
+<dd>Override for the initialization sequence.  (Must set graphics mode 1
+and units.)
+</dl>
+
+<dl>
+<dt><code>-sescp_Release=</code>"<em>string</em>"
+<dd>Overrides the release sequence, "<code>ESC&nbsp;@&nbsp;FF</code>" by
+default.
+</dl>
+
+<p>
+ESC/P2 allows any resolutions to be valid in theory, but only
+<code>-r360x360</code> (the default) and <code>-r720x720</code> (not
+on STC-IIs ? and st800) are known to work with most printers.
+
+<p>
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=7 bgcolor="#CCCC00"><hr><font size="+1">Valid option combinations<br>Stylus I &amp; Pro-Series only</font><hr>
+<tr valign=bottom>
+	<th valign=bottom align=left>Resolution
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th valign=bottom align=left><code>escp_Band</code>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th valign=bottom align=left>Weave usable
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th valign=bottom align=left><code>escp_Band</code> &amp;<br>number of passes
+<tr>	<td colspan=7><hr>
+<tr valign=top>	<td>180x90
+	<td>&nbsp;
+	<td>15
+	<td>&nbsp;
+	<td><code>noWeave</code>
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>180x180
+	<td>&nbsp;
+	<td>1 , 8, 24
+	<td>&nbsp;
+	<td><code>noWeave</code>, <code>Microweave</code>
+	<td>&nbsp;
+	<td>15/2 <code>SoftWeave</code>
+<tr valign=top>	<td>180x360
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>15/4 <code>SoftWeave</code>
+<tr valign=top>	<td>180x720
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>15/8 <code>SoftWeave</code>
+<tr valign=top>	<td>360x90
+	<td>&nbsp;
+	<td>15
+	<td>&nbsp;
+	<td><code>noWeave</code>
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>360x180
+	<td>&nbsp;
+	<td>1, 8, 24
+	<td>&nbsp;
+	<td><code>noWeave</code>, <code>Microweave</code>
+	<td>&nbsp;
+	<td>15/2 <code>SoftWeave</code>
+<tr valign=top>	<td>360x360
+	<td>&nbsp;
+	<td>1, 8, 24
+	<td>&nbsp;
+	<td><code>noWeave</code>, <code>Microweave</code>
+	<td>&nbsp;
+	<td>15/4 <code>SoftWeave</code>
+<tr valign=top>	<td>360x720
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>15/8 <code>SoftWeave</code>
+<tr valign=top>	<td>720x90
+	<td>&nbsp;
+	<td>15
+	<td>&nbsp;
+	<td><code>noWeave</code>
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>720x180
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>15/2 <code>SoftWeave</code>
+<tr valign=top>	<td>720x360
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td>15/4 <code>SoftWeave</code>
+<tr valign=top>	<td>720x720
+	<td>&nbsp;
+	<td>1
+	<td>&nbsp;
+	<td><code>noWeave</code>, <code>Microweave</code>
+	<td>&nbsp;
+	<td>15/8 <code>SoftWeave</code>
+</table></blockquote>
+
+<blockquote>
+<b>Beware:</b> there are only few validity checks for parameters.  A good
+example is <code>escp_Band</code>: if you set this, the driver uses your
+value even if the value is not supported by the printer.  <b>You asked for
+it and you got it!</b>
+</blockquote>
+
+<h3><a name="STC_FAQ"></a>Application note and FAQ</h3>
+
+<p>
+Quite a bunch of parameters.  Hopefully you never need any of them, besides
+feeding <code>stcolor.ps</code> to Ghostscript in front of your input.
+
+<p>
+After answering some questions over fifty times I prepared a FAQ.  Here is
+version 1.3 of the FAQ, as of <code>stcolor</code> version 1.20 (for
+Ghostscript 3.50).
+
+<h4><a name="STC_FAQ_A3"></a>Support for A3 paper</h4>
+
+<p>
+Yes, this driver supports the A3-size printer: merely set the required
+pagesize and margins.  A simple way to do this is to specify the
+command-line switch "<code>-sPAPERSIZE=a3</code>" or include the
+procedure call "<code>a3</code>" in the PostScript prolog section.  To
+optimize the printable area or set the proper margins, see the next
+paragraph.
+
+<h4><a name="STC_FAQ_margins"></a>Margins, PageSize</h4>
+
+<p>
+I refuse to add code to <code>stcolor</code> that tries to guess the
+proper margins or page size, because I found that such guessing is usually
+wrong and needs correction in either the source or the parameters.  You can
+modify <code>stcolor.ps</code> to do that, however.  After the line
+
+<blockquote><code>
+mark % prepare stack for "putdeviceprops"
+</code></blockquote>
+
+<p>
+insert these lines, which define page size and margins in points:
+
+<blockquote>
+<pre>/.HWMargins [9.0 39.96 12.6 9.0]     % Left, bottom, right, top (1/72")
+/PageSize   [597.6 842.4]            % Paper, including margins (1/72")
+/Margins [ % neg. Offset to Left/Top in Pixels
+   4 index 0 get STCold /HWResolution get 0 get mul 72 div neg
+   5 index 3 get STCold /HWResolution get 1 get mul 72 div neg
+]</pre></blockquote>
+
+<p>
+Feel free to change the values of <code>.HWMargins</code> and
+<code>PageSize</code> to match your needs; the values given are the
+defaults when the driver is compiled with "<code>-DA4</code>".  This
+option or its omission may cause trouble: the Stylus Color can print up to
+exactly 8 inches (2880 pixels) at 360dpi.  The remaining paper is the
+margin, where the left margin varies only slightly with the paper size,
+while the right margin is significantly increased for wider paper, such as
+U.S. letter size.
+
+<p>
+<b>Note</b> that if you are using an ISO paper size with a version of
+<code>stcolor</code> after 1.20 and compiled without
+"<code>-DA4</code>", then the default margin is too large, and you need
+to add the proper "<code>.HWMargins</code>" to the command line or to
+<code>stcolor.ps</code>.
+
+<h4><a name="STC_FAQ_II_IIS_1500"></a>Stylus Color II / IIs and 1500</h4>
+
+<p>
+First the good news: the driver can print on the Stylus Color II.
+Now the bad news:
+<ul>
+<li>According to Epson support the driver "abuses" the color
+capabilities.  (See "Future Plans" for details.)
+<li>You need some parameters on the command line (or in
+<code>stcolor.ps</code>).
+<li>I doubted that it would be usable with the Stylus Color IIs, but
+it <b>is</b> usable and suffers from mixing problems!
+</ul>
+
+<p>
+
+To make things work, you <b>MUST</b> disable the driver's internal
+weaving (<code>Softweave</code>), in one of these two ways:
+
+<blockquote>
+<code>gs -dMicroweave</code> ...<br>
+<code>gs -dnoWeave -descp_Band=1</code> ...
+</blockquote>
+
+<p>
+Version 1.90, current as of Ghostscript 5.10, fixes this bug by new default
+behaviour.  I experienced significantly increased printing speed with the
+second variant on the old Stylus Color, when printing mostly monochrome
+data.
+
+<h3><a name="STC_recommendations"></a>Recommendations</h3>
+
+<p>
+The next section is a contribution from Jason Patterson &lt;jason@reflections.com.au&gt;
+who evaluated a previous version (1.17).  Ghostscript was invoked as follows:
+
+<blockquote><dl compact>
+<dt><code>gs</code>
+<dd><code>-sDEVICE=stcolor -r720x720
+-sDithering=</code>... <code>-sOutputFile=escp.out stcolor.ps
+whatsoever.ps</code>
+
+</dl></blockquote>
+
+<p>
+where "..." is the name of the desired algorithm.
+<code>stcolor.ps</code> was omitted for the gs-algorithms
+(<code>gsmono</code>, <code>gsrgb</code> and <code>gscmyk</code>),
+for which it is useless and would not allow the selection of
+"<code>gscmyk</code>".
+
+<h4><a name="STC_dither_experiment"></a>Color dithering experiments with
+<code>gdevstc</code> 1.21</h4>
+
+<p>
+Here are data about the EPSON Stylus Color driver's different dithering
+methods, based on a little experiment using four good quality scanned
+images of quite varied nature, to begin with, a summary of the results of
+the four experiments.  <b>Sanity note:</b> the results here are from only
+four images and a total of 24 printouts (eight on 720dpi paper, sixteen on
+plain paper).  Your results will almost certainly vary, and your standards
+might not be the same as mine, so use these results only as a guide, not as
+a formal evaluation.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=3 bgcolor="#CCCC00"><hr><font size="+1">Quality of output by method</font><hr>
+<tr valign=bottom>
+	<th align=left>
+	<td>&nbsp;&nbsp;
+	<th align=left>
+<tr>	<td colspan=3><hr>
+<tr>	<td valign=top><code>gsmono</code>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;
+<td>Pretty much what you'd expect from a mono ordered pattern.
+Looks like what a lot of mono laser printers produce.
+<tr>	<td valign=top><code>fsmono</code>
+<td>&nbsp;
+<td>Excellent for monochrome.
+<tr>	<td valign=top><code>gscmyk</code>
+<td>&nbsp;
+<td>Not very good, but expected from an ordered pattern.
+<tr>	<td valign=top><code>gsrgb</code>
+<td>&nbsp;
+<td>A little better than <code>gscmyk</code>. More consistent
+looking.
+<tr>	<td valign=top><code>fs2</code>
+<td>&nbsp;
+<td>Good, but not quite as good as <code>fsrgb</code>.  Gets the
+brightness wrong: too light at 720dpi, too dark at 360dpi.
+<tr>	<td valign=top><code>fsrgb</code>
+<td>&nbsp;
+<td>Very good, but a little too dark and has a slight blue tint.
+<tr>	<td valign=top><code>hscmyk</code>
+<td>&nbsp;
+<td>Excellent. Slightly better than <code>fsrgb</code> and
+<code>fs2</code>. Better than <code>fscmyk</code> on
+some images, almost the same on most.
+<tr>	<td valign=top><code>fscmyk</code>
+<td>&nbsp;
+<td>Best. Very, very slightly better than <code>hscmyk</code>.
+On some images nearly as good as the EPSON demos done with
+the MS Windows driver.
+</table></blockquote>
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=4 bgcolor="#CCCC00"><hr><font size="+1">Overall visual quality (1-10), best to worst</font><hr>
+<tr valign=top>	<th colspan=4 align=left>Monochrome
+<tr>	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td><code>fsmono</code>
+	<td>&nbsp;&nbsp;
+	<td><code>******************</code>
+<tr>	<td>&nbsp;
+	<td><code>gsmono</code>
+	<td>&nbsp;
+	<td><code>**********</code>
+<tr>	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td><code>0&nbsp;1&nbsp;2&nbsp;3&nbsp;4&nbsp;5&nbsp;6&nbsp;7&nbsp;8&nbsp;9&nbsp;10</code>
+<tr>	<td colspan=4><hr>
+<tr valign=top>	<th colspan=4 align=left>Colour
+<tr>	<td>&nbsp;
+	<td><code>fscmyk</code>
+	<td>&nbsp;
+	<td><code>*******************</code>
+<tr>	<td>&nbsp;
+	<td><code>hscmyk</code>
+	<td>&nbsp;
+	<td><code>*******************</code>
+<tr>	<td>&nbsp;
+	<td><code>fsrgb</code>
+	<td>&nbsp;
+	<td><code>******************</code>
+<tr>	<td>&nbsp;
+	<td><code>fs2</code>
+	<td>&nbsp;
+	<td><code>*****************</code>
+<tr>	<td>&nbsp;
+	<td><code>gsrgb</code>
+	<td>&nbsp;
+	<td><code>**********</code>
+<tr>	<td>&nbsp;
+	<td><code>gscmyk</code>
+	<td>&nbsp;
+	<td><code>*********</code>
+<tr>	<td>&nbsp;
+	<td>&nbsp;
+	<td>&nbsp;
+	<td><code>0&nbsp;1&nbsp;2&nbsp;3&nbsp;4&nbsp;5&nbsp;6&nbsp;7&nbsp;8&nbsp;9&nbsp;10</code>
+</table></blockquote>
+
+<h3><a name="STC_color_transform"></a>Color transformation</h3>
+
+<p>
+In the initial version of the driver distributed with Ghostscript 3.33, the
+parameter "<code>SpotSize</code>" was the only way to manipulate the
+colors at the driver level.  According to the parameters enumerated above,
+this has changed significantly with version 1.16 and above as a result an
+ongoing discussion about dithering algorithms and "false color" on the
+Epson Stylus Color.  This initiated the transformation of the
+<code>stcolor</code> driver into a framework for different dithering
+algorithms, providing a generalized interface to the internal Ghostscript
+color models and the other data structures related to Ghostscript drivers.
+
+<p>
+The main thing such a framework should be able to do is to deliver the
+values the dithering algorithm needs; and since this directly influences
+the optical image impression, this transformation should be adjustable
+without the need for recompilation and relinking.  In general the process
+can be described as follows:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td colspan=3><code>ColorAdjustMatrix</code>
+	<td align=center>Coding
+	<td colspan=3>&nbsp;
+	<td align=center>Transfer
+	<td colspan=3>&nbsp;
+<tr valign=top>	<td>|
+	<td align=center>Ghostscript color
+	<td>|
+	<td align=center>=&gt;
+	<td>|
+	<td align=center>Ghostscript raster
+	<td>|
+	<td align=center>=&gt;
+	<td>|
+	<td align=center>Dithering data
+	<td>|
+<tr valign=top>	<td>|
+	<td>&nbsp;
+	<td>|
+	<td>&nbsp;
+	<td>|
+	<td align=center>1/2/4/8/16/32-bit
+	<td>|
+	<td>&nbsp;
+	<td>|
+	<td>&nbsp;
+	<td>|
+<tr valign=top>	<td>|
+	<td align=center>1/3/4 16-bit values
+	<td>|
+	<td>&nbsp;
+	<td>|
+	<td align=center>1/3/4 values
+	<td>|
+	<td>&nbsp;
+	<td>|
+	<td align=center>(arbitrary type)
+	<td>|
+</table></blockquote>
+
+<p>
+Due to the limitations on raster storage, information is lost in the first
+transformation step, except for the 16-bit monochrome mode. So any color
+adjustment should take place before this step and this is where the optional
+<code>ColorAdjustMatrix</code> works.
+
+<p>
+The first transformation step, called "coding", is controlled by the
+<code>?coding</code> arrays. The decoding process expands the range of
+values expontentially to a larger range than that provided by the initial
+Ghostscript color model, and is therefore a reasonable place to make
+device- or algorithm-specific adjustments. This is where the
+<code>?transfer</code> arrays are used. Array access might be not the
+fastest method, but its generality is superior, so this step is always
+based upon internally algorithm-specific array access. If 8 bits are stored
+per color component and if the algorithm uses bytes too, the second
+transformation is included within the first, which saves significant
+computation time when printing the data.
+
+<h3><a name="STC_CAM"></a><code>ColorAdjustMatrix</code></h3>
+
+<p>
+The driver supports different values for <code>ProcessColorModel</code>,
+which raises the need for different color adjustments.  Here
+"<code>CAM</code>" stands for "<code>ColorAdjustMatrix</code>".
+
+<dl>
+<dt><code>DeviceGray</code> (three floats)
+<dd><pre>if ((r == g) &amp;&amp; (g == b))
+   K' = 1.0 - R;
+else
+   K' = 1.0 - CAM[0] * R + CAM[1] * G + CAM[2] * B;</pre>
+
+<p>
+According to the <a href="Drivers.htm">documentation on drivers</a>, the
+latter (the "else" clause) should never happen.
+</dl>
+
+<dl>
+<dt><code>DeviceRGB</code> (nine floats)
+<dd><pre>if((r == g) &amp;&amp; (g == b))
+   R' = B' = G' = R;
+else
+   R' = CAM[0]*R + CAM[1]*G + CAM[2]*B;
+   G' = CAM[3]*R + CAM[4]*G + CAM[5]*B;
+   B' = CAM[6]*R + CAM[7]*G + CAM[8]*B;</pre>
+
+<p>
+The printer always uses four inks, so a special treatment of black is
+provided.  Algorithms may take special action if R, G, and B are all
+equal.
+</dl>
+
+<dl>
+<dt><code>DeviceCMYK</code> (sixteen floats)
+<dd>
+<pre>if((c == m) &amp;&amp; (m == y))
+   K' = max(C,K);
+   C' = M' = Y' = 0;
+else
+   K  = min(C,M,Y);
+   if((K &gt; 0) &amp;&amp; ColorAdjustMatrix_present) { =&gt; UCR
+      C -= K;
+      M -= K;
+      Y -= K;
+   }
+
+   C' = CAM[ 0]*C + CAM[ 1]*M + CAM[ 2]*Y + CAM[ 3]*K;
+   M' = CAM[ 4]*C + CAM[ 5]*M + CAM[ 6]*Y + CAM[ 7]*K;
+   Y' = CAM[ 8]*C + CAM[ 9]*M + CAM[10]*Y + CAM[11]*K;
+   K' = CAM[12]*C + CAM[13]*M + CAM[14]*Y + CAM[15]*K;</pre>
+
+<p>
+Again we have a special black treatment. "<code>max(C,K)</code>" was introduced
+because of a slight misbehaviour of Ghostscript, which delivers
+black under certain circumstances as (1,1,1,0). Normally, when
+no special black separation and undercolor removal procedures
+are defined at the PostScript level, either (C,M,Y,0) or (0,0,0,K)
+values are mapped.  This would make the extended <code>ColorAdjustMatrix</code>
+quite tedious, and so during mapping, black separation is done for
+(C,M,Y,0) requests; and if there is a <code>ColorAdjustMatrix</code>, undercolor
+removal is used too. In other words the default matrix is:
+
+<blockquote><table>
+<tr>	<td>1 <td>0 <td>0 <td>1
+<tr>	<td>0 <td>1 <td>0 <td>1
+<tr>	<td>0 <td>0 <td>1 <td>1
+<tr>	<td>0 <td>0 <td>0 <td>1
+</table></blockquote>
+
+<p>
+and it is applied to CMYK values with separated and removed black.  Raising
+the CMY coefficients while lowering the K coefficients reduces black and
+intensifies color.  But be careful, because even small deviations from the
+default cause drastic changes.
+</dl>
+
+<p>
+If no <code>ColorAdjustMatrix</code> is set, the matrix computations are
+skipped.  Thus the transformation reduces to range inversion in monochrome
+mode and black separation in CMYK mode.
+
+<h3><a name="STC_RGBCMYK_coding"></a>RGB / CMYK coding and transfer, and <code>BitsPerPixel</code></h3>
+
+<p>
+These two (groups of) parameters are arrays of floating-point numbers in
+the range 0.0 to 1.0.  They control the truncation to the desired number of
+bits stored in raster memory (<code>BitsPerPixel</code>) and the ink
+density.  The "truncation" may become a nonlinear function if any of the
+<code>?coding</code> arrays is set.  Assume the following Ghostscript
+invocation:
+
+<blockquote><pre>gs -sDEVICE=stcolor -sDithering=fscmyk -dBitsPerPixel=16 \
+     -dKcoding='{ 0.0 0.09 0.9 1.0 }' \
+     -dMcoding='{ 0.0 0.09 0.9 1.0 }' \
+   -dKtransfer='{ 0.0 0.09 0.9 1.0 }' \
+   -dYtransfer='{ 0.0 0.09 0.9 1.0 }'</pre>
+</blockquote>
+
+<p>
+We may have either or both of <code>?coding</code> and
+<code>?transfer</code>, giving four possible combinations.  (These four
+combinations appear in the given example.)  The resulting mapping appears
+in the following tables, where except for the internal Indices (4
+components &times; 4 bits = 16 <code>BitsPerPixel</code>), all values
+are normalized to the range 0 to 1.  The actual range is 0 to 65535 for the
+Ghostscript color and 0 to 16777215 for the ink values delivered to the
+<code>fscmyk</code> algorithm.  Sorry for the bunch of numbers
+following, but you may try this example in conjunction with
+<code>stcinfo.ps</code>, which should give you a graphical printout of
+the following numbers when you issue a <code>showpage</code> command.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr>	<td>&nbsp;
+	<td>&nbsp;
+	<th colspan=5>Cyan<hr>
+	<td>&nbsp;
+	<th colspan=5>Magenta<hr>
+<tr valign=top>	<th>CI/15
+	<td>&nbsp;
+	<th>gs_color_values
+	<td>&nbsp;
+	<th>CI
+	<td>&nbsp;
+	<th>Ink
+	<td>&nbsp;
+	<th>gs_color_values
+	<td>&nbsp;
+	<th>CI
+	<td>&nbsp;
+	<th>Ink
+<tr>	<td colspan=13><hr>
+<tr valign=top>	<td align=center>0.000
+	<td>&nbsp;
+	<td align=center>0.000 - 0.062
+	<td>&nbsp;
+	<td align=right>0
+	<td>&nbsp;
+	<td align=center>0.000
+	<td>&nbsp;
+	<td align=center>-0.123 - 0.123
+	<td>&nbsp;
+	<td align=right>0
+	<td>&nbsp;
+	<td align=center>0.000
+<tr valign=top>	<td align=center>0.067
+	<td>&nbsp;
+	<td align=center>0.063 - 0.125
+	<td>&nbsp;
+	<td align=right>1
+	<td>&nbsp;
+	<td align=center>0.067
+	<td>&nbsp;
+	<td align=center>0.123 - 0.299
+	<td>&nbsp;
+	<td align=right>1
+	<td>&nbsp;
+	<td align=center>0.247
+<tr valign=top>	<td align=center>0.133
+	<td>&nbsp;
+	<td align=center>0.125 - 0.187
+	<td>&nbsp;
+	<td align=right>2
+	<td>&nbsp;
+	<td align=center>0.133
+	<td>&nbsp;
+	<td align=center>0.299 - 0.365
+	<td>&nbsp;
+	<td align=right>2
+	<td>&nbsp;
+	<td align=center>0.351
+<tr valign=top>	<td align=center>0.200
+	<td>&nbsp;
+	<td align=center>0.188 - 0.250
+	<td>&nbsp;
+	<td align=right>3
+	<td>&nbsp;
+	<td align=center>0.200
+	<td>&nbsp;
+	<td align=center>0.365 - 0.392
+	<td>&nbsp;
+	<td align=right>3
+	<td>&nbsp;
+	<td align=center>0.379
+<tr valign=top>	<td align=center>0.267
+	<td>&nbsp;
+	<td align=center>0.250 - 0.312
+	<td>&nbsp;
+	<td align=right>4
+	<td>&nbsp;
+	<td align=center>0.267
+	<td>&nbsp;
+	<td align=center>0.392 - 0.420
+	<td>&nbsp;
+	<td align=right>4
+	<td>&nbsp;
+	<td align=center>0.406
+<tr valign=top>	<td align=center>0.333
+	<td>&nbsp;
+	<td align=center>0.313 - 0.375
+	<td>&nbsp;
+	<td align=right>5
+	<td>&nbsp;
+	<td align=center>0.333
+	<td>&nbsp;
+	<td align=center>0.420 - 0.447
+	<td>&nbsp;
+	<td align=right>5
+	<td>&nbsp;
+	<td align=center>0.433
+<tr valign=top>	<td align=center>0.400
+	<td>&nbsp;
+	<td align=center>0.375 - 0.437
+	<td>&nbsp;
+	<td align=right>6
+	<td>&nbsp;
+	<td align=center>0.400
+	<td>&nbsp;
+	<td align=center>0.447 - 0.475
+	<td>&nbsp;
+	<td align=right>6
+	<td>&nbsp;
+	<td align=center>0.461
+<tr valign=top>	<td align=center>0.467
+	<td>&nbsp;
+	<td align=center>0.438 - 0.500
+	<td>&nbsp;
+	<td align=right>7
+	<td>&nbsp;
+	<td align=center>0.467
+	<td>&nbsp;
+	<td align=center>0.475 - 0.502
+	<td>&nbsp;
+	<td align=right>7
+	<td>&nbsp;
+	<td align=center>0.488
+<tr valign=top>	<td align=center>0.533
+	<td>&nbsp;
+	<td align=center>0.500 - 0.562
+	<td>&nbsp;
+	<td align=right>8
+	<td>&nbsp;
+	<td align=center>0.533
+	<td>&nbsp;
+	<td align=center>0.502 - 0.529
+	<td>&nbsp;
+	<td align=right>8
+	<td>&nbsp;
+	<td align=center>0.516
+<tr valign=top>	<td align=center>0.600
+	<td>&nbsp;
+	<td align=center>0.563 - 0.625
+	<td>&nbsp;
+	<td align=right>9
+	<td>&nbsp;
+	<td align=center>0.600
+	<td>&nbsp;
+	<td align=center>0.529 - 0.557
+	<td>&nbsp;
+	<td align=right>9
+	<td>&nbsp;
+	<td align=center>0.543
+<tr valign=top>	<td align=center>0.667
+	<td>&nbsp;
+	<td align=center>0.625 - 0.687
+	<td>&nbsp;
+	<td align=right>10
+	<td>&nbsp;
+	<td align=center>0.667
+	<td>&nbsp;
+	<td align=center>0.557 - 0.584
+	<td>&nbsp;
+	<td align=right>10
+	<td>&nbsp;
+	<td align=center>0.571
+<tr valign=top>	<td align=center>0.733
+	<td>&nbsp;
+	<td align=center>0.688 - 0.750
+	<td>&nbsp;
+	<td align=right>11
+	<td>&nbsp;
+	<td align=center>0.733
+	<td>&nbsp;
+	<td align=center>0.584 - 0.612
+	<td>&nbsp;
+	<td align=right>11
+	<td>&nbsp;
+	<td align=center>0.598
+<tr valign=top>	<td align=center>0.800
+	<td>&nbsp;
+	<td align=center>0.750 - 0.812
+	<td>&nbsp;
+	<td align=right>12
+	<td>&nbsp;
+	<td align=center>0.800
+	<td>&nbsp;
+	<td align=center>0.612 - 0.639
+	<td>&nbsp;
+	<td align=right>12
+	<td>&nbsp;
+	<td align=center>0.626
+<tr valign=top>	<td align=center>0.867
+	<td>&nbsp;
+	<td align=center>0.813 - 0.875
+	<td>&nbsp;
+	<td align=right>13
+	<td>&nbsp;
+	<td align=center>0.867
+	<td>&nbsp;
+	<td align=center>0.639 - 0.715
+	<td>&nbsp;
+	<td align=right>13
+	<td>&nbsp;
+	<td align=center>0.653
+<tr valign=top>	<td align=center>0.933
+	<td>&nbsp;
+	<td align=center>0.875 - 0.937
+	<td>&nbsp;
+	<td align=right>14
+	<td>&nbsp;
+	<td align=center>0.933
+	<td>&nbsp;
+	<td align=center>0.715 - 0.889
+	<td>&nbsp;
+	<td align=right>14
+	<td>&nbsp;
+	<td align=center>0.778
+<tr valign=top>	<td align=center>1.000
+	<td>&nbsp;
+	<td align=center>0.938 - 1.000
+	<td>&nbsp;
+	<td align=right>15
+	<td>&nbsp;
+	<td align=center>1.000
+	<td>&nbsp;
+	<td align=center>0.889 - 1.111
+	<td>&nbsp;
+	<td align=right>15
+	<td>&nbsp;
+	<td align=center>1.000
+</table></blockquote>
+
+<p>
+The difference between cyan and magenta is the presence of a coding array.
+The coding process must map a range of color values to each of the sixteen
+component indices.  If no coding array is given, this is accomplished
+by dividing by 4096, equivalent to a right shift by 12 bits.  The
+final ink density resides in the given interval and moves from the left to
+the right side from 0 to 15.  For magenta there is a coding array
+and the ink value matches the center of the intervals.  But the distribution
+of the mapped intervals follows the given coding array and is nonlinear in
+the linear color space of Ghostscript.
+
+<p>
+Now let us take a look at the case with transfer arrays:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr>	<td>&nbsp;
+	<td>&nbsp;
+	<th colspan=5>Yellow<hr>
+	<td>&nbsp;
+	<th colspan=5>Black<hr>
+<tr valign=top>	<th>CI/15
+	<td>&nbsp;
+	<th>gs_color_values
+	<td>&nbsp;
+	<th>CI
+	<td>&nbsp;
+	<th>Ink
+	<td>&nbsp;
+	<th>gs_color_values
+	<td>&nbsp;
+	<th>CI
+	<td>&nbsp;
+	<th>Ink
+<tr>	<td colspan=13><hr>
+<tr valign=top>	<td align=center>0.000
+	<td>&nbsp;
+	<td align=center>0.000 - 0.062
+	<td>&nbsp;
+	<td align=right>0
+	<td>&nbsp;
+	<td align=center>0.000
+	<td>&nbsp;
+	<td align=center>-0.123 - 0.123
+	<td>&nbsp;
+	<td align=right>0
+	<td>&nbsp;
+	<td align=center>0.000
+<tr valign=top>	<td align=center>0.067
+	<td>&nbsp;
+	<td align=center>0.063 - 0.125
+	<td>&nbsp;
+	<td align=right>1
+	<td>&nbsp;
+	<td align=center>0.018
+	<td>&nbsp;
+	<td align=center>0.123 - 0.299
+	<td>&nbsp;
+	<td align=right>1
+	<td>&nbsp;
+	<td align=center>0.067
+<tr valign=top>	<td align=center>0.133
+	<td>&nbsp;
+	<td align=center>0.125 - 0.187
+	<td>&nbsp;
+	<td align=right>2
+	<td>&nbsp;
+	<td align=center>0.036
+	<td>&nbsp;
+	<td align=center>0.299 - 0.365
+	<td>&nbsp;
+	<td align=right>2
+	<td>&nbsp;
+	<td align=center>0.133
+<tr valign=top>	<td align=center>0.200
+	<td>&nbsp;
+	<td align=center>0.188 - 0.250
+	<td>&nbsp;
+	<td align=right>3
+	<td>&nbsp;
+	<td align=center>0.054
+	<td>&nbsp;
+	<td align=center>0.365 - 0.392
+	<td>&nbsp;
+	<td align=right>3
+	<td>&nbsp;
+	<td align=center>0.200
+<tr valign=top>	<td align=center>0.267
+	<td>&nbsp;
+	<td align=center>0.250 - 0.312
+	<td>&nbsp;
+	<td align=right>4
+	<td>&nbsp;
+	<td align=center>0.072
+	<td>&nbsp;
+	<td align=center>0.392 - 0.420
+	<td>&nbsp;
+	<td align=right>4
+	<td>&nbsp;
+	<td align=center>0.267
+<tr valign=top>	<td align=center>0.333
+	<td>&nbsp;
+	<td align=center>0.313 - 0.375
+	<td>&nbsp;
+	<td align=right>5
+	<td>&nbsp;
+	<td align=center>0.090
+	<td>&nbsp;
+	<td align=center>0.420 - 0.447
+	<td>&nbsp;
+	<td align=right>5
+	<td>&nbsp;
+	<td align=center>0.333
+<tr valign=top>	<td align=center>0.400
+	<td>&nbsp;
+	<td align=center>0.375 - 0.437
+	<td>&nbsp;
+	<td align=right>6
+	<td>&nbsp;
+	<td align=center>0.252
+	<td>&nbsp;
+	<td align=center>0.447 - 0.475
+	<td>&nbsp;
+	<td align=right>6
+	<td>&nbsp;
+	<td align=center>0.400
+<tr valign=top>	<td align=center>0.467
+	<td>&nbsp;
+	<td align=center>0.438 - 0.500
+	<td>&nbsp;
+	<td align=right>7
+	<td>&nbsp;
+	<td align=center>0.414
+	<td>&nbsp;
+	<td align=center>0.475 - 0.502
+	<td>&nbsp;
+	<td align=right>7
+	<td>&nbsp;
+	<td align=center>0.467
+<tr valign=top>	<td align=center>0.533
+	<td>&nbsp;
+	<td align=center>0.500 - 0.562
+	<td>&nbsp;
+	<td align=right>8
+	<td>&nbsp;
+	<td align=center>0.576
+	<td>&nbsp;
+	<td align=center>0.502 - 0.529
+	<td>&nbsp;
+	<td align=right>8
+	<td>&nbsp;
+	<td align=center>0.533
+<tr valign=top>	<td align=center>0.600
+	<td>&nbsp;
+	<td align=center>0.563 - 0.625
+	<td>&nbsp;
+	<td align=right>9
+	<td>&nbsp;
+	<td align=center>0.738
+	<td>&nbsp;
+	<td align=center>0.529 - 0.557
+	<td>&nbsp;
+	<td align=right>9
+	<td>&nbsp;
+	<td align=center>0.600
+<tr valign=top>	<td align=center>0.667
+	<td>&nbsp;
+	<td align=center>0.625 - 0.687
+	<td>&nbsp;
+	<td align=right>10
+	<td>&nbsp;
+	<td align=center>0.900
+	<td>&nbsp;
+	<td align=center>0.557 - 0.584
+	<td>&nbsp;
+	<td align=right>10
+	<td>&nbsp;
+	<td align=center>0.667
+<tr valign=top>	<td align=center>0.733
+	<td>&nbsp;
+	<td align=center>0.688 - 0.750
+	<td>&nbsp;
+	<td align=right>11
+	<td>&nbsp;
+	<td align=center>0.920
+	<td>&nbsp;
+	<td align=center>0.584 - 0.612
+	<td>&nbsp;
+	<td align=right>11
+	<td>&nbsp;
+	<td align=center>0.733
+<tr valign=top>	<td align=center>0.800
+	<td>&nbsp;
+	<td align=center>0.750 - 0.812
+	<td>&nbsp;
+	<td align=right>12
+	<td>&nbsp;
+	<td align=center>0.940
+	<td>&nbsp;
+	<td align=center>0.612 - 0.639
+	<td>&nbsp;
+	<td align=right>12
+	<td>&nbsp;
+	<td align=center>0.800
+<tr valign=top>	<td align=center>0.867
+	<td>&nbsp;
+	<td align=center>0.813 - 0.875
+	<td>&nbsp;
+	<td align=right>13
+	<td>&nbsp;
+	<td align=center>0.960
+	<td>&nbsp;
+	<td align=center>0.639 - 0.715
+	<td>&nbsp;
+	<td align=right>13
+	<td>&nbsp;
+	<td align=center>0.867
+<tr valign=top>	<td align=center>0.933
+	<td>&nbsp;
+	<td align=center>0.875 - 0.937
+	<td>&nbsp;
+	<td align=right>14
+	<td>&nbsp;
+	<td align=center>0.980
+	<td>&nbsp;
+	<td align=center>0.715 - 0.889
+	<td>&nbsp;
+	<td align=right>14
+	<td>&nbsp;
+	<td align=center>0.933
+<tr valign=top>	<td align=center>1.000
+	<td>&nbsp;
+	<td align=center>0.938 - 1.000
+	<td>&nbsp;
+	<td align=right>15
+	<td>&nbsp;
+	<td align=center>1.000
+	<td>&nbsp;
+	<td align=center>0.889 - 1.111
+	<td>&nbsp;
+	<td align=right>15
+	<td>&nbsp;
+	<td align=center>1.000
+</table></blockquote>
+
+<p>
+Yellow uses a transfer array.  There is no linear correspondence between
+the color and the ink values: this correspondence is defined through the
+given array.  In other words, the transfer arrays define a nonlinear ink
+characteristic, which is exactly the same functionality that PostScript's
+"(color)transfer" function provides.
+
+<p>
+While for yellow the intervals match the intervals used with cyan, for
+black the intervals match the magenta intervals.  But watch the
+correspondence between the CI/15 values and the ink density for black: this
+is a linear distribution in the ink domain.
+
+<p>
+Not a bad idea, I think.  Consider the <code>fs2</code> algorithm: it
+uses values in the range 0 to 255.  If any transfer array were alone, some
+of the 256 possible values would never be used and others would be used for
+adjacent intervals several times.  Establishing an identical coding array
+solves this problem, so the full potential of the algorithm is used.
+
+<p>
+Another useful feature of the coding arrays is that they are internally
+normalized to the range 0-1.  In 720x720dpi mode the transfer arrays in
+<code>stcolor.ps</code> limit the dot density to about 50%, so these
+arrays end at 0.5 (and begin at 0.5 for RGB).  Because of automatic
+normalization, these arrays can also be used as coding arrays.  But of
+course in the <code>fs2</code> case mentioned above, values from 0 to
+127 will never be delivered to the algorithm, while values 128-255 are
+delivered for adjacent intervals.
+
+<p>
+To clarify the intended use of the three parameters (parameter groups), keep this in mind:
+
+<blockquote><ul>
+<li><code>ColorAdjustMatrix</code> is never used when transferring gray
+values.  This restricts it to what the name says: adjustment of colors,
+that is, correction for miscolored ink.  Do not use it for saturation or
+brightness control.
+
+<li><code>?transfer</code> arrays control the values delivered to the
+driver, which in turn controls the ink quantity.  Use these arrays to
+control saturation and brightness.  In general these arrays are identical
+for all inks.  If they differ they provide a simpler scheme for color
+correction, which is not necessarily faster than the
+<code>ColorAdjustMatrix</code>.
+
+<li><code>?coding</code> arrays control the color value intervals mapped
+to the internal color indices.
+</ul></blockquote>
+
+<h3><a name="What_is_weaving"></a>What is weaving?</h3>
+
+<p>
+The Epson Stylus Color has a head assembly that contains two physically
+identifiable heads, one for black and one for cyan, magenta, and yellow
+(CMY).  This makes four "logical" heads, one for each color component.
+Each of these four heads has several jets at some vertical (Y) distance
+from one another, so several horizontal lines can be printed of a given
+color during one pass of the heads.  From experience I think there are
+fifteen jets per color, spaced at 1/90in.
+
+<p>
+So the question arises of how to print at a Y resolution of 360dpi with
+90dpi jets.  Simply by division one gets 360dpi/90dpi = 4, which tells us
+that 4 passes of the head assembly are needed to achieve a Y resolution of
+360dpi.
+
+<p>
+Weaving is the method of how the fifteen jets are used to print adjacent
+horizontal rows separated here by 1/360 inch:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=17 bgcolor="#CCCC00"><hr><font size="+1">Print-head jets used with and without weaving</font><hr>
+<tr>	<td>&nbsp;
+	<td>&nbsp;
+	<th valign=bottom colspan=7>Weaving<hr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th valign=bottom colspan=7>noWeave<hr>
+<tr valign=top>	<td>&nbsp;
+	<th>Pass
+	<th>1
+	<td>&nbsp;
+	<th>2
+	<td>&nbsp;
+	<th>3
+	<td>&nbsp;
+	<th>4
+	<td>&nbsp;
+	<th>1
+	<td>&nbsp;
+	<th>2
+	<td>&nbsp;
+	<th>3
+	<td>&nbsp;
+	<th>4
+<tr>	<th>Row
+<tr valign=top>	<td align=center>0
+	<td>&nbsp;
+	<td align=center>jet 0
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 0
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+<tr valign=top>	<td align=center>1
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 1
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 0
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+<tr valign=top>	<td align=center>2
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 2
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 0
+	<td>&nbsp;
+	<td align=center>--
+<tr valign=top>	<td align=center>3
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 3
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 0
+<tr valign=top>	<td align=center>4
+	<td>&nbsp;
+	<td align=center>jet 1
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 1
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+<tr valign=top>	<td align=center>5
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 2
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 1
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+<tr valign=top>	<td align=center>6
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 3
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>jet 1
+	<td>&nbsp;
+	<td align=center>--
+<tr valign=top>	<th>...
+</table></blockquote>
+
+<p>
+Now let's assume that the dot diameter is different for each individual
+jet, but the average among the jets matches the desired resolution.  With
+weaving, adjacent rows are printed by different jets, thus some averaging
+takes place.  Without weaving, adjacent rows are printed by the same jet
+and this makes the dot diameter deviations visible as 1/90in stripes on
+the paper.
+
+<h3><a name="STC_print_modes"></a>Print mode parameters</h3>
+
+<p>
+The parameters "<code>Unidirectional</code>",
+"<code>Microweave</code>", "<code>noWeave</code>",
+"<code>OutputCode</code>", "<code>Model</code>" and the given
+resolution control the data generated for the printer.
+
+<h4><a name="STC_unidirectional"></a><code>Unidirectional</code></h4>
+
+<p>
+Simply toggles the unidirectional mode of the printer.  Setting
+"<code>Unidirectional</code>" definitely slows printing speed, but may
+improve the quality.  I use this for printing transparencies, where fast
+head movement could smear the ink.
+
+<h4><a name="STC_noweave"></a><code>Microweave</code>,
+<code>noWeave</code> and <code>OutputCode=deltarow</code></h4>
+
+<p>
+The first are two booleans, which implies that four combinations are
+possible.  Actually only three exist (if you don't count for
+<code>deltarow</code>): <code>Softweave</code>,
+<code>Microweave</code>, and <code>noWeave</code>.  The first and
+second are functionally identical, the difference being whether the driver
+or the printer does the job.
+
+<p>
+In the default <code>Softweave</code> mode the driver sends the data
+properly arranged to the printer, while in <code>Microweave</code> mode,
+it is the printer that arranges the data. But in general the host processor
+is much faster than the printer's processor, and thus it is faster for the
+host do the job.  In addition to that, for 720dpi eight passes are
+required, and the amount of buffer space needed to buffer the data for the
+passes is far beyond the printer's memory.  <code>Softweave</code>
+requires an odd value of "<code>escp_Band</code>"; the Stylus Color
+provides fifteen for that.
+
+<p>
+"<code>OutputCode</code>" controls the encoding used. In the basic
+modes, the choice consists of "plain" and "runlength".  The computation of
+runlength-encoded data does not take much time, less than the data tranfer
+to the printer; thus this is the recommended mode, and of course the
+default.  With the Stylus Color, Epson introduced some new encoding
+principles, namely "tiff" and "deltarow".  While the first was omitted from
+this driver for lack of apparent advantages, "<code>deltarow</code>" is
+available as an option.  "<code>Softweave</code>" cannot be used with
+this encoding, so if <code>OutputCode=deltarow</code> is set,
+<code>Microweave</code> becomes the default.  Maybe that the size of the
+ESC/P2 code becomes smaller, but I have never observed faster printing
+speed.  Things tend to become slower with <code>deltarow</code> compared
+to <code>Softweave</code>.
+
+<h4><a name="STC_model"></a><code>Model</code></h4>
+
+<p>
+Some ESC/P2 printers such as the Stylus 800 do not offer
+<code>Microweave</code> or the commands required to do
+<code>Softweave</code>.  Setting <code>Model</code> just changes the
+defaults and omits some parts of the initialization sequence which are not
+compatible with the given printer model.  Currently only
+"<code>st800</code>" is supported besides the default
+<code>stcolor</code>.
+
+<h3><a name="STC_Pitfalls"></a>Bugs and pitfalls</h3>
+
+<ul>
+<li>The given <code>?coding</code> and <code>?transfer</code> arrays
+should be strictly monotonic.
+
+<li>It is impossible to change <code>WHITE</code>: that's your paper.
+Thus RGB transfer should end at 1.0 and CMYK transfer should start at 0.0.
+
+<li>Usually 8 bits per component yields fastest operation.
+
+<li>The <code>ColorAdjustMatrix</code> is not used in the reverse
+transformation used when Ghostscript does the dithering
+(<code>gs</code>* modes).  Expect funny results.
+
+<li>If <code>BitsPerPixel</code> is less than 6, the entire coding and
+transfer process does not work.  This is always true for the
+<code>gs</code>* modes and becomes true for the other modes if
+<code>BitsPerPixel</code> is forced to low values.
+
+<li>720&times;720dpi printing should never select the <code>gs</code>*
+modes and should always use <code>stcolor.ps</code>.  (I prefer
+360&times;720.)
+</ul>
+
+<h3><a name="STC_Tests"></a>Tests</h3>
+
+<p>
+This section gives an overview of performance in terms of processing and
+printing times, from tests run after version 1.13.  Printing was done
+offline (simply copying a processed file to the printer) to measure real
+printing speed without regard to speed of processing on the host, since at
+high resolutions, processing time is the same order of magnitude and thus
+may become the limiting factor.
+
+<h4><a name="STC_OutputCodes"></a>The various OutputCodes</h4>
+
+<p>
+I ran several files though Ghostscript and recorded the size of the
+resulting print code, the processing time, and the printing time, at least
+for some of the files, always using these options:
+
+<blockquote><code>
+gs -sDEVICE=stcolor -sPAPERSIZE=a4 stcolor.ps - &lt; file.ps
+</code></blockquote>
+
+<p>
+(Actually "<code>-sPAPERSIZE=a4</code>" is in my
+<code>gs_init.ps</code> since I'm a germ.)
+
+<p>"<code>deltarow</code>" is the new encoding principle
+("<code>ESC&nbsp;.&nbsp;3&nbsp;10&nbsp;10&nbsp;1</code>") with
+<code>Microweave</code> on.  It is activated with
+"<code>-sOutputCode=deltarow</code>".
+
+<p>"<code>Softweave</code>" actually means that nothing else was used:
+it is the default, and implies that odd v=40/h=10/m=15 mode
+("<code>ESC&nbsp;.&nbsp;1&nbsp;40&nbsp;10&nbsp;15</code>").
+
+<p>"<code>Microweave</code>" means "<code>-dMicroweave</code>",
+equivalent to "<code>ESC&nbsp;.&nbsp;1&nbsp;10&nbsp;10&nbsp;1</code>",
+with full skip optimization and microweave activated.
+
+<p>
+Finally I wanted to see the plain Kathy Ireland, and used
+"<code>-sOutputCode=plain</code>", which just replaces runlength
+encoding (RLE) by no encoding, thus using
+"<code>ESC&nbsp;.&nbsp;0&nbsp;40&nbsp;10&nbsp;15</code>".  [So sorry
+<code>;-)</code> Kathy was still dressed in blue in front of the blue
+sea on a blue air cushion -- nice to see but hard to dither.]
+
+<p>
+So here are the results.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=9 bgcolor="#CCCC00"><hr><font size="+1">File sizes and printing speeds with various weaving methods</font><hr>
+<tr valign=bottom>
+	<td>&nbsp;
+	<td>&nbsp;
+	<th><code>golfer.ps</code>
+	<td>&nbsp;
+	<th><code>colorcir.ps</code>
+	<td>&nbsp;
+	<th><code>drawing.ps</code>
+	<td>&nbsp;
+	<th><code>brief.ps</code>
+<tr>	<td colspan=9><hr>
+<tr valign=top>	<td><code>deltarow</code>
+	<td>&nbsp;
+	<td>572751/48.180u
+	<td>&nbsp;
+	<td>643374/41.690u
+	<td>&nbsp;
+	<td>90142/46.180u/1:50
+	<td>&nbsp;
+	<td>178563/49.350u/2:22
+<tr valign=top>	<td><code>Softweave</code>
+	<td>&nbsp;
+	<td>559593/46.810u
+	<td>&nbsp;
+	<td>669966/44.960u
+	<td>&nbsp;
+	<td>296168/48.160u/1:30
+	<td>&nbsp;
+	<td>269808/43.320u/1:55
+<tr valign=top>	<td><code>Microweave</code>
+	<td>&nbsp;
+	<td>590999/56.060u
+	<td>&nbsp;
+	<td>754276/42.890u
+	<td>&nbsp;
+	<td>338885/47.060u/1:50
+	<td>&nbsp;
+	<td>282314/44.690u/2:22
+</table></blockquote>
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=3 bgcolor="#CCCC00"><hr><font size="+1">Kathy Ireland</font><hr>
+<tr valign=bottom>
+	<td>&nbsp;
+	<td>&nbsp;
+	<th><code>kathy.ps</code>
+<tr>	<td colspan=3><hr>
+<tr valign=top>	<td><code>deltarow</code>
+	<td>&nbsp;
+	<td>3975334/111.940u/5:35
+<tr valign=top>	<td><code>Softweave</code>
+	<td>&nbsp;
+	<td>3897112/101.940u/3:10
+<tr valign=top>	<td><code>Microweave</code>
+	<td>&nbsp;
+	<td>4062829/100.990u/3:15
+<tr valign=top>	<td><code>plain/soft</code>
+	<td>&nbsp;
+	<td>5072255/104.390u/3:05
+</table></blockquote>
+
+<p>
+It may be that I've not chosen the optimal <code>deltarow</code> code,
+but even if it saves at lot of bytes, printing-speed is not increased.
+
+<p>
+At least the printer prefers plain Kathy.  In other words, sending 1
+Megabyte or 20% more data has no impact on printing speed.
+<code>drawing.ps</code> is an exception to this rule: plain prints
+slower than RLE.
+
+<p>
+"Unclever" coding -- especially with <code>deltarow</code> -- can
+significantly slow down printing.  But even if very significant advantages
+in the size of the code are achieved, "<code>deltarow</code>" is not
+competitive.  <code>colorcir.ps</code> shows savings with
+<code>deltarow</code>, but printing is a mess.
+
+<h4><a name="STC_printing_time"></a>Printing time related to other options</h4>
+
+<p>
+Full page halftone images printed, unless otherwise noted.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=11 bgcolor="#CCCC00"><hr><font size="+1">Printing time related to other options</font><hr>
+<tr valign=top>	<th>dpi
+	<td>&nbsp;
+	<th colspan=3>Print mode
+	<td>&nbsp;
+	<th>Size KB
+	<td>&nbsp;
+	<th>Time
+	<td>&nbsp;
+	<th align=left>Comments
+<tr>	<td colspan=11><hr>
+<tr valign=top>	<td>180x180
+	<td>&nbsp;
+	<td>mono
+	<td>&nbsp;
+	<td align=right>-/uni
+	<td>&nbsp;
+	<td align=right>358
+	<td>&nbsp;
+	<td align=right>1:15
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>-/bi
+	<td>&nbsp;
+	<td align=right>358
+	<td>&nbsp;
+	<td align=right>0:45
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>micro/bi
+	<td>&nbsp;
+	<td align=right>205
+	<td>&nbsp;
+	<td align=right>0:45
+	<td>&nbsp;
+	<td>Not weaving
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>179
+	<td>&nbsp;
+	<td align=right>1:25
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td>color
+	<td>&nbsp;
+	<td align=right>-/bi
+	<td>&nbsp;
+	<td align=right>641
+	<td>&nbsp;
+	<td align=right>2:45
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>556
+	<td>&nbsp;
+	<td align=right>1:32
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>360x360
+	<td>&nbsp;
+	<td>mono
+	<td>&nbsp;
+	<td align=right>-/uni
+	<td>&nbsp;
+	<td align=right>269
+	<td>&nbsp;
+	<td align=right>0:50
+	<td>&nbsp;
+	<td>Monochrome text
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>-/bi
+	<td>&nbsp;
+	<td align=right>269
+	<td>&nbsp;
+	<td align=right>0:35
+	<td>&nbsp;
+	<td>Monochrome text
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>micro/bi
+	<td>&nbsp;
+	<td align=right>269
+	<td>&nbsp;
+	<td align=right>2:25
+	<td>&nbsp;
+	<td>Monochrome text
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>soft/uni
+	<td>&nbsp;
+	<td align=right>250
+	<td>&nbsp;
+	<td align=right>3:15
+	<td>&nbsp;
+	<td>Monochrome text
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>250
+	<td>&nbsp;
+	<td align=right>1:55
+	<td>&nbsp;
+	<td>Monochrome text
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td>color
+	<td>&nbsp;
+	<td align=right>-/bi
+	<td>&nbsp;
+	<td align=right>346
+	<td>&nbsp;
+	<td align=right>1:00
+	<td>&nbsp;
+	<td>Sparse-color page, visible displacements
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>micro/bi
+	<td>&nbsp;
+	<td align=right>346
+	<td>&nbsp;
+	<td align=right>1:50
+	<td>&nbsp;
+	<td>Sparse-color page, looks buggy -- printer?
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>294
+	<td>&nbsp;
+	<td align=right>1:30
+	<td>&nbsp;
+	<td>Sparse-color page, O.K.
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>-/bi
+	<td>&nbsp;
+	<td align=right>2218
+	<td>&nbsp;
+	<td align=right>2:45
+	<td>&nbsp;
+	<td>Visible stripes
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>micro/bi
+	<td>&nbsp;
+	<td align=right>5171
+	<td>&nbsp;
+	<td align=right>3:17
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>3675
+	<td>&nbsp;
+	<td align=right>3:05
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>360x720
+	<td>&nbsp;
+	<td>mono
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>2761
+	<td>&nbsp;
+	<td align=right>5:40
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td>color
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>7789
+	<td>&nbsp;
+	<td align=right>6:15
+	<td>&nbsp;
+	<td>Just a small difference!
+<tr valign=top>	<td>720x360
+	<td>&nbsp;
+	<td>color
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>7182
+	<td>&nbsp;
+	<td align=right>5:40
+	<td>&nbsp;
+	<td>&nbsp;
+<tr valign=top>	<td>720x720
+	<td>&nbsp;
+	<td>color
+	<td>&nbsp;
+	<td align=right>micro/bi
+	<td>&nbsp;
+	<td align=right>14748
+	<td>&nbsp;
+	<td align=right>30:26
+	<td>&nbsp;
+	<td>Actually beyond printer's capabilities
+<tr valign=top>	<td>&nbsp;
+	<td>&nbsp;
+	<td align=right>&nbsp;
+	<td>&nbsp;
+	<td align=right>soft/bi
+	<td>&nbsp;
+	<td align=right>14407
+	<td>&nbsp;
+	<td align=right>11:08
+	<td>&nbsp;
+	<td>&nbsp;
+</table></blockquote>
+
+<h3><a name="STC_acks"></a>Acknowledgments</h3>
+
+<p>
+This driver was copied from <code>gdevcdj.c</code> (Ghostscript 3.12),
+which was contributed by George Cameron, Koert Zeilstra, and Eckhard
+Rueggeberg.  Some of the ESC/P2 code was drawn from Richard Brown's
+<code>gdevescp.c</code>.  The POSIX interrupt code (compilation option
+<code>-DSTC_SIGNAL</code>) is from Frederic Loyer.  Several improvements
+are based on discussions with Brian Converse, Bill Davidson, Gero Guenther,
+Jason Patterson, ? Rueschstroer, and Steven Singer.
+
+<p>
+While I wish to thank everyone mentioned above, they are by no means
+responsible for bugs in the stcolor driver -- just for the features.
+
+<address>
+Gunther Hess<br>
+Richard Wagner Strasse 112<br>
+D-47057 Duisburg<br>
+Germany<br>
++49 203 376273 telephone (MET evening hours)<br>
+&lt;<a href="mailto:ghess@elmos.de">ghess@elmos.de</a>&gt;
+</address>
+
+<hr>
+
+<h2><a name="Uniprint"></a>uniprint, a flexible unified printer driver</h2>
+
+<p>
+<code>uniprint</code> is a unified parametric driver by Gunther Hess
+&lt;<a href="mailto:ghess@elmos.de">ghess@elmos.de</a>&gt; for several
+kinds of printers and devices, including
+
+<blockquote>
+<ul>
+<li>any Epson Stylus Color, Stylus, or Stylus Pro
+<li>HP PCL/RTL
+<li>Canon BubbleJet Color 610
+<li>NEC P2X
+<li>Sun raster file format
+</ul></blockquote>
+
+<p>
+This driver is intended to <em>become</em> a unified printer driver. If you
+consider it ugly, please send me your suggestions for improvements.  The
+driver will be updated with them.  Thus the full explanation of the driver's
+name is:
+
+<blockquote>
+Ugly- -&gt; Updated- -&gt; Unified Printer Driver
+</blockquote>
+
+<p>
+But you probably want to know something about the functionality.
+At the time of this writing uniprint drives:
+
+<ul>
+<li>NEC Pinwriter P2X (24-pin monochrome impact printer, ESC/P style)
+<li>Several Epson Stylus Color models (ESC/P2 style)
+<li>HP-DeskJet 550c (basic HP-RTL)
+<li>Canon BJC 610
+</ul>
+
+<p>
+It can be configured for various other printers without recompilation
+and offers uncompressed (ugly) Sun rasterfiles as another format, but
+this format is intended for testing purposes rather than real use.
+The usage of this driver is quite simple.  The typical command line looks
+like this:
+
+<blockquote>
+<code>gs @</code>{MODEL}<code>.upp -sOutputFile=</code>{printable file}<code> MyFile.ps -c quit</code>
+</blockquote>
+
+<p>
+For example, from my Linux box:
+
+<blockquote><code>
+gs @stc.upp -sOutputFile=/dev/lp1 tiger.eps -c quit
+</code></blockquote>
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=6 bgcolor="#CCCC00"><hr><font size="+1">Unified Printer Parameter files distributed with Ghostscript</font><hr>
+<tr>	<th align=left colspan=6>Canon BJC 610 (color, rendered)
+<tr valign=top>	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td><code>bjc610a0.upp</code>
+	<td>&nbsp;&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;&nbsp;
+	<td>plain paper, high speed
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a1.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a2.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>coated paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a3.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>transparency film
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a4.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>back print film
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a5.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>fabric sheet
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a6.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>glossy paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a7.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>high gloss film
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610a8.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>high resolution paper
+<tr>	<td>&nbsp;
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610b1.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610b2.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>coated paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610b3.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>transparency film
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610b4.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>back print film
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610b6.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>glossy paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610b7.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>high-gloss paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>bjc610b8.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>high resolution paper
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>HP Ink-Printers
+<tr valign=top>	<td>&nbsp;
+	<td><code>cdj550.upp</code>
+	<td>&nbsp;
+	<td>300&times;300dpi
+	<td>&nbsp;
+	<td>32-bit CMYK
+<tr valign=top>	<td>&nbsp;
+	<td><code>cdj690.upp</code>
+	<td>&nbsp;
+	<td>300&times;300dpi
+	<td>&nbsp;
+	<td>Normal mode
+<tr valign=top>	<td>&nbsp;
+	<td><code>cdj690ec.upp</code>
+	<td>&nbsp;
+	<td>300&times;300dpi
+	<td>&nbsp;
+	<td>Economy mode
+<tr valign=top>	<td>&nbsp;
+	<td><code>dnj750c.upp</code>
+	<td>&nbsp;
+	<td>300&times;300dpi
+	<td>&nbsp;
+	<td>Color -- also good for 450C
+<tr valign=top>	<td>&nbsp;
+	<td><code>dnj750m.upp</code>
+	<td>&nbsp;
+	<td>600&times;600dpi
+	<td>&nbsp;
+	<td>Monochrome
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>NEC P2X
+<tr valign=top>	<td>&nbsp;
+	<td><code>necp2x.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>8-bit (Floyd-Steinberg)
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Any Epson Stylus Color
+<tr valign=top>	<td>&nbsp;
+	<td><code>stcany.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>4-bit, PostScript halftoning
+<tr valign=top>	<td>&nbsp;
+	<td><code>stcany_h.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>4-bit, PostScript halftoning
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Original Epson Stylus and Stylus Pro Color
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 15-pin
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc_l.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>4-bit, PostScript halftoning, weaved noWeave
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc_h.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 15-pin Weave
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Epson Stylus Color II
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc2.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 20-pin, Epson Stylus Color II(s)
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc2_h.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 20-pin, Epson Stylus Color II
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc2s_h.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 20-pin, Epson Stylus Color IIs
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Epson Stylus Color 200
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc200.upp</code>
+	<td>&nbsp;
+	<td>360&times;720dpi
+	<td>&nbsp;
+	<td>Plain Paper
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Epson Stylus Color 300
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc300.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc300bl.upp</code>
+	<td>&nbsp;
+	<td>180&times;180dpi
+	<td>&nbsp;
+	<td>black only, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc300bm.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>black only, plain paper
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Epson Stylus Color 500 (good transfer curves for plain paper)
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc500p.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, noWeave, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc500ph.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, noWeave, plain paper
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Epson Stylus Color 600, 32/90-inch weaving
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc600pl.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 32-pin, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc600p.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 32-pin, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc600ih.upp</code>
+	<td>&nbsp;
+	<td>1440&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 30-pin, inkjet paper
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Epson Stylus Color 640
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc640p.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>plain paper?
+
+
+
+<tr valign=top>	<td>&nbsp;
+	<td><code>st640p.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>CMYK, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>st640pg.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>grayscale, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>st640pl.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>CMYK, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>st640plg.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>grayscale, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>st640ih.upp</code>
+	<td>&nbsp;
+	<td>1440&times;720dpi
+	<td>&nbsp;
+	<td>CMYK, inkjet paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>st640ihg.upp</code>
+	<td>&nbsp;
+	<td>1440&times;720dpi
+	<td>&nbsp;
+	<td>grayscale, inkjet paper
+
+
+
+
+
+
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Epson Stylus Color 800, 64/180-inch weaving
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc800pl.upp</code>
+	<td>&nbsp;
+	<td>360&times;360dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 64-pin, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc800p.upp</code>
+	<td>&nbsp;
+	<td>720&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 64-pin, plain paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc800ih.upp</code>
+	<td>&nbsp;
+	<td>1440&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 62-pin, inkjet paper
+<tr valign=top>	<td>&nbsp;
+	<td><code>stc1520.upp</code>
+	<td>&nbsp;
+	<td>1440&times;720dpi
+	<td>&nbsp;
+	<td>32-bit CMYK, 62-pin, inkjet paper
+<tr>	<td>&nbsp;
+<tr>	<th align=left colspan=6>Sun raster file
+<tr valign=top>	<td>&nbsp;
+	<td><code>ras1.upp</code>
+	<td>&nbsp;
+	<td>1-bit
+	<td>&nbsp;
+	<td>monochrome (Ghostscript)
+<tr valign=top>	<td>&nbsp;
+	<td><code>ras3.upp</code>
+	<td>&nbsp;
+	<td>3-bit
+	<td>&nbsp;
+	<td>RGB (Ghostscript)
+<tr valign=top>	<td>&nbsp;
+	<td><code>ras4.upp</code>
+	<td>&nbsp;
+	<td>4-bit
+	<td>&nbsp;
+	<td>CMYK (Ghostscript)
+<tr valign=top>	<td>&nbsp;
+	<td><code>ras8m.upp</code>
+	<td>&nbsp;
+	<td>8-bit
+	<td>&nbsp;
+	<td>grayscale (Floyd-Steinberg)
+<tr valign=top>	<td>&nbsp;
+	<td><code>ras24.upp</code>
+	<td>&nbsp;
+	<td>24-bit
+	<td>&nbsp;
+	<td>RGB (Floyd-Steinberg)
+<tr valign=top>	<td>&nbsp;
+	<td><code>ras32.upp</code>
+	<td>&nbsp;
+	<td>32-bit
+	<td>&nbsp;
+	<td>CMYK (CMYK-Floyd-Steinberg)
+</table></blockquote>
+
+<p>
+Thanks to Danilo Beuche, Guido Classen, Mark Goldberg and Hans-Heinrich
+Viehmann for providing the files for the stc200, hp690, stc500 and the
+stc640.  Thanks to Michael Lossin &lt;losse@germanymail.com&gt; for the
+newer st640 parameter sets.
+
+<p>
+Please note the following:
+
+<blockquote><ul>
+<li>Changing the resolution with Ghostscript's
+<a href="Use.htm#Resolution_switch"><code>-r</code> switch</a> is
+usually not possible.
+<li>For Epson Stylus Color models not listed above, the two
+<code>stc500</code> variants are likely to work in addition to
+<code>stcany</code>, but their gamma correction might be wrong.
+</ul></blockquote>
+
+<h3><a name="Uni_state"></a>The state of this driver</h3>
+
+<p>
+The coding of <code>uniprint</code> was triggered by the requirements of
+the various Stylus Color models and some personal needs for HP and NEC
+drivers. Thus the Epson models are well represented among the distributed
+parameter files.  When this driver entered the beta test phase, three other
+drivers appreared on the scene that could be at least partially integrated
+into <code>uniprint</code>: <code>cdj850</code> by Uli Wortmann
+(available at <a href="http://www.erdw.ethz.ch/~bonk/hp850/hp850.html">http://www.erdw.ethz.ch/~bonk/hp850/hp850.html</a>),
+<code>hpdj</code> by Martin Lottermoser, and <code>bjc610</code> by
+Helmut Riegler.
+
+<p>
+Uli addresses features of the more recent DeskJet models that will not be
+available in <code>uniprint</code> soon. Martin taught me a lesson on
+HP-PCL3 headers that will be available in <code>uniprint</code>
+soon. Helmut in turn followed an almost similar idea, but targetted
+primarily for printing on Canon printers from the pbmplus library. Starting
+with version 1.68 of uniprint, BJC support is available. Work on the
+<code>hpdj</code> integration will start after the update of my website.
+
+<h3><a name="Uni_background"></a>Notes on <code>uniprint</code>'s background</h3>
+
+<p>
+<code>uniprint</code> is actually an update of <code>stcolor</code>,
+but much more versatile than its predecessor; <code>stcolor</code>, in
+its turn, started as a clone of the color DeskJet family of drivers
+(<code>cdj</code>*). Finally, <code>cdj</code>* can be considered an
+addition of features to the simpler monochrome drivers of Ghostscript. This
+addition of features is useful to get an idea of the functionality of
+<code>uniprint</code>:
+
+<blockquote>
+<dl>
+<dt>Monochrome to advanced color (<code>cdj</code>*):
+<dd>This adds color mapping and rendering functions to the driver.
+Error diffusion is especially important for the quality of printing.
+</dl>
+
+<dl>
+<dt>HP color to Epson Color (<code>stcolor</code>)
+<dd>The Epson Stylus Color offered two features simultaneously: it could
+produce 720&times;720dpi output and it could soak the paper. In other
+words, it required more color management features inside the driver. This
+is still the major conceptual difference in the data generation for HP and
+Epson printers.
+</dl>
+
+<dl>
+<dt>Weaving techniques (<code>stcolor</code>)
+<dd>Besides the internal color management, the Stylus Color did not provide
+enough buffer space to operate the printer fast at 720&times;720dpi.  The
+use of weaving could yield triple the print speed.  Weaving, also called
+interleaving, is present in some monochrome drivers too.  The new thing in
+<code>stcolor</code> was the combination with error diffusion.
+Unfortunately the weaving was somehow hard-coded, as the problems with the
+newer members of the Stylus Color family of printers demonstrated.
+</dl>
+
+<dl>
+<dt>Generalized output format and weaving (<code>uniprint</code>)
+<dd>The features mentioned above yield about 90% of
+<code>stcolor</code>'s source code; only 10% is related to the
+formatting of the output.  The idea to make the output format switchable
+came up soon after completing <code>stcolor</code>, but its final design
+was triggered by the (personal) necessity to drive a NEC P2X and a
+Designjet 750c.
+</dl></blockquote>
+
+<p>
+Thus <code>uniprint</code> accumulates almost any features that can be
+found among the other printer drivers, which clearly has some disadvantage
+in processing speed -- true in particular of version 1.75, since it was
+targetted for functionality, and several speed-gaining features were
+(knowingly) omitted.
+
+<p>
+To summarize and to introduce the terms used in the description of the
+parameters, the features of <code>uniprint</code> that can be
+parameterized are:
+
+<blockquote><ul>
+<li>color mapping,
+<li>color rendering (error diffusion or Floyd-Steinberg),
+<li>output format, including
+<li>weaving.
+</ul></blockquote>
+
+<h3><a name="Uni_make_pfile"></a>Godzilla's guide to the creation of Unified Printer Parameter (<code>.upp</code>) files</h3>
+
+<p>
+Here is one of the distributed parameter files (<code>stc_l.upp</code>)
+with some added comments.  Also see the section that describes
+<a href="#Uni_all_parameters">all <code>uniprint</code>'s parameters in
+brief</a>.
+
+<pre>
+-supModel="Epson Stylus Color I (and PRO Series), 360x360DpI, noWeave"
+-sDEVICE=uniprint                    -- Select the driver
+-dNOPAUSE                            -- Useful with printers
+-dSAFER                              -- Provides some security
+-dupColorModel=/DeviceCMYK           -- Selects the color mapping
+-dupRendering=/ErrorDiffusion        -- Selects the color rendering
+-dupOutputFormat=/EscP2              -- Selects the output format
+-r360x360                            -- Adjusts the resolution
+-dupMargins="{ 9.0 39.96 9.0 9.0}"   -- Establishes (L/B/R/T margins in points)
+-dupComponentBits="{1 1 1 1}"        -- Map: bits per component (default: 8)
+-dupWeaveYPasses=4                   -- Weave: Y-passes (default: 1)
+-dupOutputPins=15                    -- Format/weave: scans per Command
+-dupBeginPageCommand="&lt;              -- Goes to the printer
+  1b40   1b40                        -- ESC '@' ESC '@'    -&gt; dual reset
+  1b2847 0100 01                     -- ESC '(' 'G' 1 0 1  -&gt; graphics
+  1b2869 0100 00                     -- ESC '(' 'i' 1 0 1  -&gt; no HW weave
+  1b2855 0100 0A                     -- ESC '(' 'U' 1 0 10 -&gt; 360dpi
+  1b5500                             -- ESC 'U'  0         -&gt; bidir print
+  1b2843 0200 0000                   -- ESC '(' 'C' 2 0 xx -&gt; page length
+  1b2863 0400 0000 0000              -- ESC '(' 'c' 4 0 xxxx -&gt; margins
+&gt;"                                   -- as it is, unless:
+-dupAdjustPageLengthCommand          -- Adjust page length in BOP requested
+-dupAdjustTopMarginCommand           -- Adjust top margin in BOP
+-dupAdjustBottomMarginCommand        -- Adjust bottom margin in BOP
+-dupEndPageCommand="(\033@\014)"     -- Last (but one) data to the printer
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"
+</pre>
+
+<p>
+That's short, and if one removes <code>upWeaveYPasses</code> and
+<code>upOutputPins</code> it becomes shorter, almost
+<code>stcany.upp</code>. This miniature size is because I am most
+familiar with ESC/P2, and was able to add defaults for the omitted
+parameters.  Now a few notes about the parameters used in this example:
+
+<ul>
+<li><code>upModel</code> is a string serving as a comment (and nothing else).
+
+<li><a href="Use.htm#Output_device"><code>DEVICE</code></a>,
+<a href="Use.htm#NoPause"><code>NOPAUSE</code></a>, <a
+href="Use.htm#Safer"><code>SAFER</code></a> are well-known Ghostscript
+parameters described in the <a href="Use.htm">usage documentation</a>.
+
+<li><code>upColorModel</code> is one of major <code>uniprint</code>
+parameters: it selects the color mapping and in turn the PostScript color
+model.  It supports the devices <code>/DeviceGray</code>,  <code>/DeviceRGBW</code>, <code>/DeviceRGB</code>, <code>/DeviceCMYK</code>, and <code>/DeviceCMYKgenerate</code>.
+
+<li><code>upRendering</code> selects the (color) rendering, supporting
+the values <code>/ErrorDiffusion</code> and <code>/FSCMYK32</code>.
+<code>/ErrorDiffusion</code> is similar to <code>fsmono</code>,
+<code>fsrgb</code> and <code>fsx4</code> of <code>stcolor</code>,
+while <code>/FSCMYK32</code> is (almost) identical to
+<code>fscmyk</code> and <code>hscmyk</code>, but is restricted to
+32-bit data and should be used in conjunction with
+<code>/DeviceCMYKgenerate</code>.
+
+<li><code>upOutputFormat</code> selects the output method, supporting the values
+<code>/SunRaster</code>, <code>/Epson</code>, <code>/EscP2</code>, <code>/EscP2XY</code>, and<code>/Pcl</code>.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td><code>/SunRaster</code>
+	<td>&nbsp;
+	<td>creates Sun raster files and requires no other parameters
+<tr valign=top>	<td><code>/Epson</code>
+	<td>&nbsp;
+	<td>is used for the elderly ESC/P format (used by many printers)
+<tr valign=top>	<td><code>/EscP2</code>
+	<td>&nbsp;
+	<td>is used by more recent Epson printers (no X weaving supported)
+<tr valign=top>	<td><code>/EscP2XY</code>
+	<td>&nbsp;
+	<td>supports X-Weaving, used with 1440dpi printers and in <code>stc2s_h</code>
+<tr valign=top>	<td><code>/Pcl</code>
+	<td>&nbsp;
+	<td>HP PCL/RTL-style output formatter without weaving
+</table></blockquote>
+
+<li><code>-r360x360</code> is Ghostscript's standard
+<a href="Use.htm#Resolution_switch">resolution switch</a>.
+
+<li><code>upMargins="{&nbsp;9.0&nbsp;39.96&nbsp;9.0&nbsp;9.0}"</code>
+has function similar to the Ghostscript parameter
+<code>.HWMargins</code>: it sets the left, bottom, right, and top
+margins in points.  <code>uniprint</code> provides this parameter to
+enable automatic left-right exchange if <code>upYFlip</code> is active.
+
+<li><code>upComponentBits</code> is an array of integers that selects
+the bits stored in raster memory, by default 8 bits per component.  In this
+example, 1 bit is selected for each component, thus turning down the
+Floyd-Steinberg algorithm (but still carrying out the time-consuming
+computation).  The related parameter "<code>upComponentShift</code>"
+controls positioning the components within raster memory.  Each of the
+numbers given corresponds to a component which depends on the selected
+"<code>upColorModel</code>":
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<td align=center>&nbsp;
+	<td>&nbsp;
+	<td align=center><code>/DeviceGray</code>
+	<td>&nbsp;
+	<td align=center><code>/DeviceRGBW</code>
+	<td>&nbsp;
+	<td align=center><code>/DeviceRGB</code>
+	<td>&nbsp;
+	<td align=center><code>/DeviceCMYK</code>
+	<td>&nbsp;
+	<td align=center><code>/DeviceCMYKgenerate</code>
+<tr>	<td colspan=11><hr>
+<tr valign=top>	<td align=center>0
+	<td>&nbsp;
+	<td align=center>White
+	<td>&nbsp;
+	<td align=center>White
+	<td>&nbsp;
+	<td align=center>Red
+	<td>&nbsp;
+	<td align=center>Black
+	<td>&nbsp;
+	<td align=center>Black
+<tr valign=top>	<td align=center>1
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>Red
+	<td>&nbsp;
+	<td align=center>Green
+	<td>&nbsp;
+	<td align=center>Cyan
+	<td>&nbsp;
+	<td align=center>Cyan
+<tr valign=top>	<td align=center>2
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>Green
+	<td>&nbsp;
+	<td align=center>Blue
+	<td>&nbsp;
+	<td align=center>Magenta
+	<td>&nbsp;
+	<td align=center>Magenta
+<tr valign=top>	<td align=center>3
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>Blue
+	<td>&nbsp;
+	<td align=center>--
+	<td>&nbsp;
+	<td align=center>Yellow
+	<td>&nbsp;
+	<td align=center>Yellow
+</table>
+
+<p>
+This order may not be suitable for some printers, so another parameter
+"<code>upOutputComponentOrder</code>", also an array of integers,
+selects the output order using the numbers on the left.
+</blockquote>
+
+<p>
+One group of very important parameters not used in the example above
+deserves to be mentioned here: the transfer arrays, named
+"<code>up<em>{color}</em>Transfer</code>", where
+<code><em>{color}</em></code> is one of the names in the table above.  
+These are
+arrays of floats in the range 0.0 - 1.0 representing the color transfer
+functions.  They are used during mapping and rendering.  In the simplest
+case, these arrays ensure an equidistant distribution of the stored values
+within the device space (which means a nonlinear mapping from Ghostscript's
+point of view).  If the given array does not cover the entire range from 0
+to 1, which applies for the Stylus Color family at high resolution for some
+media, only the relevant part gets mapped to raster memory (meaning that
+is's fully utilized) and the rendering takes care of the "overhang" (in
+this case the post-diffusion of 1-bit components makes sense).
+
+<p>
+Finally an important note on the transfer arrays: for monochrome devices
+the stored component is <code>White</code>, which is the way PostScript
+defines these devices, but most printers require <code>Black</code>.
+Thus one has to provide a falling "<code>upWhiteTransfer</code>" for
+such printers.
+
+<li><code>upWeaveYPasses</code> is an integer that gives the number of
+print head passes required to achieve the requested Ydpi. This makes sense
+only if
+
+<li><code>upOutputPins</code> is set to something greater than 1.  Thus
+multiple pins or nozzles are transferred with a single command, and of
+course such a command must be supported by the device.
+
+</ul>
+
+<p>
+If no other weave parameters are given, <code>uniprint</code> computes
+several defaults which together do no weaving. The <code>/Epson</code>
+and <code>/EscP2XY</code> formats take care of
+"<code>upWeaveXPasses</code>" too.
+
+<ul>
+
+<li><code>upBeginPageCommand</code> represents the data transferred to
+the printer whenever a new page begins.  Before that,
+"<code>upBeginJobCommand</code>" is written to the device only once per
+output file.  (Intended for the HP PJL sequences).
+
+<li><code>upAdjustBottomMarginCommand</code>,
+<code>upAdjustMediaSize</code>,
+<code>upAdjustPageLengthCommand</code>,
+<code>upAdjustPageWidthCommand</code>,
+<code>upAdjustResolutionCommand</code>, and
+<code>upAdjustTopMarginCommand</code>
+
+<p>
+Normally <code>uniprint</code> does not change the
+"<code>upBeginPageCommand</code>", nor does it provide a default.
+However, if the above boolean values are set, the corresponding values are
+changed (provided that the code of the formatters supports this change and
+the commands to be adjusted are included in the BOP string).
+
+<li><code>upEndPageCommand</code> is the fixed termination sequence for
+each page, and of course there is an "<code>upEndJobCommand</code>" too.
+
+<li><code>upAbortCommand</code> is written if <code>uniprint</code>'s
+interrupt detection is enabled and a signal is caught.  It replaces
+"<code>upEndPageCommand</code>" and "<code>upEndJobCommand</code>",
+thus allowing the indication of an aborted job.  (Ghostscript gets an error
+return from <code>uniprint</code> in this case, and abandons further
+processing.)
+
+</ul>
+
+<p>
+For the ESC/P(2) formats all commands represent binary data, while for
+the PCL/RTL formatter some of them are formats for <code>fprintf</code>. These strings
+<b><em>must</em></b> explicitly have a trailing "\0'.
+
+<p>
+I should write more, but the only recommendation is to
+take a look at the various parameter files. Here are a few more hints.
+
+<ul>
+<li>If the Driver rejects a configuration, nothing happens until
+<code>showpage</code>; then an error is raised and a message with
+"CALL-REJECTED upd_print_page..." is printed on stderr.
+
+<li><code>uniprint</code> has lots of messages that can be activated by
+setting bits in the preprocessor macro <code>UPD_MESSAGES</code>.  I
+usually use the compile-time option <code>-DUPD_MESSAGES=0x17</code> for
+configuration development.  (For the semantics, check the
+<code>UPD_M_</code> macros in the source.)
+
+<li>A program "<code>uninfo.ps</code>" distributed with Ghostscript
+displays interactively in alphabetical order the contents of the current
+pagedevice dictionary. This includes any parameters generated or changed by
+<code>uniprint</code>.
+</ul>
+
+<h3><a name="Uni_all_parameters"></a>All parameters in brief</h3>
+
+<p>
+This table gives a brief explanation of every parameter known to
+<code>uniprint</code>, listing them in alphabetical order.  "[&nbsp;]"
+denotes that a parameter is an array, and "(RO)" that it is read-only.
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=5 bgcolor="#CCCC00"><hr><font size="+1">All <code>uniprint</code> parameters</font><hr>
+<tr valign=bottom>
+	<th align=left>Parameter
+	<td>&nbsp;
+	<th align=left>Type
+	<td>&nbsp;&nbsp;&nbsp;
+	<th align=left>Use
+<tr>	<td colspan=5><hr>
+<tr valign=top>	<td><code>upAbortCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>End of page and file on interrupt
+<tr valign=top>	<td><code>upAdjustBottomMarginCommand</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Manipulate bottom margin in <code>upBeginPageCommand</code>
+<tr valign=top>	<td><code>upAdjustMediaSizeCommand</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Manipulate <code>Mediasize</code> [intended]
+<tr valign=top>	<td><code>upAdjustPageLengthCommand</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Manipulate page length in <code>upBeginPageCommand</code>
+<tr valign=top>	<td><code>upAdjustPageWidthCommand</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Manipulate page width in <code>upBeginPageCommand</code>
+<tr valign=top>	<td><code>upAdjustResolutionCommand</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Manipulate resolution
+<tr valign=top>	<td><code>upAdjustTopMarginCommand</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Manipulate top margin in <code>upBeginPageCommand</code>
+<tr valign=top>	<td><code>upBeginJobCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>Begin each output file
+<tr valign=top>	<td><code>upBeginPageCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>Begin each page
+<tr valign=top>	<td><code>upBlackTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>Black transfer (CMYK only!)
+<tr valign=top>	<td><code>upBlueTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>Blue transfer
+<tr valign=top>	<td><code>upColorInfo</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>struct <code>gx_device_color_info</code>
+<tr valign=top>	<td><code>upColorModel</code>
+	<td>&nbsp;
+	<td>Name
+	<td>&nbsp;
+	<td>Select color mapping
+<tr valign=top>	<td><code>upColorModelInitialized</code>
+	<td>&nbsp;
+	<td>Bool (RO)
+	<td>&nbsp;
+	<td>Color mapping OK
+<tr valign=top>	<td><code>upComponentBits</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>Bits stored per component
+<tr valign=top>	<td><code>upComponentShift</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>Positioning within <code>gx_color_index</code>
+<tr valign=top>	<td><code>upCyanTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>Cyan transfer
+<tr valign=top>	<td><code>upEndJobCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>End each file unless <code>upAbortCommand</code>
+<tr valign=top>	<td><code>upEndPageCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>End each page unless <code>upAbortCommand</code>
+<tr valign=top>	<td><code>upErrorDetected</code>
+	<td>&nbsp;
+	<td>Bool (RO)
+	<td>&nbsp;
+	<td>Severe (VM) error, not fully operational
+<tr valign=top>	<td><code>upFSFixedDirection</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Inhbits direction toggling in rendering
+<tr valign=top>	<td><code>upFSProcessWhiteSpace</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Causes white-space rendering
+<tr valign=top>	<td><code>upFSReverseDirection</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Run rendering in reverse (if fixed)
+<tr valign=top>	<td><code>upFSZeroInit</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Non-random rendering initialization
+<tr valign=top>	<td><code>upFormatXabsolute</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Write absolute X coordinates
+<tr valign=top>	<td><code>upFormatYabsolute</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Write absolute Y coordinates
+<tr valign=top>	<td><code>upGreenTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>Green transfer
+<tr valign=top>	<td><code>upMagentaTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>Magenta transfer
+<tr valign=top>	<td><code>upMargins</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>L/B/R/T margins in points
+<tr valign=top>	<td><code>upModel</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>Comment string, holds some info
+<tr valign=top>	<td><code>upOutputAborted</code>
+	<td>&nbsp;
+	<td>Bool (RO)
+	<td>&nbsp;
+	<td>Caught an interrupt
+<tr valign=top>	<td><code>upOutputBuffers</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Number of rendering buffers (2^<small><sup><b>N</b></sup></small>)
+<tr valign=top>	<td><code>upOutputComponentOrder</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>Order of components when printing
+<tr valign=top>	<td><code>upOutputComponents</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Number of written components, not fully operational
+<tr valign=top>	<td><code>upOutputFormat</code>
+	<td>&nbsp;
+	<td>Name
+	<td>&nbsp;
+	<td>Select output format
+<tr valign=top>	<td><code>upOutputFormatInitialized</code>
+	<td>&nbsp;
+	<td>Bool (RO)
+	<td>&nbsp;
+	<td>Format data OK
+<tr valign=top>	<td><code>upOutputHeight</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Output height in pixels
+<tr valign=top>	<td><code>upOutputPins</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Number of pins / nozzles per command
+<tr valign=top>	<td><code>upOutputWidth</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Output width in pixels
+<tr valign=top>	<td><code>upOutputXOffset</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Offset in pixels, if <code>upFormatXabsolute</code>
+<tr valign=top>	<td><code>upOutputXStep</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Divisor or multiplier for X coords
+<tr valign=top>	<td><code>upOutputYOffset</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Offset in pixels, if <code>upFormatYabsolute</code>
+<tr valign=top>	<td><code>upOutputYStep</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Divisor or multiplier for Y coords
+<tr valign=top>	<td><code>upRasterBufferInitialized</code>
+	<td>&nbsp;
+	<td>Bool (RO)
+	<td>&nbsp;
+	<td>GS buffer OK
+<tr valign=top>	<td><code>upRedTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>Red transfer
+<tr valign=top>	<td><code>upRendering</code>
+	<td>&nbsp;
+	<td>Name
+	<td>&nbsp;
+	<td>Select rendering algorithm
+<tr valign=top>	<td><code>upRenderingInitialized</code>
+	<td>&nbsp;
+	<td>Bool (RO)
+	<td>&nbsp;
+	<td>Rendering parameters OK
+<tr valign=top>	<td><code>upSelectComponentCommands</code>
+	<td>&nbsp;
+	<td>String[&nbsp;]
+	<td>&nbsp;
+	<td>Establish color (output order!)
+<tr valign=top>	<td><code>upSetLineFeedCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>Adjust linefeed (Epson only)
+<tr valign=top>	<td><code>upVersion</code>
+	<td>&nbsp;
+	<td>String (RO)
+	<td>&nbsp;
+	<td>Source code version
+<tr valign=top>	<td><code>upWeaveFinalPins</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>Number of bottom pins on EOP passes
+<tr valign=top>	<td><code>upWeaveFinalScan</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Begin EOP passes (Y-coord)
+<tr valign=top>	<td><code>upWeaveFinalXStarts</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>X-pass indices for EOP passes
+<tr valign=top>	<td><code>upWeaveFinalYFeeds</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>Y increments for EOP passes
+<tr valign=top>	<td><code>upWeaveInitialPins</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>Number of top pins on BOP passes
+<tr valign=top>	<td><code>upWeaveInitialScan</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>End BOP passes (Y coord)
+<tr valign=top>	<td><code>upWeaveInitialXStarts</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>X-pass indices for BOP passes
+<tr valign=top>	<td><code>upWeaveInitialYFeeds</code>
+	<td>&nbsp;
+	<td>int[&nbsp;]
+	<td>&nbsp;
+	<td>Y increments for BOP passes
+<tr valign=top>	<td><code>upWeavePasses</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>XPasses &times; YPasses
+<tr valign=top>	<td><code>upWeaveXPasses</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Number of X passes
+<tr valign=top>	<td><code>upWeaveXStarts</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>X-pass indices for normal passes
+<tr valign=top>	<td><code>upWeaveYFeeds</code>
+	<td>&nbsp;
+	<td>Int[&nbsp;]
+	<td>&nbsp;
+	<td>Y increments for normal passes
+<tr valign=top>	<td><code>upWeaveYOffset</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Number of blank or incomplete scans at BOP
+<tr valign=top>	<td><code>upWeaveYPasses</code>
+	<td>&nbsp;
+	<td>Int
+	<td>&nbsp;
+	<td>Number of X passes
+<tr valign=top>	<td><code>upWhiteTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>White transfer (monochrome devices!)
+<tr valign=top>	<td><code>upWriteComponentCommands</code>
+	<td>&nbsp;
+	<td>String[&nbsp;]
+	<td>&nbsp;
+	<td>Commands to write each component
+<tr valign=top>	<td><code>upWroteData</code>
+	<td>&nbsp;
+	<td>Bool (RO)
+	<td>&nbsp;
+	<td>Something (<code>BeginJob</code>) written to output
+<tr valign=top>	<td><code>upXMoveCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>X positioning command
+<tr valign=top>	<td><code>upXStepCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>Single step to the right
+<tr valign=top>	<td><code>upYFlip</code>
+	<td>&nbsp;
+	<td>Bool
+	<td>&nbsp;
+	<td>Flips output along the Y axis
+<tr valign=top>	<td><code>upYMoveCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>Y positioning command
+<tr valign=top>	<td><code>upYStepCommand</code>
+	<td>&nbsp;
+	<td>String
+	<td>&nbsp;
+	<td>Single step down
+<tr valign=top>	<td><code>upYellowTransfer</code>
+	<td>&nbsp;
+	<td>Float[&nbsp;]
+	<td>&nbsp;
+	<td>Yellow transfer
+</table></blockquote>
+
+<h3><a name="Uni_honors"></a><code>uniprint</code>'s Roll of Honor</h3>
+
+<p>
+I should mention all of the people who were involved in
+<code>stcolor</code>'s evolution, but I've decided to start from scratch
+here for <code>uniprint</code>:
+
+<blockquote>
+<dl>
+<dt>John P. Beale
+<dd>for testing the <code>stc600</code> modes
+<dt>Bill Davidson
+<dd>who triggered some weaving research and tested <code>stc2s_h</code>
+<dt>L. Peter Deutsch
+<dd>who triggered ease of configuration
+<dt>Mark Goldberg
+<dd>who prepared the <code>stc500</code> transfers
+<dt>Scott F. Johnston and Scott J. Kramer
+<dd>for testing the <code>stc800</code> modes
+<dt>Martin Lottermoser
+<dd>for his great commented H-P DeskJet driver
+<dt>Helmut Riegler
+<dd>for the BJC extension
+<dt>Hans-Gerd Straeter
+<dd>for some measured transfer curves and more
+<dt>Uli Wortmann
+<dd>for discussions and his <code>cdj850</code> driver
+<dt>My family
+<dd>for tolerating my printer-driver hacking
+</dl>
+</blockquote>
+
+<address>
+Gunther Hess<br>
+Duesseldorfer Landstr. 16b<br>
+D-47249 Duisburg<br>
+Germany<br>
++49 203 376273 telephone (MET evening hours)<br>
+&lt;<a href="mailto:ghess@elmos.de">ghess@elmos.de</a>&gt;
+</address>
+<h3><a name="Uni_weaving_howto"></a><tt>Uniprint</tt> weaving parameters howto</h3>
+This section was contributed by Glenn Ramsey.<p>
+<p>I wrote this because the documentation was very brief and I really struggled
+with it for a while, but it is very simple once you understand what is going
+on.
+<p>This only describes how to work out the Y parameters, I haven't looked
+at the X parameters yet.
+<ol>
+<li>
+<b>Determine the nozzle geometry (upOutputPins)</b>
+<p>
+You need to know how many nozzles the printer has and the spacing between
+them. Usually you can find this out from the printer manual, or the printer
+supplier, but you may have to dissect a couple of printer output files
+produced with the driver supplied with the printer. There is a utility
+called escp2ras<a href="#escp2ras"><sup>*</sup></a> that will help with that.
+Sometimes the term pin is used instead of nozzle but they mean the same thing. 
+<p>The number of nozzles will be the value assigned to the upOutputPins
+parameter.
+<p>Actually you don't have to print with all the pins available but for
+the purpose of demonstration I'll assume that we are using them all.
+<p>
+<a name="escp2ras"></a>* escp2ras is available from Gunther Hess' page at <a href="http://www-md.e-technik.uni-rostock.de/ma/gunther/gs/index.html">http://www-md.e-technik.uni-rostock.de/ma/gunther/gs/index.html</a>
+<p>
+</li>
+<li><b>Determine how many passes are required (upWeaveYPasses)</b>
+<p>The number of passes required is going to depend on the required resolution
+and the nozzle spacing.
+<blockquote>
+<tt>passes = resolution * nozzle spacing
+</tt>
+</blockquote>
+This will be the value assigned to the upWeaveYPasses parameter.
+<p>For example if the desired resolution is 360 dpi and the nozzles are
+spaced at 1/90in then 360 * 1/90 = 4 passes are required. For 720 dpi 8
+passes would be required. The printer would, of course, have to be capable
+of moving the paper in increments of either 360 or 720 dpi too.
+<p>
+</li>
+<li>
+<b>Determine the normal Y feed increment (upWeaveYFeeds)</b>
+<p>
+You need to work out how much to feed the paper so that when the paper
+has moved by one head length in however many passes you have then each
+row space on the paper has been passed over by at least one nozzle. There
+will be one feed value for each pass and the feed values must comply with
+the following rules:
+<blockquote>
+<p><tt>sum of feeds = passes * nozzles
+<br>feed%passes != 0 (feed is not exactly divisible by passes)
+<br>sum of (nozzles - feed) = 0
+</tt>
+</blockquote>
+<p>For example if passes=4 and nozzles=15, then sum of feeds=60. The feed
+values could be 1,1,1,57 or 15,15,15,15 or 14,15,18,13.
+<p>These values will be assigned to the upWeaveYFeeds parameter.
+<p>You would need to experiment to see what combination looks best on the
+printer.
+<p>I found it convenient to draw several lines of nozzles and then move
+them around to see how the different combinations would fill the paper.
+A computer drawing tool makes this easier than pencil and paper (I used
+Dia, a GNOME app). The number of nozzles would probably be be a good place
+to start.
+<p>Remember that if the number of passes is more than 1 then the feed increment
+will be less than the nozzle spacing and <tt>passes &times; feed increment size</tt>
+must equal the physical distance between each nozzle.
+<p>
+</li>
+<li>
+<b>Determine the beginning of page pins (upWeaveInitialPins)</b>
+<p>
+These values will be assigned to the upWeaveInitialPins parameter and are
+the numbers of nozzles to operate in each of the initial passes at the top
+of a page. The nozzles that the values refer to are the topmost nozzles
+on the head, nearest the top margin. If the image doesn't start at the
+top margin then uniprint doesn't use these feeds.
+<p>I don't know a mathematical relation for this except that at least one
+of the values must be the number of nozzles, but I'm sure that there must
+be one. I used a graphical method, the description that follows refers
+to the ascii diagram in below.
+<p>Draw a line of nozzles for each pass arranged as they would be using
+the normal Y feed increment determined in step 3. In the diagram below
+this would be passes 5-8.
+<p>Draw a line of nozzles that would print just before the first normal
+pass. The feed increment for this pass will be close to and most likely
+1 or 2 units less than the feed increment of the last normal pass. In the
+example below this line is pass 4 and the feed increment is 13 whereas
+the normal feed increment is 15.
+<p>Draw each pass before that with a small feed increment so that if all
+of the nozzles appearing above the first nozzle of the first normal pass
+operate then all of the spaces will be filled. This feed increment is usually
+1 except in cases where some jiggery pokery is going on to make the printer
+print at an apparent higher resolution than the nozzle diameter.
+<p>Now select the nozzles that will operate in each of theses initial passes
+so that the paper is filled. In each pass the nozzles must be adjacent
+to each other and at least one of the passes will have all the nozzles
+operating. I suspect that for each combination of normal Y feed increments
+there will only be one set of valid beginning of page increments.
+</li>
+</ol>
+<h4>Example: stc.upp from Aladdin Ghostscript 6.01</h4>
+15 nozzles spaced at 1/90 in, 360 dpi requires 4 passes.
+<blockquote><pre><tt>
+-dupWeaveYPasses=4
+-dupOutputPins=15
+-dupWeaveYFeeds="{15 15 15 15}"
+-dupWeaveInitialYFeeds="{1 1 1 13}"
+-dupWeaveInitialPins="{ 4 15 11 7}"
+</tt></pre></blockquote>
+The following diagram shows which nozzles operate during each pass.
+<br>Passes 1-4 are beginning of page passes and passes 5-8 are normal passes.
+<blockquote>
+<p>x=nozzle operates, o=nozzle not used in this pass<tt></tt>
+<p><tt>&nbsp; 1 2 3 4 5 6 7 8 - pass no</tt>
+<br><tt>0 x</tt>
+<br><tt>1&nbsp;&nbsp; x</tt>
+<br><tt>2&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>4 x</tt>
+<br><tt>5&nbsp;&nbsp; x</tt>
+<br><tt>6&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>8 x</tt>
+<br><tt>9&nbsp;&nbsp; x</tt>
+<br><tt>0&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>2 x</tt>
+<br><tt>3&nbsp;&nbsp; x</tt>
+<br><tt>4&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>6 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>7&nbsp;&nbsp; x</tt>
+<br><tt>8&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>0 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>1&nbsp;&nbsp; x</tt>
+<br><tt>2&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>4 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>5&nbsp;&nbsp; x</tt>
+<br><tt>6&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>8 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>9&nbsp;&nbsp; x</tt>
+<br><tt>0&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>2 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>3&nbsp;&nbsp; x</tt>
+<br><tt>4&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>6 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>7&nbsp;&nbsp; x</tt>
+<br><tt>8&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>0 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>1&nbsp;&nbsp; x</tt>
+<br><tt>2&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>4 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>5&nbsp;&nbsp; x</tt>
+<br><tt>6&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>8 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>9&nbsp;&nbsp; x</tt>
+<br><tt>0&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>2 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>3&nbsp;&nbsp; x</tt>
+<br><tt>4&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>6 o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>7&nbsp;&nbsp; x</tt>
+<br><tt>8&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o&nbsp;&nbsp; x</tt>
+<br><tt>0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>6</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>0</tt>
+<br><tt>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>4</tt>
+<br><tt>5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt>
+<br><tt>8</tt>
+<br><tt>9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>1</tt>
+<br><tt>2</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>5</tt>
+<br><tt>6</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>9</tt>
+<br><tt>0</tt>
+<br><tt>1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>3</tt>
+<br><tt>4</tt>
+<br><tt>5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>6</tt>
+<br><tt>7</tt>
+<br><tt>8</tt>
+<br><tt>9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>0</tt>
+<br><tt>1</tt>
+<br><tt>2</tt>
+<br><tt>3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+<br><tt>4</tt>
+<br><tt>5</tt>
+<br><tt>6</tt>
+<br><tt>7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+x</tt>
+</blockquote>
+<p>These parameters would also work:
+<blockquote><pre><tt>
+-dupWeaveYPasses=4
+-dupOutputPins=15
+-dupWeaveYFeeds="{14 15 18 13}"
+-dupWeaveInitialYFeeds="{1 1 1 13}"
+-dupWeaveInitialPins="{ 4 11 7 15}"
+</tt></pre></blockquote>
+<p>
+<hr>
+<h3><a name="Uni_esc300"></a>Extension to <tt>uniprint</tt> for the Epson Stylus Color 300</h3>
+This section was contributed by Glenn Ramsey.<p>
+The Epson Stylus Color 300 uses a different command set to other Epson
+Stylus Color printers that use the ESC/P2 language. As far as I can
+tell its commands are a subset of ESC/P2. In ESC/P2 the colour to be
+printed is selected by a 'set colour' command and then the data sent
+is only printed in that colour until the colour is changed with another
+'set colour' command. The Stylus Color 300 lacks this functionality.
+The data sent to the printer maps directly to the ink nozzles and colour
+of an output scan line in the printed output is determined by the position
+of the scan line within the data. This means that the driver must know
+how the nozzles are arranged and must format the output accordingly.
+The extension adds a format that I have called EscNozzleMap and adds some
+ additional parameters to uniprint.<br>
+<ul>
+  <li><code>upOutputFormat</code>selects the output method, and should be set to the value
+<code>/EscNozzleMap</code> to select this format.
+    <blockquote>
+      <table cellpadding="0" cellspacing="0">
+        <tbody>
+          <tr valign="Top">
+            <td><code>/EscNozzleMap</code></td>
+            <td>&nbsp;</td>
+            <td>produces output for the Epson Stylus Color 300
+	    </td>
+          </tr>
+         </tbody>
+       </table>
+     </blockquote>
+</ul>
+
+<blockquote>
+  <table cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <th colspan="5" bgcolor="#cccc00">
+        <hr><font size="+1"><code>uniprint</code> parameters for the
+        EscNozzleMap format</font>
+        <hr></th>
+      </tr>
+      <tr valign="Bottom">
+        <th align="Left">Parameter
+	</th>
+        <td>&nbsp;
+	</td>
+        <th align="Left">Type
+	</th>
+        <td>&nbsp;&nbsp;&nbsp;
+	</td>
+        <th align="Left">Use
+	</th>
+      </tr>
+      <tr>
+        <td colspan="5">
+        <hr></td>
+      </tr>
+      <tr valign="Top">
+        <td><code>upNozzleMapRowsPerPass</code></td>
+        <td>&nbsp;
+	</td>
+        <td>Int
+	</td>
+        <td>&nbsp;
+	</td>
+        <td>output rows to generate for each pass of the head
+	</td>
+      </tr>
+      <tr valign="Top">
+        <td><code>upNozzleMapPatternRepeat</code></td>
+        <td>&nbsp;
+	</td>
+        <td>Int
+	</td>
+        <td>&nbsp;
+	</td>
+        <td>no. of rows that correspond to the repeat pattern of the
+        nozzles 
+	</td>
+      </tr>
+      <tr valign="Top">
+        <td><code>upNozzleMapRowMask</code></td>
+        <td>&nbsp;
+	</td>
+        <td>Int[]
+	</td>
+        <td>&nbsp;
+	</td>
+        <td>mask indicating the colour of the nozzles
+	</td>
+      </tr>
+      <tr valign="Top">
+        <td><code>upNozzleMapMaskScanOffset</code></td>
+        <td>&nbsp;
+	</td>
+        <td>Int[]
+	</td>
+        <td>&nbsp;
+	</td>
+        <td>mask indicating the physical position of the nozzles
+	</td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+
+<h4>A more detailed description of the new parameters</h4>
+<ul>
+  <li><code>upNozzleMapRowsPerPass</code><br>
+  The number of rows of data that are required to address all nozzles for a
+  single pass of the head. There will always be this number of rows of output
+  data generated. I'd expect it to be the same as the total number of nozzles but
+  it wouldn't break the formatter if it wasn't. So if you wanted to print with
+  only the 10th nozzle then row 10 would contain data corresponding to the bit
+  pattern and all of the others would be padded with zeros.
+  </li>
+  <li><code>upNozzleMapPatternRepeat</code><br>
+  The number of nozzles in each repeated group on the printing head.
+  This parameter must correspond with the length of the upNozzleMapRowMask array.
+  </li>
+  <li><code>upNozzleMapRowMask</code><br>
+  An array of integers that defines the colour of the nozzles on the
+  head and whether the nozzles will be used to print. The array index
+  defines the row index for the nozzle in the output data
+  and the value defines the colour of the nozzle. The mapping
+  of colours to values is defined in the table below.
+        <blockquote>
+          <table cellpadding="0" cellspacing="0">
+            <tbody>
+              <tr valign="Bottom">
+                <th align="Left">colour
+	        </th>
+                <td>&nbsp;
+	        </td>
+                <th align="center">mask value
+	        </th>
+              </tr>
+              <tr>
+                <td colspan="5">
+                <hr></td>
+              </tr>
+              <tr valign="Top" align="center">
+                <td><code>K</code></td>
+                <td>&nbsp;
+	        </td>
+                <td>1
+	        </td>
+              </tr>
+              <tr valign="Top" align="center">
+                <td><code>C</code></td>
+                <td>&nbsp;
+	        </td>
+                <td>2
+              </tr>
+              <tr valign="Top" align="center">
+                <td><code>M</code></td>
+                <td>&nbsp;
+	        </td>
+                <td>3
+                </td>
+              </tr>
+              <tr valign="Top" align="center">
+                <td><code>Y</code></td>
+                <td>&nbsp;
+	        </td>
+                <td>4
+	        </td>
+              </tr>
+              <tr valign="Top" align="center">
+                <td><code>no data</code></td>
+                <td>&nbsp;
+	        </td>
+                <td>0
+	        </td>
+              </tr>
+            </tbody>
+          </table>
+        </blockquote>
+  A value of 0 means that the nozzle is not used and the row in the output data will be
+  padded with zeros.<br>
+  </li>
+  <li><code>upNozzleMapMaskScanOffset</code><br>
+  An array of integers that defines the physical position of the nozzles relative
+  to the first nozzle in the repeated group. The relative distance is measured in
+  printed line widths and will be different for different printing resolutions.
+  This parameter is used because the physical spacing of the nozzles may not
+  correspond to their mapping in the output data. For example the ESC300 has nozzles
+  physically arranged something like this:
+  <table>
+    <tr>
+      <td bgcolor="#00ffff">&nbsp;
+      </td>
+      <td bgcolor="#ffff00">&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td bgcolor="#ff00ff">&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td bgcolor="#00ffff">&nbsp;
+      </td>
+      <td bgcolor="#ffff00">&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td bgcolor="#ff00ff">&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td bgcolor="#ffffff">&nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td bgcolor="#00ffff">&nbsp;
+      </td>
+      <td bgcolor="#ffff00">&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td bgcolor="#ff00ff">&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td bgcolor="#000000">&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td>&nbsp;
+      </td>
+      <td bgcolor="#00ffff">&nbsp;
+      </td>
+      <td bgcolor="#ffff00">&nbsp;
+      </td>
+      <td>etc ...
+      </td>
+    </tr>    
+  </table>
+  There is a one nozzle width space between the last two nozzles in each group.
+  In the output data the data for the last nozzle in the group would be in row 5
+  (numbering starts at 0) but the nozzle is physically positioned at 6 spaces from
+  the first nozzle. 
+</ul>
+<h4>Example 1 - Epson Stylus Color 300 - 360 dpi colour</h4>
+<blockquote><pre>
+-dupWeaveYPasses=6
+-dupOutputPins=11
+-dupWeaveYFeeds="{ 11 11 11 11 11 11 }"
+-dupWeaveInitialYFeeds="{ 1 1 1 1 1 7 }"
+-dupWeaveInitialPins="{ 2 11 9 7 5 3 }"
+-dupNozzleMapRowsPerPass=64
+-dupNozzleMapPatternRepeat=6
+-dupNozzleMapRowMask="{ 2 4 1 3 0 0 }"
+-dupNozzleMapMaskScanOffset="{ 0 1 2 3 0 0 }"
+</pre></blockquote>
+The weaving parameters are the same as for any other uniprint driver
+but they must be consistent with the nozzle map parameters. In this printer
+the coloured nozzles are spaced at 1/60" so 6 passes are required for 360
+dpi resolution.
+<p>
+In the example there are 64 rows of data required for each head pass. Each
+row must be completely filled with data for each pass so if certain nozzles
+do not print in the pass then the rows for those nozzles will be padded
+with zeroes.
+<P>
+The row mask translates to "C Y K M 0 0" so in the output data rows 0,7,13,...
+will contain data for cyan, rows 1,8,14,... will contain data for yellow, etc. Rows 4,10,16,...
+and 5, 11,15,... will always be padded with zeroes. The <i>upNozzleMapPatternRepeat</i>
+parameter defines the length of the mask.
+<p>
+The row mask is repeated for each group of <i>upNozzleMapPatternRepeat</i> rows
+in the output data. In this case there are 64 rows so there will be 10 groups
+of "C Y K M 0 0" followed by "C Y K M" which is equivalent to 11 output
+pins.
+<P>
+The <i>upNozzleMaskScanOffset</i> array indicates how the data from the scan
+buffer is mapped to the output data. The data is presented to the formatter
+as a buffer of four colour scanlines. The index of the scanline being printed,
+lets call it y, always corresponds, in this example, to the physical position of
+the cyan nozzle but since the nozzles are not on the same horizontal
+line then the other colours for the current pass must come from other
+scanlines in the scan buffer. The example is { 0 1 2 3 0 0 }, this means that
+when printing a 4 colour image the magenta data would come from scanline y+3,
+the black from scanline y+2, etc. It would have been possible in this case
+to use the array index instead of the <i>upNozzleMaskScanOffset</i> parameter
+however the parameter is necessary to be able to use the full capability of the
+printer in black only mode.
+
+<h4>Example 2 - Epson Stylus Color 300 - 180 dpi black only</h4>
+<blockquote>
+<pre>
+-dupMargins="{ 9.0 39.96 9.0 9.0}"
+-dupWeaveYPasses=1
+-dupOutputPins=31
+-dupNozzleMapRowsPerPass=64
+-dupNozzleMapPatternRepeat=6
+-dupNozzleMapRowMask="{ 0 0 1 0 1 1}"
+-dupNozzleMapMaskScanOffset="{ 0 0 0 0 1 2 }"
+</pre>
+</blockquote>
+In this example there is no weaving.
+<p>
+The ESC300 has black nozzles evenly physically arranged as K K K but the data must
+be sent to the printer as 00K0KK. This is handled by the <i>upNozzleMapRowMask</i>
+and <i>upNozzleMaskScanOffset</i> arrays. The <i>upNozzleMapRowMask</i>  array is
+{ 0 0 1 0 1 1} which translates to { 0 0 K 0 K K } so rows 0, 1 and 3 will always
+contain zeros and the other rows will contain data.
+<p>
+The <i>upNozzleMaskScanOffset</i> array
+in this case is { 0 0 0 0 1 2 } so if the data for the 1st nozzle comes from row
+y in the scan buffer then the data for the 2nd and 3rd nozzles will come from rows
+y+1 and y+2.
+
+<h4>Example 3 - Epson Stylus Color 300 - 360 dpi black only</h4>
+<blockquote>
+<pre>
+-dupWeaveYPasses=2
+-dupOutputPins=31
+-dupWeaveYFeeds="{31 31}"
+-dupWeaveInitialYFeeds="{1 31}"
+-dupWeaveInitialPins="{16 31}"
+-dupNozzleMapRowsPerPass=64
+-dupNozzleMapPatternRepeat=6
+-dupNozzleMapRowMask="{ 0 0 1 0 1 1}"
+-dupNozzleMapMaskScanOffset="{ 0 0 0 0 2 4 }"
+</pre>
+</blockquote>
+In this example 2 weave passes are required to achieve the desired resolution.
+<p>
+The <i>upNozzleMaskScanOffset</i> array in this case is { 0 0 0 0 2 4 } because
+there are two weave passes so if the data for the first nozzle comes from row y
+in the scan buffer then the data for the 2nd and 3rd nozzles must come from rows
+y+(1*2) and y+(2*2).
+<p>
+<address>
+Glenn Ramsey<br>
+glennr at users.sourceforge.net<br>
+February 2001
+</address>
+<br>
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

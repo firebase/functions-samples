@@ -1,0 +1,384 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Guide to Ghostscript source code</title>
+<!-- Originally: source.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Guide to Ghostscript source code</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Overview">Conceptual overview</a>
+<li><a href="#PostScript_interpreter">PostScript Interpreter</a>
+<li><a href="#PDF_interpreter">PDF interpreter</a>
+<li><a href="#Graphics_library">Graphics library</a>
+<ul>
+<li><a href="#Drivers">Device drivers</a>
+<li><a href="#Platform_specific_code">Platform-specific code</a>
+</ul>
+<li><a href="#Makefiles">Makefiles</a>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a> and the documents on <a href="Make.htm">how to build
+Ghostscript</a> from source, <a href="C-style.htm">Ghostscript C coding
+guidelines</a>, <a href="Drivers.htm">drivers</a>, the
+<a href="Lib.htm">Ghostscript library</a> and <a href="Install.htm">how to
+install Ghostscript</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Overview"></a>Conceptual overview</h2>
+
+<p>
+The Ghostscript source code is divided conceptually as follows:
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr valign=top>	<th align=left colspan=4><a href="#PostScript_interpreter">PostScript interpreter</a>:
+<tr valign=top>	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td>PostScript operators
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<td><code>z</code>*<code>.h</code> and <code>z</code>*<code>.c</code>
+<tr valign=top>	<td>&nbsp;
+	<td>Other interpreter code
+	<td>&nbsp;
+	<td><code>i</code>*<code>.h</code> and <code>i</code>*<code>.c</code>
+<tr valign=top>	<td>&nbsp;
+	<td>PostScript code
+	<td>&nbsp;
+	<td><code>gs_</code>*<code>.ps</code>
+<tr valign=top>	<th align=left colspan=4><a href="#PDF_interpreter">PDF interpreter</a>:
+<tr valign=top>	<td>&nbsp;
+	<td>PostScript code
+	<td>&nbsp;
+	<td><code>pdf_</code>*<code>.ps</code>
+<tr valign=top>	<th align=left colspan=4><a href="#Graphics_library">Graphics library</a>:
+<tr valign=top>	<td>&nbsp;
+	<td>Main library code
+	<td>&nbsp;
+	<td><code>g</code>*<code>.h</code> and <code>g</code>*<code>.c</code>
+<tr valign=top>	<td>&nbsp;
+	<td>Streams
+	<td>&nbsp;
+	<td><code>s</code>*<code>.h</code> and <code>s</code>*<code>.c</code>
+<tr valign=top>	<td>&nbsp;
+	<td><a href="#Drivers">Device drivers</a>
+	<td>&nbsp;
+	<td><code>gdev</code>*<code>.h</code> and <code>gdev</code>*<code>.c</code>
+<tr valign=top>	<td>&nbsp;
+	<td><a href="#Platform_specific_code">Platform-specific code</a>
+	<td>&nbsp;
+	<td><code>gp</code>*<code>.h</code> and <code>gp</code>*<code>.c</code>
+</table></blockquote>
+
+<hr>
+
+<h2><a name="PostScript_interpreter"></a>PostScript Interpreter</h2>
+
+<p>
+<code>gs.c</code> is the main program for the interactive language
+interpreter; <code>gserver.c</code> is an alternative main program that
+is a rudimentary server.  If you configure Ghostscript as a server rather
+than an interactive program, you will use <code>gserver.c</code> instead
+of <code>gs.c</code>.
+
+<p>
+Files named <code>z</code>*<code>.c</code> are Ghostscript operator
+files.  The names of the files generally follow the section headings of the
+operator summary in section 6.2 (Second Edition) or 8.2 (Third Edition) of
+the PostScript Language Reference Manual.  Each operator XXX is implemented
+by a procedure named <code>z</code>XXX, for example,
+<code>zfill</code> and <code>zarray</code>.
+
+<p>
+Files named <code>i</code>*<code>.c</code>, and *<code>.h</code>
+other than <code>g</code>*<code>.h</code>, are the rest of the
+interpreter.  See the makefile for a little more information on how the
+files are divided functionally.
+
+<p>
+The main loop of the PostScript interpreter is the <code>interp</code>
+procedure in <code>interp.c</code>.  When the interpreter is reading
+from an input file, it calls the token scanner in
+<code>iscan</code>*<code>.c</code>.
+
+<p>
+<code>idebug.c</code> contains a lot of debugger-callable routines
+useful for printing PostScript objects when debugging.
+
+<hr>
+
+<h2><a name="PDF_interpreter"></a>PDF interpreter</h2>
+
+<p>
+The PDF interpreter is written entirely in PostScript.  Its main loop is
+the <code>.pdfrun</code> procedure in <code>pdf_base.ps</code>.  When
+the PDF interpreter is configured into the build, it redefines the
+"<code>run</code>" operator to test whether the file is a PDF file.
+This redefinition is near the beginning of <code>pdf_main.ps</code>.
+
+<hr>
+
+<h2><a name="Graphics_library"></a>Graphics library</h2>
+
+<p>
+Files beginning with <code>gs</code>, <code>gx</code>, or
+<code>gz</code> (both <code>.c</code> and <code>.h</code>), other
+than <code>gs.c</code> and <code>gserver.c</code>, are the
+Ghostscript library.  Files beginning with <code>gdev</code> are device
+drivers or related code, also part of the library.  Other files beginning
+with <code>g</code> are library files that don't fall neatly into either
+the kernel or the driver category.
+
+<p>
+Files named <code>s</code>*<code>.c</code> and
+<code>s</code>*<code>.h</code> are a flexible stream package,
+including the Level 2 PostScript "filters" supported by Ghostscript.  See
+<code>stream.h</code>, <code>scommon.h</code>, and
+<code>strimpl.h</code> for all the details.
+
+<h3><a name="Drivers"></a>Device drivers</h3>
+
+<p>
+The interface between the graphics library and device drivers is the only
+really well documented one in all of Ghostscript: see the
+<a href="Drivers.htm">documentation on drivers</a>.
+
+<p>
+In addition to many real device and file format drivers listed in
+<code>devs.mak</code> and <code>contrib.mak</code>, a number of
+drivers are used for internal purposes.  You can search
+<code>lib.mak</code> for files named
+<code>gdev</code>*<code>.c</code> to find almost all of them.
+
+<p>
+Drivers are divided into "printer" drivers, which support banding, and
+non-printer drivers, which don't.  The decision whether banding is
+required is made (by default on the basis of how much memory is available)
+in the procedure <code>gdev_prn_alloc</code> in
+<code>gdevprn.c</code>: it implements this decision by filling the
+virtual procedure table for the printer device in one of two different
+ways.
+
+<p>
+A good simple "printer" (bandable) driver to read is
+<code>gdevmiff.c</code>: it's less than 100 lines, of which much is
+boilerplate.  There are no simple non-printer drivers that actually drive
+devices: probably the simplest non-printer driver for reading is
+<code>gdevm8.c</code>, which implements 8-bit-deep devices that only
+store the bits in memory.
+
+<h3><a name="Platform_specific_code"></a>Platform-specific code</h3>
+
+<p>
+There are very few platform dependencies in Ghostscript.  Ghostscript deals
+with them in three ways:
+
+<ul>
+<li>Files named *<code>_.h</code> substitute for the corresponding
+<code>&lt;</code>*<code>.h&gt;</code> file by adding conditionals
+that provide a uniform set of system interfaces on all platforms.
+
+<li>The file <code>arch.h</code> contains a set of
+mechanically-discovered platform properties like byte order, size of
+<code>int</code>, etc.  These properties, <b>not</b> the names of
+specific platforms, are used to select between different algorithms or
+parameters at compile time.
+
+<li>Files named <code>gp</code>*<code>.h</code> define interfaces
+that are intended to be implemented differently on each platform, but whose
+specification is common to all platforms.
+</ul>
+
+<p>
+The platform-specific implementations of the
+<code>gp</code>*<code>.h</code> interfaces have names of the form
+"<code>gp_</code><em>{platform}</em><code>.c</code>, specifically
+(this list may be out of date):
+
+<blockquote><table cellpadding=0 cellspacing=0>
+<tr><th colspan=3 bgcolor="#CCCC00"><hr><font size="+1">Platform-specific interfaces</font><hr>
+<tr valign=bottom>
+	<th align=left>Routine
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;
+	<th align=left>Platform
+<tr>	<td colspan=3><hr>
+<tr valign=top>	<td><code>gp_dosfb.c</code>
+	<td>&nbsp;
+	<td>DOS
+<tr valign=top>	<td><code>gp_dosfs.c</code>
+	<td>&nbsp;
+	<td>DOS and MS Windows
+<tr valign=top>	<td><code>gp_itbc.c</code>
+	<td>&nbsp;
+	<td>DOS, Borland compilers
+<tr valign=top>	<td><code>gp_iwatc.c</code>
+	<td>&nbsp;
+	<td>DOS, Watcom or Microsoft compiler
+<tr valign=top>	<td><code>gp_msdos.c</code>
+	<td>&nbsp;
+	<td>DOS and MS Windows
+<tr valign=top>	<td><code>gp_ntfs.c</code>
+	<td>&nbsp;
+	<td>MS Windows NT
+<tr valign=top>	<td><code>gp_os2.c</code>
+	<td>&nbsp;
+	<td>OS/2
+<tr valign=top>	<td><code>gp_os9.c</code>
+	<td>&nbsp;
+	<td>OS-9
+<tr valign=top>	<td><code>gp_unifs.c</code>
+	<td>&nbsp;
+	<td>Unix, OS-9, and QNX
+<tr valign=top>	<td><code>gp_unix.c</code>
+	<td>&nbsp;
+	<td>Unix and QNX
+<tr valign=top>	<td><code>gp_sysv.c</code>
+	<td>&nbsp;
+	<td>System V Unix
+<tr valign=top>	<td><code>gp_vms.c</code>
+	<td>&nbsp;
+	<td>VMS
+<tr valign=top>	<td><code>gp_win32.c</code>
+	<td>&nbsp;
+	<td>MS Windows NT
+</table></blockquote>
+
+<p>
+If you are going to extend Ghostscript to new machines or operating
+systems, check the *<code>_.h</code> files for <code>ifdef</code> on
+things other than <code>DEBUG</code>.  You should probably plan to make
+a new makefile and a new <code>gp_</code>XXX<code>.c</code> file.
+
+<hr>
+
+<h2><a name="Makefiles"></a>Makefiles</h2>
+
+<p>
+This section is only for advanced developers who need to integrate
+Ghostscript into a larger program at build time.
+
+<p>
+NOTE: THIS SECTION IS INCOMPLETE.  IT WILL BE IMPROVED IN A LATER REVISION.
+
+<p>
+The Ghostscript makefiles are meant to be organized according to the
+following two principles:
+
+<ul>
+
+<li>All the parameters that vary from platform to platform appear in the
+top-level makefile for a given platform.  ("Platform" = OS + compiler +
+choice of interpreter vs. library)
+
+<li>All the rules and definitions that can meaningfully be shared among more
+than 1 platform appear in a makefile that is "included" by a makefile
+(normally the top-level makefile) for those platforms.
+</ul>
+
+<p>
+Thus, for example:
+
+<ul>
+
+<li>Rules and definitions shared by all builds are in
+<code>gs.mak</code>.
+
+<li>Rules and definitions specific to the library (on all platforms) are in
+<code>lib.mak</code>.  In principle this could be merged with
+<code>gs.mak</code>, but we wanted to leave open the possibility that
+<code>gs.mak</code> might be useful with hypothetical interpreter-only
+products.
+
+<li>Stuff specific to interpreters (on all platforms) is in
+<code>int.mak</code>.
+
+<li>Stuff specific to all Unix platforms should be in a single
+<code>unix.mak</code> file, but because <code>make</code> sometimes
+cares about the order of definitions, and because some of it is shared with
+DV/X, it got split between <code>unix-aux.mak</code>,
+<code>unix-end.mak</code>, <code>unixhead.mak</code>,
+<code>unixinst.mak</code>, and <code>unixlink.mak</code>.
+
+</ul>
+
+<p>
+For MS-DOS and MS Windows builds, there should be:
+
+<ul>
+
+<li>A makefile for all MS OS (DOS or Windows) builds, for all
+        compilers and products.
+
+<li>Perhaps a makefile for all MS-DOS builds, for all compilers and
+products, although since Watcom is the only such compiler we're likely to
+support this may be overkill.
+
+<li>A makefile for all MS Windows builds, for all compilers and products.
+
+<li>A makefile for all Watcom builds (DOS or Windows), for all products.
+
+<li>A top-level makefile for the Watcom DOS interpreter product.
+
+<li>A top-level makefile for the Watcom Windows interpreter product.
+
+<li>A top-level makefile for the Watcom DOS library "product".
+
+<li>A top-level makefile for the Watcom Windows library "product".
+
+<li>A makefile for all Borland builds (DOS or Windows), for all
+        products.
+
+</ul>
+
+<p>
+and so on.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

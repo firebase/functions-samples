@@ -1,0 +1,356 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Add the Central European and other Adobe extended Latin characters to a
+% Type 1 font.
+% Requires -dWRITESYSTEMDICT to disable access protection.
+
+(type1ops.ps) runlibfile
+
+% ---------------- Utilities ---------------- %
+
+/addce_dict 50 dict def
+addce_dict begin
+
+% Define the added copyright notice.
+/addednotice (. Portions Copyright (C) 2012 Artifex Software Inc.) def
+
+% Open a font for modification by removing the FID and changing the
+% FontName.  Removing UniqueID and XUID is not necessary, since we
+% will only be adding characters.
+/openfont {		% <name> <font> openfont <name> <font'>
+  dup length dict copy
+  dup /FID undef
+  dup /FontName 3 index put
+} def
+
+% Do the equivalent of false charpath for a glyph.
+% This should really be an operator!
+/glyphpath {		% <glyph> glyphpath -
+  currentfont /Encoding get 0 3 -1 roll put
+  <00> false charpath
+} def
+
+% Do the equivalent of charpath + pathbbox for a glyph.
+/glyphbbox {		% <glyph> glyphbbox <llx> <lly> <urx> <ury>
+        % We cache this value, because it's expensive to compute.
+  BBoxes 1 index .knownget {
+    exch pop
+  } {
+    gsave newpath 0 0 moveto dup glyphpath [pathbbox] grestore
+    BBoxes 3 -1 roll 2 index put
+  } ifelse aload pop
+} def
+
+% Get the side bearing and width for a glyph.
+/glyphsbw {		% <glyph> glyphsbw <lsbx> <wx>
+        % We cache this value, because it's expensive to compute.
+  SBW 1 index .knownget {
+    exch pop
+  } {
+    dup glyphcs { dup /hsbw eq { pop exit } if } forall
+    2 array astore
+    SBW 3 -1 roll 2 index put
+  } ifelse aload pop
+} def
+
+% Get the CharString for a glyph, as an array.
+/glyphcs {		% <glyph> glyphcs <array>
+  CharStrings exch get
+  4330 exch dup length string .type1decrypt exch pop
+  dup length lenIV sub lenIV exch getinterval
+  0 () /SubFileDecode filter [ exch charstack_read ]
+} def
+
+% Find an occurrence of a value in an array.
+/asearch {		% <array> <value> asearch <index> true
+                        % <array> <value> asearch false
+  false 0 4 2 roll exch {
+                % Stack: false index value element
+    2 copy eq { pop pop exch not exch dup exit } if
+    exch 1 add exch
+  } forall pop pop
+} def
+
+% Convert an array back to a CharString.
+/csdef {		% <glyph> <array> csdef -
+  charproc_string
+  4330 exch dup .type1encrypt exch pop readonly
+  CharStrings 3 1 roll put
+} def
+
+% Split an accented character name.
+/splitaccented {	% <Baccent> splitaccented <Baccent> <B> <accent>
+    dup =string cvs
+    dup 0 1 getinterval cvn
+    exch dup length 1 sub 1 exch getinterval cvn
+} def
+
+% Begin the definition of a 'seac' character.
+% Defines accent, base, abox, bbox.
+% The initial dx lines up the origins of the base and the accent.
+/beginseac {		% <bchar> <achar> beginseac
+                        %   -mark- <lsbx> <wx> /hsbw <asb> <dx>
+  /accent exch def /base exch def
+  /abox [accent glyphbbox] def
+  /bbox [base glyphbbox] def
+  [ base glyphsbw /hsbw accent glyphsbw pop
+  dup 4 index sub
+} def
+
+% Center the accent over the base of a 'seac' character.
+/centeraccent {		% <dx> centeraccent <adx>
+  bbox 2 get bbox 0 get add 2 div
+  abox 2 get abox 0 get add 2 div
+  sub add
+} def
+
+% Finish the definition of a 'seac' character.
+/finishseac {		% <charname> -mark- ... <adx> <ady> finishseac -
+  exch cvi exch cvi
+  charindex base get charindex accent get /seac ] csdef
+} def
+
+% ---------------- Main program ---------------- %
+
+% Define accented characters that can be made with seac,
+% with the accent centered over the character.
+/seacchars [
+  /Abreve /Amacron
+  /Cacute /Ccaron /Dcaron
+  /Ecaron /Edotaccent /Emacron
+  /Gbreve
+  /Idotaccent /Imacron
+  /Lacute
+  /Nacute /Ncaron
+  /Ohungarumlaut /Omacron
+  /Racute /Rcaron
+  /Sacute /Scedilla
+  /Tcaron
+  /Uhungarumlaut /Umacron /Uogonek /Uring
+  /Zacute /Zdotaccent
+  /abreve /amacron
+  /cacute /ccaron
+  /ecaron /edotaccent /emacron
+  /gbreve
+  /lacute
+  /nacute /ncaron
+  /ohungarumlaut /omacron
+  /racute /rcaron
+  /sacute /scedilla
+  /uhungarumlaut /umacron /uring
+  /zacute /zdotaccent
+] def
+
+% Define seac characters where the accent lines up with the right
+% edge of the character.
+/seacrightchars [
+  /Aogonek /Eogonek /Iogonek /aogonek /eogonek /iogonek /uogonek
+] def
+
+% Define seac characters where the caron becomes an appended quoteright.
+/seaccaronchars [
+  /dcaron /lcaron /tcaron
+] def
+
+% Define seac characters using commaaccent.
+/seaccommachars [
+  /Gcommaaccent /Kcommaaccent /Lcommaaccent /Ncommaaccent /Rcommaaccent
+  /Scommaaccent /Tcommaaccent
+  /gcommaaccent /kcommaaccent /lcommaaccent /ncommaaccent /rcommaaccent
+  /scommaaccent /tcommaaccent
+] def
+
+% Define the characters copied from the Symbol font.
+/symbolchars [
+  /Delta /greaterequal /lessequal /lozenge /notequal /partialdiff
+  /summation
+] def
+
+% Define the procedures for editing the commaaccent character.
+% Delete all the hints, since it's too hard to adjust them.
+/caedit mark
+  /rmoveto { exch commatop sub cvi exch }
+  /hstem { pop pop pop }
+  /vstem 1 index
+  /callothersubr {
+    dup 3 eq { 4 { pop } repeat /skip true def } if
+  }
+  /pop { skip { pop /skip false def } if }
+.dicttomark def
+
+/addce {		% <name> <font> addce <font'>
+  20 dict begin
+  /origfont 1 index def
+  openfont
+  dup /CharStrings 2 copy get dup length dict copy put
+  dup /Encoding 2 copy get dup length array copy put
+  dup /FontInfo 2 copy get dup length dict copy put
+  definefont /font exch def
+  currentdict font end begin begin
+  font 1000 scalefont setfont
+  /symbolfont /Symbol findfont def
+  /BBoxes CharStrings length dict def
+  /SBW CharStrings length dict def
+
+  /italfactor FontInfo /ItalicAngle .knownget {
+    neg dup sin exch cos div
+  } {
+    0
+  } ifelse def
+
+        % Invert the Encoding (needed for seac).
+
+  /charindex 256 dict def
+  0 1 255 {
+    charindex exch Encoding 1 index get exch put
+  } for
+
+        % Add the commaaccent character, by moving the comma downward.
+
+  /comma glyphbbox /commatop exch def pop pop pop
+  /comma glyphcs
+    /skip false def
+    [ exch { caedit 1 index .knownget { exec } if } forall ]
+  /commaaccent exch csdef
+
+        % Add the accented characters that can be made with seac.
+
+  seacchars {
+    splitaccented beginseac
+      centeraccent
+                % If the accent would collide with the base character,
+                % raise it a little.
+      abox 1 get bbox 3 get sub dup 0 le {
+                % ... but not if the accent is in the low position.
+        abox 1 get 0 gt {
+          neg 60 add
+                % Adjust the X position if italic.
+          dup italfactor mul 3 -1 roll add exch
+        } {
+          pop 0
+        } ifelse
+      } {
+        pop 0
+      } ifelse
+    finishseac
+  } forall
+
+  seacrightchars {
+    splitaccented beginseac
+    bbox 2 get abox 2 get sub add	% line up right edges
+    0 finishseac
+  } forall
+
+  /dcroat /d /hyphen beginseac
+    bbox 2 get abox 2 get sub add	% line up right edges
+  0 finishseac
+
+  /imacron /dotlessi /macron beginseac
+    centeraccent
+  0 finishseac
+
+  /Lcaron /L /quoteright beginseac
+    bbox 2 get abox 2 get sub add	% line up right edges
+  0 finishseac
+
+  seaccaronchars {
+    dup =string cvs 0 1 getinterval cvn /quoteright beginseac
+                % Move the quote to the right of the character.
+    bbox 2 get abox 0 get sub 50 add add
+                % Adjust the character width as well.
+    4 -1 roll abox 2 get abox 0 get sub 50 add add cvi 4 1 roll
+    0 finishseac
+  } forall
+
+  seaccommachars {
+    dup =string cvs 0 1 getinterval cvn /comma beginseac
+      centeraccent
+      commatop neg
+                % Lower the accent if the character extends below
+                % the baseline
+      bbox 1 get 0 .min add
+    finishseac
+  } forall
+
+        % Add the characters from the Symbol font.
+        % We should scale them to match the FontBBox, but we don't.
+
+  symbolchars {
+    symbolfont /CharStrings get 1 index get
+    CharStrings 3 1 roll put
+  } forall
+
+        % Add the one remaining character.
+
+  CharStrings /Dcroat CharStrings /Eth get put
+
+        % Recompute the FontBBox, since some of the accented characters
+        % may have enlarged it.
+
+  /llx 1000 def /lly 1000 def /urx 0 def /ury 0 def
+  CharStrings {
+    pop glyphbbox
+    ury .max /ury exch def urx .max /urx exch def
+    lly .min /lly exch def llx .min /llx exch def
+  } forall
+  /FontBBox llx cvi lly cvi urx ceiling cvi ury ceiling cvi 4 packedarray def
+
+        % Restore the Encoding and wrap up.
+
+  [/Copyright /Notice] {
+    FontInfo 1 index .knownget {
+      addednotice concatstrings FontInfo 3 1 roll put
+    } {
+      pop
+    } ifelse
+  } forall
+  FontName font openfont
+  dup /Encoding origfont /Encoding get put
+  definefont
+
+  end end
+} def
+
+currentdict end readonly pop	% addce_dict
+
+/addce { addce_dict begin addce end } def
+
+% ---------------- Integration ---------------- %
+
+% We would like to patch the font loader so that it adds the extended
+% Latin characters automatically.  We haven't done this yet.
+
+% ---------------- Test program ---------------- %
+
+/TEST where { pop TEST } { false } ifelse {
+  /FONT where { pop } { /FONT /Palatino-Italic def } ifelse
+  (unprot.ps) runlibfile
+  unprot
+  (wrfont.ps) runlibfile
+  wrfont_dict begin
+    /eexec_encrypt true def
+    /binary_CharStrings true def
+  end
+  save
+    FONT findfont
+    /Latin-CE exch addce setfont
+    (t.ce.pfb) (w) file dup writefont closefile
+  restore
+  (prfont.ps) runlibfile
+  (t.ce.pfb) (r) file .loadfont
+  /Latin-CE DoFont
+  quit
+} if

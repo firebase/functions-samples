@@ -1,0 +1,63 @@
+.\" Using encoding of the German (de_DE) translation: UTF-8
+.\" Translation by Tobias Burnus <burnus@gmx.de> and Thomas Hoffmann
+.\" revised for version 7.06 by Wolfram Quester <wolfi@mittelerde.physik.uni-kostanz.de> 
+.\" revised for version 8.64 and recoded to UTF-8 by Jonas Smedegaard <dr@jones.dk>
+.TH PS2PDF 1 "7.März 2009" 8.64 Ghostscript \" -*- nroff -*-
+.SH NAME
+ps2pdf \- konvertiert PostScript nach PDF mittels ghostscript
+.br
+ps2pdf12 \- konvertiert PostScript nach PDF\ 1.2 (kompatibel zu Acrobat\ 3 und später) mittels ghostscript
+.br
+ps2pdf13 \- konvertiert PostScript nach PDF\ 1.3 (kompatibel zu Acrobat\ 4 und später) mittels ghostscript
+.br
+ps2pdf14 \- konvertiert PostScript nach PDF\ 1.4 (kompatibel zu Acrobat\ 5 und später) mittels ghostscript
+.SH SYNTAX
+\fBps2pdf\fR  [Optionen...] {Eingabe.[e]ps|-} [Ausgabe.pdf|-]
+.br
+\fBps2pdf12\fR  [Optionen...] {Eingabe.[e]ps|-} [Ausgabe.pdf|-]
+.br
+\fBps2pdf13\fR  [Optionen...] {Eingabe.[e]ps|-} [Ausgabe.pdf|-]
+.br
+\fBps2pdf14\fR  [Optionen...] {Eingabe.[e]ps|-} [Ausgabe.pdf|-]
+.SH BESCHREIBUNG
+Außer in der Benutzerschnittstelle sind die
+.B ps2pdf\-Skripte
+nahezu in allen Funktionen äquivalent zu Adobe Acrobat Distiller: Sie konvertieren 
+PostScript-Dateien in das Portable Document Format (PDF).
+
+.PP
+Die drei Skripte unterscheiden sich wie folgt:
+.IP -
+.B ps2pdf12
+produziert immer PDF-1.2-Dateien (kompatibel zu Acrobat 3 und später).
+.IP -
+.B ps2pdf13
+produziert immer PDF-1.3-Dateien (kompatibel zu Acrobat 4 und später).
+.IP -
+.B ps2pdf14
+produziert immer PDF-1.4-Dateien (kompatibel zu Acrobat 5 und später).
+.IP -
+.B ps2pdf
+selbst produziert standardgemäß PDF-1.4-Dateien (kompatibel zu Acrobat 5 und später); In späteren Versionen kann sich das jedoch ändern. Falls Sie eine bestimmte PDF-Version benötigen, sollten Sie
+.B ps2pdf12,
+.B ps2pdf13,
+.BR ps2pdf14 
+oder den
+.B \-dCompatibilityLevel=1.x
+Schalter in der Kommandozeile benutzen.
+.PP
+Die Konvertierung mittels
+.BR ps2pdf
+unterliegt einigen Beschränkungen. Ausführlichere Informationen dazu stehen in der HTML-Dokumentation.
+.SH OPTIONEN
+Für ps2pdf gelten die gleichen Optionen wie für gs(1).
+.SH SIEHE AUCH
+gs(1), ps2pdfwr(1),
+.br
+Ps2pdf.htm in der Ghostscript-Dokumentation
+.SH VERSION
+Dieses Dokument wurde zuletzt für Ghostscript Version 8.64 durchgesehen.
+.SH AUTOR
+Artifex Software, Inc. sind die
+Hauptautoren von Ghostscript.
+Diese Manpage ist von George Ferguson.

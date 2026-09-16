@@ -1,0 +1,253 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% pdf2dsc.ps
+% read pdf file and produce DSC "index" file.
+%
+% Input  file is named PDFname
+% Output file is named DSCname
+%
+% Run using:
+%  gs -dNODISPLAY -sPDFname=pdffilename -sDSCname=tempfilename pdf2dsc.ps
+% Then display the PDF file with
+%  gs tempfilename
+%
+% Modified by Jason McCarty, bug 688071
+%       Add PageLabels support.
+% Modified by Geoff Keating <geoffk@ozemail.com.au> 21/12/98:
+%	Add DocumentMedia, PageMedia comments
+%	Use inherited BoundingBox and Orientation
+%	Reformat, add new macro 'puts', generally clean up
+% Modified by Johannes Plass <plass@dipmza.physik.uni-mainz.de> 1996-11-05:
+%	Adds BoundingBox and Orientation if available.
+% Modified by rjl/lpd 9/19/96
+%	Updates for compatibility with modified pdf_*.ps code for handling
+%	  page ranges (i.e., partial files) better.
+% Modified by Geoff Keating <Geoff.Keating@anu.edu.au> 7/3/96:
+%	include Title and CreationDate DSC comments (these are displayed by
+%	  Ghostview);
+%	reduce the size of typical output files by a factor of about 3.
+% Modified by L. Peter Deutsch 3/18/96:
+%	Removes unnecessary and error-prone code duplicated from pdf_main.ps
+% Modified by L. Peter Deutsch for GS 3.33
+% Originally by Russell Lang  1995-04-26
+
+/PDFfile PDFname (r) file def
+/DSCfile DSCname (w) file def
+systemdict /.setsafe known { .setsafe } if
+
+/puts { DSCfile exch writestring } bind def
+/DSCstring 255 string def
+/MediaTypes 10 dict def
+
+   GS_PDF_ProcSet begin
+   pdfdict begin
+   PDFfile
+   pdfopen begin
+   /FirstPage where { pop } { /FirstPage 1 def } ifelse
+   /LastPage where { pop } { /LastPage pdfpagecount def } ifelse
+
+% scan through for media sizes, keep them in the dictionary
+   FirstPage 1 LastPage {
+      pdfgetpage /MediaBox pget pop   % MediaBox is a required attribute
+      aload pop
+      3 -1 roll sub 3 1 roll exch sub exch
+      2 array astore
+      aload 3 1 roll 10 string cvs exch 10 string cvs
+      (x) 3 -1 roll concatstrings concatstrings cvn
+      MediaTypes 3 1 roll exch put
+   } for
+
+% write header and prolog
+   (%!PS-Adobe-3.0\n) puts
+   Trailer /Info knownoget
+    {
+      dup /Title knownoget
+       {
+         (%%Title: ) puts
+         DSCfile exch write==
+       }
+      if
+      /CreationDate knownoget
+       {
+         (%%CreationDate: ) puts
+         DSCfile exch write==
+       }
+      if
+    }
+   if
+   % This is really supposed to be sorted by frequency of usage...
+   (%%DocumentMedia: )
+   MediaTypes {
+      exch pop
+      1 index puts
+      (y) puts dup 1 get DSCstring cvs puts
+      (x) puts dup 0 get DSCstring cvs puts
+      ( ) puts dup 0 get DSCstring cvs puts
+      ( ) puts 1 get DSCstring cvs puts
+      ( 70 white ()\n) puts
+      pop (%%+ )
+   } forall
+   pop
+
+   (%%Pages: ) puts
+   LastPage FirstPage sub 1 add DSCstring cvs puts
+   (\n%%EndComments\n) puts
+   (%%BeginProlog\n) puts
+   (/Page null def\n/Page# 0 def\n/PDFSave null def\n) puts
+   (/DSCPageCount 0 def\n) puts
+   (/DoPDFPage {dup /Page# exch store pdfgetpage pdfshowpage } def\n) puts
+   (GS_PDF_ProcSet begin\npdfdict begin\n) puts
+   (%%EndProlog\n) puts
+   (%%BeginSetup\n) puts
+   DSCfile PDFname write==only
+   ( \(r\) file { DELAYSAFER { .setsafe } if } stopped pop\n) puts
+   ( pdfopen begin\n) puts
+   ( process_trailer_attrs\n) puts
+   (%%EndSetup\n) puts
+
+   /.hasPageLabels false def % see "Page Labels" in the PDF Reference
+   Trailer /Root knownoget {
+     /PageLabels knownoget {
+       /PageLabels exch def
+       /.pageCounter 1 def
+       /.pageCounterType /D def
+       /.pagePrefix () def
+
+       % (TEXT)  .ToLower  (text)  -- convert text to lowercase -- only letters!
+       /.ToLower {
+         dup length 1 sub  -1 0 {
+           1 index exch 2 copy get 2#00100000 or put
+         } for
+       } def
+
+       % int  .CvAlpha  (int in alphabetic base 26)  -- convert a positive
+       % integer to base 26 in capital letters, with 1=A; i.e. A..Z, AA..AZ, ...
+       /.CvAlpha { % using cvrs seems futile since this isn't zero-based ...
+         [ exch % construct an array of ASCII values, in reverse
+         { % the remainder stays on the top of stack
+           dup 0 eq { pop exit } if % quit if the value is zero
+           dup 26 mod dup 0 eq { 26 add } if % so that the division is correct
+           dup 64 add 3 1 roll sub 26 idiv % save the ASCII value and iterate
+         } loop ]
+         dup length dup string 3 1 roll
+         dup -1 1 { % put the letters in a string
+           4 copy sub exch 4 -1 roll 1 sub get put
+         } for pop pop
+       } def
+
+       % int  .CvRoman  (int in capital Roman numerals)
+       % convert a positive integer to capital Roman numerals
+       % return a decimal string if >= 4000
+       /.CvRoman {
+         dup DSCstring cvs % start with the decimal representation
+         exch 4000 lt { % convert only if Roman numerals can represent this
+           dup length
+           [ [ () (I) (II) (III) (IV) (V) (VI) (VII) (VIII) (IX) ]
+             [ () (X) (XX) (XXX) (XL) (L) (LX) (LXX) (LXXX) (XC) ]
+             [ () (C) (CC) (CCC) (CD) (D) (DC) (DCC) (DCCC) (CM) ]
+             [ () (M) (MM) (MMM) ] ] % Roman equivalents
+           () % append the Roman equivalent of each decimal digit to this string
+           2 index  -1 1 {
+             2 index 1 index 1 sub get
+             5 index 5 index 4 -1 roll sub get
+             48 sub get concatstrings
+           } for
+           4 1 roll pop pop pop
+         } if
+       } def
+
+       /PageToString <<
+         /D { DSCstring cvs }
+         /R { .CvRoman }
+         /r { .CvRoman .ToLower }
+         /A { .CvAlpha }
+         /a { .CvAlpha .ToLower }
+       >> def
+       /.hasPageLabels true def
+     } if
+   } if
+
+   % process each page
+   FirstPage 1 LastPage {
+       (%%Page: ) puts
+
+       .hasPageLabels {
+         dup 1 sub PageLabels exch numoget dup null ne {
+           % page labels changed at this page, reset the values
+           dup /S known { dup /S get } { null } ifelse
+           /.pageCounterType exch def
+
+           dup /P known { dup /P get } { () } ifelse
+           /.pagePrefix exch def
+
+           dup /St known { /St get } { pop 1 } ifelse
+           /.pageCounter exch def
+         } { pop } ifelse
+
+         % output the page label
+         (\() .pagePrefix
+         .pageCounterType //null ne dup {
+           PageToString .pageCounterType known and
+         } if { % format the page number
+           .pageCounter dup 0 gt { % don't try to format nonpositive numbers
+             PageToString .pageCounterType get exec
+           } {
+             DSCstring cvs
+          } ifelse
+         } { () } ifelse
+         (\)) concatstrings concatstrings concatstrings puts
+
+         /.pageCounter .pageCounter 1 add def
+       } {
+         dup DSCstring cvs puts
+       } ifelse
+       ( ) puts
+       dup DSCstring cvs puts
+       (\n) puts
+
+       dup pdfgetpage
+       dup /MediaBox pget pop
+         (%%PageMedia: y) puts
+         aload pop 3 -1 roll sub DSCstring cvs puts
+         (x) puts exch sub DSCstring cvs puts
+         (\n) puts
+       dup /CropBox pget {
+         (%%PageBoundingBox: ) puts
+         {DSCfile exch write=only ( ) puts} forall
+         (\n) puts
+       } if
+       /Rotate pget {
+         (%%PageOrientation: ) puts
+         90 div cvi 4 mod dup 0 lt {4 add} if
+         [(Portrait) (Landscape) (UpsideDown) (Seascape)] exch get puts
+         (\n) puts
+       } if
+
+       DSCfile exch DSCstring cvs writestring
+       ( DoPDFPage\n) puts
+    } for
+   currentdict pdfclose
+   end
+   end
+   end
+% write trailer
+(%%Trailer\n) puts
+(currentdict pdfclose\nend\nend\nend\n) puts
+(%%EOF\n) puts
+% close output file and exit
+DSCfile closefile
+quit
+% end of pdf2dsc.ps

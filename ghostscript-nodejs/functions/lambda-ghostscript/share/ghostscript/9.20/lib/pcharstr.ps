@@ -1,0 +1,125 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% pcharstr.ps
+% Print the CharStrings and Subrs (if present) from a Type 1 font,
+% in either a PostScript-like or a C-compatible form,
+% depending on whether CSFormat is defined as /PS or /C.
+
+% Load the Type 1 utilities.
+(type1ops.ps) runlibfile
+
+% Define the printing procedures for PostScript-like output.
+/pcs_ps_dict mark
+  /, {( ) print}
+  /charname {==only}
+  /csbegin {}
+  /beginchars {(%---------------- CharStrings\n) print}
+  /charbegin {==only}
+  /char1 {( ) print ==only}
+  /endchars {}
+  /beginsubrs {(%---------------- Subrs\n) print}
+  /subrbegin {=only}
+  /endsubrs {}
+  /beginboxes {(%---------------- Encoding & metrics\n) print}
+  /notdefbox {}
+  /boxbegin {=only ( ) print}
+  /boxend {(\n) print}
+  /endboxes {(%----------------\n) print}
+.dicttomark readonly def
+
+% Define the printing procedures for C-like output.
+/pcs_c_dict mark
+  /, {(, ) print}
+  /charname {(") print =only (") print}
+  /csbegin {counttomark =only ,}
+  /beginchars {(\nconstdata int CSCharData[] = {\n) print}
+  /charbegin {pop}
+  /char1 {=only ,}
+  /endchars {
+    (-1\n};\nconstdata char *CSCharNames[] = {\n) print
+    CharStrings {pop charname ,} forall (0\n};\n) print
+  }
+  /beginsubrs {(\nconstdata int CSSubrs[] = {\n) print}
+  /subrbegin {pop}
+  /endsubrs {(-1\n};\n) print}
+  /beginboxes {(\nconstdata type1_box CSboxes[] = {\n) print}
+  /notdefbox {(  {""},\n) print}
+  /boxbegin {pop (  {) print}
+  /boxend {(},) =}
+  /endboxes {(  {0}\n};\n) print}
+.dicttomark readonly def
+
+/printcs
+ { dup type /stringtype eq
+    { printcs1 (\n) print }
+    { ( ) print == }
+   ifelse
+ } bind def
+/printcs1
+ { save exch
+   lenIV 0 ge {
+     4330 exch dup length string .type1decrypt exch pop
+     dup length lenIV sub lenIV exch getinterval
+   } if
+   0 () /SubFileDecode filter
+   mark exch charstack_read csbegin
+   counttomark 1 sub -1 0 { index char1 } for
+   cleartomark restore
+ } bind def
+
+/printfont
+ { pcs_ps_dict
+   /CSFormat where { pop CSFormat /C eq { pop pcs_c_dict } if } if
+   begin
+   currentfont begin Private begin 10 dict begin
+
+        % Print the CharStrings and Subrs
+
+   beginchars
+   CharStrings { exch charbegin printcs } forall
+   endchars
+   /Subrs where
+    { pop	% the dictionary
+      beginsubrs
+      0 1 Subrs length 1 sub
+       { dup subrbegin
+         Subrs exch get printcs
+       } for
+      endsubrs
+    } if
+
+        % Print the bounding boxes
+
+   gsave nulldevice FontMatrix matrix invertmatrix concat
+   beginboxes
+   0 1 Encoding length 1 sub
+    { dup Encoding exch get dup /.notdef eq
+       { pop pop notdefbox
+       }
+       { 1 index boxbegin charname ,
+         ( ) dup 0 4 -1 roll put
+         newpath 0 0 moveto false charpath
+         pathbbox ({) print 4 -1 roll =only ,
+         3 -1 roll =only , exch =only , =only (}) print
+         boxend
+       }
+      ifelse
+    } for
+   endboxes
+   grestore
+
+   end end end end
+ } bind def

@@ -1,0 +1,129 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% markhint.ps
+% Draw the hints for a Type 1 font.
+
+(type1ops.ps) runlibfile
+
+/mhsetup		% <matrix> <print> mhsetup -
+ { /mhprint exch def
+   /mhmx exch def
+   /mhdash 0 9 gsave initmatrix dtransform grestore idtransform add abs def
+   gsave
+   clippath pathbbox
+   2 index sub /bbh exch def
+   2 index sub /bbw exch def
+   /bby exch def
+   /bbx exch def
+   grestore
+ } def
+
+/markfonthints		% <matrix> <print> markfonthints -
+ { mhsetup
+ } def
+
+/hmark			% <y> hmark -
+ { bbx exch moveto bbw 0 rlineto stroke
+ } def
+/hsmark			% <y0> <dy> hsmark -
+ { 1 index add exch gsave
+   [mhdash] 0 setdash 0 exch mhmx transform exch pop hmark
+   [mhdash 2 div dup 2 mul] 0 setdash 0 exch mhmx transform exch pop hmark
+   grestore
+ } def
+/vmark			% <x> vmark -
+ { bby moveto 0 bbh rlineto stroke
+ } def
+/vsmark			% <x0> <dx> vsmark -
+ { 1 index add exch gsave
+   [mhdash] mhdash setdash 0 mhmx transform pop vmark
+   [mhdash 2 div dup 2 mul] 0 setdash 0 mhmx transform pop vmark
+   grestore
+ } def
+/pmark			% <x> <y> pmark -
+ { newpath 0 4.5 gsave initmatrix dtransform grestore idtransform add abs
+   0 360 arc stroke
+ } def
+/mchdict mark
+  /hsbw { pop 0 mhmx transform translate 0 0 pmark }
+  /sbw { pop pop mhmx transform translate 0 0 pmark }
+  /hstem
+   { mhprint { (hstem ) print 2 copy 2 packedarray == } if
+     hsmark
+   }
+  /vstem
+   { mhprint { (vstem ) print 2 copy 2 packedarray == } if
+     vsmark
+   }
+  /hstem3
+   { mhprint { (hstem3 ) print 6 copy 6 packedarray == } if
+     3 { hsmark } repeat
+   }
+  /vstem3
+   { mhprint { (vstem3 ) print 6 copy 6 packedarray == } if
+     3 { vsmark } repeat
+   }
+  /div
+   { div
+   }
+  /callothersubr
+   { 3 eq
+      { pop
+        mhprint { (replace) = } if
+                % We're replacing hints; lighten the color.
+        currentrgbcolor 3 { 2 mul 3 div 3 1 roll } repeat setrgbcolor
+      }
+      { { pop } repeat
+      } ifelse
+   }
+  /callsubr
+   { Private /Subrs get exch get mchinterp
+   }
+  /pop
+   {
+   }
+  /return
+   {
+   }
+.dicttomark def
+
+/mchinterp		% <charstring> mchinterp -
+ { 4330 exch dup length string .type1decrypt exch pop
+   dup length lenIV sub lenIV exch getinterval
+   0 () /SubFileDecode filter
+   mark exch charstack_read ]
+    { dup type /nametype eq
+       { mchdict exch .knownget { exec } { cleartomark mark } ifelse
+       }
+      if
+    }
+   forall
+ } def
+
+/markcharhints		% <charname> <matrix> <print> markcharhints -
+ { mhsetup
+   gsave mark
+   /Private currentfont /Private get def
+   Private rcheck	% make sure we won't get an access error
+    { /lenIV Private /lenIV .knownget not { 4 } if def
+      currentfont /CharStrings get 3 -1 roll get mchinterp
+    }
+    { (Sorry, this font is protected; I can't show the hints.\n) print flush
+      exch
+    }
+   ifelse
+   cleartomark grestore
+ } def

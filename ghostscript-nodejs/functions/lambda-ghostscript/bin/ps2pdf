@@ -1,0 +1,12 @@
+#!/bin/sh
+# Convert PostScript to PDF.
+
+# Currently, we produce PDF 1.4 by default, but this is not guaranteed
+# not to change in the future.
+version=14
+
+ps2pdf="`dirname \"$0\"`/ps2pdf$version"
+if test ! -x "$ps2pdf"; then
+	ps2pdf="ps2pdf$version"
+fi
+exec "$ps2pdf" "$@"

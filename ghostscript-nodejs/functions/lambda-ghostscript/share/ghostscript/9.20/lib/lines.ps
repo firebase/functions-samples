@@ -1,0 +1,164 @@
+%!
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Test line rendering (stroke).
+
+% Exercise the miter limit.  The left column of lines should bevel at
+% 90 degrees, the right column at 60 degrees.
+
+gsave
+1.8 setlinewidth
+0 setgray
+15 15 scale
+-5 5 translate
+[1.415 2.0]
+ { setmiterlimit 12 0 translate 0 0 moveto
+   10 30 360
+    { gsave 5 0 rlineto rotate 2.5 0 rlineto
+      gsave 0 setlinewidth 1 0 0 setrgbcolor stroke grestore
+      strokepath 0 setlinewidth stroke
+      grestore
+      0 4 rmoveto
+    } for
+ } forall
+
+showpage
+grestore
+
+% Exercise all the combinations of cap and join styles
+% for one-line, two-line, and closed paths.
+
+gsave
+
+/drawlines {
+gsave
+2.0 setmiterlimit
+2.0 setlinewidth
+6 6 scale
+5 20 translate
+{0 1 2}				% line cap
+ { setlinecap gsave
+   {0 1 2}			% line join
+    { setlinejoin gsave
+      { {currentpoint lineto}
+        {3 7 lineto}
+        {3 7 lineto 5 1 lineto}
+        {3 7 lineto 6 3 lineto closepath}
+      }
+       { gsave 0 0 moveto exec
+         gsave stroke grestore
+         0.5 setlinewidth 1 0 0 setrgbcolor stroke
+         grestore 8 0 translate
+       } forall
+      grestore 35 0 translate
+    } forall
+   grestore 0 20 translate
+ } forall
+grestore
+} def
+/xflip
+ { 8.5 72 mul 0 translate -1 1 scale
+ } def
+/rot90
+ { 90 rotate 0 -9.75 72 mul translate
+ } def
+/rot180
+ { rot90 rot90
+ } def
+/rot270
+ { rot180 rot90
+ } def
+
+drawlines showpage
+gsave xflip drawlines grestore showpage
+gsave rot90 drawlines grestore showpage
+gsave rot90 xflip drawlines grestore showpage
+gsave drawlines rot180 showpage
+gsave rot180 xflip drawlines grestore showpage
+gsave rot270 drawlines grestore showpage
+gsave rot270 xflip drawlines grestore showpage
+grestore
+
+% Here are some boundary conditions, contributed by Mark Rawling.
+
+gsave
+1 setlinecap
+2.6 setmiterlimit
+3.0 setlinewidth
+
+5 5 scale
+10 20 translate
+
+% [ 0.5 sqrt dup dup dup neg exch 0 0 ] concat	% 45 rotate
+
+{0 1 2}                        % line join
+{
+    setlinejoin gsave
+    0 0 moveto 0 10 lineto 10 0 lineto gsave stroke grestore
+    15 0 translate
+    0 0 moveto 0 10 lineto 10 20 lineto gsave stroke grestore
+    15 0 translate
+    10 0 moveto 10 10 lineto 0 20 lineto gsave stroke grestore
+    15 0 translate
+    10 0 moveto 10 10 lineto 0 0 lineto gsave stroke grestore
+    grestore
+    gsave
+    0 20 translate
+    0 20 moveto 0 10 lineto 10 20 lineto gsave stroke grestore
+    15 0 translate
+    0 20 moveto 0 10 lineto 10 0 lineto gsave stroke grestore
+    15 0 translate
+    10 20 moveto 10 10 lineto 0 0 lineto gsave stroke grestore
+    15 0 translate
+    10 20 moveto 10 10 lineto 0 20 lineto gsave stroke grestore
+    grestore 60 0 translate
+} forall
+
+showpage
+grestore
+
+% Test narrow lines at a variety of angles.
+
+gsave
+
+/rad 120 def
+/ray { gsave rotate 0 0 moveto rad 0 rlineto stroke grestore } def
+/star
+ { newpath gsave
+   gsave 0.5 setgray 0 0 rad 0 360 arc stroke grestore
+   0 90 359
+    { rotate
+      0 3 14 { ray } for
+      15 15 89 { ray } for
+    } for
+   grestore
+ } def
+
+0 setgray
+150 150 translate
+[ [ 0 0.5 1 ] [ 1.5 2 2.5 ] [ 3 3.5 4 ] ]
+ { gsave
+    { setlinewidth star
+      250 0 translate
+    } forall
+   grestore 0 250 translate
+ } forall
+
+grestore showpage
+
+% End
+
+quit

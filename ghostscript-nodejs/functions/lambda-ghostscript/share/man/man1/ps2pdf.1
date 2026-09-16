@@ -1,0 +1,96 @@
+.TH PS2PDF 1 "26 September 2016" 9.20 Ghostscript \" -*- nroff -*-
+.SH NAME
+ps2pdf \- Convert PostScript to PDF using ghostscript
+.br
+ps2pdf12 \- Convert PostScript to PDF\ 1.2 (Acrobat\ 3-and-later compatible) using ghostscript
+.br
+ps2pdf13 \- Convert PostScript to PDF\ 1.3 (Acrobat\ 4-and-later compatible) using ghostscript
+.br
+ps2pdf14 \- Convert PostScript to PDF\ 1.4 (Acrobat\ 5-and-later compatible) using ghostscript
+.SH SYNOPSIS
+\fBps2pdf\fR  [options...] {input.[e]ps|-} [output.pdf|-]
+.br
+\fBps2pdf12\fR  [options...] {input.[e]ps|-} [output.pdf|-]
+.br
+\fBps2pdf13\fR  [options...] {input.[e]ps|-} [output.pdf|-]
+.br
+\fBps2pdf14\fR  [options...] {input.[e]ps|-} [output.pdf|-]
+.SH DESCRIPTION
+The
+.B ps2pdf
+scripts are work-alikes for nearly all the functionality (but not the
+user interface) of Adobe's Acrobat(TM) Distiller(TM) product: they
+convert PostScript files to Portable Document Format (PDF) files. 
+.PP
+If the output filename is not specified, the output is placed in a file
+of the same name with a '.pdf' extension in the current working
+directory. Either the input filename or the output filename can be '-'
+to request reading from stdin or writing to stdout, respectively,
+when used as a filter.
+.PP
+The three scripts differ as follows:
+.IP -
+.B ps2pdf12
+will always produce PDF 1.2 output (Acrobat 3-and-later compatible).
+.IP -
+.B ps2pdf13
+will always produce PDF 1.3 output (Acrobat 4-and-later compatible).
+.IP -
+.B ps2pdf14
+will always produce PDF 1.4 output (Acrobat 5-and-later compatible).
+.IP -
+.B ps2pdf
+per se currently produces PDF 1.4 output.
+However, this may change in the future. If you care about
+the compatibility level of the output, use
+.BR ps2pdf12 ,
+.B ps2pdf13
+or
+.BR ps2pdf14 ,
+or use the
+.B \-dCompatibilityLevel=1.x
+switch in the command line.
+.PP
+There are some limitations in
+.BR ps2pdf 's
+conversion. See the HTML documentation for more information. A large 
+number of Adobe Distiller(TM) parameters which can be used to control
+the conversion are also documented there, including instructions for 
+generating PDF/X and PDF/A documents.
+.SH OPTIONS
+The
+.B ps2pdf
+scripts use the same options as gs(1).
+.SH EXAMPLES
+.LP
+Converting a figure.ps to figure.pdf:
+.IP
+.B ps2pdf
+.I figure.ps
+.LP
+A conversion with more specifics:
+.IP
+.B ps2pdf
+-dPDFSETTINGS=/prepress 
+.I figure.ps proof.pdf
+.LP
+Converting as part of a pipe:
+.IP
+.B make_report.pl 
+-t ps |
+.B ps2pdf
+-dCompatibilityLevel=1.3 - - |
+.B lpr
+.SH SEE ALSO
+gs(1), ps2pdfwr(1),
+.br
+Ps2pdf.htm in the Ghostscript documentation
+.SH BUGS
+See http://bugs.ghostscript.com/ and the Usenet news group
+comp.lang.postscript.
+.SH VERSION
+This document was last revised for Ghostscript version 9.20.
+.SH AUTHOR
+Artifex Software, Inc. are the
+primary maintainers of Ghostscript.
+This manpage by George Ferguson.

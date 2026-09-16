@@ -1,0 +1,66 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% Disable all access checks.  This is useful for printing out
+% eexec-encrypted Type 1 fonts, and similar purposes.
+
+systemdict wcheck
+ { /protdict systemdict def
+ }
+ { (Please restart Ghostscript with the -dWRITESYSTEMDICT switch.\n) print
+   (Some access checks will remain active if you do not do this.\n) print
+   flush
+   /protdict userdict def
+ }
+ifelse
+
+% The procedures we're about to define will go in systemdict,
+% so they must be allocated in global VM.
+
+.currentglobal true .setglobal
+
+protdict begin
+   /readonly. /readonly load def
+   /executeonly. /executeonly load def
+   /noaccess. /noaccess load def
+   /readonly { } odef
+   /readonly.. /readonly load def
+   /executeonly { } odef
+   /executeonly.. /executeonly load def
+   /noaccess { } odef
+   /noaccess.. /noaccess load def
+end
+
+% Disable the access checks.
+
+/unprot
+ { protdict begin
+   /readonly /readonly.. load def
+   /executeonly /executeonly.. load def
+   /noaccess /noaccess.. load def
+   end
+ } bind def
+
+% Re-enable the access checks.
+
+/reprot
+ { protdict begin
+   /readonly /readonly. load def
+   /executeonly /executeonly. load def
+   /noaccess /noaccess. load def
+   end
+ } bind def
+
+.setglobal

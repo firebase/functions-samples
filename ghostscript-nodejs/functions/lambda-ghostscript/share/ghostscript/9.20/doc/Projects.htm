@@ -1,0 +1,642 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Ghostscript projects</title>
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Ghostscript projects seeking developers</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<ul>
+<li><a href="#Driver_architecture">Driver architecture</a>
+<li><a href="#Specific_drivers">Specific drivers</a>
+<li><a href="#Graphics_functionality">Graphics functionality</a>
+<li><a href="#Performance">Performance</a>
+<li><a href="#Other_functionality">Other functionality</a>
+<li><a href="#Other_implementation">Implementation improvements</a>
+</ul>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<p>
+There are many projects that would improve Ghostscript and that we would
+like to do, but for which we don't have enough resources.  If you would like
+to take responsibility for any of these projects, please <a
+href="mailto:info@artifex.com">contact us</a>.  Additional comments on
+implementation approaches or project goals are in <I>italic type like
+this</I>.
+
+<h3>Windows driver using Ghostscript as a language monitor.</h3>
+
+<p>
+MS Windows has a "language monitor" capability which would allow Ghostscript
+to be invoked seamlessly to process input files in any language Ghostscript
+handles and for any printer for which Ghostscript has a driver. Doing 
+this properly would require integrating Ghostscript with Windows' "Add 
+Printer" dialog, using an appropriate PPD.
+
+<p>
+<I>Russell Lang's RedMon program provides
+some, but not all, of this capability.</I>
+See also <code>lib/ghostpdf.ppd</code>.
+
+<h3>Netscape browser plug-in.</h3>
+
+<p>
+Currently, Ghostscript can work as a "helper application" for the Netscape
+browser, but not as a plug-in; the latter would integrate it more closely
+with the browser.  We aren't sure what doing this would involve; we've also
+heard by rumor that it's already been done.
+
+<h3>Ghostscript as an Active-X COM Object.</h3>
+
+<p>
+In order to integrate Ghostscript into XMetaL and other applications it
+would be convenient for Ghostscript to be distributed as a COM object
+along with the current gswin32.exe, gswin32c.exe and gsdll32.dll files.
+
+<h3>Visual Trace window for X.</h3>
+
+<p>
+Currently Ghostscript implements Visual Trace window for Windows only
+(see <I>wdtrace.c</I>). An implementation for X would be useful. 
+
+<p>
+<hr>
+
+<h2><a name="Driver_architecture"></a>Driver Architecture</h2>
+
+<h3>Improved multi-threaded rendering support.</h3>
+
+<p>
+Currently, drivers can be written so that converting PostScript to a list of
+graphical objects can run in one thread, and rasterizing the objects can run
+in another thread.  However, drivers must be written specially if they are
+going to do this.  We would like to change the architecture so that any
+driver can work this way.  We would also like to support dual-threaded
+operation for drivers that produce high-level output, such as the PDF
+writer.  <I>Doing this would require separating banding from
+the multithreaded logic.  Also, currently each thread has its own allocation
+pool: this is unnecessary in the normal case, since Ghostscript now supports
+properly locked access to the C heap, but embedded systems still need to use
+a fixed-size area for the rasterizing thread.  With a locked, shared
+allocator, the rasterizing thread could use the full set of band list
+functions; with a fixed-size area and a separate allocator, only a subset is
+available, as is the case now for dual-threaded drivers.
+</I>
+
+<h3>Dynamic run-time loadable devices.</h3>
+
+<p>
+Currently, drivers must be linked into the executable.  We would like to be
+able to load drivers dynamically.  Doing this requires defining a
+platform-independent API (presumably extending the current gp_* APIs) that
+would work at least on Linux, vendor Unix, MS Windows, and Macintosh.  Unix
+systems should include Sun, HP, AIX, IRIX, DEC; Linux ELF and a.out formats
+should both be supported.  <I>Consider the Netscape plug-in
+architecture.</I>
+
+<h3>Moving 'setpagedevice' into C.</h3>
+
+<p>
+The PostScript 'setpagedevice' function implements matching of media and
+page size requests to available media, page orientation, and paper handling
+(duplex, etc.)  Currently it is implemented in PostScript code, which means
+it is not available for use with other input languages.  (It is available
+for PDF, which Ghostscript implements on top of PostScript, but not for the
+not-yet-freely-available PCL interpreters that use the Ghostscript library,
+or for possible future SVG or similar interpreters).  We would like to move
+this function into C.  <I>The device driver will be required to
+send page parameters up to PostScript to be stored in a resource.  To be
+included in this project are handling policy implementations in the device
+drivers.  DeferredMediaSelection should also be implemented.</I>
+
+<h3>Adding 'tee' for output to multiple devices.</h3>
+
+<p>
+In a few cases, it would be desirable to provide a 'tee' capability for
+drivers: specifically, for generating small, low-resolution 'thumbnail'
+images concurrently with other output.  <I>Probably the
+simplest way to do this is to generate a band list and then process it
+twice.  This is not completely trivial, since the band list does include
+device resolution information and scaling would be required for some
+constructs.</I>
+
+<h3><code>OutputDevice</code> resource category</h3>
+
+<p>
+Each available output device should provide an instance of the
+<code>OutputDevice</code> resource category, which gives the available
+page sizes, resolutions, media classes, process color models, and other
+information about the device.  <I>This would replace the current
+non-standard use of a 4-element <code>PageSize</code> in the
+<code>InputAttributes</code> entry of the page device dictionary.</I>
+
+<h3>Removing the limit on the length of OutputFile.</h3>
+
+<p>
+Currently, the maximum length of the <code>OutputFile</code> parameter is
+a compile-time constant, <code>gp_file_name_sizeof</code>.  This is
+appropriate for ordinary file names, since this constant is the platform's
+limit on the length of a file name.  However, if <code>OutputFile</code>
+is a pipe, the length should not be limited in this way.  <I>This is
+probably a small project: it requires allocating the file name dynamically,
+and freeing it in the finalization routine that gets called when a driver
+instance is freed.</I>.
+
+<h2><a name="Specific_drivers"></a>Specific drivers</h2>
+
+<h3>PrintGear and PPA output drivers.</h3>
+
+<p>
+We would like to provide (Adobe) PrintGear and (H-P) PPA output drivers for
+Ghostscript, but the specifications for these protocols are not published.
+If you can provide them to us without violating any agreements, please let
+us know.  (Some work has already been done on reverse-engineering these
+protocols, but we don't have references to it.)
+
+<h3>High level graphics and text for PCL 5 and PCL XL drivers.</h3>
+
+<p>
+Currently, the PCL 5 drivers produce only bitmaps; the PCL XL driver
+produces high-level graphics and sometimes high-level images, but low-level
+text.  We would like to improve these drivers to produce higher-level,
+smaller output.  <I>This was a very low-priority project; it has become more
+important now that H-P's laser printers are shipping with less memory.</I>
+
+<h3>Improved high level GDI driver for Windows.</h3>
+
+<p>
+We would like a "GDI driver" for MS Windows that would implement more
+higher-level constructs (specifically for text).  <I> The
+<code>mswin</code> and <code>mswinprn</code> drivers both do some of
+this.  Some of the the 'xfont' support code for MS Windows should be useful.
+We were frustrated in the past because the GDI calls for getting font sizes
+and metrics consistently returned incorrect information and provided no way
+to get the correct information; perhaps this has been fixed in 32-bit
+Windows.  We believe that H-P, Russell Lang, and perhaps others are working
+in this area, but we can always use more help.</I>
+
+<h3>PDF thumbnail generation.</h3>
+
+<p>
+The PDF writer needs to be able to generate thumbnails (small previews).  We
+might do this through the 'tee' capability mentioned above.  However, we
+currently prefer the idea of implementing a completely separate program to
+add thumbnails to an arbitrary, existing PDF file: this would allow
+Ghostscript to add thumbnails to PDF files generated by other programs.
+<I>Much of the code needed to do this has already been written
+for Ghostscript's PDF linearizer: see
+<code>lib/pdfwrite.ps</code>.  A user has implemented this as well,
+using a separate program that calls Ghostscript: see
+<a href="http://www.uni-giessen.de/~g029/eurotex99/oberdiek/">
+http://www.uni-giessen.de/~g029/eurotex99/oberdiek/</a>.
+</I>
+
+<h3>Consolidate inkjet drivers into a single family.</h3>
+
+<p>
+In addition to factoring out the error diffusion code as described below, we
+would like to see another attempt at reducing the enormous volume of code
+for color inkjet drivers.  There are three sets of drivers (gdevcdj.c,
+gdevstc.c, gdevupd.c) with much overlapping functionality.  The latter two
+driver families make good attempts at factoring out things like head
+geometry and canned control strings, but we think this problem deserves
+another pass, especially in the hope of consolidating these drivers into a
+single family.
+
+<h3>Download glyph bitmaps (with glyph decaching notification).</h3>
+
+<p>
+See below under "Notification for glyph decaching."
+
+<h3>Preserve compression when writing PDF images.</h3>
+
+<p>
+Currently, all images are decompressed by the interpreter before being
+passed to the graphics library; the PDF writer may then compress them again.
+Ordinarily, this only slows things down a little, but in the case of
+DCT-encoded images that are being DCT-encoded in the output, image
+degradation may occur.  Ideally, the implementation should be smart enough
+to not decode and re-encode the image.  However, making this work properly
+is difficult.  <I>This would probably involve extending the library APIs for
+images so that they could pass a stream, possibly including filters, instead
+of the (fully decoded) data rows.</I>
+
+<h3>Emit warnings when producing PDF output.</h3>
+
+<p>
+Currently, the PDF writer has no way to emit warnings.  Users would like to
+see warnings when fonts cannot be embedded (this is actually required when
+the value of CannotEmbedFontPolicy is set to /Warning), and for some other
+questionable situations like non-existent Dests (Feature request
+<a href="http://bugs.ghostscript.com/show_bug.cgi?id=480853"
+class="offsite">#480853</a>).
+Probably the right way to handle this is with a pseudo device parameter
+called "Warnings" that is a list of strings: the pdfwrite driver would add
+strings to this list, and the ps2pdf script (lib/gs_pdfwr.ps) would read
+them out, print them, and reset them at the end of each page.
+
+<hr>
+
+<h2><a name="Graphics_functionality"></a>Graphics functionality</h2>
+
+<h3>Support for 64-bit colors on 64-bit platforms.</h3>
+
+<p>
+Currently, the library supports a maximum of 32 bits of data per pixel; we
+would like to raise this limit to 64 bits on systems where the 'long' data
+type is 64 bits wide.  <I>The <code>gx_color_index</code>
+type is already defined as 'long', but there are many places where the type
+<code>bits32</code> is used for pixel values; there is a 32-bit
+stored-image "device", but there is no 64-bit device; a few algorithms and
+tables have knowledge of the 32-bit width built into them, only because the
+C preprocessor doesn't have any kind of loop or repetition
+capability.</I>
+
+<h3>In-RIP trapping.</h3>
+
+<p>
+The PostScript specification includes an option for the interpreter to
+implement trapping (adjustments of object boundaries to prevent visual
+anomalies caused by slight misregistration of different ink layers): we
+would like to implement this.  <I>This is a complex and
+difficult area; even many Adobe RIPs don't do it.</I>
+
+<h3>Improve the font grid fitting and antialiasing.</h3>
+
+<p>
+Ghostscript includes a reduced True Type bytecode interpreter branched from FreeType 1.
+It performs a grid fitting for True Type glyphs except ones involving
+instructions patented by Apple. A wanted improvement is to implement
+a stem recognition algorithm similar to Free Type autohinting.
+It also would help to poorly designed Type 1 fonts, which have misplaced or missed hints. 
+
+<p>
+Another useful improvement is to implement a font antialiasing with 
+<code>TextAlphaBits</code> other than 1,2,4.
+
+<h3>ICC profile support for output.</h3>
+
+<p>
+Ghostscript 7.00 and later supports ICCBased color spaces of PDF
+using the icclib package from
+<a href="http://web.access.net.au/argyll/color.html ">
+http://web.access.net.au/argyll/color.html</a> 
+but there is no facility to use ICC output (printer) profiles that
+may be embedded in the PDF. Also it would be useful for PostScript
+to be able to directly use a specific Intent from ICC profile to
+convert output colors (as CRD's are now used).
+<I>The primary difficulty is that the graphics library and PostScript
+always use CIE XYZ as the connection space, but ICC profiles may
+use CIELAB as the connection space, requiring conversion for use
+with the graphics library. </I>
+
+<h3>Making halftones into "objects" and adding new types.</h3>
+
+<p>
+Currently, knowledge of the specific data formats and algorithms for
+halftoning permeates too many places in the library.  We would like
+halftoning to be more "object oriented" (using virtual procedures) so that
+we could support other halftoning methods such as direct use of threshold
+arrays, or the double-rectangle approach added in newer PostScript versions.
+<I>Threshold arrays take much less space than the current
+representation, generally at the expense of longer rendering time for
+black-and-white images; double-rectangle representation would give us a
+better implementation of AccurateScreens.  We might want store both
+threshold arrays and the current representation.</I>
+
+<h3>Factor out error diffusion routines, integrate ETS.</h3>
+
+<p>
+Currently, several different inkjet drivers implement their own, very
+similar but slightly differing error diffusion methods.  This has caused
+severe code bloat as well as tempting future driver writers to contribute to
+it further.  We want to factor out error diffusion into a common set of
+facilities that drivers can use.  <I>We would like to design
+these facilities so that they can easily interface to the Even-Toned
+Screening algorithms, to the extent that these
+will be Open Source.</I>
+
+<h3>Improve, or generalize, linearization for stochastic threshold
+data.</h3>
+
+<p>
+The Ghostscript distribution includes a stochastic threshold array.  This
+array has some gamma correction built into it, which works well for some
+output devices and not for others.  We would like to provide a version of
+this array without (or with less) gamma correction.  <I>We have
+original data available from which this could be done fairly easily.</I>
+
+<h3>Change sampled functions to use new interpreted functions.</h3>
+
+<p>
+The PostScript language defines many functions relevant to graphics
+rendering as being implemented by arbitrary PostScript procedures: transfer
+(gamma correction), black generation, undercolor removal, several stages of
+CIE color space and rendering, and color mapping for Separation and DeviceN
+spaces.  Since the graphics library can't call PostScript procedures,
+Ghostscript currently samples these procedures at a fixed number of points
+and interpolates linearly between the samples.  As of Ghostscript 6.20, the
+library can interpret a restricted subset of PostScript procedures directly
+(basically those that only use arithmetic and comparisons: no loops,
+sub-procedures, or data structures).  Changing the rendering functions to
+use this approach when possible would greatly improve output quality when
+the functions are very non-linear (which we have actually seen in practice).
+<I>This should only be done if the function is, in fact,
+severely non-linear, since interpreting the function definition will almost
+always be much slower than interpolating in the table.</I>
+
+<h3>Replace PostScript procedures with Function objects.</h3>
+
+<p>
+Currently, there is a lot of tiresome code for doing callbacks with
+continuations for loading the caches that hold sampled values for the
+procedures listed under "Change sampled functions ..." above.  For the
+Separation and DeviceN tint transform functions, and only for these,
+PostScript code associated with the setcolorspace operator actually converts
+the PostScript procedure to a Function object -- to a FunctionType 4
+(PostScript subset) Function if possible, or to a FunctionType 0 (sampled)
+Function if not.  This approach should be used for all the other sampled
+functions.  Doing this would reduce the amount of C code significantly,
+while only increasing PostScript code slightly.
+
+<p>
+This change would require touching (and slightly changing) all PostScript
+operators that currently do such callbacks: for example, rather than a
+setblackgeneration operator that takes a PostScript procedure as its
+operand, we would have a .setblackgeneration operator that takes as operands
+both the PostScript procedure (so that currentblackgeneration can return it)
+*and* a Function derived from it (which will actually be used when loading
+the cache, or for sampling directly if desired).
+
+<p>
+In some cases, this approach has a non-negligible space cost.  If the
+PostScript procedure cannot be represented as a FunctionType 4 Function, it
+must be sampled and represented as a FunctionType 0 Function.  Then the BG /
+UCR / transfer / ... cache will essentially just hold a copy of the Function
+data.  While it is likely that this situation will be rare in practice, it
+might be worth looking into changing the internal representation of these
+caches so that they were the same as the representation of a FunctionType 0
+Function with a particular choice of parameters.  Then the PostScript code
+that called .buildsampledfunction when necessary could arrange the
+parameters to have the same values as the internal representation of the
+cache, and the cache could use the Function data directly.  This is probably
+not worth the trouble.
+
+<h3>Add optional cubic interpolation to RenderTable and other table
+lookup.</h3>
+
+<p>
+Currently, if a CIE rendering dictionary uses a lookup table for the final
+step, Ghostscript always interpolates linearly between the entries.  Cubic
+interpolation should be supported as an option.  A cubic interpolation
+option is also needed for general table-lookup Functions.
+
+<h3>Add better (SVG-like) alpha channel and compositing to library.</h3>
+
+<p>
+Ghostscript has partial support for alpha channel and for alpha and RasterOp
+compositing.  There is some architectural support for general compositing,
+but it postdates the RasterOp implementation, and most of the RasterOp code
+doesn't use it.  We expect that the more extensive compositing and alpha
+capabilities of SVG will find their way into PDF (and probably PostScript as
+well) in the course of 2000 and 2001, and we will need to implement them.
+
+<hr>
+
+<h2><a name="Performance"></a>Performance</h2>
+
+<h3>Change band list logic to defer halftoning until rendering.</h3>
+
+<p>
+Currently, when Ghostscript uses a band list, it does halftoning before
+banding.  It should do halftoning after banding: this produces smaller band
+lists and shifts more work to the rasterizer (which is good because the
+rasterizer can be multi-threaded internally for higher performance on
+multiprocessors: see the next topic.)
+
+<h3>Reduce redundant data for smoothed banded images.</h3>
+
+<p>
+When smoothed ("interpolated") images are written in the band list, extra
+rows must be written above and below each band in order to provide the data
+for interpolation.  Currently, the number of such rows is computed very
+conservatively; instead, the final interpolation algorithm should be
+consulted to provide the correct value.  <i>This is a small task.</i>
+
+<h3>Multi-threaded rasterizing</h3>
+
+<p>
+For high-resolution devices, rasterization dominates execution time.  On
+multiprocessor systems, Ghostscript can do tasks in parallel:
+
+<ul>
+
+<li>Rasterize multiple bands simultaneously;
+
+<li>Rasterize multiple color planes of a single band simultaneously (if a
+planar representation is being used);
+
+<li>For some computation-intensive tasks like smoothing images or filling
+large regions, partition the task (possibly buffering more data to allow
+larger-grain partitioning) and execute several partitions simultaneously.
+
+</ul>
+
+<p>
+We would want these facilities implemented so that no conditional
+compilation was involved: on uniprocessor systems, the locking API would
+simply have a vacuous implementation.
+
+<h3>Notification for glyph decaching.</h3>
+
+<p>
+Currently, drivers can't do a very good job of downloading rendered
+character bitmaps to the device they manage, because they can't find out
+when a bitmap is being deleted from Ghostscript's cache and therefore will
+never be referenced again.  Here is a sketch of how we would add this
+capability to the graphics library:
+
+<ul>
+
+<li>The driver would implement the <code>text_begin</code> call, simply
+to get access to a <code>gs_imager_state</code> that references the
+rendered character cache.  (The driver could always simply call the default
+implementation of <code>text_begin</code>.)
+
+<li>In the <code>text_begin</code> procedure, the driver would call
+
+<blockquote><pre>
+gs_glyph_decache_register(imager_state, notify_proc, proc_data)
+</pre></blockquote>
+
+<p>
+where <code>proc_data</code> was, or pointed to a structure that
+included, a pointer to the driver.
+
+<li><code>gs_glyph_decache_register</code> would use the general
+notification mechanism defined in <code>gsnotify.h</code> to call
+
+<blockquote><pre>
+notify_proc(proc_data, pchar_data)
+</pre></blockquote>
+
+<p>
+whenever a bitmap was removed from the character cache.
+<code>pchar_data</code> would point to some identification of the
+character; perhaps just the bitmap ID, but possibly a
+<code>gx_cached_bits_common</code> or even a <code>cached_char</code>.
+
+<li>The <code>char_cache</code> structure would be need an additional
+member, a <code>gs_notify_list_t</code>.  It would also need to add
+finalization so that when it was freed, it would notify and unregister all
+clients, using <code>gs_notify_all(list, NULL)</code> and then
+<code>gs_notify_release</code>.
+
+</ul>
+
+<p>
+<I>This facility was requested by the Display Ghostscript project, but it
+could also be used to improve the output of the PCL XL driver and possibly
+the X and PCL5 drivers.</I>
+
+<hr>
+
+<h2><a name="Other_functionality"></a>Other functionality</h2>
+
+<h3>OpenStep (Display PostScript + NeXT) extensions to Ghostscript.</h3>
+
+<p>
+There is a project to create a GNU implementation of the OPENStep API, which
+involves extending Ghostscript to provide the full functionality of Adobe's
+Display PostScript system with some of the NeXT extensions.  For more
+information, please contact Net-Community &lt;<a
+href="mailto:scottc@net-community.com">scottc@net-community.com</a>&gt;.
+
+<h3>Job Server implementation.</h3>
+
+<p>
+For full Adobe PostScript compatibility, Ghostscript needs a real "job
+server" to encapsulate the execution of PostScript files. 
+<I>See the section on "Job Execution Environment" in the PostScript
+Language Reference Manual for details.</I>
+
+<h3>SVG (XML Structured Vector Graphics) interpreter.</h3>
+
+<p>
+Ghostscript could be adapted with some work to read SVG.  This would be an
+interesting and challenging project because SVG's graphics model would
+require extending the library (see above).  <I>If SVG turns out to be an
+important standard, it is important that there be a good free implementation
+of it.</I>
+
+<h3><code>%font%</code> and other IODevices.</h3>
+
+<p>
+Currently, the <code>%font%</code> IODevice is not implemented.  We would
+like to see this implemented using a general framework for implementing
+IODevices (%xxxx%) entirely in PostScript, in an "object oriented" manner
+very similiar to the way Resource categories are implemented.  An IODevice
+would be implemented as a dictionary with the following keys, whose values
+would be procedures that implemented the corresponding operation:
+
+<blockquote><pre>
+/File
+/DeleteFile
+/RenameFile
+/Status
+/FileNameForAll
+/GetDevParams
+/PutDevParams
+</pre></blockquote>
+
+<p>
+There would only be global IODevices, no local ones; the dictionary keeping
+track of them would be stored in global VM.
+
+<p>
+<I>This is an obscure feature that matters only because some PostScript code
+uses <code>filenameforall</code> with this IODevice, rather than
+<code>filenameforall</code> with the <code>/Font</code> Resource
+category, to enumerate available fonts.</I>
+
+<h3>Repairing damaged or EOL-converted PDF files.</h3>
+
+<p>
+Adobe Acrobat Reader can scan a PDF file that has had its end-of-lines
+converted by careless users transferring the file across operating systems
+as text rather than binary across, and reconstruct the cross-reference table
+which the PDF interpreter requires.  This only works if the file has no
+binary data in it, which with PDF 1.3 is rarely the case.  However, users
+occasionally receive PDF files that have been damaged in this way, and it
+might be useful to have a program that can repair them.  <I>We think this
+should probably be done as a separate program, possibly in PostScript,
+similar to Ghostscript's PDF linearizer.</I>
+
+<h2><a name="Other_implementation"></a>Implementation improvements</h2>
+
+<h3>Fully re-entrant code.</h3>
+
+<p>
+Currently, neither the PostScript interpreter nor the graphics library is
+fully re-entrant (no writable globals).  Making them fully re-entrant would
+make Ghostscript usable in multi-threaded environments, and more easily
+usable in embedded environments.  Note that this is necessary, but far from
+sufficient, for Ghostscript to allow simultaneous execution of a single
+Ghostscript interpreter instance by multiple threads: that is probably
+permanently out of the question.  <I>Almost all drivers, including all of
+the drivers in devs.mak which are maintained as part of the main Ghostscript
+code, are already fully re-entrant; making the remaining ones re-entrant
+should really be up to the driver author.</I>
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>

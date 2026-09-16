@@ -1,0 +1,65 @@
+%!
+% grayscaled text test, including a trivial user bitmap font
+
+/grayalphsave save def		% prevent left over effects
+
+/inch {72 mul} def
+
+/BuildCharDict 10 dict def
+/$ExampleFont 7 dict def
+$ExampleFont begin
+  /FontType 3 def % user defined font.
+  /FontMatrix [1 0 0 1 0 0] def
+  /FontBBox [0 0 1 1] def
+  /Encoding 256 array def
+  0 1 255 {Encoding exch /.notdef put} for
+  Encoding (a) 0 get /plus put
+  /CharStrings 2 dict def
+  CharStrings /.notdef {} put
+  CharStrings /plus
+    { gsave
+      0 0 moveto
+      32 32 true [32 0 0 -32 0 32]
+    {<0007E000 0007E000 0007E000 0007E000 0007E000 0007E000 0007E000 0007E000
+      0007E000 0007E000 0007E000 0007E000 0007E000 FFFFFFFF FFFFFFFF FFFFFFFF
+      FFFFFFFF FFFFFFFF FFFFFFFF 0007E000 0007E000 0007E000 0007E000 0007E000
+      0007E000 0007E000 0007E000 0007E000 0007E000 0007E000 0007E000 0007E000>
+      } imagemask
+      grestore
+    } put
+  /BuildChar
+    { BuildCharDict begin
+        /char exch def
+        /fontdict exch def
+        /charproc
+          fontdict /Encoding get char get
+          fontdict /CharStrings get
+          exch get def
+        1 0 0 0 1 1 setcachedevice 
+        charproc
+      end
+    } def
+end
+
+/MyFont $ExampleFont definefont pop
+
+      newpath
+        .5 inch 7.5 inch moveto
+        7.5 inch 0 rlineto
+        0 1.5 inch rlineto
+        -7.5 inch 0 rlineto
+      closepath
+      0 setgray
+      fill
+
+      /MyFont findfont 72 scalefont setfont
+      .75 inch 7.75 inch moveto
+      0 1 6
+        { /n exch def
+          1 n 6 div sub setgray
+          (a) show
+        } for
+
+showpage
+clear cleardictstack
+grayalphsave restore

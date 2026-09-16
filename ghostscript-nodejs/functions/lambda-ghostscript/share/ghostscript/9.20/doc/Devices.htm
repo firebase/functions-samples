@@ -1,0 +1,1913 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Details of Ghostscript output devices</title>
+<!-- Originally: devices.txt -->
+<link rel="stylesheet" type="text/css" href="gs.css" title="Ghostscript Style">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Details of Ghostscript output devices</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<h2>Table of contents</h2>
+
+<blockquote><ul>
+<li><a href="#Measurements">Notes on measurements</a>
+<li><a href="#File_formats">Image file formats</a>
+<ul>
+<li><a href="#PNG">PNG file format</a>
+<li><a href="#JFIF">JPEG file format (JFIF)</a>
+<li><a href="#PNM">PNM file format</a>
+<li><a href="#TIFF">TIFF file formats</a>
+<li><a href="#fax">fax file formats</a>
+<li><a href="#BMP">BMP file format</a>
+<li><a href="#PCX">PCX file format</a>
+<li><a href="#PSD">PSD file format (DeviceN color model)</a>
+</ul>
+<li><a href="#High-level">High level formats</a>
+<ul>
+<li><a href="#PDF">PDF file output</a>
+<li><a href="#PS">PostScript file output</a>
+<li><a href="#EPS">EPS file output</a>
+<li><a href="#PXL">PCL-XL file output</a>
+<li><a href="#TXT">Text output</a>
+</ul>
+<li><a href="#Dis	play_devices">Display devices</a>
+<ul>
+<li><a href="#x11_devices">X Window System</a>
+<li><a href="#display_device">display device (MS Windows, OS/2, gtk+)</a>
+</ul>
+<li><a href="#IJS">IJS - Inkjet and other raster devices</a>
+<li><a href="#Rinkj">Rinkj - Resplendent inkjet driver</a>
+<li><a href="#HP_ijs">HP Deskjet official drivers</a>
+<li><a href="#gimp-print">Gimp-Print driver collection</a>
+<li><a href="#Win">MS Windows printers</a>
+<li><a href="#SPARCprinter">Sun SPARCprinter</a>
+<ul>
+<li><a href="#SPARC_install">Installation</a>
+<li><a href="#SPARC_problems">Problems</a>
+</ul>
+<li><a href="#Apple">Apple dot matrix printer</a>
+<li><a href="#Test">Test devices</a>
+<ul>
+<li><a href="#Permute">Permutation (DeviceN color model)</a>
+<li><a href="#SPOT">spotcmyk (DeviceN color model)</a>
+<li><a href="#XCF">XCF (DeviceN color model)</a>
+<li><a href="#bitraw">Raw 'bit' devices</a>
+</ul>
+</ul></blockquote>
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.  You may also be interested in <a href="Make.htm">how to
+build Ghostscript</a> and <a href="Install.htm">install it</a>, as well as
+the description of the <a href="Drivers.htm">driver interface</a>.
+
+<p>Documentation for some older, superceded devices has been moved to
+<a href="Deprecated.htm">another document</a>. In general such devices are deprecated
+and will be removed in future versions of Ghostscript. In general all older printer
+drivers can be replaced by the ijs interface and one of the available 3rd party raster
+driver collections. We recommend moving to the ijs device for all such printing.</p>
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Measurements"></a>Notes on measurements</h2>
+
+<p>
+Several different important kinds of measures appear throughout this
+document: inches, centimeters and millimeters, points, and bits per pixel.
+
+<dl>
+
+<dt>Centimeters and millimeters</dt>
+<dd>ISO standard paper sizes such as A4 and A3 are commonly represented in
+the SI units of centimeters and millimeters.  Centimeters are abbreviated
+<dfn><abbr>cm</abbr></dfn>, millimeters <dfn><abbr>mm</abbr></dfn>.  ISO A4 paper is
+quite close to 210&times;297 millimeters (approximately 8.3&times;11.7
+inches).</dd>
+
+<dt>Inches</dt>
+<dd>1 inch equals 2.54 centimeters.  The inch measure is sometimes
+represented by <dfn><abbr>in</abbr></dfn> or a quotation mark
+(<abbr>&quot;</abbr>) to the right
+of a measure, like 8.5in or 8.5&quot;.
+U.S. "letter" paper is exactly
+8.5in&times;11in, approximately 21.6cm&times;27.9cm.  (See in the usage
+documentation all the <a href="Use.htm#Known_paper_sizes">paper sizes
+predefined in Ghostscript</a>.)</dd>
+
+<dt>Points</dt>
+<dd>Points are a measure traditionally used in the printing trade and now
+in PostScript, which specifies exactly 72 points per inch (approximately
+28.35 per centimeter).  The <a href="Use.htm#Known_paper_sizes">paper sizes
+known to Ghostscript</a> are defined in the initialization file
+<tt>gs_statd.ps</tt> in terms of points.</dd>
+
+<dt>Dots per inch</dt>
+<dd>Dots per inch or <dfn><abbr>dpi</abbr></dfn> is the common measure of
+printing resolution in the US.</dd>
+
+<dt>Bits per pixel</dt>
+<dd>Commonly abbreviated <dfn><abbr>bpp</abbr></dfn> this is the number of
+digital bits used to represent the color of each pixel. This is also referred
+to as 'bit depth' or 'pixel depth'.</dd>
+
+</dl>
+
+<hr>
+
+<h2><a name="File_formats"></a>Image file formats</h2>
+
+<p>
+Ghostscript supports output to a variety of image file formats
+and is widely used for rasterizing postscript and pdf files.
+A collection of such formats ('output devices' in Ghostscript terminology)
+are described in this section.
+</p>
+
+<p>
+Here are some commonly useful driver options that apply to all raster drivers.
+Options specific to particular file formats are described in their respective
+sections below.</p>
+
+<blockquote><dl>
+
+<dt>-sOutputFile=<em>filename</em></dt>
+<dd><p>This is a general option telling Ghostscript what to name the output.
+It can either be a single filename '<tt>tiger.png</tt>' or a template
+'<tt>figure-%03d.jpg</tt>' where the <tt>%03d</tt> is replaced by the page number.</p>
+
+
+<dt>-r<em>res</em></dt>
+<dt>-r<em>xres</em>x<em>yres</em></dt>
+<dd><p>This option sets the resolution of the output file in dots per inch.
+The default value if you don't specify this options is usually 72 <abbr>dpi</abbr>.</p></dd>
+
+<dt>-dTextAlphaBits=<em>n</em></dt>
+<dt>-dGraphicsAlphaBits=<em>n</em></dt>
+<dd><p>These options control the use of subsample antialiasing. Their use is highly recommended
+for producing high quality rasterizations of the input files. The size of the subsampling
+box <em>n</em> should be 4 for optimum output, but smaller values can be used for faster
+rendering. Antialiasing is enabled separately for text and graphics content.</p></dd>
+<p>Because this feature relies upon rendering the input it is incompatible, and will generate
+an error on attempted use, with any of the vector output devices.
+
+</dl></blockquote>
+
+<p>
+It is also conventional to call Ghostscript with the '<tt>-dSAFER -dBATCH -dNOPAUSE</tt>' trio
+of options when rasterizing to a file. These suppress interactive prompts and enable some
+security checks on the file to be run. Please see the <a href="Use.htm">Use documentation</a>
+for a complete description.
+</p>
+
+<h3><a name="PNG"></a>PNG file format</h3>
+
+<p><acronym>PNG</acronym> (pronounced 'ping') stands for Portable Network Graphics,
+and is the recommended format for high-quality images. It supports full quality
+color and transparency, offers excellent lossless compression of the image data,
+and is widely supported. Please see the
+<a href="http://www.libpng.org/pub/png/pngintro.html" class="offsite">PNG website</a>
+for a complete description of the format.</p>
+
+<p>Ghostscript provides a variety of devices for <acronym>PNG</acronym> output
+varying by bit depth. For normal use we recommend <tt>png16m</tt> for 24-bit RGB color,
+or <tt>pnggray</tt> for grayscale. The <tt>png256</tt>, <tt>png16</tt> and
+<tt>pngmono</tt> devices respectively provide 8-bit color, 4-bit color and
+black-and-white for special needs. The <tt>pngmonod</tt> device is also a
+black-and-white device, but the output is formed from an internal 8 bit grayscale
+rendering which is then error diffused and converted down to 1bpp.</p>
+
+<p>The <tt>pngalpha</tt> device is 32-bit RGBA color with transparency
+indicating pixel coverage.  The background is transparent unless
+it has been explicitly filled.  PDF 1.4 transparent files do not
+give a transparent background with this device.  Text and graphics
+anti-aliasing are enabled by default.</p>
+
+<h4>Options</h4>
+
+<p>The <tt>pngmonod</tt>, <tt>png16m</tt>, <tt>pnggray</tt> and
+<tt>pngalpha</tt> devices all respond to the following:</p>
+
+<blockquote>
+<dl>
+<dt><code>-dDownScaleFactor=</code><b><em>integer</em></b>
+<dd>This causes the internal rendering to be scaled down by the given (integer <= 8) factor before being output. For example, the following will produce
+a 200dpi output png from a 600dpi internal rendering:
+<blockquote>
+<pre>
+ <kbd>gs -sDEVICE=png16m -r600 -dDownScaleFactor=3 -o tiger.png\
+      examples/tiger.png</kbd>
+</pre>
+</blockquote>
+
+</dl>
+</blockquote>
+
+<p>The <tt>pngmonod</tt> device responds to the following option:</p>
+
+<blockquote>
+<dl>
+<dt><code>-dMinFeatureSize=</code><em>state</em> (0 to 4; default = 1)
+<dd>This option allows a minimum feature size to be set; if any output pixel
+appears on its own, or as part of a group of pixels smaller than
+<tt>MinFeatureSize</tt> x <tt>MinFeatureSize</tt>, it will be expanded to
+ensure that it does. This is useful for output devices that are high
+resolution, but that have trouble rendering isolated pixels.
+
+<dd>While this parameter will accept values from 0 to 4, not all are fully
+implemented. 0 and 1 cause no change to the output (as expected). 2 works
+as specified. Values of 3 and 4 are accepted for compatibility, but
+behave as for 2.
+</dl>
+</blockquote>
+
+<p>The <tt>pngalpha</tt> device responds to the following option:</p>
+
+<blockquote>
+<dl>
+<dt><code>-dBackgroundColor=</code><b><em>16#RRGGBB</em></b> (RGB color, default white = 16#ffffff)
+<dd>For the <tt>pngalpha</tt> device only,
+set the suggested background color in the PNG bKGD chunk.
+When a program reading a PNG file does not support alpha
+transparency, the PNG library converts the image using
+either a background color if supplied by the program
+or the bKGD chunk.
+One common web browser has this problem, so when using
+<code>&lt;body bgcolor="CCCC00"&gt;</code> on a web page
+you would need to use <code>-dBackgroundColor=16#CCCC00</code>
+when creating alpha transparent PNG images for use on the
+page.
+</dl>
+</blockquote>
+
+<h4>Examples</h4>
+
+<p>Examples of how to use Ghostscript to convert postscript to PNG image files:
+
+<blockquote>
+<pre>
+ <kbd>gs -dSAFER -dBATCH -dNOPAUSE -sDEVICE=png16m -dGraphicsAlphaBits=4 \
+      -sOutputFile=tiger.png examples/tiger.png</kbd>
+
+ <kbd>gs -dSAFER -dBATCH -dNOPAUSE -r150 -sDEVICE=pnggray -dTextAlphaBits=4 \
+      -sOutputFile=doc-%02d.png doc.pdf</kbd>
+</pre>
+</blockquote>
+<p></p>
+
+<h3><a name="JFIF"></a>JPEG file format (JFIF)</h3>
+
+<p>
+Ghostscript includes output drivers that can produce jpeg files
+from postscript or pdf images. These are the <tt>jpeg</tt> and
+<tt>jpeggray</tt> devices.
+
+<p>Technically these produce <a href="http://www.ijg.org/">Independent JPEG Group</a>
+JFIF (JPEG File Interchange Format) files, the common sort found on the web.</p>
+
+<p><strong>Please note</strong> that
+JPEG is a compression method specifically intended for continuous-tone
+images such as photographs, not for graphics, and it is therefore quite
+unsuitable for the vast majority of page images produced with PostScript.
+For anything other than pages containing simple images the lossy compression
+of the jpeg format will result in poor quality output regardless of the input.
+To learn more about the distinction, consult a reference about uses and abuses of JPEG,
+such as the JPEG FAQ
+
+<blockquote>
+<a href="http://www.faqs.org/faqs/jpeg-faq/" class="offsite">http://www.faqs.org/faqs/jpeg-faq/</a>
+</blockquote>
+
+<h4>Examples</h4>
+
+<p>
+You can use the JPEG output drivers -- <code>jpeg</code> to produce
+color JPEG files and <code>jpeggray</code> for grayscale JPEGs -- the
+same as other file-format drivers: by specifying the device name and an
+output file name, for example
+
+<blockquote>
+<pre><kbd>gs -sDEVICE=jpeg -sOutputFile=foo.jpg foo.ps</kbd></pre>
+</blockquote>
+
+<h4>Options</h4>
+
+<p>
+The JPEG devices support several special parameters to control the JPEG
+"quality setting" (DCT quantization level).</p>
+
+<blockquote>
+<dl>
+<dt><code>-dJPEGQ=</code><b><em>N</em></b> (integer from 0 to 100, default 75)
+<dd>Set the quality level <b><em>N</em></b> according to the widely used
+IJG quality scale, which balances the extent of compression against the
+fidelity of the image when reconstituted.  Lower values drop more
+information from the image to achieve higher compression, and therefore
+have lower quality when reconstituted.
+
+<dt><code>-dQFactor=</code><b><em>M</em></b> (float from 0.0 to 1.0)
+<dd>Adobe's QFactor quality scale, which you may use in place of
+<code>JPEGQ</code> above.  The QFactor scale is used by PostScript's
+DCTEncode filter but is nearly unheard-of elsewhere.
+</dl>
+</blockquote>
+
+<p>
+At this writing the default JPEG quality level of 75 is equivalent to
+<code>-dQFactor=0.5</code>, but the JPEG default might change in the
+future.  There is currently no support for any additional JPEG
+compression options, such as the other DCTEncode filter parameters.
+</p>
+
+
+<h3><a name="PNM"></a>PNM</h3>
+
+<p>The PNM (portable network map) family of formats are very simple
+uncompressed image formats commonly used on unix-like systems. They
+are particularly useful for testing or as input to an external conversion
+utility.</p>
+
+<p>A wide variety of data formats and depths is supported. Devices include
+<tt>pbm
+   pbmraw pgm pgmraw pgnm pgnmraw pnm pnmraw ppm ppmraw pkm pkmraw pksm
+   pksmraw</tt>.
+</p>
+
+<h3><a name="TIFF"></a>TIFF file formats</h3>
+
+<p><acronym>TIFF</acronym> is a loose collection of formats, now largely
+superceded by <acronym>PNG</acronym> except in applications where backward
+compatibility or special compression is required. The <acronym>TIFF</acronym>
+file format is described in the
+<a href="http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf" class="offsite">TIFF 6.0 Specification</a>
+published by Adobe Systems Incorporated.</p>
+<p>Note that, due to the structure of the TIFF format, writing TIFF output
+requires that the target file be seekable. Writing to stdout, pipes or other
+similar stream is not supported. Attempting to do so will generate an error.
+</p>
+<p>
+There are two unrelated sets of TIFF drivers.  There are five color TIFF
+drivers that produce uncompressed output:
+
+<blockquote>
+<dl>
+<dt><code>tiffgray</code>
+<dd>Produces 8-bit gray output.
+<dt><code>tiff12nc</code>
+<dd>Produces 12-bit RGB output (4 bits per component).
+<dt><code>tiff24nc</code>
+<dd>Produces 24-bit RGB output (8 bits per component).
+<dt><code>tiff48nc</code>
+<dd>Produces 48-bit RGB output (16 bits per component).
+<dt><code>tiff32nc</code>
+<dd>Produces 32-bit CMYK output (8 bits per component).
+<dt><code>tiff64nc</code>
+<dd>Produces 64-bit CMYK output (16 bits per component).
+<a name="tiffsep"></a><dt><code>tiffsep</code>
+<dd>
+The <tt>tiffsep</tt> device creates multiple output files: a single 32 bit
+composite CMYK file and multiple tiffgray files, one for each
+separation.  The default compression is <code>lzw</code> but this
+may be overridden by the <code>-sCompression=</code> option.
+
+<p>
+The file specified via the OutputFile command line parameter will contain
+CMYK data. This data is based upon the CMYK data within the file plus
+an equivalent CMYK color for each spot color. The equivalent
+CMYK color for each spot color is determined using the alternate tint transform
+function specified in the Separation and DeviceN color spaces. Since
+this file is created based upon having color planes for each colorant, the
+file will correctly represent the appearance of overprinting with spot colors.
+
+<p>
+File names for the separations for the CMYK colorants are created by appending
+'.Cyan.tif', '.Magenta.tif' '.Yellow.tif' or '.Black.tif' to the
+end of the file name specified via the OutputFile parameter.
+File names for the spot color separation files are created by appending the
+Spot color name in '(' and ').tif' to the filename.
+
+<p>
+If desired the file names for the spot color separation files can be created
+by appending '.sn.tif'  (where n is the spot color number, see below) to the end
+of the file name specified via the OutputFile parameter.   This change is a
+compile time edit.  To obtain this type
+of output the function create_separation_file_name in gdevtsep.c should be
+called with a true value for its use_sep_name parameter.
+
+<p>
+The <tt>tiffsep</tt> device will automatically recognize spot colors. In this
+case their order is determined by when they are found in the input file.
+The names of spot colors may be specified via the SeparationColorNames
+device parameters.
+
+<p>
+Internally each spot color is assigned a spot color number.  These
+numbers start with 0 for the first spot color.  The spot color
+numbers are assigned in the same order as the names are printed to
+stderr (see below).  This order also matches the ordering in the
+SeparationColorNames list, if this parameter is specified.  The
+spot color numbers are not affected by the SeparationOrder parameter.
+
+<p>
+If only a subset of the colorants for a file is desired, then the separations
+to be output can be selected via the SeparationOrder
+device parameter.  When colorants are selected via the
+SeparationOrder parameter, the composite CMYK output contains
+the equivalent CMYK data only for the selected colorants.
+
+<p>
+NOTE: the composite CMYK output, because it uses the tint transformed
+colour equivalents for any spot colours (see Postscript Language
+Reference "Separation Color Spaces" and "DeviceN Color Spaces"), may
+not produce an accurate preview, if the job uses overprinting.
+
+<p>
+The <tt>tiffsep</tt> device also prints the names of any spot colors
+detected within a document to stderr.  (stderr is also used for the
+output from the bbox device.)  For each spot color, the name of
+the color is printed preceded by '%%SeparationName:  '.  This
+provides a simple mechanism for users and external applications to be informed about
+the names of spot colors within a document.
+
+<p>
+Generally Ghostscript will support a maximum of 64 process and spot
+colors.   The <tt>tiffsep</tt> device and the <tt>psdcmyk</tt> device maintain rendered data
+in a planar form with a maximum of 64 planes set by the definition of
+GS_CLIENT_COLOR_MAX_COMPONENTS in the code.  That is there can be up to
+64 colorants accurately handled with overprint on a single page.  If more
+than 64 colorants are encountered, those beyond 64 will be mapped to CMYK using the
+alternate tint transform.
+
+<p>
+When rendering a PDF document,  Ghostscript can deteremine prior to rendering how
+many colorants occur on a particular page.  With Postscript, this is not possible
+in general.  To optimize for this, when rendering Postscript, it is possible to specify
+at run-time the number of spot colorants you wish to have the device capable
+of handling using the -dMaxSpots=N command option, where N is the number of spot
+colorants that you wish to be able to handle and must be
+less than 60 (60 + 4 CMYK process colorants gets us to a
+maximum of 64 colorants on a page).   If you specify more than
+is needed, the document will render more slowly.   The ideal case is to use
+the same number as the maximum number of spot colorants that occur on a single page
+of the document.  If more spot colorants are encountered than is specified by
+-dMaxSpots, then a warning will be printed indicating that some spot colorants will
+be mapped to CMYK using the alternate tint transform.
+
+<p>The <code>tiffsep</code> device accepts a -dBitsPerComponent=
+option, which may be set to 8 (the default) or 1. In 1bpp mode, the
+device renders each component internally in 8 bits, but then converts
+down to 1bpp with error diffusion before output as described below in
+the <code>tiffscaled</code> device. No composite file is produced in
+1bpp mode, only individual separations.
+
+<p>The device also accepts the -dDownScaleFactor= -dTrapX= -dTrapy= and -sPostRenderProfile=
+parameters as described below in the tiffscaled device, and
+-dMinFeatureSize= in 1bpp mode.
+
+<p>When -dDownScaleFactor= is used in 8 bit mode with the <tt>tiffsep</tt>
+(and <tt>psdcmyk</tt>/<tt>psdrgb</tt>) device(s) 2 additional &quot;special&quot; ratios
+are available, 32 and 34. 32 provides a 3:2 downscale (so from 300 to
+200 dpi, say). 34 produces a 3:4 upscale (so from 300 to 400 dpi, say).
+
+<a name="tiffsep1"></a><dt><code>tiffsep1</code>
+<dd>
+The <tt>tiffsep1</tt> device creates multiple output files, one for each component
+or separation color. The device creates multiple tiffg4 files (the compression
+can be set using -sCompression= described below). The 1 bit per component
+output is halftoned using the current screening set by  'setcolorscreen'
+or 'sethalftone' which allows for ordered dither or stochastic threshold
+array dither to be used. This is faster than error diffusion.
+
+<p>
+The file specified via the OutputFile command line parameter will not be
+created (it is opened, but deleted prior to finishing each page).
+
+<p>
+File names for the separations for the CMYK colorants are created by appending
+'(Cyan).tif', '(Magenta).tif' '(Yellow).tif' or '(Black).tif' to the to the
+end of the file name specified via the OutputFile parameter. File names
+for the spot color separation files are created by appending the Spot color
+name in '(' and ').tif' to the filename.
+If the file name specified via the OutputFile parameter ends with the suffix
+'.tif', then the suffix is removed prior to adding the component name in
+'(' and ').tif'.
+
+<a name="tiffscaled"></a><dt><code>tiffscaled</code>
+<dd>
+The <tt>tiffscaled</tt> device renders internally at the specified resolution to an
+8 bit greyscale image. This is then scaled down by an integer scale factor
+(set by -dDownScaleFactor= described below) and then error diffused to give
+1bpp output. The compression can be set using -sCompression= as described
+below.
+
+<a name="tiffscaled4"></a><dt><code>tiffscaled4</code>
+<dd>
+The <tt>tiffscaled4</tt> device renders internally at the specified resolution to an
+8 bit cmyk image. This is then scaled down by an integer scale factor
+(set by -dDownScaleFactor= described below) and then error diffused to give
+4bpp cmyk output. The compression can be set using -sCompression= as described
+below.
+
+<a name="tiffscaled8"></a><dt><code>tiffscaled8</code>
+<dd>
+The <tt>tiffscaled8</tt> device renders internally at the specified resolution to an
+8 bit greyscale image. This is then scaled down by an integer scale factor
+(set by -dDownScaleFactor= described below). The compression can be set using
+-sCompression= as described below.
+
+<a name="tiffscaled24"></a><dt><code>tiffscaled24</code>
+<dd>
+The <tt>tiffscaled24</tt> device renders internally at the specified resolution to a
+24 bit rgb image. This is then scaled down by an integer scale factor
+(set by -dDownScaleFactor= described below). The compression can be set using
+-sCompression= as described below.
+
+
+<a name="tiffscaled32"></a><dt><code>tiffscaled32</code>
+<dd>
+The <tt>tiffscaled32</tt> device renders internally at the specified resolution to a
+32 bit cmyk image. This is then scaled down by an integer scale factor
+(set by -dDownScaleFactor= described below). The compression can be set using
+-sCompression= as described below.
+
+</dl>
+</blockquote>
+
+<p>
+The remaining TIFF drivers all produce black-and-white output with different
+compression modes:
+
+<blockquote>
+<dl>
+<dt><code>tiffcrle</code>
+<dd>G3 fax encoding with no EOLs
+<dt><code>tiffg3</code>
+<dd>G3 fax encoding with EOLs
+<dt><code>tiffg32d</code>
+<dd>2-D G3 fax encoding
+<dt><code>tiffg4</code>
+<dd>G4 fax encoding
+<dt><code>tifflzw</code>
+<dd>LZW-compatible (tag = 5) compression
+<dt><code>tiffpack</code>
+<dd>PackBits (tag = 32773) compression
+</dl>
+</blockquote>
+
+<p>See the <tt>AdjustWidth</tt> option documentation below for important
+information about these devices.
+
+<h4>Options</h4>
+
+<p>
+All TIFF drivers support creation of files that are comprised of more than a
+single strip.  Multi-strip files reduce the memory requirement on the reader,
+since readers need only store and process one strip at a time.  The
+<code>MaxStripSize</code> parameter controls the strip size:
+
+<blockquote>
+<dl>
+<dt><code>-dMaxStripSize=<em>N</em></code> (non-negative integer; default = 8192)
+<dd>Set the maximum (uncompressed) size of a strip.
+</dl>
+</blockquote>
+
+<p>
+The TIFF 6.0 specification, Section 7, page 27, recommends that the size of
+each strip be about 8 Kbytes.
+
+<p>
+If the value of the <tt>MaxStripSize</tt> parameter is smaller than a
+single image row, then no error will be generated, and the TIFF file will be
+generated correctly using one row per strip.  Note that smaller strip sizes
+increase the size of the file by increasing the size of the StripOffsets and
+StripByteCounts tables, and by reducing the effectiveness of the compression
+which must start over for each strip.
+
+<p>
+If the value of MaxStripSize is 0, then the entire image will be a single strip.
+
+
+<p>
+Since v. 8.51 the logical order of bits within a byte, FillOrder, tag = 266 is
+controlled by a parameter:
+
+<blockquote>
+<dl>
+<dt><code>-dFillOrder=<em>1 | 2 </em></code> (default = 1)
+<dd>If this option set to 2 then pixels are arranged within a byte such that pixels
+with lower column values are stored in the lower-order bits of the byte; otherwise
+pixels are arranged in reverse order.
+</dl></blockquote>
+
+Earlier versions of Ghostscript always generated TIFF files with FillOrder = 2.
+According to the TIFF 6.0 specification, Section 8, page 32, support of
+FillOrder = 2 is not required in a Baseline TIFF compliant reader
+
+<p>
+The writing of BigTIFF format output files is controlled with the
+<code>-dUseBigTIFF</code> parameter.
+<p>
+Unfortunately, due the unpredictable size of compressed output, we cannot
+automate the selection of BigTIFF, using it only when the output file
+grows large enough to warrant it.
+
+<blockquote>
+<dl>
+<dt><code>-dUseBigTIFF(=<em>false/true</em>)</code> (boolean, default: false)
+<dd>Force use (or not) of BigTIFF format in output from TIFF devices
+</dl>
+</blockquote>
+
+<p>
+The writing of the DateTime TAG can be controlled using the
+<code>-dTIFFDateTime</code> parameter.
+
+<blockquote>
+<dl>
+<dt><code>-dTIFFDateTime(=<em>true/false</em>)</code> (boolean, default: true)
+<dd>Write or otherwise the DateTime TAG to the TIFF output file. Thus to disable
+writing the TAG, use: <code>-dTIFFDateTime=false</code>
+</dl>
+</blockquote>
+
+<p>
+The compression scheme that is used for the image data can be set for all tiff
+devices with:
+
+<blockquote>
+    <dl>
+	<dt><code>-sCompression=<em>none | crle | g3 | g4 | lzw | pack</em></code></dt>
+	<dd>Change the compression scheme of the tiff device.
+	<code>crle</code>, <code>g3</code>, and <code>g4</code> may only be
+	used with 1 bit devices (including <code>tiffsep1</code>).</dd>
+    </dl>
+</blockquote>
+
+<p>
+For the <code>tiffsep</code> device, it changes the compression scheme
+of the separation files and composite cmyk file (which is
+<code>lzw</code> by default).  It defaults to <code>g4</code> for the
+<code>tiffsep1</code> device.
+
+<p>
+The black-and-white TIFF devices also provide the following parameters:
+
+<blockquote><dl>
+<dt><code>-dAdjustWidth=<em>state</em></code> (0, 1, or value; default = 1)
+<dd>If this option is 1 then if the requested page width is in the range
+of either 1680..1736 or 2000..2056 columns, set the page width to A4
+(1728 columns) or B4 (2048 columns) respectively. If this option is set
+to a value &gt;1 then the width is unconditionally adjusted to this value.
+
+This behavior is the default for all the fax based devices (i.e. all the black
+and white devices except <tt>tifflzw</tt>, <tt>tiffpack</tt> and
+<tt>tiffscaled</tt>). Pass <tt>-dAdjustWidth=0</tt> to force this behaviour
+off.
+
+<dd>When using this option with <tt>tiffscaled</tt> it is the downsampled size
+that triggers the adjustment.
+
+<dt><code>-dMinFeatureSize=<em>state</em></code> (0 to 4; default = 1)
+<dd>This option allows a minimum feature size to be set; if any output pixel
+appears on its own, or as part of a group of pixels smaller than
+<tt>MinFeatureSize</tt> x <tt>MinFeatureSize</tt>, it will be expanded to
+ensure that it does. This is useful for output devices that are high
+resolution, but that have trouble rendering isolated pixels.
+
+<dd>While this parameter will accept values from 0 to 4, not all are fully
+implemented. 0 and 1 cause no change to the output (as expected). 2 works
+as specified. 3 and 4 currently expand pixels correctly horizontally, but
+only expand vertically to the 2 pixel size.
+
+<dd>The mechanism by which <tt>MinFeatureSize</tt> is implemented for
+<tt>tiffscaled</tt> is different, in that it is done as part of the error
+diffusion. Values of 0 to 2 work as expected, but values 3 and 4 (while
+accepted for compatibility) will behave as for 2.
+
+</dl></blockquote>
+
+<p>
+The <tt>tiffscaled</tt>, <tt>tiffscaled4</tt>, <tt>tiffscaled8</tt>,
+<tt>tiffscaled24</tt> and <tt>tiffscaled32</tt> TIFF
+drivers also provide the following two parameters:
+
+<blockquote><dl>
+<dt><code>-dDownScaleFactor=<em>factor</em></code> (small non-negative integer; default = 1)
+<dd>If this option set then the page is downscaled by the given factor on both
+axes before error diffusion takes place. For example rendering with
+<tt>-r600</tt> and then specifying <tt>-dDownScaleFactor=3</tt> will produce
+a 200dpi image.
+</dl></blockquote>
+
+<blockquote><dl>
+<dt><code>-sPostRenderProfile=<em>path</em></code> (path to an ICC profile)
+<dd>If this option set then the page will be color transformed using that
+profile <b>after</b> downscaling.
+<p>
+This is useful when the file uses overprint to separately paint to some
+subset of the C, M, Y, and K colorants, but the final CMYK is to be color
+corrected for printing or display.
+</dl></blockquote>
+
+<p>
+The <tt>tiffsep</tt> TIFF device also provide this parameter:
+
+<blockquote><dl>
+<dt><code>-dPrintSpotCMYK=<em>boolean</em></code> defaults to false. When set to true
+the device will print (to stdout) the name of each ink used on the page, and the CMYK
+values which are equivalent to 100% of that ink. The values are 16-bits ranging from 0
+to 32760.
+</dl></blockquote>
+
+<a name="TIFF_trapping"></a>
+<p>The <code>tiffsep</code> device (along with the <code>tiffscaled32</code> and
+<code>psdcmyk</code> devices) can perform rudimentary automatic bitmap
+'trapping' on the final rendered bitmap. This code is disabled by default; see
+the <a href="#trapping_patent_note">note</a> below as to why.
+
+<p>Trapping is a process whereby the output is adjusted to minimise the
+visual impact of offsets between each printed plane. Typically this involves
+slightly extending abutting regions that are rendered in different inks. The
+intent of this is to avoid the unsightly gaps that might be otherwise be
+revealed in the final printout if the different color plates do not exactly
+line up.
+
+<p>This trapping is controlled by 3 device parameters. Firstly the maximum
+X and Y offsets are specified using <code>-dTrapX=N</code> and <code>-dTrapY=N</code>
+(where <code>N</code> is a figure in pixels, before the downscaler is applied).
+
+<p>The final control is to inform the trapping process in what order inks
+should be processed, from darkest to lightest. For a typical CMYK device
+this order would be [ 3 1 0 2 ] (K darker than M darker than C darker than Y).
+This is the default. In the case where CMYK + spots are used, the code
+defaults to assuming that the spots are lighter than the standard colours
+and are sent darkest first (thus [ 3 1 0 2 4 5 6 ... ]).
+
+<p>To override these defaults, the <code>TrapOrder</code> parameter can be used, for
+example:
+
+<blockquote><code>
+    gs -sDEVICE=psdcmyk -dTrapX=2 -dTrapY=2 -o out.psd -c "&lt;&lt; /TrapOrder [ 4 5 3 1 0 2 ] &gt;&gt; setpagedevice" -f examples\tiger.eps
+</code></blockquote>
+
+<h4><a name="trapping_patent_note"></a>Trapping patents</h4>
+
+<p>Trapping is an technology area encumbered by many patents. Until
+we can convince ourselves that our trapping code is not covered by
+any of these patents, the functionality is disabled by default.</p>
+
+<p>It can be enabled by building with the <code>ENABLE_TRAPPING</code>
+define, but before you do so you should convince yourself that
+either:</p>
+
+<ul>
+<li>The trapping code is not covered by any existing patent.
+<li>Any patents that do cover the code are invalid in your
+jurisdiction.
+<li>That you have appropriate patent licenses for any patents
+  that do apply.
+</ul>
+
+<p>You bear full responsibility for choosing to build with
+<tt>ENABLE_TRAPPING</tt>.
+
+<h3><a name="fax"></a>FAX</h3>
+
+<p>
+Ghostscript supports a variety of fax encodings, both encapsulated in
+<acronym>TIFF</acronym> (see above) and as raw files. The later case is
+described here.
+</p>
+
+<p>
+The fax devices are <tt>faxg3</tt>, <tt>faxg32d</tt> and <tt>faxg4</tt>.
+</p>
+
+<p>
+The fax devices support the <tt>MinFeatureSize</tt> parameter as defined in
+the TIFF device section.
+</p>
+
+<h3><a name="BMP"></a>BMP</h3>
+
+<p>
+BMP is a simple uncompressed image format commonly used on MS Windows.
+It is supported by the devices <tt>bmpmono bmpgray bmpsep1
+   bmpsep8 bmp16 bmp256 bmp16m bmp32b</tt>.
+</p>
+
+<h3><a name="PCX"></a>PCX</h3>
+
+<p>
+PCX is an image format sometimes used on MS Windows. It has some support
+for image compression and alternate color spaces, and so can be a useful
+way to output CMYK.
+It is supported by the <tt>pcxmono pcxgray pcx16 pcx256 pcx24b pcxcmyk</tt>
+series of devices.
+</p>
+
+<h3><a name="PSD"></a>PSD</h3>
+
+<p>
+PSD is the image format used by Adobe Photoshop.
+It is supported by the <tt>psdcmyk</tt> and <tt>psdrgb</tt> devices.
+Of special interest with the <tt>psdcmyk</tt> device is that it supports spot
+colors.  <a href="#tiffsep">See the comments under the <tt>tiffsep</tt> and <tt>tiffsep1</tt>
+device about the maximum number of spot colors supported by Ghostscript</a>
+<p>
+The <tt>psdcmykog</tt> device produces PSD files with 6 components:
+Cyan, Magenta, Yellow, blacK, Orange, and Green.  This device does not support the -dDownScaleFactor=
+option (see below), instead it always scales down by a factor of two.
+
+<p>
+These devices support the same -dDownScaleFactor= ratios as <tt>tiffsep</tt>.
+The <tt>psdcmyk</tt> device supports the same trapping options as <tt>tiffsep</tt>
+(but see <a href="#trapping_patent_note">this note</a>).
+
+<p>
+NOTE: The PSD format is a single image per file format, so you must use the &quot%d&quot
+format for the &quotOutputFile&quot (or &quot-o&quot) file name parameter (see
+<a href="Use.htm#One_page_per_file">One_page_per_file</a> for details). An attempt
+to output multiple pages to a single PSD file (i.e. without the &quot%d&quot format) will
+result in an <code>ioerror</code> Postscript error.
+<h2><a name="High-level"></a>High-level devices</h2>
+
+<p>
+In addition to raster image files, Ghostscript supports output in a number
+of 'high-level' formats. These allow Ghostscript to preserve (as much as
+possible) the drawing elements of the input file maintaining flexibility,
+resolution independence, and editability.</p>
+
+<h3><a name="PDF"></a>PDF writer</h3>
+
+<p>The <tt>pdfwrite</tt> device outputs PDF.</p>
+
+<h3><a name="PS"></a>PS2 writer</h3>
+
+<p>The <tt>ps2write</tt> device outputs postscript language level 2.
+It is recommnded that this device is used for PostScript output.
+There is no longer any support for creating PostScript level 1 output.</p>
+
+<h3><a name="EPS"></a>EPS writer</h3>
+
+<p>The <tt>eps2write</tt> device outputs encapsulated postscript.</p>
+<h3><a name="PXL"></a>PXL</h3>
+
+<p>The <tt>pxlmono</tt> and <tt>pxlcolor</tt> devices output HP PCL-XL,
+a graphic language understood by many recent laser printers.
+
+
+<h3><a name="TXT"></a>Text output</h3>
+
+<p> The txtwrite device will output the text contained in the original
+document as Unicode.</p>
+
+<p>  Please refer to
+<a href="VectorDevices.htm">VectorDevices.htm</a> for documentation on the
+device options for these devices.
+</p>
+<p>
+
+<hr>
+
+<h2><a name="Display_devices"></a>Display Devices</h2>
+
+<p>
+Ghostscript is often used for screen display of postscript and pdf documents.
+In many cases, a client or 'viewer' application calls the Ghostscript engine
+to do the rasterization and handles the display of the resulting image itself,
+but it is also possible to invoke Ghostscript directly and select an output
+device which directly handles displaying the image on screen.
+
+<p>
+This section describes the various display-oriented devices that are available
+in Ghostscript.
+
+<h3><a name="x11_devices"></a>X Window System</h3>
+
+<p>
+Perhaps the most common use of of a display device is with the X Window System
+on unix-like systems. It is the default device on the command line client on
+such systems, and is used more creatively by the gv client application.
+
+<p>
+The available devices are:
+
+<dl>
+<dt><b>x11</b>
+<dd>This is the default device, handling display on X11R6.
+
+<dt><b>x11alpha</b>
+<dd>This is the <tt>x11</tt> device, but with antialiasing. It is equivalent to
+invoking the <tt>x11</tt> device with the options <tt>-dGraphicsAlphaBits=4
+-dTextAlphaBits=4 -dMaxBitmap=50000000</tt>.
+
+<dt><b>x11cmyk</b>
+<dd>This device rasterizes the image in the CMYK color space, then flattens
+it to RGB for display. It's intended for testing only.
+
+<dt><b>x11mono</b>
+<dd>This is a strict black-and-white device for 1-bit monochrome displays.
+
+<dt><b>x11gray2</b>
+<dd>This is a device for 2 bpp (4-level) monochrome displays.
+
+<dt><b>x11gray4</b>
+<dd>This is a device for 4 bpp (16-level) monochrome displays.
+</dl>
+
+<p>On Mac OS X as of 10.6, the X server (XQuartz) only supports color depth
+15 and 24. Depth 15 isn't well-tested, and it may be desirable, for serious
+use, to switch to depth 24 with:
+
+<blockquote><code>
+defaults write org.x.X11 depth 24
+</code></blockquote>
+
+<h3><a name="display_device"></a>display device (MS Windows, OS/2, gtk+)</h3>
+<p>
+The <code>display</code> device is used by the MS Windows,
+OS/2 and the gtk+ versions of ghostscript.
+</p>
+
+<h4>Options</h4>
+
+<p>The display device has several user settable options.</p>
+
+<blockquote>
+<dl>
+<dt><code>-dDisplayFormat=</code><b><em>N</em></b> (integer bit-field)
+<dd>Some common values are 16#30804 for Windows RGB, 16#804 for gtk+ RGB,
+16#20101 for Windows monochrome, 16#102 for gtk+ monochrome,
+16#20802 grayscale, 16#20808 for CMYK, 16#a0800 for separations.
+The bit fields are
+<ul>
+<li> native (1), gray (2), RGB (4), CMYK (8), or separation (80000)
+  color spaces.
+<li> unused first byte (40) or last byte (80).
+<li> 1 (100), 4 (400), or 8 (800) bits/component.
+<li> bigendian (00000 = RGB) or littleendian (10000 = BGR) order.
+<li> top first (20000) or bottom first (00000) raster.
+<li> 16 bits/pixel with 555 (00000) or 565 (40000) bitfields.
+</ul>
+For more details, see the <a href="API.htm#display">Ghostscript
+Interpreter API.</a>
+<dt><code>-dDisplayResolution=</code><b><em>DPI</em></b>
+<dd>Set the initial resolution resolution for the display device.
+This is used by the Windows clients to set the display device
+resolution to the Windows display logical resolution.
+This can be overriden by the command line option
+<code>-r<em>DPI</em></code>.
+</dl>
+
+</blockquote>
+
+When using the separation color space, the following options may be set
+using setpagedevice, as described in the PostScript Language Reference:
+
+<blockquote>
+<dl>
+<dt><code>SeparationColorNames</code>
+<dd>An array giving the names of the spot colors
+
+<dt><code>SeparationOrder</code>
+<dd>An array giving the names and order of the colorants
+to be output.
+</dl>
+</blockquote>
+
+
+<hr>
+
+<h2><a name="IJS"></a>IJS - Inkjet and other raster devices</h2>
+
+<p>
+IJS is a relatively new initiative to improve the quality and ease of
+use of inkjet printing with Ghostscript. Using IJS, you can add new
+drivers, or upgrade existing ones, without recompiling Ghostscript.
+All driver authors are encouraged to adapt their drivers for IJS, and
+if there is an IJS driver available for your printer, it should be
+your first choice.
+</p>
+
+<p>Please see the <a href="http://www.linuxprinting.org/ijs/">IJS web
+page</a> for more information about IJS, including a listing of
+IJS-compatible drivers.
+</p>
+
+<p>
+A typical command line for IJS is:
+</p>
+
+<blockquote>
+<code>
+gs -dSAFER -sDEVICE=ijs -sIjsServer=hpijs
+ -sDeviceManufacturer=HEWLETT-PACKARD -sDeviceModel='DESKJET 990'
+ -dIjsUseOutputFD -sOutputFile=/dev/usb/lp1 -dNOPAUSE --
+ examples/tiger.eps
+</code>
+</blockquote>
+
+
+<p>
+Individual IJS command line parameters are as follows:
+</p>
+
+<dl>
+<dt><code>-sIjsServer=</code><em>{path}</em>
+<dd>Sets the pathname for the IJS server (ie printer driver).
+Ghostscript will spawn a new process for this driver, and communicate
+with it using the IJS protocol. The pathname need not be absolute,
+as the PATH environment variable is searched, but it's probably a good
+idea for robustness and security. Note also that if -dSAFER is not
+specified, it's possible for PostScript code to set this parameter,
+so it can cause arbitrary code to be executed. See the section on <a
+href="Use.htm#Security">Security</a> for more information.
+</dl>
+
+<dl>
+<dt><code>-sDeviceManufacturer=</code><em>{name}</em>
+<dt><code>-sDeviceModel=</code><em>{name}</em>
+<dd>These parameters select the device according to IEEE-1284 standard
+device ID strings. In general, consult the documentation for the
+driver to find the appropriate settings. Note that, if the value
+contains a space, you'll want to quote the value in your shell, as
+in the example above.
+</dl>
+
+<dl>
+<dt><code>-sIjsParams=</code><em>{params}</em>
+<dd>This parameter allows you to set arbitrary IJS parameters on
+the IJS driver. The format is a comma-separated list of
+<code>key=value</code> pairs. If it is necessary to send a
+value containing a comma or backslash, it can be escaped with
+a backslash. Thus, <code>'-sIjsParams=Foo=bar,Baz=a\,b'</code> sets
+the parameter Foo to "bar", and Baz to "a,b".
+</dl>
+
+<dl>
+<dt><code>-dIjsUseOutputFD</code>
+<dd>This flag indicates that Ghostscript should open the output file
+and pass a file descriptor to the server. If not set, Ghostscript
+simply passes the filename set in OutputFile to the server. In most
+cases, this flag won't matter, but if you have a driver which works
+only with OutputFD (such as hpijs 1.0.2), or if you're using the
+-sOutputFile="|cmd" syntax, you'll need to set it.
+</dl>
+
+<dl>
+<dt><code>-dBitsPerSample=</code><em>N</em>
+<dd>This parameter controls the number of bits per sample. The
+default value of 8 should be appropriate for most work. For monochrome
+images, use -dBitsPerSample=1.
+</dl>
+
+<p>Generic Ghostscript options that are particularly relevant for IJS
+are summarized below:
+</p>
+
+<dl>
+<dt><code>-r</code><em>number</em>
+<br><code>-r</code><em>number1</em><code>x</code><em>number2</em>
+<dd>Sets the resolution, in dpi. If the resolution is not specified,
+Ghostscript queries the IJS server to determine the preferred resolution.
+When the resolution is specified, it overrides the value (if any)
+preferred by the IJS server.
+</dl>
+
+<dl>
+<dt><code>-dDuplex</code>
+<dt><code>-dTumble</code>
+<dd>These flags enable duplex (two-sided) printing. Tumble controls
+the orientation. When Tumble is false, the pages
+are oriented suitably at the left or right. When Tumble is true,
+the pages are oriented suitably for binding at the top or
+bottom.
+</dl>
+
+<dl>
+<dt><code>-sProcessColorModel=</code><em>{name}</em>
+<dd>Use this flag to select the process color model. Suitable values
+include DeviceGray, DeviceRGB, and DeviceCMYK.
+</dl>
+
+<h3>Building IJS</h3>
+
+<p> IJS is included by default on Unix gcc builds, and also in
+autoconf'ed builds. Others may need some makefile tweaking. First,
+make sure the IJS device is selected:
+
+<blockquote>
+DEVICE_DEVS2=&#36;(DD)ijs.dev
+</blockquote>
+
+<p> Next, make sure that the path and execution type are set in
+the top level makefile. The values for Unix are as follows:
+
+<blockquote>
+IJSSRCDIR=ijs
+IJSEXECTYPE=unix
+</blockquote>
+
+<p> At present, "unix" and "win" are the only supported values for
+IJSEXECTYPE. If neither sounds appropriate for your system, it's
+possible that more porting work is needed.
+
+<p> Last, make sure that ijs.mak is included in the top level makefile.
+It should be present right after the include of icclib.mak.
+
+<p> IJS is not inherently platform-specific. We're very much interested
+in taking patches from people who have ported it to non-mainstream
+platforms. And once it's built, you won't have to recompile Ghostscript
+to support new drivers!
+
+<h2><a name="Rinkj"></a>Rinkj - Resplendent inkjet driver</h2>
+
+<p>The Rinkj driver is an experimental new driver, capable of driving
+some Epson printers at a very high level of quality. It is not
+currently recommended for the faint of heart.</p>
+
+<p>You will need to add the following line to your makefile:
+
+<blockquote>
+DEVICE_DEVS2=&#36;(DD)rinkj.dev
+</blockquote>
+
+<p>Most of the configuration parameters, including resolution, choice
+of printer model, and linearization curves, are in a separate setup
+file. In addition, we rely heavily on an ICC profile for mapping
+document colors to actual device colors.</p>
+
+<p>A typical command line invocation is:</p>
+
+<blockquote><tt>
+gs -r1440x720 -sDEVICE=rinkj -sOutputFile=/dev/usb/lp0
+  -sSetupFile=lib/rinkj-2200-setup -sProfileOut=2200-cmyk.icm
+  -dNOPAUSE -dBATCH file.ps
+</tt></blockquote>
+
+<p>
+Individual Rinkj command line parameters are as follows:
+</p>
+
+<dl>
+<dt><code>-sSetupFile=</code><em>{path}</em>
+<dd>Specifies the path for the setup file.
+
+<dt><code>-sProfileOut=</code><em>{path}</em>
+<dd>Specifies the path for the output ICC profile. This profile should
+be a <i>link</i> profile, mapping the ProcessColorModel (DeviceCMYK by
+default) to the device color space.
+</dl>
+
+<p>For 6- and 7-color devices, the target color space for the output
+profile is currently a 4-component space. The conversion from this
+into the 6- or 7-color space (the "ink split") is done by lookup
+tables in the setup file.</p>
+
+<p>Setup files are in a simple "Key: value" text format. Relevant keys
+are:</p>
+
+<dl>
+<dt><code>Manufacturer:</code><em>{name}</em>
+<dt><code>Model:</code><em>{name}</em>
+<dd>The manufacturer and model of the individual device, using the
+same syntax as IEEE printer identification strings. Currently, the
+only supported manufacturer string is "EPSON", and the only supported
+model strings are "Stylus Photo 2200" and "Stylus Photo 7600".
+
+<dt><code>Resolution:</code><em>{x-dpi}</em>x<em>{y-dpi}</em>
+<dd>The resolution in dpi. Usually, this should match the
+Ghostscript resolution set with the <tt>-r</tt> switch. Otherwise,
+the page image will be scaled.
+
+<dt><code>Dither:</code><em>{int}</em>
+<dd>Selects among variant dither options. Currently, the choices are
+<tt>1</tt> for one-bit dither, and <tt>2</tt>, for a 2-bit variable
+dot dither.
+
+<dt><code>Aspect:</code><em>{int}</em>
+<dd>Controls the aspect ratio for highlight dot placement. Valid
+values are <tt>1</tt>, <tt>2</tt>, and <tt>4</tt>. For best results,
+choose a value near the x resolution divided by the y resolution. For
+example, if resolution is 1440x720, aspect should be 2.
+
+<dt><code>Microdot:</code><em>{int}</em>
+<dd>Chooses a microdot size. On EPSON devices, this value is passed
+directly through to the "ESC ( e" command. See EPSON documentation
+for further details (see, I <em>told</em> you this wasn't for the
+faint of heart).
+
+<dt><code>Unidirectional:</code><em>{int}</em>
+<dd>Enables (1) or disables (0) unidirectional printing, which is
+slower but possibly higher quality.
+
+<dt><code>AddLut:</code><em>{plane}</em>
+<dd>Adds a linearization look-up table. The plane is one of
+"CcMmYKk". The lookup table data follows. The line immediately
+following AddLut is the number of data points. Then, for each data
+point is a line consisting of two space-separated floats - the output
+value and the input value. If more than one LUT is specified for a
+single plane, they are applied in sequence.
+</dl>
+
+<p>A typical setup file is supplied in <tt>lib/rinkj-2200-setup</tt>.
+It is configured for the 2200, but can be adapted to the 7600 just by
+changing the "Model" line.
+
+<p>A known issue with this driver is poor support for margins and
+page size. In some cases, this will cause an additional page to be
+ejected at the end of a job. You may be able to work around this by
+supplying a cut-down value for <tt>-dDEVICEHEIGHTPOINTS</tt>, for
+example 755 for an 8.5x11 inch page on the EPSON 2200.</p>
+
+<h2><a name="HP_ijs"></a>HP Deskjet official drivers</h2>
+
+<p>
+HP provides official drivers for many of their Deskjet printer models.
+In order to use these drivers, you will need the HP Inkjet Server as
+well as Ghostscript, available from <a
+href="http://hpinkjet.sourceforge.net">http://hpinkjet.sourceforge.net</a>.
+This version of Ghostscript includes the patch from version 0.97 of
+the hpijs software. If you are installing hpijs from an RPM, you will
+only need the hpijs RPM, not the Ghostscript-hpijs one, as the code
+needed to work with hpijs is already included.
+
+<p>
+Note that newer version of the hpijs drivers support the IJS protocol.
+If you can, you should consider using the ijs driver instead. Among
+other things, the hpijs Ghostscript driver is Unix-only, and is untested
+on older Unix platforms.
+
+<p>
+As of the 0.97 version, hpijs supports the following printer models:
+
+<dl><dt><b>e-Series:</b>
+ <dd>e-20
+<dt><b>DeskJet 350C Series:</b>
+ <dd>350C
+<dt><b>DeskJet 600C Series:</b>
+ <dd>600C, 660C, 670/672C, 670TV, 680/682C
+<dt><b>DeskJet 600C Series Photo:</b>
+ <dd>610/612C, 640/648C, 690/692/693/694/695/697C
+<dt><b>DeskJet 630C Series:</b>
+ <dd>630/632C
+<dt><b>DeskJet 800C Series:</b>
+ <dd>810/812C, 830/832C, 840/842/843C, 880/882C, 895C
+<dt><b>DeskJet 900C Series, PhotoSmart::</b>
+ <dd>930/932C, 950/952C, 970C, PhotoSmart 1000/1100
+<dt><b>DeskJet 990C, PhotoSmart:</b>
+ <dd>960C, 980C, 990C, PhotoSmart 1215/1218
+
+</dl>
+
+<p>You will need to add the following line to your makefile:
+
+<blockquote>
+DEVICE_DEVS2=&#36;(DD)DJ630.dev &#36;(DD)DJ6xx.dev &#36;(DD)DJ6xxP.dev &#36;(DD)DJ8xx.dev &#36;(DD)DJ9xx.dev &#36;(DD)DJ9xxVIP.dev &#36;(DD)AP21xx.dev
+</blockquote>
+
+<p>
+Please see <a
+href="http://hpinkjet.sourceforge.net">http://hpinkjet.sourceforge.net</a>
+for more information about this driver. Thanks to the folks at HP,
+especially David Suffield for making this driver available and working to
+integrate it with Ghostscript.
+</p>
+
+<h2><a name="gimp-print"></a>Gimp-Print driver collection</h2>
+
+<p>
+The Gimp-Print project provides a large collection of printer drivers
+with an IJS interface. Please see their
+<a href="http://gimp-print.sourceforge.net/" class="offsite">website</a>
+for details.
+</p>
+
+<hr>
+<h2><a name="Win"></a>MS Windows printers</h2>
+
+<p>
+This section was written by Russell Lang, the author of Ghostscript's
+MS&nbsp;Windows-specific printer driver, and updated by
+<a href="mailto:Pierre.Arnaud@opac.ch">Pierre Arnaud</a>,
+the current maintainer.
+</p>
+
+<p>
+The <code>mswinpr2</code> device uses MS&nbsp;Windows printer drivers, and
+thus should work with any printer with device-independent bitmap (DIB)
+raster capabilities. The printer resolution cannot be selected directly
+using PostScript commands from Ghostscript: use the printer setup in the
+Control Panel instead. It is however possible to specify a maximum resolution
+for the printed document (see below).
+</p>
+
+<p>
+If no Windows printer name is specified in <code>-sOutputFile</code>,
+Ghostscript prompts for a Windows printer using the standard Print Setup
+dialog box.  You must set the orientation to Portrait and the page size to
+that expected by Ghostscript; otherwise the image will be clipped.
+Ghostscript sets the physical device size to that of the Windows printer
+driver, but it does not update the PostScript clipping path.
+</p>
+
+<p>
+If a Windows printer name is specified in <code>-sOutputFile</code> using
+the format <tt>"%printer%printer_name"</tt>, for instance
+</p>
+
+<blockquote><code>
+gs ... -sOutputFile="%printer%Apple LaserWriter II NT"
+</code></blockquote>
+
+<p>
+then Ghostscript attempts to open the Windows printer without prompting
+(except, of course, if the printer is connected to <code>FILE:</code>).
+Ghostscript attempts to set the Windows printer page size and orientation
+to match that expected by Ghostscript, but doesn't always succeed.  It uses
+this algorithm:
+</p>
+
+<ol>
+<li>If the requested page size matches one of the Windows standard page
+sizes +/- 2mm, request that standard size.</li>
+
+<li>Otherwise if the requested page size matches one of the Windows
+standard page sizes in landscape mode, ask for that standard size in
+landscape.</li>
+
+<li>Otherwise ask for the page size by specifying only its dimensions.</li>
+
+<li>Merge the requests above with the defaults.  If the printer driver
+ignores the requested paper size, no error is generated: it will print on
+the wrong paper size.</li>
+
+<li>Open the Windows printer with the merged orientation and size.</li>
+</ol>
+
+<p>
+The Ghostscript physical device size is updated to match the Windows
+printer physical device.
+</p>
+
+<h3><a name="Win_properties"></a>Supported command-line parameters</h3>
+
+<p>
+The <code>mswinpr2</code> device supports a limited number of command-line
+parameters (e.g. it does not support setting the printer resolution). The
+recognized parameters are the following:
+</p>
+
+<blockquote>
+<dl>
+<dt><code>-sDEVICE=mswinpr2</code></dt>
+<dd>Selects the MS&nbsp;Windows printer device. If Ghostscript was not
+compiled with this device as the default output device, you have to specify
+it on the command line.</dd>
+
+<dt><code>-dNoCancel</code></dt>
+<dd>Hides the progress dialog, which shows the percent of the document page
+already processed and also provides a <em>cancel</em> button. This option
+is useful if GS is intended to print pages in the background, without any
+user intervention.</dd>
+
+<dt><code>-sOutputFile=</code><b>"%printer%<em>printer_name</em>"</b></dt>
+<dd>Specifies which printer should be used. The <em>printer_name</em> should be
+typed exactly as it appears in the Printers control panel, including spaces.</dd>
+
+</dl>
+</blockquote>
+
+<h3><a name="Win_options"></a>Supported options (device properties)</h3>
+
+<p>
+Several extra options exist which cannot be set through the command-line,
+but only by executing the appropriate PostScript setup code. These options
+can be set through the inclusion of a setup file on the command-line:
+</p>
+
+<blockquote><code>
+gs ... setup.ps ...
+</code></blockquote>
+
+<p>
+The <tt>setup.ps</tt> file is responsible for the device selection, therefore
+you should not specify the <code>-sDEVICE=mswinpr2</code> option on the
+command-line if you are using such a setup file. Here is an example of such
+a setup file:
+</p>
+
+<blockquote><pre>
+mark
+  /NoCancel      true                       % don't show the cancel dialog
+  /BitsPerPixel  4                          % force 4 bits/pixel
+  /UserSettings
+    &lt;&lt;
+      /DocumentName  (Ghostscript document) % name for the Windows spooler
+      /MaxResolution 360                    % maximum document resolution
+    &gt;&gt;
+  (mswinpr2) finddevice                     % select the Windows device driver
+  putdeviceprops
+setdevice
+</pre></blockquote>
+
+<p>
+This example disables the progress dialog (same as the <code>-dNoCancel</code>
+option), forces a 4 bits/pixel output resolution and specifies additional user
+settings, such as the document name (which will be displayed by the Windows
+spooler for the queued document) and the maximum resolution (here 360&nbsp;dpi).
+It then finds and selects an instance of the MS&nbsp;Windows device printer
+and activates it. This will show the standard printer dialog, since no
+<code>/OutputFile</code> property was specified.
+</p>
+
+<p>
+The following options are available:
+</p>
+
+<blockquote>
+<dl>
+<dt><code>/NoCancel <em>boolean</em></code></dt>
+<dd>Disables (hides) the progress dialog when set to <em><tt>true</tt></em> or
+show the progress dialog if not set or set to <em><tt>false</tt></em>.</dd>
+
+<dt><code>/OutputFile <em>string</em></code></dt>
+<dd>Specifies which printer should be used. The string should be of the form
+<code>%printer%<em>printer_name</em></code>, where the <em>printer_name</em> should be
+typed exactly as it appears in the Printers control panel, including spaces.</dd>
+
+<dt><code>/QueryUser <em>integer</em></code></dt>
+<dd>Shows the standard printer dialog (<code>1</code> or any other value),
+shows the <em>printer setup dialog</em> (<code>2</code>) or selects the
+<em>default Windows printer</em> without any user interaction (<code>3</code>).</dd>
+
+<dt><code>/BitsPerPixel <em>integer</em></code></dt>
+<dd>Sets the device depth to the specified bits per pixel. Currently supported
+values are <code>1</code> (monochrome), <code>4</code> (CMYK with screening
+handled by Ghostscript) and <code>24</code> (True Color, dithering handled by
+the Windows printer driver; this option can produce huge print jobs).</dd>
+
+<dt><code>/UserSettings <em>dict</em></code></dt>
+<dd>Sets additional options, defined in a dictionary. The following properties can
+be set:
+
+<dl>
+<dt><code>/DocumentName <em>string</em></code></dt>
+<dd>Defines the user friendly document name which will be displayed by the
+Windows spooler.</dd>
+
+<dt><code>/DocumentRange <em>[n1 n2]</em></code></dt>
+<dd>Defines the range of pages contained in the document. This information can
+be used by the printer dialog, in conjunction with the following property.</dd>
+
+<dt><code>/SelectedRange <em>[n1 n2]</em></code></dt>
+<dd>Defines the selected range of pages. This information will be displayed in
+the printer dialog and will be updated after the user interaction. A PostScript
+program could check these values and print only the selected page range.</dd>
+
+<dt><code>/MaxResolution <em>dpi</em></code></dt>
+<dd>Specifies the maximum tolerated output resolution. If the selected printer has
+a higher resolution than <code>dpi</code>, then Ghostscript will render the
+document with a submultiple of the printer resolution. For example, if
+<code>MaxResolution</code> is set to 360 and the output printer supports
+up to 1200 dpi, then Ghostscript renders the document with an internal
+resolution of 1200/4=300 dpi. This can be very useful to reduce the memory
+requirements when printing in True Color on some high resolution ink-jet color
+printers.</dd>
+
+</dl></dd>
+
+</dl>
+</blockquote>
+
+<p>
+These properties can be queried through the <code>currentpagedevice</code>
+operator. The following PostScript code snippet shows how to do it for some
+of the properties:
+</p>
+
+<blockquote><pre>
+currentpagedevice /BitsPerPixel get ==  % displays the selected depth
+
+currentpagedevice /UserSettings get     % get the additional options..
+/us exch def                            % ..and assign them to a variable
+
+us /DocumentName get ==     % displays the document name
+us /SelectedRange get ==    % displays the selected page range
+
+% other misc. information (don't rely on them)
+
+us /Color get ==            % 1 =&gt; monochrome output, 2 =&gt; color output
+us /PrintCopies get ==      % displays the number of copies requested
+</pre></blockquote>
+
+<p>
+There are a few undocumented parameters stored in the <code>UserSettings</code>
+dictionary. You should not rely on them. Their use is still experimental and
+they could be removed in a future version.
+</p>
+
+<h3><a name="Win_duplex"></a>Duplex printing</h3>
+
+<p>
+If the Windows printer supports the duplex printing feature, then it will
+also be available through the <code>mswinpr2</code> device. You can query
+for this support through the <code>/Duplex</code> property of the
+<code>currentpagedevice</code>. If it returns <code>null</code>, then
+the feature is not supported by the selected printer. Otherwise, <code>true</code>
+means that the printer is currently set up to print on both faces of the paper
+and <code>false</code> that it is not, but that it can.
+</p>
+
+<p>
+The following example shows how to print on both faces of the paper (using
+the long side of the paper as the reference):
+</p>
+
+<blockquote><pre>
+&lt;&lt; /Duplex true /Tumble false &gt;&gt; setpagedevice
+</pre></blockquote>
+
+<p>
+</p>
+
+
+<hr>
+
+<h2><a name="SPARCprinter"></a>Sun SPARCprinter</h2>
+
+<p>
+This section was contributed by Martin Schulte.
+
+<p>
+With a SPARCprinter you always buy software that enables you to do
+PostScript printing on it.  A page image is composed on the host, which
+sends a bitmap to the SPARCprinter through a special SBUS video interface.
+So the need for a Ghostscript interface to the SPARCPrinter seems low, but
+on the other hand, Sun's software prints some PostScript drawings
+incorrectly: some pages contain a thin vertical line of rubbish, and on
+some Mathematica drawings the text at the axes isn't rotated.  Ghostscript,
+however, gives the correct results.  Moreover, replacing proprietary
+software should never be a bad idea.
+
+<p>
+The problem is that there has yet been no effort to make the SPARCPrinter
+driver behave like a BSD output filter.  I made my tests using the script
+shown here.
+
+<h3><a name="SPARC_install"></a>Installation</h3>
+
+<p>
+Add <code>sparc.dev</code> to <code>DEVICE_DEVS</code> and compile
+Ghostscript as described in the documentation on <a href="Make.htm">how to
+build Ghostscript</a>.  Afterwards you can use the following script as an
+example for printing after modifying it with the right pathnames --
+including for <b>{GSPATH}</b> the full pathname of the Ghostscript
+executable:
+
+<blockquote>
+<pre>outcmd1='/vol/local/lib/troff2/psxlate -r'
+outcmd2='<b><em>{GSPATH}</em></b> -sDEVICE=sparc -sOUTPUTFILE=/dev/lpvi0 -'
+
+if [ &#36;# -eq 0 ]
+then
+  &#36;outcmd1 | &#36;outcmd2
+else
+  cat &#36;* | &#36;outcmd1 | &#36;outcmd2
+fi
+</pre></blockquote>
+
+<h3><a name="SPARC_problems"></a>Problems</h3>
+
+<p>
+Since <code>/dev/lpi</code> can be opened only for exclusive use, if
+another job has it open (engine_ctl_sparc or another Ghostscript are the
+most likely candidates), Ghostscript stops with "Error: /invalidfileaccess
+in --.outputpage--"
+
+<p>
+In case of common printer problems like being out of paper, a warning
+describing the reason is printed to stdout.  The driver tries access again
+each five seconds.  Due to a problem with the device driver (in the kernel)
+the reason for printer failure isn't always reported correctly to the
+program.  This is the case, for instance, if you open the top cover (error
+E5 on the printer's display).  Look at the display on the printer itself if
+a "Printer problem with unknown reason" is reported.  Fatal errors cause
+the print job to be terminated.
+
+<p>
+Note: there is some confusion whether the resolution setting should be
+the integers 300 and 400, or the symbolic constants DPI300 and DPI400
+(defined in lpviio.h). Ghostscript releases have had it both ways. It
+is currently the latter. However, INOUE Namihiko reports (in bug
+<a href="http://bugs.ghostscript.com/show_bug.cgi?id=215256"
+class="offsite">#215256</a>)
+that the former works better for him. If anyone
+has a definitive answer, please let us know.
+
+<hr>
+
+<h2><a name="Apple"></a>Apple dot matrix printer</h2>
+
+<p>
+This section was contributed by Mark Wedel
+&lt;<a href="mailto:master@cats.ucsc.edu">master@cats.ucsc.edu</a>&gt;.
+
+<p>
+The Apple Dot Matrix Printer (DMP) was a parallel predecessor to the
+Imagewriter printer.  As far as I know, Imagewriter commands are a superset
+of the Dot Matrix printer's, so the driver should generate output that can
+be printed on Imagewriters.
+
+<p>
+To print images, the driver sets the printer for unidirectional printing
+and 15 characters per inch (cpi), or 120dpi.  It sets the line feed to 1/9
+inch.  When finished, it sets the printer to bidirectional printing,
+1/8-inch line feeds, and 12 cpi.  There appears to be no way to reset the
+printer to initial values.
+
+<p>
+This code does not set for 8-bit characters (which is required).  It also
+assumes that carriage return-newline is needed, and not just carriage
+return.  These are all switch settings on the DMP, and I have configured
+them for 8-bit data and carriage return exclusively.  Ensure that the Unix
+printer daemon handles 8-bit (binary) data properly; in my SunOS 4.1.1
+<code>printcap</code> file the string "<code>ms=pass8,-opost</code>"
+works fine for this.
+
+<p>
+Finally, you can search <code>devdemp.c</code> for
+"<code>Init</code>" and "<code>Reset</code>" to find the strings that
+initialize the printer and reset things when finished, and change them to
+meet your needs.
+
+
+<hr>
+
+<h2><a name="Test"></a>Special and Test devices</h2>
+
+<p>
+The devices in this section are intended primarily for testing. They may
+be interesting as code examples, as well.
+
+<h3>Raw 'bit' devices</h3>
+
+<p>There are a collection of 'bit' devices that don't do any special formatting
+but output 'raw' binary data for the page images. These are used for benchmarking
+but can also be useful when you want to directly access the raster data.</p>
+
+<p>
+The raw devices are <tt>bit bitrgb bitcmyk</tt>.
+
+<h3><a name="Bounding_box_output"></a>Bounding box output</h3>
+
+<p>
+There is a special <code>bbox</code> "device" that just prints the
+bounding box of each page.  You select it in the usual way:
+
+<blockquote><code>
+gs -dSAFER -dNOPAUSE -dBATCH -sDEVICE=bbox
+</code></blockquote>
+
+<p>
+It prints the output in a format like this:
+
+<blockquote>
+<pre><code>%%BoundingBox: 14 37 570 719
+%%HiResBoundingBox: 14.3ep08066 37.547999 569.495061 718.319158
+</code></pre></blockquote>
+<p></p>
+
+<p>
+Currently, it always prints the bounding box on <code>stderr</code>;
+eventually, it should also recognize <code>-sOutputFile=</code>.
+
+<p>
+By default, white objects don't contribute to the bounding box because
+many files fill the whole page with white before drawing other objects.
+This can be changed by:
+
+<blockquote><code>
+&lt;&lt; /WhiteIsOpaque true &gt;&gt; setpagedevice
+</code></blockquote>
+
+<p>
+Note that this device, like other devices, has a resolution and a (maximum)
+page size.  As for other devices, the product (resolution x page size) is
+limited to approximately 500K pixels.  By default, the resolution is 4000
+DPI and the maximum page size is approximately 125", or approximately 9000
+default (1/72") user coordinate units.  If you need to measure larger pages
+than this, you must reset <em>both</em> the resolution and the page size in
+pixels, e.g.,
+
+<blockquote><code>
+gs -dNOPAUSE -dBATCH -sDEVICE=bbox -r100 -g500000x500000
+</code></blockquote>
+
+<h3><a name="Ink_coverage_output"></a>Ink coverage output</h3>
+
+<p>
+There is a special <code>inkcov</code> device that just prints the
+ink coverage of each page.  It is selected like this:
+
+<blockquote><code>
+gs -dSAFER -dNOPAUSE -dBATCH -o- -sDEVICE=inkcov Y.pdf
+</code></blockquote>
+
+These commands also work as expected:
+
+<blockquote><code>
+gs -o X_inkcov.txt -sDEVICE=inkcov Y.pdf
+gs -o X_inkcov_page%03d.txt -sDEVICE=inkcov Y.pdf
+</code></blockquote>
+
+<p>
+It prints the output in a format like this:
+
+<blockquote>
+<pre><code>Page 1
+ 0.10022  0.09563  0.10071  0.06259 CMYK OK
+Page 2
+ 0.06108  0.05000  0.05834  0.04727 CMYK OK
+</code></pre></blockquote>
+<p></p>
+
+<h3><a name="Permute"></a>Permutation (DeviceN color model)</h3>
+
+<p>
+With no additional parameters, the device named "permute" looks
+to Ghostscript like a standard CMYK contone device, and outputs a
+PPM file, using a simple CMYK-&gt;RGB transform. This should be the
+baseline for regression testing.
+
+<p>
+With the addition of <code>-dPermute=1</code>, the internal behavior changes
+somewhat, but in most cases the resulting rendered file should be the
+same. In this mode, the color model becomes "DeviceN" rather than
+"DeviceCMYK", the number of components goes to six, and the color
+model is considered to be the (yellow, cyan, cyan, magenta, 0, black)
+tuple. This is what's rendered into the memory buffer. Finally, on
+conversion to RGB for output, the colors are permuted back.
+
+<p>
+As such, this code should check that all imaging code paths are
+64-bit clean. Additionally, it should find incorrect code that assumes
+that the color model is one of DeviceGray, DeviceRGB, or DeviceCMYK.
+
+<p>
+Currently, the code has the limitation of 8-bit continuous tone
+rendering only. An enhancement to do halftones is planned as well. Note,
+however, that when testing permuted halftones for consistency, it is
+important to permute the planes of the default halftone accordingly, and
+that any file which sets halftones explicitly will fail a consistency
+check.
+
+<h3><a name="SPOT"></a>spotcmyk (DeviceN color model)</h3>
+
+<p>
+The <tt>spotcmyk</tt> device was created for debugging and testing of the DeviceN
+extensions to Ghostscript that were released in version 8.0.
+There are also another device (<tt>devicen</tt>) in the same
+source file.  It were created for testing however it are not actually useful
+except as example code.
+
+<p>The <tt>spotcmyk</tt> device was also designed to provide example code for a
+device which supports spot colors.
+Spot colors need to be specified prior to opening the
+first page.
+This can be done via adding the
+following to the command line: <code>-c "&lt;&lt; /SeparationColorNames [ /Name1 /Name2 ]
+&gt;&gt; setpagedevice" -f</code>.
+
+<p>
+The <tt>spotcmyk</tt> device produces a binary data file (similar to the bitcmyk
+device) for the CMYK data.  This data file has the name specified by the "OutputFile"
+parameter.
+The device also produces a binary data file (similar to the bitmono device)
+for each spot color plane.
+These data files have the name specified by the "OutputFile"
+parameter with "sn" appended to the end (where "n" is the spot color number 0 to 12)".
+
+<p>
+After the <tt>spotcmyk</tt> device produces the binary data files, the files are read
+and PCX format versions of these files are created with ".pcx" appended to the binary
+source file name.
+
+<p> If the the <tt>spotcmyk</tt> is being used with three spot colors and the
+"OutputFile" parameter is <tt>xxx</tt> then the following files would be created
+by the device:
+
+<blockquote>
+<pre>xxx - binary CMYK data
+xxxs0 - binary data for first spot color
+xxxs1 - binary data for second spot color
+xxxs2 - binary data for third spot color
+xxx.pcx - CMYK data in PCX format
+xxxs0.pcx - first spot color in PCX format
+xxxs1.pcx - second spot color in PCX format
+xxxs2.pcx - third spot color in PCX format
+</pre>
+</blockquote>
+
+<p>
+The <tt>spotcmyk</tt> device has the creation of the binary data files separated
+from the creation of the PCX files since the source file is intended as example
+code and many people may not be interested in the PCX format. The PCX format was
+chosen because it was simple to implement from preexisting code and viewers are
+available.  The PCX format does have the disadvantage that most of those viewers
+are on Windows.
+
+
+<h3><a name="XCF"></a>XCF (DeviceN color model)</h3>
+
+<p>
+The XCF file format is the native image format for the GIMP program. This format
+is currently supported by two devices: <tt> xcfrgb</tt> and <tt>xcfcmyk</tt>.
+
+<blockquote><em>
+We have been warned by the people supporting the GIMP program that they reserve
+the right to change the
+XCF format at anytime and thus these devices may become invalid. They are being
+included in the documentation because we have received some questions about
+these devices do.
+</em></blockquote>
+
+<p>
+The XCF devices were created for testing of the DeviceN extensions to Ghostscript
+which were released in version 8.0.
+
+<p>
+The <tt>xcfrgb</tt> device uses a DeviceRGB process color model and creates
+a normal XCF file.
+
+<p>
+The <tt>xcfcmyk</tt> device was created as a means of viewing spot colors for
+those users that do not have access to either Photoshop <a href="#PSD">(see the PSD
+devices)</a> or a PCX viewer <a href="#SPOT">(see the <tt>spotcmyk</tt>
+device)</a>.
+
+<p>
+The <tt>xcfcmyk</tt> device starts by using a DeviceCMYK process color model. The
+DeviceCMYK process color model allows the <tt>xcfcmyk</tt> device to also
+support spot colors. Spot colors need to be specified prior to opening the
+first page.
+This can be done via adding the
+following to the command line: <code>-c "&lt;&lt; /SeparationColorNames [ /Name1 /Name2 ]
+&gt;&gt; setpagedevice" -f</code>.
+
+<p>
+After a page is complete, the <tt>xcfcmyk</tt> converts the CMYK image data into
+RGB for storing in the XCF output file.  The XCF format does not currently
+support CMYK data directly. The spot color planes are converted into alpha
+channel planes. This is done because the XCF format does not currently support
+spot colors.
+
+</p>
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2000-2006 Artifex Software, Inc.  All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.20, 26 September 2016
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>
+

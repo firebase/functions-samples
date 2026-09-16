@@ -1,0 +1,26 @@
+.\" Using encoding of the German (de_DE) translation: ISO-8859-1
+.\" Translation by Tobias Burnus <burnus@gmx.de> and Thomas Hoffmann
+.TH FONT2C 1 "8.Juli 2002" 7.21 Ghostscript \" -*- nroff -*-
+.SH NAME
+font2c \- schreibt PostScript-Type-0- oder Type-1-Schriften als C-Code
+.SH SYNTAX
+\fBfont2c\fR \fISchriftname\fR
+.SH BESCHREIBUNG
+Das Skript ruft
+.BR gs (1)
+mit den folgen Paramtern auf:
+
+.ce
+.B -q -dNODISPLAY -dWRITESYSTEMDICT
+
+gefolgt von den Argumenten der Kommandozeile. Dies schreibt eine
+PostScript-Type-0 oder Type-1-Schrift als C-Quelltext, so daß sie mit dem Interpreter gelinkt werden kann.
+.SH SIEHE AUCH
+gs(1)
+.SH VERSION
+Dieses Dokument wurde zuletzt für Ghostscript Version 7.21 durchfgesehen.
+.SH AUTHOR
+Artifex Software, Inc. sind die
+Hauptautoren von Ghostscript.
+Diese Manpage ist von George Ferguson.
+

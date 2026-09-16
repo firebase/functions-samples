@@ -1,0 +1,34 @@
+-supModel="Epson Stylus Photo PM820, 720x720DpI, Plain Paper"
+-sDEVICE=uniprint
+-dNOPAUSE
+-dSAFER
+-dupColorModel=/DeviceCMYKgenerate
+-dupRendering=/FSCMYK32
+-dupOutputFormat=/EscP2
+-r720x720
+-dupMargins="{ 9.0 31.0 9.0 9.0}"
+-dupBlackTransfer="{   0.0000 0.0260 0.0587 0.1079 0.2109 0.3750 }"
+-dupCyanTransfer="{    0.0000 0.0254 0.0620 0.1070 0.2250 0.4125 }"
+-dupMagentaTransfer="{ 0.0000 0.0233 0.0569 0.0981 0.2063 0.4125 }"
+-dupYellowTransfer="{  0.0000 0.0212 0.0516 0.0891 0.2250 0.4125 }"
+-dupOutputComponentOrder="{ 1 2 3 0 }"
+-dupWeaveYPasses=6
+-dupOutputPins=48
+-dupWeaveYFeeds="{47 47 47 53 47 47}"
+-dupWeaveInitialYFeeds="{1  1  1  1  1  43}"
+-dupWeaveInitialPins="{ 8 48 40 31 23 15}"
+-dupBeginJobCommand="(\000\000\000\000\000\000\033\001@EJL\0401284.4\012@EJL\040\040\040\040\040\012)"
+-dupBeginPageCommand="<
+   1b40   1b40
+   1b2847 0100 01
+   1b2855 0100 05
+   1b5501
+   1b2865 0200 0000
+   1b2843 0200 0000
+   1b2863 0400 0000 0000
+>"
+-dupAdjustPageLengthCommand
+-dupAdjustTopMarginCommand
+-dupAdjustBottomMarginCommand
+-dupEndPageCommand="(\033@\014)"
+-dupAbortCommand="(\033@\15\12\12\12\12    Printout-Aborted\15\014)"

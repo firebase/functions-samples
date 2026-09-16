@@ -1,0 +1,719 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% gslp.ps - format and print text
+
+% This utility provides functionality approximately equivalent to the Unix
+% `enscript' program.  It prints plain text files using a single font.
+% It currently handles tabs and formfeeds, but not backspaces.
+% It will line-wrap when using fixed-pitch fonts.
+% It will also do kerning and width adjustment.
+% Standard switches implemented:
+%	-12BclqRr -b<header> -f<font> -F<hfont> -L<lines> -p<outfile>
+% Sun switches implemented:
+%	-T<n>	set tab width
+% Switches ignored:
+%	-GghKkmow -# -C -d -J -n -P -S -s -t -v
+% Switches added:
+%	--add-to-space <units>
+%		add the given number of 1/72" units to the width of each
+%		space (may be negative)
+%	--add-to-width <units>
+%		add the given number of 1/72" units to the width of each
+%		character (may be negative)
+%	--columns <n>
+%		print in <n> columns
+%	--detect
+%		treat the file as PostScript if it starts with %!
+%	--first-page <n>
+%     --duplex(|-long-edge|-short-edge)
+%             use duplex if available; if not specified, select long edge
+%             for portrait printing, short edge for landscape
+%		start printing at page <n>
+%	--kern <file.afm>
+%		kern using information from the given .AFM file
+%	--last-page <n>
+%		stop printing after page <n>
+%	--(heading|footing)-(left|center|right) <string>
+%		set the heading/footing fields; use -B first to clear
+%	--margin-(top|bottom|left|right) <inches>
+%		set a margin
+%	--no-eject-(file|formfeed)
+%		end-of-file/FF only starts a new column, not a new sheet
+%	--spacing <n>
+%		use double (n=2), triple (n=3), etc. spacing
+% Also, the string %# in a heading or footing is replaced with the page #.
+/PageNumberString (%#) def
+
+/lpdict 150 dict def
+lpdict begin
+
+% build iso-latin-1 version of a font
+/font-to-iso-latin-1 {	% <font> font-to-iso-latin-1 <font>
+    %% reencode for iso latin1; from the 2nd edition red book, sec 5.6.1
+    dup length dict begin {1 index /FID ne {def} {pop pop} ifelse} forall
+    /Encoding ISOLatin1Encoding def currentdict end
+    dup /FontName get 80 string cvs (-ISOLatin1) concatstrings cvn
+    exch definefont
+} def
+
+/find-latin-font {	% <name> find-latin-font <font>
+  findfont font-to-iso-latin-1
+} def
+
+% Define the initial values of the printing parameters.
+
+/AddToSpace 0 def
+/AddToWidth 0 def
+/BodyFont null def		% use default
+  /defaultBodyFontPortrait
+    /Courier find-latin-font 10 scalefont def
+  /defaultBodyFontLandscape
+    /Courier find-latin-font 7 scalefont def
+  /defaultBodyFont
+    { Landscape { defaultBodyFontLandscape } { defaultBodyFontPortrait } ifelse } def
+/Columns 1 def
+/DetectFileType false def
+/Duplex null def
+/EjectEOF true def
+/EjectFF true def
+/Footers false def
+/FootingLeft () def
+/FootingCenter () def
+/FootingRight () def
+/Headers true def
+/HeadingLeft () def
+/HeadingCenter () def
+/HeadingRight (page ) PageNumberString concatstrings def
+/HeadingFont null def		% use default
+  /defaultHeadingFont
+    /Courier-Bold find-latin-font 10 scalefont def
+/Kern 0 dict def		% no kerning
+/Landscape false def
+/MarginBottom 36 def		% 1/2"
+/MarginLeft 36 def		% 1/2"
+/MarginRight 36 def		% 1/2"
+/MarginTop 36 def		% 1/2"
+/MaxLines 9999 def		% max lines per page
+/Noisy true def			% i.e., not quiet
+/OutFile null def		% null = write directly to device
+/PageFirst 1 def
+/PageLast 99999 def
+/Spacing 1 def
+/Tab 8 def
+/Truncate false def		% wrap long lines, don't truncate
+
+% When writing to a file, we want to write out PostScript;
+% when writing to the printer, we want to execute it;
+% some commands should be executed regardless.
+% lpexec provides for all this.
+
+/lpdef {	% <name> <value> lpdef -
+  /def 2 true lpexec
+} def
+
+/lpexec {	% <arg1> ... <argn> </op> <n> <do_always> lpexec -
+  OutFile null eq {
+    pop 1 add true
+  } {
+    /t exch def 1 add /n exch def cvx
+    n -1 roll dup wo
+    n 1 sub { n -1 roll dup wosp } repeat
+    (\n) ws n t
+  } ifelse
+    { pop load exec }
+    { { pop } repeat }
+  ifelse
+} def
+
+/lpmoveto {	% <x> <y> lpmoveto -
+        % Round the coordinates for smaller output.
+  2 {
+    exch 100 mul round 100 div
+    dup dup cvi eq { cvi } if
+  } repeat
+  1 index X eq { neg exch pop /V 1 } { neg /M 2 } ifelse true lpexec
+} def
+/lpshow {	% <string> lpshow -
+  dup length 0 ne {
+    addspace 0 ne {
+      addspace 0 32
+      addwidth 0 ne {
+        addwidth 0 6 -1 roll /awidthshow 6 true lpexec
+      } {
+        4 -1 roll /widthshow 4 true lpexec
+      } ifelse
+    } {
+      addwidth 0 ne {
+        addwidth 0 3 -1 roll /ashow 3 true lpexec
+      } {
+        OutFile null ne {
+          dup dup length =string length gt {
+            /show 1 false lpexec
+          } {
+            (S ) ws ws (\n) ws
+          } ifelse
+        } if show
+      } ifelse
+    } ifelse
+  } {
+    pop
+  } ifelse
+} def
+/lpsetmyfont {
+  dup load setfont
+   OutFile null ne { cvx /setfont 1 false lpexec } { pop } ifelse
+} def
+
+% Define some utility procedures.
+
+/banner		% ypos left center right
+ { /HFont lpsetmyfont
+   /addspace 0 def /addwidth 0 def
+   /pairkern 0 dict def
+   3 -1 roll bannerstring pop 0 4 index pwidth showline2 pop
+   exch bannerstring pwidth exch sub 2 div 3 index pwidth showline2 pop
+   bannerstring
+                % Prevent the last character of the heading from grazing
+                % the right margin.
+                % ****** WHY DOES IT REQUIRE SO MUCH PADDING? ******
+   ( ) stringwidth pop 2 mul add
+   pwidth exch sub
+   3 -1 roll pwidth showline2 pop
+ } def
+
+/bannerstring	% string -> string width
+  { PageNumberString search
+     { exch pop pindex 4 string cvs concatstrings exch concatstrings
+     }
+    if dup stringwidth pop
+  } def
+
+/beginpage
+ { /lindex 0 def
+   /skipping pindex PageFirst ge pindex PageLast le and not def
+   pagex pagey Landscape {/BL} {/B} ifelse 2 true lpexec
+   /pagesave exch def
+   skipping { nulldevice   /OutFile null def } if
+   Headers
+    { lheight hdescent add
+      HeadingLeft HeadingCenter HeadingRight banner
+    } if
+   /BFont lpsetmyfont
+   /pairkern Kern def
+   /addspace AddToSpace def /addwidth AddToWidth def
+   pairkern length 0 ne {
+     /addspace AddToSpace lpdef /addwidth AddToWidth lpdef
+   } if
+ } def
+
+/endpage {
+  lindex 0 ne {
+    Footers {
+      topskip plength sub hdescent add
+      FootingLeft FootingCenter FootingRight banner
+    } if
+    /E
+  } {
+    /restore
+  } ifelse
+  pagesave exch 0 true lpexec
+  /pindex pindex 1 add def
+} def
+
+/endcolumn
+ { lindex colines 1 sub add colines idiv colines mul
+   dup llength ge { pop endpage beginpage } { /lindex exch def } ifelse
+ } def
+
+/fontheight	% <font> fontheight <ascent> <height>
+ { gsave setfont
+   newpath 0 0 moveto
+   (|^_j) false charpath
+   pathbbox exch pop dup 2 index sub 4 -2 roll pop pop
+   grestore exch 1.25 mul exch 1.25 mul
+ } def
+
+/wdict {
+  dup length wosp ( dict\n) ws
+  { (dup) ws exch wosp wosp ( put\n) ws } forall
+} def
+/wosp { ( ) ws wo } def
+/wo {
+  dup type /dicttype eq { wdict } { OutFile exch write==only } ifelse
+} def
+/ws {
+  OutFile exch writestring
+} def
+
+/outfont {		% <name> <font> outfont -
+  OutFile null ne {
+    exch wo
+    dup /FontName get
+    dup wosp (-ISOLatin1) ws wosp ( RE) ws
+    /FontMatrix get 0 get 1000 mul round cvi wosp
+    ( scalefont def\n) ws
+  } {
+    pop pop
+  }ifelse
+} def
+
+/StringFF (\f) def
+/CharFF StringFF 0 get def
+/StringTAB (\t) def
+/CharTAB StringTAB 0 get def
+
+/showline		% line -> leftover_line (handles \f)
+ {  { showline1 dup length 0 eq { exit } if
+      dup 0 get CharFF ne { exit } if
+      EjectFF { endpage beginpage } { endcolumn } ifelse
+      skip1
+    }
+   loop
+ } def
+
+/showline1		% line -> leftover_line (handles page break)
+ { lindex llength eq { endpage beginpage } if
+   lindex colines idiv cowidth mul		% x
+   lindex colines mod 1 add lheight mul neg fascent sub	% y
+   1 index cowidth add
+   showline2
+   /lindex lindex 1 add def
+ } def
+
+/setxy {
+  /ty exch def /tx exch def
+} def
+
+/showline2 {	% string x y xlimit -> leftover_string (handles tabs)
+  2 index exch 5 2 roll setxy {
+                % Stack: xinit xlimit string
+    showline3 dup length 0 eq { exit } if
+    dup 0 get CharTAB ne { exit } if
+    tx 3 index sub tabwx div
+      0.05 add ceiling tabwx mul 3 index add ty setxy
+    skip1
+    tx 2 index ge { exit } if
+  } loop exch pop exch pop
+} def
+
+/showline3 {	% xlimit string -> xlimit leftover_string
+                % (finds line break / tab / formfeed)
+  1 index tx sub
+    cwx div 0.1 add cvi 0 .max 1 index length .min
+  1 index 0 3 -1 roll getinterval
+        % look for \f or \t
+  StringFF search { exch pop exch pop } if
+  StringTAB search { exch pop exch pop } if
+  dup length 0 ne {
+    tx ty lpmoveto
+    dup pairkern length 0 eq {
+      lpshow
+    } {
+      { kproc } exch /kshow 2 true lpexec
+    } ifelse
+    currentpoint setxy
+  } if
+  length dup 2 index length exch sub getinterval
+} def
+
+/kproc {	% <char1> <char2> kproc -
+  pairkern currentfont /Encoding get 3 index get
+  2 copy known {
+    get currentfont /Encoding get 2 index get
+    2 copy known {
+      get currentfont /FontMatrix get 0 get mul
+    } {
+      pop pop 0
+    } ifelse
+  } {
+    pop pop 0
+  } ifelse
+  addwidth add 2 index 32 eq { addspace add } if
+  dup 0 eq { pop } { 0 rmoveto } ifelse
+  pop pop
+} def
+
+/skip1
+ { dup length 1 sub 1 exch getinterval
+ } def
+
+/e== {		% <object> e== - -- print an object to stderr
+  (%stderr) (w) file dup 3 -1 roll write==only flushfile
+} def
+
+/eprint {	% <string> eprint - -- print a string to stderr
+  (%stderr) (w) file dup 3 -1 roll writestring flushfile
+} def
+
+% Read kerning information from a .AFM file.
+
+/readkern {	% <afmfile> readkern <pairkerndict>
+  /mfilename 1 index def
+  (r) file /mfile exch def
+  mfile =string readline pop
+  (StartFontMetrics ) anchorsearch {
+    pop pop
+    /kdict 256 dict def
+    { mfile =string readline pop
+      (EndFontMetrics) anchorsearch { pop pop exit } if
+      (KPX ) anchorsearch {
+        pop token pop cvlit /char1 exch def
+        token pop cvlit /char2 exch def
+        token pop /kern exch def pop
+        kdict char1 .knownget not {
+          5 dict kdict char1 2 index .growput
+        } if
+        char2 kern .growput
+      } {
+        pop
+      } ifelse
+    } loop kdict
+  } {
+    pop
+    mfilename eprint ( does not begin with StartFontMetrics.\n) eprint
+    0 dict
+  } ifelse
+  mfile closefile
+} def
+
+% The main printing procedure
+
+/doFirst true def
+/prevBFont null def
+/prevHFont null def
+
+/lpfirst {	% - lpfirst -
+% Define some abbreviating procedures.
+  /B {save 3 1 roll translate /X 0 def} lpdef
+  /BL {save 3 1 roll 90 rotate translate /X 0 def} lpdef
+  /P {/setpagedevice where {pop  % <key> <value> P
+      5 dict begin 2 copy def
+      /Policies 2 dict dup 4 index 1 put def currentdict end setpagedevice
+      } {pop pop} ifelse} lpdef
+  /E {showpage restore} lpdef
+  /V {neg X exch moveto} lpdef
+  /M {/X 2 index def neg moveto} lpdef
+  /S {currentfile =string readline pop show} lpdef
+  /RE {		% <isoname> <fontname> RE <font>
+    findfont
+        %% reencode for iso latin1; from the 2nd edition red book, sec 5.6.1
+    dup length dict begin {1 index /FID ne {def} {pop pop} ifelse} forall
+    /Encoding ISOLatin1Encoding def currentdict end
+    definefont
+  } lpdef
+} def
+
+/lp {		% file initial_chars ->
+  /lpline exch def
+  /lpfile exch def
+
+  doFirst { lpfirst /doFirst false def } if
+
+% Initialize the device and fonts.
+  /BFont
+    BodyFont null eq { defaultBodyFont } { BodyFont } ifelse def
+  BFont prevBFont ne {
+    /BFont BFont outfont
+    /prevBFont BFont def
+  } if
+  Headers Footers or {
+    /HFont
+      HeadingFont null eq { defaultHeadingFont } { HeadingFont } ifelse def
+    HFont prevHFont ne {
+      /HFont HFont outfont
+      /prevHFont HFont def
+    } if
+  } if
+  save
+
+% Get the layout parameters.
+   clippath
+   gsave	% for possible rotation
+   Landscape { 90 rotate } if
+   BFont setfont ( ) stringwidth pop /cwx exch def
+     cwx Tab mul /tabwx exch def
+   BFont fontheight /fheight exch def /fascent exch def
+   Headers Footers or { HFont fontheight } { 0 0 } ifelse
+     /hheight exch def /hascent exch def
+     /hdescent hheight hascent sub def
+   fheight Spacing mul /lheight exch def
+   Headers { hheight lheight add } { 0 } ifelse
+     /topskip exch def
+   Footers { hheight lheight add } { 0 } ifelse
+     /botskip exch def
+   /pskip topskip botskip add def
+        % Translate the page so that (0,0) corresponds to
+        % the top of the topmost body line.
+   pathbbox
+     2 index sub MarginBottom MarginTop add sub /plength exch def
+     2 index sub MarginLeft MarginRight add sub /pwidth exch def
+     pwidth Columns div /cowidth exch def
+     exch MarginLeft add
+     exch MarginBottom add plength add topskip sub
+     /pagey exch def /pagex exch def
+   plength pskip sub lheight div cvi MaxLines .min
+     dup /colines exch def
+     Columns mul /llength exch def
+   grestore
+   OutFile null ne { nulldevice } if
+
+% Print layout
+   Noisy
+    { (Page height = ) eprint llength e==
+      (.\n) eprint flush
+    } if
+
+    colines 1 lt cowidth 1 lt or
+    {
+      (Page too small, it must be large to hold at least one line of text\n) eprint
+      (please specify a page size using for example -sPAPERSIZE=(a4|letter)\n) eprint
+      /gslp.ps cvx /limitcheck signalerror
+    } if
+
+
+% Set duplex if requested.
+  Duplex null ne {
+    /Duplex true /P 2 false lpexec
+    /Tumble Duplex /P 2 false lpexec
+  } if
+
+% Write the kerning table, if relevant.
+   OutFile null ne Kern length 0 ne and {
+     (/kproc) ws /kproc load wosp ( def\n) ws
+     (/pairkern) ws Kern wosp ( def\n) ws
+   } if
+
+% Disable stack recording so we can use stopped with readline.
+   $error /recordstacks false put
+
+% Initialize for the first page.
+   /lbuf 64000 string def
+   /pindex 1 def
+   beginpage
+
+% Iterate through the file.
+   lpline
+    { dup length /pos exch def
+      lbuf exch 0 exch putinterval
+       { lpfile lbuf pos lbuf length pos sub getinterval readline } stopped
+       {	% Filled the line before a CR or EOF.
+         exch pop showline
+       }
+       {	% Reached CR and/or EOF first.
+         exch length pos add lbuf exch 0 exch getinterval
+         1 index { showline } if		% omit final empty line
+          { dup length 0 eq Truncate or { pop () exit } if
+            showline
+          }
+         loop
+         exch not { exit } if
+       }
+      ifelse
+      pindex PageLast gt { exit } if
+    } loop
+   pop
+
+% Wrap up.
+%**************** WHY IS THIS COMMENTED OUT? ****************
+%   EjectEOF { endpage } { endcolumn } ifelse
+   endpage
+   restore
+
+} def
+
+end
+
+% Usage: <file> lp
+%   prints <file> using the current parameter settings.
+% Usage: [ <arg1> ... <argn> ] lpcommand
+%   interprets args like a command line.
+
+/lp { save   lpdict begin () lp end   restore } def
+
+lpdict begin
+
+/splitfn		% (FontNN.NN) -> <font>
+ { dup /arg exch def length
+    { dup 0 le { exit } if
+      dup 1 sub arg exch get dup 48 ge 1 index 59 le and exch 46 eq or not { exit } if
+      1 sub
+    } loop
+   arg exch 0 exch getinterval dup cvn find-latin-font
+   exch arg exch anchorsearch pop pop cvr scalefont
+ } def
+
+% Parse the command line switches.
+
+/doswitch	% argn ... arg1 (-?) restofswitch ->
+ { exch dup cvn lpdict exch known
+    { cvn load exec }
+    { exch pop (Unknown switch: ) eprint eprint (\n) eprint }
+   ifelse
+ } def
+
+/more		% argn ... arg1 restofswitch ->
+ { dup length 0 ne
+    { (- ) dup 1 3 index 0 get put
+      exch dup length 1 sub 1 exch getinterval
+      doswitch
+    }
+    { pop
+    }
+   ifelse
+ } def
+
+/-- { (--) exch concatstrings
+      dup cvn lpdict exch known
+       { cvn load exec }
+       { (Unknown switch: ) eprint eprint (\n) eprint }
+      ifelse
+    } def
+/--add-to-space { cvr /AddToSpace exch def } def
+/--add-to-width { cvr /AddToWidth exch def } def
+/--columns { cvi 1 .max /Columns exch def } def
+/--detect { /DetectFileType true def } def
+/--duplex { /Duplex {Landscape} def } def
+/--duplex-long-edge { /Duplex false def } def
+/--duplex-short-edge { /Duplex true def } def
+/--first-page { cvi /PageFirst exch def } def
+/--footing-center { /FootingCenter exch def   /Footers true def } def
+/--footing-left { /FootingLeft exch def   /Footers true def } def
+/--footing-right { /FootingRight exch def   /Footers true def} def
+/--heading-center { /HeadingCenter exch def   /Headers true def } def
+/--heading-left { /HeadingLeft exch def   /Headers true def } def
+/--heading-right { /HeadingRight exch def   /Headers true def } def
+/--kern { readkern /Kern exch def } def
+/--last-page { cvi /PageLast exch def } def
+/--margin-bottom { cvr 72.0 mul /MarginBottom exch def } def
+/--margin-left { cvr 72.0 mul /MarginLeft exch def } def
+/--margin-right { cvr 72.0 mul /MarginRight exch def } def
+/--margin-top { cvr 72.0 mul /MarginTop exch def } def
+/--no-eject-file { /EjectEOF false def } def
+/--no-eject-formfeed { /EjectFF false def } def
+/--spacing { cvr /Spacing exch def } def
+
+/-# { pop } def		% ignore
+/-+ { -- } def
+(-1)cvn { /Columns 1 def   more } def
+(-2)cvn { /Columns 2 def   more } def
+/-b { /HeadingLeft exch def   /HeadingCenter () def   /HeadingRight PageNumberString def
+      /Headers true def
+      /break true def
+    } def
+/-B { /HeadingLeft () def   /HeadingCenter () def   /HeadingRight () def
+      /Headers false def
+      /FootingLeft () def   /FootingCenter () def   /FootingRight () def
+      /Footers false def
+      /break true def
+      more
+    } def
+/-C { pop } def		% ignore
+/-c { /Truncate true def   more } def
+/-d { pop } def		% ignore
+/-f { splitfn /BodyFont exch def } def
+/-F { splitfn /HeadingFont exch def } def
+/-G { more } def	% ignore
+/-g { more } def	% ignore
+/-h { more } def	% ignore
+/-J { pop } def		% ignore
+/-K { more } def	% ignore
+/-k { more } def	% ignore
+/-l { 66 -L -B } def
+/-L { cvi /MaxLines exch def } def
+/-m { more } def	% ignore
+/-n { pop } def		% ignore
+/-o { more } def	% ignore
+/-p { (w) file /OutFile exch def   OutFile (%!\n) writestring } def
+/-P { pop } def		% ignore
+/-q { /Noisy false def   more } def
+/-r { /Landscape true def   more } def
+/-R { /Landscape false def   more } def
+/-S { pop } def		% ignore
+/-s { pop } def		% ignore
+/-T { cvi /Tab exch def } def
+/-v { pop } def		% ignore
+/-w { more } def	% ignore
+
+/lp1		% filename ->
+ { break not { dup /HeadingLeft exch def } if
+   Noisy
+    { (Printing ) eprint dup eprint (\n) eprint
+    } if
+   (r) file
+                % If requested, check for a PostScript file.
+   DetectFileType
+    { dup 2 string readstring pop dup (%!) eq
+       {	% Yes, it's a PostScript file.
+         pop dup 80 string readline pop pop cvx exec
+       }
+       { lp
+       }
+      ifelse
+    }
+    { () lp
+    }
+   ifelse
+ } bind def
+
+/lpcstring 8192 string def
+
+end
+
+/lpcommand		% <[arg1 ... argn]> lpcommand <any_printed>
+ {	% Push the commands on the stack in reverse order
+   mark exch
+   dup length 1 sub -1 0 { 1 index exch get exch } for pop
+   lpdict begin
+   /any false def
+   /break false def
+    { dup mark eq { pop exit } if
+      dup length 2 ge { dup 0 get (-) 0 get eq } { false } ifelse
+       { dup 0 2 getinterval
+         exch dup length 2 sub 2 exch getinterval
+         doswitch
+       }
+       { dup  /matched false def
+          { /matched true def   /any true def   lp1 } lpcstring filenameforall
+         matched { pop } { lp1 } ifelse		% let the error happen
+       }
+      ifelse
+    } loop
+   OutFile null ne
+    { OutFile (%stdout) (w) file ne { OutFile closefile } if
+      /OutFile null def
+    } if
+   any
+   end
+ } def
+
+[ shellarguments
+ { ] dup length 0 ne { lpcommand } { false } ifelse not
+    { (%stderr) (w) file
+      [ (Usage: )
+        /PROGNAME where { pop PROGNAME } { (gslp) } ifelse
+        ( [-12BclqRr] [-b<header>] [-f<font>] [-F<hfont>]\n)
+        (        [-L<lines>] [-p<outfile>] [-T<tabwidth>]\n)
+        (        [--add-to-(space|width) <units>] [--columns <n>]\n)
+        (        [--detect] [--first-page <page#>] [--last-page <page#>]\n)
+        (        [--(heading|footing)-(left|right|center) <string>]\n)
+        (        [--kern <afmfile>] [--margin-(top|bottom|left|right) <inches>]\n)
+        (        [--no-eject-(file|formfeed)] [--spacing <n>] file1 ... filen\n)
+      ] { 2 copy writestring pop } forall dup flushfile closefile
+    }
+   if
+ }
+ { pop }
+ifelse

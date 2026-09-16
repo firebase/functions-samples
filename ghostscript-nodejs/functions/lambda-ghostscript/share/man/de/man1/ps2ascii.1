@@ -1,0 +1,32 @@
+.\" Using encoding of the German (de_DE) translation: ISO-8859-1
+.\" Translation by Tobias Burnus <burnus@gmx.de> and Thomas Hoffmann
+.TH PS2ASCII 1 "8.Juli 2002" 7.21 "Ghostscript-Werkzeuge" \" -*- nroff -*-
+.SH NAME
+ps2ascii \- Ghostscript-Übersetzer von PostScript oder PDF nach ASCII
+.SH SYNTAX
+\fBps2ascii\fR [ \fIEingabe.ps\fR [ \fIAusgabe.txt\fR ] ]
+.br
+\fBps2ascii\fR \fIEingabe.pdf\fR [ \fIAusgabe.txt\fR ]
+.SH BESCHREIBUNG
+\fBps2ascii\fR benutzt \fBgs\fR(1), um ASCII-Text aus einer
+\fBPostScript\fR(tm)- oder Adobe \fBPortable-Document-Format\fR-(PDF-)Datei zu extrahieren. Falls keine 
+Dateien in der Kommandozeile angegeben werden,
+liest \fBgs\fR von der Standardeingabe; bei PDF-Dateien wird ein expliziter
+Dateiname benötigt, keine Standardeingabe. Falls keine Ausgabedatei angegeben
+ist, wird zur Standardausgabe geschrieben.
+.PP
+\fBps2ascii\fR ignoriert die Schriftkodierung und kommt nicht sonderlich
+gut mit Unterscheidung (Kerning) zurecht. Somit sollten Sie für PostScript
+(aber gegenwärtig nicht für PDF) \fBpstotext\fR benutzen (siehe unten).
+.SH DATEIEN
+Starten Sie "\fBgs -h\fR" um den Ort der Ghostscript-Dokumentation auf Ihrem System zu ermitteln, 
+wo Sie weitere Datails finden.
+.SH SIEHE AUCH
+pstotext(1), http://www.research.digital.com/SRC/virtualpaper/pstotext.html
+.SH VERSION
+Dies Dokument wurde zuletzt für Ghostscript version 7.21 durchgesehen.
+.SH AUTOR
+Artifex Software, Inc. sind die
+Hauptautoren von Ghostscript.
+David M. Jones <dmjones@theory.lcs.mit.edu> verbesserte \fBps2ascii\fR
+substanziell.

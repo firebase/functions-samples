@@ -1,0 +1,120 @@
+%!PS-Adobe-3.0
+%%Title: euc-china encoding
+%%Creator: Taiji Yamada <taiji@aihara.co.jp> and gs-cjk project
+%%Copyright: (C) 2001 Taiji Yamada and gs-cjk project
+%%+ This script is part of GNU Ghostscript and is distributed under
+%%+ the terms of the GNU Affero General Public License. See the file COPYING
+%%+ for more information.
+%%BoundingBox: 30 150 530 650
+%%EndComments
+%%BeginProlog
+
+/*gs-cjk (\
+------------------------------------------------------------------------\n\
+This is a script to test CJK fonts such as CID-keyed fonts.\n\
+If you have not done CID-keyed fonts installation and definitions at\n\
+/Resource/CMap and CIDFnmap or /Resource/CIDFont of ghostscript, then\n\
+this script can't work correctly.\n\
+For details, please see README at http://www.gyve.org/gs-cjk/supplement.\n\
+
+If you throw this script into a printer, it requires PostScript 3\n\
+printer and CID-keyed fonts specified in this script.\n\
+------------------------------------------------------------------------\n) def
+
+/notice*stdout 4 dict begin
+  /*open {} def /*echo-n { =only } def /*echo { = } def /*close { flush } def
+  currentdict
+end def
+
+/notice*page 5 dict begin
+  /*y 750 def
+  /*open {
+    gsave initmatrix /Courier findfont 11 scalefont setfont 50 *y moveto
+    *y 750 eq {
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+    } if
+  } def
+  /*echo-n { dup type /stringtype ne { dup length string cvs } if show } def
+  /*echo { *echo-n /*y *y 11 sub def 50 *y moveto } def
+  /*close { grestore } def
+  currentdict
+end def
+
+/greeting*gs-cjk {
+  product (Ghostscript) search not { pop } { pop pop pop QUIET not {
+    notice*stdout begin
+      *open
+      *gs-cjk { (\n) search { *echo } { *echo-n exit } ifelse pop } loop
+      *close
+    end
+  } if } ifelse
+} bind def
+greeting*gs-cjk
+
+/*findfont {
+  dup /Font resourcestatus { pop pop findfont } {
+    notice*page begin
+      *open
+      (Error in findfont: ) *echo-n dup *echo
+      *close
+    end
+    findfont
+  } ifelse
+} bind def
+
+/orighandleerror errordict /handleerror get def
+errordict begin
+  /handleerror {
+    notice*page begin errordict begin $error begin
+      *open
+      (Error of ) *echo-n errorname dup length string cvs *echo
+      *close
+      showpage
+    end end end
+    orighandleerror
+  } bind def
+end
+%%EndProlog
+/STSong-Light--GB-EUC-V *findfont 25 scalefont setfont
+500 625 moveto
+(灵笔中文简体字直写印刷) show
+/STSong-Light--GB-EUC-H *findfont 25 scalefont setfont
+50 600 moveto
+(灵笔 Ghostscript) show	
+50 550 moveto
+(中文简体字 Simplified Chinese) show
+50 500 moveto
+(横写 horizontal writing) show
+50 450 moveto
+(印刷 Print) show
+%
+/STSong-Light--GB-EUC-V *findfont [ 1 .3 0 1 0 0 ] makefont 20 scalefont setfont
+100 275 moveto 20 2 div 0 rmoveto
+(斜体) dup stringwidth neg rmoveto show
+/STSong-Light--GB-EUC-H *findfont [ 1 0 .3 1 0 0 ] makefont 20 scalefont setfont
+100 250 moveto
+(斜体 Italic transformation) show
+%
+/STSong-Light--GB-EUC-H *findfont 20 scalefont setfont
+150 400 moveto
+(Song Typeface 宋体) show
+/STFangsong-Light--GB-EUC-H *findfont 20 scalefont setfont
+150 375 moveto
+(Fangsong Typeface 仿宋体) show
+/STHeiti-Regular--GB-EUC-H *findfont 20 scalefont setfont
+150 350 moveto
+(Hei Typeface 黑体) show
+/STKaiti-Regular--GB-EUC-H *findfont 20 scalefont setfont
+150 325 moveto
+(Kai Typeface 揩体) show
+%
+/Times-Roman findfont 13 scalefont setfont
+50 200 moveto
+(* Chinese translation of "Ghostscript" is merely associative \
+characters of these meanings.) show
+50 200 13 sub moveto
+(In Simplified Chinese articles, customarily we use just "Ghostscript" \
+as it is.) show
+showpage
+%%Trailer
+%%EOF

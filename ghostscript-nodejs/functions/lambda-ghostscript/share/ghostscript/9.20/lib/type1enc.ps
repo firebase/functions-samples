@@ -1,0 +1,64 @@
+% Copyright (C) 2001-2012 Artifex Software, Inc.
+% All Rights Reserved.
+%
+% This software is provided AS-IS with no warranty, either express or
+% implied.
+%
+% This software is distributed under license and may not be copied,
+% modified or distributed except as expressly authorized under the terms
+% of the license contained in the file LICENSE in this distribution.
+%
+% Refer to licensing information at http://www.artifex.com or contact
+% Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134, San Rafael,
+% CA  94903, U.S.A., +1(415)492-9861, for further information.
+%
+
+% type1enc.ps
+% PostScript language versions of the Type 1 encryption/decryption algorithms.
+
+% This file is normally not needed with Ghostscript, since Ghostscript
+% implements these algorithms in C.  For the specifications, see Chapter 7 of
+% "Adobe Type 1 Font Format," ISBN 0-201-57044-0, published by Addison-Wesley.
+
+/.type1crypt	% <R> <from> <to> <proc> .type1crypt <R'> <to>
+                % (auxiliary procedure)
+ { 4 1 roll
+   0 2 index length getinterval
+   0 1 2 index length 1 sub
+    {		% Stack: proc R from to index
+      2 index 1 index get			% proc R from to index C/P
+      4 index -8 bitshift xor 3 copy put	% proc R from to index P/C
+      5 index exec				% proc R from to C
+
+%		Compute R' = ((R + C) * 52845 + 22719) mod 65536
+%		without exceeding a 31-bit integer magnitude, given that
+%		0 <= R <= 65535 and 0 <= C <= 255.
+
+      4 -1 roll add
+      dup 20077 mul	% 52845 - 32768
+      exch 1 and 15 bitshift add	% only care about 16 low-order bits
+      22719 add 65535 and 3 1 roll
+    }
+   for exch pop 3 -1 roll pop
+ } bind def
+
+% <state> <fromString> <toString> .type1encrypt <newState> <toSubstring>
+%	Encrypts fromString according to the algorithm for Adobe
+%	  Type 1 fonts, writing the result into toString.
+%	  toString must be at least as long as fromString or a
+%	  rangecheck error occurs.  state is the initial state of
+%	  the encryption algorithm (a 16-bit non-negative
+%	  integer); newState is the new state of the algorithm.
+
+/.type1encrypt
+ { { exch pop } .type1crypt
+ } bind def
+
+% <state> <fromString> <toString> .type1decrypt <newState> <toSubstring>
+%	Decrypts fromString according to the algorithm for Adobe
+%	  Type 1 fonts, writing the result into toString.  Other
+%	  specifications are as for type1encrypt.
+
+/.type1decrypt
+ { { pop 2 index exch get } .type1crypt
+ } bind def

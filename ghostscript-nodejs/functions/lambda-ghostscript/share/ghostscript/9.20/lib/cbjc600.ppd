@@ -1,0 +1,408 @@
+*PPD-Adobe: "4.1"
+*% Adobe Systems PostScript(R) Printer Description File
+*% Copyright 1995 Yves Arrouye for AFPL Ghostscript with Level 2 PS.
+*% All Rights Reserved. 
+*% This file may be distributed as part of GNU Ghostscript and/or AFPL
+*% Ghostscript, under the same terms and conditions as Ghostscript.
+*% End of Copyright statement
+*FormatVersion: "4.1"
+*FileVersion: "1.0"
+*LanguageEncoding: ISOLatin1
+*LanguageVersion: English
+*PCFileName: "CBJC600.PPD"
+*Product: "(Canon Bubble Jet Color 600)"
+*PSVersion: "(2010.351) 0"
+*ModelName: "Canon Bubble Jet Color 600"
+*NickName: "BJC-600"
+*ShortNickName: "BJC-600"
+*Manufacturer: "Canon"
+
+*% This file is not complete, and may lack some useful information...
+
+*% Note: the default transfer function should be set to Null if Ghostscript
+*% exhibit a bug making magenta appear while printing in gray levels...
+*% Note: if you print on A4 paper by default, change *Default values (the
+*% default is Letter here).
+
+*% ==============Constraints =================
+
+*UIConstraints: *BitsPerPixel None *ColorModel DeviceCMYK
+*UIConstraints: *BitsPerPixel None *ColorModel DeviceRGB
+*UIConstraints: *BitsPerPixel 16 *ColorModel DeviceRGB
+*UIConstraints: *BitsPerPixel 16 *ColorModel DeviceGray
+*UIConstraints: *BitsPerPixel 24 *ColorModel DeviceGray
+*UIConstraints: *BitsPerPixel 32 *ColorModel DeviceRGB
+*UIConstraints: *BitsPerPixel 32 *ColorModel DeviceGray
+
+*UIConstraints: *ColorModel DeviceCMYK *BitsPerPixel None
+*UIConstraints: *ColorModel DeviceRGB *BitsPerPixel None
+*UIConstraints: *ColorModel DeviceRGB *BitsPerPixel 16
+*UIConstraints: *ColorModel DeviceRGB *BitsPerPixel 32
+*UIConstraints: *ColorModel DeviceGray *BitsPerPixel 16
+*UIConstraints: *ColorModel DeviceGray *BitsPerPixel 24
+*UIConstraints: *ColorModel DeviceGray *BitsPerPixel 32
+
+*% =========== Device Capabilities ===============
+
+*LanguageLevel: "2"
+*Protocols: TBCP
+*FreeVM: "2124600"
+*ColorDevice:  True
+*DefaultColorSpace: CMYK
+*FileSystem: True
+*Throughput: "1"
+
+*Password: "()" 
+
+*% ============Paper Size Information ==============
+
+*OpenUI *PageSize: PickOne
+*OrderDependency: 30 AnySetup *PageSize
+*DefaultPageSize: Letter
+*PageSize A4: "1 dict dup /PageSize [595 842] put setpagedevice"
+*PageSize A5: "1 dict dup /PageSize [421 595] put setpagedevice"
+*PageSize A6: "1 dict dup /PageSize [297 421] put setpagedevice"
+*PageSize A7: "1 dict dup /PageSize [210 297] put setpagedevice"
+*PageSize A8: "1 dict dup /PageSize [148 210] put setpagedevice"
+*PageSize A9: "1 dict dup /PageSize [105 148] put setpagedevice"
+*PageSize A10: "1 dict dup /PageSize [74 105] put setpagedevice"
+*PageSize B5: "1 dict dup /PageSize [501 709] put setpagedevice"
+*PageSize Letter/US Letter: "1 dict dup /PageSize [612 792] put setpagedevice"
+*CloseUI: *PageSize
+
+*OpenUI *PageRegion: PickOne
+*OrderDependency: 40 AnySetup *PageRegion
+*DefaultPageRegion: Letter
+*PageRegion A4: "1 dict dup /PageSize [595 842] put setpagedevice"
+*PageRegion A5: "1 dict dup /PageSize [421 595] put setpagedevice"
+*PageRegion A6: "1 dict dup /PageSize [297 421] put setpagedevice"
+*PageRegion A7: "1 dict dup /PageSize [210 297] put setpagedevice"
+*PageRegion A8: "1 dict dup /PageSize [148 210] put setpagedevice"
+*PageRegion A9: "1 dict dup /PageSize [105 148] put setpagedevice"
+*PageRegion A10: "1 dict dup /PageSize [74 105] put setpagedevice"
+*PageRegion B5: "1 dict dup /PageSize [501 709] put setpagedevice"
+*PageRegion Letter/US Letter: "1 dict dup /PageSize [612 792] put setpagedevice"
+*CloseUI: *PageRegion
+
+*DefaultImageableArea: Letter
+*ImageableArea A4: "18.425196 27.096094 576.625183 833.496094"
+*ImageableArea A5: "18.425196 27.096045 402.625183 586.496033"
+*ImageableArea A6: "18.425196 27.096045 278.625183 412.496033"
+*ImageableArea A7: "18.425196 27.096045 191.625198 288.496033"
+*ImageableArea A8: "18.425196 27.096045 129.625198 201.496048"
+*ImageableArea A9: "18.425196 27.096045 86.625198 139.496048"
+*ImageableArea A10: "18.425196 27.096045 55.625195 96.496048"
+*ImageableArea B5: "18.425196 27.096045 482.625183 700.496033"
+*ImageableArea Letter/US Letter: "18.425196 27.096045 593.625183 783.496033"
+
+*?ImageableArea: "
+save
+  /cvp {(                ) cvs print ( ) print } bind def
+  /upperright {10000 mul floor 10000 div} bind def
+  /lowerleft {10000 mul ceiling 10000 div} bind def
+  newpath clippath pathbbox
+  4 -2 roll exch 2 {lowerleft cvp} repeat
+  exch 2 {upperright cvp} repeat flush
+ restore
+"
+*End
+
+*DefaultPaperDimension: Letter
+*PaperDimension A4: "595 842"
+*PaperDimension A5: "421 595"
+*PaperDimension A6: "297 421"
+*PaperDimension A7: "210 297"
+*PaperDimension A8: "148 210"
+*PaperDimension A9: "105 148"
+*PaperDimension A10: "74 105"
+*PaperDimension B5: "501 709"
+*PaperDimension Letter/US Letter: "612 792"
+
+*HWMargins: "9.637794495 27.042521 9.637794495 8.503937"
+
+*% =============Halftone Information ===============
+
+*ScreenFreq: "60.0"
+*ScreenAngle: "45.0"
+
+*DefaultScreenProc: Dot
+*ScreenProc Dot: "
+{dup mul exch dup mul add 1.0 exch sub }
+"
+*End
+*ScreenProc Line: "{ pop }"
+*ScreenProc Ellipse: "{ dup 5 mul 8 div mul exch dup mul exch add sqrt 1 exch sub }"
+
+*DefaultTransfer: Normalized
+*Transfer Normalized: "{mark
+1.0 1.000 0.955 0.915 0.847 0.765 0.683 0.602 0.500 0.311 0.030 0.0
+counttomark dup 3 add -1 roll exch
+2 sub mul dup floor cvi dup 3 1 roll sub exch dup 
+3 add index exch 2 add index dup 4 1 roll sub mul add
+counttomark 1 add 1 roll cleartomark
+} bind"
+*End
+*Transfer Null: "{ }"
+*Transfer Null.Inverse: "{ 1 exch sub }"
+*End
+
+*%==================Input Slot====================
+
+*OpenUI *InputSlot/Media Source: PickOne
+*OrderDependency: 20 AnySetup *InputSlot
+*DefaultInputSlot: Feeder
+*InputSlot Feeder/Paper Tray: ""
+*CloseUI: *InputSlot
+
+*%=================Manual Feed====================
+
+*OpenUI *ManualFeed/Manual Feed:  Boolean
+*OrderDependency: 20 AnySetup *ManualFeed
+*DefaultManualFeed: False
+*ManualFeed True/True: "1 dict dup /ManualFeed true put setpagedevice"
+*ManualFeed False/False: "1 dict dup /ManualFeed false put setpagedevice"
+*?ManualFeed: "
+ save
+ currentpagedevice /ManualFeed get
+ {(True)}{(False)}ifelse = flush
+ restore"
+*End
+
+*CloseUI: *ManualFeed
+
+*%===================Resolution====================
+
+*OpenUI *Resolution/Resolution: PickOne
+*OrderDependency: 10 AnySetup *Resolution
+*DefaultResolution: 360x360dpi
+*Resolution 90x90dpi/90dpi: "
+ 1 dict dup /HWResolution [ 90 90 ]
+ put setpagedevice"
+*End
+
+*Resolution 180x180dpi/180dpi: "
+ 1 dict dup /HWResolution [ 180 180 ]
+ put setpagedevice"
+*End
+
+*Resolution 360x360dpi/360dpi: "
+ 1 dict dup /HWResolution [ 360 360 ]
+ put setpagedevice"
+*End
+
+*?Resolution: "
+ save
+ currentpagedevice /HWResolution get dup
+ 0 get cvi 10 string cvs print
+ (x) print
+ 0 get cvi 10 string print
+ (dpi) = flush
+ restore"
+*End
+
+*CloseUI: *Resolution
+
+*%===================Output Depth====================
+
+*OpenUI *BitsPerPixel/Print Depth: PickOne
+*OrderDependency: 30 AnySetup *BitsPerPixel
+*DefaultBitsPerPixel: 24
+*BitsPerPixel None/1bpp: "
+ 1 dict dup /BitsPerPixel 1 put
+ setpagedevice"
+*End
+
+*BitsPerPixel 8/8bpp: "
+ 1 dict dup /BitsPerPixel 8 put
+ setpagedevice"
+*End
+
+*BitsPerPixel 16/16bpp: "
+ 1 dict dup /BitsPerPixel 16 put
+ setpagedevice"
+*End
+
+*BitsPerPixel 24/24bpp: "
+ 1 dict dup /BitsPerPixel 24 put
+ setpagedevice"
+*End
+
+*BitsPerPixel 32/32bpp: "
+ 1 dict dup /BitsPerPixel 32 put
+ setpagedevice"
+*End
+
+*?BitsPerPixel: "
+ save
+ currentpagedevice /BitsPerPixel get dup 1 eq { pop (None) } if = flush
+ restore"
+*End
+
+*CloseUI: *BitsPerPixel
+
+*%=================Media Type============================
+
+*OpenUI *MediaType/Media Type: PickOne
+*OrderDependency: 50 AnySetup *MediaType
+*DefaultMediaType: PlainPaper
+*MediaType PlainPaper/Plain Paper: "
+ 1 dict dup /MediaType (PlainPaper) put setpagedevice"
+*End
+
+*MediaType CoatedPaper/Coated Paper: "
+ 1 dict dup /MediaType (CoatedPaper) put setpagedevice"
+*End
+
+*MediaType TransparencyFilm/Transparency Film: "
+ 1 dict dup /MediaType (TransparencyFilm) put setpagedevice"
+*End
+
+*MediaType Envelope/Envelope: "
+ 1 dict dup /MediaType (Envelope) put setpagedevice"
+*End
+
+*MediaType Card/Card: "
+ 1 dict dup /MediaType (Card) put setpagedevice"
+*End
+
+*MediaType Other/Other: "
+ 1 dict dup /MediaType (Other) put setpagedevice"
+*End
+
+*?MediaType: "
+ save
+ currentpagedevice /MediaType get
+ dup null eq {pop (Unknown)} if = flush 
+ restore " 
+*End
+
+*CloseUI: *MediaType
+
+*%===================Printing Quality====================
+
+*OpenUI *OutputMode/Print Quality: PickOne
+*OrderDependency: 50 AnySetup *OuputMode
+*DefaultOutputMode: Normal
+*OutputMode Draft/Draft: "
+ 1 dict dup /PrintQuality (Draft) put setpagedevice"
+*End
+
+*OutputMode Normal/Normal: "
+ 1 dict dup /PrintQuality (Normal) put setpagedevice"
+*End
+
+*OutputMode High/High: "
+ 1 dict dup /PrintQuality (High) put setpagedevice"
+*End
+
+*?OutputMode: "
+ save
+ currentpagedevice /PrintQuality get
+ dup null eq {pop (Unknown)} if = flush 
+ restore " 
+*End
+
+*CloseUI: *OutputMode
+
+*%===================Color/Gray Printing====================
+
+*OpenUI *ColorModel/Color Processing: PickOne
+*OrderDependency: 20 AnySetup *ColorModel
+*DefaultColorModel: DeviceCMYK
+*ColorModel DeviceGray/Gray: "
+ 1 dict dup /ProcessColorModel /DeviceGray 
+ put setpagedevice"
+*End
+
+*ColorModel DeviceRGB/RGB: "
+ 1 dict dup /ProcessColorModel /DeviceRGB
+ put setpagedevice"
+*End
+
+*ColorModel DeviceCMYK/CMYK: "
+ 1 dict dup /ProcessColorModel /DeviceCMYK 
+ put setpagedevice"
+*End
+
+*?ColorModel: "
+ save
+ currentpagedevice /ProcessColorModel get = flush 
+ restore "
+*End
+
+*CloseUI: *ColorModel
+
+*%===================Media Weight/Thick Media====================
+
+*OpenUI *ThickMedia/Thick Media: PickOne
+*OrderDependency: 30 AnySetup *ThickMedia
+*DefaultThickMedia: Thin
+*ThickMedia Thin/No: "
+ 1 dict dup /MediaWeight 80 
+ put setpagedevice"
+*End
+
+*ThickMedia Thick/Yes: "
+ 1 dict dup /ThickMedia 120
+ put setpagedevice"
+*End
+
+*?ThickMedia: "
+ save
+ currentpagedevice /MediaWeight get 105 gt { (Thick) } { (Thin) } ifelse
+ = flush 
+ restore "
+*End
+
+*CloseUI: *ThickMedia
+
+*%===================PrintColors====================
+
+*OpenUI *PrintColors/Print Colors: PickOne
+*OrderDependency: 20 AnySetup *PrintColors
+*DefaultPrintColors: "15"
+*PrintColors 0/None: "1 dict dup /PrintColors 0 put setpagedevice"
+*End
+
+*PrintColors 1/Cyan: "1 dict dup /PrintColors 1 put setpagedevice"
+*End
+
+*PrintColors 2/Magenta: "1 dict dup /PrintColors 2 put setpagedevice"
+*End
+
+*PrintColors 4/Yellow: "1 dict dup /PrintColors 4 put setpagedevice"
+*End
+
+*PrintColors 8/Black: "1 dict dup /PrintColors 8 put setpagedevice"
+*End
+
+*PrintColors 15/All: "1 dict dup /PrintColors 15 put setpagedevice"
+*End
+
+
+*CloseUI *PrintColors
+
+*%===================Monochrome Printing====================
+
+*OpenUI *MonochromePrint/Monochrome Print: Boolean
+*OrderDependency: 50 AnySetup *MonochromePrint
+*DefaultMonochromePrint: False
+*MonochromePrint True/Yes: "
+ 1 dict dup /MonochromePrint true 
+ put setpagedevice"
+*End
+
+*MonochromePrint False/No: "
+ 1 dict dup /MonochromePrint false 
+ put setpagedevice"
+*End
+
+*?MonochromePrint: "
+ save
+ currentpagedevice /MonochromePrint get
+ {(True)}{(False)}ifelse = flush
+ restore"
+*End
+
+*CloseUI: *MonochromePrint
+
