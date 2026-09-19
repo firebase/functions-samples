@@ -2,8 +2,8 @@
   "name": "github-to-slack-functions",
   "description": "Cloud Functions for Firebase that posts new GitHub commits to a Slack channel.",
   "dependencies": {
-    "firebase-admin": "^14.2.0",
-    "firebase-functions": "^7.3.2",
+    "firebase-admin": "^14.4.0",
+    "firebase-functions": "^7.4.0",
     "secure-compare": "^3.0.1"
   },
   "devDependencies": {
