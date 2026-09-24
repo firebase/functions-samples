@@ -8,7 +8,7 @@ This sample has two parts:
 
 - A Node.js backend that “exchanges” Okta access tokens for Firebase custom
   authentication tokens. The backend is intended to be deployed as a Cloud
-  Function, but because its just an Express.js app, you can also run on it on
+  Function, but because it's just an Express.js app, you can also run on it on
   your own infrastructure.
 - A web frontend that signs users in with Okta, gets a Firebase custom
   authentication token from your backend, and authenticates with Firebase using
