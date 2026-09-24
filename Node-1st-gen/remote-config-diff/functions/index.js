@@ -15,13 +15,16 @@
  */
 
 const functions = require('firebase-functions/v1');
+const { onConfigUpdated } = require("firebase-functions/v2/remoteConfig");
+
 const admin = require('firebase-admin');
 const jsonDiff = require('json-diff');
 
 admin.initializeApp();
 
 // [START remote_config_function]
-exports.showConfigDiff = functions.remoteConfig.onUpdate(versionMetadata => {
+exports.showConfigDiff = onConfigUpdated(({ version: versionMetadata, context }) => {
+
   return admin.credential.applicationDefault().getAccessToken()
     .then(accessTokenObj => {
       return accessTokenObj.access_token;
