@@ -60,6 +60,14 @@ exports.onNoteCreated = functions.runWith({secrets: [elasticPassword]}).firestor
 
 // [START search_function_elastic]
 exports.searchNotes = functions.runWith({secrets: [elasticPassword]}).https.onCall(async (data, context) => {
+  // Ensure that the user is authenticated with Firebase Auth
+  if (!(context.auth && context.auth.uid)) {
+    throw new functions.https.HttpsError('permission-denied', 'Must be signed in!');
+  }
+
+  if (!data || typeof data.query !== 'string') {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with a string "query" argument.');
+  }
   const query = data.query;
 
   // Search for any notes where the text field contains the query text.
@@ -69,10 +77,23 @@ exports.searchNotes = functions.runWith({secrets: [elasticPassword]}).https.onCa
     index: "notes",
     body: {
       query: {
-        query_string: {
-          query: `*${query}*`,
-          fields: [
-            "text"
+        bool: {
+          must: [
+            {
+              simple_query_string: {
+                query: `*${query}*`,
+                fields: [
+                  "text"
+                ]
+              }
+            }
+          ],
+          filter: [
+            {
+              term: {
+                owner: context.auth.uid
+              }
+            }
           ]
         }
       }
