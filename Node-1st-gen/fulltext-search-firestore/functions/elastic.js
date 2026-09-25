@@ -65,6 +65,9 @@ exports.searchNotes = functions.runWith({secrets: [elasticPassword]}).https.onCa
     throw new functions.https.HttpsError('permission-denied', 'Must be signed in!');
   }
 
+  if (!data || typeof data.query !== 'string') {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with a string "query" argument.');
+  }
   const query = data.query;
 
   // Search for any notes where the text field contains the query text.
@@ -77,7 +80,7 @@ exports.searchNotes = functions.runWith({secrets: [elasticPassword]}).https.onCa
         bool: {
           must: [
             {
-              query_string: {
+              simple_query_string: {
                 query: `*${query}*`,
                 fields: [
                   "text"
