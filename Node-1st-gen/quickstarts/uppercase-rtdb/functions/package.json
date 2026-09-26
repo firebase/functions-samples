@@ -3,8 +3,8 @@
   "description": "Uppercaser Cloud Functions for Firebase Quickstart sample",
   "dependencies": {
     "eslint": "^10.8.0",
-    "firebase-admin": "^14.2.0",
-    "firebase-functions": "^7.3.2"
+    "firebase-admin": "^14.5.0",
+    "firebase-functions": "^7.4.0"
   },
   "devDependencies": {
     "eslint-plugin-promise": "^7.3.0",
