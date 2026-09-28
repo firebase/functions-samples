@@ -24,7 +24,7 @@ admin.initializeApp();
 const fs = require('fs');
 const mkdirp = fs.promises.mkdir;
 const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
+const execFile = promisify(require('child_process').execFile);
 const path = require('path');
 const os = require('os');
 
@@ -87,7 +87,7 @@ async function blurImage(filePath, bucketName, metadata) {
   functions.logger.log('The file has been downloaded to', tempLocalFile);
 
   // Blur the image using ImageMagick.
-  await exec(`convert "${tempLocalFile}" -channel RGBA -blur 0x8 "${tempLocalFile}"`);
+  await execFile('convert', [tempLocalFile, '-channel', 'RGBA', '-blur', '0x8', tempLocalFile]);
   functions.logger.log('Blurred image created at', tempLocalFile);
 
   // Uploading the Blurred image.
