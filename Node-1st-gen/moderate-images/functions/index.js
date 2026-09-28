@@ -39,10 +39,6 @@ const BLURRED_FOLDER = 'blurred';
  * API and if it is we blur it using ImageMagick.
  */
 exports.blurOffensiveImages = functions.storage.object().onFinalize(async (object) => {
-  if (!object.name) {
-    return null;
-  }
-
   // Ignore things we've already blurred
   if (object.name.startsWith(`${BLURRED_FOLDER}/`)) {
     functions.logger.log(`Ignoring upload "${object.name}" because it was already blurred.`);
@@ -78,18 +74,7 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
  * Blurs the given image located in the given bucket using ImageMagick.
  */
 async function blurImage(filePath, bucketName, metadata) {
-  const tempRoot = path.resolve(os.tmpdir());
-  const tempLocalFile = path.resolve(tempRoot, filePath);
-  const relative = path.relative(tempRoot, tempLocalFile);
-  if (
-    path.isAbsolute(filePath) ||
-    filePath.split(/[\\/]/).includes('..') ||
-    !relative ||
-    relative.split(path.sep)[0] === '..' ||
-    path.isAbsolute(relative)
-  ) {
-    throw new Error(`Invalid file path: ${filePath}`);
-  }
+  const tempLocalFile = path.join(os.tmpdir(), filePath);
   const tempLocalDir = path.dirname(tempLocalFile);
   const bucket = admin.storage().bucket(bucketName);
 
