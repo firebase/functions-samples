@@ -24,7 +24,7 @@ admin.initializeApp();
 const fs = require('fs');
 const mkdirp = fs.promises.mkdir;
 const {promisify} = require('util');
-const exec = promisify(require('child_process').exec);
+const execFile = promisify(require('child_process').execFile);
 const path = require('path');
 const os = require('os');
 
@@ -39,6 +39,10 @@ const BLURRED_FOLDER = 'blurred';
  * API and if it is we blur it using ImageMagick.
  */
 exports.blurOffensiveImages = functions.storage.object().onFinalize(async (object) => {
+  if (!object.name) {
+    return null;
+  }
+
   // Ignore things we've already blurred
   if (object.name.startsWith(`${BLURRED_FOLDER}/`)) {
     functions.logger.log(`Ignoring upload "${object.name}" because it was already blurred.`);
@@ -74,7 +78,15 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
  * Blurs the given image located in the given bucket using ImageMagick.
  */
 async function blurImage(filePath, bucketName, metadata) {
-  const tempLocalFile = path.join(os.tmpdir(), filePath);
+  const tempRoot = path.resolve(os.tmpdir());
+  const tempLocalFile = path.resolve(tempRoot, filePath);
+  if (
+    path.isAbsolute(filePath) ||
+    filePath.split(/[\\/]/).includes('..') ||
+    !tempLocalFile.startsWith(`${tempRoot}${path.sep}`)
+  ) {
+    throw new Error(`Invalid file path: ${filePath}`);
+  }
   const tempLocalDir = path.dirname(tempLocalFile);
   const bucket = admin.storage().bucket(bucketName);
 
@@ -87,7 +99,7 @@ async function blurImage(filePath, bucketName, metadata) {
   functions.logger.log('The file has been downloaded to', tempLocalFile);
 
   // Blur the image using ImageMagick.
-  await exec(`convert "${tempLocalFile}" -channel RGBA -blur 0x8 "${tempLocalFile}"`);
+  await execFile('convert', [tempLocalFile, '-channel', 'RGBA', '-blur', '0x8', tempLocalFile]);
   functions.logger.log('Blurred image created at', tempLocalFile);
 
   // Uploading the Blurred image.
