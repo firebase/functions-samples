@@ -80,10 +80,13 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
 async function blurImage(filePath, bucketName, metadata) {
   const tempRoot = path.resolve(os.tmpdir());
   const tempLocalFile = path.resolve(tempRoot, filePath);
+  const relative = path.relative(tempRoot, tempLocalFile);
   if (
     path.isAbsolute(filePath) ||
     filePath.split(/[\\/]/).includes('..') ||
-    !tempLocalFile.startsWith(`${tempRoot}${path.sep}`)
+    !relative ||
+    relative.split(path.sep)[0] === '..' ||
+    path.isAbsolute(relative)
   ) {
     throw new Error(`Invalid file path: ${filePath}`);
   }
