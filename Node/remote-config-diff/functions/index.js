@@ -61,7 +61,7 @@ exports.showconfigdiff = onConfigUpdated(async (event) => {
 
     // Get the templates
     const responses = await Promise.all(templatePromises);
-    const results = responses.map((r) => r.json());
+    const results = await Promise.all(responses.map((r) => r.json()));
     const currentTemplate = results[0];
     const previousTemplate = results[1];
     // Figure out the differences of the templates

@@ -16,6 +16,8 @@
 
 'use strict';
 
+/** @typedef {import('firebase-admin/database').Query} Query */
+
 const functions = require('firebase-functions/v1');
 const { initializeApp, applicationDefault } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
@@ -96,7 +98,7 @@ app.get('/api/messages', async (req, res) => {
   const uid = req.user.uid;
   const category = `${req.query?.category ?? ''}`;
 
-  /** @type {import('firebase-admin/database').Query} */
+  /** @type {Query} */
   let query = getDatabase().ref(`/users/${uid}/messages`);
 
   if (category && ['positive', 'negative', 'neutral'].indexOf(category) > -1) {

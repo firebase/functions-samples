@@ -15,6 +15,8 @@
  */
 "use strict";
 
+/** @typedef {import("firebase-admin/auth").UserRecord} UserRecord */
+
 // [START all]
 // [START import]
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
@@ -53,7 +55,7 @@ exports.accountcleanup = onSchedule("every day 00:00", async (event) => {
 // [START deleteInactiveUser]
 /**
  * Deletes one inactive user from the list.
- * @param {import("firebase-admin/auth").UserRecord[]} inactiveUsers
+ * @param {UserRecord[]} inactiveUsers
  * @return {null | Promise<void>}
  */
 function deleteInactiveUser(inactiveUsers) {
@@ -85,9 +87,9 @@ function deleteInactiveUser(inactiveUsers) {
 // Returns the list of all inactive users.
 /**
  *
- * @param {import("firebase-admin/auth").UserRecord[]} [users] the current list of inactive users
+ * @param {UserRecord[]} [users] the current list of inactive users
  * @param {string} [nextPageToken]
- * @return {Promise<import("firebase-admin/auth").UserRecord[]>}
+ * @return {Promise<UserRecord[]>}
  */
 async function getInactiveUsers(users = [], nextPageToken) {
   const result = await getAuth().listUsers(1000, nextPageToken);

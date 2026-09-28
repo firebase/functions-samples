@@ -15,6 +15,8 @@
  */
 'use strict';
 
+/** @typedef {import('sharp').SharpConstructor & typeof import('sharp')} SharpConstructor */
+
 // [START import]
 const functions = require('firebase-functions/v1');
 const { initializeApp } = require('firebase-admin/app');
@@ -23,7 +25,7 @@ initializeApp();
 const path = require('path');
 
 //library for resizing images
-const sharp = /** @type {import('sharp').SharpConstructor} */ (/** @type {unknown} */ (require('sharp')));
+const sharp = /** @type {SharpConstructor} */ (require('sharp'));
 // [END import]
 
 // [START generateThumbnail]

@@ -15,6 +15,8 @@
  */
 "use strict";
 
+/** @typedef {import("sharp").SharpConstructor & typeof import("sharp")} SharpConstructor */
+
 // [START v2storageImports]
 // [START v2storageSDKImport]
 const {onObjectFinalized} = require("firebase-functions/storage");
@@ -27,7 +29,7 @@ const logger = require("firebase-functions/logger");
 const path = require("path");
 
 // library for image resizing
-const sharp = /** @type {import('sharp').SharpConstructor} */ (/** @type {unknown} */ (require("sharp")));
+const sharp = /** @type {SharpConstructor} */ (require("sharp"));
 
 initializeApp();
 // [END v2storageAdditionalImports]
