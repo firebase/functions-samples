@@ -17,12 +17,13 @@
 
 // [START all]
 // [START import]
+const {URL, URLSearchParams} = require("node:url");
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
 const {onConfigUpdated} = require("firebase-functions/remoteConfig");
 const logger = require("firebase-functions/logger");
 // The Firebase Admin SDK to obtain access tokens.
-const admin = require("firebase-admin");
-const app = admin.initializeApp();
+const {initializeApp, applicationDefault} = require("firebase-admin/app");
+initializeApp();
 const jsonDiff = require("json-diff");
 // [END import]
 
@@ -30,13 +31,14 @@ const jsonDiff = require("json-diff");
 exports.showconfigdiff = onConfigUpdated(async (event) => {
   try {
     // Obtain the access token from the Admin SDK
-    const accessTokenObj = await admin.credential.applicationDefault()
+    const accessTokenObj = await applicationDefault()
         .getAccessToken();
     const accessToken = accessTokenObj.access_token;
 
     // Get the version number from the event object
-    const remoteConfigApi = "https://firebaseremoteconfig.googleapis.com/v1/" +
-        `projects/${app.options.projectId}/remoteConfig`;
+    const remoteConfigApi = new URL(
+        `https://firebaseremoteconfig.googleapis.com/v1/projects/${process.env.GCLOUD_PROJECT}/remoteConfig`,
+    );
     const currentVersion = event.data.versionNumber;
     const prevVersion = currentVersion - 1;
     const templatePromises = [];
@@ -59,7 +61,7 @@ exports.showconfigdiff = onConfigUpdated(async (event) => {
 
     // Get the templates
     const responses = await Promise.all(templatePromises);
-    const results = responses.map((r) => r.json());
+    const results = await Promise.all(responses.map((r) => r.json()));
     const currentTemplate = results[0];
     const previousTemplate = results[1];
     // Figure out the differences of the templates

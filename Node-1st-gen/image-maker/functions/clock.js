@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const _ = require('lodash');
 
 const getDefaultOpts = () => ({
   strokes: {
@@ -39,7 +38,11 @@ const getY = (angle) => {
 };
 
 const clock = (ctx, colorOpts) => {
-  const colors = _.merge({}, getDefaultOpts(), colorOpts);
+  const defaultOpts = getDefaultOpts();
+  const colors = {
+    strokes: Object.assign({}, defaultOpts.strokes, colorOpts && colorOpts.strokes),
+    fills: Object.assign({}, defaultOpts.fills, colorOpts && colorOpts.fills),
+  };
   let x, y, i;
   const now = new Date();
 

@@ -22,11 +22,13 @@ const cookieParser = require('cookie-parser');
 const crypto = require('node:crypto');
 
 // Firebase Setup
-const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
+const { getAuth } = require('firebase-admin/auth');
 // @ts-ignore
 const serviceAccount = require('./service-account.json');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+initializeApp({
+  credential: cert(serviceAccount),
   databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
 });
 
@@ -130,10 +132,10 @@ async function createFirebaseAccount(spotifyID, displayName, photoURL, email, ac
   const uid = `spotify:${spotifyID}`;
 
   // Save the access token to the Firebase Realtime Database.
-  const databaseTask = admin.database().ref(`/spotifyAccessToken/${uid}`).set(accessToken);
+  const databaseTask = getDatabase().ref(`/spotifyAccessToken/${uid}`).set(accessToken);
 
   // Create or update the user account.
-  const userCreationTask = admin.auth().updateUser(uid, {
+  const userCreationTask = getAuth().updateUser(uid, {
     displayName: displayName,
     photoURL: photoURL,
     email: email,
@@ -141,7 +143,7 @@ async function createFirebaseAccount(spotifyID, displayName, photoURL, email, ac
   }).catch((error) => {
     // If user does not exists we create it.
     if (error.code === 'auth/user-not-found') {
-      return admin.auth().createUser({
+      return getAuth().createUser({
         uid: uid,
         displayName: displayName,
         photoURL: photoURL,
@@ -155,7 +157,7 @@ async function createFirebaseAccount(spotifyID, displayName, photoURL, email, ac
   // Wait for all async tasks to complete, then generate and return a custom auth token.
   await Promise.all([userCreationTask, databaseTask]);
   // Create a Firebase custom auth token.
-  const token = await admin.auth().createCustomToken(uid);
+  const token = await getAuth().createCustomToken(uid);
   functions.logger.log(
     'Created Custom token for UID "',
     uid,

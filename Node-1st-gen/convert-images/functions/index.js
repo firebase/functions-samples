@@ -16,13 +16,14 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
+const { initializeApp } = require('firebase-admin/app');
+const { getStorage } = require('firebase-admin/storage');
 const spawn = require('child-process-promise').spawn;
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
-admin.initializeApp();
+initializeApp();
 
 // File extension for the created JPEG files.
 const JPEG_EXTENSION = '.jpg';
@@ -52,7 +53,7 @@ exports.imageToJPG = functions.storage.object().onFinalize(async (object) => {
     return null;
   }
 
-  const bucket = admin.storage().bucket(object.bucket);
+  const bucket = getStorage().bucket(object.bucket);
   // Create the temp directory where the storage file will be downloaded.
   await fs.promises.mkdir(tempLocalDir, { recursive: true });
   // Download file from bucket.

@@ -21,8 +21,9 @@ const crypto = require('crypto');
 const path = require('path');
 const os = require('os');
 
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
+initializeApp();
 const { Storage } = require('@google-cloud/storage');
 const spawn = require('child-process-promise').spawn;
 
@@ -54,7 +55,7 @@ exports.metadata = functions.storage.object().onFinalize(async (object) => {
   // Save metadata to realtime datastore.
   metadata = imageMagickOutputToObject(result.stdout);
   const safeKey = makeKeyFirebaseCompatible(filePath);
-  await admin.database().ref(safeKey).set(metadata);
+  await getDatabase().ref(safeKey).set(metadata);
   functions.logger.log('Wrote to:', filePath, 'data:', metadata);
   // Cleanup temp directory after metadata is extracted
   // Remove the file from temp directory

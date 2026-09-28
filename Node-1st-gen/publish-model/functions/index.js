@@ -16,10 +16,11 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getMachineLearning } = require('firebase-admin/machine-learning');
+initializeApp();
 
-const ml = admin.machineLearning();
+const ml = getMachineLearning();
 const path = require('path');
 
 /**

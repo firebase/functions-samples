@@ -31,7 +31,7 @@ onInit(() => {
   client = new Typesense.Client({
     'nodes': [{
       'host': 'xxx.a1.typesense.net', // where xxx is the ClusterID of your Typesense Cloud cluster
-      'port': '443',
+      'port': 443,
       'protocol': 'https'
     }],
     'apiKey': typesenseAdminApiKey.value(),

@@ -51,8 +51,9 @@ exports.onNoteCreated = functions.runWith({secrets: [algoliaId, algoliaAdminKey]
 // [END update_index_function]
 
 // [START get_firebase_user]
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+initializeApp();
 
 async function getFirebaseUser(req, res, next) {
   functions.logger.log('Check if request is authorized with Firebase ID token');
@@ -73,7 +74,7 @@ async function getFirebaseUser(req, res, next) {
   }
 
   try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
+    const decodedIdToken = await getAuth().verifyIdToken(idToken);
     functions.logger.log('ID Token correctly decoded', decodedIdToken);
     req.user = decodedIdToken;
     return next();

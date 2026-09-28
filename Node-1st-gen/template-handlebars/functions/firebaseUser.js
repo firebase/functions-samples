@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const admin = require('firebase-admin');
+const { getAuth } = require('firebase-admin/auth');
 const cookieParser = require('cookie-parser')();
 const functions = require('firebase-functions/v1');
 
@@ -61,7 +61,7 @@ function getIdTokenFromRequest(req, res) {
  */
 async function addDecodedIdTokenToRequest(idToken, req) {
   try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
+    const decodedIdToken = await getAuth().verifyIdToken(idToken);
     req.user = decodedIdToken;
     functions.logger.log('ID Token correctly decoded', decodedIdToken);
   } catch (error) {

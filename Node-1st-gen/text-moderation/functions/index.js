@@ -16,7 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const Filter = require('bad-words');
+const { Filter } = require('bad-words');
 const badWordsFilter = new Filter();
 
 // Moderates messages by lowering all uppercase messages and removing swearwords.

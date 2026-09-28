@@ -33,9 +33,11 @@ onInit(() => {
   client = new Client({
     cloud: {
       id: elasticId.value(),
+    },
+    auth: {
       username: elasticUsername.value(),
       password: elasticPassword.value(),
-    }
+    },
   });
 });
 // [END init_elastic]

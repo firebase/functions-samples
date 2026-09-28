@@ -17,8 +17,9 @@
 
 // Firebase setup
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getStorage } = require('firebase-admin/storage');
+initializeApp();
 
 // Node.js core modules
 const fs = require('fs');
@@ -76,7 +77,7 @@ exports.blurOffensiveImages = functions.storage.object().onFinalize(async (objec
 async function blurImage(filePath, bucketName, metadata) {
   const tempLocalFile = path.join(os.tmpdir(), filePath);
   const tempLocalDir = path.dirname(tempLocalFile);
-  const bucket = admin.storage().bucket(bucketName);
+  const bucket = getStorage().bucket(bucketName);
 
   // Create the temp directory where the storage file will be downloaded.
   await mkdirp(tempLocalDir, { recursive: true });

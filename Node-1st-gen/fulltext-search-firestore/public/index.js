@@ -52,7 +52,10 @@ function searchAlgoliaAuthenticated(query) {
   return firebase.auth().currentUser.getIdToken()
     .then(function(token) {
       // The token is then passed to our getSearchKey Cloud Function
-      return fetch('https://us-central1-' + PROJECT_ID + '.cloudfunctions.net/getSearchKey/', {
+      const searchKeyUrl = new URL(
+        `https://us-central1-${PROJECT_ID}.cloudfunctions.net/getSearchKey/`
+      );
+      return fetch(searchKeyUrl, {
           headers: { Authorization: 'Bearer ' + token }
       });
     })

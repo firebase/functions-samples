@@ -16,8 +16,8 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+initializeApp();
 
 const express = require('express');
 const { engine } = require('express-handlebars');

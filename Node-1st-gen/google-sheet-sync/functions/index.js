@@ -20,8 +20,9 @@
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1/init');
 const {defineString, defineSecret} = require('firebase-functions/params');
-const admin = require('firebase-admin');
-admin.initializeApp();
+const { initializeApp } = require('firebase-admin/app');
+const { getDatabase } = require('firebase-admin/database');
+initializeApp();
 const {OAuth2Client} = require('google-auth-library');
 const {google} = require('googleapis');
 
@@ -70,7 +71,7 @@ exports.oauthcallback = functions.runWith({secrets: [googleApiClientId, googleAp
   try {
     const { tokens } = await functionsOauthClient.getToken(code);
     // Now tokens contains an access_token and an optional refresh_token. Save them.
-    await admin.database().ref(DB_TOKEN_PATH).set(tokens);
+    await getDatabase().ref(DB_TOKEN_PATH).set(tokens);
     res.status(200).send('App successfully configured with new Credentials. '
         + 'You can now close this page.');
   } catch (error) {
@@ -120,7 +121,7 @@ async function getAuthorizedClient() {
     functionsOauthClient.setCredentials(oauthTokens);
     return functionsOauthClient;
   }
-  const snapshot = await admin.database().ref(DB_TOKEN_PATH).once('value');
+  const snapshot = await getDatabase().ref(DB_TOKEN_PATH).once('value');
   oauthTokens = snapshot.val();
   functionsOauthClient.setCredentials(oauthTokens);
   return functionsOauthClient;
@@ -132,7 +133,7 @@ exports.testsheetwrite = functions.https.onRequest(async (req, res) => {
   const random2 = Math.floor(Math.random() * 100);
   const random3 = Math.floor(Math.random() * 100);
   const ID = new Date().getUTCMilliseconds();
-  await admin.database().ref(`${watchedpathsDataPath.value()}/${ID}`).set({
+  await getDatabase().ref(`${watchedpathsDataPath.value()}/${ID}`).set({
     firstColumn: random1,
     secondColumn: random2,
     thirdColumn: random3,

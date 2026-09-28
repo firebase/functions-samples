@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 "use strict";
+const {URL, URLSearchParams} = require("node:url");
 const path = require("path");
 const functions = require('firebase-functions/v1');
 const {initializeApp} = require("firebase-admin/app");
@@ -54,9 +55,11 @@ exports.backupApod = functions
       }
 
       logger.info(`Requesting data from apod api for date ${date}`);
-      let url = "https://api.nasa.gov/planetary/apod";
-      url += `?date=${date}`;
-      url += `&api_key=${process.env.NASA_API_KEY}`;
+      const url = new URL("https://api.nasa.gov/planetary/apod");
+      url.search = new URLSearchParams({
+        date,
+        api_key: process.env.NASA_API_KEY || "",
+      }).toString();
       const apiResp = await fetch(url);
       if (!apiResp.ok) {
         logger.warn(

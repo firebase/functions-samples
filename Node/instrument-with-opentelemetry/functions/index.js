@@ -26,9 +26,10 @@ const db = getFirestore();
 
 /**
  * Divide an array into chunks of `chunkSize`
- * @param {any[]} arr
- * @param {Number} chunkSize
- * @return {Array<Array<any>>}
+ * @template T
+ * @param {T[]} arr
+ * @param {number} chunkSize
+ * @return {T[][]}
  */
 function sliceIntoChunks(arr, chunkSize) {
   const res = [];

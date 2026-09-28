@@ -22,6 +22,7 @@ const {getFunctions} = require("firebase-admin/functions");
 const {logger} = require("firebase-functions");
 
 // Dependencies for image backup.
+const {URL, URLSearchParams} = require("node:url");
 const path = require("path");
 const {initializeApp} = require("firebase-admin/app");
 const {getStorage} = require("firebase-admin/storage");
@@ -59,9 +60,11 @@ exports.backupapod = onTaskDispatched(
         );
       }
       logger.info(`Requesting data from apod api for date ${date}`);
-      let url = "https://api.nasa.gov/planetary/apod";
-      url += `?date=${date}`;
-      url += `&api_key=${process.env.NASA_API_KEY}`;
+      const url = new URL("https://api.nasa.gov/planetary/apod");
+      url.search = new URLSearchParams({
+        date,
+        api_key: process.env.NASA_API_KEY || "",
+      }).toString();
       const apiResp = await fetch(url);
       if (!apiResp.ok) {
         logger.warn(
@@ -115,11 +118,12 @@ async function getFunctionUrl(name, location="us-central1") {
     });
   }
   const projectId = await auth.getProjectId();
-  const url = "https://cloudfunctions.googleapis.com/v2beta/" +
-    `projects/${projectId}/locations/${location}/functions/${name}`;
+  const url = new URL(
+      `https://cloudfunctions.googleapis.com/v2beta/projects/${projectId}/locations/${location}/functions/${name}`,
+  );
 
   const client = await auth.getClient();
-  const res = await client.request({url});
+  const res = await client.request({url: url.toString()});
   const uri = res.data?.serviceConfig?.uri;
   if (!uri) {
     throw new Error(`Unable to retreive uri for function at ${url}`);
