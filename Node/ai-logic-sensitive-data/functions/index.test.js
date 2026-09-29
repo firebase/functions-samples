@@ -16,12 +16,15 @@
 
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";
+import { HttpsError } from "firebase-functions/v2/ai";
 import {
   redactSensitiveData,
   redactPrompt,
   redactResponse,
   setDlpClientForTesting,
 } from "./index.js";
+
+process.env.GCLOUD_PROJECT = "test-project";
 
 /**
  * Creates a mock DLP client that simulates deidentification using regex for standard infoTypes.
@@ -33,9 +36,6 @@ function createMockDlpClient(opts) {
     get callCount() {
       return callCount;
     },
-    async getProjectId() {
-      return "test-project";
-    },
     async deidentifyContent(request) {
       callCount++;
       if (opts?.shouldFail) {
@@ -45,23 +45,23 @@ function createMockDlpClient(opts) {
       const text = request?.item?.value ?? "";
       let transformed = text;
 
-      // Mock DLP redaction rules matching default infoTypes
-      transformed = transformed.replace(
-        /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
-        "[EMAIL_ADDRESS]"
+      // Mock DLP redaction rules matching requested infoTypes
+      const configuredInfoTypes = new Set(
+        (request?.inspectConfig?.infoTypes ?? []).map((it) => it.name)
       );
-      transformed = transformed.replace(
-        /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/g,
-        "[PHONE_NUMBER]"
-      );
-      transformed = transformed.replace(
-        /\b(?:\d{4}[- ]?){3}\d{4}\b/g,
-        "[CREDIT_CARD_NUMBER]"
-      );
-      transformed = transformed.replace(
-        /\b\d{3}-\d{2}-\d{4}\b/g,
-        "[US_SOCIAL_SECURITY_NUMBER]"
-      );
+
+      if (configuredInfoTypes.has("EMAIL_ADDRESS")) {
+        transformed = transformed.replace(
+          /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+          "[EMAIL_ADDRESS]"
+        );
+      }
+      if (configuredInfoTypes.has("PHONE_NUMBER")) {
+        transformed = transformed.replace(
+          /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/g,
+          "[PHONE_NUMBER]"
+        );
+      }
 
       return [
         {
@@ -134,11 +134,11 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
 
     it("should redact multiple types of sensitive info in the same text", async () => {
       const input =
-        "Customer alice@example.com with phone 555-123-4567, SSN 123-45-6789, CC 4111-2222-3333-4444.";
+        "Customer alice@example.com with phone 555-123-4567.";
       const result = await redactSensitiveData(input);
       assert.equal(
         result,
-        "Customer [EMAIL_ADDRESS] with phone [PHONE_NUMBER], SSN [US_SOCIAL_SECURITY_NUMBER], CC [CREDIT_CARD_NUMBER]."
+        "Customer [EMAIL_ADDRESS] with phone [PHONE_NUMBER]."
       );
     });
 
@@ -160,9 +160,6 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
 
     it("should fall back to original text when DLP response is missing item or value", async () => {
       const emptyItemDlp = {
-        async getProjectId() {
-          return "test-project";
-        },
         async deidentifyContent() {
           return [{}]; // no item
         },
@@ -174,7 +171,7 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
       assert.equal(result, input);
     });
 
-    it("should propagate errors thrown by the DLP service", async () => {
+    it("should fail closed and throw HttpsError when DLP service throws", async () => {
       const failingDlp = createMockDlpClient({ shouldFail: true });
       setDlpClientForTesting(failingDlp);
 
@@ -182,8 +179,44 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
         async () => {
           await redactSensitiveData("test@example.com");
         },
-        { message: "DLP service unavailable" }
+        (err) => {
+          assert(err instanceof HttpsError);
+          assert.equal(err.code, "internal");
+          assert.equal(
+            err.message,
+            "Failed to inspect and redact sensitive data."
+          );
+          return true;
+        }
       );
+    });
+
+    it("should fall back to GOOGLE_CLOUD_PROJECT when GCLOUD_PROJECT is unset", async () => {
+      const origGcloud = process.env.GCLOUD_PROJECT;
+      const origGoogle = process.env.GOOGLE_CLOUD_PROJECT;
+      delete process.env.GCLOUD_PROJECT;
+      process.env.GOOGLE_CLOUD_PROJECT = "fallback-project";
+
+      let capturedParent;
+      const spyDlp = {
+        async deidentifyContent(req) {
+          capturedParent = req.parent;
+          return [{ item: { value: req.item?.value } }];
+        },
+      };
+      setDlpClientForTesting(spyDlp);
+
+      try {
+        await redactSensitiveData("contact@example.com");
+        assert.equal(capturedParent, "projects/fallback-project/locations/global");
+      } finally {
+        process.env.GCLOUD_PROJECT = origGcloud;
+        if (origGoogle !== undefined) {
+          process.env.GOOGLE_CLOUD_PROJECT = origGoogle;
+        } else {
+          delete process.env.GOOGLE_CLOUD_PROJECT;
+        }
+      }
     });
   });
 
@@ -234,7 +267,7 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
                 role: "user",
                 parts: [
                   { text: "Also, my email is john.doe@example.com." },
-                  { text: "And SSN is 000-11-2222." },
+                  { text: "And alternate phone is 555-987-6543." },
                 ],
               },
             ],
@@ -259,11 +292,11 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
       );
       assert.equal(
         responseBody.contents[2].parts[1].text,
-        "And SSN is [US_SOCIAL_SECURITY_NUMBER]."
+        "And alternate phone is [PHONE_NUMBER]."
       );
     });
 
-    it("should preserve non-text parts (e.g. inlineData) untouched", async () => {
+    it("should preserve non-text parts (such as inlineData) untouched", async () => {
       const event = {
         data: {
           api: "google.cloud.aiplatform.v1beta1",
@@ -516,6 +549,59 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
       );
     });
 
+    it("should fail closed and reject when DLP service throws", async () => {
+      const failingDlp = createMockDlpClient({ shouldFail: true });
+      setDlpClientForTesting(failingDlp);
+
+      const event = {
+        data: {
+          api: "google.cloud.aiplatform.v1beta1",
+          model: "gemini-1.5-flash",
+          request: {
+            contents: [
+              {
+                parts: [{ text: "Sensitive info alice@example.com" }],
+              },
+            ],
+          },
+        },
+      };
+
+      await assert.rejects(
+        async () => {
+          await invokeAiTrigger(redactPrompt, event);
+        },
+        { message: "Failed to inspect and redact sensitive data." }
+      );
+    });
+
+    it("should safely handle request where contents is not an array", async () => {
+      const event = {
+        data: {
+          request: {
+            contents: "invalid-contents",
+          },
+        },
+      };
+
+      const responseBody = await invokeAiTrigger(redactPrompt, event);
+      assert.equal(responseBody.contents, undefined);
+    });
+
+    it("should safely handle systemInstruction with non-array parts", async () => {
+      const event = {
+        data: {
+          request: {
+            systemInstruction: { parts: "invalid-parts" },
+            contents: [],
+          },
+        },
+      };
+
+      const responseBody = await invokeAiTrigger(redactPrompt, event);
+      assert.equal(responseBody.systemInstruction, undefined);
+    });
+
     it("should expose the expected blockingTrigger endpoint configuration", () => {
       const endpoint = redactPrompt.__endpoint;
       assert.ok(endpoint);
@@ -649,7 +735,7 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
       assert.equal(responseBody.candidates, undefined);
     });
 
-    it("should safely handle candidate with missing content (e.g. SAFETY block)", async () => {
+    it("should safely handle candidate with missing content (such as a SAFETY block)", async () => {
       const event = {
         data: {
           api: "google.cloud.aiplatform.v1beta1",
@@ -702,6 +788,47 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
       );
     });
 
+    it("should fail closed and reject when DLP service throws", async () => {
+      const failingDlp = createMockDlpClient({ shouldFail: true });
+      setDlpClientForTesting(failingDlp);
+
+      const event = {
+        data: {
+          api: "google.cloud.aiplatform.v1beta1",
+          model: "gemini-1.5-flash",
+          response: {
+            candidates: [
+              {
+                content: {
+                  parts: [{ text: "Sensitive response alice@example.com" }],
+                },
+              },
+            ],
+          },
+        },
+      };
+
+      await assert.rejects(
+        async () => {
+          await invokeAiTrigger(redactResponse, event);
+        },
+        { message: "Failed to inspect and redact sensitive data." }
+      );
+    });
+
+    it("should safely handle response where candidates is not an array", async () => {
+      const event = {
+        data: {
+          response: {
+            candidates: "invalid-candidates",
+          },
+        },
+      };
+
+      const responseBody = await invokeAiTrigger(redactResponse, event);
+      assert.equal(responseBody.candidates, undefined);
+    });
+
     it("should expose the expected blockingTrigger endpoint configuration", () => {
       const endpoint = redactResponse.__endpoint;
       assert.ok(endpoint);
@@ -710,6 +837,14 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
         endpoint.blockingTrigger?.eventType,
         "google.firebase.ailogic.v1.afterGenerate"
       );
+    });
+  });
+
+  describe("declarative IAM roles", () => {
+    it("should register roles/dlp.user in functions manifest", () => {
+      const manifest = globalThis[Symbol.for("firebase-functions:manifest")];
+      assert.ok(manifest);
+      assert.ok(manifest.requiredRoles?.includes("roles/dlp.user"));
     });
   });
 });

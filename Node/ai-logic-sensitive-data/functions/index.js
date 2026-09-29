@@ -17,13 +17,18 @@
 // [START ai_logic_sensitive_data_all]
 // [START ai_logic_pre_request]
 // [START ai_logic_imports]
-import { logger } from "firebase-functions";
+import { logger } from "firebase-functions/logger";
+import { requiresRole } from "firebase-functions/v2";
 import {
   beforeGenerateContent,
   afterGenerateContent,
+  HttpsError,
 } from "firebase-functions/v2/ai";
 import { DlpServiceClient } from "@google-cloud/dlp";
 // [END ai_logic_imports]
+
+// Declaratively declare required IAM role for the function's service account.
+requiresRole("roles/dlp.user");
 
 // [START ai_logic_redact_helper]
 let dlp = new DlpServiceClient();
@@ -31,8 +36,8 @@ let dlp = new DlpServiceClient();
 /**
  * Redacts sensitive data from a text string using Cloud Sensitive Data Protection (DLP).
  *
- * Inspects for basic sensitive infoTypes (email, phone number, credit card number, SSN)
- * and replaces detected values with their infoType placeholder (e.g. "[EMAIL_ADDRESS]").
+ * Inspects for sensitive infoTypes (email address, phone number)
+ * and replaces detected values with their infoType placeholder (for example, "[EMAIL_ADDRESS]").
  *
  * @param {string} text - The raw input text string to inspect and redact.
  * @returns {Promise<string>} The redacted text, or the original text if empty or unchanged.
@@ -42,33 +47,45 @@ export async function redactSensitiveData(text) {
     return text;
   }
 
-  const projectId = await dlp.getProjectId();
+  const projectId = process.env.GCLOUD_PROJECT || process.env.GOOGLE_CLOUD_PROJECT;
 
-  const [response] = await dlp.deidentifyContent({
-    parent: `projects/${projectId}/locations/global`,
-    item: { value: text },
-    inspectConfig: {
-      infoTypes: [
-        { name: "EMAIL_ADDRESS" },
-        { name: "PHONE_NUMBER" },
-        { name: "CREDIT_CARD_NUMBER" },
-        { name: "US_SOCIAL_SECURITY_NUMBER" },
-      ],
-    },
-    deidentifyConfig: {
-      infoTypeTransformations: {
-        transformations: [
-          {
-            primitiveTransformation: {
-              replaceWithInfoTypeConfig: {},
-            },
-          },
+  try {
+    const [response] = await dlp.deidentifyContent({
+      parent: `projects/${projectId}/locations/global`,
+      item: { value: text },
+      inspectConfig: {
+        infoTypes: [
+          { name: "EMAIL_ADDRESS" },
+          { name: "PHONE_NUMBER" },
         ],
       },
-    },
-  });
+      deidentifyConfig: {
+        infoTypeTransformations: {
+          transformations: [
+            {
+              primitiveTransformation: {
+                replaceWithInfoTypeConfig: {},
+              },
+            },
+          ],
+        },
+      },
+    });
 
-  return response?.item?.value ?? text;
+    return response?.item?.value ?? text;
+  } catch (error) {
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+    logger.error("Failed to inspect and redact sensitive data via Cloud DLP", {
+      error: error instanceof Error ? error.message : String(error),
+      projectId,
+    });
+    throw new HttpsError(
+      "internal",
+      "Failed to inspect and redact sensitive data."
+    );
+  }
 }
 // [END ai_logic_redact_helper]
 
@@ -80,23 +97,31 @@ export async function redactSensitiveData(text) {
  * and system instructions before reaching the model.
  */
 export const redactPrompt = beforeGenerateContent(async (event) => {
-  const request = event.data?.request;
+  const request = event?.data?.request;
   if (!request) return;
 
   let modified = false;
 
-  // Redact sensitive data from prompt contents
-  for (const content of request.contents ?? []) {
+  // Redact sensitive data from prompt contents concurrently across parts
+  const textParts = [];
+  const contents = Array.isArray(request.contents) ? request.contents : [];
+  for (const content of contents) {
     for (const part of content?.parts ?? []) {
       if (part?.text) {
-        const redacted = await redactSensitiveData(part.text);
-        if (redacted !== part.text) {
-          part.text = redacted;
-          modified = true;
-        }
+        textParts.push(part);
       }
     }
   }
+
+  await Promise.all(
+    textParts.map(async (part) => {
+      const redacted = await redactSensitiveData(part.text);
+      if (redacted !== part.text) {
+        part.text = redacted;
+        modified = true;
+      }
+    })
+  );
 
   // Redact sensitive data from system instruction if present
   if (typeof request.systemInstruction === "string") {
@@ -106,22 +131,32 @@ export const redactPrompt = beforeGenerateContent(async (event) => {
       modified = true;
     }
   } else if (request.systemInstruction) {
-    const parts = request.systemInstruction.parts ?? [request.systemInstruction];
+    const parts = Array.isArray(request.systemInstruction.parts)
+      ? request.systemInstruction.parts
+      : [request.systemInstruction];
+    const systemParts = [];
     for (const part of parts) {
       if (part?.text) {
+        systemParts.push(part);
+      }
+    }
+    await Promise.all(
+      systemParts.map(async (part) => {
         const redacted = await redactSensitiveData(part.text);
         if (redacted !== part.text) {
           part.text = redacted;
           modified = true;
         }
-      }
-    }
+      })
+    );
   }
 
   // Returning nothing (or undefined) leaves the request untouched.
   // If modified, return the updated request object.
   if (modified) {
-    logger.info("Redacted sensitive data from prompt request");
+    logger.info("Redacted sensitive data from prompt request", {
+      contentCount: request.contents?.length ?? 0,
+    });
     return request;
   }
 });
@@ -135,28 +170,37 @@ export const redactPrompt = beforeGenerateContent(async (event) => {
  * Inspects all response candidates and redacts any sensitive data generated by the model.
  */
 export const redactResponse = afterGenerateContent(async (event) => {
-  const response = event.data?.response;
-  if (!response?.candidates) return;
+  const response = event?.data?.response;
+  if (!Array.isArray(response?.candidates)) return;
 
   let modified = false;
 
-  // Redact sensitive data from model response candidates
+  // Redact sensitive data from model response candidates concurrently
+  const candidateParts = [];
   for (const candidate of response.candidates) {
     for (const part of candidate?.content?.parts ?? []) {
       if (part?.text) {
-        const redacted = await redactSensitiveData(part.text);
-        if (redacted !== part.text) {
-          part.text = redacted;
-          modified = true;
-        }
+        candidateParts.push(part);
       }
     }
   }
 
+  await Promise.all(
+    candidateParts.map(async (part) => {
+      const redacted = await redactSensitiveData(part.text);
+      if (redacted !== part.text) {
+        part.text = redacted;
+        modified = true;
+      }
+    })
+  );
+
   // Returning nothing (or undefined) leaves the response untouched.
   // If modified, return the updated response object.
   if (modified) {
-    logger.info("Redacted sensitive data from model response candidates");
+    logger.info("Redacted sensitive data from model response candidates", {
+      candidateCount: response.candidates.length,
+    });
     return response;
   }
 });
