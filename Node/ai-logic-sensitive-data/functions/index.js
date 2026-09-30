@@ -18,7 +18,7 @@
 // [START ai_logic_pre_request]
 // [START ai_logic_imports]
 import { logger } from "firebase-functions/logger";
-import { requiresRole } from "firebase-functions/v2";
+import { requiresRole, requiresAPI } from "firebase-functions";
 import {
   beforeGenerateContent,
   afterGenerateContent,
@@ -27,8 +27,12 @@ import {
 import { DlpServiceClient } from "@google-cloud/dlp";
 // [END ai_logic_imports]
 
-// Declaratively declare required IAM role for the function's service account.
+// Declaratively declare required IAM role and Google Cloud API for the function.
 requiresRole("roles/dlp.user");
+requiresAPI(
+  "dlp.googleapis.com",
+  "Required for Cloud Sensitive Data Protection de-identification"
+);
 
 // [START ai_logic_redact_helper]
 let dlp = new DlpServiceClient();
@@ -130,13 +134,14 @@ export const redactPrompt = beforeGenerateContent(async (event) => {
       request.systemInstruction = redacted;
       modified = true;
     }
-  } else if (request.systemInstruction) {
-    const parts = Array.isArray(request.systemInstruction.parts)
-      ? request.systemInstruction.parts
-      : [request.systemInstruction];
+  } else if (
+    request.systemInstruction &&
+    "parts" in request.systemInstruction &&
+    Array.isArray(request.systemInstruction.parts)
+  ) {
     const systemParts = [];
-    for (const part of parts) {
-      if (part?.text) {
+    for (const part of request.systemInstruction.parts) {
+      if (part && typeof part === "object" && "text" in part && part.text) {
         systemParts.push(part);
       }
     }
@@ -149,6 +154,16 @@ export const redactPrompt = beforeGenerateContent(async (event) => {
         }
       })
     );
+  } else if (
+    request.systemInstruction &&
+    "text" in request.systemInstruction &&
+    typeof request.systemInstruction.text === "string"
+  ) {
+    const redacted = await redactSensitiveData(request.systemInstruction.text);
+    if (redacted !== request.systemInstruction.text) {
+      request.systemInstruction.text = redacted;
+      modified = true;
+    }
   }
 
   // Returning nothing (or undefined) leaves the request untouched.

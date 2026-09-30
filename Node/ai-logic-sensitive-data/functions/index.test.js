@@ -840,11 +840,21 @@ describe("AI Logic Sensitive Data Redaction Sample", () => {
     });
   });
 
-  describe("declarative IAM roles", () => {
+  describe("declarative IAM roles and APIs", () => {
     it("should register roles/dlp.user in functions manifest", () => {
       const manifest = globalThis[Symbol.for("firebase-functions:manifest")];
       assert.ok(manifest);
       assert.ok(manifest.requiredRoles?.includes("roles/dlp.user"));
+    });
+
+    it("should register dlp.googleapis.com in functions manifest", () => {
+      const manifest = globalThis[Symbol.for("firebase-functions:manifest")];
+      assert.ok(manifest);
+      assert.ok(
+        manifest.requiredAPIs?.some(
+          (item) => item.api === "dlp.googleapis.com"
+        )
+      );
     });
   });
 });

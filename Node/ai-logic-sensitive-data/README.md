@@ -53,6 +53,8 @@ This sample implements two 2nd Gen Cloud Functions:
    firebase login
    ```
 3. Enable the **Cloud Sensitive Data Protection API** (formerly Cloud DLP):
+   The sample declares this requirement using `requiresAPI('dlp.googleapis.com', ...)` in `functions/index.js`, so the Firebase CLI prompts you to enable it automatically during deployment.
+   If you wish to enable it manually ahead of time:
    ```bash
    gcloud services enable dlp.googleapis.com --project=YOUR_PROJECT_ID
    ```
