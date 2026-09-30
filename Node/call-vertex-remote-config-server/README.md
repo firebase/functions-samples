@@ -31,7 +31,14 @@ Get Started
     enable ReCAPTCHA Enterprise, enable and enforce Firebase App Check, and add
     your Firebase config and ReCAPTCHA Enterprise key to the client config.
  
- 2. Enable [recommended Vertex AI APIs](https://console.cloud.google.com/vertex-ai).
+ 2. Enable Vertex AI and Remote Config APIs and configure IAM:
+    The sample declaratively specifies required APIs and IAM roles in `functions/index.js`
+    (`requiresRole("roles/aiplatform.user")`, `requiresRole("roles/cloudconfig.viewer")`,
+    `requiresAPI("aiplatform.googleapis.com", ...)`, and `requiresAPI("firebaseremoteconfig.googleapis.com", ...)`).
+    When deployed, the Firebase CLI prompts you to enable required APIs automatically and
+    provisions the necessary IAM roles for the function's service account.
+    You can also manually enable [recommended Vertex AI APIs](https://console.cloud.google.com/vertex-ai)
+    and the Firebase Remote Config API in the Google Cloud Console.
  
  3. Configure a Remote Config server template on the Firebase console. Use the template
     described in

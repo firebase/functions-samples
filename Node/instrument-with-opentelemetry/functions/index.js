@@ -15,11 +15,18 @@
  */
 
 const {onCall} = require("firebase-functions/https");
+const {requiresRole, requiresAPI} = require("firebase-functions/v2");
 const logger = require("firebase-functions/logger");
 const {initializeApp} = require("firebase-admin/app");
 const {getFirestore} = require("firebase-admin/firestore");
 const opentelemetry = require("@opentelemetry/api");
 const {Timer} = require("./timer");
+
+requiresRole("roles/cloudtrace.agent");
+requiresAPI(
+    "cloudtrace.googleapis.com",
+    "Needed to export OpenTelemetry traces to Google Cloud Trace",
+);
 
 initializeApp();
 const db = getFirestore();

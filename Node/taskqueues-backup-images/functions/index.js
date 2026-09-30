@@ -18,6 +18,7 @@
 // Dependencies for task queue functions.
 const {onTaskDispatched} = require("firebase-functions/tasks");
 const {onRequest, HttpsError} = require("firebase-functions/https");
+const {requiresRole, requiresAPI} = require("firebase-functions/v2");
 const {getFunctions} = require("firebase-admin/functions");
 const {logger} = require("firebase-functions");
 
@@ -28,6 +29,13 @@ const {getStorage} = require("firebase-admin/storage");
 const {GoogleAuth} = require("google-auth-library");
 // [END imports]
 initializeApp();
+
+requiresRole("roles/cloudtasks.enqueuer");
+requiresRole("roles/cloudfunctions.viewer");
+requiresAPI(
+    "cloudfunctions.googleapis.com",
+    "Needed to query function endpoint URL at runtime",
+);
 
 const BACKUP_START_DATE = new Date("1995-06-17");
 const BACKUP_COUNT = parseInt(process.env.BACKUP_COUNT) || 100;

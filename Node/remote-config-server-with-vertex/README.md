@@ -16,12 +16,14 @@ sample function and client.
 
 ## Set up the sample
 
+Required Google Cloud APIs (`aiplatform.googleapis.com` and `firebaseremoteconfig.googleapis.com`) and IAM roles (`roles/aiplatform.user` and `roles/cloudconfig.viewer`) are declaratively declared in `functions/index.js`. On deployment, the Firebase CLI prompts you to enable required APIs automatically and provisions the necessary IAM roles.
+
 Follow the [User server-side Remote Config with Cloud Functions and Vertex AI
 guide](https://firebase.google.com/docs/remote-config/solution-server) to:
 
 * Set up your Firebase project.
-* Enable required APIs and SDKs.
-* Configure IAM permissions.
+* Enable required APIs and SDKs (or let the Firebase CLI enable them during deploy).
+* Configure IAM permissions (or let the Firebase CLI provision them during deploy).
 * Test your function in the Firebase emulator.
 * Deploy your function.
 

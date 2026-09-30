@@ -19,12 +19,19 @@
 // [START import]
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
 const {onConfigUpdated} = require("firebase-functions/remoteConfig");
+const {requiresRole, requiresAPI} = require("firebase-functions/v2");
 const logger = require("firebase-functions/logger");
 // The Firebase Admin SDK to obtain access tokens.
 const admin = require("firebase-admin");
 const app = admin.initializeApp();
 const jsonDiff = require("json-diff");
 // [END import]
+
+requiresRole("roles/cloudconfig.viewer");
+requiresAPI(
+    "firebaseremoteconfig.googleapis.com",
+    "Needed to fetch Remote Config templates via REST",
+);
 
 // [START showconfigdiff]
 exports.showconfigdiff = onConfigUpdated(async (event) => {
