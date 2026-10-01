@@ -1,10 +1,16 @@
 // [START remote_config_server_vertex_init]
 const { onRequest } = require("firebase-functions/https");
+const { requiresRole, requiresAPI } = require("firebase-functions/v2");
 const logger = require("firebase-functions/logger");
 
 const { initializeApp } = require("firebase-admin/app");
 const { VertexAI } = require('@google-cloud/vertexai');
 const { getRemoteConfig } = require("firebase-admin/remote-config");
+
+requiresRole("roles/aiplatform.user");
+requiresRole("roles/cloudconfig.viewer");
+requiresAPI("aiplatform.googleapis.com", "Needed to query Vertex AI Gemini models");
+requiresAPI("firebaseremoteconfig.googleapis.com", "Needed to fetch server-side Remote Config templates");
 
 // Set and check environment variables.
 const project = process.env.GCLOUD_PROJECT;

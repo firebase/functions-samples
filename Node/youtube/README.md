@@ -19,10 +19,10 @@ default it will return information about the
    [Firebase Console](https://console.firebase.google.com) if you don't already have a project you want to use.
    1. Upgrade your Firebase project to the
       [Blaze "pay as you go" plan](https://firebase.google.com/pricing)
-1. Enable the Youtube API by visiting the
-   [API console](http://console.cloud.google.com/marketplace/product/google/youtube.googleapis.com),
-   selecting your Firebase project, and clicking "ENABLE".
-   1. Once the API is enabled, visit the
+1. Enable the YouTube API and generate an API key:
+   The sample declaratively requires the YouTube Data API v3 in `functions/index.ts` (`requiresAPI("youtube.googleapis.com", ...)`), so the Firebase CLI prompts you to enable it automatically during deployment.
+   Alternatively, you can manually enable the YouTube API by visiting the [API console](http://console.cloud.google.com/marketplace/product/google/youtube.googleapis.com), selecting your Firebase project, and clicking "ENABLE".
+   1. Once the API is enabled, an API key is still required: visit the
       [credentials tab](http.console.cloud.google.com/apis/api/youtube.googleapis.com/credentials)
       and click "CREATE CREDENTIALS" to create a YouTube API key.
 
