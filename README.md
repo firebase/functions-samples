@@ -116,6 +116,12 @@ Trigger a function based on a Firebase Alert, and send information about the ale
 
 Learn how to trigger a function based on an event sent by an extension
 
+### Firebase AI Logic: Redact sensitive data with Cloud Sensitive Data Protection
+
+- [Node 2nd gen](/Node/ai-logic-sensitive-data/)
+
+Intercept and redact sensitive data (PII) before sending prompts to the Gemini API and after generating responses using Firebase AI Logic triggers and Cloud Sensitive Data Protection.
+
 ### Unit testing
 
 - [Test with Jest](/Node/test-functions-jest/)
