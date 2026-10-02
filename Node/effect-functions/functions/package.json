@@ -1,0 +1,31 @@
+{
+  "name": "effect-functions",
+  "description": "An example of Firebase 2nd Gen Cloud Functions integrated with Effect.ts",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json --module NodeNext --moduleResolution NodeNext --allowJs false --checkJs false",
+    "test": "vitest run",
+    "test:emulator": "firebase emulators:exec --project demo-effect-functions --only firestore \"vitest run\"",
+    "test:unit": "vitest run",
+    "serve": "npm run build && firebase emulators:start --only functions,firestore",
+    "shell": "npm run build && firebase functions:shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "effect": "^4.0.0",
+    "firebase-admin": "^14.2.0",
+    "firebase-functions": "^7.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "firebase-functions-test": "^3.5.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.1.0"
+  },
+  "private": true
+}
