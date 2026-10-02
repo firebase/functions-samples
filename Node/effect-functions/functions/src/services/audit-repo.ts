@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-import { Effect, Context, Layer } from "effect";
-import { Transaction } from "firebase-admin/firestore";
+import { Effect, Context, Layer, Predicate } from "effect";
+import { GrpcStatus, type WriteBatch } from "firebase-admin/firestore";
 import { FirestoreService } from "./firestore";
+import { schemaConverter } from "./schema-converter";
 import { AuditLog } from "../domain/models";
 import { FirestoreError } from "../domain/errors";
 
 export interface AuditRepositoryShape {
-  readonly record: (entry: AuditLog) => Effect.Effect<void, FirestoreError>;
-  readonly withIdempotentEvent: (
+  /**
+   * Atomically commits `audit_logs/{entry.id}` together with any writes enqueued by `enqueueWrites`.
+   * `WriteBatch.create()` rejects the entire batch with ALREADY_EXISTS when `entry.id` was already
+   * recorded (e.g. an Eventarc redelivery), so duplicates apply nothing and resolve to `false`.
+   */
+  readonly recordOnce: (
     entry: AuditLog,
-    applySideEffects: (tx: Transaction) => Effect.Effect<void, FirestoreError>
+    enqueueWrites?: (batch: WriteBatch) => void
   ) => Effect.Effect<boolean, FirestoreError>;
 }
+
+const isAlreadyExists = (cause: unknown): boolean =>
+  Predicate.hasProperty(cause, "code") &&
+  cause.code === GrpcStatus.ALREADY_EXISTS;
 
 export class AuditRepository extends Context.Service<
   AuditRepository,
@@ -40,56 +49,35 @@ export class AuditRepository extends Context.Service<
     AuditRepository,
     Effect.gen(function* () {
       const db = yield* FirestoreService;
-      const auditCol = db.collection("audit_logs");
+      const auditCol = db
+        .collection("audit_logs")
+        .withConverter(schemaConverter(AuditLog));
 
-      const record = Effect.fn("AuditRepository.record")(function* (
-        entry: AuditLog
-      ) {
-        yield* Effect.tryPromise({
-          try: async () => {
-            await auditCol.doc(entry.id).set(entry);
-          },
-          catch: (cause) =>
-            new FirestoreError({
-              cause,
-              message: `Failed to record audit log ${entry.id}`,
-            }),
-        });
-      });
-
-      const withIdempotentEvent = Effect.fn(
-        "AuditRepository.withIdempotentEvent"
-      )(function* (
+      const recordOnce = Effect.fn("AuditRepository.recordOnce")(function* (
         entry: AuditLog,
-        applySideEffects: (
-          tx: Transaction
-        ) => Effect.Effect<void, FirestoreError>
+        enqueueWrites?: (batch: WriteBatch) => void
       ) {
-        const context = yield* Effect.context<never>();
-        const runWithContext = Effect.runPromiseWith(context);
+        const batch = db.batch();
+        batch.create(auditCol.doc(entry.id), entry);
+        enqueueWrites?.(batch);
         return yield* Effect.tryPromise({
-          try: () =>
-            db.runTransaction(async (tx) => {
-              const auditRef = auditCol.doc(entry.id);
-              const snap = await tx.get(auditRef);
-              if (snap.exists) {
-                return false;
-              }
-              await runWithContext(applySideEffects(tx));
-              tx.set(auditRef, entry);
-              return true;
-            }),
-          catch: (cause) =>
-            new FirestoreError({
-              cause,
-              message: `Failed to execute idempotent transaction for audit log ${entry.id}`,
-            }),
-        });
+          try: () => batch.commit(),
+          catch: (cause) => cause,
+        }).pipe(
+          Effect.as(true),
+          Effect.catchIf(isAlreadyExists, () => Effect.succeed(false)),
+          Effect.mapError(
+            (cause) =>
+              new FirestoreError({
+                cause,
+                message: `Failed to commit audit log ${entry.id}`,
+              })
+          )
+        );
       });
 
       return AuditRepository.of({
-        record,
-        withIdempotentEvent,
+        recordOnce,
       });
     })
   );

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Effect, Context, Layer, Option, DateTime } from "effect";
+import { Effect, Context, Layer, Option } from "effect";
 import { FirestoreService } from "./firestore";
-import { Task, CreateTaskInput, decodeTask } from "../domain/models";
+import { schemaConverter } from "./schema-converter";
+import { Task, CreateTaskInput } from "../domain/models";
 import { FirestoreError } from "../domain/errors";
 
 export interface TaskRepositoryShape {
   readonly create: (input: {
-    readonly id: string;
     readonly userId: string;
     readonly data: CreateTaskInput;
   }) => Effect.Effect<Task, FirestoreError>;
@@ -43,20 +43,21 @@ export class TaskRepository extends Context.Service<
     TaskRepository,
     Effect.gen(function* () {
       const db = yield* FirestoreService;
-      const tasksCol = db.collection("tasks");
+      const tasksCol = db
+        .collection("tasks")
+        .withConverter(schemaConverter(Task));
 
       const create = Effect.fn("TaskRepository.create")(function* ({
-        id,
         userId,
         data,
       }: {
-        readonly id: string;
         readonly userId: string;
         readonly data: CreateTaskInput;
       }) {
-        const now = DateTime.formatIso(yield* DateTime.now);
+        const docRef = tasksCol.doc();
+        const now = new Date().toISOString();
         const docData: Task = {
-          id,
+          id: docRef.id,
           userId,
           title: data.title,
           description: data.description,
@@ -66,11 +67,11 @@ export class TaskRepository extends Context.Service<
           updatedAt: now,
         };
         yield* Effect.tryPromise({
-          try: () => tasksCol.doc(id).set(docData),
+          try: () => docRef.set(docData),
           catch: (cause) =>
             new FirestoreError({
               cause,
-              message: `Failed to create task with id ${id}`,
+              message: `Failed to create task with id ${docRef.id}`,
             }),
         });
         return docData;
@@ -87,19 +88,15 @@ export class TaskRepository extends Context.Service<
               message: `Failed to fetch task with id ${id}`,
             }),
         });
-        if (!snap.exists) {
-          return Option.none<Task>();
-        }
-        const task = yield* decodeTask(snap.data()).pipe(
-          Effect.mapError(
-            (cause) =>
-              new FirestoreError({
-                cause,
-                message: `Failed to decode task with id ${id}`,
-              })
-          )
-        );
-        return Option.some(task);
+        const task = yield* Effect.try({
+          try: () => snap.data(),
+          catch: (cause) =>
+            new FirestoreError({
+              cause,
+              message: `Failed to decode task with id ${id}`,
+            }),
+        });
+        return Option.fromNullishOr(task);
       });
 
       const deleteTask = Effect.fn("TaskRepository.delete")(function* (

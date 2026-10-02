@@ -8,17 +8,18 @@ This sample demonstrates how to build production-grade, type-safe Firebase 2nd G
   - Request validation and decoding defaults using `Schema.decodeUnknownEffect`, `Schema.withDecodingDefault`, and `SchemaIssue.makeFormatterStandardSchemaV1`.
   - Authentication verification and domain error modeling with `Schema.TaggedError` (yielded directly in `Effect.gen` / `Effect.fn` without `Effect.fail`).
   - Parameterized configuration via `firebase-functions/params` (`defineInt`) enforcing per-user active task limits.
+  - Native Firestore auto-IDs (`collection.doc()`) and Schema-backed `withConverter` (`FirestoreDataConverter`) for validated repository reads and typed writes.
   - Warm container reuse using a module-scoped `ManagedRuntime`.
   - Exhaustive domain error mapping to `HttpsError` status codes via `Cause.findErrorOption`, while logging unexpected defects with `Cause.pretty`.
 
 - **2nd Gen Firestore Trigger (`onTaskWritten`)**:
-  - Document snapshot parsing with `Schema.decodeUnknownEffect` and concurrent before/after snapshot decoding with `Effect.all`.
+  - Document snapshot parsing with `Schema.decodeUnknownEffect`.
   - Traced state machine transition validation (`Effect.fn("validateStatusTransition")` + `InvalidTransitionError`).
-  - Atomic idempotent audit log persistence and user stats updates via `db.runTransaction` keyed by Eventarc `event.id` (`audit_logs/{event.id}`), guaranteeing exactly-once stats mutations and relying on the Firestore SDK's built-in transaction backoff and retry handling rather than redundant application-level write retries.
-  - Clock-backed timestamps via `DateTime.now`.
+  - Atomic idempotent audit log persistence and user stats updates via `WriteBatch.create()` keyed on `audit_logs/{event.id}`, rejecting duplicate Eventarc deliveries with `ALREADY_EXISTS` so stats mutations execute at most once without round-trip reads or nested transactions.
+  - Authoritative Eventarc CloudEvent timestamps via `event.time`.
 
 - **`Context.Service` & `Layer` Dependency Injection**:
-  - Modular service architecture (`FirestoreService`, `TaskRepository`, `AuditRepository`, `UserStatsRepository`) defined with `Context.Service` and static `layer` / `layerNoDeps` definitions, composed via `Layer.provideMerge`.
+  - Modular service architecture (`FirestoreService`, `TaskRepository`, `AuditRepository`, `UserStatsRepository`) defined with `Context.Service` and static `layer` / `layerNoDeps` definitions, composed via `Layer.provideMerge` and backed by `withConverter(schemaConverter(...))`.
   - Custom `Logger` layer built on `Logger.formatStructured` and `Logger.layer`, routing `Effect.logInfo`, `Effect.annotateLogs`, and `Effect.withLogSpan` directly into `firebase-functions/logger` (`logger.write`) with structured `jsonPayload` attributes.
 
 - **Emulator Testing with Vitest**:

@@ -68,4 +68,3 @@ export const UserStats = Schema.Struct({
 });
 export type UserStats = typeof UserStats.Type;
 
-export const decodeUserStats = Schema.decodeUnknownEffect(UserStats);

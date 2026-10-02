@@ -18,7 +18,6 @@ import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { defineInt } from "firebase-functions/params";
 import { logger } from "firebase-functions";
-import { randomUUID } from "node:crypto";
 import {
   Effect,
   Exit,
@@ -26,7 +25,6 @@ import {
   Option,
   Predicate,
   SchemaIssue,
-  DateTime,
 } from "effect";
 import { appRuntime } from "./runtime";
 import {
@@ -127,6 +125,7 @@ export const validateStatusTransition = Effect.fn("validateStatusTransition")(
  * - Request validation via `Schema.decodeUnknownEffect` and `SchemaIssue.makeFormatterStandardSchemaV1`
  * - Authentication verification with typed `UnauthorizedError` yielded directly
  * - Parameterized limits via `firebase-functions/params` (`defineInt`)
+ * - Firestore auto-IDs (`collection.doc()`) and Schema-backed `withConverter` repositories
  * - `Effect.gen` + `Effect.fn` for traced effectful workflows
  * - Structured logging with `Effect.annotateLogs`, `Effect.withLogSpan`, and custom Cloud Logger layer
  * - `ManagedRuntime` execution with warm container reuse
@@ -181,19 +180,16 @@ export const createTask = onCall({ cors: true }, async (request) => {
       });
     }
 
-    const taskId = randomUUID();
-
     yield* Effect.logInfo(`Creating new task "${input.title}"`);
 
     // 4. Persist to Firestore via injected TaskRepository
     const taskRepo = yield* TaskRepository;
     const task = yield* taskRepo.create({
-      id: taskId,
       userId,
       data: input,
     });
 
-    yield* Effect.logInfo(`Task created successfully with id ${taskId}`);
+    yield* Effect.logInfo(`Task created successfully with id ${task.id}`);
 
     return task;
   }).pipe(
@@ -212,10 +208,9 @@ export const createTask = onCall({ cors: true }, async (request) => {
  *
  * Demonstrates:
  * - Document snapshot parsing via `Schema.decodeUnknownEffect`
- * - Concurrent snapshot decoding with `Effect.all`
  * - State machine validation via typed `InvalidTransitionError`
- * - Atomic idempotent audit logging and user stats updates via `db.runTransaction` keyed by Eventarc `event.id` (`audit_logs/{event.id}`)
- * - Clock-backed timestamps via `DateTime.now`
+ * - Atomic idempotent audit logging and user stats updates via `WriteBatch.create()` keyed by Eventarc `event.id` (`audit_logs/{event.id}`)
+ * - Authoritative Eventarc CloudEvent timestamps via `event.time`
  */
 export const onTaskWritten = onDocumentWritten(
   "tasks/{taskId}",
@@ -227,7 +222,6 @@ export const onTaskWritten = onDocumentWritten(
     const program = Effect.gen(function* () {
       const auditRepo = yield* AuditRepository;
       const statsRepo = yield* UserStatsRepository;
-      const timestamp = DateTime.formatIso(yield* DateTime.now);
 
       // Case 1: Task Created
       if (!beforeSnap?.exists && afterSnap?.exists) {
@@ -243,16 +237,16 @@ export const onTaskWritten = onDocumentWritten(
 
         yield* Effect.logInfo("Processing newly created task");
 
-        const applied = yield* auditRepo.withIdempotentEvent(
+        const applied = yield* auditRepo.recordOnce(
           {
             id: event.id,
             taskId,
             userId: task.userId,
             action: "created",
             details: { title: task.title, priority: task.priority },
-            timestamp,
+            timestamp: event.time,
           },
-          (tx) => statsRepo.onTaskCreated(task.userId, tx)
+          (batch) => statsRepo.onTaskCreated(batch, task.userId)
         );
 
         if (applied) {
@@ -265,26 +259,24 @@ export const onTaskWritten = onDocumentWritten(
 
       // Case 2: Task Updated
       if (beforeSnap?.exists && afterSnap?.exists) {
-        const [beforeTask, afterTask] = yield* Effect.all([
-          decodeTask(beforeSnap.data()).pipe(
-            Effect.mapError(
-              (err) =>
-                new FirestoreError({
-                  cause: err,
-                  message: `Failed to decode 'before' task snapshot for ${taskId}`,
-                })
-            )
-          ),
-          decodeTask(afterSnap.data()).pipe(
-            Effect.mapError(
-              (err) =>
-                new FirestoreError({
-                  cause: err,
-                  message: `Failed to decode 'after' task snapshot for ${taskId}`,
-                })
-            )
-          ),
-        ]);
+        const beforeTask = yield* decodeTask(beforeSnap.data()).pipe(
+          Effect.mapError(
+            (err) =>
+              new FirestoreError({
+                cause: err,
+                message: `Failed to decode 'before' task snapshot for ${taskId}`,
+              })
+          )
+        );
+        const afterTask = yield* decodeTask(afterSnap.data()).pipe(
+          Effect.mapError(
+            (err) =>
+              new FirestoreError({
+                cause: err,
+                message: `Failed to decode 'after' task snapshot for ${taskId}`,
+              })
+          )
+        );
 
         if (beforeTask.status !== afterTask.status) {
           yield* Effect.logInfo(
@@ -294,21 +286,21 @@ export const onTaskWritten = onDocumentWritten(
           // Validate allowed state transition
           yield* validateStatusTransition(beforeTask.status, afterTask.status);
 
-          const applied = yield* auditRepo.withIdempotentEvent(
+          const applied = yield* auditRepo.recordOnce(
             {
               id: event.id,
               taskId,
               userId: afterTask.userId,
               action: "status_changed",
               details: { from: beforeTask.status, to: afterTask.status },
-              timestamp,
+              timestamp: event.time,
             },
-            (tx) =>
+            (batch) =>
               statsRepo.onStatusChanged(
+                batch,
                 afterTask.userId,
                 beforeTask.status,
-                afterTask.status,
-                tx
+                afterTask.status
               )
           );
 
@@ -335,16 +327,17 @@ export const onTaskWritten = onDocumentWritten(
 
         yield* Effect.logInfo("Processing deleted task");
 
-        const applied = yield* auditRepo.withIdempotentEvent(
+        const applied = yield* auditRepo.recordOnce(
           {
             id: event.id,
             taskId,
             userId: beforeTask.userId,
             action: "deleted",
             details: { title: beforeTask.title },
-            timestamp,
+            timestamp: event.time,
           },
-          (tx) => statsRepo.onTaskDeleted(beforeTask.userId, beforeTask.status, tx)
+          (batch) =>
+            statsRepo.onTaskDeleted(batch, beforeTask.userId, beforeTask.status)
         );
 
         if (applied) {

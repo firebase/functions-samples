@@ -22,7 +22,7 @@ import { getApps, initializeApp } from "firebase-admin/app";
 import * as firestoreModule from "firebase-admin/firestore";
 import { Change } from "firebase-functions/v2";
 import firebaseFunctionsTest from "firebase-functions-test";
-import { Clock, Effect, Exit, Option, Predicate } from "effect";
+import { Cause, Effect, Exit, Option, Predicate } from "effect";
 import {
   createTask,
   onTaskWritten,
@@ -34,7 +34,7 @@ import { AuditRepository } from "../services/audit-repo";
 import { UserStatsRepository } from "../services/user-stats-repo";
 import { FirestoreError, TaskNotFoundError } from "../domain/errors";
 
-const { getFirestore } = firestoreModule;
+const { getFirestore, GrpcStatus } = firestoreModule;
 
 // Compatibility shim for firebase-functions-test with firebase-admin v14
 if (!Predicate.isFunction((admin as Record<string, unknown>).firestore)) {
@@ -48,9 +48,28 @@ const fft = firebaseFunctionsTest({
   projectId: "demo-effect-functions",
 });
 
+interface InMemoryDocRef {
+  readonly id: string;
+  readonly _key: string;
+  readonly get: () => Promise<{
+    readonly exists: boolean;
+    readonly data: () => unknown;
+  }>;
+  readonly set: (
+    data: Record<string, unknown>,
+    options?: { merge?: boolean }
+  ) => Promise<void>;
+  readonly delete: () => Promise<void>;
+  readonly _has: () => boolean;
+  readonly _set: (
+    data: Record<string, unknown>,
+    options?: { merge?: boolean }
+  ) => void;
+}
+
 function installInMemoryFirestoreFallback(db: firestoreModule.Firestore): void {
   const store = new Map<string, Map<string, Record<string, unknown>>>();
-  let txQueue: Promise<unknown> = Promise.resolve();
+  let autoIdCounter = 0;
 
   const getColMap = (name: string): Map<string, Record<string, unknown>> => {
     let col = store.get(name);
@@ -61,102 +80,166 @@ function installInMemoryFirestoreFallback(db: firestoreModule.Firestore): void {
     return col;
   };
 
+  const applySet = (
+    colMap: Map<string, Record<string, unknown>>,
+    id: string,
+    data: Record<string, unknown>,
+    options?: { merge?: boolean }
+  ): void => {
+    const prev = options?.merge ? (colMap.get(id) ?? {}) : {};
+    const next: Record<string, unknown> = { ...prev };
+    for (const [k, v] of Object.entries(data)) {
+      if (
+        Predicate.hasProperty(v, "operand") &&
+        Predicate.isNumber(v.operand)
+      ) {
+        const current = Predicate.isNumber(next[k]) ? next[k] : 0;
+        next[k] = current + v.operand;
+      } else {
+        next[k] = v;
+      }
+    }
+    colMap.set(id, next);
+  };
+
   const makeQuery = (
     colMap: Map<string, Record<string, unknown>>,
-    filters: ReadonlyArray<{ field: string; value: unknown }> = []
+    filters: ReadonlyArray<{ field: string; value: unknown }> = [],
+    converter?: firestoreModule.FirestoreDataConverter<unknown>
   ): Record<string, unknown> => ({
     where: (field: string, _op: string, value: unknown) =>
-      makeQuery(colMap, [...filters, { field, value }]),
+      makeQuery(colMap, [...filters, { field, value }], converter),
     get: async () => {
       const docs = Array.from(colMap.values()).filter((doc) =>
         filters.every((f) => doc[f.field] === f.value)
       );
       return {
         empty: docs.length === 0,
-        docs: docs.map((d) => ({ exists: true, data: () => ({ ...d }) })),
+        docs: docs.map((d) => ({
+          exists: true,
+          data: () => {
+            const raw = { ...d };
+            return converter
+              ? converter.fromFirestore({
+                  data: () => raw,
+                } as firestoreModule.QueryDocumentSnapshot)
+              : raw;
+          },
+        })),
       };
     },
   });
 
-  (db as unknown as Record<string, unknown>).collection = (name: string) => {
+  const makeCollection = (
+    name: string,
+    converter?: firestoreModule.FirestoreDataConverter<unknown>
+  ): Record<string, unknown> => {
     const colMap = getColMap(name);
     return {
-      ...makeQuery(colMap),
-      doc: (id: string) => ({
-        get: async () => {
-          const existing = colMap.get(id);
-          return {
-            exists: existing !== undefined,
-            data: () => (existing ? { ...existing } : undefined),
-          };
-        },
-        set: async (
+      ...makeQuery(colMap, [], converter),
+      withConverter: (
+        nextConverter: firestoreModule.FirestoreDataConverter<unknown>
+      ) => makeCollection(name, nextConverter),
+      doc: (id?: string): InMemoryDocRef => {
+        const docId = id ?? `auto-id-${++autoIdCounter}`;
+        const writeDoc = (
           data: Record<string, unknown>,
           options?: { merge?: boolean }
-        ) => {
-          const prev = options?.merge ? (colMap.get(id) ?? {}) : {};
-          const next: Record<string, unknown> = { ...prev };
-          for (const [k, v] of Object.entries(data)) {
-            if (
-              Predicate.hasProperty(v, "operand") &&
-              Predicate.isNumber(v.operand)
-            ) {
-              const current = Predicate.isNumber(next[k]) ? next[k] : 0;
-              next[k] = current + v.operand;
-            } else {
-              next[k] = v;
-            }
-          }
-          colMap.set(id, next);
-        },
-        delete: async () => {
-          colMap.delete(id);
-        },
-      }),
+        ): void => {
+          const serialized = (
+            converter
+              ? options
+                ? converter.toFirestore(data, options)
+                : converter.toFirestore(data)
+              : data
+          ) as Record<string, unknown>;
+          applySet(colMap, docId, serialized, options);
+        };
+        return {
+          id: docId,
+          _key: `${name}/${docId}`,
+          get: async () => {
+            const existing = colMap.get(docId);
+            return {
+              exists: existing !== undefined,
+              data: () => {
+                if (!existing) {
+                  return undefined;
+                }
+                const raw = { ...existing };
+                return converter
+                  ? converter.fromFirestore({
+                      data: () => raw,
+                    } as firestoreModule.QueryDocumentSnapshot)
+                  : raw;
+              },
+            };
+          },
+          set: async (
+            data: Record<string, unknown>,
+            options?: { merge?: boolean }
+          ) => {
+            writeDoc(data, options);
+          },
+          delete: async () => {
+            colMap.delete(docId);
+          },
+          _has: () => colMap.has(docId),
+          _set: writeDoc,
+        };
+      },
     };
   };
 
-  (db as unknown as Record<string, unknown>).runTransaction = <T>(
-    updateFunction: (tx: firestoreModule.Transaction) => Promise<T>
-  ): Promise<T> => {
-    const nextTx = txQueue.then(async () => {
-      const pendingWrites: Array<() => Promise<void>> = [];
-      let hasWritten = false;
+  (db as unknown as Record<string, unknown>).collection = (name: string) =>
+    makeCollection(name);
 
-      const tx = {
-        get: async (docRef: { get: () => Promise<unknown> }) => {
-          if (hasWritten) {
-            throw new Error(
-              "Firestore transactions require all reads to be executed before all writes."
-            );
+  (db as unknown as Record<string, unknown>).batch = () => {
+    const ops: Array<
+      | { type: "create"; ref: InMemoryDocRef; data: Record<string, unknown> }
+      | {
+          type: "set";
+          ref: InMemoryDocRef;
+          data: Record<string, unknown>;
+          options?: { merge?: boolean };
+        }
+    > = [];
+    const batch = {
+      create: (ref: InMemoryDocRef, data: Record<string, unknown>) => {
+        ops.push({ type: "create", ref, data });
+        return batch;
+      },
+      set: (
+        ref: InMemoryDocRef,
+        data: Record<string, unknown>,
+        options?: { merge?: boolean }
+      ) => {
+        ops.push({ type: "set", ref, data, options });
+        return batch;
+      },
+      commit: async () => {
+        const createdInBatch = new Set<string>();
+        for (const op of ops) {
+          if (op.type === "create") {
+            if (op.ref._has() || createdInBatch.has(op.ref._key)) {
+              throw Object.assign(
+                new Error("ALREADY_EXISTS: Document already exists"),
+                { code: GrpcStatus.ALREADY_EXISTS }
+              );
+            }
+            createdInBatch.add(op.ref._key);
           }
-          return docRef.get();
-        },
-        set: (
-          docRef: {
-            set: (
-              data: Record<string, unknown>,
-              options?: { merge?: boolean }
-            ) => Promise<void>;
-          },
-          data: Record<string, unknown>,
-          options?: { merge?: boolean }
-        ) => {
-          hasWritten = true;
-          pendingWrites.push(() => docRef.set(data, options));
-          return tx;
-        },
-      } as unknown as firestoreModule.Transaction;
-
-      const result = await updateFunction(tx);
-      for (const write of pendingWrites) {
-        await write();
-      }
-      return result;
-    });
-
-    txQueue = nextTx.catch(() => undefined);
-    return nextTx;
+        }
+        for (const op of ops) {
+          if (op.type === "create") {
+            op.ref._set(op.data);
+          } else {
+            op.ref._set(op.data, op.options);
+          }
+        }
+      },
+    };
+    return batch;
   };
 }
 
@@ -319,9 +402,11 @@ describe("Effect Cloud Functions", () => {
 
       const beforeSnap = fft.firestore.makeDocumentSnapshot({}, `tasks/${taskId}`);
       const afterSnap = fft.firestore.makeDocumentSnapshot(taskData, `tasks/${taskId}`);
+      const eventTime = "2026-01-15T12:34:56.789Z";
       const event = {
         params: { taskId },
         id: "event-create-1",
+        time: eventTime,
         data: new Change(beforeSnap, afterSnap),
       };
 
@@ -336,6 +421,7 @@ describe("Effect Cloud Functions", () => {
       expect(auditDoc.exists).toBe(true);
       expect(auditDoc.data()?.taskId).toBe(taskId);
       expect(auditDoc.data()?.action).toBe("created");
+      expect(auditDoc.data()?.timestamp).toBe(eventTime);
     });
 
     it("processes valid status transition: updates stats and logs status change", async () => {
@@ -695,12 +781,10 @@ describe("Effect Cloud Functions", () => {
 
   describe("TaskRepository service methods", () => {
     it("findById decodes valid tasks, returns Option.none for missing tasks, and deletes tasks", async () => {
-      const taskId = "repo-test-task-1";
       const created = await appRuntime.runPromise(
         Effect.gen(function* () {
           const repo = yield* TaskRepository;
           return yield* repo.create({
-            id: taskId,
             userId: "user-repo",
             data: {
               title: "Repository test",
@@ -710,12 +794,12 @@ describe("Effect Cloud Functions", () => {
           });
         })
       );
-      expect(created.id).toBe(taskId);
+      expect(created.id).toBeTruthy();
 
       const found = await appRuntime.runPromise(
         Effect.gen(function* () {
           const repo = yield* TaskRepository;
-          return yield* repo.findById(taskId);
+          return yield* repo.findById(created.id);
         })
       );
       expect(Option.isSome(found)).toBe(true);
@@ -723,14 +807,14 @@ describe("Effect Cloud Functions", () => {
       await appRuntime.runPromise(
         Effect.gen(function* () {
           const repo = yield* TaskRepository;
-          yield* repo.delete(taskId);
+          yield* repo.delete(created.id);
         })
       );
 
       const afterDelete = await appRuntime.runPromise(
         Effect.gen(function* () {
           const repo = yield* TaskRepository;
-          return yield* repo.findById(taskId);
+          return yield* repo.findById(created.id);
         })
       );
       expect(Option.isNone(afterDelete)).toBe(true);
@@ -753,7 +837,37 @@ describe("Effect Cloud Functions", () => {
         })
       );
       expect(Exit.isFailure(exit)).toBe(true);
+      if (Exit.isFailure(exit)) {
+        const errOpt = Cause.findErrorOption(exit.cause);
+        expect(Option.isSome(errOpt)).toBe(true);
+        if (Option.isSome(errOpt)) {
+          expect(errOpt.value._tag).toBe("FirestoreError");
+        }
+      }
       await db.collection("tasks").doc(corruptedId).delete();
+
+      // Also verify UserStatsRepository.getByUserId maps converter decode failures to FirestoreError
+      const corruptedStatsUserId = "repo-corrupted-stats-1";
+      await db.collection("user_stats").doc(corruptedStatsUserId).set({
+        userId: corruptedStatsUserId,
+        activeTasks: "not-a-number",
+      });
+
+      const statsExit = await appRuntime.runPromiseExit(
+        Effect.gen(function* () {
+          const statsRepo = yield* UserStatsRepository;
+          return yield* statsRepo.getByUserId(corruptedStatsUserId);
+        })
+      );
+      expect(Exit.isFailure(statsExit)).toBe(true);
+      if (Exit.isFailure(statsExit)) {
+        const errOpt = Cause.findErrorOption(statsExit.cause);
+        expect(Option.isSome(errOpt)).toBe(true);
+        if (Option.isSome(errOpt)) {
+          expect(errOpt.value._tag).toBe("FirestoreError");
+        }
+      }
+      await db.collection("user_stats").doc(corruptedStatsUserId).delete();
     });
 
     it("UserStatsRepository.onStatusChanged accurately updates counts for transitions from archived", async () => {
@@ -766,23 +880,25 @@ describe("Effect Cloud Functions", () => {
         lastUpdated: new Date().toISOString(),
       });
 
-      await appRuntime.runPromise(
+      const statsRepo = await appRuntime.runPromise(
         Effect.gen(function* () {
-          const statsRepo = yield* UserStatsRepository;
-          yield* statsRepo.onStatusChanged(userId, "archived", "todo");
-          yield* statsRepo.onStatusChanged(userId, "archived", "completed");
+          return yield* UserStatsRepository;
         })
       );
+      const batch = db.batch();
+      statsRepo.onStatusChanged(batch, userId, "archived", "todo");
+      statsRepo.onStatusChanged(batch, userId, "archived", "completed");
+      await batch.commit();
 
       const snap = await db.collection("user_stats").doc(userId).get();
       expect(snap.data()?.activeTasks).toBe(1);
       expect(snap.data()?.completedTasks).toBe(1);
     });
 
-    it("AuditRepository.withIdempotentEvent rolls back transaction if side effects fail, preserves fiber Context, and succeeds on retry", async () => {
+    it("AuditRepository.recordOnce commits audit log and stats atomically and returns false for duplicate event ids", async () => {
       const db = getFirestore();
-      const userId = "user-tx-rollback";
-      const eventId = "event-tx-rollback-1";
+      const userId = "user-record-once";
+      const eventId = "event-record-once-1";
       const now = new Date().toISOString();
 
       await db.collection("user_stats").doc(userId).set({
@@ -792,98 +908,91 @@ describe("Effect Cloud Functions", () => {
         lastUpdated: now,
       });
 
-      const failedExit = await appRuntime.runPromiseExit(
-        Effect.gen(function* () {
-          const auditRepo = yield* AuditRepository;
-          const statsRepo = yield* UserStatsRepository;
-          return yield* auditRepo.withIdempotentEvent(
-            {
-              id: eventId,
-              taskId: "task-tx-1",
-              userId,
-              action: "created",
-              details: { title: "Rollback test" },
-              timestamp: now,
-            },
-            (tx) =>
-              Effect.gen(function* () {
-                // Perform a transactional write first, then fail to verify buffered rollback
-                yield* statsRepo.onTaskCreated(userId, tx);
-                return yield* new FirestoreError({
-                  cause: new Error("Simulated side-effect failure"),
-                  message: "Stats update failed inside transaction",
-                });
-              })
-          );
-        })
-      );
-      expect(Exit.isFailure(failedExit)).toBe(true);
-
-      // Verify neither user_stats nor audit_logs was modified when transaction failed
-      const statsAfterFailure = await db.collection("user_stats").doc(userId).get();
-      expect(statsAfterFailure.data()?.activeTasks).toBe(0);
-      const auditAfterFailure = await db
-        .collection("audit_logs")
-        .doc(eventId)
-        .get();
-      expect(auditAfterFailure.exists).toBe(false);
-
-      // Subsequent redelivery of the same eventId with a custom fiber Clock succeeds, inherits Clock, and returns true
-      const fixedMillis = 1_700_000_000_000;
-      const fixedNanos = 1_700_000_000_000_000_000n;
-      const fixedClock: Clock.Clock = {
-        currentTimeMillisUnsafe: () => fixedMillis,
-        currentTimeMillis: Effect.succeed(fixedMillis),
-        monotonicTimeNanosUnsafe: () => fixedNanos,
-        monotonicTimeNanos: Effect.succeed(fixedNanos),
-        currentTimeNanosUnsafe: () => fixedNanos,
-        currentTimeNanos: Effect.succeed(fixedNanos),
-        sleep: () => Effect.void,
-      };
-
       const firstSuccess = await appRuntime.runPromise(
         Effect.gen(function* () {
           const auditRepo = yield* AuditRepository;
           const statsRepo = yield* UserStatsRepository;
-          return yield* auditRepo.withIdempotentEvent(
+          return yield* auditRepo.recordOnce(
             {
               id: eventId,
-              taskId: "task-tx-1",
+              taskId: "task-batch-1",
               userId,
               action: "created",
-              details: { title: "Rollback test" },
+              details: { title: "Initial delivery" },
               timestamp: now,
             },
-            (tx) => statsRepo.onTaskCreated(userId, tx)
+            (batch) => statsRepo.onTaskCreated(batch, userId)
           );
-        }).pipe(Effect.provideService(Clock.Clock, fixedClock))
+        })
       );
       expect(firstSuccess).toBe(true);
+
+      let statsSnap = await db.collection("user_stats").doc(userId).get();
+      expect(statsSnap.data()?.activeTasks).toBe(1);
 
       const duplicateAttempt = await appRuntime.runPromise(
         Effect.gen(function* () {
           const auditRepo = yield* AuditRepository;
           const statsRepo = yield* UserStatsRepository;
-          return yield* auditRepo.withIdempotentEvent(
+          return yield* auditRepo.recordOnce(
             {
               id: eventId,
-              taskId: "task-tx-1",
+              taskId: "task-batch-1",
               userId,
               action: "created",
-              details: { title: "Rollback test" },
-              timestamp: now,
+              details: { title: "Duplicate delivery" },
+              timestamp: "2099-01-01T00:00:00.000Z",
             },
-            (tx) => statsRepo.onTaskCreated(userId, tx)
+            (batch) => statsRepo.onTaskCreated(batch, userId)
           );
         })
       );
       expect(duplicateAttempt).toBe(false);
 
-      const statsSnap = await db.collection("user_stats").doc(userId).get();
+      statsSnap = await db.collection("user_stats").doc(userId).get();
       expect(statsSnap.data()?.activeTasks).toBe(1);
-      expect(statsSnap.data()?.lastUpdated).toBe(
-        new Date(fixedMillis).toISOString()
-      );
+
+      const auditSnap = await db.collection("audit_logs").doc(eventId).get();
+      expect(auditSnap.exists).toBe(true);
+      expect(auditSnap.data()?.details).toEqual({ title: "Initial delivery" });
+      expect(auditSnap.data()?.timestamp).toBe(now);
+
+      // Verify non-ALREADY_EXISTS commit errors map to FirestoreError rather than returning false
+      const originalBatch = db.batch.bind(db);
+      (db as unknown as Record<string, unknown>).batch = () => ({
+        create: () => {},
+        set: () => {},
+        commit: async () => {
+          throw Object.assign(new Error("UNAVAILABLE: backend unavailable"), {
+            code: GrpcStatus.UNAVAILABLE,
+          });
+        },
+      });
+      try {
+        const errorExit = await appRuntime.runPromiseExit(
+          Effect.gen(function* () {
+            const auditRepo = yield* AuditRepository;
+            return yield* auditRepo.recordOnce({
+              id: "event-unavailable-1",
+              taskId: "task-batch-1",
+              userId,
+              action: "created",
+              details: { title: "Unavailable test" },
+              timestamp: now,
+            });
+          })
+        );
+        expect(Exit.isFailure(errorExit)).toBe(true);
+        if (Exit.isFailure(errorExit)) {
+          const errOpt = Cause.findErrorOption(errorExit.cause);
+          expect(Option.isSome(errOpt)).toBe(true);
+          if (Option.isSome(errOpt)) {
+            expect(errOpt.value._tag).toBe("FirestoreError");
+          }
+        }
+      } finally {
+        (db as unknown as Record<string, unknown>).batch = originalBatch;
+      }
     });
 
     it("handleCallableExit maps TaskNotFoundError, FirestoreError, and unhandled defects to HttpsError", () => {

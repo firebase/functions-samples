@@ -14,47 +14,35 @@
  * limitations under the License.
  */
 
-import { Effect, Context, Layer, DateTime, Option } from "effect";
+import { Effect, Context, Layer, Option } from "effect";
+import { FieldValue, type WriteBatch } from "firebase-admin/firestore";
 import { FirestoreService } from "./firestore";
-import { FieldValue, Transaction } from "firebase-admin/firestore";
+import { schemaConverter } from "./schema-converter";
 import { FirestoreError } from "../domain/errors";
-import { TaskStatus, UserStats, decodeUserStats } from "../domain/models";
+import { TaskStatus, UserStats } from "../domain/models";
 
-const isActiveStatus = (status: TaskStatus): boolean =>
-  status === "todo" || status === "in_progress";
+const counters = (status: TaskStatus) => ({
+  active: status === "todo" || status === "in_progress" ? 1 : 0,
+  completed: status === "completed" ? 1 : 0,
+});
 
 export interface UserStatsRepositoryShape {
   readonly getByUserId: (
     userId: string
   ) => Effect.Effect<Option.Option<UserStats>, FirestoreError>;
-  readonly onTaskCreated: (
-    userId: string,
-    tx?: Transaction
-  ) => Effect.Effect<void, FirestoreError>;
-  readonly onTaskCompleted: (
-    userId: string,
-    tx?: Transaction
-  ) => Effect.Effect<void, FirestoreError>;
-  readonly onTaskReopened: (
-    userId: string,
-    tx?: Transaction
-  ) => Effect.Effect<void, FirestoreError>;
-  readonly onTaskArchived: (
-    userId: string,
-    previousStatus: TaskStatus,
-    tx?: Transaction
-  ) => Effect.Effect<void, FirestoreError>;
+  /** Enqueue counter adjustments into an atomic WriteBatch (committed by AuditRepository.recordOnce). */
+  readonly onTaskCreated: (batch: WriteBatch, userId: string) => void;
   readonly onStatusChanged: (
+    batch: WriteBatch,
     userId: string,
     from: TaskStatus,
-    to: TaskStatus,
-    tx?: Transaction
-  ) => Effect.Effect<void, FirestoreError>;
+    to: TaskStatus
+  ) => void;
   readonly onTaskDeleted: (
+    batch: WriteBatch,
     userId: string,
-    previousStatus: TaskStatus,
-    tx?: Transaction
-  ) => Effect.Effect<void, FirestoreError>;
+    previousStatus: TaskStatus
+  ) => void;
 }
 
 export class UserStatsRepository extends Context.Service<
@@ -69,7 +57,9 @@ export class UserStatsRepository extends Context.Service<
     UserStatsRepository,
     Effect.gen(function* () {
       const db = yield* FirestoreService;
-      const statsCol = db.collection("user_stats");
+      const statsCol = db
+        .collection("user_stats")
+        .withConverter(schemaConverter(UserStats));
 
       const getByUserId = Effect.fn("UserStatsRepository.getByUserId")(
         function* (userId: string) {
@@ -81,222 +71,71 @@ export class UserStatsRepository extends Context.Service<
                 message: `Failed to fetch user stats for ${userId}`,
               }),
           });
-          if (!snap.exists) {
-            return Option.none<UserStats>();
-          }
-          const stats = yield* decodeUserStats(snap.data()).pipe(
-            Effect.mapError(
-              (cause) =>
-                new FirestoreError({
-                  cause,
-                  message: `Failed to decode user stats for ${userId}`,
-                })
-            )
-          );
-          return Option.some(stats);
-        }
-      );
-
-      const onTaskCreated = Effect.fn("UserStatsRepository.onTaskCreated")(
-        function* (userId: string, tx?: Transaction) {
-          const lastUpdated = DateTime.formatIso(yield* DateTime.now);
-          yield* Effect.tryPromise({
-            try: async () => {
-              const docRef = statsCol.doc(userId);
-              const data = {
-                userId,
-                activeTasks: FieldValue.increment(1),
-                completedTasks: FieldValue.increment(0),
-                lastUpdated,
-              };
-              if (tx) {
-                tx.set(docRef, data, { merge: true });
-              } else {
-                await docRef.set(data, { merge: true });
-              }
-            },
+          const stats = yield* Effect.try({
+            try: () => snap.data(),
             catch: (cause) =>
               new FirestoreError({
                 cause,
-                message: `Failed to update user stats for created task (${userId})`,
+                message: `Failed to decode user stats for ${userId}`,
               }),
           });
+          return Option.fromNullishOr(stats);
         }
       );
 
-      const onTaskCompleted = Effect.fn("UserStatsRepository.onTaskCompleted")(
-        function* (userId: string, tx?: Transaction) {
-          const lastUpdated = DateTime.formatIso(yield* DateTime.now);
-          yield* Effect.tryPromise({
-            try: async () => {
-              const docRef = statsCol.doc(userId);
-              const data = {
-                userId,
-                activeTasks: FieldValue.increment(-1),
-                completedTasks: FieldValue.increment(1),
-                lastUpdated,
-              };
-              if (tx) {
-                tx.set(docRef, data, { merge: true });
-              } else {
-                await docRef.set(data, { merge: true });
-              }
-            },
-            catch: (cause) =>
-              new FirestoreError({
-                cause,
-                message: `Failed to update user stats for completed task (${userId})`,
-              }),
-          });
+      const enqueueDelta = (
+        batch: WriteBatch,
+        userId: string,
+        activeDelta: number,
+        completedDelta: number
+      ): void => {
+        if (activeDelta === 0 && completedDelta === 0) {
+          return;
         }
-      );
+        batch.set(
+          statsCol.doc(userId),
+          {
+            userId,
+            activeTasks: FieldValue.increment(activeDelta),
+            completedTasks: FieldValue.increment(completedDelta),
+            lastUpdated: new Date().toISOString(),
+          },
+          { merge: true }
+        );
+      };
 
-      const onTaskReopened = Effect.fn("UserStatsRepository.onTaskReopened")(
-        function* (userId: string, tx?: Transaction) {
-          const lastUpdated = DateTime.formatIso(yield* DateTime.now);
-          yield* Effect.tryPromise({
-            try: async () => {
-              const docRef = statsCol.doc(userId);
-              const data = {
-                userId,
-                activeTasks: FieldValue.increment(1),
-                completedTasks: FieldValue.increment(-1),
-                lastUpdated,
-              };
-              if (tx) {
-                tx.set(docRef, data, { merge: true });
-              } else {
-                await docRef.set(data, { merge: true });
-              }
-            },
-            catch: (cause) =>
-              new FirestoreError({
-                cause,
-                message: `Failed to update user stats for reopened task (${userId})`,
-              }),
-          });
-        }
-      );
+      const onTaskCreated = (batch: WriteBatch, userId: string): void => {
+        enqueueDelta(batch, userId, 1, 0);
+      };
 
-      const onTaskArchived = Effect.fn("UserStatsRepository.onTaskArchived")(
-        function* (userId: string, previousStatus: TaskStatus, tx?: Transaction) {
-          if (previousStatus === "archived") {
-            return;
-          }
-          const lastUpdated = DateTime.formatIso(yield* DateTime.now);
-          const activeDelta = isActiveStatus(previousStatus) ? -1 : 0;
-          const completedDelta = previousStatus === "completed" ? -1 : 0;
+      const onStatusChanged = (
+        batch: WriteBatch,
+        userId: string,
+        from: TaskStatus,
+        to: TaskStatus
+      ): void => {
+        const fromCounts = counters(from);
+        const toCounts = counters(to);
+        enqueueDelta(
+          batch,
+          userId,
+          toCounts.active - fromCounts.active,
+          toCounts.completed - fromCounts.completed
+        );
+      };
 
-          yield* Effect.tryPromise({
-            try: async () => {
-              const docRef = statsCol.doc(userId);
-              const data = {
-                userId,
-                activeTasks: FieldValue.increment(activeDelta),
-                completedTasks: FieldValue.increment(completedDelta),
-                lastUpdated,
-              };
-              if (tx) {
-                tx.set(docRef, data, { merge: true });
-              } else {
-                await docRef.set(data, { merge: true });
-              }
-            },
-            catch: (cause) =>
-              new FirestoreError({
-                cause,
-                message: `Failed to update user stats for archived task (${userId})`,
-              }),
-          });
-        }
-      );
-
-      const onStatusChanged = Effect.fn("UserStatsRepository.onStatusChanged")(
-        function* (
-          userId: string,
-          from: TaskStatus,
-          to: TaskStatus,
-          tx?: Transaction
-        ) {
-          if (from === to || (isActiveStatus(from) && isActiveStatus(to))) {
-            return;
-          }
-          if (to === "completed" && isActiveStatus(from)) {
-            return yield* onTaskCompleted(userId, tx);
-          }
-          if (from === "completed" && isActiveStatus(to)) {
-            return yield* onTaskReopened(userId, tx);
-          }
-          if (to === "archived") {
-            return yield* onTaskArchived(userId, from, tx);
-          }
-
-          const lastUpdated = DateTime.formatIso(yield* DateTime.now);
-          const activeDelta =
-            (isActiveStatus(to) ? 1 : 0) - (isActiveStatus(from) ? 1 : 0);
-          const completedDelta =
-            (to === "completed" ? 1 : 0) - (from === "completed" ? 1 : 0);
-
-          yield* Effect.tryPromise({
-            try: async () => {
-              const docRef = statsCol.doc(userId);
-              const data = {
-                userId,
-                activeTasks: FieldValue.increment(activeDelta),
-                completedTasks: FieldValue.increment(completedDelta),
-                lastUpdated,
-              };
-              if (tx) {
-                tx.set(docRef, data, { merge: true });
-              } else {
-                await docRef.set(data, { merge: true });
-              }
-            },
-            catch: (cause) =>
-              new FirestoreError({
-                cause,
-                message: `Failed to update user stats for status change ${from} -> ${to} (${userId})`,
-              }),
-          });
-        }
-      );
-
-      const onTaskDeleted = Effect.fn("UserStatsRepository.onTaskDeleted")(
-        function* (userId: string, previousStatus: TaskStatus, tx?: Transaction) {
-          const lastUpdated = DateTime.formatIso(yield* DateTime.now);
-          const activeDelta = isActiveStatus(previousStatus) ? -1 : 0;
-          const completedDelta = previousStatus === "completed" ? -1 : 0;
-
-          yield* Effect.tryPromise({
-            try: async () => {
-              const docRef = statsCol.doc(userId);
-              const data = {
-                userId,
-                activeTasks: FieldValue.increment(activeDelta),
-                completedTasks: FieldValue.increment(completedDelta),
-                lastUpdated,
-              };
-              if (tx) {
-                tx.set(docRef, data, { merge: true });
-              } else {
-                await docRef.set(data, { merge: true });
-              }
-            },
-            catch: (cause) =>
-              new FirestoreError({
-                cause,
-                message: `Failed to update user stats for deleted task (${userId})`,
-              }),
-          });
-        }
-      );
+      const onTaskDeleted = (
+        batch: WriteBatch,
+        userId: string,
+        previousStatus: TaskStatus
+      ): void => {
+        const prevCounts = counters(previousStatus);
+        enqueueDelta(batch, userId, -prevCounts.active, -prevCounts.completed);
+      };
 
       return UserStatsRepository.of({
         getByUserId,
         onTaskCreated,
-        onTaskCompleted,
-        onTaskReopened,
-        onTaskArchived,
         onStatusChanged,
         onTaskDeleted,
       });
