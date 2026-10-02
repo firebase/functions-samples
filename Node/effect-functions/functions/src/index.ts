@@ -26,7 +26,6 @@ import {
   Option,
   Predicate,
   SchemaIssue,
-  Schedule,
   DateTime,
 } from "effect";
 import { appRuntime } from "./runtime";
@@ -56,20 +55,6 @@ export const maxActiveTasksPerUser = defineInt("MAX_ACTIVE_TASKS_PER_USER", {
 });
 
 const formatValidationIssue = SchemaIssue.makeFormatterStandardSchemaV1();
-
-/**
- * Module-scoped retry policy: exponential backoff starting at 100ms with jitter,
- * capped at 3 retries, logging each retry attempt via `Schedule.tap`.
- */
-export const retryPolicy = Schedule.exponential("100 millis").pipe(
-  Schedule.jittered,
-  Schedule.upTo({ times: 3 }),
-  Schedule.tap((meta) =>
-    Effect.logWarning(
-      `Retrying Firestore operation (attempt ${meta.attempt})`
-    )
-  )
-);
 
 const allowedTransitions: Record<TaskStatus, ReadonlyArray<TaskStatus>> = {
   todo: ["in_progress", "completed", "archived"],
@@ -227,11 +212,10 @@ export const createTask = onCall({ cors: true }, async (request) => {
  *
  * Demonstrates:
  * - Document snapshot parsing via `Schema.decodeUnknownEffect`
+ * - Concurrent snapshot decoding with `Effect.all`
  * - State machine validation via typed `InvalidTransitionError`
- * - Idempotent audit logging keyed by Eventarc `event.id`
+ * - Atomic idempotent audit logging and user stats updates via `db.runTransaction` keyed by Eventarc `event.id` (`audit_logs/{event.id}`)
  * - Clock-backed timestamps via `DateTime.now`
- * - Structured concurrency with `Effect.all` running independent operations concurrently
- * - Resilient retries with exponential backoff, jitter, and logging via `Schedule.upTo` & `Schedule.tap`
  */
 export const onTaskWritten = onDocumentWritten(
   "tasks/{taskId}",
@@ -259,49 +243,48 @@ export const onTaskWritten = onDocumentWritten(
 
         yield* Effect.logInfo("Processing newly created task");
 
-        // Run idempotent audit record and user stats increment concurrently with retries
-        yield* Effect.all(
-          [
-            auditRepo
-              .record({
-                id: event.id,
-                taskId,
-                userId: task.userId,
-                action: "created",
-                details: { title: task.title, priority: task.priority },
-                timestamp,
-              })
-              .pipe(Effect.retry(retryPolicy)),
-
-            statsRepo.onTaskCreated(task.userId).pipe(Effect.retry(retryPolicy)),
-          ],
-          { concurrency: "unbounded" }
+        const applied = yield* auditRepo.withIdempotentEvent(
+          {
+            id: event.id,
+            taskId,
+            userId: task.userId,
+            action: "created",
+            details: { title: task.title, priority: task.priority },
+            timestamp,
+          },
+          (tx) => statsRepo.onTaskCreated(task.userId, tx)
         );
 
-        yield* Effect.logInfo("Audit log and stats recorded for task creation");
+        if (applied) {
+          yield* Effect.logInfo("Audit log and stats recorded for task creation");
+        } else {
+          yield* Effect.logInfo("Duplicate task creation event ignored");
+        }
         return;
       }
 
       // Case 2: Task Updated
       if (beforeSnap?.exists && afterSnap?.exists) {
-        const beforeTask = yield* decodeTask(beforeSnap.data()).pipe(
-          Effect.mapError(
-            (err) =>
-              new FirestoreError({
-                cause: err,
-                message: `Failed to decode 'before' task snapshot for ${taskId}`,
-              })
-          )
-        );
-        const afterTask = yield* decodeTask(afterSnap.data()).pipe(
-          Effect.mapError(
-            (err) =>
-              new FirestoreError({
-                cause: err,
-                message: `Failed to decode 'after' task snapshot for ${taskId}`,
-              })
-          )
-        );
+        const [beforeTask, afterTask] = yield* Effect.all([
+          decodeTask(beforeSnap.data()).pipe(
+            Effect.mapError(
+              (err) =>
+                new FirestoreError({
+                  cause: err,
+                  message: `Failed to decode 'before' task snapshot for ${taskId}`,
+                })
+            )
+          ),
+          decodeTask(afterSnap.data()).pipe(
+            Effect.mapError(
+              (err) =>
+                new FirestoreError({
+                  cause: err,
+                  message: `Failed to decode 'after' task snapshot for ${taskId}`,
+                })
+            )
+          ),
+        ]);
 
         if (beforeTask.status !== afterTask.status) {
           yield* Effect.logInfo(
@@ -311,32 +294,29 @@ export const onTaskWritten = onDocumentWritten(
           // Validate allowed state transition
           yield* validateStatusTransition(beforeTask.status, afterTask.status);
 
-          // Run idempotent audit logging and user statistics update concurrently with retries
-          yield* Effect.all(
-            [
-              auditRepo
-                .record({
-                  id: event.id,
-                  taskId,
-                  userId: afterTask.userId,
-                  action: "status_changed",
-                  details: { from: beforeTask.status, to: afterTask.status },
-                  timestamp,
-                })
-                .pipe(Effect.retry(retryPolicy)),
-
-              statsRepo
-                .onStatusChanged(
-                  afterTask.userId,
-                  beforeTask.status,
-                  afterTask.status
-                )
-                .pipe(Effect.retry(retryPolicy)),
-            ],
-            { concurrency: "unbounded" }
+          const applied = yield* auditRepo.withIdempotentEvent(
+            {
+              id: event.id,
+              taskId,
+              userId: afterTask.userId,
+              action: "status_changed",
+              details: { from: beforeTask.status, to: afterTask.status },
+              timestamp,
+            },
+            (tx) =>
+              statsRepo.onStatusChanged(
+                afterTask.userId,
+                beforeTask.status,
+                afterTask.status,
+                tx
+              )
           );
 
-          yield* Effect.logInfo("Status change processed and audited");
+          if (applied) {
+            yield* Effect.logInfo("Status change processed and audited");
+          } else {
+            yield* Effect.logInfo("Duplicate status change event ignored");
+          }
         }
         return;
       }
@@ -355,27 +335,23 @@ export const onTaskWritten = onDocumentWritten(
 
         yield* Effect.logInfo("Processing deleted task");
 
-        yield* Effect.all(
-          [
-            auditRepo
-              .record({
-                id: event.id,
-                taskId,
-                userId: beforeTask.userId,
-                action: "deleted",
-                details: { title: beforeTask.title },
-                timestamp,
-              })
-              .pipe(Effect.retry(retryPolicy)),
-
-            statsRepo
-              .onTaskDeleted(beforeTask.userId, beforeTask.status)
-              .pipe(Effect.retry(retryPolicy)),
-          ],
-          { concurrency: "unbounded" }
+        const applied = yield* auditRepo.withIdempotentEvent(
+          {
+            id: event.id,
+            taskId,
+            userId: beforeTask.userId,
+            action: "deleted",
+            details: { title: beforeTask.title },
+            timestamp,
+          },
+          (tx) => statsRepo.onTaskDeleted(beforeTask.userId, beforeTask.status, tx)
         );
 
-        yield* Effect.logInfo("Deletion audit log and stats updated");
+        if (applied) {
+          yield* Effect.logInfo("Deletion audit log and stats updated");
+        } else {
+          yield* Effect.logInfo("Duplicate task deletion event ignored");
+        }
       }
     }).pipe(
       Effect.annotateLogs({

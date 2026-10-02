@@ -16,7 +16,7 @@
 
 import { Effect, Context, Layer, DateTime, Option } from "effect";
 import { FirestoreService } from "./firestore";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Transaction } from "firebase-admin/firestore";
 import { FirestoreError } from "../domain/errors";
 import { TaskStatus, UserStats, decodeUserStats } from "../domain/models";
 
@@ -27,21 +27,33 @@ export interface UserStatsRepositoryShape {
   readonly getByUserId: (
     userId: string
   ) => Effect.Effect<Option.Option<UserStats>, FirestoreError>;
-  readonly onTaskCreated: (userId: string) => Effect.Effect<void, FirestoreError>;
-  readonly onTaskCompleted: (userId: string) => Effect.Effect<void, FirestoreError>;
-  readonly onTaskReopened: (userId: string) => Effect.Effect<void, FirestoreError>;
+  readonly onTaskCreated: (
+    userId: string,
+    tx?: Transaction
+  ) => Effect.Effect<void, FirestoreError>;
+  readonly onTaskCompleted: (
+    userId: string,
+    tx?: Transaction
+  ) => Effect.Effect<void, FirestoreError>;
+  readonly onTaskReopened: (
+    userId: string,
+    tx?: Transaction
+  ) => Effect.Effect<void, FirestoreError>;
   readonly onTaskArchived: (
     userId: string,
-    previousStatus: TaskStatus
+    previousStatus: TaskStatus,
+    tx?: Transaction
   ) => Effect.Effect<void, FirestoreError>;
   readonly onStatusChanged: (
     userId: string,
     from: TaskStatus,
-    to: TaskStatus
+    to: TaskStatus,
+    tx?: Transaction
   ) => Effect.Effect<void, FirestoreError>;
   readonly onTaskDeleted: (
     userId: string,
-    previousStatus: TaskStatus
+    previousStatus: TaskStatus,
+    tx?: Transaction
   ) => Effect.Effect<void, FirestoreError>;
 }
 
@@ -86,19 +98,22 @@ export class UserStatsRepository extends Context.Service<
       );
 
       const onTaskCreated = Effect.fn("UserStatsRepository.onTaskCreated")(
-        function* (userId: string) {
+        function* (userId: string, tx?: Transaction) {
           const lastUpdated = DateTime.formatIso(yield* DateTime.now);
           yield* Effect.tryPromise({
             try: async () => {
-              await statsCol.doc(userId).set(
-                {
-                  userId,
-                  activeTasks: FieldValue.increment(1),
-                  completedTasks: FieldValue.increment(0),
-                  lastUpdated,
-                },
-                { merge: true }
-              );
+              const docRef = statsCol.doc(userId);
+              const data = {
+                userId,
+                activeTasks: FieldValue.increment(1),
+                completedTasks: FieldValue.increment(0),
+                lastUpdated,
+              };
+              if (tx) {
+                tx.set(docRef, data, { merge: true });
+              } else {
+                await docRef.set(data, { merge: true });
+              }
             },
             catch: (cause) =>
               new FirestoreError({
@@ -110,19 +125,22 @@ export class UserStatsRepository extends Context.Service<
       );
 
       const onTaskCompleted = Effect.fn("UserStatsRepository.onTaskCompleted")(
-        function* (userId: string) {
+        function* (userId: string, tx?: Transaction) {
           const lastUpdated = DateTime.formatIso(yield* DateTime.now);
           yield* Effect.tryPromise({
             try: async () => {
-              await statsCol.doc(userId).set(
-                {
-                  userId,
-                  activeTasks: FieldValue.increment(-1),
-                  completedTasks: FieldValue.increment(1),
-                  lastUpdated,
-                },
-                { merge: true }
-              );
+              const docRef = statsCol.doc(userId);
+              const data = {
+                userId,
+                activeTasks: FieldValue.increment(-1),
+                completedTasks: FieldValue.increment(1),
+                lastUpdated,
+              };
+              if (tx) {
+                tx.set(docRef, data, { merge: true });
+              } else {
+                await docRef.set(data, { merge: true });
+              }
             },
             catch: (cause) =>
               new FirestoreError({
@@ -134,19 +152,22 @@ export class UserStatsRepository extends Context.Service<
       );
 
       const onTaskReopened = Effect.fn("UserStatsRepository.onTaskReopened")(
-        function* (userId: string) {
+        function* (userId: string, tx?: Transaction) {
           const lastUpdated = DateTime.formatIso(yield* DateTime.now);
           yield* Effect.tryPromise({
             try: async () => {
-              await statsCol.doc(userId).set(
-                {
-                  userId,
-                  activeTasks: FieldValue.increment(1),
-                  completedTasks: FieldValue.increment(-1),
-                  lastUpdated,
-                },
-                { merge: true }
-              );
+              const docRef = statsCol.doc(userId);
+              const data = {
+                userId,
+                activeTasks: FieldValue.increment(1),
+                completedTasks: FieldValue.increment(-1),
+                lastUpdated,
+              };
+              if (tx) {
+                tx.set(docRef, data, { merge: true });
+              } else {
+                await docRef.set(data, { merge: true });
+              }
             },
             catch: (cause) =>
               new FirestoreError({
@@ -158,7 +179,7 @@ export class UserStatsRepository extends Context.Service<
       );
 
       const onTaskArchived = Effect.fn("UserStatsRepository.onTaskArchived")(
-        function* (userId: string, previousStatus: TaskStatus) {
+        function* (userId: string, previousStatus: TaskStatus, tx?: Transaction) {
           if (previousStatus === "archived") {
             return;
           }
@@ -168,15 +189,18 @@ export class UserStatsRepository extends Context.Service<
 
           yield* Effect.tryPromise({
             try: async () => {
-              await statsCol.doc(userId).set(
-                {
-                  userId,
-                  activeTasks: FieldValue.increment(activeDelta),
-                  completedTasks: FieldValue.increment(completedDelta),
-                  lastUpdated,
-                },
-                { merge: true }
-              );
+              const docRef = statsCol.doc(userId);
+              const data = {
+                userId,
+                activeTasks: FieldValue.increment(activeDelta),
+                completedTasks: FieldValue.increment(completedDelta),
+                lastUpdated,
+              };
+              if (tx) {
+                tx.set(docRef, data, { merge: true });
+              } else {
+                await docRef.set(data, { merge: true });
+              }
             },
             catch: (cause) =>
               new FirestoreError({
@@ -188,18 +212,23 @@ export class UserStatsRepository extends Context.Service<
       );
 
       const onStatusChanged = Effect.fn("UserStatsRepository.onStatusChanged")(
-        function* (userId: string, from: TaskStatus, to: TaskStatus) {
+        function* (
+          userId: string,
+          from: TaskStatus,
+          to: TaskStatus,
+          tx?: Transaction
+        ) {
           if (from === to || (isActiveStatus(from) && isActiveStatus(to))) {
             return;
           }
           if (to === "completed" && isActiveStatus(from)) {
-            return yield* onTaskCompleted(userId);
+            return yield* onTaskCompleted(userId, tx);
           }
           if (from === "completed" && isActiveStatus(to)) {
-            return yield* onTaskReopened(userId);
+            return yield* onTaskReopened(userId, tx);
           }
           if (to === "archived") {
-            return yield* onTaskArchived(userId, from);
+            return yield* onTaskArchived(userId, from, tx);
           }
 
           const lastUpdated = DateTime.formatIso(yield* DateTime.now);
@@ -210,15 +239,18 @@ export class UserStatsRepository extends Context.Service<
 
           yield* Effect.tryPromise({
             try: async () => {
-              await statsCol.doc(userId).set(
-                {
-                  userId,
-                  activeTasks: FieldValue.increment(activeDelta),
-                  completedTasks: FieldValue.increment(completedDelta),
-                  lastUpdated,
-                },
-                { merge: true }
-              );
+              const docRef = statsCol.doc(userId);
+              const data = {
+                userId,
+                activeTasks: FieldValue.increment(activeDelta),
+                completedTasks: FieldValue.increment(completedDelta),
+                lastUpdated,
+              };
+              if (tx) {
+                tx.set(docRef, data, { merge: true });
+              } else {
+                await docRef.set(data, { merge: true });
+              }
             },
             catch: (cause) =>
               new FirestoreError({
@@ -230,22 +262,25 @@ export class UserStatsRepository extends Context.Service<
       );
 
       const onTaskDeleted = Effect.fn("UserStatsRepository.onTaskDeleted")(
-        function* (userId: string, previousStatus: TaskStatus) {
+        function* (userId: string, previousStatus: TaskStatus, tx?: Transaction) {
           const lastUpdated = DateTime.formatIso(yield* DateTime.now);
           const activeDelta = isActiveStatus(previousStatus) ? -1 : 0;
           const completedDelta = previousStatus === "completed" ? -1 : 0;
 
           yield* Effect.tryPromise({
             try: async () => {
-              await statsCol.doc(userId).set(
-                {
-                  userId,
-                  activeTasks: FieldValue.increment(activeDelta),
-                  completedTasks: FieldValue.increment(completedDelta),
-                  lastUpdated,
-                },
-                { merge: true }
-              );
+              const docRef = statsCol.doc(userId);
+              const data = {
+                userId,
+                activeTasks: FieldValue.increment(activeDelta),
+                completedTasks: FieldValue.increment(completedDelta),
+                lastUpdated,
+              };
+              if (tx) {
+                tx.set(docRef, data, { merge: true });
+              } else {
+                await docRef.set(data, { merge: true });
+              }
             },
             catch: (cause) =>
               new FirestoreError({

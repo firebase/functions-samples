@@ -12,11 +12,10 @@ This sample demonstrates how to build production-grade, type-safe Firebase 2nd G
   - Exhaustive domain error mapping to `HttpsError` status codes via `Cause.findErrorOption`, while logging unexpected defects with `Cause.pretty`.
 
 - **2nd Gen Firestore Trigger (`onTaskWritten`)**:
-  - Document snapshot parsing with `Schema.decodeUnknownEffect`.
+  - Document snapshot parsing with `Schema.decodeUnknownEffect` and concurrent before/after snapshot decoding with `Effect.all`.
   - Traced state machine transition validation (`Effect.fn("validateStatusTransition")` + `InvalidTransitionError`).
-  - Idempotent audit log persistence keyed by Eventarc `event.id` and Clock-backed timestamps via `DateTime.now`.
-  - Structured concurrency with `Effect.all` running independent operations concurrently.
-  - Resilient retry policies with exponential backoff, jitter, and retry logging via `Schedule.exponential`, `Schedule.jittered`, `Schedule.upTo`, and `Schedule.tap`.
+  - Atomic idempotent audit log persistence and user stats updates via `db.runTransaction` keyed by Eventarc `event.id` (`audit_logs/{event.id}`), guaranteeing exactly-once stats mutations and relying on the Firestore SDK's built-in transaction backoff and retry handling rather than redundant application-level write retries.
+  - Clock-backed timestamps via `DateTime.now`.
 
 - **`Context.Service` & `Layer` Dependency Injection**:
   - Modular service architecture (`FirestoreService`, `TaskRepository`, `AuditRepository`, `UserStatsRepository`) defined with `Context.Service` and static `layer` / `layerNoDeps` definitions, composed via `Layer.provideMerge`.

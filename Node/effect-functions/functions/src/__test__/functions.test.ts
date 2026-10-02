@@ -22,15 +22,15 @@ import { getApps, initializeApp } from "firebase-admin/app";
 import * as firestoreModule from "firebase-admin/firestore";
 import { Change } from "firebase-functions/v2";
 import firebaseFunctionsTest from "firebase-functions-test";
-import { Effect, Exit, Option, Predicate } from "effect";
+import { Clock, Effect, Exit, Option, Predicate } from "effect";
 import {
   createTask,
   onTaskWritten,
   handleCallableExit,
-  retryPolicy,
 } from "../index";
 import { appRuntime } from "../runtime";
 import { TaskRepository } from "../services/task-repo";
+import { AuditRepository } from "../services/audit-repo";
 import { UserStatsRepository } from "../services/user-stats-repo";
 import { FirestoreError, TaskNotFoundError } from "../domain/errors";
 
@@ -50,6 +50,7 @@ const fft = firebaseFunctionsTest({
 
 function installInMemoryFirestoreFallback(db: firestoreModule.Firestore): void {
   const store = new Map<string, Map<string, Record<string, unknown>>>();
+  let txQueue: Promise<unknown> = Promise.resolve();
 
   const getColMap = (name: string): Map<string, Record<string, unknown>> => {
     let col = store.get(name);
@@ -113,6 +114,49 @@ function installInMemoryFirestoreFallback(db: firestoreModule.Firestore): void {
         },
       }),
     };
+  };
+
+  (db as unknown as Record<string, unknown>).runTransaction = <T>(
+    updateFunction: (tx: firestoreModule.Transaction) => Promise<T>
+  ): Promise<T> => {
+    const nextTx = txQueue.then(async () => {
+      const pendingWrites: Array<() => Promise<void>> = [];
+      let hasWritten = false;
+
+      const tx = {
+        get: async (docRef: { get: () => Promise<unknown> }) => {
+          if (hasWritten) {
+            throw new Error(
+              "Firestore transactions require all reads to be executed before all writes."
+            );
+          }
+          return docRef.get();
+        },
+        set: (
+          docRef: {
+            set: (
+              data: Record<string, unknown>,
+              options?: { merge?: boolean }
+            ) => Promise<void>;
+          },
+          data: Record<string, unknown>,
+          options?: { merge?: boolean }
+        ) => {
+          hasWritten = true;
+          pendingWrites.push(() => docRef.set(data, options));
+          return tx;
+        },
+      } as unknown as firestoreModule.Transaction;
+
+      const result = await updateFunction(tx);
+      for (const write of pendingWrites) {
+        await write();
+      }
+      return result;
+    });
+
+    txQueue = nextTx.catch(() => undefined);
+    return nextTx;
   };
 }
 
@@ -533,6 +577,120 @@ describe("Effect Cloud Functions", () => {
       expect(statsSnap.data()?.activeTasks).toBe(1);
       expect(statsSnap.data()?.completedTasks).toBe(0);
     });
+
+    it("ignores duplicate Eventarc deliveries with the same event.id without double-counting user stats", async () => {
+      const db = getFirestore();
+      const userId = "user-idempotent-stats";
+      const taskId = "task-idempotent-1";
+      const now = new Date().toISOString();
+
+      await db.collection("user_stats").doc(userId).set({
+        userId,
+        activeTasks: 0,
+        completedTasks: 0,
+        lastUpdated: now,
+      });
+
+      const emptySnap = fft.firestore.makeDocumentSnapshot({}, `tasks/${taskId}`);
+      const todoSnap = fft.firestore.makeDocumentSnapshot(
+        {
+          id: taskId,
+          userId,
+          title: "Idempotent task",
+          description: "",
+          priority: "medium",
+          status: "todo",
+          createdAt: now,
+          updatedAt: now,
+        },
+        `tasks/${taskId}`
+      );
+      const completedSnap = fft.firestore.makeDocumentSnapshot(
+        {
+          id: taskId,
+          userId,
+          title: "Idempotent task",
+          description: "",
+          priority: "medium",
+          status: "completed",
+          createdAt: now,
+          updatedAt: now,
+        },
+        `tasks/${taskId}`
+      );
+
+      // 1. Duplicate task creation event delivery (concurrent + sequential)
+      const createEvent = {
+        params: { taskId },
+        id: "event-dup-create-1",
+        data: new Change(emptySnap, todoSnap),
+      };
+      await Promise.all([
+        wrappedOnTaskWritten({ ...createEvent }),
+        wrappedOnTaskWritten({ ...createEvent }),
+      ]);
+      await wrappedOnTaskWritten({ ...createEvent });
+
+      let statsSnap = await db.collection("user_stats").doc(userId).get();
+      expect(statsSnap.data()?.activeTasks).toBe(1);
+      expect(statsSnap.data()?.completedTasks).toBe(0);
+
+      const createAuditSnap = await db
+        .collection("audit_logs")
+        .doc("event-dup-create-1")
+        .get();
+      expect(createAuditSnap.exists).toBe(true);
+
+      // 2. Duplicate status transition event delivery (todo -> completed)
+      const transitionEvent = {
+        params: { taskId },
+        id: "event-dup-status-1",
+        data: new Change(todoSnap, completedSnap),
+      };
+      await Promise.all([
+        wrappedOnTaskWritten({ ...transitionEvent }),
+        wrappedOnTaskWritten({ ...transitionEvent }),
+      ]);
+      await wrappedOnTaskWritten({ ...transitionEvent });
+
+      statsSnap = await db.collection("user_stats").doc(userId).get();
+      expect(statsSnap.data()?.activeTasks).toBe(0);
+      expect(statsSnap.data()?.completedTasks).toBe(1);
+
+      const transitionAuditSnap = await db
+        .collection("audit_logs")
+        .doc("event-dup-status-1")
+        .get();
+      expect(transitionAuditSnap.exists).toBe(true);
+
+      // 3. Duplicate task deletion event delivery
+      const deleteEvent = {
+        params: { taskId },
+        id: "event-dup-delete-1",
+        data: new Change(completedSnap, emptySnap),
+      };
+      await Promise.all([
+        wrappedOnTaskWritten({ ...deleteEvent }),
+        wrappedOnTaskWritten({ ...deleteEvent }),
+      ]);
+      await wrappedOnTaskWritten({ ...deleteEvent });
+
+      statsSnap = await db.collection("user_stats").doc(userId).get();
+      expect(statsSnap.data()?.activeTasks).toBe(0);
+      expect(statsSnap.data()?.completedTasks).toBe(0);
+
+      const deleteAuditSnap = await db
+        .collection("audit_logs")
+        .doc("event-dup-delete-1")
+        .get();
+      expect(deleteAuditSnap.exists).toBe(true);
+
+      const allTaskAudits = await db
+        .collection("audit_logs")
+        .where("taskId", "==", taskId)
+        .get();
+      expect(allTaskAudits.docs.length).toBe(3);
+    });
   });
 
   describe("TaskRepository service methods", () => {
@@ -621,36 +779,111 @@ describe("Effect Cloud Functions", () => {
       expect(snap.data()?.completedTasks).toBe(1);
     });
 
-    it("retryPolicy retries transient failures up to 3 times and succeeds or fails after exhausting attempts", async () => {
-      let attempts = 0;
-      const recovered = await appRuntime.runPromise(
-        Effect.gen(function* () {
-          attempts += 1;
-          if (attempts < 3) {
-            return yield* new FirestoreError({
-              cause: new Error("Transient unavailable"),
-              message: "Firestore temporarily unavailable",
-            });
-          }
-          return "ok";
-        }).pipe(Effect.retry(retryPolicy))
-      );
-      expect(recovered).toBe("ok");
-      expect(attempts).toBe(3);
+    it("AuditRepository.withIdempotentEvent rolls back transaction if side effects fail, preserves fiber Context, and succeeds on retry", async () => {
+      const db = getFirestore();
+      const userId = "user-tx-rollback";
+      const eventId = "event-tx-rollback-1";
+      const now = new Date().toISOString();
 
-      let exhaustedAttempts = 0;
-      const exhaustedExit = await appRuntime.runPromiseExit(
+      await db.collection("user_stats").doc(userId).set({
+        userId,
+        activeTasks: 0,
+        completedTasks: 0,
+        lastUpdated: now,
+      });
+
+      const failedExit = await appRuntime.runPromiseExit(
         Effect.gen(function* () {
-          exhaustedAttempts += 1;
-          return yield* new FirestoreError({
-            cause: new Error("Persistent failure"),
-            message: "Firestore down",
-          });
-        }).pipe(Effect.retry(retryPolicy))
+          const auditRepo = yield* AuditRepository;
+          const statsRepo = yield* UserStatsRepository;
+          return yield* auditRepo.withIdempotentEvent(
+            {
+              id: eventId,
+              taskId: "task-tx-1",
+              userId,
+              action: "created",
+              details: { title: "Rollback test" },
+              timestamp: now,
+            },
+            (tx) =>
+              Effect.gen(function* () {
+                // Perform a transactional write first, then fail to verify buffered rollback
+                yield* statsRepo.onTaskCreated(userId, tx);
+                return yield* new FirestoreError({
+                  cause: new Error("Simulated side-effect failure"),
+                  message: "Stats update failed inside transaction",
+                });
+              })
+          );
+        })
       );
-      expect(Exit.isFailure(exhaustedExit)).toBe(true);
-      // 1 initial attempt + 3 retries = 4 total evaluations
-      expect(exhaustedAttempts).toBe(4);
+      expect(Exit.isFailure(failedExit)).toBe(true);
+
+      // Verify neither user_stats nor audit_logs was modified when transaction failed
+      const statsAfterFailure = await db.collection("user_stats").doc(userId).get();
+      expect(statsAfterFailure.data()?.activeTasks).toBe(0);
+      const auditAfterFailure = await db
+        .collection("audit_logs")
+        .doc(eventId)
+        .get();
+      expect(auditAfterFailure.exists).toBe(false);
+
+      // Subsequent redelivery of the same eventId with a custom fiber Clock succeeds, inherits Clock, and returns true
+      const fixedMillis = 1_700_000_000_000;
+      const fixedNanos = 1_700_000_000_000_000_000n;
+      const fixedClock: Clock.Clock = {
+        currentTimeMillisUnsafe: () => fixedMillis,
+        currentTimeMillis: Effect.succeed(fixedMillis),
+        monotonicTimeNanosUnsafe: () => fixedNanos,
+        monotonicTimeNanos: Effect.succeed(fixedNanos),
+        currentTimeNanosUnsafe: () => fixedNanos,
+        currentTimeNanos: Effect.succeed(fixedNanos),
+        sleep: () => Effect.void,
+      };
+
+      const firstSuccess = await appRuntime.runPromise(
+        Effect.gen(function* () {
+          const auditRepo = yield* AuditRepository;
+          const statsRepo = yield* UserStatsRepository;
+          return yield* auditRepo.withIdempotentEvent(
+            {
+              id: eventId,
+              taskId: "task-tx-1",
+              userId,
+              action: "created",
+              details: { title: "Rollback test" },
+              timestamp: now,
+            },
+            (tx) => statsRepo.onTaskCreated(userId, tx)
+          );
+        }).pipe(Effect.provideService(Clock.Clock, fixedClock))
+      );
+      expect(firstSuccess).toBe(true);
+
+      const duplicateAttempt = await appRuntime.runPromise(
+        Effect.gen(function* () {
+          const auditRepo = yield* AuditRepository;
+          const statsRepo = yield* UserStatsRepository;
+          return yield* auditRepo.withIdempotentEvent(
+            {
+              id: eventId,
+              taskId: "task-tx-1",
+              userId,
+              action: "created",
+              details: { title: "Rollback test" },
+              timestamp: now,
+            },
+            (tx) => statsRepo.onTaskCreated(userId, tx)
+          );
+        })
+      );
+      expect(duplicateAttempt).toBe(false);
+
+      const statsSnap = await db.collection("user_stats").doc(userId).get();
+      expect(statsSnap.data()?.activeTasks).toBe(1);
+      expect(statsSnap.data()?.lastUpdated).toBe(
+        new Date(fixedMillis).toISOString()
+      );
     });
 
     it("handleCallableExit maps TaskNotFoundError, FirestoreError, and unhandled defects to HttpsError", () => {

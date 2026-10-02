@@ -15,12 +15,17 @@
  */
 
 import { Effect, Context, Layer } from "effect";
+import { Transaction } from "firebase-admin/firestore";
 import { FirestoreService } from "./firestore";
 import { AuditLog } from "../domain/models";
 import { FirestoreError } from "../domain/errors";
 
 export interface AuditRepositoryShape {
   readonly record: (entry: AuditLog) => Effect.Effect<void, FirestoreError>;
+  readonly withIdempotentEvent: (
+    entry: AuditLog,
+    applySideEffects: (tx: Transaction) => Effect.Effect<void, FirestoreError>
+  ) => Effect.Effect<boolean, FirestoreError>;
 }
 
 export class AuditRepository extends Context.Service<
@@ -52,8 +57,39 @@ export class AuditRepository extends Context.Service<
         });
       });
 
+      const withIdempotentEvent = Effect.fn(
+        "AuditRepository.withIdempotentEvent"
+      )(function* (
+        entry: AuditLog,
+        applySideEffects: (
+          tx: Transaction
+        ) => Effect.Effect<void, FirestoreError>
+      ) {
+        const context = yield* Effect.context<never>();
+        const runWithContext = Effect.runPromiseWith(context);
+        return yield* Effect.tryPromise({
+          try: () =>
+            db.runTransaction(async (tx) => {
+              const auditRef = auditCol.doc(entry.id);
+              const snap = await tx.get(auditRef);
+              if (snap.exists) {
+                return false;
+              }
+              await runWithContext(applySideEffects(tx));
+              tx.set(auditRef, entry);
+              return true;
+            }),
+          catch: (cause) =>
+            new FirestoreError({
+              cause,
+              message: `Failed to execute idempotent transaction for audit log ${entry.id}`,
+            }),
+        });
+      });
+
       return AuditRepository.of({
         record,
+        withIdempotentEvent,
       });
     })
   );
