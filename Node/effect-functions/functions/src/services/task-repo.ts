@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Effect, Context, Layer, Option } from "effect";
+import { Effect, Context, Layer, Option, DateTime } from "effect";
 import { FirestoreService } from "./firestore";
-import { Task, CreateTaskInput } from "../domain/models";
+import { Task, CreateTaskInput, decodeTask } from "../domain/models";
 import { FirestoreError } from "../domain/errors";
 
 export interface TaskRepositoryShape {
@@ -31,60 +31,81 @@ export interface TaskRepositoryShape {
   readonly delete: (id: string) => Effect.Effect<void, FirestoreError>;
 }
 
-export class TaskRepository extends Context.Tag("TaskRepository")<
+export class TaskRepository extends Context.Service<
   TaskRepository,
   TaskRepositoryShape
->() {}
+>()("effect-functions/services/TaskRepository") {
+  static readonly layerNoDeps: Layer.Layer<
+    TaskRepository,
+    never,
+    FirestoreService
+  > = Layer.effect(
+    TaskRepository,
+    Effect.gen(function* () {
+      const db = yield* FirestoreService;
+      const tasksCol = db.collection("tasks");
 
-export const TaskRepositoryLive = Layer.effect(
-  TaskRepository,
-  Effect.gen(function* () {
-    const db = yield* FirestoreService;
-    const tasksCol = db.collection("tasks");
-
-    return {
-      create: ({ id, userId, data }) =>
-        Effect.tryPromise({
-          try: async () => {
-            const now = new Date().toISOString();
-            const docData: Task = {
-              id,
-              userId,
-              title: data.title,
-              description: data.description ?? "",
-              priority: data.priority ?? "medium",
-              status: "todo",
-              createdAt: now,
-              updatedAt: now,
-            };
-            await tasksCol.doc(id).set(docData);
-            return docData;
-          },
+      const create = Effect.fn("TaskRepository.create")(function* ({
+        id,
+        userId,
+        data,
+      }: {
+        readonly id: string;
+        readonly userId: string;
+        readonly data: CreateTaskInput;
+      }) {
+        const now = DateTime.formatIso(yield* DateTime.now);
+        const docData: Task = {
+          id,
+          userId,
+          title: data.title,
+          description: data.description,
+          priority: data.priority,
+          status: "todo",
+          createdAt: now,
+          updatedAt: now,
+        };
+        yield* Effect.tryPromise({
+          try: () => tasksCol.doc(id).set(docData),
           catch: (cause) =>
             new FirestoreError({
               cause,
               message: `Failed to create task with id ${id}`,
             }),
-        }),
+        });
+        return docData;
+      });
 
-      findById: (id: string) =>
-        Effect.tryPromise({
-          try: async () => {
-            const snap = await tasksCol.doc(id).get();
-            if (!snap.exists) {
-              return Option.none();
-            }
-            return Option.some(snap.data() as Task);
-          },
+      const findById = Effect.fn("TaskRepository.findById")(function* (
+        id: string
+      ) {
+        const snap = yield* Effect.tryPromise({
+          try: () => tasksCol.doc(id).get(),
           catch: (cause) =>
             new FirestoreError({
               cause,
               message: `Failed to fetch task with id ${id}`,
             }),
-        }),
+        });
+        if (!snap.exists) {
+          return Option.none<Task>();
+        }
+        const task = yield* decodeTask(snap.data()).pipe(
+          Effect.mapError(
+            (cause) =>
+              new FirestoreError({
+                cause,
+                message: `Failed to decode task with id ${id}`,
+              })
+          )
+        );
+        return Option.some(task);
+      });
 
-      delete: (id: string) =>
-        Effect.tryPromise({
+      const deleteTask = Effect.fn("TaskRepository.delete")(function* (
+        id: string
+      ) {
+        yield* Effect.tryPromise({
           try: async () => {
             await tasksCol.doc(id).delete();
           },
@@ -93,7 +114,19 @@ export const TaskRepositoryLive = Layer.effect(
               cause,
               message: `Failed to delete task with id ${id}`,
             }),
-        }),
-    };
-  })
-);
+        });
+      });
+
+      return TaskRepository.of({
+        create,
+        findById,
+        delete: deleteTask,
+      });
+    })
+  );
+
+  static readonly layer: Layer.Layer<TaskRepository> =
+    this.layerNoDeps.pipe(Layer.provide(FirestoreService.layer));
+}
+
+export const TaskRepositoryLive = TaskRepository.layerNoDeps;

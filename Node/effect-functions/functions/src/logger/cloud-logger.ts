@@ -14,45 +14,58 @@
  * limitations under the License.
  */
 
-import { Logger, Layer } from "effect";
+import { Logger, Predicate } from "effect";
 import { logger } from "firebase-functions";
+import type { LogSeverity } from "firebase-functions/logger";
+
+function toLogSeverity(level: string): LogSeverity {
+  switch (level) {
+    case "TRACE":
+    case "DEBUG":
+      return "DEBUG";
+    case "INFO":
+      return "INFO";
+    case "WARN":
+      return "WARNING";
+    case "ERROR":
+      return "ERROR";
+    case "FATAL":
+      return "CRITICAL";
+    default:
+      return "INFO";
+  }
+}
+
+function formatPart(part: unknown): string {
+  return Predicate.isString(part) ? part : JSON.stringify(part);
+}
 
 /**
- * Custom Effect Logger layer that routes Effect logs (Effect.logInfo, Effect.logError, etc.)
- * directly into firebase-functions/logger.
+ * Custom Effect Logger built on `Logger.formatStructured` that routes Effect logs
+ * (`Effect.logInfo`, `Effect.logError`, etc.) directly into `firebase-functions/logger`.
  *
- * Annotations set via Effect.annotateLogs are automatically converted to structured attributes
- * within Cloud Logging's jsonPayload.
+ * Annotations (`Effect.annotateLogs`), spans (`Effect.withLogSpan`), causes, and fiber IDs
+ * are preserved as structured fields within Cloud Logging's `jsonPayload`.
  */
-export const FirebaseLoggerLive = Logger.replace(
-  Logger.defaultLogger,
-  Logger.make(({ logLevel, message, annotations }) => {
-    const structuredData: Record<string, unknown> = {};
-    for (const [key, value] of annotations) {
-      structuredData[key] = value;
-    }
-
+export const cloudLogger = Logger.formatStructured.pipe(
+  Logger.map(({ level, message, cause, annotations, spans, fiberId }) => {
     const formattedMessage = Array.isArray(message)
-      ? message.map((item) => (typeof item === "object" ? JSON.stringify(item) : String(item))).join(" ")
-      : String(message);
+      ? message.map(formatPart).join(" ")
+      : formatPart(message);
 
-    switch (logLevel._tag) {
-      case "Debug":
-      case "Trace":
-        logger.debug(formattedMessage, structuredData);
-        break;
-      case "Info":
-        logger.info(formattedMessage, structuredData);
-        break;
-      case "Warning":
-        logger.warn(formattedMessage, structuredData);
-        break;
-      case "Error":
-      case "Fatal":
-        logger.error(formattedMessage, structuredData);
-        break;
-      default:
-        logger.log(formattedMessage, structuredData);
-    }
+    const structuredData: Record<string, unknown> = {
+      ...annotations,
+      fiberId,
+      ...(Object.keys(spans).length > 0 ? { spans } : {}),
+      ...(cause !== undefined ? { cause } : {}),
+    };
+
+    logger.write({
+      ...structuredData,
+      severity: toLogSeverity(level),
+      message: formattedMessage,
+    });
   })
 );
+
+export const FirebaseLoggerLive = Logger.layer([cloudLogger]);

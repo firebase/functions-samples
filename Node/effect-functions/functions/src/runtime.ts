@@ -15,27 +15,26 @@
  */
 
 import { Layer, ManagedRuntime } from "effect";
-import { FirestoreLive } from "./services/firestore";
-import { TaskRepositoryLive } from "./services/task-repo";
-import { AuditRepositoryLive } from "./services/audit-repo";
-import { UserStatsRepositoryLive } from "./services/user-stats-repo";
+import { FirestoreService } from "./services/firestore";
+import { TaskRepository } from "./services/task-repo";
+import { AuditRepository } from "./services/audit-repo";
+import { UserStatsRepository } from "./services/user-stats-repo";
 import { FirebaseLoggerLive } from "./logger/cloud-logger";
 
 /**
  * Compose all domain repositories, injecting the Firestore client service into them.
  */
 export const RepositoriesLive = Layer.mergeAll(
-  TaskRepositoryLive,
-  AuditRepositoryLive,
-  UserStatsRepositoryLive
-).pipe(Layer.provide(FirestoreLive));
+  TaskRepository.layerNoDeps,
+  AuditRepository.layerNoDeps,
+  UserStatsRepository.layerNoDeps
+).pipe(Layer.provideMerge(FirestoreService.layer));
 
 /**
  * Top-level application layer providing all services, databases, and logger integrations.
  */
 export const AppLiveLayer = Layer.mergeAll(
   RepositoriesLive,
-  FirestoreLive,
   FirebaseLoggerLive
 );
 

@@ -23,20 +23,24 @@ export interface AuditRepositoryShape {
   readonly record: (entry: AuditLog) => Effect.Effect<void, FirestoreError>;
 }
 
-export class AuditRepository extends Context.Tag("AuditRepository")<
+export class AuditRepository extends Context.Service<
   AuditRepository,
   AuditRepositoryShape
->() {}
+>()("effect-functions/services/AuditRepository") {
+  static readonly layerNoDeps: Layer.Layer<
+    AuditRepository,
+    never,
+    FirestoreService
+  > = Layer.effect(
+    AuditRepository,
+    Effect.gen(function* () {
+      const db = yield* FirestoreService;
+      const auditCol = db.collection("audit_logs");
 
-export const AuditRepositoryLive = Layer.effect(
-  AuditRepository,
-  Effect.gen(function* () {
-    const db = yield* FirestoreService;
-    const auditCol = db.collection("audit_logs");
-
-    return {
-      record: (entry) =>
-        Effect.tryPromise({
+      const record = Effect.fn("AuditRepository.record")(function* (
+        entry: AuditLog
+      ) {
+        yield* Effect.tryPromise({
           try: async () => {
             await auditCol.doc(entry.id).set(entry);
           },
@@ -45,7 +49,17 @@ export const AuditRepositoryLive = Layer.effect(
               cause,
               message: `Failed to record audit log ${entry.id}`,
             }),
-        }),
-    };
-  })
-);
+        });
+      });
+
+      return AuditRepository.of({
+        record,
+      });
+    })
+  );
+
+  static readonly layer: Layer.Layer<AuditRepository> =
+    this.layerNoDeps.pipe(Layer.provide(FirestoreService.layer));
+}
+
+export const AuditRepositoryLive = AuditRepository.layerNoDeps;

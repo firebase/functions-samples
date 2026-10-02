@@ -18,19 +18,24 @@ import { Context, Layer } from "effect";
 import { getFirestore, Firestore } from "firebase-admin/firestore";
 import { getApps, initializeApp } from "firebase-admin/app";
 
-export class FirestoreService extends Context.Tag("FirestoreService")<
+export class FirestoreService extends Context.Service<
   FirestoreService,
   Firestore
->() {}
+>()("effect-functions/services/FirestoreService") {
+  static readonly layer: Layer.Layer<FirestoreService> = Layer.sync(
+    FirestoreService,
+    () => {
+      const defaultApp = getApps().find((app) => app.name === "[DEFAULT]");
+      const app =
+        defaultApp ??
+        initializeApp(
+          process.env.GCLOUD_PROJECT
+            ? { projectId: process.env.GCLOUD_PROJECT }
+            : undefined
+        );
+      return getFirestore(app);
+    }
+  );
+}
 
-export const FirestoreLive = Layer.sync(FirestoreService, () => {
-  const defaultApp = getApps().find((app) => app.name === "[DEFAULT]");
-  const app =
-    defaultApp ??
-    initializeApp(
-      process.env.GCLOUD_PROJECT
-        ? { projectId: process.env.GCLOUD_PROJECT }
-        : undefined
-    );
-  return getFirestore(app);
-});
+export const FirestoreLive = FirestoreService.layer;

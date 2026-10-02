@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-import { Schema } from "effect";
+import { Effect, Schema } from "effect";
 
-export const TaskStatus = Schema.Literal("todo", "in_progress", "completed", "archived");
+export const NonEmptyTrimmedString = Schema.Trim.check(Schema.isNonEmpty());
+
+export const TaskStatus = Schema.Literals(["todo", "in_progress", "completed", "archived"]);
 export type TaskStatus = typeof TaskStatus.Type;
 
-export const TaskPriority = Schema.Literal("low", "medium", "high", "urgent");
+export const TaskPriority = Schema.Literals(["low", "medium", "high", "urgent"]);
 export type TaskPriority = typeof TaskPriority.Type;
 
 export const Task = Schema.Struct({
   id: Schema.String,
   userId: Schema.String,
-  title: Schema.NonEmptyTrimmedString,
+  title: NonEmptyTrimmedString,
   description: Schema.String,
   priority: TaskPriority,
   status: TaskStatus,
@@ -35,13 +37,17 @@ export const Task = Schema.Struct({
 export type Task = typeof Task.Type;
 
 export const CreateTaskInput = Schema.Struct({
-  title: Schema.NonEmptyTrimmedString,
-  description: Schema.optional(Schema.String),
-  priority: Schema.optional(TaskPriority),
+  title: NonEmptyTrimmedString,
+  description: Schema.String.pipe(Schema.withDecodingDefault(Effect.succeed(""))),
+  priority: TaskPriority.pipe(Schema.withDecodingDefault(Effect.succeed("medium" as const))),
 });
 export type CreateTaskInput = typeof CreateTaskInput.Type;
+export type CreateTaskInputEncoded = typeof CreateTaskInput.Encoded;
 
-export const AuditAction = Schema.Literal("created", "status_changed", "deleted");
+export const decodeCreateTaskInput = Schema.decodeUnknownEffect(CreateTaskInput);
+export const decodeTask = Schema.decodeUnknownEffect(Task);
+
+export const AuditAction = Schema.Literals(["created", "status_changed", "deleted"]);
 export type AuditAction = typeof AuditAction.Type;
 
 export const AuditLog = Schema.Struct({
@@ -49,7 +55,7 @@ export const AuditLog = Schema.Struct({
   taskId: Schema.String,
   userId: Schema.String,
   action: AuditAction,
-  details: Schema.Record({ key: Schema.String, value: Schema.Unknown }),
+  details: Schema.Record(Schema.String, Schema.Unknown),
   timestamp: Schema.String,
 });
 export type AuditLog = typeof AuditLog.Type;
@@ -61,3 +67,5 @@ export const UserStats = Schema.Struct({
   lastUpdated: Schema.String,
 });
 export type UserStats = typeof UserStats.Type;
+
+export const decodeUserStats = Schema.decodeUnknownEffect(UserStats);

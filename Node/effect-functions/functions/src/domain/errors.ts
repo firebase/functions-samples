@@ -14,30 +14,39 @@
  * limitations under the License.
  */
 
-import { Data } from "effect";
+import { Schema } from "effect";
 
-export class UnauthorizedError extends Data.TaggedError("UnauthorizedError")<{
-  readonly message: string;
-}> {}
+export class UnauthorizedError extends Schema.TaggedError<UnauthorizedError>()(
+  "UnauthorizedError",
+  { message: Schema.String }
+) {}
 
-export class ValidationError extends Data.TaggedError("ValidationError")<{
-  readonly issues: ReadonlyArray<string>;
-}> {}
+export class ValidationError extends Schema.TaggedError<ValidationError>()(
+  "ValidationError",
+  { issues: Schema.Array(Schema.String) }
+) {}
 
-export class TaskNotFoundError extends Data.TaggedError("TaskNotFoundError")<{
-  readonly id: string;
-}> {}
+export class TaskNotFoundError extends Schema.TaggedError<TaskNotFoundError>()(
+  "TaskNotFoundError",
+  { id: Schema.String }
+) {}
 
-export class InvalidTransitionError extends Data.TaggedError("InvalidTransitionError")<{
-  readonly from: string;
-  readonly to: string;
-  readonly reason: string;
-}> {}
+export class InvalidTransitionError extends Schema.TaggedError<InvalidTransitionError>()(
+  "InvalidTransitionError",
+  {
+    from: Schema.String,
+    to: Schema.String,
+    reason: Schema.String,
+  }
+) {}
 
-export class FirestoreError extends Data.TaggedError("FirestoreError")<{
-  readonly cause: unknown;
-  readonly message: string;
-}> {}
+export class FirestoreError extends Schema.TaggedError<FirestoreError>()(
+  "FirestoreError",
+  {
+    cause: Schema.Defect(),
+    message: Schema.String,
+  }
+) {}
 
 export type DomainError =
   | UnauthorizedError
