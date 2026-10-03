@@ -2,8 +2,8 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
-    "firebase-admin": "^14.2.0",
-    "firebase-functions": "^7.3.2"
+    "firebase-admin": "^14.5.0",
+    "firebase-functions": "^7.4.0"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
