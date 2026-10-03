@@ -148,7 +148,7 @@ async function createFirebaseAccount(spotifyID, displayName, photoURL, email, ac
         displayName: displayName,
         photoURL: photoURL,
         email: email,
-        emailVerified: true,
+        emailVerified: false,
       });
     }
     throw error;
