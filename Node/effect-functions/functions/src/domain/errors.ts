@@ -23,12 +23,7 @@ export class UnauthorizedError extends Schema.TaggedError<UnauthorizedError>()(
 
 export class ValidationError extends Schema.TaggedError<ValidationError>()(
   "ValidationError",
-  { issues: Schema.Array(Schema.String) }
-) {}
-
-export class TaskNotFoundError extends Schema.TaggedError<TaskNotFoundError>()(
-  "TaskNotFoundError",
-  { id: Schema.String }
+  { message: Schema.String }
 ) {}
 
 export class InvalidTransitionError extends Schema.TaggedError<InvalidTransitionError>()(
@@ -51,6 +46,5 @@ export class FirestoreError extends Schema.TaggedError<FirestoreError>()(
 export type DomainError =
   | UnauthorizedError
   | ValidationError
-  | TaskNotFoundError
   | InvalidTransitionError
   | FirestoreError;

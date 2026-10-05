@@ -15,51 +15,22 @@
  */
 
 import { Effect, Context, Layer, Option } from "effect";
-import { FieldValue, type WriteBatch } from "firebase-admin/firestore";
-import { FirestoreService } from "./firestore";
-import { schemaConverter } from "./schema-converter";
+import { getFirestore } from "firebase-admin/firestore";
 import { FirestoreError } from "../domain/errors";
-import { TaskStatus, UserStats } from "../domain/models";
-
-const counters = (status: TaskStatus) => ({
-  active: status === "todo" || status === "in_progress" ? 1 : 0,
-  completed: status === "completed" ? 1 : 0,
-});
-
-export interface UserStatsRepositoryShape {
-  readonly getByUserId: (
-    userId: string
-  ) => Effect.Effect<Option.Option<UserStats>, FirestoreError>;
-  /** Enqueue counter adjustments into an atomic WriteBatch (committed by AuditRepository.recordOnce). */
-  readonly onTaskCreated: (batch: WriteBatch, userId: string) => void;
-  readonly onStatusChanged: (
-    batch: WriteBatch,
-    userId: string,
-    from: TaskStatus,
-    to: TaskStatus
-  ) => void;
-  readonly onTaskDeleted: (
-    batch: WriteBatch,
-    userId: string,
-    previousStatus: TaskStatus
-  ) => void;
-}
+import { UserStats, decodeUserStats } from "../domain/models";
 
 export class UserStatsRepository extends Context.Service<
   UserStatsRepository,
-  UserStatsRepositoryShape
+  {
+    readonly getByUserId: (
+      userId: string
+    ) => Effect.Effect<Option.Option<UserStats>, FirestoreError>;
+  }
 >()("effect-functions/services/UserStatsRepository") {
-  static readonly layerNoDeps: Layer.Layer<
+  static readonly layer: Layer.Layer<UserStatsRepository> = Layer.sync(
     UserStatsRepository,
-    never,
-    FirestoreService
-  > = Layer.effect(
-    UserStatsRepository,
-    Effect.gen(function* () {
-      const db = yield* FirestoreService;
-      const statsCol = db
-        .collection("user_stats")
-        .withConverter(schemaConverter(UserStats));
+    () => {
+      const statsCol = getFirestore().collection("user_stats");
 
       const getByUserId = Effect.fn("UserStatsRepository.getByUserId")(
         function* (userId: string) {
@@ -71,79 +42,24 @@ export class UserStatsRepository extends Context.Service<
                 message: `Failed to fetch user stats for ${userId}`,
               }),
           });
-          const stats = yield* Effect.try({
-            try: () => snap.data(),
-            catch: (cause) =>
-              new FirestoreError({
-                cause,
-                message: `Failed to decode user stats for ${userId}`,
-              }),
-          });
-          return Option.fromNullishOr(stats);
+          const data = snap.data();
+          if (!data) {
+            return Option.none();
+          }
+          const stats = yield* decodeUserStats(data).pipe(
+            Effect.mapError(
+              (cause) =>
+                new FirestoreError({
+                  cause,
+                  message: `Failed to decode user stats for ${userId}`,
+                })
+            )
+          );
+          return Option.some(stats);
         }
       );
 
-      const enqueueDelta = (
-        batch: WriteBatch,
-        userId: string,
-        activeDelta: number,
-        completedDelta: number
-      ): void => {
-        if (activeDelta === 0 && completedDelta === 0) {
-          return;
-        }
-        batch.set(
-          statsCol.doc(userId),
-          {
-            userId,
-            activeTasks: FieldValue.increment(activeDelta),
-            completedTasks: FieldValue.increment(completedDelta),
-            lastUpdated: new Date().toISOString(),
-          },
-          { merge: true }
-        );
-      };
-
-      const onTaskCreated = (batch: WriteBatch, userId: string): void => {
-        enqueueDelta(batch, userId, 1, 0);
-      };
-
-      const onStatusChanged = (
-        batch: WriteBatch,
-        userId: string,
-        from: TaskStatus,
-        to: TaskStatus
-      ): void => {
-        const fromCounts = counters(from);
-        const toCounts = counters(to);
-        enqueueDelta(
-          batch,
-          userId,
-          toCounts.active - fromCounts.active,
-          toCounts.completed - fromCounts.completed
-        );
-      };
-
-      const onTaskDeleted = (
-        batch: WriteBatch,
-        userId: string,
-        previousStatus: TaskStatus
-      ): void => {
-        const prevCounts = counters(previousStatus);
-        enqueueDelta(batch, userId, -prevCounts.active, -prevCounts.completed);
-      };
-
-      return UserStatsRepository.of({
-        getByUserId,
-        onTaskCreated,
-        onStatusChanged,
-        onTaskDeleted,
-      });
-    })
+      return UserStatsRepository.of({ getByUserId });
+    }
   );
-
-  static readonly layer: Layer.Layer<UserStatsRepository> =
-    this.layerNoDeps.pipe(Layer.provide(FirestoreService.layer));
 }
-
-export const UserStatsRepositoryLive = UserStatsRepository.layerNoDeps;

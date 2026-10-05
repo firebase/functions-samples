@@ -15,6 +15,7 @@
  */
 
 process.env.GCLOUD_PROJECT = "demo-effect-functions";
+process.env.MAX_ACTIVE_TASKS_PER_USER = "100";
 
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import * as admin from "firebase-admin";
@@ -29,14 +30,14 @@ import {
   handleCallableExit,
 } from "../index";
 import { appRuntime } from "../runtime";
-import { TaskRepository } from "../services/task-repo";
-import { AuditRepository } from "../services/audit-repo";
 import { UserStatsRepository } from "../services/user-stats-repo";
-import { FirestoreError, TaskNotFoundError } from "../domain/errors";
+import { FirestoreError } from "../domain/errors";
 
-const { getFirestore, GrpcStatus } = firestoreModule;
+const { getFirestore } = firestoreModule;
 
-// Compatibility shim for firebase-functions-test with firebase-admin v14
+// Compatibility shim: firebase-functions-test@3.5.0 still calls `admin.firestore(...)`
+// and checks `instanceof admin.firestore.Timestamp`, and firebase-admin@14 no longer
+// exports that namespace on the root module.
 if (!Predicate.isFunction((admin as Record<string, unknown>).firestore)) {
   (admin as Record<string, unknown>).firestore = Object.assign(
     firestoreModule.getFirestore,
@@ -48,208 +49,10 @@ const fft = firebaseFunctionsTest({
   projectId: "demo-effect-functions",
 });
 
-interface InMemoryDocRef {
-  readonly id: string;
-  readonly _key: string;
-  readonly get: () => Promise<{
-    readonly exists: boolean;
-    readonly data: () => unknown;
-  }>;
-  readonly set: (
-    data: Record<string, unknown>,
-    options?: { merge?: boolean }
-  ) => Promise<void>;
-  readonly delete: () => Promise<void>;
-  readonly _has: () => boolean;
-  readonly _set: (
-    data: Record<string, unknown>,
-    options?: { merge?: boolean }
-  ) => void;
-}
-
-function installInMemoryFirestoreFallback(db: firestoreModule.Firestore): void {
-  const store = new Map<string, Map<string, Record<string, unknown>>>();
-  let autoIdCounter = 0;
-
-  const getColMap = (name: string): Map<string, Record<string, unknown>> => {
-    let col = store.get(name);
-    if (!col) {
-      col = new Map();
-      store.set(name, col);
-    }
-    return col;
-  };
-
-  const applySet = (
-    colMap: Map<string, Record<string, unknown>>,
-    id: string,
-    data: Record<string, unknown>,
-    options?: { merge?: boolean }
-  ): void => {
-    const prev = options?.merge ? (colMap.get(id) ?? {}) : {};
-    const next: Record<string, unknown> = { ...prev };
-    for (const [k, v] of Object.entries(data)) {
-      if (
-        Predicate.hasProperty(v, "operand") &&
-        Predicate.isNumber(v.operand)
-      ) {
-        const current = Predicate.isNumber(next[k]) ? next[k] : 0;
-        next[k] = current + v.operand;
-      } else {
-        next[k] = v;
-      }
-    }
-    colMap.set(id, next);
-  };
-
-  const makeQuery = (
-    colMap: Map<string, Record<string, unknown>>,
-    filters: ReadonlyArray<{ field: string; value: unknown }> = [],
-    converter?: firestoreModule.FirestoreDataConverter<unknown>
-  ): Record<string, unknown> => ({
-    where: (field: string, _op: string, value: unknown) =>
-      makeQuery(colMap, [...filters, { field, value }], converter),
-    get: async () => {
-      const docs = Array.from(colMap.values()).filter((doc) =>
-        filters.every((f) => doc[f.field] === f.value)
-      );
-      return {
-        empty: docs.length === 0,
-        docs: docs.map((d) => ({
-          exists: true,
-          data: () => {
-            const raw = { ...d };
-            return converter
-              ? converter.fromFirestore({
-                  data: () => raw,
-                } as firestoreModule.QueryDocumentSnapshot)
-              : raw;
-          },
-        })),
-      };
-    },
-  });
-
-  const makeCollection = (
-    name: string,
-    converter?: firestoreModule.FirestoreDataConverter<unknown>
-  ): Record<string, unknown> => {
-    const colMap = getColMap(name);
-    return {
-      ...makeQuery(colMap, [], converter),
-      withConverter: (
-        nextConverter: firestoreModule.FirestoreDataConverter<unknown>
-      ) => makeCollection(name, nextConverter),
-      doc: (id?: string): InMemoryDocRef => {
-        const docId = id ?? `auto-id-${++autoIdCounter}`;
-        const writeDoc = (
-          data: Record<string, unknown>,
-          options?: { merge?: boolean }
-        ): void => {
-          const serialized = (
-            converter
-              ? options
-                ? converter.toFirestore(data, options)
-                : converter.toFirestore(data)
-              : data
-          ) as Record<string, unknown>;
-          applySet(colMap, docId, serialized, options);
-        };
-        return {
-          id: docId,
-          _key: `${name}/${docId}`,
-          get: async () => {
-            const existing = colMap.get(docId);
-            return {
-              exists: existing !== undefined,
-              data: () => {
-                if (!existing) {
-                  return undefined;
-                }
-                const raw = { ...existing };
-                return converter
-                  ? converter.fromFirestore({
-                      data: () => raw,
-                    } as firestoreModule.QueryDocumentSnapshot)
-                  : raw;
-              },
-            };
-          },
-          set: async (
-            data: Record<string, unknown>,
-            options?: { merge?: boolean }
-          ) => {
-            writeDoc(data, options);
-          },
-          delete: async () => {
-            colMap.delete(docId);
-          },
-          _has: () => colMap.has(docId),
-          _set: writeDoc,
-        };
-      },
-    };
-  };
-
-  (db as unknown as Record<string, unknown>).collection = (name: string) =>
-    makeCollection(name);
-
-  (db as unknown as Record<string, unknown>).batch = () => {
-    const ops: Array<
-      | { type: "create"; ref: InMemoryDocRef; data: Record<string, unknown> }
-      | {
-          type: "set";
-          ref: InMemoryDocRef;
-          data: Record<string, unknown>;
-          options?: { merge?: boolean };
-        }
-    > = [];
-    const batch = {
-      create: (ref: InMemoryDocRef, data: Record<string, unknown>) => {
-        ops.push({ type: "create", ref, data });
-        return batch;
-      },
-      set: (
-        ref: InMemoryDocRef,
-        data: Record<string, unknown>,
-        options?: { merge?: boolean }
-      ) => {
-        ops.push({ type: "set", ref, data, options });
-        return batch;
-      },
-      commit: async () => {
-        const createdInBatch = new Set<string>();
-        for (const op of ops) {
-          if (op.type === "create") {
-            if (op.ref._has() || createdInBatch.has(op.ref._key)) {
-              throw Object.assign(
-                new Error("ALREADY_EXISTS: Document already exists"),
-                { code: GrpcStatus.ALREADY_EXISTS }
-              );
-            }
-            createdInBatch.add(op.ref._key);
-          }
-        }
-        for (const op of ops) {
-          if (op.type === "create") {
-            op.ref._set(op.data);
-          } else {
-            op.ref._set(op.data, op.options);
-          }
-        }
-      },
-    };
-    return batch;
-  };
-}
-
 describe("Effect Cloud Functions", () => {
   beforeAll(() => {
     if (!getApps().some((app) => app.name === "[DEFAULT]")) {
       initializeApp({ projectId: "demo-effect-functions" });
-    }
-    if (!process.env.FIRESTORE_EMULATOR_HOST) {
-      installInMemoryFirestoreFallback(getFirestore());
     }
   });
 
@@ -284,7 +87,7 @@ describe("Effect Cloud Functions", () => {
       ).rejects.toThrowError(
         expect.objectContaining({
           code: "invalid-argument",
-          message: expect.stringContaining("title:"),
+          message: expect.stringContaining("title"),
         })
       );
     });
@@ -515,7 +318,17 @@ describe("Effect Cloud Functions", () => {
 
     it("rejects invalid status transition (archived to todo)", async () => {
       const taskId = "task-invalid-1";
-      const userId = "user-abc";
+      const userId = "user-invalid-transition";
+      const now = new Date().toISOString();
+
+      const db = getFirestore();
+      await db.collection("user_stats").doc(userId).set({
+        userId,
+        activeTasks: 1,
+        completedTasks: 2,
+        lastUpdated: now,
+      });
+
       const beforeData = {
         id: taskId,
         userId,
@@ -523,13 +336,13 @@ describe("Effect Cloud Functions", () => {
         description: "",
         priority: "low",
         status: "archived",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: now,
+        updatedAt: now,
       };
       const afterData = {
         ...beforeData,
         status: "todo",
-        updatedAt: new Date().toISOString(),
+        updatedAt: now,
       };
 
       const beforeSnap = fft.firestore.makeDocumentSnapshot(beforeData, `tasks/${taskId}`);
@@ -541,7 +354,14 @@ describe("Effect Cloud Functions", () => {
         data: new Change(beforeSnap, afterSnap),
       };
 
-      await expect(wrappedOnTaskWritten(event)).rejects.toThrowError();
+      await expect(wrappedOnTaskWritten(event)).resolves.toBeUndefined();
+
+      const auditSnap = await db.collection("audit_logs").doc("event-invalid-1").get();
+      expect(auditSnap.exists).toBe(false);
+
+      const statsSnap = await db.collection("user_stats").doc(userId).get();
+      expect(statsSnap.data()?.activeTasks).toBe(1);
+      expect(statsSnap.data()?.completedTasks).toBe(2);
     });
 
     it("processes task deletion: decrements stats and logs deletion", async () => {
@@ -662,6 +482,17 @@ describe("Effect Cloud Functions", () => {
       statsSnap = await db.collection("user_stats").doc(userId).get();
       expect(statsSnap.data()?.activeTasks).toBe(1);
       expect(statsSnap.data()?.completedTasks).toBe(0);
+
+      // 4. Create task directly in completed status (none -> completed): activeTasks 1, completedTasks 1
+      await wrappedOnTaskWritten({
+        params: { taskId },
+        id: "event-create-completed-1",
+        data: new Change(emptySnap, completedSnap),
+      });
+
+      statsSnap = await db.collection("user_stats").doc(userId).get();
+      expect(statsSnap.data()?.activeTasks).toBe(1);
+      expect(statsSnap.data()?.completedTasks).toBe(1);
     });
 
     it("ignores duplicate Eventarc deliveries with the same event.id without double-counting user stats", async () => {
@@ -779,74 +610,9 @@ describe("Effect Cloud Functions", () => {
     });
   });
 
-  describe("TaskRepository service methods", () => {
-    it("findById decodes valid tasks, returns Option.none for missing tasks, and deletes tasks", async () => {
-      const created = await appRuntime.runPromise(
-        Effect.gen(function* () {
-          const repo = yield* TaskRepository;
-          return yield* repo.create({
-            userId: "user-repo",
-            data: {
-              title: "Repository test",
-              description: "Verify findById and delete",
-              priority: "urgent",
-            },
-          });
-        })
-      );
-      expect(created.id).toBeTruthy();
-
-      const found = await appRuntime.runPromise(
-        Effect.gen(function* () {
-          const repo = yield* TaskRepository;
-          return yield* repo.findById(created.id);
-        })
-      );
-      expect(Option.isSome(found)).toBe(true);
-
-      await appRuntime.runPromise(
-        Effect.gen(function* () {
-          const repo = yield* TaskRepository;
-          yield* repo.delete(created.id);
-        })
-      );
-
-      const afterDelete = await appRuntime.runPromise(
-        Effect.gen(function* () {
-          const repo = yield* TaskRepository;
-          return yield* repo.findById(created.id);
-        })
-      );
-      expect(Option.isNone(afterDelete)).toBe(true);
-    });
-
-    it("findById fails with FirestoreError when stored task document is corrupted", async () => {
+  describe("Repository validation and error mapping", () => {
+    it("UserStatsRepository.getByUserId fails with FirestoreError when stored document is corrupted", async () => {
       const db = getFirestore();
-      const corruptedId = "repo-corrupted-task-1";
-      await db.collection("tasks").doc(corruptedId).set({
-        id: corruptedId,
-        userId: "user-repo",
-        title: "   ", // invalid NonEmptyTrimmedString
-        status: "invalid-status",
-      });
-
-      const exit = await appRuntime.runPromiseExit(
-        Effect.gen(function* () {
-          const repo = yield* TaskRepository;
-          return yield* repo.findById(corruptedId);
-        })
-      );
-      expect(Exit.isFailure(exit)).toBe(true);
-      if (Exit.isFailure(exit)) {
-        const errOpt = Cause.findErrorOption(exit.cause);
-        expect(Option.isSome(errOpt)).toBe(true);
-        if (Option.isSome(errOpt)) {
-          expect(errOpt.value._tag).toBe("FirestoreError");
-        }
-      }
-      await db.collection("tasks").doc(corruptedId).delete();
-
-      // Also verify UserStatsRepository.getByUserId maps converter decode failures to FirestoreError
       const corruptedStatsUserId = "repo-corrupted-stats-1";
       await db.collection("user_stats").doc(corruptedStatsUserId).set({
         userId: corruptedStatsUserId,
@@ -870,141 +636,7 @@ describe("Effect Cloud Functions", () => {
       await db.collection("user_stats").doc(corruptedStatsUserId).delete();
     });
 
-    it("UserStatsRepository.onStatusChanged accurately updates counts for transitions from archived", async () => {
-      const db = getFirestore();
-      const userId = "user-unarchive-stats";
-      await db.collection("user_stats").doc(userId).set({
-        userId,
-        activeTasks: 0,
-        completedTasks: 0,
-        lastUpdated: new Date().toISOString(),
-      });
-
-      const statsRepo = await appRuntime.runPromise(
-        Effect.gen(function* () {
-          return yield* UserStatsRepository;
-        })
-      );
-      const batch = db.batch();
-      statsRepo.onStatusChanged(batch, userId, "archived", "todo");
-      statsRepo.onStatusChanged(batch, userId, "archived", "completed");
-      await batch.commit();
-
-      const snap = await db.collection("user_stats").doc(userId).get();
-      expect(snap.data()?.activeTasks).toBe(1);
-      expect(snap.data()?.completedTasks).toBe(1);
-    });
-
-    it("AuditRepository.recordOnce commits audit log and stats atomically and returns false for duplicate event ids", async () => {
-      const db = getFirestore();
-      const userId = "user-record-once";
-      const eventId = "event-record-once-1";
-      const now = new Date().toISOString();
-
-      await db.collection("user_stats").doc(userId).set({
-        userId,
-        activeTasks: 0,
-        completedTasks: 0,
-        lastUpdated: now,
-      });
-
-      const firstSuccess = await appRuntime.runPromise(
-        Effect.gen(function* () {
-          const auditRepo = yield* AuditRepository;
-          const statsRepo = yield* UserStatsRepository;
-          return yield* auditRepo.recordOnce(
-            {
-              id: eventId,
-              taskId: "task-batch-1",
-              userId,
-              action: "created",
-              details: { title: "Initial delivery" },
-              timestamp: now,
-            },
-            (batch) => statsRepo.onTaskCreated(batch, userId)
-          );
-        })
-      );
-      expect(firstSuccess).toBe(true);
-
-      let statsSnap = await db.collection("user_stats").doc(userId).get();
-      expect(statsSnap.data()?.activeTasks).toBe(1);
-
-      const duplicateAttempt = await appRuntime.runPromise(
-        Effect.gen(function* () {
-          const auditRepo = yield* AuditRepository;
-          const statsRepo = yield* UserStatsRepository;
-          return yield* auditRepo.recordOnce(
-            {
-              id: eventId,
-              taskId: "task-batch-1",
-              userId,
-              action: "created",
-              details: { title: "Duplicate delivery" },
-              timestamp: "2099-01-01T00:00:00.000Z",
-            },
-            (batch) => statsRepo.onTaskCreated(batch, userId)
-          );
-        })
-      );
-      expect(duplicateAttempt).toBe(false);
-
-      statsSnap = await db.collection("user_stats").doc(userId).get();
-      expect(statsSnap.data()?.activeTasks).toBe(1);
-
-      const auditSnap = await db.collection("audit_logs").doc(eventId).get();
-      expect(auditSnap.exists).toBe(true);
-      expect(auditSnap.data()?.details).toEqual({ title: "Initial delivery" });
-      expect(auditSnap.data()?.timestamp).toBe(now);
-
-      // Verify non-ALREADY_EXISTS commit errors map to FirestoreError rather than returning false
-      const originalBatch = db.batch.bind(db);
-      (db as unknown as Record<string, unknown>).batch = () => ({
-        create: () => {},
-        set: () => {},
-        commit: async () => {
-          throw Object.assign(new Error("UNAVAILABLE: backend unavailable"), {
-            code: GrpcStatus.UNAVAILABLE,
-          });
-        },
-      });
-      try {
-        const errorExit = await appRuntime.runPromiseExit(
-          Effect.gen(function* () {
-            const auditRepo = yield* AuditRepository;
-            return yield* auditRepo.recordOnce({
-              id: "event-unavailable-1",
-              taskId: "task-batch-1",
-              userId,
-              action: "created",
-              details: { title: "Unavailable test" },
-              timestamp: now,
-            });
-          })
-        );
-        expect(Exit.isFailure(errorExit)).toBe(true);
-        if (Exit.isFailure(errorExit)) {
-          const errOpt = Cause.findErrorOption(errorExit.cause);
-          expect(Option.isSome(errOpt)).toBe(true);
-          if (Option.isSome(errOpt)) {
-            expect(errOpt.value._tag).toBe("FirestoreError");
-          }
-        }
-      } finally {
-        (db as unknown as Record<string, unknown>).batch = originalBatch;
-      }
-    });
-
-    it("handleCallableExit maps TaskNotFoundError, FirestoreError, and unhandled defects to HttpsError", () => {
-      expect(() =>
-        handleCallableExit(Exit.fail(new TaskNotFoundError({ id: "task-404" })))
-      ).toThrowError(
-        expect.objectContaining({
-          code: "not-found",
-          message: "Task task-404 was not found",
-        })
-      );
-
+    it("handleCallableExit maps FirestoreError and unhandled defects to HttpsError", () => {
       expect(() =>
         handleCallableExit(
           Exit.fail(

@@ -15,33 +15,20 @@
  */
 
 import { Layer, ManagedRuntime } from "effect";
-import { FirestoreService } from "./services/firestore";
 import { TaskRepository } from "./services/task-repo";
-import { AuditRepository } from "./services/audit-repo";
 import { UserStatsRepository } from "./services/user-stats-repo";
 import { FirebaseLoggerLive } from "./logger/cloud-logger";
 
 /**
- * Compose all domain repositories, injecting the Firestore client service into them.
- */
-export const RepositoriesLive = Layer.mergeAll(
-  TaskRepository.layerNoDeps,
-  AuditRepository.layerNoDeps,
-  UserStatsRepository.layerNoDeps
-).pipe(Layer.provideMerge(FirestoreService.layer));
-
-/**
- * Top-level application layer providing all services, databases, and logger integrations.
- */
-export const AppLiveLayer = Layer.mergeAll(
-  RepositoriesLive,
-  FirebaseLoggerLive
-);
-
-/**
  * Module-scoped ManagedRuntime.
  *
- * By creating the runtime at the module top level, services, connections, and memoized
+ * By creating the runtime at the module top level, services and memoized
  * layers are reused across warm invocations of Cloud Functions instances, minimizing latency.
  */
-export const appRuntime = ManagedRuntime.make(AppLiveLayer);
+export const appRuntime = ManagedRuntime.make(
+  Layer.mergeAll(
+    TaskRepository.layer,
+    UserStatsRepository.layer,
+    FirebaseLoggerLive
+  )
+);

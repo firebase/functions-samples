@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
+import { getApps, initializeApp } from "firebase-admin/app";
+import { FieldValue, getFirestore, GrpcStatus } from "firebase-admin/firestore";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
 import { defineInt } from "firebase-functions/params";
 import { logger } from "firebase-functions";
-import {
-  Effect,
-  Exit,
-  Cause,
-  Option,
-  Predicate,
-  SchemaIssue,
-} from "effect";
+import { Effect, Exit, Cause, Option, Predicate } from "effect";
 import { appRuntime } from "./runtime";
 import {
   TaskStatus,
@@ -37,11 +32,14 @@ import {
   UnauthorizedError,
   ValidationError,
   InvalidTransitionError,
-  FirestoreError,
 } from "./domain/errors";
 import { TaskRepository } from "./services/task-repo";
-import { AuditRepository } from "./services/audit-repo";
 import { UserStatsRepository } from "./services/user-stats-repo";
+
+if (getApps().length === 0) {
+  initializeApp();
+}
+const db = getFirestore();
 
 /**
  * Parameterized configuration via `firebase-functions/params`.
@@ -52,14 +50,16 @@ export const maxActiveTasksPerUser = defineInt("MAX_ACTIVE_TASKS_PER_USER", {
   description: "Maximum number of active tasks allowed per user",
 });
 
-const formatValidationIssue = SchemaIssue.makeFormatterStandardSchemaV1();
-
 const allowedTransitions: Record<TaskStatus, ReadonlyArray<TaskStatus>> = {
   todo: ["in_progress", "completed", "archived"],
   in_progress: ["completed", "todo", "archived"],
   completed: ["in_progress", "archived"],
   archived: [],
 };
+
+const isAlreadyExists = (cause: unknown): boolean =>
+  Predicate.hasProperty(cause, "code") &&
+  cause.code === GrpcStatus.ALREADY_EXISTS;
 
 /**
  * Maps Effect Exit outcomes to Firebase HttpsErrors.
@@ -79,9 +79,7 @@ export function handleCallableExit<A>(exit: Exit.Exit<A, DomainError>): A {
       case "UnauthorizedError":
         throw new HttpsError("unauthenticated", error.message);
       case "ValidationError":
-        throw new HttpsError("invalid-argument", error.issues.join("; "));
-      case "TaskNotFoundError":
-        throw new HttpsError("not-found", `Task ${error.id} was not found`);
+        throw new HttpsError("invalid-argument", error.message);
       case "InvalidTransitionError":
         throw new HttpsError(
           "failed-precondition",
@@ -122,10 +120,10 @@ export const validateStatusTransition = Effect.fn("validateStatusTransition")(
  * 2nd Gen Callable Function: createTask
  *
  * Demonstrates:
- * - Request validation via `Schema.decodeUnknownEffect` and `SchemaIssue.makeFormatterStandardSchemaV1`
+ * - Request validation and decoding defaults via `Schema.decodeUnknownEffect` and `Schema.withDecodingDefault`
  * - Authentication verification with typed `UnauthorizedError` yielded directly
  * - Parameterized limits via `firebase-functions/params` (`defineInt`)
- * - Firestore auto-IDs (`collection.doc()`) and Schema-backed `withConverter` repositories
+ * - Firestore repositories defined with `Context.Service` and `Layer.sync`
  * - `Effect.gen` + `Effect.fn` for traced effectful workflows
  * - Structured logging with `Effect.annotateLogs`, `Effect.withLogSpan`, and custom Cloud Logger layer
  * - `ManagedRuntime` execution with warm container reuse
@@ -143,29 +141,11 @@ export const createTask = onCall({ cors: true }, async (request) => {
 
     // 2. Validate input payload using pre-built Schema decoder
     const input = yield* decodeCreateTaskInput(request.data).pipe(
-      Effect.mapError(
-        (err) =>
-          new ValidationError({
-            issues: formatValidationIssue(err.issue).issues.map((issue) => {
-              const path =
-                issue.path
-                  ?.map((segment) =>
-                    Predicate.hasProperty(segment, "key")
-                      ? String(segment.key)
-                      : String(segment)
-                  )
-                  .join(".") ?? "";
-              return path ? `${path}: ${issue.message}` : issue.message;
-            }),
-          })
-      )
+      Effect.mapError((err) => new ValidationError({ message: err.message }))
     );
 
     // 3. Enforce parameterized active task limit per user
-    const maxActiveTasks =
-      process.env[maxActiveTasksPerUser.name] !== undefined
-        ? maxActiveTasksPerUser.value()
-        : 100;
+    const maxActiveTasks = maxActiveTasksPerUser.value();
     const statsRepo = yield* UserStatsRepository;
     const currentStats = yield* statsRepo.getByUserId(userId);
     const activeTasks = Option.match(currentStats, {
@@ -174,9 +154,7 @@ export const createTask = onCall({ cors: true }, async (request) => {
     });
     if (activeTasks >= maxActiveTasks) {
       return yield* new ValidationError({
-        issues: [
-          `activeTasks: User has reached the maximum of ${maxActiveTasks} active tasks`,
-        ],
+        message: `User has reached the maximum of ${maxActiveTasks} active tasks`,
       });
     }
 
@@ -208,7 +186,7 @@ export const createTask = onCall({ cors: true }, async (request) => {
  *
  * Demonstrates:
  * - Document snapshot parsing via `Schema.decodeUnknownEffect`
- * - State machine validation via typed `InvalidTransitionError`
+ * - State machine validation via `Effect.fn` and typed `InvalidTransitionError` (logged and swallowed via `Effect.catchTag` to avoid infinite Eventarc retries)
  * - Atomic idempotent audit logging and user stats updates via `WriteBatch.create()` keyed by Eventarc `event.id` (`audit_logs/{event.id}`)
  * - Authoritative Eventarc CloudEvent timestamps via `event.time`
  */
@@ -220,133 +198,80 @@ export const onTaskWritten = onDocumentWritten(
     const afterSnap = event.data?.after;
 
     const program = Effect.gen(function* () {
-      const auditRepo = yield* AuditRepository;
-      const statsRepo = yield* UserStatsRepository;
+      const before = beforeSnap?.exists
+        ? yield* decodeTask(beforeSnap.data())
+        : undefined;
+      const after = afterSnap?.exists
+        ? yield* decodeTask(afterSnap.data())
+        : undefined;
+      const task = after ?? before;
+      if (!task || (before && after && before.status === after.status)) {
+        return; // no-op write
+      }
 
-      // Case 1: Task Created
-      if (!beforeSnap?.exists && afterSnap?.exists) {
-        const task = yield* decodeTask(afterSnap.data()).pipe(
-          Effect.mapError(
-            (err) =>
-              new FirestoreError({
-                cause: err,
-                message: `Failed to decode created task document for ${taskId}`,
-              })
-          )
-        );
+      if (before && after) {
+        yield* validateStatusTransition(before.status, after.status);
+      }
 
-        yield* Effect.logInfo("Processing newly created task");
+      const action = !before
+        ? "created"
+        : !after
+          ? "deleted"
+          : "status_changed";
+      const details = !before
+        ? { title: task.title, priority: task.priority }
+        : !after
+          ? { title: task.title }
+          : { from: before.status, to: after.status };
 
-        const applied = yield* auditRepo.recordOnce(
+      // How a task in a given status contributes to the user's counters.
+      const counts = (s?: TaskStatus) => ({
+        active: s === "todo" || s === "in_progress" ? 1 : 0,
+        completed: s === "completed" ? 1 : 0,
+      });
+      const activeDelta =
+        counts(after?.status).active - counts(before?.status).active;
+      const completedDelta =
+        counts(after?.status).completed - counts(before?.status).completed;
+
+      const batch = db.batch();
+      batch.create(db.collection("audit_logs").doc(event.id), {
+        id: event.id,
+        taskId,
+        userId: task.userId,
+        action,
+        details,
+        timestamp: event.time,
+      });
+      if (activeDelta !== 0 || completedDelta !== 0) {
+        batch.set(
+          db.collection("user_stats").doc(task.userId),
           {
-            id: event.id,
-            taskId,
             userId: task.userId,
-            action: "created",
-            details: { title: task.title, priority: task.priority },
-            timestamp: event.time,
+            activeTasks: FieldValue.increment(activeDelta),
+            completedTasks: FieldValue.increment(completedDelta),
+            lastUpdated: new Date().toISOString(),
           },
-          (batch) => statsRepo.onTaskCreated(batch, task.userId)
+          { merge: true }
         );
-
-        if (applied) {
-          yield* Effect.logInfo("Audit log and stats recorded for task creation");
-        } else {
-          yield* Effect.logInfo("Duplicate task creation event ignored");
-        }
-        return;
       }
-
-      // Case 2: Task Updated
-      if (beforeSnap?.exists && afterSnap?.exists) {
-        const beforeTask = yield* decodeTask(beforeSnap.data()).pipe(
-          Effect.mapError(
-            (err) =>
-              new FirestoreError({
-                cause: err,
-                message: `Failed to decode 'before' task snapshot for ${taskId}`,
-              })
-          )
-        );
-        const afterTask = yield* decodeTask(afterSnap.data()).pipe(
-          Effect.mapError(
-            (err) =>
-              new FirestoreError({
-                cause: err,
-                message: `Failed to decode 'after' task snapshot for ${taskId}`,
-              })
-          )
-        );
-
-        if (beforeTask.status !== afterTask.status) {
-          yield* Effect.logInfo(
-            `Task status transition detected: ${beforeTask.status} -> ${afterTask.status}`
-          );
-
-          // Validate allowed state transition
-          yield* validateStatusTransition(beforeTask.status, afterTask.status);
-
-          const applied = yield* auditRepo.recordOnce(
-            {
-              id: event.id,
-              taskId,
-              userId: afterTask.userId,
-              action: "status_changed",
-              details: { from: beforeTask.status, to: afterTask.status },
-              timestamp: event.time,
-            },
-            (batch) =>
-              statsRepo.onStatusChanged(
-                batch,
-                afterTask.userId,
-                beforeTask.status,
-                afterTask.status
-              )
-          );
-
-          if (applied) {
-            yield* Effect.logInfo("Status change processed and audited");
-          } else {
-            yield* Effect.logInfo("Duplicate status change event ignored");
-          }
-        }
-        return;
-      }
-
-      // Case 3: Task Deleted
-      if (beforeSnap?.exists && !afterSnap?.exists) {
-        const beforeTask = yield* decodeTask(beforeSnap.data()).pipe(
-          Effect.mapError(
-            (err) =>
-              new FirestoreError({
-                cause: err,
-                message: `Failed to decode deleted task snapshot for ${taskId}`,
-              })
-          )
-        );
-
-        yield* Effect.logInfo("Processing deleted task");
-
-        const applied = yield* auditRepo.recordOnce(
-          {
-            id: event.id,
-            taskId,
-            userId: beforeTask.userId,
-            action: "deleted",
-            details: { title: beforeTask.title },
-            timestamp: event.time,
-          },
-          (batch) =>
-            statsRepo.onTaskDeleted(batch, beforeTask.userId, beforeTask.status)
-        );
-
-        if (applied) {
-          yield* Effect.logInfo("Deletion audit log and stats updated");
-        } else {
-          yield* Effect.logInfo("Duplicate task deletion event ignored");
-        }
-      }
+      const applied = yield* Effect.tryPromise({
+        try: () => batch.commit(),
+        catch: (e) => e,
+      }).pipe(
+        Effect.as(true),
+        Effect.catchIf(isAlreadyExists, () => Effect.succeed(false)), // Eventarc redelivery
+        Effect.orDie
+      );
+      yield* Effect.logInfo(
+        applied ? `Recorded ${action}` : `Duplicate ${action} event ignored`
+      );
     }).pipe(
+      Effect.catchTag("InvalidTransitionError", (e) =>
+        Effect.logWarning(
+          `Ignoring invalid status transition from '${e.from}' to '${e.to}': ${e.reason}`
+        )
+      ),
       Effect.annotateLogs({
         taskId,
         eventId: event.id,

@@ -5,30 +5,30 @@ This sample demonstrates how to build production-grade, type-safe Firebase 2nd G
 ## What it demonstrates
 
 - **2nd Gen Callable Function (`createTask`)**:
-  - Request validation and decoding defaults using `Schema.decodeUnknownEffect`, `Schema.withDecodingDefault`, and `SchemaIssue.makeFormatterStandardSchemaV1`.
+  - Request validation and decoding defaults using `Schema.decodeUnknownEffect` and `Schema.withDecodingDefault`.
   - Authentication verification and domain error modeling with `Schema.TaggedError` (yielded directly in `Effect.gen` / `Effect.fn` without `Effect.fail`).
   - Parameterized configuration via `firebase-functions/params` (`defineInt`) enforcing per-user active task limits.
-  - Native Firestore auto-IDs (`collection.doc()`) and Schema-backed `withConverter` (`FirestoreDataConverter`) for validated repository reads and typed writes.
+  - Native Firestore auto-IDs (`collection.doc()`) and explicit `Schema.decodeUnknownEffect` validation on repository reads.
   - Warm container reuse using a module-scoped `ManagedRuntime`.
   - Exhaustive domain error mapping to `HttpsError` status codes via `Cause.findErrorOption`, while logging unexpected defects with `Cause.pretty`.
 
 - **2nd Gen Firestore Trigger (`onTaskWritten`)**:
   - Document snapshot parsing with `Schema.decodeUnknownEffect`.
-  - Traced state machine transition validation (`Effect.fn("validateStatusTransition")` + `InvalidTransitionError`).
-  - Atomic idempotent audit log persistence and user stats updates via `WriteBatch.create()` keyed on `audit_logs/{event.id}`, rejecting duplicate Eventarc deliveries with `ALREADY_EXISTS` so stats mutations execute at most once without round-trip reads or nested transactions.
+  - Traced state machine transition validation (`Effect.fn("validateStatusTransition")` + `InvalidTransitionError`), caught with `Effect.catchTag` and logged as a warning so Eventarc does not retry invalid transitions.
+  - Atomic idempotent audit log persistence and user stats updates via `WriteBatch.create()` keyed on `audit_logs/{event.id}`, catching `ALREADY_EXISTS` with `Effect.catchIf` so duplicate Eventarc deliveries execute stats mutations at most once without round-trip reads or transactions.
   - Authoritative Eventarc CloudEvent timestamps via `event.time`.
 
 - **`Context.Service` & `Layer` Dependency Injection**:
-  - Modular service architecture (`FirestoreService`, `TaskRepository`, `AuditRepository`, `UserStatsRepository`) defined with `Context.Service` and static `layer` / `layerNoDeps` definitions, composed via `Layer.provideMerge` and backed by `withConverter(schemaConverter(...))`.
-  - Custom `Logger` layer built on `Logger.formatStructured` and `Logger.layer`, routing `Effect.logInfo`, `Effect.annotateLogs`, and `Effect.withLogSpan` directly into `firebase-functions/logger` (`logger.write`) with structured `jsonPayload` attributes.
+  - Firestore repositories (`TaskRepository`, `UserStatsRepository`) defined with `Context.Service` and static `layer` definitions (`Layer.sync`), composed via `Layer.mergeAll`.
+  - Custom `Logger` layer built on `Logger.formatStructured` and `Logger.layer`, routing `Effect.logInfo`, `Effect.logWarning`, `Effect.annotateLogs`, and `Effect.withLogSpan` directly into `firebase-functions/logger` (`logger.write`) with structured `jsonPayload` attributes.
 
 - **Emulator Testing with Vitest**:
-  - Local unit and integration tests using `firebase-functions-test` and Vitest running against the Firebase Local Emulator Suite.
+  - Integration tests using `firebase-functions-test` and Vitest running against the Firebase Local Emulator Suite.
 
 ## Prerequisites
 
 - Node.js 20+
-- [Firebase CLI](https://firebase.google.com/docs/cli) installed and logged in (`npm install -g firebase-tools`)
+- [Firebase CLI](https://firebase.google.com/docs/cli) installed (`npm install -g firebase-tools`)
 - Java Runtime Environment (JRE) for the Firebase Emulator Suite
 
 ## Setup
@@ -48,16 +48,10 @@ This sample demonstrates how to build production-grade, type-safe Firebase 2nd G
 
 ## Running Tests
 
-Run the test suite with Vitest:
+Run the test suite inside the Firebase Local Emulator Suite (starts the Firestore emulator, runs Vitest, and tears down the emulator automatically):
 
 ```bash
 npm test
-```
-
-To run the test suite inside the Firebase Local Emulator Suite (starts the Firestore emulator, runs Vitest, and tears down the emulator automatically):
-
-```bash
-npm run test:emulator
 ```
 
 ## Local Development & Emulators

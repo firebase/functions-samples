@@ -14,38 +14,24 @@
  * limitations under the License.
  */
 
-import { Effect, Context, Layer, Option } from "effect";
-import { FirestoreService } from "./firestore";
-import { schemaConverter } from "./schema-converter";
+import { Effect, Context, Layer } from "effect";
+import { getFirestore } from "firebase-admin/firestore";
 import { Task, CreateTaskInput } from "../domain/models";
 import { FirestoreError } from "../domain/errors";
 
-export interface TaskRepositoryShape {
-  readonly create: (input: {
-    readonly userId: string;
-    readonly data: CreateTaskInput;
-  }) => Effect.Effect<Task, FirestoreError>;
-  readonly findById: (
-    id: string
-  ) => Effect.Effect<Option.Option<Task>, FirestoreError>;
-  readonly delete: (id: string) => Effect.Effect<void, FirestoreError>;
-}
-
 export class TaskRepository extends Context.Service<
   TaskRepository,
-  TaskRepositoryShape
+  {
+    readonly create: (input: {
+      readonly userId: string;
+      readonly data: CreateTaskInput;
+    }) => Effect.Effect<Task, FirestoreError>;
+  }
 >()("effect-functions/services/TaskRepository") {
-  static readonly layerNoDeps: Layer.Layer<
+  static readonly layer: Layer.Layer<TaskRepository> = Layer.sync(
     TaskRepository,
-    never,
-    FirestoreService
-  > = Layer.effect(
-    TaskRepository,
-    Effect.gen(function* () {
-      const db = yield* FirestoreService;
-      const tasksCol = db
-        .collection("tasks")
-        .withConverter(schemaConverter(Task));
+    () => {
+      const tasksCol = getFirestore().collection("tasks");
 
       const create = Effect.fn("TaskRepository.create")(function* ({
         userId,
@@ -77,53 +63,7 @@ export class TaskRepository extends Context.Service<
         return docData;
       });
 
-      const findById = Effect.fn("TaskRepository.findById")(function* (
-        id: string
-      ) {
-        const snap = yield* Effect.tryPromise({
-          try: () => tasksCol.doc(id).get(),
-          catch: (cause) =>
-            new FirestoreError({
-              cause,
-              message: `Failed to fetch task with id ${id}`,
-            }),
-        });
-        const task = yield* Effect.try({
-          try: () => snap.data(),
-          catch: (cause) =>
-            new FirestoreError({
-              cause,
-              message: `Failed to decode task with id ${id}`,
-            }),
-        });
-        return Option.fromNullishOr(task);
-      });
-
-      const deleteTask = Effect.fn("TaskRepository.delete")(function* (
-        id: string
-      ) {
-        yield* Effect.tryPromise({
-          try: async () => {
-            await tasksCol.doc(id).delete();
-          },
-          catch: (cause) =>
-            new FirestoreError({
-              cause,
-              message: `Failed to delete task with id ${id}`,
-            }),
-        });
-      });
-
-      return TaskRepository.of({
-        create,
-        findById,
-        delete: deleteTask,
-      });
-    })
+      return TaskRepository.of({ create });
+    }
   );
-
-  static readonly layer: Layer.Layer<TaskRepository> =
-    this.layerNoDeps.pipe(Layer.provide(FirestoreService.layer));
 }
-
-export const TaskRepositoryLive = TaskRepository.layerNoDeps;

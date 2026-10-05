@@ -36,10 +36,6 @@ function toLogSeverity(level: string): LogSeverity {
   }
 }
 
-function formatPart(part: unknown): string {
-  return Predicate.isString(part) ? part : JSON.stringify(part);
-}
-
 /**
  * Custom Effect Logger built on `Logger.formatStructured` that routes Effect logs
  * (`Effect.logInfo`, `Effect.logError`, etc.) directly into `firebase-functions/logger`.
@@ -47,21 +43,17 @@ function formatPart(part: unknown): string {
  * Annotations (`Effect.annotateLogs`), spans (`Effect.withLogSpan`), causes, and fiber IDs
  * are preserved as structured fields within Cloud Logging's `jsonPayload`.
  */
-export const cloudLogger = Logger.formatStructured.pipe(
+const cloudLogger = Logger.formatStructured.pipe(
   Logger.map(({ level, message, cause, annotations, spans, fiberId }) => {
-    const formattedMessage = Array.isArray(message)
-      ? message.map(formatPart).join(" ")
-      : formatPart(message);
+    const formattedMessage = (Array.isArray(message) ? message : [message])
+      .map((part) => (Predicate.isString(part) ? part : JSON.stringify(part)))
+      .join(" ");
 
-    const structuredData: Record<string, unknown> = {
+    logger.write({
       ...annotations,
       fiberId,
       ...(Object.keys(spans).length > 0 ? { spans } : {}),
       ...(cause !== undefined ? { cause } : {}),
-    };
-
-    logger.write({
-      ...structuredData,
       severity: toLogSeverity(level),
       message: formattedMessage,
     });

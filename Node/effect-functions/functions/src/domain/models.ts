@@ -22,7 +22,6 @@ export const TaskStatus = Schema.Literals(["todo", "in_progress", "completed", "
 export type TaskStatus = typeof TaskStatus.Type;
 
 export const TaskPriority = Schema.Literals(["low", "medium", "high", "urgent"]);
-export type TaskPriority = typeof TaskPriority.Type;
 
 export const Task = Schema.Struct({
   id: Schema.String,
@@ -42,23 +41,6 @@ export const CreateTaskInput = Schema.Struct({
   priority: TaskPriority.pipe(Schema.withDecodingDefault(Effect.succeed("medium" as const))),
 });
 export type CreateTaskInput = typeof CreateTaskInput.Type;
-export type CreateTaskInputEncoded = typeof CreateTaskInput.Encoded;
-
-export const decodeCreateTaskInput = Schema.decodeUnknownEffect(CreateTaskInput);
-export const decodeTask = Schema.decodeUnknownEffect(Task);
-
-export const AuditAction = Schema.Literals(["created", "status_changed", "deleted"]);
-export type AuditAction = typeof AuditAction.Type;
-
-export const AuditLog = Schema.Struct({
-  id: Schema.String,
-  taskId: Schema.String,
-  userId: Schema.String,
-  action: AuditAction,
-  details: Schema.Record(Schema.String, Schema.Unknown),
-  timestamp: Schema.String,
-});
-export type AuditLog = typeof AuditLog.Type;
 
 export const UserStats = Schema.Struct({
   userId: Schema.String,
@@ -68,3 +50,6 @@ export const UserStats = Schema.Struct({
 });
 export type UserStats = typeof UserStats.Type;
 
+export const decodeCreateTaskInput = Schema.decodeUnknownEffect(CreateTaskInput);
+export const decodeTask = Schema.decodeUnknownEffect(Task);
+export const decodeUserStats = Schema.decodeUnknownEffect(UserStats);

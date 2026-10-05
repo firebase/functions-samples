@@ -5,9 +5,7 @@
   "scripts": {
     "build": "tsc",
     "compile": "cp ../../../tsconfig.template.json ./tsconfig-compile.json && tsc --project tsconfig-compile.json --module NodeNext --moduleResolution NodeNext --allowJs false --checkJs false",
-    "test": "vitest run",
-    "test:emulator": "firebase emulators:exec --project demo-effect-functions --only firestore \"vitest run\"",
-    "test:unit": "vitest run",
+    "test": "firebase emulators:exec --project demo-effect-functions --only firestore \"vitest run\"",
     "serve": "npm run build && firebase emulators:start --only functions,firestore",
     "shell": "npm run build && firebase functions:shell",
     "deploy": "firebase deploy --only functions",
