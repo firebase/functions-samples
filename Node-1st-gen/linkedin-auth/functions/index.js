@@ -44,14 +44,16 @@ function getRedirectUri() {
 }
 
 /**
- * Redirects the User to the LinkedIn authentication consent screen. Also the 'state' cookie is set for later state
- * verification.
+ * Redirects the User to the LinkedIn authentication consent screen. Also the '__session' cookie is set to the state
+ * value for later state verification.
  */
 exports.redirect = functions.runWith({secrets: [linkedinClientId]}).https.onRequest((req, res) => {
   cookieParser()(req, res, () => {
-    const state = req.cookies.state || crypto.randomBytes(20).toString('hex');
+    const state = req.cookies.__session || crypto.randomBytes(20).toString('hex');
     functions.logger.log('Setting verification state:', state);
-    res.cookie('state', state.toString(), {
+    // Firebase Hosting only forwards the `__session` cookie to functions, so the state must be stored there.
+    // See https://firebase.google.com/docs/hosting/manage-cache#using_cookies
+    res.cookie('__session', state.toString(), {
       maxAge: 3600000,
       secure: true,
       httpOnly: true,
@@ -100,18 +102,18 @@ async function getLinkedInUserProfile(accessToken) {
 
 /**
  * Exchanges a given LinkedIn auth code passed in the 'code' URL query parameter for a Firebase auth token.
- * The request also needs to specify a 'state' query parameter which will be checked against the 'state' cookie.
+ * The request also needs to specify a 'state' query parameter which will be checked against the '__session' cookie.
  * The Firebase custom auth token is sent back in a JSONP callback function with function name defined by the
  * 'callback' query parameter.
  */
 exports.token = functions.runWith({secrets: [linkedinClientId, linkedinClientSecret]}).https.onRequest(async (req, res) => {
   return cookieParser()(req, res, async () => {
     try {
-      if (!req.cookies.state) {
+      if (!req.cookies.__session) {
         throw new Error('State cookie not set or expired. Maybe you took too long to authorize. Please try again.');
       }
-      functions.logger.log('Received verification state:', req.cookies.state);
-      if (req.cookies.state !== req.query.state) {
+      functions.logger.log('Received verification state:', req.cookies.__session);
+      if (req.cookies.__session !== req.query.state) {
         throw new Error('State query parameter does not match the state cookie.');
       }
       
