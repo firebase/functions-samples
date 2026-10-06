@@ -50,7 +50,7 @@ function getIdTokenFromRequest(req, res) {
         // Read the ID Token from cookie.
         resolve(req.cookies.__session);
       } else {
-        resolve();
+        resolve(undefined);
       }
     });
   });

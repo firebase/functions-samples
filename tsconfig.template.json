@@ -9,9 +9,7 @@
     "outDir": "./dist",                       /* Redirect output structure to the directory. */
     "noEmit": true,                           /* Do not emit outputs. */
     "resolveJsonModule": true,
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "types": ["node"],
     /* Strict Type-Checking Options */
     "strict": true,                           /* Enable all strict type-checking options. */
     "noImplicitAny": false,                   /* Raise error on expressions and declarations with an implied 'any' type. */

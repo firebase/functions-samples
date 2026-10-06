@@ -16,7 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const {onInit} = require('firebase-functions/v1/init');
+const {onInit} = require('firebase-functions/v1');
 const {defineString, defineSecret} = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');

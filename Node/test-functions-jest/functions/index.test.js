@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/// <reference types="jest" />
+
 jest.mock("jose", () => ({}));
 jest.mock("jwks-rsa", () => ({}));
 

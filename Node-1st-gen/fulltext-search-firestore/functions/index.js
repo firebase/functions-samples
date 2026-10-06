@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions/v1');
-const {onInit} = require('firebase-functions/v1/init');
+const {onInit} = require('firebase-functions/v1');
 const {defineSecret} = require('firebase-functions/params');
-const algoliasearch = require('algoliasearch').default;
+const { algoliasearch } = require('algoliasearch');
 
 // [START init_algolia]
 // Initialize Algolia, requires installing Algolia dependencies:
