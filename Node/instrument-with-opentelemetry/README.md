@@ -21,6 +21,12 @@ await tracer.startActiveSpan("calculatePrice", async (span) => {
 });
 ```
 
+## 1st gen functions
+
+This sample targets 2nd gen functions. 2nd gen functions run on Cloud Run, which sends `SIGTERM` before it shuts down an instance, and the handler in `tracing.js` uses that signal to flush buffered spans. 1st gen instances don't receive `SIGTERM`, so spans that are still buffered when an instance is recycled are lost.
+
+If you instrument a 1st gen function, flush spans before each invocation returns. You can call `forceFlush()` on the tracer provider at the end of your handler, or configure the SDK with a `SimpleSpanProcessor`, which exports each span as soon as it ends.
+
 ## Deploy and test
 1. Deploy your function using firebase deploy --only functions
 2. Seed Firestore with mock data.
