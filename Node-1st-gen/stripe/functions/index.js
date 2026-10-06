@@ -66,9 +66,11 @@ exports.addPaymentMethodDetails = functions.runWith({secrets: [stripeSecret]}).f
         paymentMethodId
       );
       await snap.ref.set(paymentMethod);
+      // Look up the Stripe customer id.
+      const customer = (await snap.ref.parent.parent.get()).data().customer_id;
       // Create a new SetupIntent so the customer can add a new method next time.
       const intent = await stripe.setupIntents.create({
-        customer: `${paymentMethod.customer}`,
+        customer,
       });
       await snap.ref.parent.parent.set(
         {
