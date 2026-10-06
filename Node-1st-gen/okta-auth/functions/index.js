@@ -32,7 +32,7 @@ if (envCfg.parsed && envCfg.parsed.GOOGLE_APPLICATION_CREDENTIALS) {
 }
 
 const functions = require('firebase-functions/v1');
-const {onInit} = require('firebase-functions/v1/init');
+const {onInit} = require('firebase-functions/v1');
 const {defineString} = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');

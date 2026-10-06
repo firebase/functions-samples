@@ -1,5 +1,5 @@
-firebase-functions ~= 0.5.0
-firebase-admin ~= 7.4.0
+firebase-functions ~= 0.6.0
+firebase-admin ~= 7.7.0
 google-auth
 google-api-python-client
 google-cloud-tasks

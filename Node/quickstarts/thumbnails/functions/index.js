@@ -13,10 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
-
-/** @typedef {import("sharp").SharpConstructor & typeof import("sharp")} SharpConstructor */
-
 // [START v2storageImports]
 // [START v2storageSDKImport]
 const {onObjectFinalized} = require("firebase-functions/storage");
@@ -29,7 +25,7 @@ const logger = require("firebase-functions/logger");
 const path = require("path");
 
 // library for image resizing
-const sharp = /** @type {SharpConstructor} */ (require("sharp"));
+const sharp = /** @type {typeof import("sharp")} */ (require("sharp"));
 
 initializeApp();
 // [END v2storageAdditionalImports]

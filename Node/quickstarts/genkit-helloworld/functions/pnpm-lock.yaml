@@ -10,16 +10,16 @@ importers:
     dependencies:
       '@genkit-ai/googleai':
         specifier: 1.28.0
-        version: 1.28.0(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))
+        version: 1.28.0(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))
       firebase-admin:
-        specifier: ^14.2.0
-        version: 14.2.0
+        specifier: ^14.5.0
+        version: 14.5.0
       firebase-functions:
-        specifier: ^7.3.2
-        version: 7.3.2(firebase-admin@14.2.0)
+        specifier: ^7.4.0
+        version: 7.4.0(firebase-admin@14.5.0)
       genkit:
         specifier: 1.37.0
-        version: 1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)
+        version: 1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)
     devDependencies:
       eslint:
         specifier: ^8.57.1
@@ -29,7 +29,7 @@ importers:
         version: 0.14.0(eslint@8.57.1)
       firebase-functions-test:
         specifier: ^3.5.0
-        version: 3.5.0(firebase-admin@14.2.0)(firebase-functions@7.3.2(firebase-admin@14.2.0))(jest@29.7.0(@types/node@26.1.2))
+        version: 3.5.0(firebase-admin@14.5.0)(firebase-functions@7.4.0(firebase-admin@14.5.0))(jest@29.7.0(@types/node@26.1.2))
 
 packages:
 
@@ -293,13 +293,17 @@ packages:
     resolution: {integrity: sha512-Ohjxjvusr65+SiEVBrilpyn1ir9CM8ZqWjcf7bA8ph1GCunxI6bbwtcl7iGl67A7Lr4Nz7WpNzITNETwggc7pw==}
     engines: {node: '>=18'}
 
+  '@google-cloud/firestore-api@0.2.0':
+    resolution: {integrity: sha512-wfHJPZmLqzpy6FN6U+7HkkP/AKhGsbHSpEy/qL2TyI3/pKRAvpamQxZ2qvps5hMRgAjfuHCim+oeJj9RveCaqg==}
+    engines: {node: '>=18'}
+
   '@google-cloud/firestore@7.11.6':
     resolution: {integrity: sha512-EW/O8ktzwLfyWBOsNuhRoMi8lrC3clHM5LVFhGvO1HCsLozCOOXRAlHrYBoE6HL42Sc8yYMuCb2XqcnJ4OOEpw==}
     engines: {node: '>=14.0.0'}
 
-  '@google-cloud/firestore@8.7.0':
-    resolution: {integrity: sha512-EvMpZQUXkTRdweSvOu6VL6EEQwHjHAgWz2UYZR+Mj6Ao52S+TWieHbSn15jiNnEw8F8RhbZj7IGXZ1PFB1eA+A==}
-    engines: {node: '>=18'}
+  '@google-cloud/firestore@9.3.1':
+    resolution: {integrity: sha512-ofGTiSpfXrHrrS3KaDOmsupSzCHr4WVl1+s6Ke0F8rPBRyb/OuZSC8u1NjCKtt/fO7A1GvqASQGhdAwVsnGpQA==}
+    engines: {node: '>=22'}
 
   '@google-cloud/logging-winston@6.0.2':
     resolution: {integrity: sha512-rrNs4XXLtk0BAnL6kTjfAH26a/zVGsuZHd6Vve3Ip1fT4/Irz2QJtqI0XiPbT/yfmKqFmYa44GWPXtPPAi56ug==}
@@ -343,6 +347,10 @@ packages:
     resolution: {integrity: sha512-DJS3s0OVH4zFDB1PzjxAsHqJT6sKVbRwwML0ZBP9PbU7Yebtu/7SWMRzvO2J3nUi9pRNITCfu4LJeooM2w4pjg==}
     engines: {node: '>=14.0.0'}
 
+  '@google-cloud/paginator@7.1.0':
+    resolution: {integrity: sha512-PNCXdAQgNoQODZuqyhmkN2nUpB2q9UFzawZ1oyCDyEyhcheRoCKJJhSKhEIeKpM/NCLnC6Q4We4HEkGCwNDnCA==}
+    engines: {node: '>=22'}
+
   '@google-cloud/precise-date@4.0.0':
     resolution: {integrity: sha512-1TUx3KdaU3cN7nfCdNf+UVqA/PSX29Cjcox3fZZBtINlRrXVTmUkQnCKv2MbBUbCopbK4olAT1IHl76uZyCiVA==}
     engines: {node: '>=14.0.0'}
@@ -351,13 +359,21 @@ packages:
     resolution: {integrity: sha512-MmaX6HeSvyPbWGwFq7mXdo0uQZLGBYCwziiLIGq5JVX+/bdI3SAq6bP98trV5eTWfLuvsMcIC1YJOF2vfteLFA==}
     engines: {node: '>=14.0.0'}
 
+  '@google-cloud/projectify@6.1.0':
+    resolution: {integrity: sha512-tKAx9q6vTtbgZcqCojKWK8k6Dy2XBsE7BkNrrBsblxNXrKImYnljqeGfYh9qnTrlTjC9F19pTyCkGcl3pFMW/w==}
+    engines: {node: '>=22'}
+
   '@google-cloud/promisify@4.0.0':
     resolution: {integrity: sha512-Orxzlfb9c67A15cq2JQEyVc7wEsmFBmHjZWZYQMUyJ1qivXyMwdyNOs9odi79hze+2zqdTtu1E19IM/FtqZ10g==}
     engines: {node: '>=14'}
 
-  '@google-cloud/storage@7.21.0':
-    resolution: {integrity: sha512-l+IFTkd+6Y5LoAuXyYCKNAKtw/Ci+rAMqgdTB1jv4iZiLhw0rtq+0qjIRbBizXkNzEFmXiXUW0H7sZQQvk1ffA==}
-    engines: {node: '>=14'}
+  '@google-cloud/promisify@6.1.0':
+    resolution: {integrity: sha512-H+Rytzi5zYMyoAmU/zgYLgq7fJ9FY4QQEg4k6gfFx/RY1COJ2xxyIfe8bZ62lqEbWM1DJH7IYETqTFmqNtuUhQ==}
+    engines: {node: '>=22'}
+
+  '@google-cloud/storage@8.2.0':
+    resolution: {integrity: sha512-7ckgSjeEprV92VrlLjpYFA3PFerflvFtF7Ea86oQXGNCprGZq5rtpAVK0zgWnCy+44mLjms42M7MiWa433gz2A==}
+    engines: {node: '>=22'}
 
   '@google/generative-ai@0.24.1':
     resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
@@ -1683,8 +1699,8 @@ packages:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
 
-  firebase-admin@14.2.0:
-    resolution: {integrity: sha512-zfs5PdccEgjX479bbMmz95Rqc7ttQ4LV3qkGFlPiqOaOu/suBZc3fG52Qzn2hQjiSHkBM4NP2AZV5r2NvAt0TQ==}
+  firebase-admin@14.5.0:
+    resolution: {integrity: sha512-DElmgmaH9aPXu2dWXGQiDoan33UfTnbfAAKaue4fwEZxmpdaNrTk5DmuFn+vVDki2KZ6TiaC0IHRWcEzcDxB3Q==}
     engines: {node: '>=22'}
 
   firebase-functions-test@3.5.0:
@@ -1695,8 +1711,8 @@ packages:
       firebase-functions: '>=4.9.0'
       jest: '>=28.0.0'
 
-  firebase-functions@7.3.2:
-    resolution: {integrity: sha512-DTa5CtCNxFE1gPjkjlhl5uh8AcNWXLKORAMRenfkecP8zGstbje+r2TaNh4Ehdxp0qTPvTUe/sS23VESW32Gbg==}
+  firebase-functions@7.4.0:
+    resolution: {integrity: sha512-jR+c16q1E07dPVqU/sdbIEVEQJYSxjY6BFI+QR5/AvrnII8C6UkJv6fR8LJ+GKmcGUBe7SjO/MnEWLAeOiHWMw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -1784,6 +1800,10 @@ packages:
     resolution: {integrity: sha512-iJ9KMsiu+xKtNRX0PmGLSaIU3bUBAyzWTyqKemKPzNPsmmsBCQYmlNg+brEbES7IHSXtdVwzBPzx1vz3FAaipw==}
     engines: {node: '>=18'}
 
+  gcp-metadata@9.0.4:
+    resolution: {integrity: sha512-p6WvbXOhfwnVtv/MyPq5kBiVhfV/qglMIxwwTVNEI1Ha1HmOgz5uHYHtYO6SfGckFaXe8blA11IJJ3wqXmvmBA==}
+    engines: {node: '>=22'}
+
   genkit@1.37.0:
     resolution: {integrity: sha512-CkQc8Pf9XYbg13O8RCY6bXxxGypTUNL+A/nm5iLfB/IDni1P5lS8cATFdtvgs0OeCgIr9mD69O5J5EK6Ndiziw==}
 
@@ -1840,6 +1860,10 @@ packages:
     resolution: {integrity: sha512-i1ydyHrqcIxXkWh/uBmVkzCvIuq5yiK2ATndIe5XxKholrG/MTYP9xGYka4sQhrbIAgGjL2B6NOE7rFaiF3fXw==}
     engines: {node: '>=18'}
 
+  google-auth-library@11.1.0:
+    resolution: {integrity: sha512-YIBq5KNoHQrZ9PM4PeodDBqqBGlSTIxh1zibN8u3zNIO9UJg8gvKuCpdKV7fWXhsZ2zRkU6FhGrgKNgLJ2IRgw==}
+    engines: {node: '>=22'}
+
   google-auth-library@9.15.1:
     resolution: {integrity: sha512-Jb6Z0+nvECVz+2lzSMt9u98UsoakXxA2HGHMCxh+so3n90XgYWkq5dur19JAJV7ONiJY22yBTyJB1TSkvPq9Ng==}
     engines: {node: '>=14'}
@@ -1852,6 +1876,10 @@ packages:
     resolution: {integrity: sha512-M4vpZcXQIC1gqIVGQ7eaU3jXQA6zecStyTXu514TYfThlgSurYJOxHZo9fzU6hAgwPWvuEynAVHWyaIk80VeEA==}
     engines: {node: '>=18'}
 
+  google-gax@6.10.0:
+    resolution: {integrity: sha512-P9+6mNoC97uSUj55MptrxNj9muoDwc05mcY49R8jyg3kqzkPK+uWHApLuAHsNPKh3dtk1M1IuVZIto8e/fvpQA==}
+    engines: {node: '>=22'}
+
   google-logging-utils@0.0.2:
     resolution: {integrity: sha512-NEgUnEcBiP5HrPzufUkBzJOD/Sxsco3rLNo1F1TNf7ieU8ryUzBhqba8r756CjLX7rn3fHl6iLEwPYuqpoKgQQ==}
     engines: {node: '>=14'}
@@ -1859,6 +1887,10 @@ packages:
   google-logging-utils@1.1.3:
     resolution: {integrity: sha512-eAmLkjDjAFCVXg7A1unxHsLf961m6y17QFqXqAXGj/gVkKFrEICfStRfwUlGNfeCEjNRa32JEWOUTlYXPyyKvA==}
     engines: {node: '>=14'}
+
+  google-logging-utils@2.0.1:
+    resolution: {integrity: sha512-HMhaQghlOTvbcb3c4T5jmmOMtG3JUF1iOQMezaJXL86CDS+Tm2vHd0IeLFRAx3+ewd+bo9E1HFHoy17X5aJa9A==}
+    engines: {node: '>=22'}
 
   googleapis-common@7.2.0:
     resolution: {integrity: sha512-/fhDZEJZvOV3X5jmD+fKxMqma5q2Q9nZNSF3kn1F18tpxmA86BcTxAGBQdM0N89Z3bEaIs+HVznSmFJEAmMTjA==}
@@ -2626,6 +2658,10 @@ packages:
     resolution: {integrity: sha512-E1sbAYg3aEbXrq0n1ojJkRHQJGE1kaE/O6GLA94y8rnJBfgvOPTOd1b9hOceQK1FFZI9qMh1vBERCyO2ifubcw==}
     engines: {node: '>=18'}
 
+  proto3-json-serializer@4.0.2:
+    resolution: {integrity: sha512-VUQlb/J2WjOG8BKhdLwJUz+MKxSMtBGYh+TaNmRtiYVhlIzXjzeAGIx7gtc3lXlA2iURzfF2+cXaQvC2ofwzpg==}
+    engines: {node: '>=22'}
+
   protobufjs@7.6.5:
     resolution: {integrity: sha512-/FPD0nUc9jH6rfFjji9IBqOz4pcSE3CsT1m7Ep6Mdb0LxSUMj8hgl6GomOvZzpNpAqqGaXA0P3VSrZLFzIhQrw==}
     engines: {node: '>=12.0.0'}
@@ -2717,6 +2753,10 @@ packages:
   retry-request@8.0.4:
     resolution: {integrity: sha512-pI6/7eabUYkZxamkOq0g0uMxKLLGnjzhefY+vL8bVXag5rto4OU2YBTPytWLuHH7aEKD6fn7kJycQfid0Mwnkw==}
     engines: {node: '>=18'}
+
+  retry-request@9.0.1:
+    resolution: {integrity: sha512-4kGHEBl0ME6gR+8QB1sPMyg58jUxLUcCZNeqLDrfqzk0eWQN8XJFmeu7fmZCjlZCRW0S2u64Ik1HkO/0sWgCYQ==}
+    engines: {node: '>=22'}
 
   retry@0.13.1:
     resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
@@ -2904,6 +2944,10 @@ packages:
   teeny-request@10.1.4:
     resolution: {integrity: sha512-R1Cg4Vu0UULeDfHL/kjABLaTW++9yD/B6n2g48y5dJ04hsEaxcfmAqbNDzNsbqAYJyIpZafjklLG9YxRu9uzOg==}
     engines: {node: '>=18'}
+
+  teeny-request@11.0.1:
+    resolution: {integrity: sha512-bNr5j2YjSdajgCVsp+8JVjRf1uHIbpNISLeKp/7V1NnVMX3Gh6H/kECNGlm2Q3I68ACODQ0iv6aZ3Rvm8WgLGA==}
+    engines: {node: '>=22'}
 
   teeny-request@9.0.0:
     resolution: {integrity: sha512-resvxdc6Mgb7YEThw6G6bExlXKkv6+YbuzGg9xuXxSgxJF7Ozs+o8Y9+2R3sArdWdW8nOokoQb1yrpFB0pQK2g==}
@@ -3404,9 +3448,9 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@genkit-ai/ai@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))':
+  '@genkit-ai/ai@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))':
     dependencies:
-      '@genkit-ai/core': 1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))
+      '@genkit-ai/core': 1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))
       '@opentelemetry/api': 1.9.1
       '@types/node': 20.19.43
       colorette: 2.0.20
@@ -3427,7 +3471,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@genkit-ai/core@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))':
+  '@genkit-ai/core@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))':
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/api-logs': 0.52.1
@@ -3451,7 +3495,7 @@ snapshots:
       zod-to-json-schema: 3.25.2(zod@3.25.76)
     optionalDependencies:
       '@cfworker/json-schema': 4.1.1
-      '@genkit-ai/firebase': 1.40.1(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))
+      '@genkit-ai/firebase': 1.40.1(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))
     transitivePeerDependencies:
       - '@google-cloud/firestore'
       - bufferutil
@@ -3462,18 +3506,18 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@genkit-ai/firebase@1.40.1(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))':
+  '@genkit-ai/firebase@1.40.1(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))':
     dependencies:
-      '@genkit-ai/google-cloud': 1.40.1(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))
-      '@google-cloud/firestore': 8.7.0
-      firebase-admin: 14.2.0
-      genkit: 1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)
+      '@genkit-ai/google-cloud': 1.40.1(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))
+      '@google-cloud/firestore': 9.3.1
+      firebase-admin: 14.5.0
+      genkit: 1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)
     transitivePeerDependencies:
       - encoding
       - supports-color
     optional: true
 
-  '@genkit-ai/google-cloud@1.40.1(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))':
+  '@genkit-ai/google-cloud@1.40.1(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))':
     dependencies:
       '@google-cloud/firestore': 7.11.6
       '@google-cloud/logging-winston': 6.0.2(winston@3.19.0)
@@ -3491,7 +3535,7 @@ snapshots:
       '@opentelemetry/sdk-metrics': 1.25.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/sdk-node': 0.52.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/sdk-trace-base': 1.25.1(@opentelemetry/api@1.9.1)
-      genkit: 1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)
+      genkit: 1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)
       google-auth-library: 9.15.1
       node-fetch: 3.3.2
       winston: 3.19.0
@@ -3500,10 +3544,10 @@ snapshots:
       - supports-color
     optional: true
 
-  '@genkit-ai/googleai@1.28.0(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))':
+  '@genkit-ai/googleai@1.28.0(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))':
     dependencies:
       '@google/generative-ai': 0.24.1
-      genkit: 1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)
+      genkit: 1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)
       google-auth-library: 9.15.1
       node-fetch: 3.3.2
     transitivePeerDependencies:
@@ -3525,6 +3569,13 @@ snapshots:
       - supports-color
     optional: true
 
+  '@google-cloud/firestore-api@0.2.0':
+    dependencies:
+      google-gax: 5.0.8
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
   '@google-cloud/firestore@7.11.6':
     dependencies:
       '@opentelemetry/api': 1.9.1
@@ -3537,12 +3588,13 @@ snapshots:
       - supports-color
     optional: true
 
-  '@google-cloud/firestore@8.7.0':
+  '@google-cloud/firestore@9.3.1':
     dependencies:
+      '@google-cloud/firestore-api': 0.2.0
       '@opentelemetry/api': 1.9.1
       fast-deep-equal: 3.1.3
       functional-red-black-tree: 1.0.1
-      google-gax: 5.0.8
+      google-gax: 6.10.0
       protobufjs: 7.6.5
     transitivePeerDependencies:
       - supports-color
@@ -3636,20 +3688,31 @@ snapshots:
       extend: 3.0.2
     optional: true
 
+  '@google-cloud/paginator@7.1.0':
+    dependencies:
+      extend: 3.0.2
+    optional: true
+
   '@google-cloud/precise-date@4.0.0':
     optional: true
 
   '@google-cloud/projectify@4.0.0':
     optional: true
 
+  '@google-cloud/projectify@6.1.0':
+    optional: true
+
   '@google-cloud/promisify@4.0.0':
     optional: true
 
-  '@google-cloud/storage@7.21.0':
+  '@google-cloud/promisify@6.1.0':
+    optional: true
+
+  '@google-cloud/storage@8.2.0':
     dependencies:
-      '@google-cloud/paginator': 5.0.2
-      '@google-cloud/projectify': 4.0.0
-      '@google-cloud/promisify': 4.0.0
+      '@google-cloud/paginator': 7.1.0
+      '@google-cloud/projectify': 6.1.0
+      '@google-cloud/promisify': 6.1.0
       abort-controller: 3.0.0
       async-retry: 1.3.3
       duplexify: 4.1.3
@@ -3659,8 +3722,8 @@ snapshots:
       html-entities: 2.6.0
       mime: 3.0.0
       p-limit: 3.1.0
-      retry-request: 7.0.2
-      teeny-request: 9.0.0
+      retry-request: 9.0.1
+      teeny-request: 11.0.1
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -5504,38 +5567,38 @@ snapshots:
       locate-path: 6.0.0
       path-exists: 4.0.0
 
-  firebase-admin@14.2.0:
+  firebase-admin@14.5.0:
     dependencies:
       '@fastify/busboy': 3.2.0
       '@firebase/database-compat': 2.1.4
       '@firebase/database-types': 1.0.20
       fast-deep-equal: 3.1.3
-      google-auth-library: 10.9.1
+      google-auth-library: 11.1.0
       jsonwebtoken: 9.0.3
       jwks-rsa: 4.1.0
     optionalDependencies:
-      '@google-cloud/firestore': 8.7.0
-      '@google-cloud/storage': 7.21.0
+      '@google-cloud/firestore': 9.3.1
+      '@google-cloud/storage': 8.2.0
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  firebase-functions-test@3.5.0(firebase-admin@14.2.0)(firebase-functions@7.3.2(firebase-admin@14.2.0))(jest@29.7.0(@types/node@26.1.2)):
+  firebase-functions-test@3.5.0(firebase-admin@14.5.0)(firebase-functions@7.4.0(firebase-admin@14.5.0))(jest@29.7.0(@types/node@26.1.2)):
     dependencies:
       '@types/lodash': 4.17.24
-      firebase-admin: 14.2.0
-      firebase-functions: 7.3.2(firebase-admin@14.2.0)
+      firebase-admin: 14.5.0
+      firebase-functions: 7.4.0(firebase-admin@14.5.0)
       jest: 29.7.0(@types/node@26.1.2)
       lodash: 4.18.1
       ts-deepmerge: 2.0.7
 
-  firebase-functions@7.3.2(firebase-admin@14.2.0):
+  firebase-functions@7.4.0(firebase-admin@14.5.0):
     dependencies:
       '@types/cors': 2.8.19
       '@types/express': 5.0.6
       cors: 2.8.6
       express: 5.2.1
-      firebase-admin: 14.2.0
+      firebase-admin: 14.5.0
       protobufjs: 7.6.5
     transitivePeerDependencies:
       - supports-color
@@ -5632,6 +5695,7 @@ snapshots:
       json-bigint: 1.0.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   gcp-metadata@8.1.4:
     dependencies:
@@ -5642,10 +5706,18 @@ snapshots:
       - supports-color
     optional: true
 
-  genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0):
+  gcp-metadata@9.0.4:
     dependencies:
-      '@genkit-ai/ai': 1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))
-      '@genkit-ai/core': 1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0)(genkit@1.37.0(@google-cloud/firestore@8.7.0)(firebase-admin@14.2.0))
+      gaxios: 7.3.0
+      google-logging-utils: 2.0.1
+      json-bigint: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0):
+    dependencies:
+      '@genkit-ai/ai': 1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))
+      '@genkit-ai/core': 1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0)(genkit@1.37.0(@google-cloud/firestore@9.3.1)(firebase-admin@14.5.0))
       uuid: 10.0.0
     transitivePeerDependencies:
       - '@google-cloud/firestore'
@@ -5734,6 +5806,18 @@ snapshots:
       jws: 4.0.1
     transitivePeerDependencies:
       - supports-color
+    optional: true
+
+  google-auth-library@11.1.0:
+    dependencies:
+      base64-js: 1.5.1
+      ecdsa-sig-formatter: 1.0.11
+      gaxios: 7.3.0
+      gcp-metadata: 9.0.4
+      google-logging-utils: 2.0.1
+      jws: 4.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   google-auth-library@9.15.1:
     dependencies:
@@ -5783,9 +5867,29 @@ snapshots:
       - supports-color
     optional: true
 
+  google-gax@6.10.0:
+    dependencies:
+      '@grpc/grpc-js': 1.14.4
+      '@grpc/proto-loader': 0.8.1
+      '@opentelemetry/api': 1.9.1
+      duplexify: 4.1.3
+      google-auth-library: 11.1.0
+      google-logging-utils: 2.0.1
+      node-fetch: 3.3.2
+      object-hash: 3.0.0
+      proto3-json-serializer: 4.0.2
+      protobufjs: 7.6.5
+      retry-request: 9.0.1
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
   google-logging-utils@0.0.2: {}
 
-  google-logging-utils@1.1.3: {}
+  google-logging-utils@1.1.3:
+    optional: true
+
+  google-logging-utils@2.0.1: {}
 
   googleapis-common@7.2.0:
     dependencies:
@@ -6723,6 +6827,11 @@ snapshots:
       protobufjs: 7.6.5
     optional: true
 
+  proto3-json-serializer@4.0.2:
+    dependencies:
+      protobufjs: 7.6.5
+    optional: true
+
   protobufjs@7.6.5:
     dependencies:
       '@protobufjs/aspromise': 1.1.2
@@ -6836,6 +6945,14 @@ snapshots:
     dependencies:
       extend: 3.0.2
       teeny-request: 10.1.4
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
+  retry-request@9.0.1:
+    dependencies:
+      extend: 3.0.2
+      teeny-request: 11.0.1
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -7061,6 +7178,16 @@ snapshots:
   supports-preserve-symlinks-flag@1.0.0: {}
 
   teeny-request@10.1.4:
+    dependencies:
+      http-proxy-agent: 7.0.2
+      https-proxy-agent: 7.0.6
+      node-fetch: 3.3.2
+      stream-events: 1.0.5
+    transitivePeerDependencies:
+      - supports-color
+    optional: true
+
+  teeny-request@11.0.1:
     dependencies:
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6

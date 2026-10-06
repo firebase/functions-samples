@@ -16,7 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const {onInit} = require('firebase-functions/v1/init');
+const {onInit} = require('firebase-functions/v1');
 const {defineSecret} = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getDatabase } = require('firebase-admin/database');
@@ -24,7 +24,7 @@ initializeApp();
 
 // Authenticate to Algolia Database.
 // TODO: Make sure you configure the `ALGOLIA_APP_ID` and `ALGOLIA_API_KEY` secrets.
-const algoliasearch = require('algoliasearch').default;
+const { algoliasearch } = require('algoliasearch');
 const algoliaAppId = defineSecret('ALGOLIA_APP_ID');
 const algoliaApiKey = defineSecret('ALGOLIA_API_KEY');
 

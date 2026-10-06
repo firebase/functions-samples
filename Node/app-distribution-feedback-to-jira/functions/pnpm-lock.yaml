@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       firebase-functions:
-        specifier: ^7.3.2
-        version: 7.3.2(firebase-admin@12.7.0)
+        specifier: ^7.4.0
+        version: 7.4.0(firebase-admin@12.7.0)
       formdata-polyfill:
         specifier: ^4.0.10
         version: 4.0.10
@@ -543,8 +543,8 @@ packages:
     resolution: {integrity: sha512-raFIrOyTqREbyXsNkSHyciQLfv8AUZazehPaQS1lZBSCDYW74FYXU0nQZa3qHI4K+hawohlDbywZ4+qce9YNxA==}
     engines: {node: '>=14'}
 
-  firebase-functions@7.3.2:
-    resolution: {integrity: sha512-DTa5CtCNxFE1gPjkjlhl5uh8AcNWXLKORAMRenfkecP8zGstbje+r2TaNh4Ehdxp0qTPvTUe/sS23VESW32Gbg==}
+  firebase-functions@7.4.0:
+    resolution: {integrity: sha512-jR+c16q1E07dPVqU/sdbIEVEQJYSxjY6BFI+QR5/AvrnII8C6UkJv6fR8LJ+GKmcGUBe7SjO/MnEWLAeOiHWMw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
     peerDependencies:
@@ -1445,7 +1445,7 @@ snapshots:
   '@types/jsonwebtoken@9.0.10':
     dependencies:
       '@types/ms': 2.1.0
-      '@types/node': 22.20.1
+      '@types/node': 26.1.2
 
   '@types/long@4.0.2':
     optional: true
@@ -1467,7 +1467,7 @@ snapshots:
   '@types/request@2.48.13':
     dependencies:
       '@types/caseless': 0.12.5
-      '@types/node': 22.20.1
+      '@types/node': 26.1.2
       '@types/tough-cookie': 4.0.5
       form-data: 2.5.6
     optional: true
@@ -1886,7 +1886,7 @@ snapshots:
       - encoding
       - supports-color
 
-  firebase-functions@7.3.2(firebase-admin@12.7.0):
+  firebase-functions@7.4.0(firebase-admin@12.7.0):
     dependencies:
       '@types/cors': 2.8.19
       '@types/express': 5.0.6

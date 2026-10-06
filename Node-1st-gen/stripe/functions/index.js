@@ -16,7 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const {onInit} = require('firebase-functions/v1/init');
+const {onInit} = require('firebase-functions/v1');
 const {defineSecret} = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
@@ -32,7 +32,7 @@ const stripeSecret = defineSecret('STRIPE_SECRET');
 let stripe;
 onInit(() => {
   stripe = new Stripe(stripeSecret.value(), {
-    apiVersion: '2026-07-29.dahlia',
+    apiVersion: '2026-08-26.dahlia',
   });
 });
 
@@ -209,7 +209,7 @@ function reportError(err, context = {}) {
       if (error) {
         return reject(error);
       }
-      return resolve();
+      return resolve(undefined);
     });
   });
 }
