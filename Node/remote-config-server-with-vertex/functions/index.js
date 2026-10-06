@@ -36,7 +36,7 @@ const defaultConfig = {
       "HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT",
     "threshold": "HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE"
   }],
-  location: 'us-east4',
+  location: 'us-central1',
 
   // Disable Vertex AI Gemini API access for testing.
   vertex_enabled: false

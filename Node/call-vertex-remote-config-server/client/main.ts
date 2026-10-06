@@ -51,7 +51,7 @@ const callVertexWithRC = httpsCallable(getFunctions(), "callVertexWithRC", {
 });
 
 // Enable emulator so that it can be used in test mode.
-const functions = getFunctions(app, "us-east4"); // Replace with your region
+const functions = getFunctions(app, "us-central1"); // Replace with your region
 
 if (testMode) {
   connectFunctionsEmulator(functions, "localhost", 5001);

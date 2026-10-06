@@ -36,11 +36,11 @@ const cors = require('cors')({
  *
  * Example format: "MMMM Do YYYY, h:mm:ss a".
  * Example request using URL query parameters:
- *   https://us-east4-<project-id>.cloudfunctions.net/date?format=MMMM%20Do%20YYYY%2C%20h%3Amm%3Ass%20a
+ *   https://us-central1-<project-id>.cloudfunctions.net/date?format=MMMM%20Do%20YYYY%2C%20h%3Amm%3Ass%20a
  * Example request using request body with cURL:
  *   curl -H 'Content-Type: application/json' /
  *        -d '{"format": "MMMM Do YYYY, h:mm:ss a"}' /
- *        https://us-east4-<project-id>.cloudfunctions.net/date
+ *        https://us-central1-<project-id>.cloudfunctions.net/date
  *
  * This endpoint supports CORS.
  */

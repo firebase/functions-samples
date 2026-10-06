@@ -51,7 +51,7 @@ To test locally do:
 To deploy and test on prod do:
 
  1. Deploy your project using `firebase deploy`
- 1. Send a `POST` request with body `{price:5}` to `https://us-east4-<project-id>.cloudfunctions.net/pay`. You will get a 302 Redirect redirecting to the payment page.
+ 1. Send a `POST` request with body `{price:5}` to `https://us-central1-<project-id>.cloudfunctions.net/pay`. You will get a 302 Redirect redirecting to the payment page.
 
 ## Contributing
 

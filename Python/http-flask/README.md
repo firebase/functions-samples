@@ -27,6 +27,6 @@ To deploy and test the sample:
 4. Set up the CLI to use your Firebase project using `firebase use --add` and select your Firebase project.
 5. Deploy your project's code using `firebase deploy`.
 6. Use a tool like `curl` to test the function:
-   - **Add a widget:** `curl -X POST -d "My new widget" https://us-east4-YOUR_PROJECT_ID.cloudfunctions.net/httpsflaskexample/widgets`
-   - **Get all widgets:** `curl https://us-east4-YOUR_PROJECT_ID.cloudfunctions.net/httpsflaskexample/widgets`
-   - **Get a specific widget:** `curl https://us-east4-YOUR_PROJECT_ID.cloudfunctions.net/httpsflaskexample/widgets/WIDGET_ID`
+   - **Add a widget:** `curl -X POST -d "My new widget" https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/httpsflaskexample/widgets`
+   - **Get all widgets:** `curl https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/httpsflaskexample/widgets`
+   - **Get a specific widget:** `curl https://us-central1-YOUR_PROJECT_ID.cloudfunctions.net/httpsflaskexample/widgets/WIDGET_ID`

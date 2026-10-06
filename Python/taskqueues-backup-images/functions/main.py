@@ -128,7 +128,7 @@ def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
 
 
 # [START v2GetFunctionUri]
-def get_function_url(name: str, location: str = SupportedRegion.US_EAST4.value) -> str:
+def get_function_url(name: str, location: str = SupportedRegion.US_CENTRAL1.value) -> str:
     """Get the URL of a given v2 cloud function.
 
     Params:
