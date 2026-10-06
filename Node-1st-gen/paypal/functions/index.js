@@ -16,7 +16,7 @@
 'use strict';
 
 const functions = require('firebase-functions/v1');
-const {onInit} = require('firebase-functions/v1/init');
+const {onInit} = require('firebase-functions/v1');
 const {defineSecret} = require('firebase-functions/params');
 const paypal = require('paypal-rest-sdk');
 // firebase-admin SDK init

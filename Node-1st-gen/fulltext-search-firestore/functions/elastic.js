@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 const functions = require('firebase-functions/v1');
-const {onInit} = require('firebase-functions/v1/init');
+const {onInit} = require('firebase-functions/v1');
 const {defineString, defineSecret} = require('firebase-functions/params');
 
 // [START init_elastic]
