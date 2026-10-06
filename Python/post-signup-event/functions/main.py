@@ -50,7 +50,7 @@ def savegoogletoken(
 
         tasks_client = google.cloud.tasks_v2.CloudTasksClient()
         task_queue = tasks_client.queue_path(
-            params.PROJECT_ID.value, options.SupportedRegion.US_CENTRAL1, "scheduleonboarding"
+            params.PROJECT_ID.value, options.SupportedRegion.US_EAST4.value, "scheduleonboarding"
         )
         target_uri = get_function_url("scheduleonboarding")
         calendar_task = google.cloud.tasks_v2.Task(
@@ -124,7 +124,7 @@ def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
 # [END scheduleonboarding]
 
 
-def get_function_url(name: str, location: str = options.SupportedRegion.US_CENTRAL1) -> str:
+def get_function_url(name: str, location: str = options.SupportedRegion.US_EAST4.value) -> str:
     """Get the URL of a given v2 cloud function.
 
     Params:

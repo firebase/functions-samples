@@ -20,7 +20,7 @@
 const {URL, URLSearchParams} = require("node:url");
 // The Cloud Functions for Firebase SDK to set up triggers and logging.
 const {onConfigUpdated} = require("firebase-functions/remoteConfig");
-const {requiresRole, requiresAPI} = require("firebase-functions/v2");
+const {requiresRole, requiresAPI} = require("firebase-functions");
 const logger = require("firebase-functions/logger");
 // The Firebase Admin SDK to obtain access tokens.
 const {initializeApp, applicationDefault} = require("firebase-admin/app");

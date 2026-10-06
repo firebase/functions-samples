@@ -63,7 +63,7 @@ When you deploy the Cloud Function, the endpoint looks like:
 https://<YOUR_PROJECT_AND_LOCATION>.cloudfunctions.net/api/firebaseCustomToken`
         : `
 When using the emulator, the endpoint is the following:
-http://localhost:5001/${GCLOUD_PROJECT}/us-central1/api/firebaseCustomToken`
+http://localhost:5001/${GCLOUD_PROJECT}/us-east4/api/firebaseCustomToken`
 );
 
 const TOKEN_ENDPOINT_PROMPT = `\
@@ -121,7 +121,7 @@ const OKTA_CLIENT_ID = '${oktaClientId}';
 
 // The complete URL of your custom token endpoint. When using the emulator, the
 // endpoint is:
-// http://localhost:5001/<YOUR_FIREBASE_PROJECT_ID>/us-central1/api/firebaseCustomToken
+// http://localhost:5001/<YOUR_FIREBASE_PROJECT_ID>/us-east4/api/firebaseCustomToken
 const CUSTOM_TOKEN_ENDPOINT = '${tokenEndpoint}';
 
 if (OKTA_ORG_URL === ''

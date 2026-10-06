@@ -53,7 +53,7 @@ default it will return information about the
     ```bash
     firebase emulators:start --only functions
     ```
-1. Check the emulator output to find the URL of the `getChannelInfo` function. It will looks something like `http://localhost:5001/my-project-id/us-central1/getChannelInfo`
+1. Check the emulator output to find the URL of the `getChannelInfo` function. It will looks something like `http://localhost:5001/my-project-id/us-east4/getChannelInfo`
 1. Via CURL or in your browser, visit the URL that the function is running at. Optionally, add a query string `?channelId=SOME_CHANNEL_ID` to the end of the URL.
 1. You should get a JSON response with information about the YouTube channel!
 

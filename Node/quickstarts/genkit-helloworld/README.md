@@ -14,14 +14,14 @@ Getting Started
     1. The emulator will output the function URL. It is usually of the form:
 
     ```
-    https://127.0.0.1:5001/{$PROJECT}/us-central1/tellJoke
+    https://127.0.0.1:5001/{$PROJECT}/us-east4/tellJoke
     ```
 
 1. Call the function from a terminal, replacing the `url` argument with your function's URL:
 
     ```bash
     $ curl -X POST \
-        --url https://127.0.0.1:5001/{$PROJECT}/us-central1/tellJoke \
+        --url https://127.0.0.1:5001/{$PROJECT}/us-east4/tellJoke \
         --header "Content-Type: application/json" \
         --header "Accept: text/event-stream" \
         --data '{"data": "Observational comedy"}'

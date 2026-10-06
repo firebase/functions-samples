@@ -80,7 +80,7 @@ https://cloud.google.com/iam/docs/impersonating-service-accounts#impersonate-sa-
 
 ```
 gcloud functions add-iam-policy-binding $FUNCTION_NAME \
-  --region=us-central1 \
+  --region=us-east4 \
   --member=serviceAccount:${PROJECT_ID}@appspot.gserviceaccount.com \
   --role=roles/cloudfunctions.invoker
 ```
