@@ -6,6 +6,8 @@ access to data for a specific Firebase user.
 Only users who pass a valid Firebase ID token as a Bearer token in the
 `Authorization` header of the HTTP request are authorized to use the API.
 
+> **Note:** The function itself checks the Firebase ID token, so it must stay publicly invokable. The Firebase CLI grants the Cloud Functions Invoker role to `allUsers` when it deploys an HTTP function. Cloud Functions IAM only accepts Google Cloud credentials, not Firebase ID tokens, so if you remove that role your users get a `403` response before this code runs.
+
 This sample comes with a web-based API explorer UI whose code is in the [public](public) directory.
 It lets you sign in to Firebase with your Google account, and create messages whose sentiments are
 detected by the [Cloud Natural Language API](https://cloud.google.com/natural-language/).

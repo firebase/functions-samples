@@ -8,6 +8,8 @@ Checking the ID token is done with an ExpressJs middleware that also passes the 
 
 Once authorized the function respond with `Hello <username>`.
 
+> **Note:** The function itself checks the Firebase ID token, so it must stay publicly invokable. The Firebase CLI grants the Cloud Functions Invoker role to `allUsers` when it deploys an HTTP function. Cloud Functions IAM only accepts Google Cloud credentials, not Firebase ID tokens, so if you remove that role your users get a `403` response before this code runs.
+
 This sample comes with a simple web-based UI whose code is in [public](public) directory that lets you sign-in Firebase and initiates an authorized XHR to the Function.
 
 
