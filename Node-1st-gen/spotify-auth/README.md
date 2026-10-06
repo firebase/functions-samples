@@ -15,7 +15,7 @@ Create and provide a Service Account's credentials:
 
 Create and setup your Spotify app:
  1. Create a Spotify app in the [Spotify Developers website](https://developer.spotify.com/my-applications/).
- 1. Add the URL `https://<application-id>.firebaseapp.com/popup.html` to the
+ 1. Add the URL `https://<project-id>.firebaseapp.com/popup.html` to the
     **Redirect URIs** of your Spotify app.
  1. Copy the **Client ID** and **Client Secret** of your Spotify app and use them to set the `spotify.client_id` and `spotify.client_secret` Google Cloud environment variables. For this use:
 
