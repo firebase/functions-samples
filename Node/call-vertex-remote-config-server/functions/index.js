@@ -78,6 +78,7 @@ const defaultConfig = {
 // Export the function.
 exports.callVertexWithRC = onCall(
   {
+    region: "us-east4", // Must match the region the client passes to getFunctions().
     enforceAppCheck: appCheckRequired, // Enable App Check enforcement
     consumeAppCheckToken: false, // Don't consume the token (optional)
   },

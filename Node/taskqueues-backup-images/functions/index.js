@@ -45,6 +45,7 @@ const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
 // [START v2TaskFunctionSetup]
 exports.backupapod = onTaskDispatched(
     {
+      region: "us-east4",
       retryConfig: {
         maxAttempts: 5,
         minBackoffSeconds: 60,
@@ -106,8 +107,10 @@ exports.backupapod = onTaskDispatched(
 
 // [START v2EnqueueTasks]
 exports.enqueuebackuptasks = onRequest(
+    {region: "us-east4"},
     async (_request, response) => {
-      const queue = getFunctions().taskQueue("backupapod");
+      // The Admin SDK assumes us-central1 unless the function name includes its location.
+      const queue = getFunctions().taskQueue("locations/us-east4/functions/backupapod");
 
       const enqueues = [];
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {

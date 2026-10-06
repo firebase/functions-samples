@@ -31,7 +31,7 @@ onInit(() => {
   });
 });
 
-exports.getChannelInfo = functions.runWith({secrets: [youtubeKey]}).https.onRequest(
+exports.getChannelInfo = functions.region('us-east4').runWith({secrets: [youtubeKey]}).https.onRequest(
   async (request, response) => {
     const channelId = request.query.channelId || FIREBASE_YOUTUBE_CHANNEL_ID;
 

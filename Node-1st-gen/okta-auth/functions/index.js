@@ -97,4 +97,4 @@ app.get('/firebaseCustomToken', [cors, oktaAuth], async (req, res) => {
 // Enable CORS pre-flight requests.
 app.options('/firebaseCustomToken', cors);
 
-exports.api = functions.https.onRequest(app);
+exports.api = functions.region('us-east4').https.onRequest(app);

@@ -38,7 +38,7 @@ initializeApp({
  * If the request method is unsupported (not POST) return a 403 response.
  * If an error occurs log the details and return a 500 response.
  */
-exports.auth = functions.https.onRequest((req, res) => {
+exports.auth = functions.region('us-east4').https.onRequest((req, res) => {
   const handleError = (username, error) => {
     functions.logger.error({ User: username }, error);
     res.sendStatus(500);

@@ -68,6 +68,7 @@ const jokeTeller = ai.defineFlow({
 
 // [START trigger]
 exports.tellJoke = onCallGenkit({
+  region: "us-east4",
   // [START bind-secrets]
   // Bind the Gemini API key secret parameter to the function.
   secrets: [apiKey],

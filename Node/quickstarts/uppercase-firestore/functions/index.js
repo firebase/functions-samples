@@ -33,7 +33,7 @@ initializeApp();
 // Take the text parameter passed to this HTTP endpoint and insert it into
 // Firestore under the path /messages/:documentId/original
 // [START addmessageTrigger]
-exports.addmessage = onRequest(async (req, res) => {
+exports.addmessage = onRequest({region: "us-east4"}, async (req, res) => {
   // [END addmessageTrigger]
   // Grab the text parameter.
   const original = req.query.text;

@@ -25,7 +25,7 @@ const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
 
 const FIREBASE_YOUTUBE_CHANNEL_ID = "UCP4bf6IHJJQehibu6ai__cg";
 
-export const getChannelInfo = onCall({ secrets: [youtubeApiKey] }, async (request: CallableRequest) => {
+export const getChannelInfo = onCall({ region: "us-east4", secrets: [youtubeApiKey] }, async (request: CallableRequest) => {
   const youtube = google.youtube({
     version: "v3",
     auth: youtubeApiKey.value(),

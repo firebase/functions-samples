@@ -67,7 +67,7 @@ def savegoogletoken(
 
 
 # [START scheduleonboarding]
-@tasks_fn.on_task_dispatched()
+@tasks_fn.on_task_dispatched(region=options.SupportedRegion.US_EAST4)
 def scheduleonboarding(request: tasks_fn.CallableRequest) -> https_fn.Response:
     """Add an onboarding event to a user's Google Calendar.
 

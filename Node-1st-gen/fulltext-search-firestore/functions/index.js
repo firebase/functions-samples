@@ -123,5 +123,5 @@ app.get('/', (req, res) => {
 
 // Finally, pass our ExpressJS app to Cloud Functions as a function
 // called 'getSearchKey';
-exports.getSearchKey = functions.runWith({secrets: [algoliaId, algoliaAdminKey, algoliaSearchKey]}).https.onRequest(app);
+exports.getSearchKey = functions.region('us-east4').runWith({secrets: [algoliaId, algoliaAdminKey, algoliaSearchKey]}).https.onRequest(app);
 // [END get_algolia_user_token]

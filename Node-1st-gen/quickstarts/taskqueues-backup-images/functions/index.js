@@ -34,6 +34,7 @@ const BACKUP_BUCKET = process.env.BACKUP_BUCKET;
  */
 // [START taskFunctionSetup]
 exports.backupApod = functions
+    .region("us-east4")
     .runWith( {secrets: ["NASA_API_KEY"]})
     .tasks.taskQueue({
       retryConfig: {
@@ -96,9 +97,10 @@ exports.backupApod = functions
     });
 
 // [START enqueueTasks]
-exports.enqueueBackupTasks = functions.https.onRequest(
+exports.enqueueBackupTasks = functions.region("us-east4").https.onRequest(
     async (_request, response) => {
-      const queue = getFunctions().taskQueue("backupApod");
+      // The Admin SDK assumes us-central1 unless the function name includes its location.
+      const queue = getFunctions().taskQueue("locations/us-east4/functions/backupApod");
 
       const enqueues = [];
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {

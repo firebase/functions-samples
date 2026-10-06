@@ -45,7 +45,7 @@ const cors = require('cors')({
  * This endpoint supports CORS.
  */
 // [START trigger]
-exports.date = functions.https.onRequest((req, res) => {
+exports.date = functions.region('us-east4').https.onRequest((req, res) => {
   // [END trigger]
   // [START sendError]
   // Forbidding PUT requests.

@@ -46,4 +46,4 @@ app.intent('actions.intent.TEXT', (conv) => {
  * and read out the ordinal of that number.
  * e.g. If the user says "Twelve" the action will say "The ordinal of twelve is twelfth".
  */
-exports.sayNumber = functions.https.onRequest(app);
+exports.sayNumber = functions.region('us-east4').https.onRequest(app);

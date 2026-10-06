@@ -42,7 +42,7 @@ def add_widget():
 # Expose Flask app as a single Cloud Function:
 
 
-@https_fn.on_request()
+@https_fn.on_request(region="us-east4")
 def httpsflaskexample(req: https_fn.Request) -> https_fn.Response:
     with app.request_context(req.environ):
         return app.full_dispatch_request()

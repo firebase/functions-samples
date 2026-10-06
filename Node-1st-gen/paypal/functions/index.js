@@ -40,7 +40,7 @@ onInit(() => {
  * Set up the payment information object
  * Initialize the payment and redirect the user to the PayPal payment page
  */
-exports.pay = functions.runWith({secrets: [paypalClientId, paypalClientSecret]}).https.onRequest((req, res) => {
+exports.pay = functions.region('us-east4').runWith({secrets: [paypalClientId, paypalClientSecret]}).https.onRequest((req, res) => {
   // 1.Set up a payment information object, Build PayPal payment request
   const payReq = JSON.stringify({
     intent: 'sale',
@@ -94,7 +94,7 @@ exports.pay = functions.runWith({secrets: [paypalClientId, paypalClientSecret]})
 });
 
 // 3.Complete the payment. Use the payer and payment IDs provided in the query string following the redirect.
-exports.process = functions.runWith({secrets: [paypalClientId, paypalClientSecret]}).https.onRequest(async (req, res) => {
+exports.process = functions.region('us-east4').runWith({secrets: [paypalClientId, paypalClientSecret]}).https.onRequest(async (req, res) => {
   const paymentId = req.query.paymentId;
   const payerId = {
     payer_id: req.query.PayerID

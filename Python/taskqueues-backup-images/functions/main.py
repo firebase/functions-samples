@@ -42,6 +42,7 @@ NASA_API_KEY = params.StringParam("NASA_API_KEY").value
 
 # [START v2TaskFunctionSetup]
 @tasks_fn.on_task_dispatched(
+    region=SupportedRegion.US_EAST4,
     retry_config=RetryConfig(max_attempts=5, min_backoff_seconds=60),
     rate_limits=RateLimits(max_concurrent_dispatches=10),
 )
@@ -100,10 +101,11 @@ def backupapod(req: tasks_fn.CallableRequest) -> str:
 
 
 # [START v2EnqueueTasks]
-@https_fn.on_request()
+@https_fn.on_request(region=SupportedRegion.US_EAST4)
 def enqueuebackuptasks(_: https_fn.Request) -> https_fn.Response:
     """Adds backup tasks to a Cloud Tasks queue."""
-    task_queue = functions.task_queue("backupapod")
+    # The Admin SDK assumes us-central1 unless the function name includes its location.
+    task_queue = functions.task_queue("locations/us-east4/functions/backupapod")
     target_uri = get_function_url("backupapod")
 
     for i in range(BACKUP_COUNT):
