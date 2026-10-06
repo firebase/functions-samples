@@ -23,7 +23,8 @@ admin.initializeApp();
 exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}').onWrite(
     async (change) => {
       const collectionRef = change.after.ref.parent;
-      const countRef = collectionRef.parent.child('likes_count');
+      const postRef = collectionRef.parent;
+      const countRef = postRef.child('likes_count');
 
       let increment;
       if (change.after.exists() && !change.before.exists()) {
@@ -31,6 +32,12 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
       } else if (!change.after.exists() && change.before.exists()) {
         increment = -1;
       } else {
+        return null;
+      }
+
+      // Deleting a post also deletes its likes, which triggers this function.
+      // Don't write a count back to a post that no longer exists.
+      if (increment === -1 && !(await postRef.once('value')).exists()) {
         return null;
       }
 
@@ -46,7 +53,14 @@ exports.countlikechange = functions.database.ref('/posts/{postid}/likes/{likeid}
 // If the number of likes gets deleted, recount the number of likes
 exports.recountlikes = functions.database.ref('/posts/{postid}/likes_count').onDelete(async (snap) => {
   const counterRef = snap.ref;
-  const collectionRef = counterRef.parent.child('likes');
+  const postRef = counterRef.parent;
+  const collectionRef = postRef.child('likes');
+
+  // Deleting a post also deletes its counter, which triggers this function.
+  // Don't recreate a post that no longer exists.
+  if (!(await postRef.once('value')).exists()) {
+    return null;
+  }
 
   // Return the promise from counterRef.set() so our function
   // waits for this async event to complete before it exits.
