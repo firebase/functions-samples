@@ -48,6 +48,8 @@ If a user starts following another user we'll write to `/followers/$followedUid/
 
 The function triggers every time the value of a follow flag changes at `/followers/$followedUid/$followerUid`.
 
+There is no function for your app to call directly. To send a notification, your app writes `true` to `/followers/$followedUid/$followerUid` in the Realtime Database, as the web UI in [public/main.js](public/main.js) does, and the database write triggers the function.
+
 
 ## Deploy and test
 
