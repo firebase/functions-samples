@@ -58,10 +58,13 @@ Deploy functions using Firebase CLI:
 $ firebase deploy
 ```
 
-## IAM Policy
-You may see `PERMISSION DENIED` errors when enqueueing tasks or when Cloud Task tries to invoke your task queue functions. Ensure that your project has following IAM bindings:
+## IAM Policy and API Enablement
 
-* Identity used to enqueue tasks to Cloud Tasks needs `cloudtasks.tasks.create` IAM permission
+The sample declares required IAM roles and APIs declaratively in `functions/index.js` (`requiresRole("roles/cloudtasks.enqueuer")`, `requiresRole("roles/cloudfunctions.viewer")`, and `requiresAPI("cloudfunctions.googleapis.com", ...)`). On deployment, Firebase CLI automatically provisions these IAM policy bindings and enables the required API.
+
+If configuring manually or troubleshooting permission errors, ensure that your project has the following IAM bindings:
+
+* Identity used to enqueue tasks to Cloud Tasks needs `cloudtasks.tasks.create` IAM permission (`roles/cloudtasks.enqueuer`):
   * In our sample, this is the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts).
 
 ```

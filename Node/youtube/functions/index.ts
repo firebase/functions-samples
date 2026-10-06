@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+import { requiresAPI } from "firebase-functions";
 import { onCall, CallableRequest } from "firebase-functions/https";
 import { defineSecret } from "firebase-functions/params";
 import { google, youtube_v3 } from "googleapis";
+
+requiresAPI("youtube.googleapis.com", "Needed to query YouTube Data API v3");
 
 const youtubeApiKey = defineSecret("YOUTUBE_API_KEY");
 
