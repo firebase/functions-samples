@@ -79,7 +79,7 @@ gcloud iam service-accounts add-iam-policy-binding ${PROJECT_NUMBER}-compute@dev
 
 ```
 gcloud functions add-iam-policy-binding backupapod \
-  --region=us-east4 \
+  --region=us-central1 \
   --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
   --role=roles/run.invoker
 ```
