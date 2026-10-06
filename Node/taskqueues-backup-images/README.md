@@ -30,10 +30,6 @@ You can further configure this function with following [environment variables](h
 ### 2. `enqueuebackuptasks`
 An HTTP function responsible for enqueuing tasks to our task queue. The function uses the Firebase Admin SDK to create and enqueue a task for each day we want to backup an "apod" image.
 
-Note that we explicitly query for and specify the `uri` of the task queue function when enqueueing task.
-
-We are required to do this because v2 task queue functions doesn't come with a deterministic url.
-
 You can configure this function with following [environment variables](https://firebase.google.com/docs/functions/config-env):
 
 * `BACKUP_COUNT`: Number of days to back up Astronomy Picture of the Day, starting from 1995-06-17 (the first day of publication). Defaults to 100.
@@ -58,9 +54,9 @@ Deploy functions using Firebase CLI:
 $ firebase deploy
 ```
 
-## IAM Policy and API Enablement
+## IAM Policy
 
-The sample declares required IAM roles and APIs declaratively in `functions/index.js` (`requiresRole("roles/cloudtasks.enqueuer")`, `requiresRole("roles/cloudfunctions.viewer")`, and `requiresAPI("cloudfunctions.googleapis.com", ...)`). On deployment, Firebase CLI automatically provisions these IAM policy bindings and enables the required API.
+The sample declares required IAM roles declaratively in `functions/index.js` (`requiresRole("roles/cloudtasks.enqueuer")` and `requiresRole("roles/run.invoker")`). On deployment, Firebase CLI automatically provisions these IAM policy bindings.
 
 If configuring manually or troubleshooting permission errors, ensure that your project has the following IAM bindings:
 
@@ -80,12 +76,12 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 Please follow Google Cloud IAM documentation to add App Engine default service account as user of App Engine default service account.
 ```
 
-* Identity used to trigger the Task Queue function needs `cloudfunctions.functions.invoke` permission.
+* Identity used to trigger the Task Queue function needs `run.routes.invoke` permission.
   * In our sample, this is the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts).
 
 ```
 gcloud functions add-iam-policy-binding backupapod \
   --region=us-central1 \
   --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
-  --role=roles/cloudfunctions.invoker
+  --role=roles/run.invoker
 ```
