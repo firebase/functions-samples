@@ -17,26 +17,16 @@
 
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1');
-const {defineString, defineSecret} = require('firebase-functions/params');
-const nodemailer = require('nodemailer');
-// Configure the email transport using the default SMTP transport and a GMail account.
-// For Gmail, enable these:
-// 1. https://www.google.com/settings/security/lesssecureapps
-// 2. https://accounts.google.com/DisplayUnlockCaptcha
-// For other types of transports such as Sendgrid see https://nodemailer.com/transports/
-// TODO: Configure the `gmail.email` and `gmail.password` Google Cloud environment variables.
-const gmailEmail = defineString('GMAIL_EMAIL');
-const gmailPassword = defineSecret('GMAIL_PASSWORD');
+const {defineSecret} = require('firebase-functions/params');
+const {Resend} = require('resend');
 
-let mailTransport;
+// Emails are sent with Resend (https://resend.com/).
+// TODO: Store your Resend API key in the `EMAIL_API_KEY` secret with `firebase functions:secrets:set EMAIL_API_KEY`.
+const emailApiKey = defineSecret('EMAIL_API_KEY');
+
+let resend;
 onInit(() => {
-  mailTransport = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: gmailEmail.value(),
-      pass: gmailPassword.value(),
-    },
-  });
+  resend = new Resend(emailApiKey.value());
 });
 
 // Your company name to include in the emails
@@ -48,7 +38,7 @@ const APP_NAME = 'Cloud Storage for Firebase quickstart';
  * Sends a welcome email to new user.
  */
 // [START onCreateTrigger]
-exports.sendWelcomeEmail = functions.runWith({secrets: [gmailPassword]}).auth.user().onCreate((user) => {
+exports.sendWelcomeEmail = functions.runWith({secrets: [emailApiKey]}).auth.user().onCreate((user) => {
 // [END onCreateTrigger]
   // [START eventAttributes]
   const email = user.email; // The email of the user.
@@ -64,7 +54,7 @@ exports.sendWelcomeEmail = functions.runWith({secrets: [gmailPassword]}).auth.us
  * Send an account deleted email confirmation to users who delete their accounts.
  */
 // [START onDeleteTrigger]
-exports.sendByeEmail = functions.runWith({secrets: [gmailPassword]}).auth.user().onDelete((user) => {
+exports.sendByeEmail = functions.runWith({secrets: [emailApiKey]}).auth.user().onDelete((user) => {
 // [END onDeleteTrigger]
   const email = user.email;
   const displayName = user.displayName;
@@ -75,30 +65,31 @@ exports.sendByeEmail = functions.runWith({secrets: [gmailPassword]}).auth.user()
 
 // Sends a welcome email to the given user.
 async function sendWelcomeEmail(email, displayName) {
-  const mailOptions = {
-    from: `${APP_NAME} <noreply@firebase.com>`,
+  // Resend reports API failures in the returned `error` instead of throwing.
+  const {error} = await resend.emails.send({
+    from: `${APP_NAME} <onboarding@resend.dev>`,
     to: email,
-  };
-
-  // The user subscribed to the newsletter.
-  mailOptions.subject = `Welcome to ${APP_NAME}!`;
-  mailOptions.text = `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`;
-  await mailTransport.sendMail(mailOptions);
+    subject: `Welcome to ${APP_NAME}!`,
+    text: `Hey ${displayName || ''}! Welcome to ${APP_NAME}. I hope you will enjoy our service.`,
+  });
+  if (error) {
+    throw new Error(`Failed to send welcome email: ${error.message}`);
+  }
   functions.logger.log('New welcome email sent to:', email);
   return null;
 }
 
 // Sends a goodbye email to the given user.
 async function sendGoodbyeEmail(email, displayName) {
-  const mailOptions = {
-    from: `${APP_NAME} <noreply@firebase.com>`,
+  const {error} = await resend.emails.send({
+    from: `${APP_NAME} <onboarding@resend.dev>`,
     to: email,
-  };
-
-  // The user unsubscribed to the newsletter.
-  mailOptions.subject = `Bye!`;
-  mailOptions.text = `Hey ${displayName || ''}!, We confirm that we have deleted your ${APP_NAME} account.`;
-  await mailTransport.sendMail(mailOptions);
+    subject: `Bye!`,
+    text: `Hey ${displayName || ''}!, We confirm that we have deleted your ${APP_NAME} account.`,
+  });
+  if (error) {
+    throw new Error(`Failed to send goodbye email: ${error.message}`);
+  }
   functions.logger.log('Account deletion confirmation email sent to:', email);
   return null;
 }

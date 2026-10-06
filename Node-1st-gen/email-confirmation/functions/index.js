@@ -17,58 +17,50 @@
 
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1');
-const {defineString, defineSecret} = require('firebase-functions/params');
-const nodemailer = require('nodemailer');
-// Configure the email transport using the default SMTP transport and a GMail account.
-// For other types of transports such as Sendgrid see https://nodemailer.com/transports/
-// TODO: Configure the `GMAIL_EMAIL` environment variable and the `GMAIL_PASSWORD` secret.
-const gmailEmail = defineString('GMAIL_EMAIL');
-const gmailPassword = defineSecret('GMAIL_PASSWORD');
+const {defineSecret} = require('firebase-functions/params');
+const {Resend} = require('resend');
 
-let mailTransport;
+// Emails are sent with Resend (https://resend.com/).
+// TODO: Store your Resend API key in the `EMAIL_API_KEY` secret with `firebase functions:secrets:set EMAIL_API_KEY`.
+const emailApiKey = defineSecret('EMAIL_API_KEY');
+
+let resend;
 onInit(() => {
-  mailTransport = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: gmailEmail.value(),
-      pass: gmailPassword.value(),
-    },
-  });
+  resend = new Resend(emailApiKey.value());
 });
 
 // Sends an email confirmation when a user changes his mailing list subscription.
-exports.sendEmailConfirmation = functions.runWith({secrets: [gmailPassword]}).database.ref('/users/{uid}').onWrite(async (change) => {
+exports.sendEmailConfirmation = functions.runWith({secrets: [emailApiKey]}).database.ref('/users/{uid}').onWrite(async (change) => {
   // Early exit if the 'subscribedToMailingList' field has not changed
   if (change.after.child('subscribedToMailingList').val() === change.before.child('subscribedToMailingList').val()) {
     return null;
   }
 
   const val = change.after.val();
-
-  const mailOptions = {
-    from: '"Spammy Corp." <noreply@firebase.com>',
-    to: val.email,
-  };
-
   const subscribed = val.subscribedToMailingList;
 
   // Building Email message.
-  mailOptions.subject = subscribed ? 'Thanks and Welcome!' : 'Sad to see you go :`(';
-  mailOptions.text = subscribed ?
-      'Thanks you for subscribing to our newsletter. You will receive our next weekly newsletter.' :
-      'I hereby confirm that I will stop sending you the newsletter.';
-  
-  try {
-    await mailTransport.sendMail(mailOptions);
-    functions.logger.log(
-      `New ${subscribed ? '' : 'un'}subscription confirmation email sent to:`,
-      val.email
-    );
-  } catch(error) {
+  const mailOptions = {
+    from: 'Spammy Corp. <onboarding@resend.dev>',
+    to: val.email,
+    subject: subscribed ? 'Thanks and Welcome!' : 'Sad to see you go :`(',
+    text: subscribed ?
+        'Thanks you for subscribing to our newsletter. You will receive our next weekly newsletter.' :
+        'I hereby confirm that I will stop sending you the newsletter.',
+  };
+
+  // Resend reports API failures in the returned `error` instead of throwing.
+  const {error} = await resend.emails.send(mailOptions);
+  if (error) {
     functions.logger.error(
       'There was an error while sending the email:',
       error
     );
+    return null;
   }
+  functions.logger.log(
+    `New ${subscribed ? '' : 'un'}subscription confirmation email sent to:`,
+    val.email
+  );
   return null;
 });
