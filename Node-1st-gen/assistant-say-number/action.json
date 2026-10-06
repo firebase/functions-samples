@@ -11,7 +11,7 @@
         "intent": "assistant.intent.action.MAIN"
       },
       "httpExecution": {
-        "url": "https://us-central1-<YOUR_PROJECT_ID>.cloudfunctions.net/sayNumber"
+        "url": "https://us-east4-<YOUR_PROJECT_ID>.cloudfunctions.net/sayNumber"
       }
     }
   ]

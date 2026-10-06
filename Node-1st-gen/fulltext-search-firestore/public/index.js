@@ -53,7 +53,7 @@ function searchAlgoliaAuthenticated(query) {
     .then(function(token) {
       // The token is then passed to our getSearchKey Cloud Function
       const searchKeyUrl = new URL(
-        `https://us-central1-${PROJECT_ID}.cloudfunctions.net/getSearchKey/`
+        `https://us-east4-${PROJECT_ID}.cloudfunctions.net/getSearchKey/`
       );
       return fetch(searchKeyUrl, {
           headers: { Authorization: 'Bearer ' + token }

@@ -41,12 +41,12 @@ a Firebase project.
 1. Trigger the functions
    1. Look in the output of the `firebase emulators:start` command for the URL
       of the http function "addmessage". It will look similar to:
-      `http://localhost:5001/MY_PROJECT/us-central1/addmessage`
+      `http://localhost:5001/MY_PROJECT/us-east4/addmessage`
       1. `MY_PROJECT` will be replaced with your project ID
       1. The port may be different on your local machine
    1. Add the query string `?text=uppercaseme` to the end of the function's URL.
       It should now look something like:
-      `http://localhost:5001/MY_PROJECT/us-central1/addmessage?text=uppercaseme`
+      `http://localhost:5001/MY_PROJECT/us-east4/addmessage?text=uppercaseme`
       1. Optionally, you can change the message "uppercaseme" to a custom
          message
    1. Create a new message by opening the URL in a new tab in your browser
