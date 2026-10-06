@@ -18,7 +18,7 @@
 // Dependencies for task queue functions.
 const {onTaskDispatched} = require("firebase-functions/tasks");
 const {onRequest, HttpsError} = require("firebase-functions/https");
-const {requiresRole, requiresAPI} = require("firebase-functions/v2");
+const {requiresRole} = require("firebase-functions");
 const {getFunctions} = require("firebase-admin/functions");
 const {logger} = require("firebase-functions");
 
@@ -27,16 +27,11 @@ const {URL, URLSearchParams} = require("node:url");
 const path = require("path");
 const {initializeApp} = require("firebase-admin/app");
 const {getStorage} = require("firebase-admin/storage");
-const {GoogleAuth} = require("google-auth-library");
 // [END imports]
 initializeApp();
 
 requiresRole("roles/cloudtasks.enqueuer");
-requiresRole("roles/cloudfunctions.viewer");
-requiresAPI(
-    "cloudfunctions.googleapis.com",
-    "Needed to query function endpoint URL at runtime",
-);
+requiresRole("roles/run.invoker");
 
 const BACKUP_START_DATE = new Date("1995-06-17");
 const BACKUP_COUNT = parseInt(process.env.BACKUP_COUNT) || 100;
@@ -109,42 +104,10 @@ exports.backupapod = onTaskDispatched(
     });
 
 
-let auth;
-
-// [START v2GetFunctionUri]
-/**
- * Get the URL of a given v2 cloud function.
- *
- * @param {string} name the function's name
- * @param {string} location the function's location
- * @return {Promise<string>} The URL of the function
- */
-async function getFunctionUrl(name, location="us-central1") {
-  if (!auth) {
-    auth = new GoogleAuth({
-      scopes: "https://www.googleapis.com/auth/cloud-platform",
-    });
-  }
-  const projectId = await auth.getProjectId();
-  const url = new URL(
-      `https://cloudfunctions.googleapis.com/v2beta/projects/${projectId}/locations/${location}/functions/${name}`,
-  );
-
-  const client = await auth.getClient();
-  const res = await client.request({url: url.toString()});
-  const uri = res.data?.serviceConfig?.uri;
-  if (!uri) {
-    throw new Error(`Unable to retreive uri for function at ${url}`);
-  }
-  return uri;
-}
-// [END v2GetFunctionUri]
-
 // [START v2EnqueueTasks]
 exports.enqueuebackuptasks = onRequest(
     async (_request, response) => {
       const queue = getFunctions().taskQueue("backupapod");
-      const targetUri = await getFunctionUrl("backupapod");
 
       const enqueues = [];
       for (let i = 0; i <= BACKUP_COUNT; i += 1) {
@@ -160,7 +123,6 @@ exports.enqueuebackuptasks = onRequest(
             queue.enqueue({date}, {
               scheduleDelaySeconds,
               dispatchDeadlineSeconds: 60 * 5, // 5 minutes
-              uri: targetUri,
             }),
         );
       }
