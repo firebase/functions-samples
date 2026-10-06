@@ -69,11 +69,13 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --role=roles/cloudtasks.enqueuer
 ```
 
-* Identity used to enqueue tasks to Cloud Task needs permission to use the service account associated with a task in Cloud Tasks.
-  * In our sample, this is the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts).
+* Identity used to enqueue tasks needs permission to act as the service account that Cloud Tasks uses to call the task queue function (`roles/iam.serviceAccountUser` on that service account).
+  * In our sample, both identities are the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts), so the account needs that role on itself:
 
 ```
-Please follow Google Cloud IAM documentation to add App Engine default service account as user of App Engine default service account.
+gcloud iam service-accounts add-iam-policy-binding ${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
+  --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
+  --role=roles/iam.serviceAccountUser
 ```
 
 * Identity used to trigger the Task Queue function needs `run.routes.invoke` permission.
@@ -85,3 +87,5 @@ gcloud functions add-iam-policy-binding backupapod \
   --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
   --role=roles/run.invoker
 ```
+
+If tasks fail with `401` or `403` (`PERMISSION_DENIED`) in the Cloud Tasks logs, check that the `roles/run.invoker` binding above exists and that the `uri` passed when enqueuing the task is the function's Cloud Run URL. Cloud Tasks mints an OIDC token for that `uri`, and Cloud Run rejects the token if the URL doesn't match.
