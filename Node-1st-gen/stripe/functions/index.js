@@ -185,11 +185,15 @@ function reportError(err, context = {}) {
   const logName = 'errors';
   const log = logging.log(logName);
 
+  // The name of the function, as set by the Cloud Functions runtime.
+  // https://cloud.google.com/functions/docs/configuring/env-var#newer_runtimes
+  const functionName = process.env.K_SERVICE;
+
   // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
   const metadata = {
     resource: {
       type: 'cloud_function',
-      labels: { function_name: process.env.FUNCTION_NAME },
+      labels: { function_name: functionName },
     },
   };
 
@@ -197,7 +201,7 @@ function reportError(err, context = {}) {
   const errorEvent = {
     message: err.stack,
     serviceContext: {
-      service: process.env.FUNCTION_NAME,
+      service: functionName,
       resourceType: 'cloud_function',
     },
     context: context,
