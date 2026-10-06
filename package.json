@@ -16,9 +16,9 @@
     "compile-2nd-gen": "pnpm --recursive --filter  \"./Node/**\" run compile "
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.20.5",
     "eslint": "^8.57.1",
-    "pnpm": "^10.28.2",
+    "pnpm": "^10.34.6",
     "typescript": "^7.0.2"
   },
   "engines": {

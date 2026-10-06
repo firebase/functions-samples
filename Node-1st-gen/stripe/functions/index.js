@@ -32,7 +32,7 @@ const stripeSecret = defineSecret('STRIPE_SECRET');
 let stripe;
 onInit(() => {
   stripe = new Stripe(stripeSecret.value(), {
-    apiVersion: '2026-07-29.dahlia',
+    apiVersion: '2026-08-26.dahlia',
   });
 });
 
