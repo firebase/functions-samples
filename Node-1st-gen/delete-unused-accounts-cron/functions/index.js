@@ -15,11 +15,13 @@
  */
 'use strict';
 
+/** @typedef {typeof import('es6-promise-pool').default & typeof import('es6-promise-pool')} PromisePoolConstructor */
+
 const functions = require('firebase-functions/v1');
 const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 initializeApp();
-const PromisePool = require('es6-promise-pool');
+const PromisePool = /** @type {PromisePoolConstructor} */ (require('es6-promise-pool'));
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 

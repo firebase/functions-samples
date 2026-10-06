@@ -16,6 +16,7 @@
 "use strict";
 
 /** @typedef {import("firebase-admin/auth").UserRecord} UserRecord */
+/** @typedef {typeof import("es6-promise-pool").default & typeof import("es6-promise-pool")} PromisePoolConstructor */
 
 // [START all]
 // [START import]
@@ -29,7 +30,9 @@ const {getAuth} = require("firebase-admin/auth");
 initializeApp();
 
 // The es6-promise-pool to limit the concurrency of promises.
-const PromisePool = require("es6-promise-pool");
+const PromisePool = /** @type {PromisePoolConstructor} */ (
+  require("es6-promise-pool")
+);
 // Maximum concurrent account deletions.
 const MAX_CONCURRENT = 3;
 // [END import]
