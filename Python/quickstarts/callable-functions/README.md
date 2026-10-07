@@ -31,7 +31,7 @@ See [functions/main.py](functions/main.py) for the code. It defines two function
 
 ## Test
 
-Callable functions use a [specific request format](https://firebase.google.com/docs/functions/callable-reference): a `POST` request with a JSON body whose payload sits under a `data` key. The **Testing** tab in the Google Cloud console sends a plain HTTP request, so it can't call these functions. Use one of the following instead.
+Callable functions use a [specific request format](https://firebase.google.com/docs/functions/callable-reference): a `POST` request with a JSON body whose payload sits under a `data` key, plus a few headers the client SDKs set for you. The **Testing** tab in the Google Cloud console doesn't follow that format, so calls from there fail. Use one of the following instead.
 
 ### Call the function from a client
 
