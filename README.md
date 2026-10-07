@@ -4,11 +4,9 @@ This repository contains a collection of samples showcasing some typical uses of
 
 Samples are available for **Node** (1st and 2nd gen) and **Python** (2nd gen).
 
-> Note: Python support in Cloud Functions for Firebase is a public preview. This means that the functionality might change in backward-incompatible ways. A preview release is not subject to any SLA or deprecation policy and may receive limited or no support.
-
 ### What's Cloud Functions for Firebase?
 
-Cloud Functions is a hosted, private, and scalable Node.js environment where you can run JavaScript or Python code. [Cloud Functions for Firebase](https://firebase.google.com/features/functions) integrates the Firebase platform by letting you write code that responds to events and invokes functionality exposed by other Firebase features.
+Cloud Functions is a hosted, private, and scalable environment where you can run JavaScript or Python code. [Cloud Functions for Firebase](https://firebase.google.com/features/functions) integrates the Firebase platform by letting you write code that responds to events and invokes functionality exposed by other Firebase features.
 
 ## Prerequisites
 
@@ -286,12 +284,7 @@ Uses a Realtime Database or Firestore trigger.
 
 ### User data cleanup
 
-- [Node (1st gen)](/Node-1st-gen/user-data-cleanup)
-
-Deletes all associated user data in the Realtime database when a user deletes his Firebase account.
-Uses an Auth trigger.
-**This code has moved to its own repo at
-https://github.com/firebase/user-data-protection**
+This sample moved to [FirebaseExtended/user-data-protection](https://github.com/FirebaseExtended/user-data-protection), which is kept for reference and no longer maintained. To delete a user's data when they delete their account, use the [Delete User Data extension](https://extensions.dev/extensions/firebase/delete-user-data).
 
 ### Export your data to a Google Spreadsheet
 
@@ -375,7 +368,7 @@ We'd love that you contribute to the project. Before doing so please read our [C
 
 ## License
 
-© Google, 2015-2023. Licensed under an [Apache-2](LICENSE) license.
+© Google, 2015-2026. Licensed under an [Apache-2](LICENSE) license.
 
 ## Build Status
 
