@@ -34,7 +34,7 @@ Sending emails is performed using [Resend](https://resend.com/). The dependencie
    ```bash
    cd functions && pnpm install && cd ..
    ```
-3. Set your Resend API key for local development in `functions/.env.local`:
+3. Set your Resend API key for local development in `functions/.secret.local` (the emulator reads [secret values](https://firebase.google.com/docs/functions/config-env#secrets_and_credentials_in_the_emulator) from that file):
    ```bash
    EMAIL_API_KEY="re_123456789"
    ```
