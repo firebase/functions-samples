@@ -24,13 +24,17 @@ const CUT_OFF_TIME = 2 * 60 * 60 * 1000; // 2 Hours in milliseconds.
 
 /**
  * This database triggered function will check for child nodes that are older than the
- * cut-off time. Each child needs to have a `timestamp` attribute.
+ * cut-off time. Each child needs to have a `timestamp` attribute, set to the time it was
+ * written in milliseconds since the epoch (for example, `Date.now()` or
+ * `ServerValue.TIMESTAMP`).
  */
 exports.deleteOldItems = functions.database.ref('/path/to/items/{pushId}').onWrite(async (change) => {
   const ref = change.after.ref.parent; // reference to the parent
   const now = Date.now();
   const cutoff = now - CUT_OFF_TIME;
-  const oldItemsQuery = ref.orderByChild('timestamp').endAt(cutoff);
+  // Children without a numeric `timestamp` sort before any number, so
+  // `startAt(0)` keeps them out of the query instead of deleting them right away.
+  const oldItemsQuery = ref.orderByChild('timestamp').startAt(0).endAt(cutoff);
   const snapshot = await oldItemsQuery.once('value');
   // create a map with all children that need to be removed
   const updates = {};
