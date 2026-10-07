@@ -6,7 +6,7 @@ Samples are available for **Node** (1st and 2nd gen) and **Python** (2nd gen).
 
 ### What's Cloud Functions for Firebase?
 
-Cloud Functions is a hosted, private, and scalable Node.js environment where you can run JavaScript or Python code. [Cloud Functions for Firebase](https://firebase.google.com/features/functions) integrates the Firebase platform by letting you write code that responds to events and invokes functionality exposed by other Firebase features.
+Cloud Functions is a hosted, private, and scalable environment where you can run JavaScript or Python code. [Cloud Functions for Firebase](https://firebase.google.com/features/functions) integrates the Firebase platform by letting you write code that responds to events and invokes functionality exposed by other Firebase features.
 
 ## Prerequisites
 
@@ -291,7 +291,7 @@ Uses a Realtime Database or Firestore trigger.
 
 ### User data cleanup
 
-This sample moved to its own repo: [firebase/user-data-protection](https://github.com/firebase/user-data-protection).
+This sample moved to [FirebaseExtended/user-data-protection](https://github.com/FirebaseExtended/user-data-protection), which is kept for reference and no longer maintained. To delete a user's data when they delete their account, use the [Delete User Data extension](https://extensions.dev/extensions/firebase/delete-user-data).
 
 ### Export your data to a Google Spreadsheet
 
