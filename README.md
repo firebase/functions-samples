@@ -243,7 +243,7 @@ Uses an HTTP trigger.
 
 ### Authorize with 3rd-party authentication providers
 
-[Okta](/Node-1st-gen/okta-auth), [LinkedIn](/Node-1st-gen/linkedin-auth), [Spotify](/Node-1st-gen/spotify-auth), [Instagram](/Node-1st-gen/instagram-auth), or [Basic Auth](/Node-1st-gen/username-password-auth)
+[Okta](/Node-1st-gen/okta-auth), [LinkedIn](/Node-1st-gen/linkedin-auth), [Spotify](/Node-1st-gen/spotify-auth), or [Basic Auth](/Node-1st-gen/username-password-auth)
 
 Demonstrates how to authorize with a 3rd party sign-in mechanism, create a Firebase custom auth token, update the user's profile and authorize Firebase.
 Uses an HTTP trigger.
