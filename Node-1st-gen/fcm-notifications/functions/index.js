@@ -78,20 +78,26 @@ exports.sendFollowerNotification = functions.database.ref('/followers/{followedU
       );
       functions.logger.log('Fetched follower profile', follower);
 
-      // Notification details.
-      const payload = {
+      // Notification details. The common `notification` object only takes
+      // `title`, `body`, and `image`. Fields for one platform, such as the
+      // icon for the web client, go under that platform's key.
+      const message = {
         notification: {
           title: 'You have a new follower!',
           body: `${follower.displayName} is now following you.`,
-          icon: follower.photoURL
-        }
+        },
+        webpush: {
+          notification: {
+            icon: follower.photoURL,
+          },
+        },
       };
 
       // Listing all tokens as an array.
       tokens = Object.keys(tokensSnapshot.val());
       // Send notifications to all tokens.
       const {responses} = await getMessaging().sendEachForMulticast({
-        notification: payload.notification,
+        ...message,
         tokens,
       });
       // For each message check if there was an error.
