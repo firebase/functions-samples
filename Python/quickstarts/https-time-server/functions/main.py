@@ -30,11 +30,11 @@ from firebase_functions import https_fn, options
 #
 # Example format: "%B %d %Y, %I:%M:%S %p".
 # Example request using URL query parameters:
-#   https://us-east4-<project-id>.cloudfunctions.net/date?format=%25B%20%25d%20%25Y%2C%20%25I%3A%25M%3A%25S%20%25p
+#   https://us-central1-<project-id>.cloudfunctions.net/date?format=%25B%20%25d%20%25Y%2C%20%25I%3A%25M%3A%25S%20%25p
 # Example request using request body with cURL:
 #   curl -H 'Content-Type: application/json' /
 #        -d '{"format": "%B %d %Y, %I:%M:%S %p"}' /
-#        https://us-east4-<project-id>.cloudfunctions.net/date
+#        https://us-central1-<project-id>.cloudfunctions.net/date
 #
 # This endpoint supports CORS.
 # [START trigger]

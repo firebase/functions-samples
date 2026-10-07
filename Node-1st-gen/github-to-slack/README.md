@@ -23,7 +23,7 @@ To test this integration:
  - Configure this sample to use your project using `firebase use --add` and select your project.
  - Install dependencies locally by running: `cd functions; npm install; cd -`
  - [Add a WebHook to your GitHub repo](https://help.github.com/articles/about-webhooks/) with the following settings:
-   - Payload URL: `https://us-east4-<FIREBASE_PROJECT_ID>.cloudfunctions.net/githubWebhook`
+   - Payload URL: `https://us-central1-<FIREBASE_PROJECT_ID>.cloudfunctions.net/githubWebhook`
    - Content type: `application/json`
    - Secret: `A_SECRET_YOU_DEFINE`
    - Which events would you like to trigger this webhook? `Just the push event.`

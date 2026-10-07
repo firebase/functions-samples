@@ -81,7 +81,7 @@ Please follow Google Cloud IAM documentation to add App Engine default service a
 
 ```
 gcloud functions add-iam-policy-binding backupapod \
-  --region=us-east4 \
+  --region=us-central1 \
   --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
   --role=roles/run.invoker
 ```

@@ -67,7 +67,7 @@ const defaultConfig = {
   ],
 
   // Vertex AI location.
-  location: "us-east4",
+  location: "us-central1",
 
   // Disable Vertex AI Gemini API access for testing.
   vertex_enabled: false,
