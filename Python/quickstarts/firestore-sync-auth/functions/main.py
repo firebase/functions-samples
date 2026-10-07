@@ -18,7 +18,9 @@ from firebase_functions import firestore_fn
 
 # [START verifyComment]
 @firestore_fn.on_document_updated_with_auth_context(document="comments/{comment_id}")
-def verify_comment(event: Event[Change[DocumentSnapshot]]) -> None:
+def verify_comment(
+    event: firestore_fn.AuthEvent[firestore_fn.Change[firestore_fn.DocumentSnapshot]],
+) -> None:
     # Get the current and previous document values.
     new_value = event.data.after
     prev_value = event.data.before
@@ -32,7 +34,7 @@ def verify_comment(event: Event[Change[DocumentSnapshot]]) -> None:
         # system-generated users are automatically verified
         verified = True
     elif user_auth_type in ("unknown", "unauthenticated"):
-        if user_auth_id.endswith("@example.com"):
+        if user_auth_id is not None and user_auth_id.endswith("@example.com"):
             # admin users from a specific domain are verified
             verified = True
 
