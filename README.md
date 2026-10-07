@@ -218,13 +218,6 @@ Uses a Realtime Database trigger.
 This sample demonstrates how to send a Firebase Cloud Messaging (FCM) notification from a Realtime Database triggered Function when users get new followers. The sample also features a Web UI to experience the FCM notification.
 Uses a Realtime Database trigger.
 
-### Google Assistant says ordinal of given number
-
-- [Node (1st gen)](/Node-1st-gen/assistant-say-number)
-
-This sample shows how to create an action for the Google Home/Assistant using the Actions SDK hosted on Cloud Functions. The sample action asks users to say a number and reads out the ordinal of that number.
-Uses an HTTP trigger.
-
 ### Authenticated JSON API
 
 - [Node (1st gen)](/Node-1st-gen/authenticated-json-api)
