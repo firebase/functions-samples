@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const {functions} = require("firebase-functions/v1");
+const functions = require("firebase-functions/v1");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");
 
@@ -74,4 +74,4 @@ exports.checkForBan = functions.auth
       }
     // [END v1bannedHttpsError]
     });
-// [START v1CheckForBan]
+// [END v1CheckForBan]
