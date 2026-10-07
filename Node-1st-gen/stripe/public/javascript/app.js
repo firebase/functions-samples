@@ -268,11 +268,11 @@ document
  * Helper functions
  */
 
-// Format amount for diplay in the UI
+// Format amount for display in the UI
 function formatAmount(amount, currency) {
-  amount = zeroDecimalCurrency(amount, currency)
-    ? amount
-    : (amount / 100).toFixed(2);
+  // Stripe amounts are in the smallest currency unit (for example, cents).
+  // The currency formatter rounds to the right number of decimal places.
+  amount = zeroDecimalCurrency(amount, currency) ? amount : amount / 100;
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
