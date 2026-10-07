@@ -43,10 +43,10 @@ The website should display your display name, email and profile pic from Spotify
 
 When clicking the **Sign in with Spotify** button a popup is shown which redirects users to the `redirect` Function URL.
 
-The `redirect` Function then redirects the user to the Spotify OAuth 2.0 consent screen where (the first time only) the user will have to grant approval. Also the `state` cookie is set on the client with the value of the `state` URL query parameter to check against later on.
+The `redirect` Function then redirects the user to the Spotify OAuth 2.0 consent screen where (the first time only) the user will have to grant approval. Also the `__session` cookie is set on the client with the value of the `state` URL query parameter to check against later on. Firebase Hosting forwards only the `__session` cookie to functions, so the sample uses that name.
 
 After the user has granted approval he is redirected back to the `./popup.html` page along with an OAuth 2.0 Auth Code as a URL parameter. This Auth code is then sent to the `token` Function using a JSONP Request. The `token` function then:
- - Checks that the value of the `state` URL query parameter is the same as the one in the `state` cookie.
+ - Checks that the value of the `state` URL query parameter is the same as the one in the `__session` cookie.
  - Exchanges the auth code for an access token using the Spotify app credentials.
  - Fetches the user identity using the Spotify API.
  - Mints a Custom Auth token (which is why we need Service Accounts Credentials).
