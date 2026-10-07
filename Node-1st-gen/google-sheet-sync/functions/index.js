@@ -111,7 +111,7 @@ function appendPromise(requestWithoutAuth) {
         }
         return resolve(response.data);
       });
-    });
+    }).catch(reject);
   });
 }
 
