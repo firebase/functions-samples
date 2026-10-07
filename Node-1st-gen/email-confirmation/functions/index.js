@@ -37,6 +37,10 @@ exports.sendEmailConfirmation = functions.runWith({secrets: [emailApiKey]}).data
   }
 
   const val = change.after.val();
+  // The user was deleted, so there's no one to email.
+  if (!val) {
+    return null;
+  }
   const subscribed = val.subscribedToMailingList;
 
   // Building Email message.
