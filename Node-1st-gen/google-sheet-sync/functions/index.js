@@ -111,7 +111,7 @@ function appendPromise(requestWithoutAuth) {
         }
         return resolve(response.data);
       });
-    });
+    }).catch(reject);
   });
 }
 
@@ -123,6 +123,10 @@ async function getAuthorizedClient() {
   }
   const snapshot = await getDatabase().ref(DB_TOKEN_PATH).once('value');
   oauthTokens = snapshot.val();
+  if (!oauthTokens) {
+    throw new Error(`No OAuth tokens found at ${DB_TOKEN_PATH}. ` +
+        'Visit the URL of the authgoogleapi function to grant access to your Google Sheet first.');
+  }
   functionsOauthClient.setCredentials(oauthTokens);
   return functionsOauthClient;
 }
