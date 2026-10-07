@@ -22,11 +22,11 @@ assignees: ''
 
 <!-- Many reports turn out to be version-specific, so this saves a round trip. -->
 
-**Firebase SDK versions** (from the sample's `package.json` or `requirements.txt`, for example `firebase-functions` and `firebase-admin`)
+**`firebase-functions` and `firebase-admin`** (the installed versions: run `npm ls firebase-functions firebase-admin` in the sample's `functions` directory, or `pip show firebase-functions firebase-admin` for Python)
 
-**Firebase CLI version** (run `firebase --version`)
+**Firebase CLI** (run `firebase --version`; only needed if the problem shows up when you deploy or in the emulator)
 
-**Runtime version** (run `node --version` or `python --version`)
+**Node.js or Python** (run `node --version` or `python --version`)
 
 ### Debug output
 
