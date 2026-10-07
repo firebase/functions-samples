@@ -88,4 +88,6 @@ gcloud functions add-iam-policy-binding backupapod \
   --role=roles/run.invoker
 ```
 
-If tasks fail with `401` or `403` (`PERMISSION_DENIED`) in the Cloud Tasks logs, check that the `roles/run.invoker` binding above exists and that the `uri` passed when enqueuing the task is the function's Cloud Run URL. Cloud Tasks mints an OIDC token for that `uri`, and Cloud Run rejects the token if the URL doesn't match.
+If tasks fail with `401` or `403` (`PERMISSION_DENIED`) in the Cloud Tasks logs, check that the `roles/run.invoker` binding above exists. Cloud Tasks mints an OIDC token for the function's URL, and Cloud Run rejects the call if the token's service account can't invoke the function. `requiresRole` covers the first and third bindings at deploy time; the `roles/iam.serviceAccountUser` binding is the one to add by hand.
+
+The sample deploys to `us-central1`, which is the region `getFunctions().taskQueue("backupapod")` assumes when you pass a bare function name. If you deploy the function to another region, pass the full resource name instead: `taskQueue("locations/europe-west1/functions/backupapod")`.

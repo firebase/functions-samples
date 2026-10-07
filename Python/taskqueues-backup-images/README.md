@@ -57,7 +57,7 @@ firebase deploy
 
 ## IAM policy
 
-Unlike the Node.js sample, the Python sample can't declare its IAM requirements in code, so you grant the roles yourself. The sample runs as the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts), which needs these bindings:
+The Node.js sample declares the roles it needs in code with `requiresRole`, and the Firebase CLI grants them at deploy time. The Python SDK has no equivalent, so you grant the roles yourself. The sample runs as the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts), which needs these bindings:
 
 * To enqueue tasks, `roles/cloudtasks.enqueuer` on the project:
 
@@ -84,7 +84,9 @@ gcloud functions add-iam-policy-binding backupapod \
   --role=roles/run.invoker
 ```
 
-If tasks fail with `401` or `403` (`PERMISSION_DENIED`) in the Cloud Tasks logs, check that the `roles/run.invoker` binding exists and that `get_function_url` returns the function's Cloud Run URL for the region you deployed to. Cloud Tasks mints an OIDC token for that URL, and Cloud Run rejects the token if the URL doesn't match.
+If tasks fail with `401` or `403` (`PERMISSION_DENIED`) in the Cloud Tasks logs, check that the `roles/run.invoker` binding exists and that `get_function_url` returns the function's Cloud Run URL for the region you deployed to. Cloud Tasks mints an OIDC token for that URL, and Cloud Run rejects the token if the URL doesn't match. Also check your SDK version: `firebase-functions` for Python older than 0.4.1 rejected Cloud Tasks tokens with an `aud` error ([firebase-functions-python#157](https://github.com/firebase/firebase-functions-python/issues/157)).
+
+The sample deploys to `us-central1`, which is the region `functions.task_queue("backupapod")` assumes when you pass a bare function name. If you deploy the function to another region, pass the full resource name instead: `task_queue("locations/europe-west1/functions/backupapod")`, and pass the same region to `get_function_url`.
 
 ## Test
 
