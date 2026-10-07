@@ -16,9 +16,10 @@
 #
 # Only issues a maintainer has labeled `needs-info` are considered. After 30
 # days without activity the issue is labeled `stale` and the reporter gets a
-# heads-up. After 7 more quiet days it is closed. Any comment clears the
-# `stale` and `needs-info` labels, and a maintainer can reopen at any time.
-# Pull requests are never touched.
+# heads-up. After 7 more quiet days it is closed. When anyone other than a
+# maintainer comments on a `needs-info` issue, the `answered` job removes the
+# label so the issue leaves the pipeline until a maintainer looks again. A
+# maintainer can reopen at any time. Pull requests are never touched.
 
 name: Close issues waiting on info
 
@@ -26,12 +27,15 @@ on:
   schedule:
     - cron: '0 9 * * *' # Daily
   workflow_dispatch: # Manual trigger
+  issue_comment:
+    types: [created]
 
 permissions: {}
 
 jobs:
   stale:
     name: Mark and close needs-info issues
+    if: github.event_name != 'issue_comment'
     runs-on: ubuntu-latest
     permissions:
       issues: write # To label, comment on, and close issues
@@ -55,10 +59,28 @@ jobs:
             the details we asked for and we'll pick it back up.
           close-issue-message: >
             We're closing this issue because we haven't heard back. If it's
-            still a problem, comment with the details we asked for and we'll
-            reopen it. For help setting up a sample, start a thread in
+            still a problem, reply with the details we asked for and we'll
+            reopen it, or open a new issue that links to this one. For help
+            setting up a sample, start a thread in
             [Discussions](https://github.com/firebase/functions-samples/discussions).
             For questions about Cloud Functions for Firebase itself,
             [Firebase support](https://firebase.google.com/support) and
             [Stack Overflow](https://stackoverflow.com/questions/tagged/google-cloud-functions+firebase)
             are the best places to ask.
+
+  answered:
+    name: Clear needs-info when the reporter answers
+    if: >-
+      github.event_name == 'issue_comment' &&
+      !github.event.issue.pull_request &&
+      contains(github.event.issue.labels.*.name, 'needs-info') &&
+      github.event.comment.user.type != 'Bot' &&
+      !contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # To remove the label
+    steps:
+      - run: gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --remove-label needs-info
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
