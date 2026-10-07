@@ -15,7 +15,7 @@ Create and provide a Service Account's credentials:
 
 Create and setup your Instagram app:
  1. Register an Instagram app on [Instagram for Developers](https://www.instagram.com/developer/). You'll need to **Register a New Client**.
- 1. Once Your app is created make sure you specify your app's callback URL in the list of **Valid redirect URIs** of your Instagram app. You should whitelist `https://localhost:5000/popup.html` for local development and if you deploy on App Engine (See Deploy section below) you should whitelist the URL `https://<application-id>.firebaseapp.com/popup.html`.
+ 1. Once Your app is created make sure you specify your app's callback URL in the list of **Valid redirect URIs** of your Instagram app. You should whitelist `https://localhost:5000/popup.html` for local development and if you deploy on App Engine (See Deploy section below) you should whitelist the URL `https://<project-id>.firebaseapp.com/popup.html`.
  1. Copy the **Client ID** and **Client Secret** of your Instagram app and use them to set the `instagram.client_id` and `instagram.client_secret` Google Cloud environment variables. For this use:
 
     ```bash

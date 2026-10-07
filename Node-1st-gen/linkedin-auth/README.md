@@ -15,7 +15,7 @@ Create and provide a Service Account's credentials:
 
 Create and setup your LinkedIn app:
  1. Create a LinkedIn app in the [LinkedIn Developers website](https://www.linkedin.com/developer/apps/).
- 1. Add the URL `https://<application-id>.firebaseapp.com/popup.html` to the
+ 1. Add the URL `https://<project-id>.firebaseapp.com/popup.html` to the
     **OAuth 2.0** > **Authorized Redirect URLs** of your LinkedIn app.
  1. Copy the **Client ID** and **Client Secret** of your LinkedIn app and use them to set the `linkedin.client_id` and `linkedin.client_secret` Google Cloud environment variables. For this use:
 
