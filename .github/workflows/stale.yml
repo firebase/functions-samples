@@ -1,0 +1,64 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Closes issues that are waiting on the reporter.
+#
+# Only issues a maintainer has labeled `needs-info` are considered. After 30
+# days without activity the issue is labeled `stale` and the reporter gets a
+# heads-up. After 7 more quiet days it is closed. Any comment clears the
+# `stale` and `needs-info` labels, and a maintainer can reopen at any time.
+# Pull requests are never touched.
+
+name: Close issues waiting on info
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Daily
+  workflow_dispatch: # Manual trigger
+
+permissions: {}
+
+jobs:
+  stale:
+    name: Mark and close needs-info issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # To label, comment on, and close issues
+    steps:
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          only-issue-labels: needs-info
+          days-before-issue-stale: 30
+          days-before-issue-close: 7
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: stale
+          close-issue-label: closed-by-bot
+          close-issue-reason: not_planned
+          remove-issue-stale-when-updated: true
+          labels-to-remove-when-unstale: needs-info
+          stale-issue-message: >
+            Hi! It's been a month since we asked for more information on this
+            issue, and we haven't heard back. We'll close it in a week if
+            there's no update. If you're still seeing the problem, reply with
+            the details we asked for and we'll pick it back up.
+          close-issue-message: >
+            We're closing this issue because we haven't heard back. If it's
+            still a problem, comment with the details we asked for and we'll
+            reopen it. For help setting up a sample, start a thread in
+            [Discussions](https://github.com/firebase/functions-samples/discussions).
+            For questions about Cloud Functions for Firebase itself,
+            [Firebase support](https://firebase.google.com/support) and
+            [Stack Overflow](https://stackoverflow.com/questions/tagged/google-cloud-functions+firebase)
+            are the best places to ask.
