@@ -48,7 +48,7 @@ The function triggers on changes to `/users/$uid` and exits if there are no chan
     firebase functions:secrets:set EMAIL_API_KEY
     ```
 
-    To run the function in the emulator, put the key in `functions/.env.local` instead:
+    To run the function in the emulator, put the key in `functions/.secret.local` instead. The emulator reads secret values from that file; see [Secrets and credentials in the emulator](https://firebase.google.com/docs/functions/config-env#secrets_and_credentials_in_the_emulator).
 
     ```bash
     EMAIL_API_KEY="re_123456789"
