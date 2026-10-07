@@ -18,6 +18,16 @@ assignees: ''
 
 <!-- Help us diagnose the issue. Please provide detailed instructions to run your minimal repro or to recreate the environment -->
 
+### Versions
+
+<!-- Many reports turn out to be version-specific, so this saves a round trip. -->
+
+**Firebase SDK versions** (from the sample's `package.json` or `requirements.txt`, for example `firebase-functions` and `firebase-admin`)
+
+**Firebase CLI version** (run `firebase --version`)
+
+**Runtime version** (run `node --version` or `python --version`)
+
 ### Debug output
 
 <!-- Provide any error messages or screenshots of unexpected behavior -->
