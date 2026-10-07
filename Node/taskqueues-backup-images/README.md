@@ -56,32 +56,37 @@ $ firebase deploy
 
 ## IAM Policy
 
-The sample declares required IAM roles declaratively in `functions/index.js` (`requiresRole("roles/cloudtasks.enqueuer")` and `requiresRole("roles/run.invoker")`). On deployment, Firebase CLI automatically provisions these IAM policy bindings.
+The sample declares the IAM roles it needs in `functions/index.js`: `requiresRole("roles/cloudtasks.enqueuer")` and `requiresRole("roles/run.invoker")`. When you deploy, the Firebase CLI creates a service account for this codebase (its email starts with `firebase-fn-`), grants it those roles, and runs every function in the codebase as that account. The CLI prints the account's email when it creates it; you can also find it under **IAM & Admin > Service accounts** in the Google Cloud console. The commands below call it `${FUNCTIONS_SA}`.
 
-If configuring manually or troubleshooting permission errors, ensure that your project has the following IAM bindings:
+Cloud Tasks needs three bindings in total. `requiresRole` covers the first and third; you add the second by hand.
 
-* Identity used to enqueue tasks to Cloud Tasks needs `cloudtasks.tasks.create` IAM permission (`roles/cloudtasks.enqueuer`):
-  * In our sample, this is the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts).
+* The identity that enqueues tasks needs `cloudtasks.tasks.create` (`roles/cloudtasks.enqueuer`). `requiresRole` grants it. To grant it yourself:
 
 ```
 gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
+  --member=serviceAccount:${FUNCTIONS_SA} \
   --role=roles/cloudtasks.enqueuer
 ```
 
-* Identity used to enqueue tasks to Cloud Task needs permission to use the service account associated with a task in Cloud Tasks.
-  * In our sample, this is the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts).
+* The identity that enqueues tasks needs permission to act as the service account that Cloud Tasks uses to call the task queue function (`roles/iam.serviceAccountUser` on that service account). In this sample both are `${FUNCTIONS_SA}`, so the account needs the role on itself. `requiresRole` doesn't cover this one:
 
 ```
-Please follow Google Cloud IAM documentation to add App Engine default service account as user of App Engine default service account.
+gcloud iam service-accounts add-iam-policy-binding ${FUNCTIONS_SA} \
+  --member=serviceAccount:${FUNCTIONS_SA} \
+  --role=roles/iam.serviceAccountUser
 ```
 
-* Identity used to trigger the Task Queue function needs `run.routes.invoke` permission.
-  * In our sample, this is the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts).
+* The identity that Cloud Tasks uses to call the task queue function needs `run.routes.invoke` (`roles/run.invoker`). `requiresRole` grants it. To grant it yourself:
 
 ```
 gcloud functions add-iam-policy-binding backupapod \
   --region=us-central1 \
-  --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
+  --member=serviceAccount:${FUNCTIONS_SA} \
   --role=roles/run.invoker
 ```
+
+If you remove the `requiresRole` calls, the functions run as the [Compute Engine default service account](https://cloud.google.com/compute/docs/access/service-accounts) (`${PROJECT_NUMBER}-compute@developer.gserviceaccount.com`) instead. Use that email in the commands above and run all three.
+
+If tasks fail with `401` or `403` (`PERMISSION_DENIED`) in the Cloud Tasks logs, check that the `roles/run.invoker` binding above exists. Cloud Tasks mints an OIDC token for the function's URL, and Cloud Run rejects the call if the token's service account can't invoke the function. If `enqueue` itself fails with `PERMISSION_DENIED`, the missing `roles/iam.serviceAccountUser` binding is the usual cause.
+
+The sample deploys to `us-central1`, which is the region `getFunctions().taskQueue("backupapod")` assumes when you pass a bare function name. If you deploy the function to another region, pass the full resource name instead: `taskQueue("locations/europe-west1/functions/backupapod")`.
