@@ -17,31 +17,29 @@
 
 const functions = require('firebase-functions/v1');
 const {onInit} = require('firebase-functions/v1');
-const {defineString, defineSecret} = require('firebase-functions/params');
+const {defineSecret} = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 initializeApp();
-const nodemailer = require('nodemailer');
-// Configure the email transport using the default SMTP transport and a GMail account.
-// For other types of transports such as Sendgrid see https://nodemailer.com/transports/
-// TODO: Configure the `GMAIL_EMAIL` environment variable and the `GMAIL_PASSWORD` secret.
-const gmailEmail = defineString('GMAIL_EMAIL');
-const gmailPassword = defineSecret('GMAIL_PASSWORD');
+const {Resend} = require('resend');
 
-let mailTransport;
+// Emails are sent with Resend (https://resend.com/).
+// TODO: Store your Resend API key in the `EMAIL_API_KEY` secret with `firebase functions:secrets:set EMAIL_API_KEY`.
+const emailApiKey = defineSecret('EMAIL_API_KEY');
+
+let resend;
 onInit(() => {
-  mailTransport = nodemailer.createTransport(
-    `smtps://${encodeURIComponent(gmailEmail.value())}:${encodeURIComponent(gmailPassword.value())}@smtp.gmail.com`);
+  resend = new Resend(emailApiKey.value());
 });
 
-// TODO: Create yor own survey.
-const LINK_TO_SURVEY = 'https://goo.gl/forms/IdurnOZ66h3FtlO33';
+// TODO: Create your own survey.
+const LINK_TO_SURVEY = 'https://example.com/survey';
 const LATEST_VERSION = '2.0';
 
 /**
  * After a user has updated the app. Send them a survey to compare the app with the old version.
  */
-exports.sendAppUpdateSurvey = functions.runWith({secrets: [gmailPassword]}).analytics.event('app_update').onLog(async (event) => {
+exports.sendAppUpdateSurvey = functions.runWith({secrets: [emailApiKey]}).analytics.event('app_update').onLog(async (event) => {
   const uid = event.user.userId;
   const appVerion = event.user.appInfo.appVersion;
 
@@ -63,7 +61,7 @@ exports.sendAppUpdateSurvey = functions.runWith({secrets: [gmailPassword]}).anal
  */
 async function sendSurveyEmail(email, name) {
   const mailOptions = {
-    from: '"MyCoolApp" <noreply@firebase.com>',
+    from: 'MyCoolApp <onboarding@resend.dev>',
     to: email,
     subject: 'How did you like our new app?',
     text: `Hey ${name}, We've seen that you have upgraded to the new version of our app!
@@ -71,6 +69,11 @@ async function sendSurveyEmail(email, name) {
            Fill out our survey: ${LINK_TO_SURVEY}`,
   };
 
-  await mailTransport.sendMail(mailOptions);
+  // Resend reports API failures in the returned `error` instead of throwing.
+  const {error} = await resend.emails.send(mailOptions);
+  if (error) {
+    functions.logger.error('There was an error while sending the email:', error);
+    return;
+  }
   functions.logger.log('Upgrade App Survey email sent to:', email);
 }
