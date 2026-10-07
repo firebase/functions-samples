@@ -36,7 +36,10 @@ export const annotateImage = functions.https.onCall(async (data, context) => {
     );
   }
   try {
-    return await client.annotateImage(data);
+    // The Android snippets in the docs send the request as a JSON string, and
+    // the Apple snippets send it as an object. Accept both.
+    const request = typeof data === "string" ? JSON.parse(data) : data;
+    return await client.annotateImage(request);
   } catch (e) {
 
     throw new functions.https.HttpsError("internal", (e as Error).message);
