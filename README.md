@@ -247,9 +247,9 @@ Uses an HTTP trigger.
 
 Demonstrates how to automatically post GitHub commits to a Slack channel using an HTTPS triggered Function.
 
-### Create and charge customers with [Stripe](/Node-1st-gen/stripe) or [Paypal](/Node-1st-gen/paypal)
+### Create and charge customers with [Stripe](/Node-1st-gen/stripe)
 
-Demonstrates hows to integrate Firebase Auth and the Realtime database with Stripe via the Stripe Node.js library and shows how to create HTTP endpoints to charge customers via Paypal.
+Demonstrates how to integrate Firebase Auth and Cloud Firestore with Stripe via the Stripe Node.js library.
 
 ### Text moderation
 
