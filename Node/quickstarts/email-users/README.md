@@ -14,8 +14,8 @@ We'll deploy 2nd gen Auth triggered functions that send a welcome email when a n
 
 The functions are organized into separate files for clean, self-contained documentation snippets and modular code:
 
-- [functions/sendWelcomeEmail.js](functions/sendWelcomeEmail.js): `sendWelcomeEmail` triggers on all user creations across the project (default behavior).
-- [functions/sendByeEmail.js](functions/sendByeEmail.js): `sendByeEmail` triggers when any user account is deleted.
+- [functions/newUserWelcome.js](functions/newUserWelcome.js): `newUserWelcome` triggers on all user creations across the project (default behavior).
+- [functions/deletedUserFarewell.js](functions/deletedUserFarewell.js): `deletedUserFarewell` triggers when any user account is deleted.
 - [functions/tenants.js](functions/tenants.js): Multi-tenancy examples:
   - `sendWelcomeEmailToTenant`: Scoped to users in a specific Identity Platform tenant using `tenantId: "my-tenant-id"`.
   - `sendWelcomeEmailNoTenant`: Triggers only for users not associated with any tenant using `tenantId: IS_NOT_TENANT`.
@@ -50,8 +50,8 @@ The [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-su
    ```
 2. Open the **Emulator Suite UI** in your browser at [http://localhost:4000](http://localhost:4000) (or the port printed in your terminal).
 3. Navigate to the **Authentication** tab.
-4. **Trigger `sendWelcomeEmail`**: Click **Add user**, enter an email address and display name, and click **Save**.
-5. **Trigger `sendByeEmail`**: Select the user you just created and click **Delete user**.
+4. **Trigger `newUserWelcome`**: Click **Add user**, enter an email address and display name, and click **Save**.
+5. **Trigger `deletedUserFarewell`**: Select the user you just created and click **Delete user**.
 6. View the logs in the **Logs** tab of the Emulator Suite UI or in your terminal to see the functions execute:
    > `New welcome email sent to: user@example.com`  
    > `Account deletion confirmation email sent to: user@example.com`
