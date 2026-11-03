@@ -125,6 +125,12 @@ Learn how to trigger a function based on an event sent by an extension
 
 The Firebase CLI generates sample code for Cloud Functions using JavaScript or TypeScript.
 
+### Effect.ts 2nd Gen Functions
+
+- [Node 2nd gen](/Node/effect-functions/)
+
+This sample demonstrates how to build type-safe 2nd gen Cloud Functions using Effect.ts, featuring Schema validation, Context & Layer dependency injection, module-scoped ManagedRuntime for warm instances, structured concurrency with Effect.all, Schedule retries, custom Cloud Logging, and Vitest testing with the Firebase Emulator Suite.
+
 ### Server-side generated pages w/ Handlebars templating and user sessions
 
 - [Node (1st gen)](/Node-1st-gen/template-handlebars)

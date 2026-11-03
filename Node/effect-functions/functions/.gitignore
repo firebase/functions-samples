@@ -1,0 +1,8 @@
+# Compiled JavaScript files
+lib/
+
+# Dependency directory
+node_modules/
+
+# Logs
+*.log

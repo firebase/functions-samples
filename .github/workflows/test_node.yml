@@ -61,6 +61,18 @@ jobs:
       - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: ${{ matrix.node-version }}
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Cache Firebase Emulators
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('Node/effect-functions/firebase.json') }}
+
+      - run: npm install -g firebase-tools
 
       - name: Cache npm
         uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
