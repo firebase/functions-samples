@@ -1,0 +1,3 @@
+# Node.js dependency directory
+node_modules/
+tsconfig-compile.json

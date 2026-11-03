@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.template.json",
+  "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "checkJs": true
+  },
+  "include": [
+    "index.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "index.test.js"
+  ]
+}
