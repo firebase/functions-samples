@@ -13,7 +13,7 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "firebase-admin": "^14.5.0",
+    "firebase-admin": "^14.5.1",
     "firebase-functions": "^7.4.0",
     "googleapis": "^173.0.0"
   },

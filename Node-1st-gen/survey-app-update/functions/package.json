@@ -2,7 +2,7 @@
   "name": "survey-app-update-function",
   "description": "Sends a survey via email to users who upgrade your app",
   "dependencies": {
-    "firebase-admin": "^14.5.0",
+    "firebase-admin": "^14.5.1",
     "firebase-functions": "^7.4.0",
     "resend": "^4.0.0"
   },

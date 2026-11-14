@@ -2,7 +2,7 @@
   "name": "generate-thumbnail-functions-quickstart",
   "description": "Generate Thumbnail Cloud Functions for Firebase sample",
   "dependencies": {
-    "firebase-admin": "^14.5.0",
+    "firebase-admin": "^14.5.1",
     "firebase-functions": "^7.4.0",
     "sharp": "^0.35.5"
   },
