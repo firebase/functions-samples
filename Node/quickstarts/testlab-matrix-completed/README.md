@@ -28,4 +28,4 @@ completion of a Test Matrix in Firebase Test Lab.
 ## Next Steps
 
 To see how to post to Slack instead of just `console.log`-ing, check out
-[this sample](https://github.com/firebase/functions-samples/tree/main/2nd-gen/testlab-to-slack).
+[this sample](https://github.com/firebase/functions-samples/tree/main/Node/testlab-to-slack).
