@@ -12,7 +12,7 @@ this:
 1.  Clone or download this repo and open this directory in a terminal:
 
     ```shell
-    cd testlab-to-slack
+    cd Node-1st-gen/testlab-to-slack
     ```
 
 1.  You must have the latest Firebase CLI installed. If you don't have it,
