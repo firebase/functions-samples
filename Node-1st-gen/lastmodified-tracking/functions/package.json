@@ -2,7 +2,7 @@
   "name": "lastmodified-tracking-functions",
   "description": "Track Lastmodified date of nodes Cloud Functions for Firebase sample",
   "dependencies": {
-    "firebase-admin": "^14.5.0",
+    "firebase-admin": "^14.5.1",
     "firebase-functions": "^7.4.0"
   },
   "devDependencies": {
